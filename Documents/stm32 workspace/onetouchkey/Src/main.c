@@ -408,7 +408,7 @@ static void MX_TSC_Init(void)
   htsc.Init.SpreadSpectrumDeviation = 1;
   htsc.Init.SpreadSpectrumPrescaler = TSC_SS_PRESC_DIV1;
   htsc.Init.PulseGeneratorPrescaler = TSC_PG_PRESC_DIV64;
-  htsc.Init.MaxCountValue = TSC_MCV_255;
+  htsc.Init.MaxCountValue = TSC_MCV_4095;
   htsc.Init.IODefaultMode = TSC_IODEF_OUT_PP_LOW;
   htsc.Init.SynchroPinPolarity = TSC_SYNC_POLARITY_FALLING;
   htsc.Init.AcquisitionMode = TSC_ACQ_MODE_NORMAL;
@@ -546,19 +546,19 @@ void ProcessSensors(void){
             }
 
 void SetFlags(void){
-	if (uhTSCAcquisitionValue3 < 2445) {
+	if (uhTSCAcquisitionValue3 < 2400) {
 	    	not2 = 1;
 	    	not1 = 1;}
 	    else {
 	    	not2 = 0;
 	        not1 = 0;};
-	    if (uhTSCAcquisitionValue1 < 1910) {
+	    if (uhTSCAcquisitionValue1 < 1903) {
 	        	not3 = 1;
 	        	not2 = 1;}
 	        else {
 	        	not3 = 0;
 	            not2 = 0;};
-	    if (uhTSCAcquisitionValue2 < 2400) {
+	    if (uhTSCAcquisitionValue2 < 2390) {
 	           	not3 = 1;
 	           	not1 = 1;}
 	           else {
@@ -583,7 +583,7 @@ void ChangeMode(void) {
 			mode1 = (mode1 + 1) % 2;
 		}
 		if (flag2 > temp2) {
-			mode2 = (mode2 + 1) % 2;
+			mode2 = (mode2 + 1) % 3;
 		}
 		if (flag3 > temp3) {
 			mode3 = (mode3 + 1) % 4;
