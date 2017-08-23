@@ -170,22 +170,28 @@ void TIM3_IRQHandler(void)
   if (trig ==1){
 	  	//if (mode2 == 2 && reset == 1) {position = 0; last = 0; reset = 0;};
   		if (position < fix16_sub(fix16_from_int(15), inc)) {Attack();}
-  		if (position >= fix16_sub(fix16_from_int(15), inc) && position < fix16_from_int(30)) {Release();}
-  		if (position >= fix16_from_int(30)) {position = 0, last = 0, biinterp = 0; interp1 = 0; last = wavefrac;
-  											 if (mode2 > 0) {trig = 0;};}
+  		if (position >= fix16_sub(fix16_from_int(15), inc) && position < fix16_sub(fix16_from_int(30), inc)) {Release();}
+  		if (position >= fix16_sub(fix16_from_int(30), inc)) {
+  			//last = fix16_sub(position, fix16_from_int(30));
+  			last = fix16_sub((position &0x1fff), 2);
+  			position = 0;
+  			biinterp = 0;
+  			//interp1 = 0;
+  			if (mode2 > 0) {trig = 0;};}
   	}
   /* USER CODE END TIM3_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
 void Attack(void) {
-	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, interp1);
+	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, biinterp);
 
 	if (mode1 == 0)
 		{inc = fix16_mul(precalc + ADCReadings[2], lookuptable[ADCReadings[0]]);};
 	if (mode1 == 1)
 		{inc = lookuptable[ADCReadings[0]] >> 8;};
 
+	if (inc > fix16_from_int(29)) {inc = fix16_from_int(29);};
 	position = fix16_add(inc, last);
 	last = position;
 
@@ -204,18 +210,20 @@ void Attack(void) {
 	Rnvalue2 = attackfamily[Rnm][Rn];
 
 	interp1 = fix16_lerp16(Lnvalue1, Rnvalue1, wavefrac);
-	//interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, wavefrac);
+	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, wavefrac);
 
-	//biinterp = fix16_lerp16(interp1, interp2, morphfrac);
+	biinterp = fix16_lerp16(interp1, interp2, morphfrac);
 	reset = 0;
 }
 void Release(void) {
-	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, interp1);
+	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, biinterp);
 	if (mode1 == 0) {inc = fix16_mul(precalc + ADCReadings[2], lookuptable[ADCReadings[0]]);};
 	if (mode1 == 1) {inc = lookuptable[ADCReadings[2]] >> 11;};
 	if (mode2 == 2 && reset == 1) {inc = lookuptable[ADCReadings[0]] >> 8;
 									position = fix16_sub(last, inc);}
-	else {position = fix16_add(inc, last);};
+	else {
+		if (inc > fix16_from_int(29)) {inc = fix16_from_int(29);};
+		position = fix16_add(inc, last);};
 	last = position;
 	mirror = fix16_sub(fix16_from_int(30), position);
 	Ln = (int) (mirror >> 16);
@@ -230,8 +238,8 @@ void Release(void) {
 	Lnvalue2 = releasefamily[Rnm][Ln];
 	Rnvalue2 = releasefamily[Rnm][Rn];
 	interp1 = fix16_lerp16(Lnvalue1, Rnvalue1, wavefrac);
-	//interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, wavefrac);
-	//biinterp = fix16_lerp16(interp1, interp2, morphfrac);
+	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, wavefrac);
+	biinterp = fix16_lerp16(interp1, interp2, morphfrac);
 }
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
