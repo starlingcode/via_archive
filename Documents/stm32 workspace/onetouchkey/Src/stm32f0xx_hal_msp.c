@@ -41,6 +41,10 @@
 
 extern DMA_HandleTypeDef hdma_adc;
 
+extern DMA_HandleTypeDef hdma_dac_ch1;
+
+extern DMA_HandleTypeDef hdma_dac_ch2;
+
 extern void _Error_Handler(char *, int);
 /* USER CODE BEGIN 0 */
 
@@ -178,6 +182,39 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+    /* DAC DMA Init */
+    /* DAC_CH1 Init */
+    hdma_dac_ch1.Instance = DMA1_Channel3;
+    hdma_dac_ch1.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma_dac_ch1.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_dac_ch1.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_dac_ch1.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+    hdma_dac_ch1.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+    hdma_dac_ch1.Init.Mode = DMA_CIRCULAR;
+    hdma_dac_ch1.Init.Priority = DMA_PRIORITY_LOW;
+    if (HAL_DMA_Init(&hdma_dac_ch1) != HAL_OK)
+    {
+      _Error_Handler(__FILE__, __LINE__);
+    }
+
+    __HAL_LINKDMA(hdac,DMA_Handle1,hdma_dac_ch1);
+
+    /* DAC_CH2 Init */
+    hdma_dac_ch2.Instance = DMA1_Channel4;
+    hdma_dac_ch2.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma_dac_ch2.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_dac_ch2.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_dac_ch2.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+    hdma_dac_ch2.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+    hdma_dac_ch2.Init.Mode = DMA_CIRCULAR;
+    hdma_dac_ch2.Init.Priority = DMA_PRIORITY_LOW;
+    if (HAL_DMA_Init(&hdma_dac_ch2) != HAL_OK)
+    {
+      _Error_Handler(__FILE__, __LINE__);
+    }
+
+    __HAL_LINKDMA(hdac,DMA_Handle2,hdma_dac_ch2);
+
     /* DAC interrupt Init */
     HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
@@ -204,6 +241,10 @@ void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac)
     PA5     ------> DAC_OUT2 
     */
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_4|GPIO_PIN_5);
+
+    /* DAC DMA DeInit */
+    HAL_DMA_DeInit(hdac->DMA_Handle1);
+    HAL_DMA_DeInit(hdac->DMA_Handle2);
 
     /* DAC interrupt DeInit */
   /* USER CODE BEGIN DAC:TIM6_DAC_IRQn disable */

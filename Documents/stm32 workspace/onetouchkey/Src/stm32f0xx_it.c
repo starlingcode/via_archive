@@ -46,10 +46,11 @@
 #define low {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 #define fromaudio1 {0,236,305,452,787,1149,1455,1868,2440,2854,2916,3675,3738,3804,3977,4095}
 #define fromaudio2 {0, 505, 640, 635, 376, 737, 1160, 1476, 1648, 2228, 2721, 3425, 3346, 3494, 3668, 4091}
+#define fromaudio65sine16bit {0,38,153,344,610,952,1368,1858,2419,3052,3753,4523,5359,6258,7220,8241,9319,10452,11638,12872,14154,15478,16843,18245,19682,21148,22642,24160,25697,27251,28818,30394,31976,33560,35142,36718,38285,39839,41376,42894,44388,45854,47291,48693,50058,51382,52664,53898,55084,56217,57295,58316,59278,60177,61013,61783,62484,63117,63678,64168,64584,64926,65192,65383,65498}
 #define fromaudio65sine {0,2,10,22,39,61,88,120,156,197,242,291,345,403,465,530,600,672,749,828,910,995,1082,1172,1264,1358,1453,1550,1648,1747,1847,1947,2048,2148,2248,2348,2447,2545,2642,2737,2831,2923,3013,3100,3185,3267,3346,3423,3495,3565,3630,3692,3750,3804,3853,3898,3939,3975,4007,4034,4056,4073,4085,4093,4095}
 #define fromaudio64warp1 {108, 153, 244, 351, 443, 538, 553, 569, 594, 640, 727, 705, 682, 635, 529, 395, 377, 376, 413, 478, 556, 737, 835, 924, 1002, 1078, 1241, 1303, 1349, 1410, 1476, 1510, 1567, 1615, 1648, 1717, 1824, 2086, 2228, 2353, 2454, 2535, 2721, 2861, 3026, 3189, 3326, 3462, 3416, 3356, 3348, 3346, 3346, 3460, 3493, 3494, 3486, 3485, 3571, 3668, 3785, 3900, 0, 4091}
 #define ramp64 {0 ,64 ,128 ,192 ,256 ,320 ,384 ,448 ,512 ,576 ,640 ,704 ,768 ,832 ,896 ,960 ,1024 ,1088 ,1152 ,1216 ,1280 ,1344 ,1408 ,1472 ,1536 ,1600 ,1664 ,1728 ,1792 ,1856 ,1920 ,1984 ,2048 ,2112 ,2176 ,2240 ,2304 ,2368 ,2432 ,2496 ,2560 ,2624 ,2688 ,2752 ,2816 ,2880 ,2944 ,3008 ,3072 ,3136 ,3200 ,3264 ,3328 ,3392 ,3456 ,3520 ,3584 ,3648 ,3712 ,3776 ,3840 ,3904 ,3968 ,4032}
-#define high65 {4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095, 4095}
+#define high65 {65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535,65535}
 #define low65 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 #define ramp65attack {0,32,64,96,128,160,192,224,256,288,320,352,384,416,448,480,512,544,576,608,640,672,704,736,768,800,832,864,896,928,960,992,1024,1056,1088,1120,1152,1184,1216,1248,1280,1312,1344,1376,1408,1440,1472,1504,1536,1568,1600,1632,1664,1696,1728,1760,1792,1824,1856,1888,1920,1952,1984,2016,2048}
 #define ramp65release {4095,4063,4031,3999,3967,3935,3903,3871,3839,3807,3775,3743,3711,3679,3647,3615,3583,3551,3519,3487,3455,3423,3391,3359,3327,3295,3263,3231,3199,3167,3135,3103,3071,3039,3007,2975,2943,2911,2879,2847,2815,2783,2751,2719,2687,2655,2623,2591,2559,2527,2495,2463,2431,2399,2367,2335,2303,2271,2239,2207,2175,2143,2111,2079,2047}
@@ -61,8 +62,8 @@
 #define spanx2 8288608 // 2 * (wavetable size - 1 in fix16)
 #define span 4194304 // wavetable size - 1 in fix16
 const fix16_t lookuptable[4096] = expotable10oct;
-uint16_t attackfamily[M][N] = {fromaudio65sine, fromaudio65sine};
-uint16_t releasefamily[M][N] = {fromaudio65sine, fromaudio65sine};
+uint16_t attackfamily[M][N] = {low65, fromaudio65sine};
+uint16_t releasefamily[M][N] = {high65, fromaudio65sine};
 uint16_t sinetable[N] = fromaudio65sine;
 const int fs = 48000;
 const fix16_t precalc = 1;
@@ -78,7 +79,8 @@ fix16_t inc;
 fix16_t interp1;
 fix16_t interp2;
 fix16_t sineinterp;
-fix16_t biinterp;
+fix16_t biinterp1;
+fix16_t biinterp2;
 fix16_t filter;
 fix16_t out;
 fix16_t Lnvalue1;
@@ -87,6 +89,7 @@ fix16_t Lnvalue2;
 fix16_t Rnvalue2;
 fix16_t sinevalue1;
 fix16_t sinevalue2;
+fix16_t lastvalue;
 int Ln;
 int Rn;
 int Lnm;
@@ -100,12 +103,16 @@ void Attack(void);
 void Release(void);
 void GetPhase(void);
 void Filter(void);
-fix16_t fix16_lerp16(fix16_t inArg0, fix16_t inArg1, uint16_t inFract);
+fix16_t fasterlerp16(fix16_t inArg0, fix16_t inArg1, uint16_t inFract);
 extern DAC_HandleTypeDef hdac;
 extern TIM_HandleTypeDef htim7;
-int benchmark;
+int benchmark1;
+int benchmark2;
+
 int lastcount;
 uint32_t ADCReadings[6];
+uint16_t dacbuffer1;
+uint16_t dacbuffer2;
 int mode1;
 int mode2;
 int mode3;
@@ -114,6 +121,8 @@ int mode3;
 
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_adc;
+extern DMA_HandleTypeDef hdma_dac_ch1;
+extern DMA_HandleTypeDef hdma_dac_ch2;
 extern DAC_HandleTypeDef hdac;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim6;
@@ -174,6 +183,34 @@ void DMA1_Channel1_IRQHandler(void)
 }
 
 /**
+* @brief This function handles DMA1 channel 2 and 3 interrupts.
+*/
+void DMA1_Channel2_3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel2_3_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel2_3_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_dac_ch1);
+  /* USER CODE BEGIN DMA1_Channel2_3_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel2_3_IRQn 1 */
+}
+
+/**
+* @brief This function handles DMA1 channel 4, 5, 6 and 7 interrupts.
+*/
+void DMA1_Channel4_5_6_7_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel4_5_6_7_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel4_5_6_7_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_dac_ch2);
+  /* USER CODE BEGIN DMA1_Channel4_5_6_7_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel4_5_6_7_IRQn 1 */
+}
+
+/**
 * @brief This function handles TIM2 global interrupt.
 */
 void TIM2_IRQHandler(void)
@@ -197,22 +234,28 @@ void TIM6_DAC_IRQHandler(void)
 
 
 
-  /* USER CODE END TIM6_DAC_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim6);
-  HAL_DAC_IRQHandler(&hdac);
-  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
-  if (trig ==1){
-  		  	lastcount = benchmark;
-  		  	HAL_TIM_Base_Start(&htim7);
-  			HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, out);
-  			HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, 4095 - out);
-  			GetPhase();
-  	  		if (position < span) {Attack();}
-  	  		if (position >= span && position < spanx2) {Release();}
-  	  		if (mode1 == 0) {Filter();}; //defines value "out" which is an interpolation between "biinterp" and a sine wave with the same phase using the values "Ln", "Rn", and "wavefrac"
-  	  		benchmark = __HAL_TIM_GET_COUNTER(&htim7);
 
-  	}
+  /* USER CODE END TIM6_DAC_IRQn 0 */
+	HAL_TIM_IRQHandler(&htim6);
+	//HAL_DAC_IRQHandler(&hdac);
+  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
+	if (trig ==1){
+		  	  	  	//benchmark2 = __HAL_TIM_GET_COUNTER(&htim7);
+		  	  	  	//lastcount = benchmark2 - benchmark1;
+	  		  	  	GetPhase();
+	  	  			lastvalue = out;
+	  	  	  		if (position < span) {Attack();}
+	  	  	  		if (position >= span && position < spanx2) {Release();}
+	  	  	  		Filter();
+	  	  	  		dacbuffer1 = out;
+	  	  	  		dacbuffer2 = (65535 - interp1);
+
+
+
+
+
+
+	  	  	}
   /* USER CODE END TIM6_DAC_IRQn 1 */
 }
 
@@ -267,26 +310,32 @@ void Release(void) {
 }
 
 void GetPhase(void) {
-	if (mode1 == 0 || mode1 == 1) {inc = fix16_mul((ADCReadings[1] << 1), (lookuptable[(4095 - ADCReadings[0] - 24)] >> 3));};
+	if (mode1 == 0 || mode1 == 1) {inc = fix16_mul((ADCReadings[1] << 2) - 4096, (lookuptable[(4095 - ADCReadings[0] - 24)] >> 2));};
 	//if (mode1 == 1) {inc = lookuptable[ADCReadings[0]] >> 12;};
 	if (inc > 1048576) {inc = 1048576;};
+	if (inc < -1048576) {inc = -1048576;};
 	position = position + inc;
 	if (position >= spanx2) {position = position - spanx2;};
+	if (position < 0) {position = position + spanx2;};
 }
 
 void Filter(void) {
+	/* filter by interp to sine, defines value "out" which is an interpolation between "out" and a sine wave with the same phase using the values "Ln", "Rn", and "wavefrac"
 	sinevalue1 = sinetable[Ln];
 	sinevalue2 = sinetable[Rn];
-	sineinterp = fix16_lerp16(sinevalue1, sinevalue2, wavefrac);
-	out = fix16_lerp16(out, sineinterp, ((inc - 1) >> 4));
+	sineinterp = fasterlerp16(sinevalue1, sinevalue2, wavefrac);
+	out = fasterlerp16(out, sineinterp, ((inc - 1) >> 4));
+	*/
+	out = fix16_add(lastvalue, fix16_mul(fix16_sub(out,lastvalue), 1)); //new sample value "out" is difference between last sample to dac "lastvalue" and new calcualted value "out" (for ease of toggling filter on and off)
 }
 
-/*fix16_t fasterlerp16(fix16_t inArg0, fix16_t inArg1, uint16_t inFract)
+fix16_t fasterlerp16(fix16_t inArg0, fix16_t inArg1, uint16_t inFract)
 {
-	fix16_t tempOut = fix16_smul(fix16_sub(inArg0, inArg1), inFract);
-	tempOut = fix16_add(inArg0, tempOut);
-	if (tempOut < 0) {tempOut = 0;};
-	return tempOut;
-}*/
+		int64_t tempOut = int64_mul_i32_i32((inArg1 - inArg0), inFract);
+		tempOut = ((int64_t)inArg0 << 16) + tempOut;
+		tempOut = int64_shift(tempOut, -16);
+		return (fix16_t)int64_lo(tempOut);
+
+}
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
