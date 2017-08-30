@@ -164,11 +164,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
     {
-	 ProcessSensors(); /*Initiates acquisition, sets uhTSCAcquisitionValue1, uhTSCAcquisitionValue2, and
+	 //ProcessSensors(); /*Initiates acquisition, sets uhTSCAcquisitionValue1, uhTSCAcquisitionValue2, and
     	//				uhTSCAcquisitionValue3 if acquisition successful*/
-	 SetFlags(); /*Sets flag1, flag2, or flag3 per the unique value combos indicating a touch in the corresponding
+	 //SetFlags(); /*Sets flag1, flag2, or flag3 per the unique value combos indicating a touch in the corresponding
      //	 	 	 zone*/
-     ChangeMode();
+     //
+	  //ChangeMode();
 
 
   /* USER CODE END WHILE */
@@ -483,10 +484,10 @@ static void MX_TIM6_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 750-1;
+  htim6.Init.Prescaler = 1000-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim6.Init.Period = 1;
-  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
