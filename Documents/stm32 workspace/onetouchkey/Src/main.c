@@ -74,12 +74,14 @@ int flag3;
 int temp1 = 0;
 int temp2 = 0;
 int temp3 = 0;
-extern int mode1 = 0;
-extern int mode2 = 0;
-extern int mode3 = 0;
 #define ramp65attack {0,32,64,96,128,160,192,224,256,288,320,352,384,416,448,480,512,544,576,608,640,672,704,736,768,800,832,864,896,928,960,992,1024,1056,1088,1120,1152,1184,1216,1248,1280,1312,1344,1376,1408,1440,1472,1504,1536,1568,1600,1632,1664,1696,1728,1760,1792,1824,1856,1888,1920,1952,1984,2016,2048}
 extern uint16_t dacbuffer1[1];
 extern uint16_t dacbuffer2[1];
+extern int mode1 = 0;
+extern int mode2 = 0;
+extern int mode3 = 0;
+uint8_t inattack;
+uint8_t inrelease;
 int benchmark;
 int lastcount;
 extern uint32_t ADCReadings[3];
@@ -164,7 +166,17 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
     {
-	 //ProcessSensors(); /*Initiates acquisition, sets uhTSCAcquisitionValue1, uhTSCAcquisitionValue2, and
+	  /* if (inattack == 1) {
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+
+	  }
+	  if (inrelease == 1 ) {
+			  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);
+			  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+
+		  }
+	 ProcessSensors(); /*Initiates acquisition, sets uhTSCAcquisitionValue1, uhTSCAcquisitionValue2, and
     	//				uhTSCAcquisitionValue3 if acquisition successful*/
 	 //SetFlags(); /*Sets flag1, flag2, or flag3 per the unique value combos indicating a touch in the corresponding
      //	 	 	 zone*/
@@ -484,7 +496,7 @@ static void MX_TIM6_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 1000-1;
+  htim6.Init.Prescaler = 750-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim6.Init.Period = 1;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;

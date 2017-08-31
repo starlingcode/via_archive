@@ -81,10 +81,10 @@
 #define perlin5_8 {951,754,521,293,107,0,4,151,468,980,1664,2258,2708,3010,3166,3186,3087,2892,2634,2350,2086,1894,1833,1970,2258,2450,2550,2577,2548,2479,2390,2297,2218,2172,2176,2248,2407,2670,2907,3000,2986,2898,2767,2622,2488,2388,2343,2371,2487,2704,3031,3466,3814,4016,4096,4081,3998,3872,3730,3599,3504,3473,3533,3709,4030}
 #define perlin5_9 {0,546,1126,1662,2003,2132,2101,1963,1765,1551,1363,1240,1217,1328,1601,2064,2627,3067,3369,3531,3562,3478,3304,3073,2826,2613,2492,2530,2756,2927,3011,3026,2989,2920,2837,2759,2705,2693,2743,2874,3102,3270,3312,3265,3164,3039,2919,2829,2790,2821,2938,3153,3476,3818,4017,4096,4083,4004,3889,3764,3658,3599,3614,3733,3984}
 const fix16_t lookuptable[4096] = expotable10oct;
-//uint16_t attackfamily[M][N] = {bittab1, bittab2, bittab3, bittab4, bittab5, bittab6, bittab7, bittab8, bittab9};
-//uint16_t releasefamily[M][N] = {bittab1, bittab2, bittab3, bittab4, bittab5, bittab6, bittab7, bittab8, bittab9};
-uint16_t releasefamily[M][N] = {perlin5_1, perlin5_2, perlin5_3, perlin5_4, perlin5_5, perlin5_6, perlin5_7, perlin5_8, perlin5_9};
-uint16_t attackfamily[M][N] = {perlin5_1, perlin5_2, perlin5_3, perlin5_4, perlin5_5, perlin5_6, perlin5_7, perlin5_8, perlin5_9};
+uint16_t attackfamily[M][N] = {bittab1, bittab2, bittab3, bittab4, bittab5, bittab6, bittab7, bittab8, bittab9};
+uint16_t releasefamily[M][N] = {bittab1, bittab2, bittab3, bittab4, bittab5, bittab6, bittab7, bittab8, bittab9};
+//uint16_t releasefamily[M][N] = {perlin5_1, perlin5_2, perlin5_3, perlin5_4, perlin5_5, perlin5_6, perlin5_7, perlin5_8, perlin5_9};
+//uint16_t attackfamily[M][N] = {perlin5_1, perlin5_2, perlin5_3, perlin5_4, perlin5_5, perlin5_6, perlin5_7, perlin5_8, perlin5_9};
 uint16_t sinetable[N] = fromaudio65sine;
 const int fs = 48000;
 const fix16_t precalc = 1;
@@ -129,7 +129,8 @@ extern DAC_HandleTypeDef hdac;
 extern TIM_HandleTypeDef htim7;
 int benchmark1;
 int benchmark2;
-
+uint8_t inattack;
+uint8_t inrelease;
 int lastcount;
 uint32_t ADCReadings[6];
 uint16_t dacbuffer1;
@@ -288,17 +289,18 @@ void TIM6_DAC_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 void Attack(void) {
-	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+	inattack = 1;
+	inrelease = 0;
 
 	//calculate value based upon phase pointer "position"
 
 	LnSample = (int) (position >> 16);
 	RnSample = (LnSample + 1);
-	LnFamily = ADCReadings[1] >> 9;
+	//LnFamily = ADCReadings[1] >> 9;
 	RnFamily = (LnFamily + 1);
 
 	wavefrac = (uint16_t) position;
-	morphfrac = (ADCReadings[1] - (LnFamily <<  9)) << 7;
+	//morphfrac = (ADCReadings[1] - (LnFamily <<  9)) << 7;
 
 	Lnvalue1 = attackfamily[LnFamily][LnSample];
 	Rnvalue1 = attackfamily[LnFamily][RnSample];
@@ -311,18 +313,18 @@ void Attack(void) {
 	out = fix16_lerp16(interp1, interp2, morphfrac);
 }
 void Release(void) {
-	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+	inattack = 0;
+	inrelease = 1;
 	//calculate value based upon phase pointer "position"
 	mirror = fix16_sub(spanx2, position);
 
 	LnSample = (int) (mirror >> 16);
 	RnSample = (LnSample + 1);
-	LnFamily = (uint32_t) ADCReadings[1] >> 9;
+	//LnFamily = (uint32_t) ADCReadings[1] >> 9;
 	RnFamily = (LnFamily + 1);
 
 	wavefrac = (uint16_t) mirror;
-	morphfrac = (ADCReadings[1] - (LnFamily <<  9)) << 7;
+	//morphfrac = (ADCReadings[1] - (LnFamily <<  9)) << 7;
 
 	Lnvalue1 = releasefamily[LnFamily][LnSample];
 	Rnvalue1 = releasefamily[LnFamily][RnSample];
@@ -341,7 +343,10 @@ void GetPhase(void) {
 	if (inc > 1048576) {inc = 1048576;};
 	if (inc < -1048576) {inc = -1048576;};
 	position = position + inc;
-	if (position >= spanx2) {position = position - spanx2;};
+	if (position >= spanx2) {
+		position = position - spanx2; inattack = 1;
+		inrelease = 0;
+		inattack = 0;};
 	if (position < 0) {position = position + spanx2;};
 }
 
