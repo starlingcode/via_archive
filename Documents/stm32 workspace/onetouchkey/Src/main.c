@@ -74,14 +74,19 @@ int flag3;
 int temp1 = 0;
 int temp2 = 0;
 int temp3 = 0;
-#define ramp65attack {0,32,64,96,128,160,192,224,256,288,320,352,384,416,448,480,512,544,576,608,640,672,704,736,768,800,832,864,896,928,960,992,1024,1056,1088,1120,1152,1184,1216,1248,1280,1312,1344,1376,1408,1440,1472,1504,1536,1568,1600,1632,1664,1696,1728,1760,1792,1824,1856,1888,1920,1952,1984,2016,2048}
 extern uint16_t dacbuffer1[1];
 extern uint16_t dacbuffer2[1];
-extern int mode1 = 0;
-extern int mode2 = 0;
-extern int mode3 = 0;
-uint8_t inattack;
-uint8_t inrelease;
+extern uint8_t speed = 0;
+extern uint8_t loop = 0;
+extern uint8_t trigmode = 0;
+extern uint8_t samphold = 0;
+extern uint8_t family = 0;
+uint8_t attackflag;
+uint8_t releaseflag;
+uint8_t intoattackfroml;
+uint8_t intoreleasefroml;
+uint8_t intoattackfromr;
+uint8_t intoreleasefromr;
 int benchmark;
 int lastcount;
 extern uint32_t ADCReadings[3];
@@ -166,22 +171,78 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
     {
-	  /* if (inattack == 1) {
-		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
-		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+	  if (intoattackfroml == 1) { //moving towards b
+		  if (samphold == 1) { // sample a
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  }
+		  else if (samphold == 2) { // sample b
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		  }
+		  else if (samphold == 3) { // sample a and b
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		  }
+		  else if (samphold == 4) {
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); // sample a and drop b
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+		  }
 
 	  }
-	  if (inrelease == 1 ) {
-			  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);
-			  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+	  if (intoreleasefroml == 1) { //moving towards a
+		  if (samphold == 1) { // release a
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+		  }
+		  else if (samphold == 2) { // b remains sampled
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		  }
+		  else if (samphold == 3) { // release a
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+		  }
+		  else if (samphold == 4) {
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET); // sample b and drop a
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		  }
+	  }
+		  if (intoattackfromr == 1) { //moving towards a
 
+			  if (samphold == 1) { //release a
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+			  }
+			  else if (samphold == 3) { // release a
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+			  }
+			  else if (samphold == 4) {
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET); // sample b and drop a
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+			  }
+
+		  }
+		  if (intoreleasefromr == 1) {
+			  if (samphold == 1) { // moving towards b
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); // sample a
+			  }
+			  else if (samphold == 2) { //
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET); // sample b
+			  }
+			  else if (samphold == 3) {
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); // sample a and b
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+			  }
+			  else if (samphold == 4) {
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); // sample a and drop b
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+			  }
+	  }
+	  if (attackflag == 0 || releaseflag == 0) {
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 		  }
 	 ProcessSensors(); /*Initiates acquisition, sets uhTSCAcquisitionValue1, uhTSCAcquisitionValue2, and
     	//				uhTSCAcquisitionValue3 if acquisition successful*/
-	 //SetFlags(); /*Sets flag1, flag2, or flag3 per the unique value combos indicating a touch in the corresponding
+	 SetFlags(); /*Sets flag1, flag2, or flag3 per the unique value combos indicating a touch in the corresponding
      //	 	 	 zone*/
      //
-	  //ChangeMode();
+	 ChangeMode();
 
 
   /* USER CODE END WHILE */
@@ -496,10 +557,10 @@ static void MX_TIM6_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 750-1;
+  htim6.Init.Prescaler = 1-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 1;
-  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  htim6.Init.Period = 800;
+  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -523,7 +584,7 @@ static void MX_TIM7_Init(void)
   htim7.Instance = TIM7;
   htim7.Init.Prescaler = 1-1;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim7.Init.Period = 50000;
+  htim7.Init.Period = 1000;
   htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
   {
@@ -628,13 +689,13 @@ static void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA1_Channel1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
   /* DMA1_Channel2_3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
   /* DMA1_Channel4_5_6_7_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel4_5_6_7_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel4_5_6_7_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_5_6_7_IRQn);
 
 }
@@ -808,13 +869,13 @@ void SetFlags(void){
 
 void ChangeMode(void) {
 		if (flag1 > temp1) {
-			mode1 = (mode1 + 1) % 2;
+			speed = (speed + 1) % 2;
 		}
 		if (flag2 > temp2) {
-			mode2 = (mode2 + 1) % 3;
+			trigmode = (trigmode + 1) % 5;
 		}
 		if (flag3 > temp3) {
-			mode3 = (mode3 + 1) % 4;
+			loop = (loop + 1) % 2;
 		}
 		temp1 = flag1;
 		temp2 = flag2;

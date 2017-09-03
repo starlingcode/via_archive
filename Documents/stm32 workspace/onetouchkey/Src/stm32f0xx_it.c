@@ -71,18 +71,18 @@
 #define bittab7 {0,1,2,4,6,8,11,14,18,24,30,38,48,60,75,93,116,143,176,217,266,324,395,478,576,690,821,970,1136,1319,1516,1724,1940,2157,2373,2581,2778,2961,3127,3276,3407,3521,3619,3702,3773,3831,3880,3921,3954,3981,4004,4022,4037,4049,4059,4067,4073,4079,4083,4086,4089,4091,4093,4095,4096}
 #define bittab8 {0,1,1,2,3,4,6,8,11,14,18,24,30,39,49,63,80,101,128,161,202,253,315,392,484,595,725,877,1051,1246,1460,1689,1927,2169,2407,2636,2850,3045,3219,3371,3502,3612,3705,3781,3844,3895,3936,3969,3995,4017,4034,4047,4058,4066,4073,4078,4082,4086,4088,4091,4092,4094,4095,4095,4096}
 #define bittab9 {0,0,1,1,2,2,3,5,6,8,11,14,19,25,32,42,55,71,92,118,153,196,251,319,405,510,638,791,971,1176,1405,1654,1915,2181,2442,2691,2920,3126,3305,3458,3586,3691,3777,3846,3900,3944,3978,4004,4025,4042,4054,4064,4071,4077,4082,4085,4088,4090,4092,4093,4094,4095,4095,4096,4096}
-#define perlin5_1 {0,143,278,403,520,628,729,822,908,987,1059,1125,1185,1240,1289,1333,1372,1407,1438,1465,1489,1510,1528,1543,1557,1568,1578,1587,1596,1603,1611,1618,1627,1635,1646,1657,1670,1686,1704,1724,1748,1775,1806,1841,1880,1924,1973,2027,2088,2154,2226,2306,2392,2486,2587,2696,2814,2940,3076,3221,3375,3539,3714,3900,4096}
-#define perlin5_2 {0,36,75,118,165,217,275,339,409,486,571,663,763,872,990,1117,1253,1399,1555,1721,1894,2056,2200,2329,2443,2544,2630,2705,2768,2820,2862,2894,2918,2935,2945,2948,2947,2941,2931,2919,2905,2889,2874,2858,2844,2832,2823,2818,2817,2822,2833,2851,2876,2911,2954,3008,3074,3151,3241,3345,3463,3596,3745,3912,4096}
-#define perlin5_3 {0,187,339,459,550,615,659,684,692,688,673,650,623,592,562,533,509,491,481,481,493,519,560,618,694,789,904,1042,1201,1384,1592,1824,2081,2326,2534,2709,2853,2967,3056,3120,3162,3186,3193,3185,3166,3137,3101,3061,3019,2978,2939,2906,2880,2865,2863,2876,2907,2958,3032,3131,3259,3416,3607,3832,4096}
-#define perlin5_4 {0,1,1,3,11,28,57,102,167,255,369,513,691,905,1136,1311,1434,1511,1549,1555,1534,1493,1437,1372,1303,1235,1172,1119,1081,1060,1060,1086,1139,1223,1340,1492,1682,1910,2180,2490,2783,3018,3201,3337,3430,3486,3510,3506,3479,3435,3379,3315,3248,3184,3128,3084,3058,3054,3079,3136,3232,3370,3557,3797,4096}
-#define perlin5_5 {0,190,466,694,871,1001,1091,1145,1170,1170,1153,1123,1085,1047,1013,990,983,997,1040,1115,1231,1392,1604,1845,2015,2115,2156,2151,2108,2040,1955,1861,1769,1685,1617,1571,1554,1572,1630,1732,1883,2085,2342,2657,3008,3290,3498,3640,3724,3758,3752,3712,3649,3569,3482,3397,3321,3264,3233,3238,3287,3388,3551,3784,4096}
-#define perlin5_6 {1527,1491,1368,1176,935,671,412,190,40,0,113,419,740,971,1125,1213,1244,1232,1186,1118,1039,960,893,850,841,879,974,1139,1385,1713,1964,2096,2131,2091,1998,1871,1727,1585,1459,1363,1311,1315,1385,1529,1757,2074,2486,2978,3376,3649,3813,3886,3883,3822,3719,3591,3454,3326,3224,3164,3163,3239,3408,3688,4096}
-#define perlin5_7 {0,350,850,1451,1962,2365,2657,2839,2915,2895,2793,2626,2415,2186,1971,1801,1717,1759,1972,2203,2355,2442,2473,2461,2417,2353,2280,2211,2156,2128,2138,2200,2324,2522,2768,2910,2957,2931,2855,2748,2630,2516,2424,2367,2357,2407,2524,2718,2995,3358,3692,3911,4031,4070,4044,3972,3870,3757,3648,3563,3518,3531,3620,3802,4096}
-#define perlin5_8 {951,754,521,293,107,0,4,151,468,980,1664,2258,2708,3010,3166,3186,3087,2892,2634,2350,2086,1894,1833,1970,2258,2450,2550,2577,2548,2479,2390,2297,2218,2172,2176,2248,2407,2670,2907,3000,2986,2898,2767,2622,2488,2388,2343,2371,2487,2704,3031,3466,3814,4016,4096,4081,3998,3872,3730,3599,3504,3473,3533,3709,4030}
-#define perlin5_9 {0,546,1126,1662,2003,2132,2101,1963,1765,1551,1363,1240,1217,1328,1601,2064,2627,3067,3369,3531,3562,3478,3304,3073,2826,2613,2492,2530,2756,2927,3011,3026,2989,2920,2837,2759,2705,2693,2743,2874,3102,3270,3312,3265,3164,3039,2919,2829,2790,2821,2938,3153,3476,3818,4017,4096,4083,4004,3889,3764,3658,3599,3614,3733,3984}
+#define perlin6_1 {27338,26805,26120,25291,24327,23235,22024,20704,19284,17775,16187,14531,12819,11060,9268,7454,5628,3803,1991,202,65,0,6,82,228,443,726,1076,1491,1970,2511,3111,3770,4484,5251,6068,6932,7841,8791,9778,10799,11850,12927,14027,15143,16273,18350,20329,22205,23973,25631,27176,28609,29928,31137,32237,32768,32768,32768,32768,32768,32768,32768,32768,32768}
+#define perlin6_2 {12848,13533,14327,15231,16236,17333,18504,19729,20986,22250,23493,24687,25803,26813,27690,28407,28941,29270,29372,29221,28089,26823,25438,23952,22385,20759,19099,17432,15787,14194,12687,11269,9869,8503,7189,5947,4792,3738,2797,1981,1297,753,353,102,0,47,1110,2288,3556,4885,6247,7617,8968,10277,11522,12685,13750,14704,15540,16255,16849,17330,17712,18014,18262}
+#define perlin6_3 {13612,13323,13322,13621,14193,14962,15799,16512,16912,17097,17078,16867,16484,15964,15349,14689,14035,13440,12957,12631,12657,12898,13342,13967,14742,15625,16564,17639,19322,21448,23788,26122,28281,30125,31539,32440,32768,32493,31613,30150,28156,25711,22921,19919,16866,13952,11671,9755,8255,7232,6707,6671,7086,7891,9011,10357,11839,13361,14836,16187,17353,18294,18997,19482,19805}
+#define perlin6_4 {11887,12056,12222,12384,12546,13061,14256,16060,18272,20609,22764,24391,25171,24852,23289,20485,16631,12186,7752,3859,1611,832,1516,3513,6521,10097,13645,16425,17551,16778,15292,13472,11616,9965,8705,7963,7810,8253,9206,10556,12136,14199,17436,21096,24501,27133,27964,27446,25747,23171,20116,17028,14368,12432,11025,10267,10193,10733,11741,13026,14384,15626,16606,17258,17621}
+#define perlin6_5 {10829,11425,12150,12742,12912,12437,11257,9619,7976,6782,6411,7050,8602,10581,12012,12243,12465,12725,13005,13353,13719,14107,14494,15243,19144,24643,29632,32628,32768,29811,24139,16756,9346,3549,317,0,2343,6489,10974,13734,13002,10881,8510,6556,5489,5542,7128,9375,11841,15540,19307,21811,22499,21432,19111,16310,13913,12368,11608,11733,12562,13752,14919,15762,16188}
+#define perlin6_6 {14900,15461,15857,15515,14875,15388,16856,18484,19043,17033,12086,7704,5790,7167,11155,15037,15912,18565,21671,23371,22161,18493,13563,9575,8015,9251,12638,16348,17742,18223,18708,19135,19459,19660,19868,23814,29374,32768,31961,26669,18353,10222,5272,4723,8096,13197,16174,14907,13019,11894,12077,13470,15509,18192,21290,22872,22445,20581,18440,17089,16616,17041,17956,18809,19246}
+#define perlin6_7 {16174,15903,16150,16536,15325,12807,11343,12622,16056,19429,22752,23522,20965,17441,18405,22075,24146,21541,14556,15498,21196,24464,19986,7931,1206,3414,11662,17093,19900,24213,25557,22518,16553,11956,11709,15560,20088,20898,21145,21249,21154,20854,24774,31275,32768,26733,15949,8144,7099,11567,16707,16791,15157,14582,15653,17713,20627,23021,22930,21028,19256,18593,19053,19956,20493}
+#define perlin6_8 {14535,14250,15246,17507,18308,15746,13456,14193,15877,14464,11889,13440,15801,13288,11975,14330,16259,11978,7305,8797,14761,19273,21179,18256,14533,16476,19043,17527,13049,15632,19081,16747,8871,6972,11844,15756,18362,20662,19299,15151,12642,14006,16960,17220,17118,16897,16530,19453,22032,19578,13943,10677,11932,14933,15037,14343,14618,15710,17317,18102,17332,16364,16145,16552,16900}
+#define perlin6_9 {15880,15875,16469,16411,15761,17409,17420,15848,18323,23040,20419,13506,6002,9238,19438,29321,23731,12911,15021,19401,12970,13841,18606,14020,13975,17549,13468,8137,12126,18242,21766,18772,15938,19423,19605,14852,18438,20502,12827,9554,15486,18641,21940,21079,16181,14273,17112,17980,17747,17460,18197,21415,19589,14599,13390,16050,16645,16136,16736,18025,18983,18258,17564,17723,18081}
 const fix16_t lookuptable[4096] = expotable10oct;
-uint16_t attackfamily[M][N] = {bittab1, bittab2, bittab3, bittab4, bittab5, bittab6, bittab7, bittab8, bittab9};
-uint16_t releasefamily[M][N] = {bittab1, bittab2, bittab3, bittab4, bittab5, bittab6, bittab7, bittab8, bittab9};
+uint16_t attackfamily[M][N] = {perlin6_1, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_9};
+uint16_t releasefamily[M][N] = {perlin6_1, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_9};
 //uint16_t releasefamily[M][N] = {perlin5_1, perlin5_2, perlin5_3, perlin5_4, perlin5_5, perlin5_6, perlin5_7, perlin5_8, perlin5_9};
 //uint16_t attackfamily[M][N] = {perlin5_1, perlin5_2, perlin5_3, perlin5_4, perlin5_5, perlin5_6, perlin5_7, perlin5_8, perlin5_9};
 uint16_t sinetable[N] = fromaudio65sine;
@@ -99,18 +99,11 @@ fix16_t mirror;
 fix16_t inc;
 fix16_t interp1;
 fix16_t interp2;
-fix16_t sineinterp;
-fix16_t biinterp1;
-fix16_t biinterp2;
-fix16_t filter;
 fix16_t out;
 fix16_t Lnvalue1;
 fix16_t Rnvalue1;
 fix16_t Lnvalue2;
 fix16_t Rnvalue2;
-fix16_t sinevalue1;
-fix16_t sinevalue2;
-fix16_t lastvalue;
 int LnSample;
 int RnSample;
 int LnFamily;
@@ -118,26 +111,36 @@ int RnFamily;
 uint16_t wavefrac;
 uint16_t morphfrac;
 volatile int trig = 0;
-volatile int reset = 0;
+volatile int retrig = 0;
 uint32_t todac;
 void Attack(void);
 void Release(void);
 void GetPhase(void);
-void Filter(void);
-fix16_t fasterlerp16(fix16_t inArg0, fix16_t inArg1, uint16_t inFract);
+void Drum(void);
+void setattackflag(void);
+void setreleaseflag(void);
 extern DAC_HandleTypeDef hdac;
-extern TIM_HandleTypeDef htim7;
 int benchmark1;
 int benchmark2;
-uint8_t inattack;
-uint8_t inrelease;
-int lastcount;
+extern uint8_t attackflag;
+extern uint8_t releaseflag;
+uint8_t lastattackflag;
+uint8_t lastreleaseflag;
+extern uint8_t intoattackfromr;
+extern uint8_t intoattackfroml;
+extern uint8_t intoreleasefromr;
+extern uint8_t intoreleasefroml;
 uint32_t ADCReadings[6];
 uint16_t dacbuffer1;
 uint16_t dacbuffer2;
-int mode1;
-int mode2;
-int mode3;
+uint8_t speed;
+uint8_t loop;
+uint8_t trigmode;
+uint8_t samphold;
+uint8_t family;
+uint8_t pendulumcount;
+uint8_t drumcount;
+
 
 /* USER CODE END 0 */
 
@@ -186,7 +189,7 @@ void EXTI2_3_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_2);
   /* USER CODE BEGIN EXTI2_3_IRQn 1 */
 	trig = 1;
-	reset = 1;
+	retrig = 1;
   /* USER CODE END EXTI2_3_IRQn 1 */
 }
 
@@ -242,8 +245,8 @@ void TIM2_IRQHandler(void)
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */
-	trig = 1;
-	reset = 1;
+	if (trig == 1) {retrig = 1;}
+	else trig = 1;
   /* USER CODE END TIM2_IRQn 1 */
 }
 
@@ -255,25 +258,20 @@ void TIM6_DAC_IRQHandler(void)
   /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 
 	if (trig ==1){
-		  	  	  	//lastcount = benchmark2 - benchmark1;
-		  	  	  	//HAL_TIM_Base_Start(&htim7);
-		  	  	  	//benchmark1 = __HAL_TIM_GET_COUNTER(&htim7);
-					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
 	  				dacbuffer1 = out;
 	  				dacbuffer2 = (65535 - out);
-
 	  		  	  	GetPhase();
-	  	  			lastvalue = out;
-	  	  	  		if (position < span) {Attack();}
-	  	  	  		if (position >= span && position < spanx2) {Release();}
-	  	  	  		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-	  	  	  		//Filter();
-	  	  	  		//benchmark2 = __HAL_TIM_GET_COUNTER(&htim7);
+	  	  	  		if (position < span) {Attack(); setattackflag();}
+	  	  	  		if (position >= span && position < spanx2) {Release(); setreleaseflag();}
+	  	  	  		if (speed == 0 && trigmode == 0 && loop == 0){Drum();}
+	  	  	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+	}
 
 
   /* USER CODE END TIM6_DAC_IRQn 0 */
-	HAL_TIM_IRQHandler(&htim6);
-	//HAL_DAC_IRQHandler(&hdac);
+  HAL_TIM_IRQHandler(&htim6);
+ // HAL_DAC_IRQHandler(&hdac);
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
 
 
@@ -282,91 +280,156 @@ void TIM6_DAC_IRQHandler(void)
 
 
 
-	  	  	}
   /* USER CODE END TIM6_DAC_IRQn 1 */
-
 }
 
 /* USER CODE BEGIN 1 */
 void Attack(void) {
-	inattack = 1;
-	inrelease = 0;
-
 	//calculate value based upon phase pointer "position"
-
+	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
 	LnSample = (int) (position >> 16);
 	RnSample = (LnSample + 1);
-	//LnFamily = ADCReadings[1] >> 9;
+	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
+	LnFamily = (uint32_t) ADCReadings[1] >> 9;
 	RnFamily = (LnFamily + 1);
-
-	wavefrac = (uint16_t) position;
-	//morphfrac = (ADCReadings[1] - (LnFamily <<  9)) << 7;
-
-	Lnvalue1 = attackfamily[LnFamily][LnSample];
-	Rnvalue1 = attackfamily[LnFamily][RnSample];
-	Lnvalue2 = attackfamily[RnFamily][LnSample];
-	Rnvalue2 = attackfamily[RnFamily][RnSample];
-
-	interp1 = fix16_lerp16(Lnvalue1, Rnvalue1, wavefrac);
-	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, wavefrac);
-
-	out = fix16_lerp16(interp1, interp2, morphfrac);
-}
-void Release(void) {
-	inattack = 0;
-	inrelease = 1;
-	//calculate value based upon phase pointer "position"
-	mirror = fix16_sub(spanx2, position);
-
-	LnSample = (int) (mirror >> 16);
-	RnSample = (LnSample + 1);
-	//LnFamily = (uint32_t) ADCReadings[1] >> 9;
-	RnFamily = (LnFamily + 1);
-
+	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
 	wavefrac = (uint16_t) mirror;
-	//morphfrac = (ADCReadings[1] - (LnFamily <<  9)) << 7;
-
+	morphfrac = (ADCReadings[1] - (LnFamily <<  9)) << 7;
+	//get values from the relevant wavetables
 	Lnvalue1 = releasefamily[LnFamily][LnSample];
 	Rnvalue1 = releasefamily[LnFamily][RnSample];
 	Lnvalue2 = releasefamily[RnFamily][LnSample];
 	Rnvalue2 = releasefamily[RnFamily][RnSample];
-
+	//find the interpolated values for the adjacent wavetables
 	interp1 = fix16_lerp16(Lnvalue1, Rnvalue1, wavefrac);
 	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, wavefrac);
-
-	out = fix16_lerp16(interp1, interp2, morphfrac);
+	//interpolate between those based upon morph (biinterpolation)
+	out = fix16_lerp16(interp1, interp2, morphfrac) >> 3;
+}
+void Release(void) {
+	//calculate value based upon phase pointer "position" reflected over the span of the wavetable
+	mirror = fix16_sub(spanx2, position);
+	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
+	LnSample = (int) (mirror >> 16);
+	RnSample = (LnSample + 1);
+	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
+	LnFamily = (uint32_t) ADCReadings[5] >> 9;
+	RnFamily = (LnFamily + 1);
+	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
+	wavefrac = (uint16_t) mirror;
+	morphfrac = (ADCReadings[1] - (LnFamily <<  9)) << 7;
+	//get values from the relevant wavetables
+	Lnvalue1 = releasefamily[LnFamily][LnSample];
+	Rnvalue1 = releasefamily[LnFamily][RnSample];
+	Lnvalue2 = releasefamily[RnFamily][LnSample];
+	Rnvalue2 = releasefamily[RnFamily][RnSample];
+	//find the interpolated values for the adjacent wavetables
+	interp1 = fix16_lerp16(Lnvalue1, Rnvalue1, wavefrac);
+	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, wavefrac);
+	//interpolate between those based upon morph (biinterpolation)
+	out = fix16_lerp16(interp1, interp2, morphfrac) >> 3;
 }
 
 void GetPhase(void) {
-	if (mode1 == 0 || mode1 == 1) {inc = fix16_mul(2000, (lookuptable[(4095 - ADCReadings[0] - 24)] >> 2));};
-	//if (mode1 == 1) {inc = lookuptable[ADCReadings[0]] >> 12;};
+	//define increment function for high speed mode with limits
+	if (speed == 0) {inc = fix16_mul(ADCReadings[1] - 2048, (lookuptable[(4095 - ADCReadings[0] - 24)] >> 2));};
 	if (inc > 1048576) {inc = 1048576;};
 	if (inc < -1048576) {inc = -1048576;};
+
+	//define increment for low speed mode, split up timing over two pot/cv combos
+	if (speed == 1) {
+		//use tim1 pot for setting inc in attack phase, blank the retrigger flag if not in hard sync mode
+		if (position < span) {
+			inc = ADCReadings[0];
+			if (trigmode ==! 1) {retrig = 0;}}
+		//use tim2 pot for setting inc in release phase, blank the retrigger variable
+		if (position >= span && retrig == 0) {inc = ADCReadings[1];}
+	}
+
+	//in gate (2) mode, work backwards to attack if retrig flag is raised when in release so long as gate is high
+	//also, releasing the gate while attacking gives a hard reset to 0
+	if (trigmode == 2){
+		if (position < span && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_SET) {
+			position = 0;}
+		if (position > span && retrig == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+			if (speed == 1) {inc = -ADCReadings[0];}
+			if (speed == 0) {inc = -inc;}
+		}
+	}
+
+	//in non gated retrigger (3) mode, work backwards to attack if retrig flag is raised regardless of gating
+	if (trigmode == 2){
+		if (position > span && retrig == 1) {
+			if (speed == 1) {inc = -ADCReadings[0];}
+			if (speed == 0) {inc = -inc;}
+		}
+	}
+
+	//in pendulum mode, an incoming trigger toggle the signage of the increment
+	//a retrtrigger increments a counter modulo 2, then the retrigger flag is bla$nked
+	//when that counter is -1, we make reverse the sign of the increment, changing direction of playback in the wavetable
+	if (trigmode == 4) {
+		if  (retrig == 1) {
+			pendulumcount = (pendulumcount + 1) % 2;
+			retrig = 0;}
+		if (pendulumcount == 1) {
+			inc = -inc;
+		}
+	}
+
+	// and here is the result of what we have done
 	position = position + inc;
+
+	// a retrigger in hard sync overrides everything above, notice we didnt wipe the retrigger flag during attack in this mode
+	if (trigmode == 1 && retrig == 1) {
+		position = 0;
+		retrig = 0;
+	}
+	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode
 	if (position >= spanx2) {
-		position = position - spanx2; inattack = 1;
-		inrelease = 0;
-		inattack = 0;};
-	if (position < 0) {position = position + spanx2;};
+		position = position - spanx2;
+		if (loop == 0){
+			if (speed ==! 0 || trigmode ==! 0) {trig = 0; position = 0;}
+		}
+	}
+	// same as above but for when we are backtracking through the attack phase aka negative increment
+	if (position < 0) {
+		position = position + spanx2;
+		if (loop == 0){
+			if (speed ==! 0 || trigmode ==! 0) {trig = 0; position = 0;}
+		}
+	}
+}
+//this logic communicates entering and leaving the two stages in the main loop
+void setattackflag(void) {
+	releaseflag = 0;
+	if (inc < 0) {attackflag = 2;}
+	else {attackflag = 1;};
+	if (attackflag == 2 && attackflag ==! lastattackflag) {intoattackfromr = 1;}
+	else if (attackflag == 1 && attackflag ==! lastattackflag) {intoattackfroml = 1;}
+	else {intoattackfroml = 0; intoattackfroml = 0;};
+	lastattackflag = attackflag;
 }
 
-void Filter(void) {
-	/* filter by interp to sine, defines value "out" which is an interpolation between "out" and a sine wave with the same phase using the values "LnSample", "RnSample", and "wavefrac"
-	sinevalue1 = sinetable[LnSample];
-	sinevalue2 = sinetable[RnSample];
-	sineinterp = fasterlerp16(sinevalue1, sinevalue2, wavefrac);
-	out = fasterlerp16(out, sineinterp, ((inc - 1) >> 4));
-	*/
-	//out = fix16_add(lastvalue, fix16_mul(fix16_sub(out,lastvalue), 1)); //new sample value "out" is difference between last sample to dac "lastvalue" and new calcualted value "out" (for ease of toggling filter on and off)
+void setreleaseflag(void) {
+	attackflag = 0;
+	if (inc < 0) {releaseflag = 2;}
+	else {releaseflag = 1;};
+	if (releaseflag == 2 && releaseflag ==! lastreleaseflag) {intoreleasefromr = 1;}
+	else if (releaseflag == 1 && releaseflag ==! lastreleaseflag) {intoreleasefroml = 1;}
+	else {intoreleasefroml = 0; intoreleasefroml = 0;};
+	lastreleaseflag = releaseflag;
 }
 
-fix16_t fasterlerp16(fix16_t inArg0, fix16_t inArg1, uint16_t inFract)
-{
-		int64_t tempOut = int64_mul_i32_i32((inArg1 - inArg0), inFract);
-		tempOut = ((int64_t)inArg0 << 16) + tempOut;
-		tempOut = int64_shift(tempOut, -16);
-		return (fix16_t)int64_lo(tempOut);
-
+void Drum(void) {
+	if (intoattackfromr == 1){drumcount++;}
+	out = out >> drumcount;
+	if (drumcount >= 16) {
+		drumcount = 0;
+		trig = 0;
+		position = 0;
+	}
 }
+
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
