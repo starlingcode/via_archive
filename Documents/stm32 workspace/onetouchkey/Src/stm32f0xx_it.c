@@ -277,8 +277,60 @@ void TIM6_DAC_IRQHandler(void)
 	  	  	  		if (position < span) {Attack(); setattackflag();}
 	  	  	  		if (position >= span && position < spanx2) {Release(); setreleaseflag();}
 	  	  	  		if (speed == 0 && loop == 0){Drum();}
+	  	  	  		if (attackflag == 1 || releaseflag == 2) { //moving towards b
+	  	  				  if (samphold == 1) { // sample a
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+	  	  				  }
+	  	  				  else if (samphold == 2) { // sample b
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+	  	  				  }
+	  	  				  else if (samphold == 3) { // sample a and b
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+	  	  				  }
+	  	  				  else if (samphold == 4) {
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET); // sample a and drop b
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+	  	  				  }
+	  	  			      else if (samphold == 5) {
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET); // drop b to be picked up by decimate counter
+	  	  				  }
+	  	  				  intoreleasefromr = 0;
+	  	  				  intoattackfroml = 0;
+	  	  			  }
+	  	  			  if (releaseflag == 1 || attackflag == 2) { //moving towards a
+	  	  				  if (samphold == 1) { // release a
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+	  	  				  }
+	  	  				  else if (samphold == 2) { // b remains sampled
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+	  	  				  }
+	  	  				  else if (samphold == 3) { // release a
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+	  	  				  }
+	  	  				  else if (samphold == 4) {
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); // sample b and drop a
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+	  	  				  }
+	  	  				  else if (samphold == 5) {
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); // drop a to be picked up by decimate counter
+	  	  			      }
+	  	  				  intoreleasefroml = 0;
+	  	  				  intoattackfromr = 0;
+	  	  			  }
+
+	  	  			  if (samphold == 5 && decimatecounter == 10) {
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+	  	  			  }
+
 	  	  	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
 	}
+
+	if (trig == 0) {
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		  }
 
 
 
@@ -430,7 +482,7 @@ void setattackflag(void) {
 	else if (attackflag == 1 && attackflag ==! lastattackflag) {
 		intoattackfroml = 1;
 		decimatecounter = 0;}
-	else {intoattackfroml = 0; intoattackfroml = 0;};
+	//else {intoattackfroml = 0; intoattackfroml = 0;};
 	lastattackflag = attackflag;
 }
 
@@ -445,7 +497,7 @@ void setreleaseflag(void) {
 	else if (releaseflag == 1 && releaseflag ==! lastreleaseflag) {
 		intoreleasefroml = 1;
 		decimatecounter = 0;}
-	else {intoreleasefroml = 0; intoreleasefroml = 0;};
+	//else {intoreleasefroml = 0; intoreleasefroml = 0;};
 	lastreleaseflag = releaseflag;
 }
 
