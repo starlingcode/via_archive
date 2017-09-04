@@ -80,9 +80,10 @@
 #define perlin6_7 {16174,15903,16150,16536,15325,12807,11343,12622,16056,19429,22752,23522,20965,17441,18405,22075,24146,21541,14556,15498,21196,24464,19986,7931,1206,3414,11662,17093,19900,24213,25557,22518,16553,11956,11709,15560,20088,20898,21145,21249,21154,20854,24774,31275,32768,26733,15949,8144,7099,11567,16707,16791,15157,14582,15653,17713,20627,23021,22930,21028,19256,18593,19053,19956,20493}
 #define perlin6_8 {14535,14250,15246,17507,18308,15746,13456,14193,15877,14464,11889,13440,15801,13288,11975,14330,16259,11978,7305,8797,14761,19273,21179,18256,14533,16476,19043,17527,13049,15632,19081,16747,8871,6972,11844,15756,18362,20662,19299,15151,12642,14006,16960,17220,17118,16897,16530,19453,22032,19578,13943,10677,11932,14933,15037,14343,14618,15710,17317,18102,17332,16364,16145,16552,16900}
 #define perlin6_9 {15880,15875,16469,16411,15761,17409,17420,15848,18323,23040,20419,13506,6002,9238,19438,29321,23731,12911,15021,19401,12970,13841,18606,14020,13975,17549,13468,8137,12126,18242,21766,18772,15938,19423,19605,14852,18438,20502,12827,9554,15486,18641,21940,21079,16181,14273,17112,17980,17747,17460,18197,21415,19589,14599,13390,16050,16645,16136,16736,18025,18983,18258,17564,17723,18081}
+#define ramp6515bit {0,511,1023,1535,2047,2559,3071,3583,4095,4607,5119,5631,6143,6655,7167,7679,8191,8703,9215,9727,10239,10751,11263,11775,12287,12799,13311,13823,14335,14847,15359,15871,16383,16895,17407,17919,18431,18943,19455,19967,20479,20991,21503,22015,22527,23039,23551,24063,24575,25087,25599,26111,26623,27135,27647,28159,28671,29183,29695,30207,30719,31231,31743,32255,32767}
 const fix16_t lookuptable[4096] = expotable10oct;
-uint16_t attackfamily[M][N] = {perlin6_1, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_9};
-uint16_t releasefamily[M][N] = {perlin6_1, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_9};
+uint16_t attackfamily[M][N] = {ramp6515bit, ramp6515bit, ramp6515bit, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_9};
+uint16_t releasefamily[M][N] = {ramp6515bit, ramp6515bit, ramp6515bit, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_9};
 //uint16_t releasefamily[M][N] = {perlin5_1, perlin5_2, perlin5_3, perlin5_4, perlin5_5, perlin5_6, perlin5_7, perlin5_8, perlin5_9};
 //uint16_t attackfamily[M][N] = {perlin5_1, perlin5_2, perlin5_3, perlin5_4, perlin5_5, perlin5_6, perlin5_7, perlin5_8, perlin5_9};
 uint16_t sinetable[N] = fromaudio65sine;
@@ -130,6 +131,7 @@ extern uint8_t intoattackfromr;
 extern uint8_t intoattackfroml;
 extern uint8_t intoreleasefromr;
 extern uint8_t intoreleasefroml;
+extern uint16_t decimatecounter;
 uint32_t ADCReadings[6];
 uint16_t dacbuffer1;
 uint16_t dacbuffer2;
@@ -140,6 +142,7 @@ uint8_t samphold;
 uint8_t family;
 uint8_t pendulumcount;
 uint8_t drumcount;
+uint8_t subcount;
 
 
 /* USER CODE END 0 */
@@ -245,8 +248,8 @@ void TIM2_IRQHandler(void)
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */
-	if (trig == 1) {retrig = 1;}
-	else trig = 1;
+	retrig = 1;
+	trig = 1;
   /* USER CODE END TIM2_IRQn 1 */
 }
 
@@ -257,24 +260,25 @@ void TIM6_DAC_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 
-	if (trig ==1){
-					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
-	  				dacbuffer1 = out;
-	  				dacbuffer2 = (65535 - out);
-	  		  	  	GetPhase();
-	  	  	  		if (position < span) {Attack(); setattackflag();}
-	  	  	  		if (position >= span && position < spanx2) {Release(); setreleaseflag();}
-	  	  	  		if (speed == 0 && trigmode == 0 && loop == 0){Drum();}
-	  	  	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
-	}
+
 
 
   /* USER CODE END TIM6_DAC_IRQn 0 */
   HAL_TIM_IRQHandler(&htim6);
- // HAL_DAC_IRQHandler(&hdac);
+  HAL_DAC_IRQHandler(&hdac);
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
 
+	if (trig ==1){
+					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
+	  				dacbuffer1 = out;
+	  				dacbuffer2 = (65535 - out);
 
+	  		  	  	GetPhase();
+	  	  	  		if (position < span) {Attack(); setattackflag();}
+	  	  	  		if (position >= span && position < spanx2) {Release(); setreleaseflag();}
+	  	  	  		if (speed == 0 && loop == 0){Drum();}
+	  	  	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+	}
 
 
 
@@ -290,11 +294,11 @@ void Attack(void) {
 	LnSample = (int) (position >> 16);
 	RnSample = (LnSample + 1);
 	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
-	LnFamily = (uint32_t) ADCReadings[1] >> 9;
+	LnFamily = (uint32_t) ADCReadings[5] >> 9;
 	RnFamily = (LnFamily + 1);
 	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
 	wavefrac = (uint16_t) mirror;
-	morphfrac = (ADCReadings[1] - (LnFamily <<  9)) << 7;
+	morphfrac = (ADCReadings[5] - (LnFamily <<  9)) << 7;
 	//get values from the relevant wavetables
 	Lnvalue1 = releasefamily[LnFamily][LnSample];
 	Rnvalue1 = releasefamily[LnFamily][RnSample];
@@ -332,7 +336,10 @@ void Release(void) {
 
 void GetPhase(void) {
 	//define increment function for high speed mode with limits
-	if (speed == 0) {inc = fix16_mul(ADCReadings[1] - 2048, (lookuptable[(4095 - ADCReadings[0] - 24)] >> 2));};
+	if (speed == 0) {
+		if (loop == 0) {inc = fix16_mul(2000, (lookuptable[(4095 - ADCReadings[0] - 24)] >> 2));}
+		else {inc = fix16_mul(ADCReadings[1] - 2048, (lookuptable[(4095 - ADCReadings[0] - 24)] >> 2));}};
+
 	if (inc > 1048576) {inc = 1048576;};
 	if (inc < -1048576) {inc = -1048576;};
 
@@ -343,22 +350,25 @@ void GetPhase(void) {
 			inc = ADCReadings[0];
 			if (trigmode ==! 1) {retrig = 0;}}
 		//use tim2 pot for setting inc in release phase, blank the retrigger variable
-		if (position >= span && retrig == 0) {inc = ADCReadings[1];}
+		if (position >= span) {inc = ADCReadings[1];}
 	}
 
 	//in gate (2) mode, work backwards to attack if retrig flag is raised when in release so long as gate is high
 	//also, releasing the gate while attacking gives a hard reset to 0
 	if (trigmode == 2){
-		if (position < span && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_SET) {
-			position = 0;}
-		if (position > span && retrig == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+		if (position < span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) {
+			if (speed == 1) {inc = -ADCReadings[1];}
+			if (speed == 0) {inc = -inc;}
+		}
+		if (position > span && retrig == 1 && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) {
 			if (speed == 1) {inc = -ADCReadings[0];}
 			if (speed == 0) {inc = -inc;}
 		}
 	}
 
 	//in non gated retrigger (3) mode, work backwards to attack if retrig flag is raised regardless of gating
-	if (trigmode == 2){
+	if (trigmode == 3){
+		if (position <= span) {retrig = 0;}
 		if (position > span && retrig == 1) {
 			if (speed == 1) {inc = -ADCReadings[0];}
 			if (speed == 0) {inc = -inc;}
@@ -372,9 +382,13 @@ void GetPhase(void) {
 		if  (retrig == 1) {
 			pendulumcount = (pendulumcount + 1) % 2;
 			retrig = 0;}
+
+		if  (loop == 0 && (position <= 0 || position >= spanx2)) {pendulumcount = 0;}
+
 		if (pendulumcount == 1) {
 			inc = -inc;
 		}
+
 	}
 
 	// and here is the result of what we have done
@@ -388,45 +402,66 @@ void GetPhase(void) {
 	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode
 	if (position >= spanx2) {
 		position = position - spanx2;
-		if (loop == 0){
-			if (speed ==! 0 || trigmode ==! 0) {trig = 0; position = 0;}
+		if (loop == 0 && speed ==! 0){
+			trig = 0;
+			retrig = 0;
+			position = 0;
 		}
 	}
 	// same as above but for when we are backtracking through the attack phase aka negative increment
 	if (position < 0) {
 		position = position + spanx2;
-		if (loop == 0){
-			if (speed ==! 0 || trigmode ==! 0) {trig = 0; position = 0;}
+		if (loop == 0 && speed ==! 0){
+		trig = 0;
+		retrig = 0;
+		position = 0;
 		}
 	}
 }
 //this logic communicates entering and leaving the two stages in the main loop
 void setattackflag(void) {
 	releaseflag = 0;
+	decimatecounter = decimatecounter + 1;
 	if (inc < 0) {attackflag = 2;}
 	else {attackflag = 1;};
-	if (attackflag == 2 && attackflag ==! lastattackflag) {intoattackfromr = 1;}
-	else if (attackflag == 1 && attackflag ==! lastattackflag) {intoattackfroml = 1;}
+	if (attackflag == 2 && attackflag ==! lastattackflag) {
+		intoattackfromr = 1;
+		decimatecounter = 0;}
+	else if (attackflag == 1 && attackflag ==! lastattackflag) {
+		intoattackfroml = 1;
+		decimatecounter = 0;}
 	else {intoattackfroml = 0; intoattackfroml = 0;};
 	lastattackflag = attackflag;
 }
 
 void setreleaseflag(void) {
-	attackflag = 0;
+	lastattackflag = 0;
+	decimatecounter = decimatecounter + 1;
 	if (inc < 0) {releaseflag = 2;}
 	else {releaseflag = 1;};
-	if (releaseflag == 2 && releaseflag ==! lastreleaseflag) {intoreleasefromr = 1;}
-	else if (releaseflag == 1 && releaseflag ==! lastreleaseflag) {intoreleasefroml = 1;}
+	if (releaseflag == 2 && releaseflag ==! lastreleaseflag) {
+		intoreleasefromr = 1;
+		decimatecounter = 0;}
+	else if (releaseflag == 1 && releaseflag ==! lastreleaseflag) {
+		intoreleasefroml = 1;
+		decimatecounter = 0;}
 	else {intoreleasefroml = 0; intoreleasefroml = 0;};
 	lastreleaseflag = releaseflag;
 }
 
 void Drum(void) {
-	if (intoattackfromr == 1){drumcount++;}
+	if (intoattackfroml == 1){
+		if (retrig == 1) {drumcount = 0; retrig = 0;}
+		subcount = subcount + 1;
+		if (subcount == (ADCReadings[1] >> 9) + 1) {
+			subcount = 0;
+			drumcount = drumcount + 1;}
+}
 	out = out >> drumcount;
 	if (drumcount >= 16) {
 		drumcount = 0;
 		trig = 0;
+		retrig = 0;
 		position = 0;
 	}
 }

@@ -76,20 +76,22 @@ int temp2 = 0;
 int temp3 = 0;
 extern uint16_t dacbuffer1[1];
 extern uint16_t dacbuffer2[1];
-extern uint8_t speed = 0;
-extern uint8_t loop = 0;
-extern uint8_t trigmode = 0;
-extern uint8_t samphold = 0;
-extern uint8_t family = 0;
+extern uint8_t speed;
+extern uint8_t loop;
+extern uint8_t trigmode;
+extern uint8_t samphold;
+extern uint8_t family;
 uint8_t attackflag;
 uint8_t releaseflag;
 uint8_t intoattackfroml;
 uint8_t intoreleasefroml;
 uint8_t intoattackfromr;
 uint8_t intoreleasefromr;
+uint16_t decimatecounter;
 int benchmark;
 int lastcount;
 extern uint32_t ADCReadings[3];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -113,7 +115,10 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* Private function prototypes -----------------------------------------------*/
 void ProcessSensors(void);
 void SetFlags(void);
+void ReadPins(void);
 void ChangeMode(void);
+void ShowMode(uint8_t);
+void ClearDisplay(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -170,7 +175,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-    {
+    {/*
 	  if (intoattackfroml == 1) { //moving towards b
 		  if (samphold == 1) { // sample a
 			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
@@ -186,7 +191,9 @@ int main(void)
 			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); // sample a and drop b
 			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 		  }
-
+	      else if (samphold == 5) {
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET); // drop b to be picked up by decimate counter
+		  }
 	  }
 	  if (intoreleasefroml == 1) { //moving towards a
 		  if (samphold == 1) { // release a
@@ -202,6 +209,9 @@ int main(void)
 			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET); // sample b and drop a
 			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 		  }
+		  else if (samphold == 5) {
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET); // drop a to be picked up by decimate counter
+	      }
 	  }
 		  if (intoattackfromr == 1) { //moving towards a
 
@@ -214,6 +224,9 @@ int main(void)
 			  else if (samphold == 4) {
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET); // sample b and drop a
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+			  }
+			  else if (samphold == 5) {
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET); // drop a to be picked up by decimate counter
 			  }
 
 		  }
@@ -232,17 +245,22 @@ int main(void)
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); // sample a and drop b
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 			  }
+			  else if (samphold == 5) {
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET); // drop b to be picked up by decimate counter
+			  }
 	  }
 	  if (attackflag == 0 || releaseflag == 0) {
 			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-		  }
-	 ProcessSensors(); /*Initiates acquisition, sets uhTSCAcquisitionValue1, uhTSCAcquisitionValue2, and
+		  } */
+	 //ProcessSensors(); /*Initiates acquisition, sets uhTSCAcquisitionValue1, uhTSCAcquisitionValue2, and
     	//				uhTSCAcquisitionValue3 if acquisition successful*/
-	 SetFlags(); /*Sets flag1, flag2, or flag3 per the unique value combos indicating a touch in the corresponding
+	 //SetFlags(); /*Sets flag1, flag2, or flag3 per the unique value combos indicating a touch in the corresponding
      //	 	 	 zone*/
      //
+	 ReadPins();
 	 ChangeMode();
+	 ClearDisplay();
 
 
   /* USER CODE END WHILE */
@@ -559,7 +577,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 1-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 800;
+  htim6.Init.Period = 3000;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
@@ -584,7 +602,7 @@ static void MX_TIM7_Init(void)
   htim7.Instance = TIM7;
   htim7.Init.Prescaler = 1-1;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim7.Init.Period = 1000;
+  htim7.Init.Period = 2000;
   htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
   {
@@ -725,8 +743,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, EXT_RESET_Pin|LD3_Pin|LD4_Pin|LD5_Pin 
-                          |GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, EXT_RESET_Pin|LD3_Pin|LD4_Pin|LD5_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
@@ -734,10 +751,8 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : EXT_RESET_Pin LD3_Pin LD4_Pin LD5_Pin 
-                           PC10 PC11 PC12 */
-  GPIO_InitStruct.Pin = EXT_RESET_Pin|LD3_Pin|LD4_Pin|LD5_Pin 
-                          |GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
+  /*Configure GPIO pins : EXT_RESET_Pin LD3_Pin LD4_Pin LD5_Pin */
+  GPIO_InitStruct.Pin = EXT_RESET_Pin|LD3_Pin|LD4_Pin|LD5_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -765,6 +780,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PC10 PC11 PC12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PD2 */
   GPIO_InitStruct.Pin = GPIO_PIN_2;
@@ -867,6 +888,27 @@ void SetFlags(void){
 	            		flag3 = 0;}
 }
 
+void ReadPins(void){
+	    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10) == GPIO_PIN_RESET) {
+	    	flag1 = 1;
+	    	ShowMode(speed);}
+	    else {
+	    		flag1 = 0;}
+	    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11) == GPIO_PIN_RESET) {
+	    	flag2 = 1;
+	    	ShowMode(trigmode);}
+	        else {
+	        			flag2 = 0;}
+	    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12) == GPIO_PIN_RESET) {
+	    	flag3 = 1;
+	    	ShowMode(loop);}
+	            else {flag3 = 0;}
+	    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12) == GPIO_PIN_RESET) {
+	    	flag3 = 1;
+	    	ShowMode(loop);}
+	            else {flag3 = 0;}
+}
+
 void ChangeMode(void) {
 		if (flag1 > temp1) {
 			speed = (speed + 1) % 2;
@@ -880,6 +922,37 @@ void ChangeMode(void) {
 		temp1 = flag1;
 		temp2 = flag2;
 		temp3 = flag3;
+}
+
+void ShowMode(uint8_t currentmode) {
+	if (currentmode == 1) {
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
+	}
+	if (currentmode == 2) {
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
+	}
+	if (currentmode == 3) {
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+
+	}
+	if (currentmode == 4) {
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+
+	}
+	if (currentmode == 5) {
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+
+	}
+}
+
+void ClearDisplay(void) {
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
 }
 /* USER CODE END 4 */
 
