@@ -211,7 +211,7 @@ int main(void)
 	 if (lastattackflag > 0 && modechanged == 0) {
 		 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, out);
 		 __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, 0);} //sets the PWM duty cycle (Capture Compare Value)
-	 if (lastreleaseflag > 0 && lastattackflag > 0 && modechanged == 0) {
+	 if (lastreleaseflag > 0 && modechanged == 0) {
 		 __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, out);
 		 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 0);
 	 } //sets the PWM duty cycle (Capture Compare Value)
@@ -402,7 +402,7 @@ static void MX_TIM1_Init(void)
   TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
 
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 100-1;
+  htim1.Init.Prescaler = 10-1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim1.Init.Period = 4096;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -541,7 +541,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 1-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 1500;
+  htim6.Init.Period = 2000;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
@@ -590,7 +590,7 @@ static void MX_TIM16_Init(void)
   TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
 
   htim16.Instance = TIM16;
-  htim16.Init.Prescaler = 100-1;
+  htim16.Init.Prescaler = 1;
   htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim16.Init.Period = 4096;
   htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -642,7 +642,7 @@ static void MX_TIM17_Init(void)
   TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
 
   htim17.Instance = TIM17;
-  htim17.Init.Prescaler = 100-1;
+  htim17.Init.Prescaler = 10-1;
   htim17.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim17.Init.Period = 4096;
   htim17.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -726,10 +726,10 @@ static void MX_DMA_Init(void)
   HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
   /* DMA1_Channel2_3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn, 2, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
   /* DMA1_Channel4_5_6_7_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel4_5_6_7_IRQn, 2, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel4_5_6_7_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_5_6_7_IRQn);
 
 }
