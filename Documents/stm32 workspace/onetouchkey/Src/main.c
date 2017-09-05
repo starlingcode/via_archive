@@ -38,11 +38,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f0xx_hal.h"
-#include "fixmath.h"
-#include "fix16.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "fixmath.h"
+#include "fix16.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -59,6 +58,7 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim7;
 TIM_HandleTypeDef htim16;
+TIM_HandleTypeDef htim17;
 
 TSC_HandleTypeDef htsc;
 
@@ -70,10 +70,9 @@ __IO uint32_t uhTSCAcquisitionValue3;
 int not1;
 int not2;
 int not3;
-int flag1;
-int flag2;
-int flag3;
-int flag4;
+int modeflag;
+int modechanged;
+int pindownlastcycle;
 int temp1 = 0;
 int temp2 = 0;
 int temp3 = 0;
@@ -86,8 +85,8 @@ extern uint8_t trigmode;
 extern uint8_t samphold;
 extern uint8_t family;
 int trig;
-uint8_t attackflag;
-uint8_t releaseflag;
+uint8_t lastattackflag;
+uint8_t lastreleaseflag;
 uint8_t intoattackfroml;
 uint8_t intoreleasefroml;
 uint8_t intoattackfromr;
@@ -114,6 +113,7 @@ static void MX_ADC_Init(void);
 static void MX_TIM16_Init(void);
 static void MX_TIM6_Init(void);
 static void MX_TIM7_Init(void);
+static void MX_TIM17_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
@@ -123,9 +123,11 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 void ProcessSensors(void);
 void SetFlags(void);
 void ReadPins(uint8_t);
-void ChangeMode(void);
+void ChangeMode(int);
 void ShowMode(uint8_t);
 void ClearDisplay(void);
+void ClearRGB(void);
+void ClearLEDs(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -167,13 +169,14 @@ int main(void)
   MX_TIM16_Init();
   MX_TIM6_Init();
   MX_TIM7_Init();
+  MX_TIM17_Init();
 
   /* USER CODE BEGIN 2 */
   HAL_ADC_Start_DMA(&hadc, ADCReadings, 6);
   HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
   HAL_TIM_Base_Start_IT(&htim6);
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim17, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
   HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
   HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
@@ -187,15 +190,32 @@ int main(void)
   while (1)
     {
 	 pintimer = (pintimer + 1) % 4;
-
-
-
 	 ReadPins(pintimer);
-	 ChangeMode();
-	 ClearDisplay();
-		 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, out); //sets the PWM duty cycle (Capture Compare Value)
-		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, 4096 - out); //sets the PWM duty cycle (Capture Compare Value)
-		 __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, ADCReadings[5]); //sets the PWM duty cycle (Capture Compare Value)
+	 if (pindownlastcycle > modechanged) {ChangeMode(modeflag);}
+	 if (pindownlastcycle > modechanged) {
+			 if (modeflag == 1) {
+				 for (int i = 0; i < 10000; i++) {ShowMode(speed);}
+				 ClearLEDs();
+			 }
+			 else if (modeflag == 2) {
+				 for (int i = 0; i < 10000; i++) {ShowMode(trigmode);}
+				 ClearLEDs();}
+			 else if (modeflag == 3) {
+				 for (int i = 0; i < 10000; i++) {ShowMode(loop);}
+				 ClearLEDs();}
+			 else if (modeflag == 4) {
+				 for (int i = 0; i < 10000; i++) {ShowMode(samphold);}
+				 ClearLEDs();}
+	}
+
+	 if (lastattackflag > 0 && modechanged == 0) {
+		 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, out);
+		 __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, 0);} //sets the PWM duty cycle (Capture Compare Value)
+	 if (lastreleaseflag > 0 && lastattackflag > 0 && modechanged == 0) {
+		 __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, out);
+		 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 0);
+	 } //sets the PWM duty cycle (Capture Compare Value)
+	 if (modechanged == 0) {__HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, ADCReadings[5]);} //sets the PWM duty cycle (Capture Compare Value)
 
 
 
@@ -382,7 +402,7 @@ static void MX_TIM1_Init(void)
   TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
 
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 10-1;
+  htim1.Init.Prescaler = 100-1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim1.Init.Period = 4096;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -521,7 +541,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 1-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 2000;
+  htim6.Init.Period = 1500;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
@@ -570,7 +590,7 @@ static void MX_TIM16_Init(void)
   TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
 
   htim16.Instance = TIM16;
-  htim16.Init.Prescaler = 10-1;
+  htim16.Init.Prescaler = 100-1;
   htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim16.Init.Period = 4096;
   htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -611,6 +631,58 @@ static void MX_TIM16_Init(void)
   }
 
   HAL_TIM_MspPostInit(&htim16);
+
+}
+
+/* TIM17 init function */
+static void MX_TIM17_Init(void)
+{
+
+  TIM_OC_InitTypeDef sConfigOC;
+  TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
+
+  htim17.Instance = TIM17;
+  htim17.Init.Prescaler = 100-1;
+  htim17.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim17.Init.Period = 4096;
+  htim17.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim17.Init.RepetitionCounter = 0;
+  htim17.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim17) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  if (HAL_TIM_PWM_Init(&htim17) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+  if (HAL_TIM_PWM_ConfigChannel(&htim17, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
+  sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+  sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+  sBreakDeadTimeConfig.DeadTime = 0;
+  sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+  sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+  if (HAL_TIMEx_ConfigBreakDeadTime(&htim17, &sBreakDeadTimeConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  HAL_TIM_MspPostInit(&htim17);
 
 }
 
@@ -813,7 +885,7 @@ void ProcessSensors(void){
               uhTSCAcquisitionValue3 = HAL_TSC_GroupGetValue(&htsc, TSC_GROUP3_IDX);
             }
             }
-
+/*
 void SetFlags(void){
 	if (uhTSCAcquisitionValue3 < 2320) {
 	    	not2 = 1;
@@ -846,53 +918,68 @@ void SetFlags(void){
 	            else {HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);
 	            		flag3 = 0;}
 }
-
+*/
 void ReadPins(uint8_t pin){
+	pindownlastcycle = modechanged;
 	if (pin == 0) {
 	    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10) == GPIO_PIN_RESET) {
-	    	flag1 = 1;
-	    	ShowMode(speed);}
+	    	modeflag = 1;
+	    	modechanged = 1;
+	    	ClearRGB();
+	    	ShowMode(speed);
+	    }
 	    else {
-	    		flag1 = 0;}
+	    	if (modeflag == 1) {modechanged = 0;}
+	    }
 	}
 	if (pin == 1) {
 	    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11) == GPIO_PIN_RESET) {
-	    	flag2 = 1;
-	    	ShowMode(trigmode);}
-	        else {
-	        			flag2 = 0;}
+	    	modeflag = 2;
+	    	modechanged = 1;
+	    	ClearRGB();
+	    	ShowMode(trigmode);
+	    }
+	    else {
+	    	if (modeflag == 2) {modechanged = 0;}
+	    }
 	}
 	if (pin == 2) {
 	    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12) == GPIO_PIN_RESET) {
-	    	flag3 = 1;
-	    	ShowMode(loop);}
-	            else {flag3 = 0;}
+	    	modeflag = 3;
+	    	modechanged = 1;
+	    	ClearRGB();
+	    	ShowMode(loop);
+	    }
+	    else {
+	    	if (modeflag == 3) {modechanged = 0;}
+	    }
 	}
 	if (pin == 3) {
 	    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_9) == GPIO_PIN_RESET) {
-	    	flag4 = 1;
-	    	ShowMode(samphold);}
-	            else {flag4 = 0;}
+	    	modeflag = 4;
+	    	modechanged = 1;
+	    	ClearRGB();
+	    	ShowMode(samphold);
+	    }
+	    else {
+	    	if (modeflag == 4) {modechanged = 0;}
+	    }
 	}
 }
 
-void ChangeMode(void) {
-		if (flag1 > temp1) {
+void ChangeMode(int mode) {
+		if (mode == 1) {
 			speed = (speed + 1) % 2;
 		}
-		if (flag2 > temp2) {
+		if (mode == 2) {
 			trigmode = (trigmode + 1) % 5;
 		}
-		if (flag3 > temp3) {
+		if (mode == 3) {
 			loop = (loop + 1) % 2;
 		}
-		if (flag4 > temp4) {
+		if (mode == 4) {
 			samphold = (samphold + 1) % 6;
 		}
-		temp1 = flag1;
-		temp2 = flag2;
-		temp3 = flag3;
-		temp4 = flag4;
 }
 
 void ShowMode(uint8_t currentmode) {
@@ -918,9 +1005,26 @@ void ShowMode(uint8_t currentmode) {
 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
 	}
+	/*
+	if (lastattackflag > 0) {
+			 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, out);
+			 __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, 0);} //sets the PWM duty cycle (Capture Compare Value)
+	if (lastreleaseflag > 0) {
+			 __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, out);
+			 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 0);
+		 } //sets the PWM duty cycle (Capture Compare Value)
+		 __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, ADCReadings[5]); //sets*/
 }
 
-void ClearDisplay(void) {
+void ClearRGB(void) {
+	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+	 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 0);
+	 __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, 0);
+	 __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, 0);
+}
+void ClearLEDs(void) {
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);

@@ -123,10 +123,10 @@ void setreleaseflag(void);
 extern DAC_HandleTypeDef hdac;
 int benchmark1;
 int benchmark2;
-extern uint8_t attackflag;
-extern uint8_t releaseflag;
-uint8_t lastattackflag;
-uint8_t lastreleaseflag;
+uint8_t attackflag;
+uint8_t releaseflag;
+extern uint8_t lastattackflag;
+extern uint8_t lastreleaseflag;
 extern uint8_t intoattackfromr;
 extern uint8_t intoattackfroml;
 extern uint8_t intoreleasefromr;
@@ -327,27 +327,23 @@ void TIM6_DAC_IRQHandler(void)
 	  	  	  		if (position >= span && position < spanx2) {Release(); setreleaseflag();}
 	  		  	  	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
 	  	  	  		if (speed == 0 && loop == 0){Drum();}
-	  	  	  		if (intoattackfroml == 1 || intoreleasefromr == 1) {//moving towards b
+	  	  	  		if (intoattackfroml == 1 || intoreleasefromr == 1) {//moving towards a, trigger the appropriate sample and hold routine with flag toa
 	  	  	  			toa = 0;
 	  	  	  			HAL_NVIC_SetPendingIRQ(EXTI4_15_IRQn);
 	  	  	  		}
-	  	  			if (intoattackfromr == 1 || intoreleasefroml == 1) { //moving towards a
+	  	  			if (intoattackfromr == 1 || intoreleasefroml == 1) { //moving towards a, trigger the appropriate sample and hold routine with flag toa
 		  	  	  		toa = 1;
 		  	  	  		HAL_NVIC_SetPendingIRQ(EXTI4_15_IRQn);
 	  	  			}
 
-	  	  			if ((samphold == 2 || samphold == 3) && decimatecounter == 4
-	  	  					) {
+	  	  			if ((samphold == 2 || samphold == 3) && decimatecounter == 4) { //grab the sample for b that was dropped in the interrupt after a 4 sample delay for aquisition
 	  	  				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 	  	  			}
 
-	  	  			if (samphold == 5 && decimatecounter == 4) {
+	  	  			if (samphold == 5 && decimatecounter == 4) { //grab the sample that was dropped in the interrupt after a 4 sample delay for aquisition
 	  	  			  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 	  	  			  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 	  	  			}
-
-
-
 	}
 
 	if (trig == 0) {
@@ -417,23 +413,23 @@ void Release(void) {
 }
 
 void GetPhase(void) {
-	//define increment function for high speed mode with limits
+	//define increment function for high speed mode with limits, tim2 parameter controls is removed from the equation if we are in drum mode
 	if (speed == 0) {
 		if (loop == 0) {inc = fix16_mul(2000, (lookuptable[(4095 - ADCReadings[0] - 24)] >> 2));}
-		else {inc = fix16_mul(ADCReadings[1] - 2048, (lookuptable[(4095 - ADCReadings[0] - 24)] >> 2));}};
-
-	if (inc > 1048576) {inc = 1048576;};
-	if (inc < -1048576) {inc = -1048576;};
+		else {inc = fix16_mul(ADCReadings[1] - 2048, (lookuptable[(4095 - ADCReadings[0] - 24)] >> 2));}
+		if (inc > 1048576) {inc = 1048576;}
+		if (inc < -1048576) {inc = -1048576;}
+	}
 
 	//define increment for low speed mode, split up timing over two pot/cv combos
-	if (speed == 1) {
+	else if (speed == 1) {
 		//use tim1 pot for setting inc in attack phase, blank the retrigger flag if not in hard sync mode
 		if (position < span) {
 			inc = ADCReadings[0];
 			if (trigmode ==! 1) {retrig = 0;}}
 		//use tim2 pot for setting inc in release phase, blank the retrigger variable
 		if (position >= span) {inc = ADCReadings[1];}
-	}
+	};
 
 	//in gate (2) mode, work backwards to attack if retrig flag is raised when in release so long as gate is high
 	//also, releasing the gate while attacking gives a hard reset to 0
@@ -449,7 +445,7 @@ void GetPhase(void) {
 	}
 
 	//in non gated retrigger (3) mode, work backwards to attack if retrig flag is raised regardless of gating
-	if (trigmode == 3){
+	else if (trigmode == 3){
 		if (position <= span) {retrig = 0;}
 		if (position > span && retrig == 1) {
 			if (speed == 1) {inc = -ADCReadings[0];}
@@ -460,7 +456,7 @@ void GetPhase(void) {
 	//in pendulum mode, an incoming trigger toggle the signage of the increment
 	//a retrtrigger increments a counter modulo 2, then the retrigger flag is bla$nked
 	//when that counter is -1, we make reverse the sign of the increment, changing direction of playback in the wavetable
-	if (trigmode == 4) {
+	else if (trigmode == 4) {
 		if  (retrig == 1) {
 			pendulumcount = (pendulumcount + 1) % 2;
 			retrig = 0;}
@@ -471,7 +467,7 @@ void GetPhase(void) {
 			inc = -inc;
 		}
 
-	}
+	};
 
 	// and here is the result of what we have done
 	position = position + inc;
@@ -491,7 +487,7 @@ void GetPhase(void) {
 		}
 	}
 	// same as above but for when we are backtracking through the attack phase aka negative increment
-	if (position < 0) {
+	else if (position < 0) {
 		position = position + spanx2;
 		if (loop == 0 && speed ==! 0){
 		trig = 0;
@@ -538,7 +534,7 @@ void Drum(void) {
 		if (subcount == (ADCReadings[1] >> 9) + 1) {
 			subcount = 0;
 			drumcount = drumcount + 1;}
-}
+	}
 	out = out >> drumcount;
 	if (drumcount >= 16) {
 		drumcount = 0;
