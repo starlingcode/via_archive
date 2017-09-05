@@ -100,7 +100,7 @@ fix16_t mirror;
 fix16_t inc;
 fix16_t interp1;
 fix16_t interp2;
-fix16_t out;
+extern fix16_t out;
 fix16_t Lnvalue1;
 fix16_t Rnvalue1;
 fix16_t Lnvalue2;
@@ -143,6 +143,8 @@ uint8_t family;
 uint8_t pendulumcount;
 uint8_t drumcount;
 uint8_t subcount;
+uint8_t toa;
+
 
 
 /* USER CODE END 0 */
@@ -194,6 +196,61 @@ void EXTI2_3_IRQHandler(void)
 	trig = 1;
 	retrig = 1;
   /* USER CODE END EXTI2_3_IRQn 1 */
+}
+
+/**
+* @brief This function handles EXTI line 4 to 15 interrupts.
+*/
+void EXTI4_15_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI4_15_IRQn 0 */
+	if (toa == 0) {
+		  if (samphold == 1) { // sample a
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+		  }
+		  else if (samphold == 2) { // drop b to be picked up by decimate counter
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		  	  	decimatecounter = 0;
+		  }
+		  else if (samphold == 3) { // sample a and drop b to be picked up by decimate counter
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		  	  	decimatecounter = 0;
+		  }
+		  else if (samphold == 4) {
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET); // sample a and drop b
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		  }
+	      else if (samphold == 5) {
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		  	  	decimatecounter = 0;// drop b to be picked up by decimate counter
+		  }
+	}
+	if (toa == 1) {
+			if (samphold == 1) { // release a
+		  	  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  	}
+			// if samphold == 2, b remains sampled
+
+		  	else if (samphold == 3) { // release a, b remains sampled
+		  	  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  	}
+		  	else if (samphold == 4) {// sample b and drop a
+		  	  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  	  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+		  	}
+		  	else if (samphold == 5) {
+		  	  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  	  	decimatecounter = 0;// drop a to be picked up by decimate counter
+		  	}
+	}
+
+
+  /* USER CODE END EXTI4_15_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
+  /* USER CODE BEGIN EXTI4_15_IRQn 1 */
+
+  /* USER CODE END EXTI4_15_IRQn 1 */
 }
 
 /**
@@ -260,71 +317,37 @@ void TIM6_DAC_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 
-
-
-
-  /* USER CODE END TIM6_DAC_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim6);
-  HAL_DAC_IRQHandler(&hdac);
-  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
-
 	if (trig ==1){
-					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
-	  				dacbuffer1 = out;
-	  				dacbuffer2 = (65535 - out);
 
+	  				dacbuffer2 = out;
+	  				dacbuffer1 = (65535 - out);
 	  		  	  	GetPhase();
+	  				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
 	  	  	  		if (position < span) {Attack(); setattackflag();}
 	  	  	  		if (position >= span && position < spanx2) {Release(); setreleaseflag();}
+	  		  	  	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
 	  	  	  		if (speed == 0 && loop == 0){Drum();}
-	  	  	  		if (attackflag == 1 || releaseflag == 2) { //moving towards b
-	  	  				  if (samphold == 1) { // sample a
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-	  	  				  }
-	  	  				  else if (samphold == 2) { // sample b
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-	  	  				  }
-	  	  				  else if (samphold == 3) { // sample a and b
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-	  	  				  }
-	  	  				  else if (samphold == 4) {
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET); // sample a and drop b
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-	  	  				  }
-	  	  			      else if (samphold == 5) {
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET); // drop b to be picked up by decimate counter
-	  	  				  }
-	  	  				  intoreleasefromr = 0;
-	  	  				  intoattackfroml = 0;
-	  	  			  }
-	  	  			  if (releaseflag == 1 || attackflag == 2) { //moving towards a
-	  	  				  if (samphold == 1) { // release a
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-	  	  				  }
-	  	  				  else if (samphold == 2) { // b remains sampled
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-	  	  				  }
-	  	  				  else if (samphold == 3) { // release a
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-	  	  				  }
-	  	  				  else if (samphold == 4) {
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); // sample b and drop a
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-	  	  				  }
-	  	  				  else if (samphold == 5) {
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); // drop a to be picked up by decimate counter
-	  	  			      }
-	  	  				  intoreleasefroml = 0;
-	  	  				  intoattackfromr = 0;
-	  	  			  }
+	  	  	  		if (intoattackfroml == 1 || intoreleasefromr == 1) {//moving towards b
+	  	  	  			toa = 0;
+	  	  	  			HAL_NVIC_SetPendingIRQ(EXTI4_15_IRQn);
+	  	  	  		}
+	  	  			if (intoattackfromr == 1 || intoreleasefroml == 1) { //moving towards a
+		  	  	  		toa = 1;
+		  	  	  		HAL_NVIC_SetPendingIRQ(EXTI4_15_IRQn);
+	  	  			}
 
-	  	  			  if (samphold == 5 && decimatecounter == 10) {
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-	  	  					  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-	  	  			  }
+	  	  			if ((samphold == 2 || samphold == 3) && decimatecounter == 4
+	  	  					) {
+	  	  				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+	  	  			}
 
-	  	  	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+	  	  			if (samphold == 5 && decimatecounter == 4) {
+	  	  			  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+	  	  			  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+	  	  			}
+
+
+
 	}
 
 	if (trig == 0) {
@@ -334,6 +357,13 @@ void TIM6_DAC_IRQHandler(void)
 
 
 
+
+
+
+  /* USER CODE END TIM6_DAC_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim6);
+  HAL_DAC_IRQHandler(&hdac);
+  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
 
 
   /* USER CODE END TIM6_DAC_IRQn 1 */
@@ -472,7 +502,7 @@ void GetPhase(void) {
 }
 //this logic communicates entering and leaving the two stages in the main loop
 void setattackflag(void) {
-	releaseflag = 0;
+	lastreleaseflag = 0;
 	decimatecounter = decimatecounter + 1;
 	if (inc < 0) {attackflag = 2;}
 	else {attackflag = 1;};
@@ -482,7 +512,7 @@ void setattackflag(void) {
 	else if (attackflag == 1 && attackflag ==! lastattackflag) {
 		intoattackfroml = 1;
 		decimatecounter = 0;}
-	//else {intoattackfroml = 0; intoattackfroml = 0;};
+	else {intoattackfroml = 0; intoattackfroml = 0;};
 	lastattackflag = attackflag;
 }
 
@@ -497,7 +527,7 @@ void setreleaseflag(void) {
 	else if (releaseflag == 1 && releaseflag ==! lastreleaseflag) {
 		intoreleasefroml = 1;
 		decimatecounter = 0;}
-	//else {intoreleasefroml = 0; intoreleasefroml = 0;};
+	else {intoreleasefroml = 0; intoreleasefroml = 0;};
 	lastreleaseflag = releaseflag;
 }
 
