@@ -1,7 +1,5 @@
 This repository contains the development history of the digital component of a synthesizer module. It utilizes the STM32 series of microcontrollers as the brains of the operation. This allows us to take advantage of the STM32CubeMX toolchain, which generates the tedious and overwheling setup code for the chip via a rather friendly GUI. We will highlight the relevant sections of user code required to make the chip do what we want it to do. 
 
-If this all looks like gibberish but you want to know more, liquidcitymotors@gmail.com
-
 Some context: The module takes two inputs and crossfades between them, with the position of the crossfader determined by a digital oscillator, implemented on the STM32. By constructiong the oscillator in two segments, "attack" and "release" and utilizing two distinct control modes, one for audio rate (typical 1v/oct oscillator) and one for CV rate (envelopes and LFOs), we get a surprisingly versatile oscillator that adapts quite nicely to its analog habitat. Keep in mind that applying our oscillator to two DC signals is a nifty way of outputtng that value with scaling and bias according to the DC values at the crossfader.
 
 The oscillator also implements a "wavestacking" technique wherin a "family" of wavetables is defined, and the user can "morph" through the family. This allows us to change the shape of CV modulation or the timbre of an audio rate oscillator.
@@ -40,4 +38,4 @@ The main loop sequentially checks for a button press on each of the mode change 
 
 More nuance in the comments, dive in if you want to grab any bits of the above.
 
-
+Contact liquidcitymotors@gmail.com if this doesn't have what you need
