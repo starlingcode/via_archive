@@ -51,35 +51,35 @@
 #define spanx2 8388608
 
 //assign names to our ADC readings that correspond to how they interface with the UI
-#define time1knob ADCReadings[0]
-#define time2knob ADCReadings[1]
-#define time1cv ADCReadings[2]
-#define time2cv ADCReadings[3]
-#define morphcv ADCReadings[4]
-#define morphknob ADCReadings[5]
+#define time1Knob ADCReadings[0]
+#define time2Knob ADCReadings[1]
+#define time1CV ADCReadings[2]
+#define time2CV ADCReadings[3]
+#define morphCV ADCReadings[4]
+#define morphKnob ADCReadings[5]
 
 //define our wavetable family as two arrays of 9 wavetables (defined in tables.h), one for attack, one for release
 
-//uint16_t attackfamily[M][N] = {perlin6_1, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
-//uint16_t releasefamily[M][N] = {perlin6_1, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
-//uint16_t releasefamily[M][N] = {bittab1, bittab2, bittab3, bittab4, bittab5, bittab6, bittab7, bittab8, bittab9};
-//uint16_t attackfamily[M][N] = {bittab1, bittab2, bittab3, bittab4, bittab5, bittab6, bittab7, bittab8, bittab9};
-uint16_t attackfamily[M][N] = {sinefold_ctr_1, sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5, sinefold_ctr_6, sinefold_ctr_7, sinefold_ctr_8, sinefold_ctr_9};
-uint16_t releasefamily[M][N] = {sinefold_ctr_1, sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5, sinefold_ctr_6, sinefold_ctr_7, sinefold_ctr_8, sinefold_ctr_9};
-//uint16_t attackfamily[M][N] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8, bounce9};
-//uint16_t releasefamily[M][N] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8, bounce9};
-//uint16_t attackfamily[M][N] = {trifold_1, trifold_2, trifold_3, trifold_4, trifold_5, trifold_6, trifold_7, trifold_8, trifold_9};
-//uint16_t releasefamily[M][N] = {trifold_1, trifold_2, trifold_3, trifold_4, trifold_5, trifold_6, trifold_7, trifold_8, trifold_9};
-//uint16_t attackfamily[M][N] = {triodd_1, triodd_2, triodd_3, triodd_4, triodd_5, triodd_6, triodd_7, triodd_8, triodd_9};
-//uint16_t releasefamily[M][N] = {triodd_1, triodd_2, triodd_3, triodd_4, triodd_5, triodd_6, triodd_7, triodd_8, triodd_9};
-//uint16_t attackfamily[M][N] = {trifudge_1, trifudge_2, trifudge_3, trifudge_4, trifudge_5, trifudge_6, trifudge_7, trifudge_8, trifudge_9};
-//uint16_t releasefamily[M][N] = {trifudge_1, trifudge_2, trifudge_3, trifudge_4, trifudge_5, trifudge_6, trifudge_7, trifudge_8, trifudge_9};
+uint16_t attackFamily[M][N] = {perlin6_1, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
+uint16_t releaseFamily[M][N] = {perlin6_1, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
+//uint16_t releaseFamily[M][N] = {bittab1, bittab2, bittab3, bittab4, bittab5, bittab6, bittab7, bittab8, bittab9};
+//uint16_t attackFamily[M][N] = {bittab1, bittab2, bittab3, bittab4, bittab5, bittab6, bittab7, bittab8, bittab9};
+//uint16_t attackFamily[M][N] = {sinefold_ctr_1, sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5, sinefold_ctr_6, sinefold_ctr_7, sinefold_ctr_8, sinefold_ctr_9};
+//uint16_t releaseFamily[M][N] = {sinefold_ctr_1, sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5, sinefold_ctr_6, sinefold_ctr_7, sinefold_ctr_8, sinefold_ctr_9};
+//uint16_t attackFamily[M][N] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8, bounce9};
+//uint16_t releaseFamily[M][N] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8, bounce9};
+//uint16_t attackFamily[M][N] = {trifold_1, trifold_2, trifold_3, trifold_4, trifold_5, trifold_6, trifold_7, trifold_8, trifold_9};
+//uint16_t releaseFamily[M][N] = {trifold_1, trifold_2, trifold_3, trifold_4, trifold_5, trifold_6, trifold_7, trifold_8, trifold_9};
+//uint16_t attackFamily[M][N] = {triodd_1, triodd_2, triodd_3, triodd_4, triodd_5, triodd_6, triodd_7, triodd_8, triodd_9};
+//uint16_t releaseFamily[M][N] = {triodd_1, triodd_2, triodd_3, triodd_4, triodd_5, triodd_6, triodd_7, triodd_8, triodd_9};
+//uint16_t attackFamily[M][N] = {trifudge_1, trifudge_2, trifudge_3, trifudge_4, trifudge_5, trifudge_6, trifudge_7, trifudge_8, trifudge_9};
+//uint16_t releaseFamily[M][N] = {trifudge_1, trifudge_2, trifudge_3, trifudge_4, trifudge_5, trifudge_6, trifudge_7, trifudge_8, trifudge_9};
 
 //this is used for our 1v/oct and bonus expo envelope
 const fix16_t lookuptable[4096] = expotable10oct;
 
 //these are the variables used to generate the phase information that feeds our interpolations
-uint32_t fixmorph;
+uint32_t fixMorph;
 fix16_t position;
 fix16_t mirror;
 fix16_t inc;
@@ -87,12 +87,12 @@ fix16_t inc;
 //sample indices and interpolation fraction for the wavetable
 int LnSample;
 int RnSample;
-uint16_t wavefrac;
+uint16_t waveFrac;
 
 //wavetable indices (within the family) and interpoation fraction for the morph interpolation
 int LnFamily;
 int RnFamily;
-uint16_t morphfrac;
+uint16_t morphFrac;
 
 //actual values and interpolation result for one wavetable
 fix16_t Lnvalue1;
@@ -113,33 +113,36 @@ extern fix16_t out;
 
 
 
-void Attack(void);
-void Release(void);
-void GetPhase(void);
-void Drum(void);
-void setattackflag(void);
-void setreleaseflag(void);
+void attack(void);
+void release(void);
+void getPhase(void);
+void drum(void);
+void setAttack(void);
+void setRelease(void);
 
 // "playback" flags that set the oscillator in motion
-volatile int trig = 0;
+volatile int oscillatorActive = 0;
 volatile int retrig = 0;
 
 // logic used to signal oscillator phase position
-uint8_t attackflag;
-uint8_t releaseflag;
-extern uint8_t lastattackflag;
-extern uint8_t lastreleaseflag;
+uint8_t attackFlag;
+uint8_t releaseFlag;
+extern uint8_t lastAttackFlag;
+extern uint8_t lastReleaseFlag;
 extern uint8_t intoattackfromr;
 extern uint8_t intoattackfroml;
 extern uint8_t intoreleasefromr;
 extern uint8_t intoreleasefroml;
-uint8_t toa;
+//uint8_t toa;
+enum sampleHoldDirection {toward_a, toward_b};
+
 
 // timers used for clocking the expo envelope in drum mode and resampling the sample and holds
-extern uint16_t decimatecounter;
-fix16_t drumcount;
-fix16_t subcount;
-uint8_t pendulumcount;
+extern uint16_t sampleHoldTimer;
+fix16_t drumCount;
+fix16_t subCount;
+
+uint8_t pendulumDirection;
 
 // ADC/DAC DMA variables
 uint32_t ADCReadings[6];
@@ -147,10 +150,14 @@ uint16_t dacbuffer1;
 uint16_t dacbuffer2;
 
 // mode indicators, determined in the main loop
-uint8_t speed;
-uint8_t loop;
-uint8_t trigmode;
-uint8_t samphold;
+// uint8_t speed;
+enum speed {high, low};
+//uint8_t loop;
+enum loop {noloop, looping};
+//uint8_t trigMode;
+enum trigMode {hardsync, gated, nongatedretrigger, pendulum};
+//uint8_t sampleHoldMode;
+enum sampleHoldMode {a, b, ab, antidecimate, decimate};
 uint8_t family;
 
 
@@ -226,7 +233,7 @@ void DMA1_Stream6_IRQHandler(void)
 void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
-	trig = 1;
+	oscillatorActive = 1;
 	retrig = 1;
 
   /* USER CODE END TIM2_IRQn 0 */
@@ -242,45 +249,59 @@ void TIM2_IRQHandler(void)
 void EXTI15_10_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
-	if (toa == 0) { //this indicates that the pointer is "moving towards a", which informs our logic about which sample and hold operation should be performed per mode
+	if (sampleHoldDirection == toward_a) { //this indicates that the pointer is "moving towards a", which informs our logic about which sample and hold operation should be performed per mode
 
-		  if (samphold == 1) { // sample a, for the sample and hold, pin low or GPIO_PIN_RESET holds and pin high or GPIO_PIN_SET tracks
-			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+		  if (sampleHoldMode == a) { // sample a, for the sample and hold, pin low or GPIO_PIN_RESET holds and pin high or GPIO_PIN_SET tracks
+			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+			  GPIOB->BSRR = (uint32_t)4 << 16U;
 		  }
-		  else if (samphold == 2) { // drop b to be picked up by decimate counter (which samples after a delay allowing the sample and hold to track to the new value (time constant dependent on sampling cap size) so that b can be "resampled" per cycle to keep things interesting
-			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		  	  	decimatecounter = 0;
+		  else if (sampleHoldMode == b) { // drop b to be picked up by decimate counter (which samples after a delay allowing the sample and hold to track to the new value (time constant dependent on sampling cap size) so that b can be "resampled" per cycle to keep things interesting
+			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+			  GPIOB->BSRR = 5;
+		  	  sampleHoldTimer = 0;
 		  }
-		  else if (samphold == 3) { // sample a and drop b to be picked up by decimate counter as above. since our oscillator generally rests at 0, b needs to remain sampled through the attack and release phase to avoid a discontinuity in attack
-			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		  	  	decimatecounter = 0;
+		  else if (sampleHoldMode == ab) { // sample a and drop b to be picked up by decimate counter as above. since our oscillator generally rests at 0, b needs to remain sampled through the attack and release phase to avoid a discontinuity in attack
+			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+			  GPIOB->BSRR = (uint32_t)4 << 16U;
+			  GPIOB->BSRR = 5;
+			  sampleHoldTimer = 0;
 		  }
-		  else if (samphold == 4) { // sample a and drop b, weird pseudo decimate mode where a is sampled when moving to b while b tracks and likewise
-			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		  else if (sampleHoldMode == antidecimate) { // sample a and drop b, weird pseudo decimate mode where a is sampled when moving to b while b tracks and likewise
+			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+			  GPIOB->BSRR = (uint32_t)4 << 16U;
+			  GPIOB->BSRR = 5;
 		  }
-	      else if (samphold == 5) {// drop b to be picked up by decimate counter, aka resample b when at a. this is true decimate mode
-			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		  	  	decimatecounter = 0;
+	      else if (sampleHoldMode == decimate) {// drop b to be picked up by decimate counter, aka resample b when at a. this is true decimate mode
+			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+			  GPIOB->BSRR = 5;
+		  	  sampleHoldTimer = 0;
 		  }
 	}
-	if (toa == 1) {
-			if (samphold == 1) { // release a
-		  	  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+	else  // if we are moving toward b
+			{
+			if (sampleHoldMode == a) { // release a
+		  	  	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  	    GPIOB->BSRR = 4;
 		  	}
-			// if samphold == 2, b remains sampled
+			// if sampleHoldMode == 2, b remains sampled
 
-		  	else if (samphold == 3) { // release a, b remains sampled
-		  	  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  	else if (sampleHoldMode == ab) { // release a, b remains sampled
+		  	  	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  	    GPIOB->BSRR = 4;
 		  	}
-		  	else if (samphold == 4) {// sample b and drop a, mirroring what happens when moving towards b above
-		  	  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-		  	  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+		  	else if (sampleHoldMode == antidecimate) {// sample b and drop a, mirroring what happens when moving towards b above
+		  	  	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  	  	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+		  		GPIOB->BSRR = 4;
+		  		GPIOB->BSRR = (uint32_t)5 << 16U;
+
 		  	}
-		  	else if (samphold == 5) {// drop a to be picked up by decimate counter
-		  	  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-		  	  	decimatecounter = 0;
+		  	else if (sampleHoldMode == decimate) {// drop a to be picked up by decimate counter
+		  	  	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  		GPIOB->BSRR = 4;
+		  		sampleHoldTimer = 0;
 		  	}
 	}
 
@@ -298,7 +319,7 @@ void TIM6_DAC_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 	// when trig is 1, the oscillator is active
-	if (trig ==1){
+	if (oscillatorActive){
 					//writing this pin low at the start of our interrupt then setting it upon completion allows easy clocking with a scope
 					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
 
@@ -307,37 +328,37 @@ void TIM6_DAC_IRQHandler(void)
 	  				dacbuffer1 = (65535 - out);
 
 	  				//call the function to advance the phase of the oscillator
-	  		  	  	GetPhase();
+	  		  	  	getPhase();
 
 	  		  	  	//call the appropriate
-	  	  	  		if (position < span) {Attack(); setattackflag();}
-	  	  	  		if (position >= span && position < spanx2) {Release(); setreleaseflag();}
+	  	  	  		if (position < span) {attack(); setAttack();}
+	  	  	  		if (position >= span && position < spanx2) {release(); setRelease();}
 
 	  	  	  		//if we are in high speed and not looping, activate drum mode
-	  		  	  	if (speed == 0 && loop == 0){
+	  		  	  	if (speed == high && loop == noloop){
 	  		  	  		//call the fuction that generates our expo decay and increments the oscillator
-	  		  	  		Drum();
+	  		  	  		drum();
 	  		  	  		//use the expo decay scaled by the manual morph control to modulate morph
-	  		  	  		fixmorph = fix16_mul(exposcale, morphknob);
+	  		  	  		fixMorph = fix16_mul(exposcale, morphKnob);
 	  		  	  	}
-	  		  	  	else {fixmorph = morphknob + morphcv;}
+	  		  	  	else {fixMorph = morphKnob + morphCV;}
 
 	  		  	  	//moving towards a, trigger the appropriate sample and hold routine with flag toa
-	  	  	  		if (intoattackfroml == 1 || intoreleasefromr == 1) {
-	  	  	  			toa = 0;
+	  	  	  		if (intoattackfroml || intoreleasefromr) {
+	  	  	  			sampleHoldDirection = toward_a;
 	  	  	  			HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
 	  	  	  		}
 	  	  	  		//moving towards a, trigger the appropriate sample and hold routine with flag toa
-	  	  			if (intoattackfromr == 1 || intoreleasefroml == 1) {
-		  	  	  		toa = 1;
+	  	  			if (intoattackfromr || intoreleasefroml) {
+		  	  	  		sampleHoldDirection = toward_b;
 		  	  	  		HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
 	  	  			}
 	  	  			//grab the sample for b that was dropped in the interrupt after a 4 sample delay for aquisition
-	  	  			if ((samphold == 2 || samphold == 3) && decimatecounter == 4) {
+	  	  			if ((sampleHoldMode == b || sampleHoldMode == ab) && sampleHoldTimer == 4) {
 	  	  				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 	  	  			}
 	  	  			//grab the sample that was dropped in the interrupt after a 4 sample delay for aquisition
-	  	  			if (samphold == 5 && decimatecounter == 4) {
+	  	  			if (sampleHoldMode == decimate && sampleHoldTimer == 4) {
 	  	  			  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 	  	  			  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 	  	  			}
@@ -345,7 +366,7 @@ void TIM6_DAC_IRQHandler(void)
 	  				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
 	}
 	//allow the sample and holds to pass when the oscillator is at rest
-	if (trig == 0) {
+	else  { // if (!oscillatorActive) {
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 		  }
@@ -380,21 +401,21 @@ void Attack(void) {
 	LnSample = (int) (position >> 16);
 	RnSample = (LnSample + 1);
 	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
-	LnFamily = (uint32_t) fixmorph >> 9;
+	LnFamily = (uint32_t) fixMorph >> 9;
 	RnFamily = (LnFamily + 1);
 	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
-	wavefrac = (uint16_t) position;
-	morphfrac = ((fixmorph - (LnFamily << 9)) << 7);
+	waveFrac = (uint16_t) position;
+	morphFrac = ((fixMorph - (LnFamily << 9)) << 7);
 	//get values from the relevant wavetables
-	Lnvalue1 = attackfamily[LnFamily][LnSample];
-	Rnvalue1 = attackfamily[LnFamily][RnSample];
-	Lnvalue2 = attackfamily[RnFamily][LnSample];
-	Rnvalue2 = attackfamily[RnFamily][RnSample];
+	Lnvalue1 = attackFamily[LnFamily][LnSample];
+	Rnvalue1 = attackFamily[LnFamily][RnSample];
+	Lnvalue2 = attackFamily[RnFamily][LnSample];
+	Rnvalue2 = attackFamily[RnFamily][RnSample];
 	//find the interpolated values for the adjacent wavetables
-	interp1 = fix16_lerp16(Lnvalue1, Rnvalue1, wavefrac);
-	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, wavefrac);
+	interp1 = fix16_lerp16(Lnvalue1, Rnvalue1, waveFrac);
+	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, waveFrac);
 	//interpolate between those based upon morph (biinterpolation)
-	out = fix16_lerp16(interp1, interp2, morphfrac) >> 3;
+	out = fix16_lerp16(interp1, interp2, morphFrac) >> 3;
 }
 
 
@@ -404,28 +425,28 @@ void Attack(void) {
 
 
 
-void Release(void) {
+void release(void) {
 	//calculate value based upon phase pointer "position" reflected over the span of the wavetable
 	mirror = fix16_sub(spanx2, position);
 	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
 	LnSample = (int) (mirror >> 16);
 	RnSample = (LnSample + 1);
 	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
-	LnFamily = (uint32_t) fixmorph >> 9;
+	LnFamily = (uint32_t) fixMorph >> 9;
 	RnFamily = (LnFamily + 1);
 	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
-	wavefrac = (uint16_t) mirror;
-	morphfrac = ((fixmorph - (LnFamily <<  9)) << 7);
+	waveFrac = (uint16_t) mirror;
+	morphFrac = ((fixMorph - (LnFamily <<  9)) << 7);
 	//get values from the relevant wavetables
-	Lnvalue1 = releasefamily[LnFamily][LnSample];
-	Rnvalue1 = releasefamily[LnFamily][RnSample];
-	Lnvalue2 = releasefamily[RnFamily][LnSample];
-	Rnvalue2 = releasefamily[RnFamily][RnSample];
+	Lnvalue1 = releaseFamily[LnFamily][LnSample];
+	Rnvalue1 = releaseFamily[LnFamily][RnSample];
+	Lnvalue2 = releaseFamily[RnFamily][LnSample];
+	Rnvalue2 = releaseFamily[RnFamily][RnSample];
 	//find the interpolated values for the adjacent wavetables
-	interp1 = fix16_lerp16(Lnvalue1, Rnvalue1, wavefrac);
-	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, wavefrac);
+	interp1 = fix16_lerp16(Lnvalue1, Rnvalue1, waveFrac);
+	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, waveFrac);
 	//interpolate between those based upon morph (biinterpolation)
-	out = fix16_lerp16(interp1, interp2, morphfrac) >> 3;
+	out = fix16_lerp16(interp1, interp2, morphFrac) >> 3;
 }
 
 
@@ -434,62 +455,122 @@ void Release(void) {
 
 
 //defines an increment then checks the trigger mode, making the appropriate changes to playback when the oscillator is retriggered
-void GetPhase(void) {
+// Questioning whether this works properly when position has to be calculated using attack inc + decay inc (at transitions) i.e. increment rate overshoot
+
+void getPhase(void) {
 	//define increment function for high speed mode with limits, tim2 parameter controls is removed from the equation if we are in drum mode
-	if (speed == 0) {
-		//multiply a base (modualted by linear FM) by a lookup value from a 10 octave expo table (modulated by expo FM)
+	if (speed == high) {
+		//multiply a base (modulated by linear FM) by a lookup value from a 10 octave expo table (modulated by expo FM)
 		//if we are in drum mode, no linear FM
-		if (loop == 0) {inc = fix16_mul(2000, (lookuptable[(4095 - (time1knob + time1cv) - 24)] >> 2));}
-		else {inc = fix16_mul((time2cv - 2048) + (time2knob - 4096), (lookuptable[(4095 - (time1knob + time1cv) - 24)] >> 2));}
+		if (loop == noloop) {inc = fix16_mul(2000, (lookuptable[(4095 - (time1Knob + time1CV) - 24)] >> 2));}
+		else {inc = fix16_mul((time2CV - 2048) + (time2Knob - 4096), (lookuptable[(4095 - (time1Knob + time1CV) - 24)] >> 2));}
 		if (inc > 1048576) {inc = 1048576;}
 		if (inc < -1048576) {inc = -1048576;}
 	}
 
 	//define increment for low speed mode, split up timing over two pot/cv combos
-	else if (speed == 1) {
+	else { //low speed
 		//use tim1 knob + cv for setting inc in attack phase, blank the retrigger flag if not in hard sync mode
 		if (position < span) {
-			inc = time1knob + time1cv;
+			inc = time1Knob + time1CV;
 			//wipe any retrigger flags unless we are in hard sync mode during attack
-			if (trigmode ==! 1) {retrig = 0;}}
+			if (trigMode ==! hardsync) {retrig = 0;}}
 		//use tim2 knob + cv for setting inc in release phase
-		if (position >= span) {inc = time2knob + time2cv;}
+		if (position >= span) {inc = time2Knob + time2CV;}
 	};
 
 	//in gate (2) mode, if retrig flag is raised when in release, work backwards to attack so long as gate is high
 	//if gate is released when in attack phase, increment backwards through attack at the release speed
 	//this mimics a retrigger on a traditional ADSR
-	if (trigmode == 2){
+
+	//consider triggers from interrupt happening right here (after attack clearing)
+
+	switch (trigMode) {
+
+	case hardsync:
+
+		if(retrig) {
+			position = 0;
+			retrig = 0;
+		}
+		break;
+
+
+	case gated :
+		// does this guarantee that position will freeze at span?
 		if (position < span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) {
-			if (speed == 1) {inc = -time2knob;}
-			if (speed == 0) {inc = -inc;}
+					if (speed == low) {inc = -time2Knob;}
+					if (speed == high) {inc = -inc;}
+		}
+
+		if (position > span && retrig == 1 && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) {
+			if (speed == low) {inc = -time1Knob;}
+			if (speed == high) {inc = -inc;}
+		}
+		position = position + inc;
+		break;
+
+
+	case nongatedretrigger:
+
+		if (position <= span) {retrig = 0;}
+		else if (retrig){
+			if (speed == low) {inc = -time1Knob;}
+					else // high speed
+				{inc = -inc;}
+			}
+		position = position + inc;
+		break;
+
+
+	case pendulum:
+		if  (retrig) {
+			pendulumDirection = !pendulumDirection
+			retrig = 0;
+		}
+		//reset our count to 0 so we always increment forward through attack when triggering from rest
+		if  (loop == noloop && (position <= 0 || position >= spanx2)) {pendulumDirection = 0;}
+
+		//reverse direction of the oscillator
+		if (pendulumDirection == 1) {
+			inc = -inc;
+		}
+		position = position + inc;
+		break;
+
+/*	if (trigMode == gated){
+		if (position < span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) {
+			if (speed == low) {inc = -time2Knob;}
+			if (speed == high) {inc = -inc;}
 		}
 		if (position > span && retrig == 1 && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) {
-			if (speed == 1) {inc = -time1knob;}
-			if (speed == 0) {inc = -inc;}
+			if (speed == low) {inc = -time1Knob;}
+			if (speed == high) {inc = -inc;}
 		}
 	}
 
 	//in non gated retrigger (3) mode, work backwards to attack if retrig flag is raised in release regardless of gating
-	else if (trigmode == 3){
-		if (position <= span) {retrig = 0;}
-		if (position > span && retrig == 1) {
-			if (speed == 1) {inc = -time1knob;}
-			if (speed == 0) {inc = -inc;}
+	else if (trigMode == nongatedretrigger){
+\\		if (position <= span) {retrig = 0;}
+\\		if (position > span && retrig) {
+			if (speed == low)
+				{inc = -time1Knob;}
+			else // high speed
+				{inc = -inc;}
 		}
 	}
 
 	 //in pendulum mode,a retrtrigger increments a counter modulo 2, then the retrigger flag is reset to 0
 	//when that counter is 1, we make flip the sign of the increment, changing direction of playback in the wavetable
-	else if (trigmode == 4) {
-		if  (retrig == 1) {
-			pendulumcount = (pendulumcount + 1) % 2;
+	else if (trigMode == pendulum) {
+		if  (retrig) {
+			pendulumDirection = (pendulumDirection + 1) % 2;
 			retrig = 0;}
 		//reset our count to 0 so we always increment forward through attack when triggering from rest
-		if  (loop == 0 && (position <= 0 || position >= spanx2)) {pendulumcount = 0;}
+		if  (loop == noloop && (position <= 0 || position >= spanx2)) {pendulumDirection = 0;}
 
 		//reverse direction of the oscillator
-		if (pendulumcount == 1) {
+		if (pendulumDirection == 1) {
 			inc = -inc;
 		}
 
@@ -499,15 +580,20 @@ void GetPhase(void) {
 	position = position + inc;
 
 	// a retrigger in hard sync overrides everything above, notice we didnt wipe the retrigger flag during attack in this mode
-	if (trigmode == 1 && retrig == 1) {
+	if (trigMode == hardsync && retrig == 1) {
 		position = 0;
 		retrig = 0;
 	}
+
+*/
+
 	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode
-	if (position >= spanx2) {
+	// note these only work for positions +/- 1 cycle width
+
+		if (position >= spanx2) {
 		position = position - spanx2;
-		if (loop == 0 && speed ==! 0){
-			trig = 0;
+		if (loop == noloop && speed == low){
+			oscillatorActive = 0;
 			retrig = 0;
 			position = 0;
 		}
@@ -515,8 +601,8 @@ void GetPhase(void) {
 	// same as above but for when we are backtracking through the attack phase aka negative increment
 	else if (position < 0) {
 		position = position + spanx2;
-		if (loop == 0 && speed ==! 0){
-		trig = 0;
+		if (loop == noloop && speed == low){
+		oscillatorActive = 0;
 		retrig = 0;
 		position = 0;
 		}
@@ -527,70 +613,70 @@ void GetPhase(void) {
 
 
 //this logic communicates entering and leaving the two stages in the main loop
-void setattackflag(void) {
+void setAttack(void) {
 	//indicate that we are not in release phase, and write the release gate low
-	lastreleaseflag = 0;
+	lastReleaseFlag = 0;
 	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_RESET);
 
 	//this is a handy time to increment our decimate counter every sample
 	//addachange
-	decimatecounter = decimatecounter + 1;
+	sampleHoldTimer++;
 
 	//indicate the direction in which the oscillator is moving in the value of the attack flag variable
-	if (inc < 0) {attackflag = 2;}
-	else {attackflag = 1;};
+	if (inc < 0) {attackFlag = 2;}
+	else {attackFlag = 1;};
 
 	//if the attack flag has changed since the last sample, raise the appropriate flag, if not, make sure that flag is set to 0
-	if (attackflag == 2 && attackflag ==! lastattackflag) {
+	if (attackFlag == 2 && attackFlag ==! lastAttackFlag) {
 		intoattackfromr = 1;
 		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_10, GPIO_PIN_SET);
-		decimatecounter = 0;}
+		sampleHoldTimer = 0;}
 
-	else if (attackflag == 1 && attackflag ==! lastattackflag) {
+	else if (attackFlag == 1 && attackFlag ==! lastAttackFlag) {
 		intoattackfroml = 1;
 		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_10, GPIO_PIN_SET);
-		decimatecounter = 0;}
+		sampleHoldTimer = 0;}
 
 	else {intoattackfroml = 0; intoattackfroml = 0;};
 	//remember the value we set
-	lastattackflag = attackflag;
+	lastAttackFlag = attackFlag;
 }
 
 
 
-//parallel to setattackflag
-void setreleaseflag(void) {
-	lastattackflag = 0;
-	decimatecounter = decimatecounter + 1;
-	if (inc < 0) {releaseflag = 2;}
-	else {releaseflag = 1;};
-	if (releaseflag == 2 && releaseflag ==! lastreleaseflag) {
+//parallel to setAttack
+void setRelease(void) {
+	lastAttackFlag = 0;
+	sampleHoldTimer++;
+	if (inc < 0) {releaseFlag = 2;}
+	else {releaseFlag = 1;};
+	if (releaseFlag == 2 && releaseFlag ==! lastReleaseFlag) {
 		intoreleasefromr = 1;
 		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_SET);
-		decimatecounter = 0;}
-	else if (releaseflag == 1 && releaseflag ==! lastreleaseflag) {
+		sampleHoldTimer = 0;}
+	else if (releaseFlag == 1 && releaseFlag ==! lastReleaseFlag) {
 		intoreleasefroml = 1;
 		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_SET);
-		decimatecounter = 0;}
+		sampleHoldTimer = 0;}
 	else {intoreleasefroml = 0; intoreleasefroml = 0;};
-	lastreleaseflag = releaseflag;
+	lastReleaseFlag = releaseFlag;
 	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_10, GPIO_PIN_RESET);
 }
 
 
 
 
-void Drum(void) {
-	//advance the drumcount pointer according to the time2 knob
-	drumcount = drumcount + (time2knob >> 6) + 1;
+void drum(void) {
+	//advance the drumCount pointer according to the time2 knob
+	drumCount = drumCount + (time2Knob >> 6) + 1;
 	//take the inverse of that in 12 bits
-	subcount = 4096 - (drumcount >> 4);
+	subCount = 4096 - (drumCount >> 4);
 	//if we get a retrigger, wait to cycle back through the period then retrigger (no pops)
-	if (intoattackfroml == 1 && retrig == 1) {retrig = 0, drumcount = 0;}
+	if (intoattackfroml == 1 && retrig == 1) {retrig = 0, drumCount = 0;}
 	//if we get to the end of the table, reset the envelope
-	if (subcount <= 0) {trig = 0, retrig = 0, drumcount = 0, position = 0;}
+	if (subCount <= 0) {trig = 0, retrig = 0, drumCount = 0, position = 0;}
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
-	exposcale = lookuptable[subcount] >> 10;
+	exposcale = lookuptable[subCount] >> 10;
 	//scale the oscillator
 	out = fix16_mul (out, exposcale);
 }
