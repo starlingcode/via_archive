@@ -75,20 +75,20 @@ int temp3 = 0;
 int temp4 = 0;
 extern uint16_t dacbuffer1[1];
 extern uint16_t dacbuffer2[1];
-extern uint8_t speed;
-extern uint8_t loop;
-extern uint8_t trigmode;
-extern uint8_t samphold;
+enum speedTypes speed;
+enum loopTypes loop;
+enum trigModeTypes trigMode;
+enum sampleHoldModeTypes sampleHoldMode;
 extern uint8_t family;
 int trig;
-uint8_t lastattackflag;
-uint8_t lastreleaseflag;
+uint8_t lastAttackFlag;
+uint8_t lastReleaseFlag;
 uint8_t intoattackfroml;
 uint8_t intoreleasefroml;
 uint8_t intoattackfromr;
 uint8_t intoreleasefromr;
 uint8_t pintimer;
-uint16_t decimatecounter;
+uint16_t sampleHoldTimer;
 int benchmark;
 int lastcount;
 fix16_t out;
@@ -186,20 +186,20 @@ int main(void)
 	 				 ClearLEDs();
 	 			 }
 	 			 else if (modeflag == 2) {
-	 				 for (int i = 0; i < 10000; i++) {ShowMode(trigmode);}
+	 				 for (int i = 0; i < 10000; i++) {ShowMode(trigMode);}
 	 				 ClearLEDs();}
 	 			 else if (modeflag == 3) {
 	 				 for (int i = 0; i < 10000; i++) {ShowMode(loop);}
 	 				 ClearLEDs();}
 	 			 else if (modeflag == 4) {
-	 				 for (int i = 0; i < 10000; i++) {ShowMode(samphold);}
+	 				 for (int i = 0; i < 10000; i++) {ShowMode(sampleHoldMode);}
 	 				 ClearLEDs();}
 	 	}
 
-	 	 if (lastattackflag > 0 && modechanged == 0) {
+	 	 if (lastAttackFlag > 0 && modechanged == 0) {
 	 		 __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, out);
 	 		 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, 0);} //sets the PWM duty cycle (Capture Compare Value)
-	 	 if (lastreleaseflag > 0 && modechanged == 0) {
+	 	 if (lastReleaseFlag > 0 && modechanged == 0) {
 	 		 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, out);
 	 		 __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 0);
 	 	 } //sets the PWM duty cycle (Capture Compare Value)
@@ -798,7 +798,7 @@ void ReadPins(uint8_t pin){
 	    	modeflag = 2;
 	    	modechanged = 1;
 	    	ClearRGB();
-	    	ShowMode(trigmode);
+	    	ShowMode(trigMode);
 	    }
 	    else {
 	    	if (modeflag == 2) {modechanged = 0;}
@@ -820,7 +820,7 @@ void ReadPins(uint8_t pin){
 	    	modeflag = 4;
 	    	modechanged = 1;
 	    	ClearRGB();
-	    	ShowMode(samphold);
+	    	ShowMode(sampleHoldMode);
 	    }
 	    else {
 	    	if (modeflag == 4) {modechanged = 0;}
@@ -833,13 +833,13 @@ void ChangeMode(int mode) {
 			speed = (speed + 1) % 2;
 		}
 		if (mode == 2) {
-			trigmode = (trigmode + 1) % 5;
+			trigMode = (trigMode + 1) % 5;
 		}
 		if (mode == 3) {
 			loop = (loop + 1) % 2;
 		}
 		if (mode == 4) {
-			samphold = (samphold + 1) % 6;
+			sampleHoldMode = (sampleHoldMode + 1) % 6;
 		}
 }
 
@@ -867,10 +867,10 @@ void ShowMode(uint8_t currentmode) {
 
 	}
 	/*
-	if (lastattackflag > 0) {
+	if (lastAttackFlag > 0) {
 			 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, out);
 			 __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, 0);} //sets the PWM duty cycle (Capture Compare Value)
-	if (lastreleaseflag > 0) {
+	if (lastReleaseFlag > 0) {
 			 __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, out);
 			 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 0);
 		 } //sets the PWM duty cycle (Capture Compare Value)

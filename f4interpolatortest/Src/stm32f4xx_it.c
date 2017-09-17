@@ -40,6 +40,7 @@
 #include "int64.h"
 #include "fix16.h"
 #include "tables.h"
+#include "main.h"
 
 //entries per wavetable
 #define N 65
@@ -133,7 +134,7 @@ extern uint8_t intoattackfromr;
 extern uint8_t intoattackfroml;
 extern uint8_t intoreleasefromr;
 extern uint8_t intoreleasefroml;
-//uint8_t toa;
+uint8_t sampleHoldDirection;
 enum sampleHoldDirection {toward_a, toward_b};
 
 
@@ -150,14 +151,11 @@ uint16_t dacbuffer1;
 uint16_t dacbuffer2;
 
 // mode indicators, determined in the main loop
-// uint8_t speed;
-enum speed {high, low};
-//uint8_t loop;
-enum loop {noloop, looping};
-//uint8_t trigMode;
-enum trigMode {hardsync, gated, nongatedretrigger, pendulum};
-//uint8_t sampleHoldMode;
-enum sampleHoldMode {a, b, ab, antidecimate, decimate};
+enum speedTypes speed;
+enum loopTypes loop;
+enum trigModeTypes trigMode;
+enum sampleHoldModeTypes sampleHoldMode;
+
 uint8_t family;
 
 
@@ -279,8 +277,7 @@ void EXTI15_10_IRQHandler(void)
 		  	  sampleHoldTimer = 0;
 		  }
 	}
-	else  // if we are moving toward b
-			{
+	else {  // if we are moving toward b
 			if (sampleHoldMode == a) { // release a
 		  	  	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 		  	    GPIOB->BSRR = 4;
@@ -395,7 +392,7 @@ void DMA2_Stream0_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 
-void Attack(void) {
+void attack(void) {
 	//calculate value based upon phase pointer "position"
 	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
 	LnSample = (int) (position >> 16);
@@ -503,11 +500,18 @@ void getPhase(void) {
 					if (speed == high) {inc = -inc;}
 		}
 
-		if (position > span && retrig == 1 && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) {
+		else if (position >= span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) {
+			if (retrig == 0) {
+				position = span;
+			}
+			else {
 			if (speed == low) {inc = -time1Knob;}
 			if (speed == high) {inc = -inc;}
+			}
 		}
+		else {
 		position = position + inc;
+		}
 		break;
 
 
@@ -525,7 +529,7 @@ void getPhase(void) {
 
 	case pendulum:
 		if  (retrig) {
-			pendulumDirection = !pendulumDirection
+			pendulumDirection = !pendulumDirection;
 			retrig = 0;
 		}
 		//reset our count to 0 so we always increment forward through attack when triggering from rest
@@ -537,6 +541,10 @@ void getPhase(void) {
 		}
 		position = position + inc;
 		break;
+
+	default: position = position + inc;
+
+	}
 
 /*	if (trigMode == gated){
 		if (position < span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) {
@@ -674,7 +682,7 @@ void drum(void) {
 	//if we get a retrigger, wait to cycle back through the period then retrigger (no pops)
 	if (intoattackfroml == 1 && retrig == 1) {retrig = 0, drumCount = 0;}
 	//if we get to the end of the table, reset the envelope
-	if (subCount <= 0) {trig = 0, retrig = 0, drumCount = 0, position = 0;}
+	if (subCount <= 0) {oscillatorActive = 0, retrig = 0, drumCount = 0, position = 0;}
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
 	exposcale = lookuptable[subCount] >> 10;
 	//scale the oscillator

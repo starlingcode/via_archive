@@ -108,6 +108,13 @@
 #define MEMS_INT2_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
+enum speedTypes {high, low};
+
+enum loopTypes {noloop, looping};
+
+enum trigModeTypes {hardsync, gated, nongatedretrigger, pendulum};
+
+enum sampleHoldModeTypes {a, b, ab, antidecimate, decimate};
 
 /* USER CODE END Private defines */
 
