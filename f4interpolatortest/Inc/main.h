@@ -112,9 +112,9 @@ enum speedTypes {high, low};
 
 enum loopTypes {noloop, looping};
 
-enum trigModeTypes {hardsync, gated, nongatedretrigger, pendulum};
+enum trigModeTypes {noretrigger, hardsync, gated, nongatedretrigger, pendulum};
 
-enum sampleHoldModeTypes {a, b, ab, antidecimate, decimate};
+enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 
 /* USER CODE END Private defines */
 

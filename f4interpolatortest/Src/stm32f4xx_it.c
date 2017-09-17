@@ -67,8 +67,8 @@ uint16_t releaseFamily[M][N] = {perlin6_1, perlin6_2, perlin6_3, perlin6_4, perl
 //uint16_t attackFamily[M][N] = {bittab1, bittab2, bittab3, bittab4, bittab5, bittab6, bittab7, bittab8, bittab9};
 //uint16_t attackFamily[M][N] = {sinefold_ctr_1, sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5, sinefold_ctr_6, sinefold_ctr_7, sinefold_ctr_8, sinefold_ctr_9};
 //uint16_t releaseFamily[M][N] = {sinefold_ctr_1, sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5, sinefold_ctr_6, sinefold_ctr_7, sinefold_ctr_8, sinefold_ctr_9};
-//uint16_t attackFamily[M][N] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8, bounce9};
-//uint16_t releaseFamily[M][N] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8, bounce9};
+//uint16_t attackFamily[M][N] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8};
+//uint16_t releaseFamily[M][N] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8};
 //uint16_t attackFamily[M][N] = {trifold_1, trifold_2, trifold_3, trifold_4, trifold_5, trifold_6, trifold_7, trifold_8, trifold_9};
 //uint16_t releaseFamily[M][N] = {trifold_1, trifold_2, trifold_3, trifold_4, trifold_5, trifold_6, trifold_7, trifold_8, trifold_9};
 //uint16_t attackFamily[M][N] = {triodd_1, triodd_2, triodd_3, triodd_4, triodd_5, triodd_6, triodd_7, triodd_8, triodd_9};
@@ -80,7 +80,7 @@ uint16_t releaseFamily[M][N] = {perlin6_1, perlin6_2, perlin6_3, perlin6_4, perl
 const fix16_t lookuptable[4096] = expotable10oct;
 
 //these are the variables used to generate the phase information that feeds our interpolations
-uint32_t fixMorph;
+int fixMorph;
 fix16_t position;
 fix16_t mirror;
 fix16_t inc;
@@ -330,15 +330,19 @@ void TIM6_DAC_IRQHandler(void)
 	  		  	  	//call the appropriate
 	  	  	  		if (position < span) {attack(); setAttack();}
 	  	  	  		if (position >= span && position < spanx2) {release(); setRelease();}
-
+	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
+		  	  		fixMorph = morphKnob - morphCV + 2500;
+		  	  		if (fixMorph > 4095) {fixMorph = 4095;}
+		  	  		if (fixMorph < 0) {fixMorph = 0;}
 	  	  	  		//if we are in high speed and not looping, activate drum mode
 	  		  	  	if (speed == high && loop == noloop){
 	  		  	  		//call the fuction that generates our expo decay and increments the oscillator
 	  		  	  		drum();
 	  		  	  		//use the expo decay scaled by the manual morph control to modulate morph
-	  		  	  		fixMorph = fix16_mul(exposcale, morphKnob);
+	  		  	  		fixMorph = fix16_mul(exposcale, fixMorph);
 	  		  	  	}
-	  		  	  	else {fixMorph = morphKnob + morphCV;}
+
+
 
 	  		  	  	//moving towards a, trigger the appropriate sample and hold routine with flag toa
 	  	  	  		if (intoattackfroml || intoreleasefromr) {
@@ -459,7 +463,8 @@ void getPhase(void) {
 	if (speed == high) {
 		//multiply a base (modulated by linear FM) by a lookup value from a 10 octave expo table (modulated by expo FM)
 		//if we are in drum mode, no linear FM
-		if (loop == noloop) {inc = fix16_mul(2000, (lookuptable[(4095 - (time1Knob + time1CV) - 24)] >> 2));}
+		if (loop == noloop) {
+			inc = fix16_mul(2000, (lookuptable[(4095 - (time1Knob + time1CV) - 24)] >> 2));}
 		else {inc = fix16_mul((time2CV - 2048) + (time2Knob - 4096), (lookuptable[(4095 - (time1Knob + time1CV) - 24)] >> 2));}
 		if (inc > 1048576) {inc = 1048576;}
 		if (inc < -1048576) {inc = -1048576;}
@@ -490,17 +495,18 @@ void getPhase(void) {
 			position = 0;
 			retrig = 0;
 		}
+		else {position = position + inc;}
 		break;
 
 
 	case gated :
 		// does this guarantee that position will freeze at span?
-		if (position < span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) {
+		if (position < span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) {
 					if (speed == low) {inc = -time2Knob;}
 					if (speed == high) {inc = -inc;}
 		}
 
-		else if (position >= span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) {
+		else if (position >= span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) {
 			if (retrig == 0) {
 				position = span;
 			}
@@ -676,13 +682,13 @@ void setRelease(void) {
 
 void drum(void) {
 	//advance the drumCount pointer according to the time2 knob
-	drumCount = drumCount + (time2Knob >> 6) + 1;
+	drumCount = drumCount + ((time2Knob + (4095 - time2CV)) >> 7) + 1;
 	//take the inverse of that in 12 bits
-	subCount = 4096 - (drumCount >> 4);
+	subCount = 4096 - (drumCount >> 7);
 	//if we get a retrigger, wait to cycle back through the period then retrigger (no pops)
 	if (intoattackfroml == 1 && retrig == 1) {retrig = 0, drumCount = 0;}
 	//if we get to the end of the table, reset the envelope
-	if (subCount <= 0) {oscillatorActive = 0, retrig = 0, drumCount = 0, position = 0;}
+	if (subCount <= 0) {oscillatorActive = 0, retrig = 0, drumCount = 0, position = 0; subCount = 0;}
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
 	exposcale = lookuptable[subCount] >> 10;
 	//scale the oscillator
