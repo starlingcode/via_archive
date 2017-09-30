@@ -124,13 +124,15 @@ fix16_t subCount;
 uint8_t pendulumDirection;
 
 // ADC/DAC DMA variables
-uint32_t ADCReadings[48];
-uint32_t time1Knob;
-uint32_t time2Knob;
-uint32_t time1CV;
-uint32_t time2CV;
-uint32_t morphCV;
-uint32_t morphKnob;
+uint32_t ADCReadings1[3];
+uint32_t ADCReadings2[2];
+uint32_t ADCReadings3[1];
+uint32_t time1Knob = ADCReadings2[0];
+uint32_t time2Knob = ADCReadings2[1];
+uint32_t time1CV = ADCReadings1[0];
+uint32_t time2CV = ADCReadings1[1];
+uint32_t morphCV = ADCReadings1[2];
+uint32_t morphKnob = ADCReadings3[0];
 uint16_t dacbuffer1;
 uint16_t dacbuffer2;
 

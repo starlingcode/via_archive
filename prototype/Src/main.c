@@ -205,7 +205,9 @@ uint16_t sampleHoldTimer;
 int benchmark;
 int lastcount;
 fix16_t out;
-extern uint32_t ADCReadings[48];
+extern uint32_t ADCReadings1[3];
+extern uint32_t ADCReadings2[2];
+extern uint32_t ADCReadings3[1];
 
 //define our wavetable family as two arrays of 9 wavetables (defined in tables.h), one for attack, one for release
 
@@ -350,7 +352,9 @@ int main(void)
 
 
 
-    HAL_ADC_Start_DMA(&hadc1, ADCReadings, 6);
+    HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 3);
+    HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
+    HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
       HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
       HAL_TIM_Base_Start_IT(&htim3);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
@@ -369,7 +373,34 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	 	 pintimer = (pintimer + 1) % 6;
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+		HAL_Delay(500);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+		HAL_Delay(500);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+
+		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
+		HAL_Delay(500);
+		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_RESET);
+
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		HAL_Delay(500);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+
+	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 2000);
+	 	HAL_Delay(500);
+	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+
+	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 2000);
+	 	HAL_Delay(500);
+	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+
+	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings3[0]);
+	 	HAL_Delay(500);
+	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+	 	 /*pintimer = (pintimer + 1) % 6;
 	 	 //ReadPins(pintimer);
 	 	 if (pindownlastcycle > modechanged) {ChangeMode(modeflag);}
 	 	 if (pindownlastcycle > modechanged) {
@@ -395,7 +426,7 @@ int main(void)
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 	 	 } //sets the PWM duty cycle (Capture Compare Value)
-	 	 if (modechanged == 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings[5]);} //sets the PWM duty cycle (Capture Compare Value)
+	 	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings[5]); //sets the PWM duty cycle (Capture Compare Value)
 
 
 
@@ -684,9 +715,9 @@ static void MX_TIM1_Init(void)
   TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
 
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 0;
+  htim1.Init.Prescaler = 10-1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 0;
+  htim1.Init.Period = 4095;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -1037,27 +1068,15 @@ void ShowMode(uint8_t currentmode) {
 		return;
 
 	}
-	/*
-	if (lastAttackFlag > 0) {
-			 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, out);
-			 __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, 0);} //sets the PWM duty cycle (Capture Compare Value)
-	if (lastReleaseFlag > 0) {
-			 __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, out);
-			 __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 0);
-		 } //sets the PWM duty cycle (Capture Compare Value)
-		 __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, ADCReadings[5]); //sets*/
 }
 
 void ClearRGB(void) {
-	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);
-	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);
-	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
 	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
 	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 }
 void ClearLEDs(void) {
-	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_12, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
