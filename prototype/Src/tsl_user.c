@@ -44,6 +44,7 @@
   */ 
 
 #include "tsl_user.h"
+#include "tsl_conf.h"
 
 /*============================================================================*/
 /* Channels                                                                   */
@@ -53,14 +54,22 @@
 CONST TSL_ChannelSrc_T MyChannels_Src[TSLPRM_TOTAL_CHANNELS] =
 {
   { CHANNEL_0_SRC, CHANNEL_0_IO_MSK, CHANNEL_0_GRP_MSK },
-  { CHANNEL_1_SRC, CHANNEL_1_IO_MSK, CHANNEL_1_GRP_MSK }
+  { CHANNEL_1_SRC, CHANNEL_1_IO_MSK, CHANNEL_1_GRP_MSK },
+  { CHANNEL_2_SRC, CHANNEL_2_IO_MSK, CHANNEL_2_GRP_MSK },
+  { CHANNEL_3_SRC, CHANNEL_3_IO_MSK, CHANNEL_3_GRP_MSK },
+  { CHANNEL_4_SRC, CHANNEL_4_IO_MSK, CHANNEL_4_GRP_MSK },
+  { CHANNEL_5_SRC, CHANNEL_5_IO_MSK, CHANNEL_5_GRP_MSK }
 };
 
 /* Destination (ROM) */
 CONST TSL_ChannelDest_T MyChannels_Dest[TSLPRM_TOTAL_CHANNELS] =
 {
   { CHANNEL_0_DEST },
-  { CHANNEL_1_DEST }
+  { CHANNEL_1_DEST },
+  { CHANNEL_2_DEST },
+  { CHANNEL_3_DEST },
+  { CHANNEL_4_DEST },
+  { CHANNEL_5_DEST }
 };
 
 /* Data (RAM) */
@@ -73,7 +82,13 @@ TSL_ChannelData_T MyChannels_Data[TSLPRM_TOTAL_CHANNELS];
 /* List (ROM) */
 CONST TSL_Bank_T MyBanks[TSLPRM_TOTAL_BANKS] = {
   {&MyChannels_Src[0], &MyChannels_Dest[0], MyChannels_Data, BANK_0_NBCHANNELS, BANK_0_MSK_CHANNELS, BANK_0_MSK_GROUPS},
-  {&MyChannels_Src[1], &MyChannels_Dest[1], MyChannels_Data, BANK_1_NBCHANNELS, BANK_1_MSK_CHANNELS, BANK_1_MSK_GROUPS}
+  {&MyChannels_Src[1], &MyChannels_Dest[1], MyChannels_Data, BANK_1_NBCHANNELS, BANK_1_MSK_CHANNELS, BANK_1_MSK_GROUPS},
+  {&MyChannels_Src[2], &MyChannels_Dest[2], MyChannels_Data, BANK_2_NBCHANNELS, BANK_2_MSK_CHANNELS, BANK_2_MSK_GROUPS},
+  {&MyChannels_Src[3], &MyChannels_Dest[3], MyChannels_Data, BANK_3_NBCHANNELS, BANK_3_MSK_CHANNELS, BANK_3_MSK_GROUPS},
+  {&MyChannels_Src[4], &MyChannels_Dest[4], MyChannels_Data, BANK_4_NBCHANNELS, BANK_4_MSK_CHANNELS, BANK_4_MSK_GROUPS},
+  {&MyChannels_Src[5], &MyChannels_Dest[5], MyChannels_Data, BANK_5_NBCHANNELS, BANK_5_MSK_CHANNELS, BANK_5_MSK_GROUPS},
+
+  // {&MyChannels_Src[3], &MyChannels_Dest[3], MyChannels_Data, BANK_1_NBCHANNELS, BANK_1_MSK_CHANNELS, BANK_1_MSK_GROUPS},
 };
 
 /*============================================================================*/
@@ -144,7 +159,11 @@ CONST TSL_TouchKeyMethods_T MyTKeys_Methods =
 CONST TSL_TouchKey_T MyTKeys[TSLPRM_TOTAL_TKEYS] =
 {
   { &MyTKeys_Data[0], &MyTKeys_Param[0], &MyChannels_Data[CHANNEL_0_DEST], MyTKeys_StateMachine, &MyTKeys_Methods },
-  { &MyTKeys_Data[1], &MyTKeys_Param[1], &MyChannels_Data[CHANNEL_1_DEST], MyTKeys_StateMachine, &MyTKeys_Methods }
+  { &MyTKeys_Data[1], &MyTKeys_Param[1], &MyChannels_Data[CHANNEL_1_DEST], MyTKeys_StateMachine, &MyTKeys_Methods },
+  { &MyTKeys_Data[2], &MyTKeys_Param[2], &MyChannels_Data[CHANNEL_2_DEST], MyTKeys_StateMachine, &MyTKeys_Methods },
+  { &MyTKeys_Data[3], &MyTKeys_Param[3], &MyChannels_Data[CHANNEL_3_DEST], MyTKeys_StateMachine, &MyTKeys_Methods },
+  { &MyTKeys_Data[4], &MyTKeys_Param[4], &MyChannels_Data[CHANNEL_4_DEST], MyTKeys_StateMachine, &MyTKeys_Methods },
+  { &MyTKeys_Data[5], &MyTKeys_Param[5], &MyChannels_Data[CHANNEL_5_DEST], MyTKeys_StateMachine, &MyTKeys_Methods },
 };
 
 /*============================================================================*/
@@ -155,7 +174,11 @@ CONST TSL_TouchKey_T MyTKeys[TSLPRM_TOTAL_TKEYS] =
 CONST TSL_Object_T MyObjects[TSLPRM_TOTAL_OBJECTS] =
 {
   { TSL_OBJ_TOUCHKEY, (TSL_TouchKey_T *)&MyTKeys[0] },
-  { TSL_OBJ_TOUCHKEY, (TSL_TouchKey_T *)&MyTKeys[1] }
+  { TSL_OBJ_TOUCHKEY, (TSL_TouchKey_T *)&MyTKeys[1] },
+  { TSL_OBJ_TOUCHKEY, (TSL_TouchKey_T *)&MyTKeys[2] },
+  { TSL_OBJ_TOUCHKEY, (TSL_TouchKey_T *)&MyTKeys[3] },
+  { TSL_OBJ_TOUCHKEY, (TSL_TouchKey_T *)&MyTKeys[4] },
+  { TSL_OBJ_TOUCHKEY, (TSL_TouchKey_T *)&MyTKeys[5] }
 };
 
 /* Group (RAM) */
@@ -298,7 +321,7 @@ void tsl_user_SetThresholds(void)
   */
 void MyTKeys_ErrorStateProcess(void)
 {
-  /* Add here your own processing when a sensor is in Error state */
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
 }
 
 

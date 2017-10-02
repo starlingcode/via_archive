@@ -43,6 +43,7 @@
 #include "fixmath.h"
 #include "fix16.h"
 #include "tables.h"
+#include "tsl_user.h"
 
 /* USER CODE END Includes */
 
@@ -55,6 +56,8 @@ DMA_HandleTypeDef hdma_adc2;
 DMA_HandleTypeDef hdma_adc3;
 
 DAC_HandleTypeDef hdac;
+DMA_HandleTypeDef hdma_dac_ch1;
+DMA_HandleTypeDef hdma_dac_ch2;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
@@ -64,6 +67,8 @@ TSC_HandleTypeDef htsc;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+tsl_user_status_t tsl_status;
+
 __IO uint32_t uhTSCAcquisitionValue1;
 __IO uint32_t uhTSCAcquisitionValue2;
 __IO uint32_t uhTSCAcquisitionValue3;
@@ -205,9 +210,9 @@ uint16_t sampleHoldTimer;
 int benchmark;
 int lastcount;
 fix16_t out;
-extern uint32_t ADCReadings1[3];
+extern uint32_t ADCReadings1[4];
 extern uint32_t ADCReadings2[2];
-extern uint32_t ADCReadings3[1];
+extern uint32_t ADCReadings3[2];
 
 //define our wavetable family as two arrays of 9 wavetables (defined in tables.h), one for attack, one for release
 
@@ -226,9 +231,9 @@ static void MX_ADC2_Init(void);
 static void MX_ADC3_Init(void);
 static void MX_DAC_Init(void);
 static void MX_TIM1_Init(void);
-static void MX_TIM2_Init(void);
 static void MX_TSC_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_TIM2_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
@@ -236,6 +241,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 void ReadPins(uint8_t);
+void ProcessSensors(void);
 void ChangeMode(int);
 void ShowMode(uint8_t);
 void ClearRGB(void);
@@ -277,9 +283,9 @@ int main(void)
   MX_ADC3_Init();
   MX_DAC_Init();
   MX_TIM1_Init();
-  MX_TIM2_Init();
   MX_TSC_Init();
   MX_TIM3_Init();
+  MX_TIM2_Init();
 
   /* USER CODE BEGIN 2 */
   //define our wavetable family as two arrays of 9 wavetables (defined in tables.h), one for attack, one for release
@@ -352,11 +358,11 @@ int main(void)
 
 
 
-    HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 3);
-    HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
-    HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
+      //HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
+      //HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
+      //HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 2);
       HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-      HAL_TIM_Base_Start_IT(&htim3);
+      //HAL_TIM_Base_Start_IT(&htim3);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
@@ -365,6 +371,8 @@ int main(void)
       HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)dacbuffer1, 1, DAC_ALIGN_12B_R);
       HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_2, (uint32_t*)dacbuffer2, 1, DAC_ALIGN_12B_R);
 
+      tsl_user_Init();
+
 
 
   /* USER CODE END 2 */
@@ -372,8 +380,47 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+  {		tsl_status = tsl_user_Exec();
+
+  	  	if (tsl_status != TSL_USER_STATUS_BUSY) {
+  	  	if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT)
+  	  	 {
+  	  			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+  	  	 }
+  	  	 else
+  	  	 {
+  	  		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+
+  	  	 }
+  	  	 if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT)
+  	  	 {
+  	  			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+  	  	 }
+  	  	 else
+  	  	 {
+  	  		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+
+  	  	 }
+  	  	 if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT)
+  	  	 {
+  	  			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+  	  	 }
+  	  	 else
+  	  	 {
+  	  		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+
+  	  	 }
+  	  	 if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT)
+  	  	 {
+  	  			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+  	  	 }
+  	  	 else
+  	  	 {
+  	  		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+
+  	  	 }
+  	  	}
+/*		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
 		HAL_Delay(500);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
 
@@ -389,17 +436,18 @@ int main(void)
 		HAL_Delay(500);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 
-	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 2000);
-	 	HAL_Delay(500);
-	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 
-	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 2000);
-	 	HAL_Delay(500);
-	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, ADCReadings2[0]);
+
+
+	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, ADCReadings2[1]);
+
 
 	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings3[0]);
-	 	HAL_Delay(500);
-	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+*/
+	 //	ProcessSensors(); //Initiates acquisition, sets uhTSCAcquisitionValue1, uhTSCAcquisitionValue2, and
+
+
 	 	 /*pintimer = (pintimer + 1) % 6;
 	 	 //ReadPins(pintimer);
 	 	 if (pindownlastcycle > modechanged) {ChangeMode(modeflag);}
@@ -430,7 +478,6 @@ int main(void)
 
 
 
-	 	 //ProcessSensors(); /*Initiates acquisition, sets uhTSCAcquisitionValue1, uhTSCAcquisitionValue2, and
 	     	//				uhTSCAcquisitionValue3 if acquisition successful*/
 	 	 //SetFlags(); /*Sets flag1, flag2, or flag3 per the unique value combos indicating a touch in the corresponding
 	      //	 	 	 zone*/
@@ -516,15 +563,15 @@ static void MX_ADC1_Init(void)
   hadc1.Instance = ADC1;
   hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 1;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.NbrOfConversion = 4;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   hadc1.Init.LowPowerAutoWait = DISABLE;
   hadc1.Init.Overrun = ADC_OVR_DATA_OVERWRITTEN;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
@@ -545,9 +592,36 @@ static void MX_ADC1_Init(void)
   sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = 1;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_181CYCLES_5;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure Regular Channel 
+    */
+  sConfig.Channel = ADC_CHANNEL_2;
+  sConfig.Rank = 2;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure Regular Channel 
+    */
+  sConfig.Channel = ADC_CHANNEL_3;
+  sConfig.Rank = 3;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure Regular Channel 
+    */
+  sConfig.Channel = ADC_CHANNEL_4;
+  sConfig.Rank = 4;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -572,7 +646,7 @@ static void MX_ADC2_Init(void)
   hadc2.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc2.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc2.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc2.Init.NbrOfConversion = 4;
+  hadc2.Init.NbrOfConversion = 2;
   hadc2.Init.DMAContinuousRequests = ENABLE;
   hadc2.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   hadc2.Init.LowPowerAutoWait = DISABLE;
@@ -587,7 +661,7 @@ static void MX_ADC2_Init(void)
   sConfig.Channel = ADC_CHANNEL_3;
   sConfig.Rank = 1;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
-  sConfig.SamplingTime = ADC_SAMPLETIME_61CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_181CYCLES_5;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
   if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
@@ -597,23 +671,8 @@ static void MX_ADC2_Init(void)
 
     /**Configure Regular Channel 
     */
+  sConfig.Channel = ADC_CHANNEL_4;
   sConfig.Rank = 2;
-  if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-    /**Configure Regular Channel 
-    */
-  sConfig.Rank = 3;
-  if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-    /**Configure Regular Channel 
-    */
-  sConfig.Rank = 4;
   if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -633,14 +692,14 @@ static void MX_ADC3_Init(void)
   hadc3.Instance = ADC3;
   hadc3.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
   hadc3.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc3.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc3.Init.ContinuousConvMode = DISABLE;
+  hadc3.Init.ScanConvMode = ADC_SCAN_ENABLE;
+  hadc3.Init.ContinuousConvMode = ENABLE;
   hadc3.Init.DiscontinuousConvMode = DISABLE;
   hadc3.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc3.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc3.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc3.Init.NbrOfConversion = 1;
-  hadc3.Init.DMAContinuousRequests = DISABLE;
+  hadc3.Init.NbrOfConversion = 2;
+  hadc3.Init.DMAContinuousRequests = ENABLE;
   hadc3.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc3.Init.LowPowerAutoWait = DISABLE;
   hadc3.Init.Overrun = ADC_OVR_DATA_OVERWRITTEN;
@@ -662,9 +721,17 @@ static void MX_ADC3_Init(void)
   sConfig.Channel = ADC_CHANNEL_12;
   sConfig.Rank = 1;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_181CYCLES_5;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
+  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure Regular Channel 
+    */
+  sConfig.Rank = 2;
   if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -780,8 +847,8 @@ static void MX_TIM1_Init(void)
 static void MX_TIM2_Init(void)
 {
 
-  TIM_SlaveConfigTypeDef sSlaveConfig;
   TIM_MasterConfigTypeDef sMasterConfig;
+  TIM_IC_InitTypeDef sConfigIC;
 
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 0;
@@ -789,16 +856,7 @@ static void MX_TIM2_Init(void)
   htim2.Init.Period = 0;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_EXTERNAL1;
-  sSlaveConfig.InputTrigger = TIM_TS_TI1FP1;
-  sSlaveConfig.TriggerPolarity = TIM_TRIGGERPOLARITY_RISING;
-  sSlaveConfig.TriggerFilter = 0;
-  if (HAL_TIM_SlaveConfigSynchronization(&htim2, &sSlaveConfig) != HAL_OK)
+  if (HAL_TIM_IC_Init(&htim2) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
@@ -806,6 +864,15 @@ static void MX_TIM2_Init(void)
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_FALLING;
+  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
+  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
+  sConfigIC.ICFilter = 0;
+  if (HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
@@ -858,13 +925,12 @@ static void MX_TSC_Init(void)
   htsc.Init.SpreadSpectrumDeviation = 1;
   htsc.Init.SpreadSpectrumPrescaler = TSC_SS_PRESC_DIV1;
   htsc.Init.PulseGeneratorPrescaler = TSC_PG_PRESC_DIV64;
-  htsc.Init.MaxCountValue = TSC_MCV_255;
+  htsc.Init.MaxCountValue = TSC_MCV_16383;
   htsc.Init.IODefaultMode = TSC_IODEF_OUT_PP_LOW;
   htsc.Init.SynchroPinPolarity = TSC_SYNC_POLARITY_FALLING;
   htsc.Init.AcquisitionMode = TSC_ACQ_MODE_NORMAL;
   htsc.Init.MaxCountInterrupt = DISABLE;
-  htsc.Init.ChannelIOs = TSC_GROUP5_IO1|TSC_GROUP5_IO2|TSC_GROUP5_IO3|TSC_GROUP6_IO2
-                    |TSC_GROUP6_IO3|TSC_GROUP6_IO4;
+  htsc.Init.ChannelIOs = TSC_GROUP5_IO1|TSC_GROUP5_IO2|TSC_GROUP5_IO3|TSC_GROUP6_IO2|TSC_GROUP6_IO3|TSC_GROUP6_IO4;
   htsc.Init.ShieldIOs = TSC_GROUP3_IO4;
   htsc.Init.SamplingIOs = TSC_GROUP3_IO3|TSC_GROUP5_IO4|TSC_GROUP6_IO1;
   if (HAL_TSC_Init(&htsc) != HAL_OK)
@@ -887,11 +953,17 @@ static void MX_DMA_Init(void)
   /* DMA1_Channel1_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
-  /* DMA2_Channel1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Channel1_IRQn, 1, 0);
-  HAL_NVIC_EnableIRQ(DMA2_Channel1_IRQn);
+  /* DMA1_Channel3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 1, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
+  /* DMA1_Channel4_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 1, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
+  /* DMA2_Channel3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Channel3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Channel3_IRQn);
   /* DMA2_Channel5_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Channel5_IRQn, 1, 0);
+  HAL_NVIC_SetPriority(DMA2_Channel5_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(DMA2_Channel5_IRQn);
 
 }
@@ -950,6 +1022,47 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+
+
+void ProcessSensors(void){
+	HAL_TSC_IODischarge(&htsc, ENABLE);
+    HAL_Delay(1); /* 1 ms is more than enough to discharge all capacitors */
+
+    /*##-3- Start the acquisition process ####################################*/
+    if (HAL_TSC_Start(&htsc) != HAL_OK)
+    {
+      /* Acquisition Error */
+      Error_Handler();
+    }
+
+    /*##-4- Wait for the end of acquisition ##################################*/
+    /*  Before starting a new acquisition, you need to check the current state of
+         the peripheral; if it�s busy you need to wait for the end of current
+         acquisition before starting a new one. */
+    while (HAL_TSC_GetState(&htsc) == HAL_TSC_STATE_BUSY)
+    {
+      /* For simplicity reasons, this example is just waiting till the end of the
+         acquisition, but application may perform other tasks while acquisition
+         operation is ongoing. */
+    }
+
+    /*##-5- Clear flags ######################################################*/
+    __HAL_TSC_CLEAR_FLAG(&htsc, (TSC_FLAG_EOA | TSC_FLAG_MCE));
+
+    /*##-6- Check if the acquisition1 is correct (no max count) ###############*/
+    if (HAL_TSC_GroupGetStatus(&htsc, TSC_GROUP5_IDX) == TSC_GROUP_COMPLETED)
+    {
+      /*##-7- Store the acquisition1 value ####################################*/
+      uhTSCAcquisitionValue1 = HAL_TSC_GroupGetValue(&htsc, TSC_GROUP5_IDX);
+    }
+    /*##-6- Check if the acquisition2 is correct (no max count) ###############*/
+        if (HAL_TSC_GroupGetStatus(&htsc, TSC_GROUP6_IDX) == TSC_GROUP_COMPLETED)
+        {
+          /*##-7- Store the acquisition2 value ####################################*/
+          uhTSCAcquisitionValue2 = HAL_TSC_GroupGetValue(&htsc, TSC_GROUP6_IDX);
+        }
+}
 
 
 void ReadPins(uint8_t pin){

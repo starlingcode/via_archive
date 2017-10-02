@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright © 2016 STMicroelectronics International N.V. 
+  * <h2><center>&copy; Copyright ï¿½ 2016 STMicroelectronics International N.V. 
   * All rights reserved.</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -64,15 +64,15 @@
 
 /** Total number of channels in application (range=1..255)
 */
-#define TSLPRM_TOTAL_CHANNELS (2)
+#define TSLPRM_TOTAL_CHANNELS (6)
 
 /** Total number of banks in application (range=1..255)
 */
-#define TSLPRM_TOTAL_BANKS (2)
+#define TSLPRM_TOTAL_BANKS (6)
 
 /** Total number of "Extended" TouchKeys in application (range=0..255)
 */
-#define TSLPRM_TOTAL_TOUCHKEYS (2)
+#define TSLPRM_TOTAL_TOUCHKEYS (6)
 
 /** Total number of "Basic" TouchKeys in application (range=0..255)
 */
@@ -91,7 +91,7 @@
 /** Total number of sensors/objects in application (range=1..255)
   - Count all TouchKeys, Linear and Rotary sensors
 */
-#define TSLPRM_TOTAL_OBJECTS (2)
+#define TSLPRM_TOTAL_OBJECTS (6)
 
 /** @} Common_Parameters_Number_Of_Elements */
 
@@ -109,7 +109,7 @@
 
 /** Proximity detection usage (0=No, 1=Yes)
 */
-#define TSLPRM_USE_PROX (1)
+#define TSLPRM_USE_PROX (0)
 
 /** Zone management usage (0=No, 1=Yes)
 */
@@ -149,7 +149,7 @@
   - Low value = faster calibration but less precision.
   - High value = slower calibration but more precision.
 */
-#define TSLPRM_CALIB_SAMPLES (4)
+#define TSLPRM_CALIB_SAMPLES (16)
 
 /** Delay in measurement samples before starting the calibration (range=0..40)
   - This is useful if a noise filter is used.
@@ -179,18 +179,18 @@
 /** TouchKeys Detect state input threshold (range=0..255)
   - Enter Detect state if delta is above
 */
-#define TSLPRM_TKEY_DETECT_IN_TH (120)
+#define TSLPRM_TKEY_DETECT_IN_TH (150)
 
 /** TouchKeys Detect state output threshold (range=0..255)
   - Exit Detect state if delta is below
 */
-#define TSLPRM_TKEY_DETECT_OUT_TH (110)
+#define TSLPRM_TKEY_DETECT_OUT_TH (125)
 
 /** TouchKeys re-Calibration threshold (range=0..255)
   - @warning The value is inverted in the sensor state machine
   - Enter Calibration state if delta is below
 */
-#define TSLPRM_TKEY_CALIB_TH (120)
+#define TSLPRM_TKEY_CALIB_TH (150)
 
 /** TouchKey, Linear and Rotary sensors thresholds coefficient (range=0..4)
     This multiplier coefficient is applied on Detect and Re-Calibration thresholds only.
@@ -342,13 +342,13 @@
   - A Low value will result in a higher sensitivity during the Proximity detection but with less noise filtering.
   - A High value will result in improving the system noise immunity but will increase the system response time.
 */
-#define TSLPRM_DEBOUNCE_PROX (2)
+#define TSLPRM_DEBOUNCE_PROX (20)
 
 /** Detect state debounce in samples unit (range=0..63)
   - A Low value will result in a higher sensitivity during the detection but with less noise filtering.
   - A High value will result in improving the system noise immunity but will increase the system response time.
 */
-#define TSLPRM_DEBOUNCE_DETECT (2)
+#define TSLPRM_DEBOUNCE_DETECT (3)
 
 /** Release state debounce in samples unit (range=0..63)
   - A Low value will result in a higher sensitivity during the end-detection but with less noise filtering.
@@ -360,13 +360,13 @@
   - A Low value will result in a higher sensitivity during the recalibration but with less noise filtering.
   - A High value will result in a lower sensitivity during the recalibration but with more noise filtering.
 */
-#define TSLPRM_DEBOUNCE_CALIB (3)
+#define TSLPRM_DEBOUNCE_CALIB (5)
 
 /** Error state debounce in samples unit (range=0..63)
   - A Low value will result in a higher sensitivity to enter in error state.
   - A High value will result in a lower sensitivity to enter in error state.
 */
-#define TSLPRM_DEBOUNCE_ERROR (3)
+#define TSLPRM_DEBOUNCE_ERROR (20)
 
 /** @} Common_Parameters_Debounce */
 
@@ -443,11 +443,11 @@
 
 /** Delay for discharging Cx and Cs capacitors (range=0..65535)
     - The value corresponds to the Softdelay function parameter.
-    -  500 gives around  63 µs delay whatever HCLK
-    - 1000 gives around 125 µs delay whatever HCLK
-    - 2000 gives around 250 µs delay whatever HCLK
+    -  500 gives around  63 ï¿½s delay whatever HCLK
+    - 1000 gives around 125 ï¿½s delay whatever HCLK
+    - 2000 gives around 250 ï¿½s delay whatever HCLK
 */
-#define TSLPRM_DELAY_DISCHARGE_ALL (1000)
+#define TSLPRM_DELAY_DISCHARGE_ALL (2000)
 
 /** IOs default mode when no on-going acquisition (range=0..1)
     - 0: Output push-pull low

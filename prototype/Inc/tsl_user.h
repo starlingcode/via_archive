@@ -49,8 +49,9 @@
 
 #include "tsl.h"
 #include "stm32f3xx_hal.h"
-#include "stm32303e_eval.h"
-#include "stm32303e_eval_lcd.h"
+/*
+#include "stm32f3303e_eval.h"
+#include "stm32303e_eval_lcd.h"*/
 
 /* Select if you use STMStudio software (0=No, 1=Yes) */
 #define USE_STMSTUDIO (0)
@@ -73,27 +74,79 @@ typedef enum
 } tsl_user_status_t;
 
 /* Channel IOs definition */
-#define CHANNEL_0_IO_MSK    (TSC_GROUP8_IO2)
-#define CHANNEL_0_GRP_MSK   (TSC_GROUP8)
-#define CHANNEL_0_SRC       (TSC_GROUP8_IDX) /* Index in source register (TSC->IOGXCR[]) */
-#define CHANNEL_0_DEST      (0) /* Index in destination result array */
+//#define CHANNEL_0_IO_MSK    (TSC_GROUP5_IO1)
+//#define CHANNEL_0_GRP_MSK   (TSC_GROUP5)
+//#define CHANNEL_0_SRC       (TSC_GROUP5_IDX) /* Index in source register (TSC->IOGXCR[]) */
+//#define CHANNEL_0_DEST      (0) /* Index in destination result array */
 
-#define CHANNEL_1_IO_MSK    (TSC_GROUP8_IO4)
-#define CHANNEL_1_GRP_MSK   (TSC_GROUP8)
-#define CHANNEL_1_SRC       (TSC_GROUP8_IDX)
+//#define CHANNEL_1_IO_MSK    (TSC_GROUP5_IO2)
+//#define CHANNEL_1_GRP_MSK   (TSC_GROUP5)
+//#define CHANNEL_1_SRC       (TSC_GROUP5_IDX)
+//#define CHANNEL_1_DEST      (1)
+
+//#define CHANNEL_2_IO_MSK    (TSC_GROUP5_IO3)
+//#define CHANNEL_2_GRP_MSK   (TSC_GROUP5)
+//#define CHANNEL_2_SRC       (TSC_GROUP5_IDX) /* Index in source register (TSC->IOGXCR[]) */
+//#define CHANNEL_2_DEST      (2)
+
+#define CHANNEL_0_IO_MSK    (TSC_GROUP6_IO2)
+#define CHANNEL_0_GRP_MSK   (TSC_GROUP6)
+#define CHANNEL_0_SRC       (TSC_GROUP6_IDX)
+#define CHANNEL_0_DEST      (0)
+
+#define CHANNEL_1_IO_MSK    (TSC_GROUP6_IO3)
+#define CHANNEL_1_GRP_MSK   (TSC_GROUP6)
+#define CHANNEL_1_SRC       (TSC_GROUP6_IDX)
 #define CHANNEL_1_DEST      (1)
 
+#define CHANNEL_2_IO_MSK    (TSC_GROUP6_IO4)
+#define CHANNEL_2_GRP_MSK   (TSC_GROUP6)
+#define CHANNEL_2_SRC       (TSC_GROUP6_IDX)
+#define CHANNEL_2_DEST      (2)
+
+#define CHANNEL_3_IO_MSK    (TSC_GROUP5_IO1)
+#define CHANNEL_3_GRP_MSK   (TSC_GROUP5)
+#define CHANNEL_3_SRC       (TSC_GROUP5_IDX)
+#define CHANNEL_3_DEST      (3)
+
+#define CHANNEL_4_IO_MSK    (TSC_GROUP5_IO2)
+#define CHANNEL_4_GRP_MSK   (TSC_GROUP5)
+#define CHANNEL_4_SRC       (TSC_GROUP5_IDX)
+#define CHANNEL_4_DEST      (4)
+
+#define CHANNEL_5_IO_MSK    (TSC_GROUP5_IO3)
+#define CHANNEL_5_GRP_MSK   (TSC_GROUP5)
+#define CHANNEL_5_SRC       (TSC_GROUP5_IDX)
+#define CHANNEL_5_DEST      (5)
+
 /* Shield IOs definition */
-#define SHIELD_IO_MSK       (TSC_GROUP6_IO2)
+#define SHIELD_IO_MSK       (TSC_GROUP3_IO4)
 
 /* Banks definition */
 #define BANK_0_NBCHANNELS    (1)
-#define BANK_0_MSK_CHANNELS  (CHANNEL_0_IO_MSK | SHIELD_IO_MSK)
+#define BANK_0_MSK_CHANNELS  (CHANNEL_0_IO_MSK )
 #define BANK_0_MSK_GROUPS    (CHANNEL_0_GRP_MSK)
 
 #define BANK_1_NBCHANNELS    (1)
-#define BANK_1_MSK_CHANNELS  (CHANNEL_1_IO_MSK | SHIELD_IO_MSK)
+#define BANK_1_MSK_CHANNELS  (CHANNEL_1_IO_MSK )
 #define BANK_1_MSK_GROUPS    (CHANNEL_1_GRP_MSK)
+
+#define BANK_2_NBCHANNELS    (1)
+#define BANK_2_MSK_CHANNELS  (CHANNEL_2_IO_MSK )
+#define BANK_2_MSK_GROUPS    (CHANNEL_2_GRP_MSK)
+
+#define BANK_3_NBCHANNELS    (1)
+#define BANK_3_MSK_CHANNELS  (CHANNEL_3_IO_MSK )
+#define BANK_3_MSK_GROUPS    (CHANNEL_3_GRP_MSK)
+
+#define BANK_4_NBCHANNELS    (1)
+#define BANK_4_MSK_CHANNELS  (CHANNEL_4_IO_MSK )
+#define BANK_4_MSK_GROUPS    (CHANNEL_4_GRP_MSK)
+
+#define BANK_5_NBCHANNELS    (1)
+#define BANK_5_MSK_CHANNELS  (CHANNEL_5_IO_MSK )
+#define BANK_5_MSK_GROUPS    (CHANNEL_5_GRP_MSK)
+
                        
 /* User Parameters */
 extern CONST TSL_Bank_T MyBanks[];

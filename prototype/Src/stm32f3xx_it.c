@@ -124,15 +124,15 @@ fix16_t subCount;
 uint8_t pendulumDirection;
 
 // ADC/DAC DMA variables
-uint32_t ADCReadings1[3];
+uint32_t ADCReadings1[4];
 uint32_t ADCReadings2[2];
-uint32_t ADCReadings3[1];
-uint32_t time1Knob = ADCReadings2[0];
-uint32_t time2Knob = ADCReadings2[1];
-uint32_t time1CV = ADCReadings1[0];
-uint32_t time2CV = ADCReadings1[1];
-uint32_t morphCV = ADCReadings1[2];
-uint32_t morphKnob = ADCReadings3[0];
+uint32_t ADCReadings3[2];
+#define time1Knob ADCReadings2[0]
+#define time2Knob ADCReadings2[1]
+#define time1CV ADCReadings1[0]
+#define time2CV ADCReadings1[1]
+#define morphCV ADCReadings1[2]
+#define morphKnob ADCReadings3[0];
 uint16_t dacbuffer1;
 uint16_t dacbuffer2;
 
@@ -154,7 +154,8 @@ uint8_t family;
 extern DMA_HandleTypeDef hdma_adc1;
 extern DMA_HandleTypeDef hdma_adc2;
 extern DMA_HandleTypeDef hdma_adc3;
-extern TIM_HandleTypeDef htim2;
+extern DMA_HandleTypeDef hdma_dac_ch1;
+extern DMA_HandleTypeDef hdma_dac_ch2;
 extern TIM_HandleTypeDef htim3;
 
 /******************************************************************************/
@@ -314,19 +315,31 @@ void DMA1_Channel1_IRQHandler(void)
 }
 
 /**
-* @brief This function handles TIM2 global interrupt.
+* @brief This function handles DMA1 channel3 global interrupt.
 */
-void TIM2_IRQHandler(void)
+void DMA1_Channel3_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM2_IRQn 0 */
-	oscillatorActive = 1;
-	retrig = 1;
+  /* USER CODE BEGIN DMA1_Channel3_IRQn 0 */
 
-  /* USER CODE END TIM2_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim2);
-  /* USER CODE BEGIN TIM2_IRQn 1 */
+  /* USER CODE END DMA1_Channel3_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_dac_ch1);
+  /* USER CODE BEGIN DMA1_Channel3_IRQn 1 */
 
-  /* USER CODE END TIM2_IRQn 1 */
+  /* USER CODE END DMA1_Channel3_IRQn 1 */
+}
+
+/**
+* @brief This function handles DMA1 channel4 global interrupt.
+*/
+void DMA1_Channel4_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel4_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel4_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_dac_ch2);
+  /* USER CODE BEGIN DMA1_Channel4_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel4_IRQn 1 */
 }
 
 /**
@@ -337,13 +350,10 @@ void TIM3_IRQHandler(void)
   /* USER CODE BEGIN TIM3_IRQn 0 */
 
 	if (oscillatorActive){
-					//writing this pin low at the start of our interrupt then setting it upon completion allows easy clocking with a scope
-					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
 
 					//write the current oscillator value to dac1, and its inverse to dac2 (crossfading)
 	  				dacbuffer2 = out;
-	  				dacbuffer1 = (65535 - out
-	  						);
+	  				dacbuffer1 = (65535 - out);
 
 	  				//getAverages;
 
@@ -354,10 +364,7 @@ void TIM3_IRQHandler(void)
 	  	  	  		if (position < (familyArray[familyIndicator].tableLength << 16)) {attack(); setAttack();}
 	  	  	  		if (position >= (familyArray[familyIndicator].tableLength << 16) && position < (familyArray[familyIndicator].tableLength << 17)) {release(); setRelease();}
 	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
-		  	  		for (int q = 1; q < 8; q++) {morphBuffer[q] = morphBuffer[q-1];}
 	  	  	  		fixMorph = morphKnob;
-		  	  		//morphBuffer[0] = getMorph;
-		  	  		//fixMorph = (morphBuffer[0] + morphBuffer[0] + morphBuffer[2] + morphBuffer[3] + morphBuffer[4] + morphBuffer[5] + morphBuffer[6] + morphBuffer[7]) >> 3;
 		  	  		if (fixMorph > 4095) {fixMorph = 4095;}
 		  	  		if (fixMorph < 0) {fixMorph = 0;}
 	  	  	  		//if we are in high speed and not looping, activate drum mode
@@ -367,9 +374,9 @@ void TIM3_IRQHandler(void)
 	  		  	  		//use the expo decay scaled by the manual morph control to modulate morph
 	  		  	  		fixMorph = fix16_mul(exposcale, fixMorph);
 	  		  	  	}
+	}
 
-
-
+	  		  	  	/*
 	  		  	  	//moving towards a, trigger the appropriate sample and hold routine with flag toa
 	  	  	  		if (intoattackfroml || intoreleasefromr) {
 	  	  	  			sampleHoldDirection = toward_a;
@@ -389,14 +396,13 @@ void TIM3_IRQHandler(void)
 	  	  			  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 	  	  			  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 	  	  			}
-	  	  			//this completes the benchmark test
-	  				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
 	}
 	//allow the sample and holds to pass when the oscillator is at rest
-	else  { // if (!oscillatorActive) {
+	else  {
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		  }
+		  }*/
+
 
   /* USER CODE END TIM3_IRQn 0 */
   HAL_TIM_IRQHandler(&htim3);
@@ -406,17 +412,17 @@ void TIM3_IRQHandler(void)
 }
 
 /**
-* @brief This function handles DMA2 channel1 global interrupt.
+* @brief This function handles DMA2 channel3 global interrupt.
 */
-void DMA2_Channel1_IRQHandler(void)
+void DMA2_Channel3_IRQHandler(void)
 {
-  /* USER CODE BEGIN DMA2_Channel1_IRQn 0 */
+  /* USER CODE BEGIN DMA2_Channel3_IRQn 0 */
 
-  /* USER CODE END DMA2_Channel1_IRQn 0 */
+  /* USER CODE END DMA2_Channel3_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_adc2);
-  /* USER CODE BEGIN DMA2_Channel1_IRQn 1 */
+  /* USER CODE BEGIN DMA2_Channel3_IRQn 1 */
 
-  /* USER CODE END DMA2_Channel1_IRQn 1 */
+  /* USER CODE END DMA2_Channel3_IRQn 1 */
 }
 
 /**
@@ -591,55 +597,6 @@ void getPhase(void) {
 
 	}
 
-/*	if (trigMode == gated){
-		if (position < span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) {
-			if (speed == low) {inc = -time2Knob;}
-			if (speed == high) {inc = -inc;}
-		}
-		if (position > span && retrig == 1 && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) {
-			if (speed == low) {inc = -time1Knob;}
-			if (speed == high) {inc = -inc;}
-		}
-	}
-
-	//in non gated retrigger (3) mode, work backwards to attack if retrig flag is raised in release regardless of gating
-	else if (trigMode == nongatedretrigger){
-\\		if (position <= span) {retrig = 0;}
-\\		if (position > span && retrig) {
-			if (speed == low)
-				{inc = -time1Knob;}
-			else // high speed
-				{inc = -inc;}
-		}
-	}
-
-	 //in pendulum mode,a retrtrigger increments a counter modulo 2, then the retrigger flag is reset to 0
-	//when that counter is 1, we make flip the sign of the increment, changing direction of playback in the wavetable
-	else if (trigMode == pendulum) {
-		if  (retrig) {
-			pendulumDirection = (pendulumDirection + 1) % 2;
-			retrig = 0;}
-		//reset our count to 0 so we always increment forward through attack when triggering from rest
-		if  (loop == noloop && (position <= 0 || position >= spanx2)) {pendulumDirection = 0;}
-
-		//reverse direction of the oscillator
-		if (pendulumDirection == 1) {
-			inc = -inc;
-		}
-
-	};
-
-	// and here is the result of what we have done
-	position = position + inc;
-
-	// a retrigger in hard sync overrides everything above, notice we didnt wipe the retrigger flag during attack in this mode
-	if (trigMode == hardsync && retrig == 1) {
-		position = 0;
-		retrig = 0;
-	}
-
-*/
-
 	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode
 	// note these only work for positions +/- 1 cycle width
 
@@ -752,9 +709,10 @@ uint32_t doAverage(uint32_t reading) {
 }
 */
 
-void EXTI15_10_IRQHandler(void)
-{
+//void EXTI15_10_IRQHandler(void)
+//{
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+	/*
 	if (sampleHoldDirection == toward_a) { //this indicates that the pointer is "moving towards a", which informs our logic about which sample and hold operation should be performed per mode
 
 		  if (sampleHoldMode == a) { // sample a, for the sample and hold, pin low or GPIO_PIN_RESET holds and pin high or GPIO_PIN_SET tracks
@@ -810,7 +768,7 @@ void EXTI15_10_IRQHandler(void)
 		  	}
 
 	}
-}
+}*/
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

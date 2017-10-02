@@ -94,8 +94,6 @@ enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 #define GREEN_LED_GPIO_Port GPIOA
 #define BLUE_LED_Pin GPIO_PIN_10
 #define BLUE_LED_GPIO_Port GPIOA
-#define trig_in_Pin GPIO_PIN_15
-#define trig_in_GPIO_Port GPIOA
 #define B_LED_Pin GPIO_PIN_5
 #define B_LED_GPIO_Port GPIOB
 #define TSC_G5_SAMPLING_Pin GPIO_PIN_7
