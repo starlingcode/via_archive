@@ -144,8 +144,8 @@ enum sampleHoldModeTypes sampleHoldMode;
 
 uint8_t family;
 
-
 extern TIM_HandleTypeDef htim1;
+
 
 
 /* USER CODE END 0 */
@@ -156,6 +156,7 @@ extern DMA_HandleTypeDef hdma_adc2;
 extern DMA_HandleTypeDef hdma_adc3;
 extern DMA_HandleTypeDef hdma_dac_ch1;
 extern DMA_HandleTypeDef hdma_dac_ch2;
+extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 
 /******************************************************************************/
@@ -343,13 +344,28 @@ void DMA1_Channel4_IRQHandler(void)
 }
 
 /**
+* @brief This function handles TIM2 global interrupt.
+*/
+void TIM2_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM2_IRQn 0 */
+	oscillatorActive = 1;
+	retrig = 1;
+  /* USER CODE END TIM2_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim2);
+  /* USER CODE BEGIN TIM2_IRQn 1 */
+
+  /* USER CODE END TIM2_IRQn 1 */
+}
+
+/**
 * @brief This function handles TIM3 global interrupt.
 */
 void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
 
-	if (oscillatorActive){
+	if (oscillatorActive || loop == looping){
 
 					//write the current oscillator value to dac1, and its inverse to dac2 (crossfading)
 	  				dacbuffer2 = out;
@@ -402,6 +418,7 @@ void TIM3_IRQHandler(void)
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 		  }*/
+
 
 
   /* USER CODE END TIM3_IRQn 0 */
@@ -462,7 +479,9 @@ void attack(void) {
 	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, waveFrac);
 	//interpolate between those based upon morph (biinterpolation)
 	out = fix16_lerp8(interp1, interp2, morphFrac);
-	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
+
+
+
 }
 
 
@@ -494,7 +513,8 @@ void release(void) {
 	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, waveFrac);
 	//interpolate between those based upon morph (biinterpolation)
 	out = fix16_lerp8(interp1, interp2, morphFrac);
-	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);
+
+
 }
 
 

@@ -262,8 +262,7 @@ int main(void)
   /* MCU Configuration----------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-
-	HAL_Init();
+  HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -381,7 +380,8 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {
+  { __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+	  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4000);
 		tsl_status = tsl_user_Exec();
 
   	  	if (tsl_status != TSL_USER_STATUS_BUSY) {
@@ -415,10 +415,11 @@ int main(void)
 	 		 		 	 	 	 break;
 	 		 		 	 }
 
-  	  	}
+	 	 	 }
 
 	 	}
-	 	/*
+
+
 	 	 if (lastAttackFlag > 0 && modechanged == 0) {
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);} //sets the PWM duty cycle (Capture Compare Value)
@@ -426,7 +427,7 @@ int main(void)
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 	 	 } //sets the PWM duty cycle (Capture Compare Value)
-	 	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings[5]); //sets the PWM duty cycle (Capture Compare Value)
+	 	 //__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings[5]); //sets the PWM duty cycle (Capture Compare Value)
 
 
 
@@ -876,13 +877,14 @@ static void MX_TSC_Init(void)
   htsc.Init.SpreadSpectrum = DISABLE;
   htsc.Init.SpreadSpectrumDeviation = 1;
   htsc.Init.SpreadSpectrumPrescaler = TSC_SS_PRESC_DIV1;
-  htsc.Init.PulseGeneratorPrescaler = TSC_PG_PRESC_DIV64;
+  htsc.Init.PulseGeneratorPrescaler = TSC_PG_PRESC_DIV32;
   htsc.Init.MaxCountValue = TSC_MCV_16383;
   htsc.Init.IODefaultMode = TSC_IODEF_OUT_PP_LOW;
   htsc.Init.SynchroPinPolarity = TSC_SYNC_POLARITY_FALLING;
   htsc.Init.AcquisitionMode = TSC_ACQ_MODE_NORMAL;
   htsc.Init.MaxCountInterrupt = DISABLE;
-  htsc.Init.ChannelIOs = TSC_GROUP5_IO1|TSC_GROUP5_IO2|TSC_GROUP5_IO3|TSC_GROUP6_IO2|TSC_GROUP6_IO3|TSC_GROUP6_IO4;
+  htsc.Init.ChannelIOs = TSC_GROUP5_IO1|TSC_GROUP5_IO2|TSC_GROUP5_IO3|TSC_GROUP6_IO2
+                    |TSC_GROUP6_IO3|TSC_GROUP6_IO4;
   htsc.Init.ShieldIOs = TSC_GROUP3_IO4;
   htsc.Init.SamplingIOs = TSC_GROUP3_IO3|TSC_GROUP5_IO4|TSC_GROUP6_IO1;
   if (HAL_TSC_Init(&htsc) != HAL_OK)
@@ -906,10 +908,10 @@ static void MX_DMA_Init(void)
   HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
   /* DMA1_Channel3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 1, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
   /* DMA1_Channel4_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 1, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 3, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
   /* DMA2_Channel3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Channel3_IRQn, 0, 0);
@@ -1020,7 +1022,7 @@ void ProcessSensors(void){
 void ReadPins(void){
 	pindownlastcycle = modechanged;
 
-	    if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
+	    if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 1;
 	    	modechanged = 1;
 	    	ClearRGB();
@@ -1030,7 +1032,7 @@ void ReadPins(void){
 	    	if (modeflag == 1) {modechanged = 0;}
 	    }
 
-	    if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
+	    if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 2;
 	    	modechanged = 1;
 	    	ClearRGB();
@@ -1041,7 +1043,7 @@ void ReadPins(void){
 	    }
 
 
-	    if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
+	    if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 3;
 	    	modechanged = 1;
 	    	ClearRGB();
@@ -1052,7 +1054,7 @@ void ReadPins(void){
 	    }
 
 
-	    if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
+	    if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 4;
 	    	modechanged = 1;
 	    	ClearRGB();
@@ -1062,7 +1064,7 @@ void ReadPins(void){
 	    	if (modeflag == 4) {modechanged = 0;}
 	    }
 
-	    if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
+	    if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 5;
 	    	modechanged = 1;
 	    	ClearRGB();
@@ -1072,7 +1074,7 @@ void ReadPins(void){
 	    	if (modeflag == 5) {modechanged = 0;}
 	    }
 
-	    if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
+	    if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 6;
 	    	modechanged = 1;
 	    	ClearRGB();
