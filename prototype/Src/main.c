@@ -62,6 +62,7 @@ DMA_HandleTypeDef hdma_dac_ch2;
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim6;
 
 TSC_HandleTypeDef htsc;
 
@@ -234,6 +235,7 @@ static void MX_TIM1_Init(void);
 static void MX_TSC_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM2_Init(void);
+static void MX_TIM6_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
@@ -286,6 +288,7 @@ int main(void)
   MX_TSC_Init();
   MX_TIM3_Init();
   MX_TIM2_Init();
+  MX_TIM6_Init();
 
   /* USER CODE BEGIN 2 */
   //define our wavetable family as two arrays of 9 wavetables (defined in tables.h), one for attack, one for release
@@ -362,12 +365,12 @@ int main(void)
       HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
       //HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 2);
       HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-      HAL_TIM_Base_Start_IT(&htim3);
+      HAL_TIM_Base_Start_IT(&htim6);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-      HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
-      HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
+      //HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
+      //HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
       HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)dacbuffer1, 1, DAC_ALIGN_12B_R);
       HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_2, (uint32_t*)dacbuffer2, 1, DAC_ALIGN_12B_R);
 
@@ -865,6 +868,31 @@ static void MX_TIM3_Init(void)
 
 }
 
+/* TIM6 init function */
+static void MX_TIM6_Init(void)
+{
+
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim6.Instance = TIM6;
+  htim6.Init.Prescaler = 1-1;
+  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim6.Init.Period = 1000;
+  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /* TSC init function */
 static void MX_TSC_Init(void)
 {
@@ -908,13 +936,13 @@ static void MX_DMA_Init(void)
   HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
   /* DMA1_Channel3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 2, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
   /* DMA1_Channel4_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 3, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
   /* DMA2_Channel3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Channel3_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA2_Channel3_IRQn, 3, 0);
   HAL_NVIC_EnableIRQ(DMA2_Channel3_IRQn);
   /* DMA2_Channel5_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Channel5_IRQn, 2, 0);

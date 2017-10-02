@@ -156,8 +156,10 @@ extern DMA_HandleTypeDef hdma_adc2;
 extern DMA_HandleTypeDef hdma_adc3;
 extern DMA_HandleTypeDef hdma_dac_ch1;
 extern DMA_HandleTypeDef hdma_dac_ch2;
+extern DAC_HandleTypeDef hdac;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim6;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -365,11 +367,27 @@ void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
 
+  /* USER CODE END TIM3_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim3);
+  /* USER CODE BEGIN TIM3_IRQn 1 */
+
+  /* USER CODE END TIM3_IRQn 1 */
+}
+
+/**
+* @brief This function handles Timer 6 interrupt and DAC underrun interrupts.
+*/
+void TIM6_DAC_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
+
+
 	if (oscillatorActive || loop == looping){
 
 					//write the current oscillator value to dac1, and its inverse to dac2 (crossfading)
-	  				dacbuffer2 = out;
-	  				dacbuffer1 = (65535 - out);
+	  				//dacbuffer2 = out;
+	  				dacbuffer1 = (4095 - out);
+	  				HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, out);
 
 	  				//getAverages;
 
@@ -421,11 +439,13 @@ void TIM3_IRQHandler(void)
 
 
 
-  /* USER CODE END TIM3_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim3);
-  /* USER CODE BEGIN TIM3_IRQn 1 */
 
-  /* USER CODE END TIM3_IRQn 1 */
+  /* USER CODE END TIM6_DAC_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim6);
+  HAL_DAC_IRQHandler(&hdac);
+  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
+
+  /* USER CODE END TIM6_DAC_IRQn 1 */
 }
 
 /**
