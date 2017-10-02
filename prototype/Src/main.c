@@ -240,7 +240,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-void ReadPins(uint8_t);
+void ReadPins(void);
 void ProcessSensors(void);
 void ChangeMode(int);
 void ShowMode(uint8_t);
@@ -262,7 +262,8 @@ int main(void)
   /* MCU Configuration----------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+
+	HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -359,10 +360,10 @@ int main(void)
 
 
       //HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
-      //HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
+      HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
       //HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 2);
       HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-      //HAL_TIM_Base_Start_IT(&htim3);
+      HAL_TIM_Base_Start_IT(&htim3);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
@@ -380,93 +381,44 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {		tsl_status = tsl_user_Exec();
+  {
+		tsl_status = tsl_user_Exec();
 
   	  	if (tsl_status != TSL_USER_STATUS_BUSY) {
-  	  	if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT)
-  	  	 {
-  	  			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-  	  	 }
-  	  	 else
-  	  	 {
-  	  		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
-
-  	  	 }
-  	  	 if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT)
-  	  	 {
-  	  			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-  	  	 }
-  	  	 else
-  	  	 {
-  	  		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
-
-  	  	 }
-  	  	 if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT)
-  	  	 {
-  	  			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-  	  	 }
-  	  	 else
-  	  	 {
-  	  		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-
-  	  	 }
-  	  	 if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT)
-  	  	 {
-  	  			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
-  	  	 }
-  	  	 else
-  	  	 {
-  	  		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
-
-  	  	 }
-  	  	}
-/*		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-		HAL_Delay(500);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
-
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
-		HAL_Delay(500);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
-
-		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
-		HAL_Delay(500);
-		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_RESET);
-
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		HAL_Delay(500);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-
-
-	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, ADCReadings2[0]);
-
-
-	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, ADCReadings2[1]);
-
-
-	 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings3[0]);
-*/
-	 //	ProcessSensors(); //Initiates acquisition, sets uhTSCAcquisitionValue1, uhTSCAcquisitionValue2, and
-
-
-	 	 /*pintimer = (pintimer + 1) % 6;
-	 	 //ReadPins(pintimer);
-	 	 if (pindownlastcycle > modechanged) {ChangeMode(modeflag);}
+	 	 ReadPins();
 	 	 if (pindownlastcycle > modechanged) {
-	 			 if (modeflag == 1) {
-	 				 for (int i = 0; i < 10000; i++) {ShowMode(speed);}
-	 				 ClearLEDs();
-	 			 }
-	 			 else if (modeflag == 2) {
-	 				 for (int i = 0; i < 10000; i++) {ShowMode(trigMode);}
-	 				 ClearLEDs();}
-	 			 else if (modeflag == 3) {
-	 				 for (int i = 0; i < 10000; i++) {ShowMode(loop);}
-	 				 ClearLEDs();}
-	 			 else if (modeflag == 4) {
-	 				 for (int i = 0; i < 10000; i++) {ShowMode(sampleHoldMode);}
-	 				 ClearLEDs();}
-	 	}
+	 		 		 	 ChangeMode(modeflag);
+	 		 		 	 switch (modeflag) {
+	 		 		 	 case 1: ShowMode(speed);
+	 		 		 	 	 	 HAL_Delay(500);
+	 		 		 	 	 	 ClearLEDs();
+	 		 		 	 	 	 break;
+	 		 		 	 case 2: ShowMode(trigMode);
+		 		 	 	 	 	 HAL_Delay(500);
+		 		 	 	 	 	 ClearLEDs();
+	 		 		 	 	 	 break;
+	 		 		 	 case 3: ShowMode(loop);
+		 		 	 	 	 	 HAL_Delay(500);
+		 		 	 	 	 	 ClearLEDs();
+	 		 		 	 	 	 break;
+	 		 		 	 case 4: ShowMode(sampleHoldMode);
+ 		 	 	 	 	 	 	 HAL_Delay(500);
+ 		 	 	 	 	 	 	 ClearLEDs();
+	 		 		 	 	 	 break;
+	 		 		 	 case 5: ShowMode(familyIndicator);
+ 		 	 	 	 	 	 	 HAL_Delay(500);
+ 		 	 	 	 	 	 	 ClearLEDs();
+	 		 		 	 	 	 break;
+	 		 		 	 case 6: ShowMode(familyIndicator);
+ 		 	 	 	 	 	 	 HAL_Delay(500);
+ 		 	 	 	 	 	 	 ClearLEDs();
+	 		 		 	 	 	 break;
+	 		 		 	 }
 
+  	  	}
+
+	 	}
+	 	/*
 	 	 if (lastAttackFlag > 0 && modechanged == 0) {
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);} //sets the PWM duty cycle (Capture Compare Value)
@@ -1065,10 +1017,10 @@ void ProcessSensors(void){
 }
 
 
-void ReadPins(uint8_t pin){
+void ReadPins(void){
 	pindownlastcycle = modechanged;
-	if (pin == 0) {
-	    if (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8) == GPIO_PIN_RESET) {
+
+	    if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 1;
 	    	modechanged = 1;
 	    	ClearRGB();
@@ -1077,9 +1029,8 @@ void ReadPins(uint8_t pin){
 	    else {
 	    	if (modeflag == 1) {modechanged = 0;}
 	    }
-	}
-	if (pin == 1) {
-	    if (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_9) == GPIO_PIN_RESET) {
+
+	    if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 2;
 	    	modechanged = 1;
 	    	ClearRGB();
@@ -1088,9 +1039,9 @@ void ReadPins(uint8_t pin){
 	    else {
 	    	if (modeflag == 2) {modechanged = 0;}
 	    }
-	}
-	if (pin == 2) {
-	    if (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10) == GPIO_PIN_RESET) {
+
+
+	    if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 3;
 	    	modechanged = 1;
 	    	ClearRGB();
@@ -1099,9 +1050,9 @@ void ReadPins(uint8_t pin){
 	    else {
 	    	if (modeflag == 3) {modechanged = 0;}
 	    }
-	}
-	if (pin == 3) {
-	    if (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_11) == GPIO_PIN_RESET) {
+
+
+	    if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 4;
 	    	modechanged = 1;
 	    	ClearRGB();
@@ -1110,18 +1061,27 @@ void ReadPins(uint8_t pin){
 	    else {
 	    	if (modeflag == 4) {modechanged = 0;}
 	    }
-	}
-	if (pin == 4) {
-	    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == GPIO_PIN_RESET) {
+
+	    if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 5;
 	    	modechanged = 1;
 	    	ClearRGB();
 	    	ShowMode(familyIndicator);
 	    }
 	    else {
-	    	if (modeflag == 4) {modechanged = 0;}
+	    	if (modeflag == 5) {modechanged = 0;}
 	    }
-	}
+
+	    if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
+	    	modeflag = 6;
+	    	modechanged = 1;
+	    	ClearRGB();
+	    	ShowMode(familyIndicator);
+	    }
+	    else {
+	    	if (modeflag == 6) {modechanged = 0;}
+	    }
+
 }
 
 void ChangeMode(int mode) {
@@ -1140,28 +1100,36 @@ void ChangeMode(int mode) {
 		if (mode == 5) {
 			familyIndicator = (familyIndicator + 1) % 8;
 		}
+		if (mode == 6) {
+			familyIndicator = (familyIndicator - 1);
+			if (familyIndicator < 0) {
+				familyIndicator = 7;
+			}
+		}
 }
 
 void ShowMode(uint8_t currentmode) {
 	if (currentmode == 1) {
-		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_12, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
 		return;
 	}
 	if (currentmode == 2) {
-		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_12, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 		return;
 	}
 	if (currentmode == 3) {
-		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_12, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
 		return;
 
 	}
 	if (currentmode == 4) {
+		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
 		return;
 
 	}
@@ -1176,7 +1144,6 @@ void ShowMode(uint8_t currentmode) {
 
 	}
 	if (currentmode == 7) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
 		return;
 

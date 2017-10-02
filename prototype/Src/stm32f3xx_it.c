@@ -145,7 +145,7 @@ enum sampleHoldModeTypes sampleHoldMode;
 uint8_t family;
 
 
-
+extern TIM_HandleTypeDef htim1;
 
 
 /* USER CODE END 0 */
@@ -462,6 +462,7 @@ void attack(void) {
 	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, waveFrac);
 	//interpolate between those based upon morph (biinterpolation)
 	out = fix16_lerp8(interp1, interp2, morphFrac);
+	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
 }
 
 
@@ -493,6 +494,7 @@ void release(void) {
 	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, waveFrac);
 	//interpolate between those based upon morph (biinterpolation)
 	out = fix16_lerp8(interp1, interp2, morphFrac);
+	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);
 }
 
 
