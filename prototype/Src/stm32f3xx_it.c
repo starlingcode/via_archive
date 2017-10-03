@@ -133,8 +133,8 @@ uint32_t ADCReadings3[2];
 #define time2CV ADCReadings1[1]
 #define morphCV ADCReadings1[2]
 #define morphKnob ADCReadings3[0];
-uint16_t dacbuffer1;
-uint16_t dacbuffer2;
+uint16_t dacbuffer1[1];
+uint16_t dacbuffer2[1];
 
 // mode indicators, determined in the main loop
 enum speedTypes speed;
@@ -158,7 +158,6 @@ extern DMA_HandleTypeDef hdma_dac_ch1;
 extern DMA_HandleTypeDef hdma_dac_ch2;
 extern DAC_HandleTypeDef hdac;
 extern TIM_HandleTypeDef htim2;
-extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim6;
 
 /******************************************************************************/
@@ -361,20 +360,6 @@ void TIM2_IRQHandler(void)
 }
 
 /**
-* @brief This function handles TIM3 global interrupt.
-*/
-void TIM3_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM3_IRQn 0 */
-
-  /* USER CODE END TIM3_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim3);
-  /* USER CODE BEGIN TIM3_IRQn 1 */
-
-  /* USER CODE END TIM3_IRQn 1 */
-}
-
-/**
 * @brief This function handles Timer 6 interrupt and DAC underrun interrupts.
 */
 void TIM6_DAC_IRQHandler(void)
@@ -385,9 +370,9 @@ void TIM6_DAC_IRQHandler(void)
 	if (oscillatorActive || loop == looping){
 
 					//write the current oscillator value to dac1, and its inverse to dac2 (crossfading)
-	  				//dacbuffer2 = out;
-	  				dacbuffer1 = (4095 - out);
-	  				HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, out);
+	  				dacbuffer1[0] = out;
+					dacbuffer2[0] = 4095 - out;
+
 
 	  				//getAverages;
 
@@ -449,17 +434,17 @@ void TIM6_DAC_IRQHandler(void)
 }
 
 /**
-* @brief This function handles DMA2 channel3 global interrupt.
+* @brief This function handles DMA2 channel1 global interrupt.
 */
-void DMA2_Channel3_IRQHandler(void)
+void DMA2_Channel1_IRQHandler(void)
 {
-  /* USER CODE BEGIN DMA2_Channel3_IRQn 0 */
+  /* USER CODE BEGIN DMA2_Channel1_IRQn 0 */
 
-  /* USER CODE END DMA2_Channel3_IRQn 0 */
+  /* USER CODE END DMA2_Channel1_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_adc2);
-  /* USER CODE BEGIN DMA2_Channel3_IRQn 1 */
+  /* USER CODE BEGIN DMA2_Channel1_IRQn 1 */
 
-  /* USER CODE END DMA2_Channel3_IRQn 1 */
+  /* USER CODE END DMA2_Channel1_IRQn 1 */
 }
 
 /**
@@ -499,6 +484,7 @@ void attack(void) {
 	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, waveFrac);
 	//interpolate between those based upon morph (biinterpolation)
 	out = fix16_lerp8(interp1, interp2, morphFrac);
+	if (out > 4095) {out = 4095;};
 
 
 
@@ -533,6 +519,7 @@ void release(void) {
 	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, waveFrac);
 	//interpolate between those based upon morph (biinterpolation)
 	out = fix16_lerp8(interp1, interp2, morphFrac);
+	if (out > 4095) {out = 4095;};
 
 
 }
@@ -730,7 +717,8 @@ void drum(void) {
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
 	exposcale = lookuptable[subCount] >> 10;
 	//scale the oscillator
-	out = fix16_mul (out, exposcale);
+	out = fix16_mul (out, exposcale)
+			;
 }
 /*
 void getAverages(void) {

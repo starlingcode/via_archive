@@ -61,7 +61,6 @@ DMA_HandleTypeDef hdma_dac_ch2;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
-TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim6;
 
 TSC_HandleTypeDef htsc;
@@ -213,7 +212,7 @@ int lastcount;
 fix16_t out;
 extern uint32_t ADCReadings1[4];
 extern uint32_t ADCReadings2[2];
-extern uint32_t ADCReadings3[2];
+extern uint32_t ADCReadings3[1];
 
 //define our wavetable family as two arrays of 9 wavetables (defined in tables.h), one for attack, one for release
 
@@ -233,7 +232,6 @@ static void MX_ADC3_Init(void);
 static void MX_DAC_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TSC_Init(void);
-static void MX_TIM3_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM6_Init(void);
 
@@ -286,7 +284,6 @@ int main(void)
   MX_DAC_Init();
   MX_TIM1_Init();
   MX_TSC_Init();
-  MX_TIM3_Init();
   MX_TIM2_Init();
   MX_TIM6_Init();
 
@@ -312,49 +309,49 @@ int main(void)
 
     perlin.attackFamily = perlinAttackFamily;
     perlin.releaseFamily = perlinReleaseFamily;
-    perlin.tableLength = 65;
+    perlin.tableLength = 64;
     perlin.familySize = 9;
     familyArray[0] = perlin;
 
     sineFold.attackFamily = sinefoldAttackFamily;
     sineFold.releaseFamily= sinefoldReleaseFamily;
-    sineFold.tableLength = 65;
+    sineFold.tableLength = 64;
     sineFold.familySize = 9;
     familyArray[1] = sineFold;
 
     bounce.attackFamily= bounceAttackFamily;
     bounce.releaseFamily = bounceReleaseFamily;
-    bounce.tableLength = 65;
+    bounce.tableLength = 64;
     bounce.familySize = 9;
     familyArray[2] = bounce;
 
-    triFold.attackFamily = &trifoldAttackFamily[0][0];
-    triFold.releaseFamily = &trifoldReleaseFamily[0][0];
-    triFold.tableLength = 65;
+    triFold.attackFamily = trifoldAttackFamily;
+    triFold.releaseFamily = trifoldReleaseFamily;
+    triFold.tableLength = 64;
     triFold.familySize = 9;
     familyArray[3] = triFold;
 
-    triOdd.attackFamily = &trioddAttackFamily[0][0];
-    triOdd.releaseFamily = &trioddReleaseFamily[0][0];
-    triOdd.tableLength = 65;
+    triOdd.attackFamily = trioddAttackFamily;
+    triOdd.releaseFamily = trioddReleaseFamily;
+    triOdd.tableLength = 64;
     triOdd.familySize = 9;
     familyArray[4] = triOdd;
 
-    triFudge.attackFamily = &trifudgeAttackFamily[0][0];
-    triFudge.releaseFamily = &trifudgeReleaseFamily[0][0];
-    triFudge.tableLength = 65;
+    triFudge.attackFamily = trifudgeAttackFamily;
+    triFudge.releaseFamily = trifudgeReleaseFamily;
+    triFudge.tableLength = 64;
     triFudge.familySize = 9;
     familyArray[5] = triFudge;
 
-    moog1.attackFamily = &moog1AttackFamily[0][0];
-    moog1.releaseFamily = &moog1ReleaseFamily[0][0];
-    moog1.tableLength = 65;
+    moog1.attackFamily = moog1AttackFamily;
+    moog1.releaseFamily = moog1ReleaseFamily;
+    moog1.tableLength = 64;
     moog1.familySize = 9;
     familyArray[6] = moog1;
 
-    moog2.attackFamily = &moog2AttackFamily[0][0];
-    moog2.releaseFamily = &moog2ReleaseFamily[0][0];
-    moog2.tableLength = 65;
+    moog2.attackFamily = moog2AttackFamily;
+    moog2.releaseFamily = moog2ReleaseFamily;
+    moog2.tableLength = 64;
     moog2.familySize = 9;
     familyArray[7] = moog2;
 
@@ -363,18 +360,20 @@ int main(void)
 
       //HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
       HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
-      //HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 2);
-      HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-      HAL_TIM_Base_Start_IT(&htim6);
-      HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-      HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-      HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-      //HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
-      //HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
+      HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
+      //HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
+      //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+      //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+      //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+      HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
+      HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
       HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)dacbuffer1, 1, DAC_ALIGN_12B_R);
       HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_2, (uint32_t*)dacbuffer2, 1, DAC_ALIGN_12B_R);
 
+
+
       tsl_user_Init();
+      HAL_TIM_Base_Start_IT(&htim6);
 
 
 
@@ -385,6 +384,7 @@ int main(void)
   while (1)
   { __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
 	  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4000);
+
 		tsl_status = tsl_user_Exec();
 
   	  	if (tsl_status != TSL_USER_STATUS_BUSY) {
@@ -487,8 +487,8 @@ void SystemClock_Config(void)
 
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1|RCC_PERIPHCLK_ADC12
                               |RCC_PERIPHCLK_ADC34;
-  PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
-  PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV1;
+  PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV128;
+  PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV128;
   PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
@@ -617,7 +617,7 @@ static void MX_ADC2_Init(void)
   sConfig.Channel = ADC_CHANNEL_3;
   sConfig.Rank = 1;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
-  sConfig.SamplingTime = ADC_SAMPLETIME_181CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_61CYCLES_5;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
   if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
@@ -629,6 +629,7 @@ static void MX_ADC2_Init(void)
     */
   sConfig.Channel = ADC_CHANNEL_4;
   sConfig.Rank = 2;
+  sConfig.OffsetNumber = ADC_OFFSET_1;
   if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -648,13 +649,13 @@ static void MX_ADC3_Init(void)
   hadc3.Instance = ADC3;
   hadc3.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
   hadc3.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc3.Init.ScanConvMode = ADC_SCAN_ENABLE;
+  hadc3.Init.ScanConvMode = ADC_SCAN_DISABLE;
   hadc3.Init.ContinuousConvMode = ENABLE;
   hadc3.Init.DiscontinuousConvMode = DISABLE;
   hadc3.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc3.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc3.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc3.Init.NbrOfConversion = 2;
+  hadc3.Init.NbrOfConversion = 1;
   hadc3.Init.DMAContinuousRequests = ENABLE;
   hadc3.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc3.Init.LowPowerAutoWait = DISABLE;
@@ -677,17 +678,9 @@ static void MX_ADC3_Init(void)
   sConfig.Channel = ADC_CHANNEL_12;
   sConfig.Rank = 1;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
-  sConfig.SamplingTime = ADC_SAMPLETIME_181CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_61CYCLES_5;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
-  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-    /**Configure Regular Channel 
-    */
-  sConfig.Rank = 2;
   if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -711,14 +704,12 @@ static void MX_DAC_Init(void)
 
     /**DAC channel OUT1 config 
     */
-  sConfig.DAC_Trigger = DAC_TRIGGER_T3_TRGO;
+  sConfig.DAC_Trigger = DAC_TRIGGER_T6_TRGO;
   sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
   if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_1) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
-
-  __HAL_REMAPTRIGGER_ENABLE(HAL_REMAPTRIGGER_DAC1_TRIG);
 
     /**DAC channel OUT2 config 
     */
@@ -835,39 +826,6 @@ static void MX_TIM2_Init(void)
 
 }
 
-/* TIM3 init function */
-static void MX_TIM3_Init(void)
-{
-
-  TIM_ClockConfigTypeDef sClockSourceConfig;
-  TIM_MasterConfigTypeDef sMasterConfig;
-
-  htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 1-1;
-  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 1000;
-  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-}
-
 /* TIM6 init function */
 static void MX_TIM6_Init(void)
 {
@@ -884,7 +842,7 @@ static void MX_TIM6_Init(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
   {
@@ -941,9 +899,9 @@ static void MX_DMA_Init(void)
   /* DMA1_Channel4_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
-  /* DMA2_Channel3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Channel3_IRQn, 3, 0);
-  HAL_NVIC_EnableIRQ(DMA2_Channel3_IRQn);
+  /* DMA2_Channel1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Channel1_IRQn, 3, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Channel1_IRQn);
   /* DMA2_Channel5_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Channel5_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(DMA2_Channel5_IRQn);
