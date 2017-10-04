@@ -84,6 +84,8 @@ int temp3 = 0;
 int temp4 = 0;
 extern uint16_t dacbuffer1[1];
 extern uint16_t dacbuffer2[1];
+extern int span;
+extern int spanx2;
 Family moog1;
 Family moog2;
 Family triFudge;
@@ -355,13 +357,16 @@ int main(void)
     moog2.familySize = 9;
     familyArray[7] = moog2;
 
+	span = familyArray[0].tableLength << 16;
+	spanx2 = familyArray[0].tableLength << 17;
+
 
 
 
       //HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
       HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
       HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
-      //HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
+      HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
       //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
       //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
       //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
@@ -382,8 +387,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  { __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
-	  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4000);
+  {
 
 		tsl_status = tsl_user_Exec();
 
@@ -487,8 +491,8 @@ void SystemClock_Config(void)
 
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1|RCC_PERIPHCLK_ADC12
                               |RCC_PERIPHCLK_ADC34;
-  PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV128;
-  PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV128;
+  PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV256;
+  PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV256;
   PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
@@ -1087,11 +1091,15 @@ void ChangeMode(int mode) {
 		}
 		if (mode == 5) {
 			familyIndicator = (familyIndicator + 1) % 8;
+			span = familyArray[familyIndicator].tableLength << 16;
+			spanx2 = familyArray[familyIndicator].tableLength << 17;
 		}
 		if (mode == 6) {
 			familyIndicator = (familyIndicator - 1);
 			if (familyIndicator < 0) {
 				familyIndicator = 7;
+				span = familyArray[familyIndicator].tableLength << 16;
+				spanx2 = familyArray[familyIndicator].tableLength << 17;
 			}
 		}
 }

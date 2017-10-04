@@ -45,7 +45,8 @@
 
 
 // wavetable size - 1 in fix16 and that number doubled
-
+fix16_t span;
+fix16_t spanx2;
 
 //import array of structs that contain our wavetable family info
 Family familyArray[8];
@@ -323,6 +324,9 @@ void DMA1_Channel3_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel3_IRQn 0 */
 
+
+
+
   /* USER CODE END DMA1_Channel3_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_dac_ch1);
   /* USER CODE BEGIN DMA1_Channel3_IRQn 1 */
@@ -377,15 +381,20 @@ void TIM6_DAC_IRQHandler(void)
 	  				//getAverages;
 
 	  				//call the function to advance the phase of the oscillator
+					GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 	  		  	  	getPhase();
-
+	  		  	  	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
+	  		  	  	// pin reset
 	  		  	  	//call the appropriate
-	  	  	  		if (position < (familyArray[familyIndicator].tableLength << 16)) {attack(); setAttack();}
-	  	  	  		if (position >= (familyArray[familyIndicator].tableLength << 16) && position < (familyArray[familyIndicator].tableLength << 17)) {release(); setRelease();}
+	  	  	  		if (position < span) {attack();}
+	  	  	  		if (position >= span && position < spanx2) {release();}
+	  	  	  		// pin set
 	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
 	  	  	  		fixMorph = morphKnob;
 		  	  		if (fixMorph > 4095) {fixMorph = 4095;}
 		  	  		if (fixMorph < 0) {fixMorph = 0;}
+
+
 	  	  	  		//if we are in high speed and not looping, activate drum mode
 	  		  	  	if (speed == high && loop == noloop){
 	  		  	  		//call the fuction that generates our expo decay and increments the oscillator
@@ -393,6 +402,7 @@ void TIM6_DAC_IRQHandler(void)
 	  		  	  		//use the expo decay scaled by the manual morph control to modulate morph
 	  		  	  		fixMorph = fix16_mul(exposcale, fixMorph);
 	  		  	  	}
+
 	}
 
 	  		  	  	/*
@@ -421,13 +431,29 @@ void TIM6_DAC_IRQHandler(void)
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 		  }*/
-
-
+	   /*TIM Update event*/
+	if(__HAL_TIM_GET_FLAG(&htim6, TIM_FLAG_UPDATE) != RESET)
+	  {
+	    if(__HAL_TIM_GET_IT_SOURCE(&htim6, TIM_IT_UPDATE) !=RESET)
+	    {
+	      __HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
+	      HAL_TIM_PeriodElapsedCallback(&htim6);
+	    }
+	  }
 
 
   /* USER CODE END TIM6_DAC_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim6);
+  //HAL_TIM_IRQHandler(&htim6);
+
+
+
+
+
+
   HAL_DAC_IRQHandler(&hdac);
+
+
+
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
 
   /* USER CODE END TIM6_DAC_IRQn 1 */
@@ -439,11 +465,11 @@ void TIM6_DAC_IRQHandler(void)
 void DMA2_Channel1_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Channel1_IRQn 0 */
-
+	//GPIOC->BRR = (uint32_t)GPIO_PIN_13; // pin reset
   /* USER CODE END DMA2_Channel1_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_adc2);
   /* USER CODE BEGIN DMA2_Channel1_IRQn 1 */
-
+	//GPIOC->BSRR = (uint32_t)GPIO_PIN_13; // pin set
   /* USER CODE END DMA2_Channel1_IRQn 1 */
 }
 
@@ -481,6 +507,7 @@ void attack(void) {
 	Rnvalue2 = *(*(familyArray[familyIndicator].attackFamily + RnFamily) + RnSample) >> 3;
 	//find the interpolated values for the adjacent wavetables
 	interp1 = fix16_lerp16(Lnvalue1, Rnvalue1, waveFrac);
+	//
 	interp2 = fix16_lerp16(Lnvalue2, Rnvalue2, waveFrac);
 	//interpolate between those based upon morph (biinterpolation)
 	out = fix16_lerp8(interp1, interp2, morphFrac);
@@ -499,7 +526,7 @@ void attack(void) {
 
 void release(void) {
 	//calculate value based upon phase pointer "position" reflected over the span of the wavetable
-	mirror = fix16_sub((familyArray[familyIndicator].tableLength << 17), position);
+	mirror = fix16_sub(spanx2, position);
 	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
 	LnSample = (int) (mirror >> 16);
 	RnSample = (LnSample + 1);
@@ -537,8 +564,7 @@ void getPhase(void) {
 	if (speed == high) {
 		//multiply a base (modulated by linear FM) by a lookup value from a 10 octave expo table (modulated by expo FM)
 		//if we are in drum mode, no linear FM
-		if (loop == noloop) {
-			inc = fix16_mul(2000, (lookuptable[(4095 - (time1Knob + time1CV) - 24)] >> 2));}
+		if (loop == noloop) {inc = fix16_mul(2000, (lookuptable[(4095 - (time1Knob + time1CV) - 24)] >> 2));}
 		else {inc = fix16_mul((time2CV - 2048) + (time2Knob - 4096), (lookuptable[(4095 - (time1Knob + time1CV) - 24)] >> 2));}
 		if (inc > 1048576) {inc = 1048576;}
 		if (inc < -1048576) {inc = -1048576;}
@@ -547,12 +573,12 @@ void getPhase(void) {
 	//define increment for low speed mode, split up timing over two pot/cv combos
 	else { //low speed
 		//use tim1 knob + cv for setting inc in attack phase, blank the retrigger flag if not in hard sync mode
-		if (position < (familyArray[familyIndicator].tableLength << 16)) {
+		if (position < span) {
 			inc = time1Knob + time1CV;
 			//wipe any retrigger flags unless we are in hard sync mode during attack
 			if (trigMode ==! hardsync) {retrig = 0;}}
 		//use tim2 knob + cv for setting inc in release phase
-		if (position >= (familyArray[familyIndicator].tableLength << 16)) {inc = time2Knob + time2CV;}
+		if (position >= span) {inc = time2Knob + time2CV;}
 	};
 
 	//in gate (2) mode, if retrig flag is raised when in release, work backwards to attack so long as gate is high
@@ -575,14 +601,14 @@ void getPhase(void) {
 
 	case gated :
 		// does this guarantee that position will freeze at span?
-		if (position < (familyArray[familyIndicator].tableLength << 16) && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) {
+		if (position < span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) {
 					if (speed == low) {inc = -time2Knob;}
 					if (speed == high) {inc = -inc;}
 		}
 
-		else if (position >= (familyArray[familyIndicator].tableLength << 16) && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) {
+		else if (position >= span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) {
 			if (retrig == 0) {
-				position = (familyArray[familyIndicator].tableLength << 16);
+				position = span;
 			}
 			else {
 			if (speed == low) {inc = -time1Knob;}
@@ -597,7 +623,7 @@ void getPhase(void) {
 
 	case nongatedretrigger:
 
-		if (position <= (familyArray[familyIndicator].tableLength << 16)) {retrig = 0;}
+		if (position <= span) {retrig = 0;}
 		else if (retrig){
 			if (speed == low) {inc = -time1Knob;}
 					else // high speed
@@ -613,7 +639,7 @@ void getPhase(void) {
 			retrig = 0;
 		}
 		//reset our count to 0 so we always increment forward through attack when triggering from rest
-		if  (loop == noloop && (position <= 0 || position >= (familyArray[familyIndicator].tableLength << 17))) {pendulumDirection = 0;}
+		if  (loop == noloop && (position <= 0 || position >= spanx2)) {pendulumDirection = 0;}
 
 		//reverse direction of the oscillator
 		if (pendulumDirection == 1) {
@@ -629,8 +655,8 @@ void getPhase(void) {
 	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode
 	// note these only work for positions +/- 1 cycle width
 
-		if (position >= (familyArray[familyIndicator].tableLength << 17)) {
-		position = position - (familyArray[familyIndicator].tableLength << 17);
+		if (position >= spanx2) {
+		position = position - spanx2;
 		if (loop == noloop && speed == low){
 			oscillatorActive = 0;
 			retrig = 0;
@@ -639,7 +665,7 @@ void getPhase(void) {
 	}
 	// same as above but for when we are backtracking through the attack phase aka negative increment
 	else if (position < 0) {
-		position = position + (familyArray[familyIndicator].tableLength << 17);
+		position = position + spanx2;
 		if (loop == noloop && speed == low){
 		oscillatorActive = 0;
 		retrig = 0;
