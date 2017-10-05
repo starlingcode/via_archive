@@ -107,6 +107,8 @@ volatile int retrig = 0;
 // logic used to signal oscillator phase position
 uint8_t attackFlag;
 uint8_t releaseFlag;
+uint8_t phaseState;
+uint8_t lastPhaseState;
 extern uint8_t lastAttackFlag;
 extern uint8_t lastReleaseFlag;
 extern uint8_t intoattackfromr;
@@ -364,6 +366,20 @@ void TIM2_IRQHandler(void)
 }
 
 /**
+* @brief This function handles EXTI line[15:10] interrupts.
+*/
+void EXTI15_10_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_12);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+
+  /* USER CODE END EXTI15_10_IRQn 1 */
+}
+
+/**
 * @brief This function handles Timer 6 interrupt and DAC underrun interrupts.
 */
 void TIM6_DAC_IRQHandler(void)
@@ -386,8 +402,9 @@ void TIM6_DAC_IRQHandler(void)
 	  		  	  	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
 	  		  	  	// pin reset
 	  		  	  	//call the appropriate
-	  	  	  		if (position < span) {attack();}
-	  	  	  		if (position >= span && position < spanx2) {release();}
+	  	  	  		lastPhaseState = phaseState;
+	  	  	  		if (position < span) {attack(); phaseState = 1;}
+	  	  	  		if (position >= span && position < spanx2) {release(); phaseState = 2;}
 	  	  	  		// pin set
 	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
 	  	  	  		fixMorph = morphKnob;
@@ -402,6 +419,7 @@ void TIM6_DAC_IRQHandler(void)
 	  		  	  		//use the expo decay scaled by the manual morph control to modulate morph
 	  		  	  		fixMorph = fix16_mul(exposcale, fixMorph);
 	  		  	  	}
+	  	  	  		if (phaseState != lastPhaseState) {HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);}
 
 	}
 
@@ -443,17 +461,8 @@ void TIM6_DAC_IRQHandler(void)
 
 
   /* USER CODE END TIM6_DAC_IRQn 0 */
-  //HAL_TIM_IRQHandler(&htim6);
-
-
-
-
-
-
+  HAL_TIM_IRQHandler(&htim6);
   HAL_DAC_IRQHandler(&hdac);
-
-
-
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
 
   /* USER CODE END TIM6_DAC_IRQn 1 */
@@ -767,6 +776,7 @@ uint32_t doAverage(uint32_t reading) {
 
 //void EXTI15_10_IRQHandler(void)
 //{
+
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
 	/*
 	if (sampleHoldDirection == toward_a) { //this indicates that the pointer is "moving towards a", which informs our logic about which sample and hold operation should be performed per mode
@@ -823,8 +833,8 @@ uint32_t doAverage(uint32_t reading) {
 		  		sampleHoldTimer = 0;
 		  	}
 
-	}
-}*/
+	}*/
+//}
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
