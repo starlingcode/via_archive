@@ -367,9 +367,9 @@ int main(void)
       HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
       HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
       HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-      //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-      //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-      //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+      HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+      HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+      HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
       HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
       HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
       HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)dacbuffer1, 1, DAC_ALIGN_12B_R);
@@ -434,7 +434,7 @@ int main(void)
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 	 	 } //sets the PWM duty cycle (Capture Compare Value)
-	 	 //__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings[5]); //sets the PWM duty cycle (Capture Compare Value)
+	 	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings3[0]); //sets the PWM duty cycle (Capture Compare Value)
 
 
 

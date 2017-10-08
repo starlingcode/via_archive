@@ -62,6 +62,13 @@ int getMorph;
 fix16_t position;
 fix16_t mirror;
 fix16_t inc;
+fix16_t incSign;
+fix16_t time1;
+fix16_t time2;
+void (*attackTime) (void);
+void (*releaseTime) (void);
+
+
 
 //sample indices and interpolation fraction for the wavetable
 int LnSample;
@@ -96,6 +103,8 @@ void attack(void);
 void release(void);
 void getPhase(void);
 void drum(void);
+fix16_t calcTime1(void);
+fix16_t calcTime2(void);
 void setAttack(void);
 void setRelease(void);
 void getAverages(void);
@@ -109,6 +118,7 @@ uint8_t attackFlag;
 uint8_t releaseFlag;
 uint8_t phaseState;
 uint8_t lastPhaseState;
+uint8_t gateOn;
 extern uint8_t lastAttackFlag;
 extern uint8_t lastReleaseFlag;
 extern uint8_t intoattackfromr;
@@ -356,8 +366,97 @@ void DMA1_Channel4_IRQHandler(void)
 void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
-	oscillatorActive = 1;
-	retrig = 1;
+    if(	HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_11) == GPIO_PIN_RESET) {
+
+	  if (oscillatorActive == 0) {
+		oscillatorActive = 1;
+		gateOn = 1;
+		}
+	  else {
+		switch (trigMode) {
+
+		case hardsync:
+
+			position = 0;
+
+			break;
+
+
+		case gated :
+
+			if (position < span) {
+
+				if (speed == low) {attackTime = &calcTime1;}
+				incSign = 1; // 1 in fix16_t
+				gateOn = 1;
+			}
+
+			else  {
+
+				if (speed == low) {releaseTime = calcTime1;}
+				incSign = -1;
+				gateOn = 2;
+
+
+			}
+
+
+			break;
+
+
+		case nongatedretrigger:
+
+			if (position >= span) {
+
+				if (speed == low) {inc = -time1Knob;}
+				else {inc = -inc;}// high speed
+
+				}
+
+			break;
+
+
+		case pendulum:
+
+			pendulumDirection = !pendulumDirection;
+
+			//reset our count to 0 so we always increment forward through attack when triggering from rest
+			//if  (loop == noloop && (position <= 0 || position >= spanx2)) {pendulumDirection = 0;}
+
+			//reverse direction of the oscillator
+			if (pendulumDirection == 1) {
+				incSign = -1;
+			}
+
+			break;
+
+		}
+
+	  }
+
+    }
+
+    else {
+
+    	if (trigMode == gated) {
+
+    		if (position < span) {
+
+				if (speed == low) {attackTime = calcTime2;}
+				incSign = -1; // -1 in fix16_t
+				gateOn = 1;
+
+			}
+    		else {
+
+    			if (speed == low) {releaseTime = calcTime2;};
+    			incSign = 1;
+    			gateOn = 0;
+
+    		}
+
+    }
+    }
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */
@@ -394,10 +493,8 @@ void TIM6_DAC_IRQHandler(void)
 					dacbuffer2[0] = 4095 - out;
 
 
-	  				//getAverages;
-
 	  				//call the function to advance the phase of the oscillator
-					GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+
 	  		  	  	getPhase();
 	  		  	  	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
 	  		  	  	// pin reset
@@ -423,7 +520,12 @@ void TIM6_DAC_IRQHandler(void)
 
 	}
 
-	  		  	  	/*
+
+
+
+
+
+					/*
 	  		  	  	//moving towards a, trigger the appropriate sample and hold routine with flag toa
 	  	  	  		if (intoattackfroml || intoreleasefromr) {
 	  	  	  			sampleHoldDirection = toward_a;
@@ -449,7 +551,11 @@ void TIM6_DAC_IRQHandler(void)
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 		  }*/
-	   /*TIM Update event*/
+
+
+
+
+	/*TIM Update event*/
 	if(__HAL_TIM_GET_FLAG(&htim6, TIM_FLAG_UPDATE) != RESET)
 	  {
 	    if(__HAL_TIM_GET_IT_SOURCE(&htim6, TIM_IT_UPDATE) !=RESET)
@@ -571,116 +677,88 @@ void release(void) {
 void getPhase(void) {
 	//define increment function for high speed mode with limits, tim2 parameter controls is removed from the equation if we are in drum mode
 	if (speed == high) {
-		//multiply a base (modulated by linear FM) by a lookup value from a 10 octave expo table (modulated by expo FM)
-		//if we are in drum mode, no linear FM
+
+		/*multiply a base (modulated by linear FM) by a lookup value from a 10 octave expo table (modulated by expo FM)
+		  if we are in drum mode, no linear FM*/
 		if (loop == noloop) {inc = fix16_mul(2000, (lookuptable[(4095 - (time1Knob + time1CV) - 24)] >> 2));}
+
 		else {inc = fix16_mul((time2CV - 2048) + (time2Knob - 4096), (lookuptable[(4095 - (time1Knob + time1CV) - 24)] >> 2));}
+
 		if (inc > 1048576) {inc = 1048576;}
 		if (inc < -1048576) {inc = -1048576;}
 	}
 
-	//define increment for low speed mode, split up timing over two pot/cv combos
+	//define increment for low speed mode using function pointers to the appropriate knob/cv combo per the retirgger mode
 	else { //low speed
-		//use tim1 knob + cv for setting inc in attack phase, blank the retrigger flag if not in hard sync mode
+
 		if (position < span) {
-			inc = time1Knob + time1CV;
-			//wipe any retrigger flags unless we are in hard sync mode during attack
-			if (trigMode ==! hardsync) {retrig = 0;}}
-		//use tim2 knob + cv for setting inc in release phase
-		if (position >= span) {inc = time2Knob + time2CV;}
-	};
-
-	//in gate (2) mode, if retrig flag is raised when in release, work backwards to attack so long as gate is high
-	//if gate is released when in attack phase, increment backwards through attack at the release speed
-	//this mimics a retrigger on a traditional ADSR
-
-	//consider triggers from interrupt happening right here (after attack clearing)
-
-	switch (trigMode) {
-
-	case hardsync:
-
-		if(retrig) {
-			position = 0;
-			retrig = 0;
-		}
-		else {position = position + inc;}
-		break;
-
-
-	case gated :
-		// does this guarantee that position will freeze at span?
-		if (position < span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) {
-					if (speed == low) {inc = -time2Knob;}
-					if (speed == high) {inc = -inc;}
-		}
-
-		else if (position >= span && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) {
-			if (retrig == 0) {
-				position = span;
+			inc = attackTime;
 			}
-			else {
-			if (speed == low) {inc = -time1Knob;}
-			if (speed == high) {inc = -inc;}
-			}
-		}
 		else {
-		position = position + inc;
-		}
-		break;
-
-
-	case nongatedretrigger:
-
-		if (position <= span) {retrig = 0;}
-		else if (retrig){
-			if (speed == low) {inc = -time1Knob;}
-					else // high speed
-				{inc = -inc;}
+			inc = releaseTime;
 			}
-		position = position + inc;
-		break;
-
-
-	case pendulum:
-		if  (retrig) {
-			pendulumDirection = !pendulumDirection;
-			retrig = 0;
-		}
-		//reset our count to 0 so we always increment forward through attack when triggering from rest
-		if  (loop == noloop && (position <= 0 || position >= spanx2)) {pendulumDirection = 0;}
-
-		//reverse direction of the oscillator
-		if (pendulumDirection == 1) {
-			inc = -inc;
-		}
-		position = position + inc;
-		break;
-
-	default: position = position + inc;
-
 	}
+
+	inc *= incSign; //multiply inc by a sign per the retrigger mode
+
+	if (trigMode == gated) {
+		if (gateOn == 1 & (abs(inc) > abs(span - position))) {
+			inc = span - position;
+
+
+
+
+
+
+
+
+
+
+
+		}
+	}
+
+	position = position + inc; // increment our phase position with our newly calculated value
 
 	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode
 	// note these only work for positions +/- 1 cycle width
 
-		if (position >= spanx2) {
+	if (position >= spanx2) {
 		position = position - spanx2;
 		if (loop == noloop && speed == low){
+
 			oscillatorActive = 0;
-			retrig = 0;
 			position = 0;
+			pendulumDirection = 0;
+
 		}
 	}
 	// same as above but for when we are backtracking through the attack phase aka negative increment
 	else if (position < 0) {
 		position = position + spanx2;
-		if (loop == noloop && speed == low){
-		oscillatorActive = 0;
-		retrig = 0;
-		position = 0;
+
+		if (speed == low && loop == noloop){
+
+			oscillatorActive = 0;
+			pendulumDirection = 0;
+			position = 0;
+
 		}
 	}
+}
+
+fix16_t calcTime1(void) {
+
+	time1 = time1Knob + time1CV;
+	return time1;
+
+}
+
+fix16_t calcTime2(void) {
+
+	time2 = time2Knob + time2CV;
+	return time2;
+
 }
 
 
@@ -752,8 +830,7 @@ void drum(void) {
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
 	exposcale = lookuptable[subCount] >> 10;
 	//scale the oscillator
-	out = fix16_mul (out, exposcale)
-			;
+	out = fix16_mul(out, exposcale);
 }
 /*
 void getAverages(void) {

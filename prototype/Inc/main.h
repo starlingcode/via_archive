@@ -104,6 +104,36 @@ enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 #define S_H_B_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
+#define EOA_JACK_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+#define EOA_JACK_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
+
+#define EOA_GATE_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_14;
+#define EOA_GATE_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_14;
+
+#define EOR_JACK_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_15;
+#define EOR_JACK_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
+
+#define EOR_GATE_HIGH GPIOF->BRR = (uint32_t)GPIO_PIN_0;
+#define EOR_GATE_LOW GPIOF->BSRR = (uint32_t)GPIO_PIN_0;
+
+#define LEDA_ON GPIOF->BSRR = (uint32_t)GPIO_PIN_1;
+#define LEDA_OFF GPIOF->BRR = (uint32_t)GPIO_PIN_1;
+
+#define LEDB_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_5;
+#define LEDB_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_5;
+
+#define LEDC_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_10;
+#define LEDC_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_10;
+
+#define LEDD_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_15;
+#define LEDD_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_15;
+
+#define SH_A_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_8;
+#define SH_A_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_8;
+
+#define SH_B_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_9;
+#define SH_B_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_9;
+
 
 /* USER CODE END Private defines */
 
