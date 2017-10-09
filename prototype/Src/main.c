@@ -40,8 +40,8 @@
 #include "stm32f3xx_hal.h"
 
 /* USER CODE BEGIN Includes */
-#include "fixmath.h"
-#include "fix16.h"
+
+
 #include "tables.h"
 #include "tsl_user.h"
 
@@ -61,6 +61,7 @@ DMA_HandleTypeDef hdma_dac_ch2;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim6;
 
 TSC_HandleTypeDef htsc;
@@ -201,6 +202,7 @@ enum loopTypes loop;
 enum trigModeTypes trigMode;
 enum sampleHoldModeTypes sampleHoldMode;
 int trig;
+uint8_t phaseState;
 uint8_t lastAttackFlag;
 uint8_t lastReleaseFlag;
 uint8_t intoattackfroml;
@@ -211,7 +213,7 @@ uint8_t pintimer;
 uint16_t sampleHoldTimer;
 int benchmark;
 int lastcount;
-fix16_t out;
+int out;
 extern uint32_t ADCReadings1[4];
 extern uint32_t ADCReadings2[2];
 extern uint32_t ADCReadings3[1];
@@ -236,6 +238,7 @@ static void MX_TIM1_Init(void);
 static void MX_TSC_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM6_Init(void);
+static void MX_TIM3_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
@@ -288,6 +291,7 @@ int main(void)
   MX_TSC_Init();
   MX_TIM2_Init();
   MX_TIM6_Init();
+  MX_TIM3_Init();
 
   /* USER CODE BEGIN 2 */
   //define our wavetable family as two arrays of 9 wavetables (defined in tables.h), one for attack, one for release
@@ -363,10 +367,12 @@ int main(void)
 
 
 
-      //HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
+
+      HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
       HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
       HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
       HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
+      HAL_TIM_Base_Start(&htim1);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
@@ -427,14 +433,16 @@ int main(void)
 	 	}
 
 
-	 	 if (lastAttackFlag > 0 && modechanged == 0) {
+	 	 if (phaseState == 1 && modechanged == 0) {
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);} //sets the PWM duty cycle (Capture Compare Value)
-	 	 if (lastReleaseFlag > 0 && modechanged == 0) {
+	 	 if (phaseState == 2 && modechanged == 0) {
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);
 	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 	 	 } //sets the PWM duty cycle (Capture Compare Value)
-	 	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings3[0]); //sets the PWM duty cycle (Capture Compare Value)
+	 	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings3[0]);
+	 	//__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 2000);
+	 	//__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 2000);//sets the PWM duty cycle (Capture Compare Value)
 
 
 
@@ -491,8 +499,8 @@ void SystemClock_Config(void)
 
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1|RCC_PERIPHCLK_ADC12
                               |RCC_PERIPHCLK_ADC34;
-  PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV128;
-  PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV64;
+  PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV16;
+  PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV16;
   PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
@@ -709,7 +717,7 @@ static void MX_DAC_Init(void)
     /**DAC channel OUT1 config 
     */
   sConfig.DAC_Trigger = DAC_TRIGGER_T6_TRGO;
-  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
+  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE;
   if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_1) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -819,11 +827,28 @@ static void MX_TIM2_Init(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
-  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_FALLING;
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_BOTHEDGE;
   sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
   sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
   sConfigIC.ICFilter = 0;
   if (HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
+/* TIM3 init function */
+static void MX_TIM3_Init(void)
+{
+
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 0;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 0;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_OnePulse_Init(&htim3, TIM_OPMODE_SINGLE) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
@@ -839,7 +864,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 1-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 1000;
+  htim6.Init.Period = 2000;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
@@ -895,7 +920,7 @@ static void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA1_Channel1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 1, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 2, 1);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
   /* DMA1_Channel3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 0, 0);
@@ -978,45 +1003,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 
-
-void ProcessSensors(void){
-	HAL_TSC_IODischarge(&htsc, ENABLE);
-    HAL_Delay(1); /* 1 ms is more than enough to discharge all capacitors */
-
-    /*##-3- Start the acquisition process ####################################*/
-    if (HAL_TSC_Start(&htsc) != HAL_OK)
-    {
-      /* Acquisition Error */
-      Error_Handler();
-    }
-
-    /*##-4- Wait for the end of acquisition ##################################*/
-    /*  Before starting a new acquisition, you need to check the current state of
-         the peripheral; if it�s busy you need to wait for the end of current
-         acquisition before starting a new one. */
-    while (HAL_TSC_GetState(&htsc) == HAL_TSC_STATE_BUSY)
-    {
-      /* For simplicity reasons, this example is just waiting till the end of the
-         acquisition, but application may perform other tasks while acquisition
-         operation is ongoing. */
-    }
-
-    /*##-5- Clear flags ######################################################*/
-    __HAL_TSC_CLEAR_FLAG(&htsc, (TSC_FLAG_EOA | TSC_FLAG_MCE));
-
-    /*##-6- Check if the acquisition1 is correct (no max count) ###############*/
-    if (HAL_TSC_GroupGetStatus(&htsc, TSC_GROUP5_IDX) == TSC_GROUP_COMPLETED)
-    {
-      /*##-7- Store the acquisition1 value ####################################*/
-      uhTSCAcquisitionValue1 = HAL_TSC_GroupGetValue(&htsc, TSC_GROUP5_IDX);
-    }
-    /*##-6- Check if the acquisition2 is correct (no max count) ###############*/
-        if (HAL_TSC_GroupGetStatus(&htsc, TSC_GROUP6_IDX) == TSC_GROUP_COMPLETED)
-        {
-          /*##-7- Store the acquisition2 value ####################################*/
-          uhTSCAcquisitionValue2 = HAL_TSC_GroupGetValue(&htsc, TSC_GROUP6_IDX);
-        }
-}
 
 
 void ReadPins(void){
