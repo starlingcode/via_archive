@@ -471,6 +471,7 @@ void TIM6_DAC_IRQHandler(void)
 	  	  	  		// pin set
 	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
 	  	  	  		fixMorph = ADCReadings3[0] + ADCReadings1[2];
+	  	  	  		//fixMorph = 0;
 		  	  		if (fixMorph > 4095) {fixMorph = 4095;}
 		  	  		if (fixMorph < 0) {fixMorph = 0;}
 
@@ -652,17 +653,17 @@ void getPhase(void) {
 
 		if (position < span) {
 			//inc = span / (float)lastGateCount;
-			inc = (spanx2   / (float)(lastPeriodCount * 2)) * ((time2Knob >> 8) / ((time1Knob >> 8) + 1));
+			inc = (spanx2   / (float)(lastPeriodCount)) * ((time2Knob >> 8) / ((time1Knob >> 8) + 1));
 		}
-		else {
+		else if (position >= span && position < spanx2) {
 			//inc =  span / (float) (lastPeriodCount - lastGateCount);
-			inc = (spanx2 / (float)(lastPeriodCount * 2)) * ((time2Knob >> 8) / ((time1Knob >> 8) + 1)) ;
+			inc = (spanx2 / (float)(lastPeriodCount)) * ((time2Knob >> 8) / ((time1Knob >> 8) + 1)) ;
 
 			}
 
 		position = position + inc;
 
-		if (position > spanx2) {
+		if (position >= spanx2) {
 			position = position - spanx2;
 		}
 		if (position < 0) {

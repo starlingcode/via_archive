@@ -85,8 +85,11 @@ int temp3 = 0;
 int temp4 = 0;
 extern uint16_t dacbuffer1[1];
 extern uint16_t dacbuffer2[1];
-extern int span;
-extern int spanx2;
+extern uint32_t span;
+extern uint32_t spanx2;
+extern uint8_t morphBitShiftRight;
+extern uint8_t morphBitShiftLeft;
+uint8_t rgbOn;
 Family moog1;
 Family moog2;
 Family triFudge;
@@ -95,6 +98,13 @@ Family triFold;
 Family bounce;
 Family sineFold;
 Family perlin;
+Family sawBend;
+Family exciteBike;
+Family rand;
+Family gauss;
+Family gauss_noconform;
+Family gauss_low;
+Family gauss_low_noconform;
 
 
 const uint16_t sinefold_ctr_1[65] = {0,1755,3221,4645,6025,7357,8637,9863,11031,12137,13180,14156,15062,15896,16655,17337,17940,18463,18903,19259,19530,19715,19812,19822,19745,19579,19325,18984,18556,18042,17444,16762,15997,15259,14604,14034,13550,13154,12845,12624,12492,12448,12493,12624,12843,13148,13537,14009,14563,15197,15909,16696,17557,18488,19487,20551,21677,22863,24104,25398,26741,28130,29561,31030,32768};
@@ -194,8 +204,224 @@ const uint16_t moog2release2[65] = { 20920 ,  20863 ,  20794 ,  20714 ,  20623 ,
 const uint16_t moog1attack2[65] = { 20345 ,  20343 ,  20322 ,  20245 ,  20079 ,  19798 ,  19386 ,  18837 , 18157 ,  17358 ,  16460 ,  15489 ,  14471 ,  13438 ,  12418 ,  11443 , 10538 ,   9729 ,   9037 ,   8478 ,   8065 ,   7806 ,   7704 ,   7757 , 7960 ,   8302 ,   8771 ,   9350 ,  10020 ,  10760 ,  11548 ,  12362 , 13180 ,  13980 ,  14742 ,  15449 ,  16085 ,  16636 ,  17092 ,  17447 , 17696 ,  17839 ,  17879 ,  17820 ,  17670 ,  17440 ,  17141 ,  16787 , 16392 ,  15971 ,  15540 ,  15113 ,  14704 ,  14326 ,  13991 ,  13708 , 13486 ,  13331 ,  13245 ,  13232 ,  13289 ,  13415 ,  13606 ,  13855 , 14155  };
 const uint16_t moog1release2[65] = { 20381 ,  20395 ,  20418 ,  20447 ,  20479 ,  20511 ,  20540 ,  20564 , 20578 ,  20581 ,  20569 ,  20539 ,  20490 ,  20421 ,  20330 ,  20216 , 20081 ,  19924 ,  19748 ,  19555 ,  19348 ,  19130 ,  18904 ,  18676 , 18449 ,  18228 ,  18018 ,  17824 ,  17649 ,  17498 ,  17374 ,  17280 , 17217 ,  17186 ,  17189 ,  17223 ,  17287 ,  17379 ,  17495 ,  17629 , 17778 ,  17934 ,  18091 ,  18243 ,  18382 ,  18503 ,  18597 ,  18660 , 18685 ,  18669 ,  18607 ,  18498 ,  18341 ,  18135 ,  17883 ,  17588 , 17255 ,  16890 ,  16500 ,  16094 ,  15681 ,  15270 ,  14872 ,  14497 , 14155  };
 
+const uint16_t two_step[65] = {0,164,645,1415,2427,3621,4926,6263,7551,8715,9683,10398,10818,10923,10923,10923,10923,10923,10923,10923,10923,10923,10923,10923,10923,10923,10949,11242,11843,12716,13809,15057,16384,17711,18958,20051,20925,21526,21819,21845,21845,21845,21845,21845,21845,21845,21845,21845,21845,21845,21845,21845,21950,22369,23085,24053,25217,26505,27842,29146,30341,31353,32123,32604,32768};
+const uint16_t two_step_plateau[65] = {0,0,0,0,0,0,0,0,0,0,0,0,0,10,353,1165,2399,3980,5814,7790,9790,11695,13389,14772,15760,16295,16384,16384,16384,16384,16384,16384,16384,16384,16384,16384,16384,16384,16384,16473,17008,17996,19379,21073,22978,24978,26954,28788,30369,31603,32415,32758,32768,32768,32768,32768,32768,32768,32768,32768,32768,32768,32768,32768,32768};
+const uint16_t three_step[65] = {0,239,930,1990,3297,4697,6027,7131,7880,8187,8192,8192,8192,8192,8192,8192,8192,8192,8192,8315,8882,9848,11099,12489,13855,15039,15900,16340,16384,16384,16384,16384,16384,16384,16384,16384,16384,16428,16868,17729,18913,20279,21669,22920,23886,24453,24576,24576,24576,24576,24576,24576,24576,24576,24576,24581,24888,25637,26741,28071,29471,30778,31838,32529,32768};
+const uint16_t three_step_plateau[65] = {0,0,0,0,0,0,0,0,312,1345,2907,4697,6372,7609,8172,8192,8192,8192,8192,8192,8192,8192,8368,9253,10721,12489,14219,15578,16305,16384,16384,16384,16384,16384,16384,16384,16463,17190,18549,20279,22047,23515,24400,24576,24576,24576,24576,24576,24576,24576,24596,25159,26396,28071,29861,31423,32456,32768,32768,32768,32768,32768,32768,32768,32768};
+const uint16_t four_step[65] = {0,315,1198,2481,3916,5229,6167,6550,6554,6554,6554,6554,6554,6554,6554,6745,7513,8726,10152,11515,12555,13072,13107,13107,13107,13107,13107,13107,13107,13205,13851,14983,16384,17785,18917,19563,19661,19661,19661,19661,19661,19661,19661,19696,20213,21253,22616,24042,25255,26023,26214,26214,26214,26214,26214,26214,26214,26218,26601,27539,28852,30287,31570,32453,32768};
+const uint16_t four_step_plateau[65] = {0,0,0,0,0,0,16,645,2023,3758,5356,6362,6554,6554,6554,6554,6554,6554,6695,7630,9191,10934,12363,13072,13107,13107,13107,13107,13107,13107,13494,14699,16384,18069,19274,19661,19661,19661,19661,19661,19661,19696,20405,21834,23577,25138,26073,26214,26214,26214,26214,26214,26214,26406,27412,29010,30745,32123,32752,32768,32768,32768,32768,32768,32768};
+const uint16_t five_step[65] = {0,388,1443,2865,4248,5199,5461,5461,5461,5461,5461,5461,5514,6169,7399,8855,10123,10841,10923,10923,10923,10923,10923,10923,11131,12027,13386,14821,15924,16381,16384,16384,16384,16384,16384,16387,16844,17947,19382,20741,21637,21845,21845,21845,21845,21845,21845,21927,22644,23908,25362,26590,27243,27296,27296,27296,27296,27296,27296,27558,28512,29898,31322,32379,32768};
+const uint16_t five_step_plateau[65] = {0,0,0,0,0,3,620,2067,3776,5073,5461,5461,5461,5461,5461,5491,6261,7791,9479,10660,10923,10923,10923,10923,10923,11005,11921,13519,15170,16224,16384,16384,16384,16384,16384,16544,17598,19249,20847,21763,21845,21845,21845,21845,21845,22107,23286,24970,26498,27266,27296,27299,27302,27305,27307,27695,28992,30701,32148,32765,32768,32768,32768,32768,32768};
 
-extern Family familyArray[8];
+const uint16_t fivept_sawbend_pre[5] = {0,10813,16384,21627,32768};
+const uint16_t fivept_sawbend_second[5] = {0,24576,16384,8192,32768};
+const uint16_t fivept_sawbend_third[5] = {0,21627,16384,10813,32768};
+const uint16_t fivept_sawbend_fourth[5] = {0,26214,16384,6554,32768};
+const uint16_t fivept_sawbend_fifth[5] = {0,32768,16384,0,32768};
+
+const uint16_t excitebike1[9] = {0,16384,16384,32768,16384,16384,0,16384,32768};
+const uint16_t excitebike2[9] = {0,0,16384,32768,16384,0,16384,32768,32768};
+const uint16_t excitebike3[9] = {0,32768,16384,0,16384,32768,16384,0,32768};
+const uint16_t excitebike4[9] = {0,10912,21843,32768,21845,10923,0,16384,32768};
+const uint16_t excitebike5[9] = {0,21843,21843,32768,10922,10923,0,21823,32768};
+const uint16_t excitebike6[9] = {0,16384,16384,10813,10813,24576,24576,21823,32768};
+const uint16_t excitebike7[9] = {0,26214,6554,24576,8192,21627,10813,21955,32768};
+const uint16_t excitebike8[9] = {0,18350,13107,21299,29491,13435,25559,20316,32768};
+const uint16_t excitebike9[9] = {0,13107,13107,19661,26214,13107,13107,22938,32768};
+
+// conforming, with otherwise random distribution of values
+
+const uint16_t rand32[9] = {0,1493,9928,295,24535,10417,28796,10518,32768};
+const uint16_t rand31[9] = {0,22857,16065,14102,16997,22115,5129,31427,32768};
+const uint16_t rand30[9] = {0,7731,12805,17639,29403,27034,16561,8420,32768};
+const uint16_t rand29[9] = {0,29691,14159,22083,11535,12766,18763,16833,32768};
+const uint16_t rand28[9] = {0,27627,20652,133,10516,22268,8889,3523,32768};
+const uint16_t rand27[9] = {0,12239,3116,5575,26,9119,25263,14209,32768};
+const uint16_t rand26[9] = {0,15692,19073,30977,8964,3348,18797,25470,32768};
+const uint16_t rand25[9] = {0,21090,22064,31653,10852,27094,22948,17322,32768};
+const uint16_t rand24[9] = {0,27565,31968,2599,18411,2265,22983,23235,32768};
+const uint16_t rand23[9] = {0,12642,13518,32505,18229,4969,14453,30121,32768};
+const uint16_t rand22[9] = {0,17637,6487,32496,22873,15642,21667,16807,32768};
+const uint16_t rand21[9] = {0,2131,31784,14508,29894,28373,9826,7715,32768};
+const uint16_t rand20[9] = {0,11846,19607,1159,15756,8109,6877,2689,32768};
+const uint16_t rand19[9] = {0,18725,11414,17908,12882,19396,3229,28304,32768};
+const uint16_t rand18[9] = {0,27481,15895,24679,20925,28474,22059,12831,32768};
+const uint16_t rand17[9] = {0,21221,19357,9554,13411,24713,31287,1820,32768};
+const uint16_t rand16[9] = {0,15605,26494,31126,17348,13258,32484,27582,32768};
+const uint16_t rand15[9] = {0,7176,16461,19822,29926,16865,15778,22007,32768};
+const uint16_t rand14[9] = {0,30349,29059,30605,13528,12642,6929,23989,32768};
+const uint16_t rand13[9] = {0,13137,29823,28006,26707,9234,18833,8357,32768};
+const uint16_t rand12[9] = {0,31370,16253,2414,23284,17215,14270,27559,32768};
+const uint16_t rand11[9] = {0,29804,18615,9750,22615,14391,21557,2970,32768};
+const uint16_t rand10[9] = {0,12654,1268,12860,13043,24974,9055,20666,32768};
+const uint16_t rand9[9] = {0,24079,30391,3283,6162,28788,15976,2238,32768};
+const uint16_t rand8[9] = {0,23974,11982,7385,1682,15239,14296,15544,32768};
+const uint16_t rand7[9] = {0,22634,9076,15554,18962,27668,32334,14728,32768};
+const uint16_t rand6[9] = {0,30352,19172,18175,11822,11115,102,19468,32768};
+const uint16_t rand5[9] = {0,5944,18625,15316,22884,11756,18715,11303,32768};
+const uint16_t rand4[9] = {0,27091,26434,29608,9363,16315,12260,20538,32768};
+const uint16_t rand3[9] = {0,27215,27741,21409,16903,6534,28248,19447,32768};
+const uint16_t rand2[9] = {0,22192,8852,11568,19026,4554,1833,20813,32768};
+const uint16_t rand1[9] = {0,11151,22417,27851,28455,30586,16587,25338,32768};
+const uint16_t rand0[9] = {0,4386,399,27875,31776,29667,2523,19933,32768};
+
+//conforming, with gaussian distribution centered at .5, standard deviation progresses from 0 to .9
+
+const uint16_t gauss32[9] = {0,4856,15794,16207,19423,22985,11060,20072,32768};
+const uint16_t gauss31[9] = {0,12792,13218,8247,32768,21286,18827,529,32768};
+const uint16_t gauss30[9] = {0,24240,11829,21355,2575,0,22100,26298,32768};
+const uint16_t gauss29[9] = {0,15295,32768,24868,4794,0,0,4853,32768};
+const uint16_t gauss28[9] = {0,27480,24389,23811,14757,13005,26726,19225,32768};
+const uint16_t gauss27[9] = {0,13869,13666,19341,17123,21086,18300,6241,32768};
+const uint16_t gauss26[9] = {0,19043,32037,21181,13314,10755,25954,32768,32768};
+const uint16_t gauss25[9] = {0,32768,5711,29557,8809,7314,17688,18814,32768};
+const uint16_t gauss24[9] = {0,15578,12830,1704,20451,22529,7638,5921,32768};
+const uint16_t gauss23[9] = {0,18392,20164,16760,17322,22983,19332,12337,32768};
+const uint16_t gauss22[9] = {0,20476,2129,32768,18481,9845,9471,16375,32768};
+const uint16_t gauss21[9] = {0,11687,19124,17372,27525,22739,20930,19144,32768};
+const uint16_t gauss20[9] = {0,21545,13979,16198,6131,19222,14924,15006,32768};
+const uint16_t gauss19[9] = {0,26164,7624,9339,3736,20255,15595,21039,32768};
+const uint16_t gauss18[9] = {0,4025,13676,14964,17662,16336,16103,8503,32768};
+const uint16_t gauss17[9] = {0,15004,13470,16340,12224,13959,6820,6096,32768};
+const uint16_t gauss16[9] = {0,25064,14415,20612,7860,23828,9985,19495,32768};
+const uint16_t gauss15[9] = {0,10471,16464,23158,11004,20674,19647,22649,32768};
+const uint16_t gauss14[9] = {0,10037,16674,12813,18113,17778,20068,25539,32768};
+const uint16_t gauss13[9] = {0,18548,19303,12456,17769,31230,16992,16352,32768};
+const uint16_t gauss12[9] = {0,14993,16041,15208,13927,14193,13076,21015,32768};
+const uint16_t gauss11[9] = {0,14135,20818,9378,18054,13493,14678,14523,32768};
+const uint16_t gauss10[9] = {0,16600,18421,24556,17565,16128,17304,17672,32768};
+const uint16_t gauss9[9] = {0,15601,15118,19037,15786,9460,10665,12924,32768};
+const uint16_t gauss8[9] = {0,19369,18736,17385,19601,21455,14800,16035,32768};
+const uint16_t gauss7[9] = {0,17539,16093,18766,14618,13106,17230,17357,32768};
+const uint16_t gauss6[9] = {0,14287,13939,18432,15103,18885,16847,18033,32768};
+const uint16_t gauss5[9] = {0,19586,13272,18702,16248,17154,16310,17152,32768};
+const uint16_t gauss4[9] = {0,19099,16054,16615,17602,15597,14517,14848,32768};
+const uint16_t gauss3[9] = {0,14859,16976,16495,16771,15640,15143,16088,32768};
+const uint16_t gauss2[9] = {0,17004,15967,16692,16860,15801,14812,16711,32768};
+const uint16_t gauss1[9] = {0,16572,16335,16661,16630,16928,16534,16410,32768};
+const uint16_t gauss0[9] = {0,16384,16384,16384,16384,16384,16384,16384,32768};
+
+//nonconforming
+
+const uint16_t gauss_noconform32[9] = {26114,21653,28960,29236,31384,32768,25798,31817,21428};
+const uint16_t gauss_noconform31[9] = {32768,26955,27239,23918,32768,32629,30986,18763,28836};
+const uint16_t gauss_noconform30[9] = {23172,32768,26311,32675,20129,16777,32768,32768,22130};
+const uint16_t gauss_noconform29[9] = {25087,28627,32768,32768,21612,18378,17547,21651,32768};
+const uint16_t gauss_noconform28[9] = {32768,32768,32768,32768,28267,27097,32768,31252,31720};
+const uint16_t gauss_noconform27[9] = {32699,27674,27538,31330,29848,32495,30634,22578,32768};
+const uint16_t gauss_noconform26[9] = {32768,31131,32768,32558,27303,25594,32768,32768,32768};
+const uint16_t gauss_noconform25[9] = {32768,32768,22224,32768,24294,23295,30225,30977,27215};
+const uint16_t gauss_noconform24[9] = {32768,28816,26980,19548,32071,32768,23511,22365,32768};
+const uint16_t gauss_noconform23[9] = {31683,30695,31879,29605,29981,32768,31323,26651,30241};
+const uint16_t gauss_noconform22[9] = {30985,32087,19831,32768,30755,24986,24736,29348,19912};
+const uint16_t gauss_noconform21[9] = {32768,26216,31185,30014,32768,32768,32391,31198,32768};
+const uint16_t gauss_noconform20[9] = {32768,32768,27748,29230,22505,31250,28379,28433,31947};
+const uint16_t gauss_noconform19[9] = {32768,32768,23502,24648,20905,31940,28827,32463,32591};
+const uint16_t gauss_noconform18[9] = {31041,21098,27545,28405,30208,29322,29166,24089,25474};
+const uint16_t gauss_noconform17[9] = {29610,28433,27407,29325,26575,27734,22965,22482,25683};
+const uint16_t gauss_noconform16[9] = {29712,32768,28039,32178,23660,32768,25080,31433,25247};
+const uint16_t gauss_noconform15[9] = {29423,25404,29407,32768,25760,32220,31534,32768,31340};
+const uint16_t gauss_noconform14[9] = {21675,25114,29548,26968,30509,30285,31815,32768,29832};
+const uint16_t gauss_noconform13[9] = {27025,30800,31304,26730,30279,32768,29760,29333,26015};
+const uint16_t gauss_noconform12[9] = {28410,28425,29125,28569,27713,27890,27144,32448,30524};
+const uint16_t gauss_noconform11[9] = {27757,27852,32316,24674,30470,27423,28214,28111,32750};
+const uint16_t gauss_noconform10[9] = {28389,29498,30715,32768,30143,29183,29968,30214,31604};
+const uint16_t gauss_noconform9[9] = {26968,28831,28508,31126,28954,24729,25534,27043,29917};
+const uint16_t gauss_noconform8[9] = {26159,31348,30925,30023,31503,32742,28296,29121,31129};
+const uint16_t gauss_noconform7[9] = {27545,30125,29159,30945,28174,27164,29919,30004,27974};
+const uint16_t gauss_noconform6[9] = {28755,27953,27721,30722,28498,31025,29663,30456,28091};
+const uint16_t gauss_noconform5[9] = {30175,31493,27275,30902,29263,29868,29304,29867,28376};
+const uint16_t gauss_noconform4[9] = {29032,31168,29134,29509,30168,28828,28107,28328,29498};
+const uint16_t gauss_noconform3[9] = {28789,28335,29750,29428,29613,28857,28525,29157,30679};
+const uint16_t gauss_noconform2[9] = {28956,29768,29075,29560,29672,28965,28304,29572,28667};
+const uint16_t gauss_noconform1[9] = {29267,29480,29321,29539,29519,29718,29454,29371,29335};
+const uint16_t gauss_noconform0[9] = {29354,29354,29354,29354,29354,29354,29354,29354,29354};
+
+//conforming, with gaussian distribution centered and reflected about 0, standard deviation progresses from 0 to 2
+
+const uint16_t gauss_low32[9] = {0,17909,1103,469,4472,9945,8377,5469,32768};
+const uint16_t gauss_low31[9] = {0,5715,5062,12699,32377,7334,3556,24557,32768};
+const uint16_t gauss_low30[9] = {0,11874,7195,7441,21414,29125,8585,15036,32768};
+const uint16_t gauss_low29[9] = {0,1870,32768,12838,18005,25443,27354,17914,32768};
+const uint16_t gauss_low28[9] = {0,16851,12102,11214,2696,5389,15692,4168,32768};
+const uint16_t gauss_low27[9] = {0,4061,4374,4347,939,7027,2747,15781,32768};
+const uint16_t gauss_low26[9] = {0,3889,23853,7173,4914,8846,14507,25265,32768};
+const uint16_t gauss_low25[9] = {0,28177,16595,20042,11835,14132,1806,3536,32768};
+const uint16_t gauss_low24[9] = {0,1435,5657,22751,6051,9244,13635,16272,32768};
+const uint16_t gauss_low23[9] = {0,2888,5611,380,1244,9942,4332,6415,32768};
+const uint16_t gauss_low22[9] = {0,6090,22099,27000,3025,10243,10819,212,32768};
+const uint16_t gauss_low21[9] = {0,7414,4013,1322,16920,9567,6787,4044,32768};
+const uint16_t gauss_low20[9] = {0,7733,3892,483,15951,4163,2440,2314,32768};
+const uint16_t gauss_low19[9] = {0,14829,13657,11022,19630,5751,1409,6955,32768};
+const uint16_t gauss_low18[9] = {0,19186,4357,2379,1767,271,629,12306,32768};
+const uint16_t gauss_low17[9] = {0,2317,4674,264,6589,3923,14892,16003,32768};
+const uint16_t gauss_low16[9] = {0,13139,3222,6298,13293,11240,10028,4584,32768};
+const uint16_t gauss_low15[9] = {0,9282,74,10211,8464,6394,4817,9430,32768};
+const uint16_t gauss_low14[9] = {0,9949,248,5684,2460,1944,5464,13869,32768};
+const uint16_t gauss_low13[9] = {0,3128,4288,6232,1931,22613,738,246,32768};
+const uint16_t gauss_low12[9] = {0,2334,724,2003,3971,3564,5280,6918,32768};
+const uint16_t gauss_low11[9] = {0,3652,6615,10961,2369,4639,2818,3056,32768};
+const uint16_t gauss_low10[9] = {0,135,2932,12359,1617,591,1216,1781,32768};
+const uint16_t gauss_low9[9] = {0,1401,2143,3879,1116,10836,8984,5513,32768};
+const uint16_t gauss_low8[9] = {0,4389,3417,1341,4745,7595,2630,734,32768};
+const uint16_t gauss_low7[9] = {0,1577,645,3463,2910,5234,1103,1297,32768};
+const uint16_t gauss_low6[9] = {0,3420,3954,2949,2165,3646,515,2337,32768};
+const uint16_t gauss_low5[9] = {0,4723,4979,3364,406,986,311,982,32768};
+const uint16_t gauss_low4[9] = {0,3975,704,158,1675,1407,3066,2558,32768};
+const uint16_t gauss_low3[9] = {0,2541,713,27,398,1340,2104,651,32768};
+const uint16_t gauss_low2[9] = {0,756,838,276,534,1093,2612,305,32768};
+const uint16_t gauss_low1[9] = {0,92,272,228,182,639,33,157,32768};
+const uint16_t gauss_low0[9] = {0,197,197,197,197,197,197,197,32768};
+
+//nonconforming
+
+const uint16_t gauss_low_noconform32[9] = {8297,19449,1182,493,4878,10827,9088,5962,20011};
+const uint16_t gauss_low_noconform31[9] = {24232,6195,5485,13786,32768,7989,3883,26675,1492};
+const uint16_t gauss_low_noconform30[9] = {15652,12923,7804,8105,23259,31640,9349,16360,18258};
+const uint16_t gauss_low_noconform29[9] = {10865,2015,32768,13971,19553,27638,29715,19454,13944};
+const uint16_t gauss_low_noconform28[9] = {11879,18334,13171,12207,2914,5840,17074,4547,5717};
+const uint16_t gauss_low_noconform27[9] = {8164,4397,4737,4742,1037,7655,3003,17136,14472};
+const uint16_t gauss_low_noconform26[9] = {16232,4244,25944,7814,5325,9598,15786,27479,25824};
+const uint16_t gauss_low_noconform25[9] = {16442,30644,18021,21802,12847,15344,1980,3861,5546};
+const uint16_t gauss_low_noconform24[9] = {9035,1543,6132,24713,6594,10065,14804,17670,25211};
+const uint16_t gauss_low_noconform23[9] = {5625,3156,6116,430,1369,10823,4726,6955,2021};
+const uint16_t gauss_low_noconform22[9] = {3881,6636,24004,29365,3306,11117,11743,213,23802};
+const uint16_t gauss_low_noconform21[9] = {11098,8042,4379,1454,18409,10416,7394,4413,10919};
+const uint16_t gauss_low_noconform20[9] = {21935,8422,4213,507,17320,4542,2635,2499,6286};
+const uint16_t gauss_low_noconform19[9] = {14896,16136,14827,11963,21320,6268,1515,7577,7896};
+const uint16_t gauss_low_noconform18[9] = {4020,20837,4719,2568,1938,277,667,13359,9897};
+const uint16_t gauss_low_noconform17[9] = {443,2501,5064,270,7145,4247,16170,17378,9375};
+const uint16_t gauss_low_noconform16[9] = {699,14298,3485,6863,14432,12234,10883,4999,10464};
+const uint16_t gauss_low_noconform15[9] = {26,10072,64,11116,9182,6967,5253,10267,4767};
+const uint16_t gauss_low_noconform14[9] = {19394,10798,287,6161,2691,2131,5956,15092,997};
+const uint16_t gauss_low_noconform13[9] = {6020,3417,4678,6757,2116,24597,819,250,8544};
+const uint16_t gauss_low_noconform12[9] = {2556,2519,770,2160,4300,3857,5722,7537,2728};
+const uint16_t gauss_low_noconform11[9] = {4191,3953,7208,11897,2592,5025,3046,3304,8293};
+const uint16_t gauss_low_noconform10[9] = {2609,163,3204,13451,1775,625,1339,1953,5428};
+const uint16_t gauss_low_noconform9[9] = {6162,1505,2312,4233,1196,11761,9748,5975,1211};
+const uint16_t gauss_low_noconform8[9] = {8183,4788,3732,1475,5175,8273,2842,780,4241};
+const uint16_t gauss_low_noconform7[9] = {4719,1731,684,3782,3146,5672,1217,1427,3648};
+const uint16_t gauss_low_noconform6[9] = {1694,3700,4280,3223,2336,3980,577,2558,3354};
+const uint16_t gauss_low_noconform5[9] = {1856,5150,5395,3674,424,1088,321,1085,2643};
+const uint16_t gauss_low_noconform4[9] = {1002,4337,748,189,1837,1512,3316,2763,163};
+const uint16_t gauss_low_noconform3[9] = {1609,2745,792,12,449,1439,2270,691,3114};
+const uint16_t gauss_low_noconform2[9] = {1192,839,894,317,598,1170,2822,348,1914};
+const uint16_t gauss_low_noconform1[9] = {415,117,279,265,214,712,53,153,246};
+const uint16_t gauss_low_noconform0[9] = {197,197,197,197,197,197,197,197,197};
+
+const uint16_t typo_a[33] = {15954,7339,12621,10565,10565,10565,15422,16592,16592}; //Bodoni MT Poster Compressed
+const uint16_t typo_b[33] = {17470,19613,21626,18140,15583,13123,10664,8204,10251}; //Bookshelf Symbol 7
+const uint16_t typo_c[33] = {12770,8809,6788,6930,9256,14607,20279,23312,22777}; //Comic Sans MS
+const uint16_t typo_d[33] = {22408,21011,19878,23797,21188,13839,7201,5141,11796}; //Informal Roman
+const uint16_t typo_e[33] = {18774,18633,15780,28174,28174,30542,32768,32768,31026}; //Bookshelf Symbol 7
+const uint16_t typo_f[33] = {28524,32768,29410,24906,20098,16354,14340,13019,12010}; //Lucida Calligraphy
+
+
+const uint16_t fivept_sawbend_quarter[65] = {0,1536,3072,4608,6144,7680,9216,10752,12288,13824,15360,16896,18432,19968,21504,23040,24576,24064,23552,23040,22528,22016,21504,20992,20480,19968,19456,18944,18432,17920,17408,16896,16384,15872,15360,14848,14336,13824,13312,12800,12288,11776,11264,10752,10240,9728,9216,8704,8192,9728,11264,12800,14336,15872,17408,18944,20480,22016,23552,25088,26624,28160,29696,31232,32768};
+//const uint16_t fivept_sawbend_third[65] = {0,1365,2731,4096,5462,6827,8192,9558,10923,12289,13654,15019,16385,17750,19116,20481,21846,21505,21164,20822,20481,20139,19798,19457,19115,18774,18432,18091,17750,17408,17067,16725,16384,16043,15701,15360,15019,14677,14336,13995,13653,13312,12971,12629,12288,11947,11605,11264,10923,12288,13653,15019,16384,17749,19115,20480,21845,23211,24576,25941,27307,28672,30037,31403,32768};
+
+
+extern Family familyArray[15];
 extern uint8_t familyIndicator;
 enum speedTypes speed;
 enum loopTypes loop;
@@ -249,7 +475,7 @@ void ReadPins(void);
 void ProcessSensors(void);
 void ChangeMode(int);
 void ShowMode(uint8_t);
-void ClearRGB(void);
+void familyRGB(void);
 void ClearLEDs(void);
 /* USER CODE END PFP */
 
@@ -312,6 +538,21 @@ int main(void)
     const uint16_t *moog1ReleaseFamily[9] = {moog1release, moog2release, moog3release, moog5release, moog6release, moog7release, moog8release, moog9release, moog9release};
     const uint16_t *moog2AttackFamily[9] = {moog1attack2, moog2attack2, moog3attack2, moog4attack2, moog5attack2, moog6attack2, moog7attack2, moog8attack2, moog9attack2};
     const uint16_t *moog2ReleaseFamily[9] = {moog1release2, moog2release2, moog3release2, moog4release2, moog5release2, moog6release2, moog7release2, moog8release2, moog9release2};
+    const uint16_t *sawBendAttackFamily[5] = {fivept_sawbend_pre, fivept_sawbend_second, fivept_sawbend_third, fivept_sawbend_fourth, fivept_sawbend_fifth};
+    const uint16_t *sawBendReleaseFamily[5] = {fivept_sawbend_pre, fivept_sawbend_second, fivept_sawbend_third, fivept_sawbend_fourth, fivept_sawbend_fifth};
+    const uint16_t *exciteBikeAttackFamily[9] = {excitebike1, excitebike2, excitebike3, excitebike4, excitebike5, excitebike6, excitebike7, excitebike8, excitebike9};
+    const uint16_t *exciteBikeReleaseFamily[9] = {excitebike1, excitebike2, excitebike3, excitebike4, excitebike5, excitebike6, excitebike7, excitebike8, excitebike9};
+    const uint16_t *randAttackFamily[33] = {rand0, rand1, rand2, rand3, rand4, rand5, rand6, rand7, rand8, rand9, rand10, rand11, rand12, rand13, rand14, rand15, rand16, rand17, rand18, rand19, rand20, rand21, rand22, rand23, rand24, rand25, rand26, rand27, rand28, rand29, rand30, rand31, rand32};
+    const uint16_t *randReleaseFamily[33] = {rand0, rand1, rand2, rand3, rand4, rand5, rand6, rand7, rand8, rand9, rand10, rand11, rand12, rand13, rand14, rand15, rand16, rand17, rand18, rand19, rand20, rand21, rand22, rand23, rand24, rand25, rand26, rand27, rand28, rand29, rand30, rand31, rand32};
+    const uint16_t *gaussAttackFamily[33] = {gauss0, gauss1, gauss2, gauss3, gauss4, gauss5, gauss6, gauss7, gauss8, gauss9, gauss10, gauss11, gauss12, gauss13, gauss14, gauss15, gauss16, gauss17, gauss18, gauss19, gauss20, gauss21, gauss22, gauss23, gauss24, gauss25, gauss26, gauss27, gauss28, gauss29, gauss30, gauss31, gauss32};
+    const uint16_t *gaussReleaseFamily[33] = {gauss0, gauss1, gauss2, gauss3, gauss4, gauss5, gauss6, gauss7, gauss8, gauss9, gauss10, gauss11, gauss12, gauss13, gauss14, gauss15, gauss16, gauss17, gauss18, gauss19, gauss20, gauss21, gauss22, gauss23, gauss24, gauss25, gauss26, gauss27, gauss28, gauss29, gauss30, gauss31, gauss32};
+    const uint16_t *gauss_noconformAttackFamily[33] = {gauss_noconform0, gauss_noconform1, gauss_noconform2, gauss_noconform3, gauss_noconform4, gauss_noconform5, gauss_noconform6, gauss_noconform7, gauss_noconform8, gauss_noconform9, gauss_noconform10, gauss_noconform11, gauss_noconform12, gauss_noconform13, gauss_noconform14, gauss_noconform15, gauss_noconform16, gauss_noconform17, gauss_noconform18, gauss_noconform19, gauss_noconform20, gauss_noconform21, gauss_noconform22, gauss_noconform23, gauss_noconform24, gauss_noconform25, gauss_noconform26, gauss_noconform27, gauss_noconform28, gauss_noconform29, gauss_noconform30, gauss_noconform31, gauss_noconform32};
+    const uint16_t *gauss_noconformReleaseFamily[33] = {gauss_noconform0, gauss_noconform1, gauss_noconform2, gauss_noconform3, gauss_noconform4, gauss_noconform5, gauss_noconform6, gauss_noconform7, gauss_noconform8, gauss_noconform9, gauss_noconform10, gauss_noconform11, gauss_noconform12, gauss_noconform13, gauss_noconform14, gauss_noconform15, gauss_noconform16, gauss_noconform17, gauss_noconform18, gauss_noconform19, gauss_noconform20, gauss_noconform21, gauss_noconform22, gauss_noconform23, gauss_noconform24, gauss_noconform25, gauss_noconform26, gauss_noconform27, gauss_noconform28, gauss_noconform29, gauss_noconform30, gauss_noconform31, gauss_noconform32};
+    const uint16_t *gauss_lowAttackFamily[33] = {gauss_low0, gauss_low1, gauss_low2, gauss_low3, gauss_low4, gauss_low5, gauss_low6, gauss_low7, gauss_low8, gauss_low9, gauss_low10, gauss_low11, gauss_low12, gauss_low13, gauss_low14, gauss_low15, gauss_low16, gauss_low17, gauss_low18, gauss_low19, gauss_low20, gauss_low21, gauss_low22, gauss_low23, gauss_low24, gauss_low25, gauss_low26, gauss_low27, gauss_low28, gauss_low29, gauss_low30, gauss_low31, gauss_low32};
+    const uint16_t *gauss_lowReleaseFamily[33] = {gauss_low0, gauss_low1, gauss_low2, gauss_low3, gauss_low4, gauss_low5, gauss_low6, gauss_low7, gauss_low8, gauss_low9, gauss_low10, gauss_low11, gauss_low12, gauss_low13, gauss_low14, gauss_low15, gauss_low16, gauss_low17, gauss_low18, gauss_low19, gauss_low20, gauss_low21, gauss_low22, gauss_low23, gauss_low24, gauss_low25, gauss_low26, gauss_low27, gauss_low28, gauss_low29, gauss_low30, gauss_low31, gauss_low32};
+    const uint16_t *gauss_low_noconformAttackFamily[33] = {gauss_low_noconform0, gauss_low_noconform1, gauss_low_noconform2, gauss_low_noconform3, gauss_low_noconform4, gauss_low_noconform5, gauss_low_noconform6, gauss_low_noconform7, gauss_low_noconform8, gauss_low_noconform9, gauss_low_noconform10, gauss_low_noconform11, gauss_low_noconform12, gauss_low_noconform13, gauss_low_noconform14, gauss_low_noconform15, gauss_low_noconform16, gauss_low_noconform17, gauss_low_noconform18, gauss_low_noconform19, gauss_low_noconform20, gauss_low_noconform21, gauss_low_noconform22, gauss_low_noconform23, gauss_low_noconform24, gauss_low_noconform25, gauss_low_noconform26, gauss_low_noconform27, gauss_low_noconform28, gauss_low_noconform29, gauss_low_noconform30, gauss_low_noconform31, gauss_low_noconform32};
+    const uint16_t *gauss_low_noconformReleaseFamily[33] = {gauss_low_noconform0, gauss_low_noconform1, gauss_low_noconform2, gauss_low_noconform3, gauss_low_noconform4, gauss_low_noconform5, gauss_low_noconform6, gauss_low_noconform7, gauss_low_noconform8, gauss_low_noconform9, gauss_low_noconform10, gauss_low_noconform11, gauss_low_noconform12, gauss_low_noconform13, gauss_low_noconform14, gauss_low_noconform15, gauss_low_noconform16, gauss_low_noconform17, gauss_low_noconform18, gauss_low_noconform19, gauss_low_noconform20, gauss_low_noconform21, gauss_low_noconform22, gauss_low_noconform23, gauss_low_noconform24, gauss_low_noconform25, gauss_low_noconform26, gauss_low_noconform27, gauss_low_noconform28, gauss_low_noconform29, gauss_low_noconform30, gauss_low_noconform31, gauss_low_noconform32};
+
 
     perlin.attackFamily = perlinAttackFamily;
     perlin.releaseFamily = perlinReleaseFamily;
@@ -361,8 +602,54 @@ int main(void)
     moog2.familySize = 9;
     familyArray[7] = moog2;
 
-	span = familyArray[0].tableLength << 16;
+    sawBend.attackFamily = sawBendAttackFamily;
+    sawBend.releaseFamily = sawBendReleaseFamily;
+    sawBend.tableLength = 4;
+    sawBend.familySize = 5;
+    familyArray[8] = sawBend;
+
+    exciteBike.attackFamily = exciteBikeAttackFamily;
+    exciteBike.releaseFamily = exciteBikeReleaseFamily;
+    exciteBike.tableLength = 8;
+    exciteBike.familySize = 9;
+    familyArray[9] = exciteBike;
+
+    rand.attackFamily = randAttackFamily;
+    rand.releaseFamily = randReleaseFamily;
+    rand.tableLength = 8;
+    rand.familySize = 33;
+    familyArray[10] = rand;
+
+    gauss.attackFamily = gaussAttackFamily;
+    gauss.releaseFamily = gaussReleaseFamily;
+    gauss.tableLength = 8;
+    gauss.familySize = 33;
+    familyArray[11] = gauss;
+
+    gauss_noconform.attackFamily = gauss_noconformAttackFamily;
+    gauss_noconform.releaseFamily = gauss_noconformReleaseFamily;
+    gauss_noconform.tableLength = 8;
+    gauss_noconform.familySize = 33;
+    familyArray[12] = gauss_noconform;
+
+    gauss_low.attackFamily = gauss_lowAttackFamily;
+    gauss_low.releaseFamily = gauss_lowReleaseFamily;
+    gauss_low.tableLength = 8;
+    gauss_low.familySize = 33;
+    familyArray[13] = gauss_low;
+
+    gauss_low_noconform.attackFamily = gauss_low_noconformAttackFamily;
+    gauss_low_noconform.releaseFamily = gauss_low_noconformReleaseFamily;
+    gauss_low_noconform.tableLength = 8;
+    gauss_low_noconform.familySize = 33;
+    familyArray[14] = gauss_low_noconform;
+
+
+    span = familyArray[0].tableLength << 16;
 	spanx2 = familyArray[0].tableLength << 17;
+	morphBitShiftRight = 9;
+	morphBitShiftLeft = 7;
+	rgbOn = 1;
 
 
 
@@ -432,17 +719,18 @@ int main(void)
 
 	 	}
 
+  	  	if (rgbOn != 0) {
+  	  		if (phaseState == 1 && modechanged == 0) {
+  	  			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
+  	  			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);} //sets the PWM duty cycle (Capture Compare Value)
+  	  		if (phaseState == 2 && modechanged == 0) {
+  	  			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);
+  	  			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+  	  		} //sets the PWM duty cycle (Capture Compare Value)
+  	  		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings3[0]);
+  	  	}
 
-	 	 if (phaseState == 1 && modechanged == 0) {
-	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
-	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);} //sets the PWM duty cycle (Capture Compare Value)
-	 	 if (phaseState == 2 && modechanged == 0) {
-	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);
-	 		 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-	 	 } //sets the PWM duty cycle (Capture Compare Value)
-	 	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings3[0]);
-	 	//__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 2000);
-	 	//__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 2000);//sets the PWM duty cycle (Capture Compare Value)
+
 
 
 
@@ -1011,7 +1299,7 @@ void ReadPins(void){
 	    if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 1;
 	    	modechanged = 1;
-	    	ClearRGB();
+	    	familyRGB();
 	    	ShowMode(speed);
 	    }
 	    else {
@@ -1021,7 +1309,7 @@ void ReadPins(void){
 	    if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 2;
 	    	modechanged = 1;
-	    	ClearRGB();
+	    	familyRGB();
 	    	ShowMode(trigMode);
 	    }
 	    else {
@@ -1032,7 +1320,7 @@ void ReadPins(void){
 	    if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 3;
 	    	modechanged = 1;
-	    	ClearRGB();
+	    	familyRGB();
 	    	ShowMode(loop);
 	    }
 	    else {
@@ -1043,7 +1331,7 @@ void ReadPins(void){
 	    if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 4;
 	    	modechanged = 1;
-	    	ClearRGB();
+	    	familyRGB();
 	    	ShowMode(sampleHoldMode);
 	    }
 	    else {
@@ -1053,7 +1341,7 @@ void ReadPins(void){
 	    if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 5;
 	    	modechanged = 1;
-	    	ClearRGB();
+	    	familyRGB();
 	    	ShowMode(familyIndicator);
 	    }
 	    else {
@@ -1063,7 +1351,7 @@ void ReadPins(void){
 	    if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 6;
 	    	modechanged = 1;
-	    	ClearRGB();
+	    	familyRGB();
 	    	ShowMode(familyIndicator);
 	    }
 	    else {
@@ -1073,6 +1361,7 @@ void ReadPins(void){
 }
 
 void ChangeMode(int mode) {
+		rgbOn = 1;
 		if (mode == 1) {
 			speed = (speed + 1) % 2;
 		}
@@ -1086,21 +1375,67 @@ void ChangeMode(int mode) {
 			sampleHoldMode = (sampleHoldMode + 1) % 6;
 		}
 		if (mode == 5) {
-			familyIndicator = (familyIndicator + 1) % 8;
-			span = familyArray[familyIndicator].tableLength << 16;
-			spanx2 = familyArray[familyIndicator].tableLength << 17;
+			familyIndicator = (familyIndicator + 1) % 15;
+			span = (familyArray[familyIndicator].tableLength) << 16;
+			spanx2 = (familyArray[familyIndicator].tableLength) << 17;
+			switch (familyArray[familyIndicator].familySize) {
+
+								case 5:
+									morphBitShiftRight = 10;
+									morphBitShiftLeft = 6;
+									break;
+
+								case 9:
+									morphBitShiftRight = 9;
+									morphBitShiftLeft = 7;
+									break;
+
+								case 17:
+									morphBitShiftRight = 8;
+									morphBitShiftLeft = 8;
+									break;
+
+								case 33:
+									morphBitShiftRight = 7;
+									morphBitShiftLeft = 9;
+									break;
+
+							}
 		}
 		if (mode == 6) {
-			familyIndicator = (familyIndicator - 1);
-			if (familyIndicator < 0) {
-				familyIndicator = 7;
-				span = familyArray[familyIndicator].tableLength << 16;
-				spanx2 = familyArray[familyIndicator].tableLength << 17;
+			if (familyIndicator == 0) {familyIndicator = 14;}
+			else familyIndicator = (familyIndicator - 1);
+			span = (familyArray[familyIndicator].tableLength) << 16;
+			spanx2 = (familyArray[familyIndicator].tableLength) << 17;
+			switch (familyArray[familyIndicator].familySize) {
+
+					case 5:
+						morphBitShiftRight = 10;
+						morphBitShiftLeft = 6;
+						break;
+
+					case 9:
+						morphBitShiftRight = 9;
+						morphBitShiftLeft = 7;
+						break;
+
+					case 17:
+						morphBitShiftRight = 8;
+						morphBitShiftLeft = 8;
+						break;
+
+					case 33:
+						morphBitShiftRight = 7;
+						morphBitShiftLeft = 9;
+						break;
+
+				}
 			}
 		}
-}
+
 
 void ShowMode(uint8_t currentmode) {
+	familyRGB();
 	if (currentmode == 1) {
 		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
 		return;
@@ -1140,12 +1475,49 @@ void ShowMode(uint8_t currentmode) {
 		return;
 
 	}
+	if (currentmode == 8) {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		return;
+
+	}
+	if (currentmode == 9) {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+		return;
+
+	}
+	if (currentmode == 10) {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+		return;
+
+	}
+	if (currentmode == 11) {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		return;
+
+	}
+	if (currentmode == 12) {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+		return;
+
+	}
+	if (currentmode == 13) {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+		return;
+
+	}
+	if (currentmode == 14) {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+		return;
+
+	}
+
 }
 
-void ClearRGB(void) {
-	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
-	 __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+void familyRGB(void) {
+	rgbOn = 0;
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, familyIndicator << 12);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, familyIndicator << 6);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4095 - (familyIndicator << 12));
 }
 void ClearLEDs(void) {
 	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_RESET);

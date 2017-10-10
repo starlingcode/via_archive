@@ -362,7 +362,7 @@ int main(void)
     familyArray[7] = moog2;
 
 	span = familyArray[0].tableLength;
-	spanx2 = familyArray[0].tableLength << 2;
+	spanx2 = familyArray[0].tableLength << 1;
 
 
 
@@ -1088,14 +1088,14 @@ void ChangeMode(int mode) {
 		if (mode == 5) {
 			familyIndicator = (familyIndicator + 1) % 8;
 			span = familyArray[familyIndicator].tableLength;
-			spanx2 = familyArray[familyIndicator].tableLength << 2;
+			spanx2 = familyArray[familyIndicator].tableLength << 1;
 		}
 		if (mode == 6) {
 			familyIndicator = (familyIndicator - 1);
 			if (familyIndicator < 0) {
 				familyIndicator = 7;
 				span = familyArray[familyIndicator].tableLength;
-				spanx2 = familyArray[familyIndicator].tableLength << 2;
+				spanx2 = familyArray[familyIndicator].tableLength << 1;
 			}
 		}
 }

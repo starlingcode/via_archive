@@ -1,8 +1,8 @@
 typedef struct family {
    uint16_t **attackFamily;
    uint16_t **releaseFamily;
-   int tableLength;
-   int familySize;
+   uint32_t tableLength;
+   uint32_t familySize;
 } Family;
 
 

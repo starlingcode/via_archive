@@ -44,11 +44,15 @@
 
 
 // wavetable size - 1 in fix16 and that number doubled
-int span;
-int spanx2;
+uint32_t span;
+uint32_t spanx2;
+
+//per family bit shift amounts to accomplish morph
+uint8_t morphBitShiftRight;
+uint8_t morphBitShiftLeft;
 
 //import array of structs that contain our wavetable family info
-Family familyArray[8];
+Family familyArray[15];
 uint8_t familyIndicator;
 
 //this is used for our 1v/oct and bonus expo envelope
@@ -121,6 +125,7 @@ uint8_t releaseFlag;
 extern uint8_t phaseState;
 uint8_t lastPhaseState;
 uint8_t gateOn;
+uint8_t rgbOn;
 uint8_t drumRetrig;
 extern uint8_t lastAttackFlag;
 extern uint8_t lastReleaseFlag;
@@ -489,6 +494,7 @@ void EXTI15_10_IRQHandler(void)
 	if (phaseState == 1) {
 		LEDC_ON;
 		LEDD_OFF;
+		EOR_JACK_LOW;
 
 		if(drumRetrig == 1) {
 			drumCount = 0;
@@ -503,6 +509,7 @@ void EXTI15_10_IRQHandler(void)
 	if (phaseState == 2) {
 			LEDC_OFF;
 			LEDD_ON;
+			EOR_JACK_HIGH;
 
 
 		}
@@ -545,7 +552,7 @@ void TIM6_DAC_IRQHandler(void)
 	  	  	  		if (position >= span && position < spanx2) {release(); phaseState = 2;}
 	  	  	  		// pin set
 	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
-	  	  	  		fixMorph = ADCReadings3[0] + ADCReadings1[2];
+	  	  	  		fixMorph = morphCV - morphKnob;
 		  	  		if (fixMorph > 4095) {fixMorph = 4095;}
 		  	  		if (fixMorph < 0) {fixMorph = 0;}
 
@@ -654,11 +661,11 @@ void attack(void) {
 	LnSample = (int) (position >> 16);
 	//RnSample = (LnSample + 1);
 	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
-	LnFamily = (uint32_t) fixMorph >> 9;
+	LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
 	//RnFamily = (LnFamily + 1);
 	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
 	waveFrac = (uint16_t) position;
-	morphFrac = ((fixMorph - (LnFamily << 9)) << 7);
+	morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
 	//get values from the relevant wavetables
 	Lnvalue1 = *(*(familyArray[familyIndicator].attackFamily + LnFamily) + LnSample);
 	Rnvalue1 = *(*(familyArray[familyIndicator].attackFamily + LnFamily) + LnSample + 1);
@@ -669,9 +676,9 @@ void attack(void) {
 	//
 	interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
 	//interpolate between those based upon morph (biinterpolation)
-	out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
+	out = myfix16_lerp(interp1, interp2, morphFrac) >> 4;
 	if (out > 4095) {out = 4095;};
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
+	if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);}
 
 
 
@@ -692,11 +699,12 @@ void release(void) {
 	LnSample = (int) (mirror >> 16);
 	//RnSample = (LnSample + 1);
 	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
-	LnFamily = (uint32_t) fixMorph >> 9;
+	//bit shift 9 for morph 6
+	LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
 	//RnFamily = (LnFamily + 1);
 	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
 	waveFrac = (uint16_t) mirror;
-	morphFrac = (uint16_t) ((fixMorph - (LnFamily <<  9)) << 7);
+	morphFrac = (uint16_t) ((fixMorph - (LnFamily <<  morphBitShiftRight)) << morphBitShiftLeft);
 	//get values from the relevant wavetables
 	Lnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample);
 	Rnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample + 1);
@@ -706,9 +714,9 @@ void release(void) {
 	interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
 	interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
 	//interpolate between those based upon morph (biinterpolation)
-	out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
+	out = myfix16_lerp(interp1, interp2, morphFrac) >> 4;
 	if (out > 4095) {out = 4095;};
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);
+	if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);}
 
 
 }
