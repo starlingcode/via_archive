@@ -484,48 +484,6 @@ void TIM2_IRQHandler(void)
 }
 
 /**
-* @brief This function handles EXTI line[15:10] interrupts.
-*/
-void EXTI15_10_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
-
-
-	if (phaseState == 1) {
-		LEDC_ON;
-		LEDD_OFF;
-		EOR_JACK_LOW;
-
-		if(drumRetrig == 1) {
-			drumCount = 0;
-			drumRetrig = 0;
-		}
-
-		else if (trigMode == nongatedretrigger) {
-			incSign = 1;
-			if (speed == low) {releaseTime = calcTime2;}
-		}
-	}
-	if (phaseState == 2) {
-			LEDC_OFF;
-			LEDD_ON;
-			EOR_JACK_HIGH;
-
-
-		}
-	if (phaseState == 0) {
-		LEDC_OFF;
-		LEDD_OFF;
-
-	}
-  /* USER CODE END EXTI15_10_IRQn 0 */
-  //HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_12);
-  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
-
-  /* USER CODE END EXTI15_10_IRQn 1 */
-}
-
-/**
 * @brief This function handles Timer 6 interrupt and DAC underrun interrupts.
 */
 void TIM6_DAC_IRQHandler(void)
@@ -552,9 +510,9 @@ void TIM6_DAC_IRQHandler(void)
 	  	  	  		if (position >= span && position < spanx2) {release(); phaseState = 2;}
 	  	  	  		// pin set
 	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
-	  	  	  		fixMorph = morphCV - morphKnob;
-		  	  		if (fixMorph > 4095) {fixMorph = 4095;}
-		  	  		if (fixMorph < 0) {fixMorph = 0;}
+	  	  	  		//fixMorph = morphCV - morphKnob;
+		  	  		//if (fixMorph > 4095) {fixMorph = 4095;}
+		  	  		//if (fixMorph < 0) {fixMorph = 0;}
 
 
 	  	  	  		//if we are in high speed and not looping, activate drum mode
@@ -747,8 +705,8 @@ void getPhase(void) {
 
 		}
 
-		if (inc > 1048576) {inc = 1048576;}
-		if (inc < -1048576) {inc = -1048576;}
+		//if (inc > 1048576) {inc = 1048576;}
+		//if (inc < -1048576) {inc = -1048576;}
 	}
 
 	//define increment for low speed mode using function pointers to the appropriate knob/cv combo per the retirgger mode

@@ -134,6 +134,8 @@ enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 #define SH_B_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_9;
 #define SH_B_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_9;
 
+#define ClearTimCount(n)           (n.TIMx->CNT = 0)
+
 
 /* USER CODE END Private defines */
 

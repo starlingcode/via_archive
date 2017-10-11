@@ -62,7 +62,10 @@ DMA_HandleTypeDef hdma_dac_ch2;
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim6;
+TIM_HandleTypeDef htim7;
+TIM_HandleTypeDef htim8;
 
 TSC_HandleTypeDef htsc;
 
@@ -73,23 +76,17 @@ tsl_user_status_t tsl_status;
 __IO uint32_t uhTSCAcquisitionValue1;
 __IO uint32_t uhTSCAcquisitionValue2;
 __IO uint32_t uhTSCAcquisitionValue3;
-int not1;
-int not2;
-int not3;
-int modeflag;
-int modechanged;
-int pindownlastcycle;
-int temp1 = 0;
-int temp2 = 0;
-int temp3 = 0;
-int temp4 = 0;
+uint8_t modeflag;
+uint8_t detectOn;
+uint8_t lastDetect;
+uint8_t displayNewMode;
 extern uint16_t dacbuffer1[1];
 extern uint16_t dacbuffer2[1];
 extern uint32_t span;
 extern uint32_t spanx2;
 extern uint8_t morphBitShiftRight;
 extern uint8_t morphBitShiftLeft;
-uint8_t rgbOn;
+extern uint8_t rgbOn;
 Family moog1;
 Family moog2;
 Family triFudge;
@@ -465,18 +462,23 @@ static void MX_TSC_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM6_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_TIM4_Init(void);
+static void MX_TIM7_Init(void);
+static void MX_TIM8_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-void ReadPins(void);
-void ProcessSensors(void);
-void ChangeMode(int);
-void ShowMode(uint8_t);
+void readDetect(void);
+void readRelease(uint8_t);
+void handleRelease(uint8_t);
+void changeMode(uint8_t);
+void showMode(uint8_t);
 void familyRGB(void);
-void ClearLEDs(void);
+void restoreDisplay(void);
+void clearLEDs(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -518,6 +520,9 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM6_Init();
   MX_TIM3_Init();
+  MX_TIM4_Init();
+  MX_TIM7_Init();
+  MX_TIM8_Init();
 
   /* USER CODE BEGIN 2 */
   //define our wavetable family as two arrays of 9 wavetables (defined in tables.h), one for attack, one for release
@@ -660,6 +665,7 @@ int main(void)
       HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
       HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
       HAL_TIM_Base_Start(&htim1);
+      HAL_TIM_Base_Start(&htim4);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
@@ -685,59 +691,16 @@ int main(void)
 		tsl_status = tsl_user_Exec();
 
   	  	if (tsl_status != TSL_USER_STATUS_BUSY) {
-	 	 ReadPins();
-	 	 if (pindownlastcycle > modechanged) {
-	 		 		 	 ChangeMode(modeflag);
-	 		 		 	 switch (modeflag) {
-	 		 		 	 case 1: ShowMode(speed);
-	 		 		 	 	 	 HAL_Delay(500);
-	 		 		 	 	 	 ClearLEDs();
-	 		 		 	 	 	 break;
-	 		 		 	 case 2: ShowMode(trigMode);
-		 		 	 	 	 	 HAL_Delay(500);
-		 		 	 	 	 	 ClearLEDs();
-	 		 		 	 	 	 break;
-	 		 		 	 case 3: ShowMode(loop);
-		 		 	 	 	 	 HAL_Delay(500);
-		 		 	 	 	 	 ClearLEDs();
-	 		 		 	 	 	 break;
-	 		 		 	 case 4: ShowMode(sampleHoldMode);
- 		 	 	 	 	 	 	 HAL_Delay(500);
- 		 	 	 	 	 	 	 ClearLEDs();
-	 		 		 	 	 	 break;
-	 		 		 	 case 5: ShowMode(familyIndicator);
- 		 	 	 	 	 	 	 HAL_Delay(500);
- 		 	 	 	 	 	 	 ClearLEDs();
-	 		 		 	 	 	 break;
-	 		 		 	 case 6: ShowMode(familyIndicator);
- 		 	 	 	 	 	 	 HAL_Delay(500);
- 		 	 	 	 	 	 	 ClearLEDs();
-	 		 		 	 	 	 break;
-	 		 		 	 }
 
-	 	 	 }
+  	  		if (detectOn == 0) {readDetect();}
+  	  		else {readRelease(modeflag);}
 
-	 	}
-
-  	  	if (rgbOn != 0) {
-  	  		if (phaseState == 1 && modechanged == 0) {
-  	  			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
-  	  			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);} //sets the PWM duty cycle (Capture Compare Value)
-  	  		if (phaseState == 2 && modechanged == 0) {
-  	  			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);
-  	  			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-  	  		} //sets the PWM duty cycle (Capture Compare Value)
-  	  		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, ADCReadings3[0]);
   	  	}
 
+  	  	if (displayNewMode == 1) {
+  	  		restoreDisplay();
+  	  	}
 
-
-
-
-	     	//				uhTSCAcquisitionValue3 if acquisition successful*/
-	 	 //SetFlags(); /*Sets flag1, flag2, or flag3 per the unique value combos indicating a touch in the corresponding
-	      //	 	 	 zone*/
-	      //
 
 
   /* USER CODE END WHILE */
@@ -785,11 +748,12 @@ void SystemClock_Config(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1|RCC_PERIPHCLK_ADC12
-                              |RCC_PERIPHCLK_ADC34;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1|RCC_PERIPHCLK_TIM8
+                              |RCC_PERIPHCLK_ADC12|RCC_PERIPHCLK_ADC34;
   PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV16;
   PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV16;
   PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
+  PeriphClkInit.Tim8ClockSelection = RCC_TIM8CLK_HCLK;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -1143,6 +1107,39 @@ static void MX_TIM3_Init(void)
 
 }
 
+/* TIM4 init function */
+static void MX_TIM4_Init(void)
+{
+
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim4.Instance = TIM4;
+  htim4.Init.Prescaler = 10000-1;
+  htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim4.Init.Period = 60000;
+  htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /* TIM6 init function */
 static void MX_TIM6_Init(void)
 {
@@ -1152,7 +1149,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 1-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 2000;
+  htim6.Init.Period = 1500;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
@@ -1162,6 +1159,66 @@ static void MX_TIM6_Init(void)
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
+/* TIM7 init function */
+static void MX_TIM7_Init(void)
+{
+
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim7.Instance = TIM7;
+  htim7.Init.Prescaler = 1000;
+  htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim7.Init.Period = 10;
+  htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim7, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
+/* TIM8 init function */
+static void MX_TIM8_Init(void)
+{
+
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim8.Instance = TIM8;
+  htim8.Init.Prescaler = 0;
+  htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim8.Init.Period = 0;
+  htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim8.Init.RepetitionCounter = 0;
+  htim8.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim8) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim8, &sClockSourceConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterOutputTrigger2 = TIM_TRGO2_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim8, &sMasterConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
@@ -1276,16 +1333,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PA12 */
-  GPIO_InitStruct.Pin = GPIO_PIN_12;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
-  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
-
 }
 
 /* USER CODE BEGIN 4 */
@@ -1293,75 +1340,144 @@ static void MX_GPIO_Init(void)
 
 
 
-void ReadPins(void){
-	pindownlastcycle = modechanged;
+void readDetect(void){
 
 	    if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 1;
-	    	modechanged = 1;
-	    	familyRGB();
-	    	ShowMode(speed);
+	    	detectOn = 1;
+			clearLEDs();
+	    	__HAL_TIM_SET_COUNTER(&htim4, 0);
+	    	showMode(speed);
 	    }
-	    else {
-	    	if (modeflag == 1) {modechanged = 0;}
-	    }
-
 	    if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 2;
-	    	modechanged = 1;
-	    	familyRGB();
-	    	ShowMode(trigMode);
+	    	detectOn = 1;
+			clearLEDs();
+	    	__HAL_TIM_SET_COUNTER(&htim4, 0);
+	    	showMode(trigMode);
 	    }
-	    else {
-	    	if (modeflag == 2) {modechanged = 0;}
-	    }
-
-
 	    if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 3;
-	    	modechanged = 1;
-	    	familyRGB();
-	    	ShowMode(loop);
+	    	detectOn = 1;
+			clearLEDs();
+	    	__HAL_TIM_SET_COUNTER(&htim4, 0);
+	    	showMode(loop);
 	    }
-	    else {
-	    	if (modeflag == 3) {modechanged = 0;}
-	    }
-
-
 	    if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 4;
-	    	modechanged = 1;
-	    	familyRGB();
-	    	ShowMode(sampleHoldMode);
+	    	detectOn = 1;
+			clearLEDs();
+	    	__HAL_TIM_SET_COUNTER(&htim4, 0);
+	    	showMode(sampleHoldMode);
 	    }
-	    else {
-	    	if (modeflag == 4) {modechanged = 0;}
-	    }
-
 	    if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 5;
-	    	modechanged = 1;
-	    	familyRGB();
-	    	ShowMode(familyIndicator);
+	    	detectOn = 1;
+			clearLEDs();
+	    	__HAL_TIM_SET_COUNTER(&htim4, 0);
+	    	showMode(familyIndicator);
 	    }
-	    else {
-	    	if (modeflag == 5) {modechanged = 0;}
-	    }
-
 	    if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 6;
-	    	modechanged = 1;
-	    	familyRGB();
-	    	ShowMode(familyIndicator);
-	    }
-	    else {
-	    	if (modeflag == 6) {modechanged = 0;}
+	    	detectOn = 1;
+			clearLEDs();
+	    	__HAL_TIM_SET_COUNTER(&htim4, 0);
+	    	showMode(familyIndicator);
 	    }
 
 }
 
-void ChangeMode(int mode) {
+
+void readRelease(uint8_t modeFlagHolder ) {
+
+	switch (modeFlagHolder) {
+
+	case 1 :
+
+	    if (MyTKeys[3].p_Data->StateId == TSL_STATEID_RELEASE) {
+	    	detectOn = 0;
+			clearLEDs();
+	    	handleRelease(modeFlagHolder);
+	    }
+	    break;
+
+	case 2 :
+
+	    if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
+	    	detectOn = 0;
+			clearLEDs();
+	    	handleRelease(modeFlagHolder);
+	    }
+	    break;
+
+	case 3 :
+
+	    if (MyTKeys[1].p_Data->StateId == TSL_STATEID_RELEASE) {
+	    	detectOn = 0;
+			clearLEDs();
+	    	handleRelease(modeFlagHolder);
+	    }
+	    break;
+
+	case 4 :
+
+	    if (MyTKeys[4].p_Data->StateId == TSL_STATEID_RELEASE) {
+	    	detectOn = 0;
+			clearLEDs();
+	    	handleRelease(modeFlagHolder);
+	    }
+	    break;
+
+	case 5 :
+
+	    if (MyTKeys[5].p_Data->StateId == TSL_STATEID_RELEASE) {
+	    	detectOn = 0;
+			clearLEDs();
+	    	handleRelease(modeFlagHolder);
+	    }
+	    break;
+
+	case 6 :
+
+	    if (MyTKeys[0].p_Data->StateId == TSL_STATEID_RELEASE) {
+	    	detectOn = 0;
+			clearLEDs();
+	    	handleRelease(modeFlagHolder);
+	    }
+	    break;
+
+	}
+
+}
+
+
+void handleRelease(uint8_t pinMode) {
+	if (__HAL_TIM_GET_COUNTER(&htim4) < 10000) {
+		changeMode(pinMode);
+		switch (pinMode) {
+		case 1: showMode(speed);
+				break;
+		case 2: showMode(trigMode);
+				break;
+		case 3: showMode(loop);
+				break;
+		case 4: showMode(sampleHoldMode);
+				break;
+		case 5: showMode(familyIndicator);
+				break;
+		case 6: showMode(familyIndicator);
+				break;
+		}
+		displayNewMode = 1;
+		__HAL_TIM_SET_COUNTER(&htim4, 0);
+	}
+	else {
+		clearLEDs();
 		rgbOn = 1;
+	}
+}
+
+void changeMode(uint8_t mode) {
 		if (mode == 1) {
 			speed = (speed + 1) % 2;
 		}
@@ -1434,97 +1550,57 @@ void ChangeMode(int mode) {
 		}
 
 
-void ShowMode(uint8_t currentmode) {
-	familyRGB();
-	if (currentmode == 1) {
-		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
-		return;
-	}
-	if (currentmode == 2) {
-		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		return;
-	}
-	if (currentmode == 3) {
-		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-		return;
+void showMode(uint8_t currentmode) {
+	if (currentmode == familyIndicator) {familyRGB();}
 
-	}
-	if (currentmode == 4) {
-		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
-		return;
+	else {
+		switch (currentmode) {
 
-	}
-	if (currentmode == 5) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		return;
-
-	}
-	if (currentmode == 6) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-		return;
-
-	}
-	if (currentmode == 7) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
-		return;
-
-	}
-	if (currentmode == 8) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		return;
-
-	}
-	if (currentmode == 9) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-		return;
-
-	}
-	if (currentmode == 10) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
-		return;
-
-	}
-	if (currentmode == 11) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		return;
-
-	}
-	if (currentmode == 12) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-		return;
-
-	}
-	if (currentmode == 13) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
-		return;
-
-	}
-	if (currentmode == 14) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-		return;
-
+			case 0 :
+				LEDA_ON
+				break;
+			case 1 :
+				LEDB_ON
+				break;
+			case 2 :
+				LEDC_ON
+				break;
+			case 3 :
+				LEDD_ON
+				break;
+			case 4 :
+				LEDA_ON
+				LEDB_ON
+				break;
+			case 5 :
+				LEDC_ON
+				LEDD_ON
+				break;
+		}
 	}
 
 }
 
 void familyRGB(void) {
-	rgbOn = 0;
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, familyIndicator << 12);
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, familyIndicator << 6);
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4095 - (familyIndicator << 12));
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, familyIndicator << 8);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, familyIndicator << 4);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4095 - (familyIndicator << 8));
 }
-void ClearLEDs(void) {
+void clearLEDs(void) {
 	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
 }
+
+void restoreDisplay() {
+	if (__HAL_TIM_GET_COUNTER(&htim4) > 5000) {
+		clearLEDs();
+		rgbOn = 1;
+		displayNewMode = 0;
+	}
+}
+
 
 
 
