@@ -19,7 +19,7 @@
 						<toolChain id="fr.ac6.managedbuild.toolchain.gnu.cross.exe.debug.852440265" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.exe.debug">
 							<option id="fr.ac6.managedbuild.option.gnu.cross.prefix.877318962" name="Prefix" superClass="fr.ac6.managedbuild.option.gnu.cross.prefix" useByScannerDiscovery="false" value="arm-none-eabi-" valueType="string" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.1295621177" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu" useByScannerDiscovery="false" value="STM32F303CCTx" valueType="string" />
-							<option id="fr.ac6.managedbuild.option.gnu.cross.board.1989111490" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board" useByScannerDiscovery="false" value="prototype" valueType="string" />
+							<option id="fr.ac6.managedbuild.option.gnu.cross.board.1989111490" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board" useByScannerDiscovery="false" value="pllprototype" valueType="string" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.instructionSet.790806240" name="Instruction Set" superClass="fr.ac6.managedbuild.option.gnu.cross.instructionSet" useByScannerDiscovery="false" value="fr.ac6.managedbuild.option.gnu.cross.instructionSet.thumbII" valueType="enumerated" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.fpu.194248478" name="Floating point hardware" superClass="fr.ac6.managedbuild.option.gnu.cross.fpu" useByScannerDiscovery="false" value="fr.ac6.managedbuild.option.gnu.cross.fpu.fpv4-sp-d16" valueType="enumerated" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.floatabi.333304675" name="Floating-point ABI" superClass="fr.ac6.managedbuild.option.gnu.cross.floatabi" useByScannerDiscovery="false" value="fr.ac6.managedbuild.option.gnu.cross.floatabi.hard" valueType="enumerated" />
@@ -78,7 +78,7 @@
 						<toolChain id="fr.ac6.managedbuild.toolchain.gnu.cross.exe.debug.922380389" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.exe.debug" unusedChildren="">
 							<option id="fr.ac6.managedbuild.option.gnu.cross.prefix.877318962.19258800" name="Prefix" superClass="fr.ac6.managedbuild.option.gnu.cross.prefix.877318962" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.1295621177.1317859001" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu.1295621177" value="STM32F303CCTx" />
-							<option id="fr.ac6.managedbuild.option.gnu.cross.board.1989111490.504018795" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board.1989111490" value="prototype" />
+							<option id="fr.ac6.managedbuild.option.gnu.cross.board.1989111490.504018795" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board.1989111490" value="pllprototype" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.instructionSet.790806240.1822049946" name="Instruction Set" superClass="fr.ac6.managedbuild.option.gnu.cross.instructionSet.790806240" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.fpu.194248478.55360912" name="Floating point hardware" superClass="fr.ac6.managedbuild.option.gnu.cross.fpu.194248478" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.floatabi.333304675.293780139" name="Floating-point ABI" superClass="fr.ac6.managedbuild.option.gnu.cross.floatabi.333304675" />
@@ -132,7 +132,7 @@
 						<toolChain id="fr.ac6.managedbuild.toolchain.gnu.cross.exe.release.46189990" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.exe.release">
 							<option id="fr.ac6.managedbuild.option.gnu.cross.prefix.877318962" name="Prefix" superClass="fr.ac6.managedbuild.option.gnu.cross.prefix" useByScannerDiscovery="false" value="arm-none-eabi-" valueType="string" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.1295621177" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu" useByScannerDiscovery="false" value="STM32F303CCTx" valueType="string" />
-							<option id="fr.ac6.managedbuild.option.gnu.cross.board.1989111490" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board" useByScannerDiscovery="false" value="prototype" valueType="string" />
+							<option id="fr.ac6.managedbuild.option.gnu.cross.board.1989111490" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board" useByScannerDiscovery="false" value="pllprototype" valueType="string" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.instructionSet.790806240" name="Instruction Set" superClass="fr.ac6.managedbuild.option.gnu.cross.instructionSet" useByScannerDiscovery="false" value="fr.ac6.managedbuild.option.gnu.cross.instructionSet.thumbII" valueType="enumerated" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.fpu.194248478" name="Floating point hardware" superClass="fr.ac6.managedbuild.option.gnu.cross.fpu" useByScannerDiscovery="false" value="fr.ac6.managedbuild.option.gnu.cross.fpu.fpv4-sp-d16" valueType="enumerated" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.floatabi.333304675" name="Floating-point ABI" superClass="fr.ac6.managedbuild.option.gnu.cross.floatabi" useByScannerDiscovery="false" value="fr.ac6.managedbuild.option.gnu.cross.floatabi.hard" valueType="enumerated" />
@@ -212,7 +212,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders" />
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="prototype" />
+			<resource resourceType="PROJECT" workspacePath="pllprototype" />
 		</configuration>
 		<configuration configurationName="Release" />
 	</storageModule>

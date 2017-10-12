@@ -55,11 +55,15 @@ uint8_t familyIndicator;
 const int lookuptable[4096] = expotable10oct;
 
 //these are the variables used to generate the phase information that feeds our interpolations
+uint8_t morphBitShiftRight;
+uint8_t morphBitShiftLeft;
 int fixMorph;
 int morphBuffer[8];
 int getMorph;
 float position = 0;
 float mirror;
+float attackInc;
+float releaseInc;
 float inc;
 int incSign = 1;
 int time1;
@@ -381,6 +385,11 @@ void TIM2_IRQHandler(void)
     	if (lastPeriodCount < 20) {lastPeriodCount = holdLastPeriodCount;};
     	periodCount = 0;
 
+
+		attackInc = (spanx2 / (float)(lastPeriodCount)) * ((time2Knob >> 8) / ((time1Knob >> 8) + 1));
+		releaseInc = (spanx2 / (float)(lastPeriodCount)) * ((time2Knob >> 8) / ((time1Knob >> 8) + 1)) ;
+
+
     	//position = 0;
 
     }
@@ -434,7 +443,7 @@ void EXTI15_10_IRQHandler(void)
 
 	}
   /* USER CODE END EXTI15_10_IRQn 0 */
-  //HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_12);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_12);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
 
   /* USER CODE END EXTI15_10_IRQn 1 */
@@ -538,8 +547,8 @@ void TIM6_DAC_IRQHandler(void)
 
 
   /* USER CODE END TIM6_DAC_IRQn 0 */
-  //HAL_TIM_IRQHandler(&htim6);
-  //HAL_DAC_IRQHandler(&hdac);
+//  HAL_TIM_IRQHandler(&htim6);
+  HAL_DAC_IRQHandler(&hdac);
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
 
   /* USER CODE END TIM6_DAC_IRQn 1 */
@@ -581,11 +590,11 @@ void attack(void) {
 	LnSample = (int) position;
 	//RnSample = (LnSample + 1);
 	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
-	LnFamily = (uint32_t) fixMorph >> 9;
+	LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
 	//RnFamily = (LnFamily + 1);
 	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
 	waveFrac = (uint16_t) ((position - LnSample) * 65536);
-	morphFrac = ((fixMorph - (LnFamily << 9)) << 7);
+	morphFrac = ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
 	//get values from the relevant wavetables
 	Lnvalue1 = *(*(familyArray[familyIndicator].attackFamily + LnFamily) + LnSample);
 	Rnvalue1 = *(*(familyArray[familyIndicator].attackFamily + LnFamily) + LnSample + 1);
@@ -619,11 +628,11 @@ void release(void) {
 	LnSample = (int) mirror;
 	//RnSample = (LnSample + 1);
 	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
-	LnFamily = (uint32_t) fixMorph >> 9;
+	LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
 	//RnFamily = (LnFamily + 1);
 	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
 	waveFrac = (uint16_t) ((mirror - LnSample) * 65536);
-	morphFrac = (uint16_t) ((fixMorph - (LnFamily <<  9)) << 7);
+	morphFrac = (uint16_t) ((fixMorph - (LnFamily <<  morphBitShiftRight)) << morphBitShiftLeft);
 	//get values from the relevant wavetables
 	Lnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample);
 	Rnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample + 1);
@@ -652,13 +661,10 @@ void getPhase(void) {
 
 
 		if (position < span) {
-			//inc = span / (float)lastGateCount;
-			inc = (spanx2   / (float)(lastPeriodCount)) * ((time2Knob >> 8) / ((time1Knob >> 8) + 1));
+			inc = attackInc;
 		}
 		else if (position >= span && position < spanx2) {
-			//inc =  span / (float) (lastPeriodCount - lastGateCount);
-			inc = (spanx2 / (float)(lastPeriodCount)) * ((time2Knob >> 8) / ((time1Knob >> 8) + 1)) ;
-
+			inc = releaseInc;
 			}
 
 		position = position + inc;

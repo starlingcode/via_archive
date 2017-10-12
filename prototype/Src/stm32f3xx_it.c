@@ -510,7 +510,7 @@ void TIM6_DAC_IRQHandler(void)
 	  	  	  		if (position >= span && position < spanx2) {release(); phaseState = 2;}
 	  	  	  		// pin set
 	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
-	  	  	  		//fixMorph = morphCV - morphKnob;
+	  	  	  		fixMorph = morphKnob;
 		  	  		//if (fixMorph > 4095) {fixMorph = 4095;}
 		  	  		//if (fixMorph < 0) {fixMorph = 0;}
 
@@ -815,6 +815,38 @@ int myfix16_lerp8(int in0, int in1, uint16_t inFract)
 	tempOut = int64_add(tempOut, int64_mul_i32_i32(in1, inFract));
 	tempOut = int64_shift(tempOut, -16);
 	return (int)int64_lo(tempOut);
+}
+
+void EXTI15_10_IRQHandler(void)
+{
+
+
+	if (phaseState == 1) {
+		LEDC_ON;
+		LEDD_OFF;
+
+		if(drumRetrig == 1) {
+			drumCount = 0;
+			drumRetrig = 0;
+		}
+
+		else if (trigMode == nongatedretrigger) {
+			incSign = 1;
+			if (speed == low) {releaseTime = calcTime2;}
+		}
+	}
+	if (phaseState == 2) {
+			LEDC_OFF;
+			LEDD_ON;
+
+
+		}
+	if (phaseState == 0) {
+		LEDC_OFF;
+		LEDD_OFF;
+
+	}
+
 }
 
 /*this logic communicates entering and leaving the two stages in the main loop

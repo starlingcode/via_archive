@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=/Users/willmitchell/Documents/stm32 workspace/prototype/Inc
+HeaderPath=/Users/willmitchell/Documents/stm32 workspace/pllprototype/Inc
 HeaderFiles=stm32f3xx_it.h;stm32f3xx_hal_conf.h;main.h;
-SourcePath=/Users/willmitchell/Documents/stm32 workspace/prototype/Src
+SourcePath=/Users/willmitchell/Documents/stm32 workspace/pllprototype/Src
 SourceFiles=stm32f3xx_it.h;stm32f3xx_hal_conf.h;main.h;stm32f3xx_it.c;stm32f3xx_hal_msp.c;main.c;
 
 [PreviousLibFiles]
