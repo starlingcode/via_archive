@@ -51,23 +51,33 @@ int spanx2;
 Family familyArray[8];
 uint8_t familyIndicator;
 
+//import two arrays of structs that contain our scale info
+Scale rowScaleArray[8];
+uint8_t rowScaleIndicator;
+Scale ratioScaleArray[8];
+uint8_t ratioScaleIndicator;
+
+uint8_t rowSelect;
+uint8_t rowIndex;
+
 //this is used for our 1v/oct and bonus expo envelope
 const int lookuptable[4096] = expotable10oct;
 
 //these are the variables used to generate the phase information that feeds our interpolations
 uint8_t morphBitShiftRight;
 uint8_t morphBitShiftLeft;
+uint8_t rowSelectBitShift;
+uint8_t rowIndexBitShift;
 int fixMorph;
 int morphBuffer[8];
 int getMorph;
 float position = 0;
 float mirror;
-float attackInc;
-float releaseInc;
+float attackInc = 1;
+float releaseInc = 1;
+float numMult;
+float denomMult;
 float inc;
-int incSign = 1;
-int time1;
-int time2;
 int (*attackTime) (void);
 int (*releaseTime) (void);
 
@@ -116,7 +126,7 @@ void setRelease(void);
 void getAverages(void);
 
 // "playback" flags that set the oscillator in motion
-volatile int oscillatorActive = 0;
+volatile int oscillatorActive = 1;
 volatile int retrig = 0;
 
 // logic used to signal oscillator phase position
@@ -126,11 +136,12 @@ extern uint8_t phaseState;
 uint8_t lastPhaseState;
 uint8_t gateOn;
 uint8_t drumRetrig;
-uint32_t periodCount;
-uint32_t lastGateCount;
-uint32_t lastPeriodCount;
-uint32_t holdLastGateCount;
-uint32_t holdLastPeriodCount;
+uint32_t periodCount = 10000;
+uint32_t lastGateCount = 5000;
+uint32_t lastPeriodCount = 10000;
+uint32_t holdLastGateCount = 10000;
+uint32_t holdLastPeriodCount = 10000;
+uint32_t gateRatio12Bit;
 extern uint8_t lastAttackFlag;
 extern uint8_t lastReleaseFlag;
 extern uint8_t intoattackfromr;
@@ -162,10 +173,11 @@ uint16_t dacbuffer1[1];
 uint16_t dacbuffer2[1];
 
 // mode indicators, determined in the main loop
-enum speedTypes speed;
-enum loopTypes loop;
-enum trigModeTypes trigMode;
-enum sampleHoldModeTypes sampleHoldMode;
+enum scaleModes scaleMode;
+enum controlModes controlMode;
+enum phaseLockModes phaseLockMode;
+enum sampleHoldModes sampleHoldMode;
+
 
 uint8_t family;
 
@@ -385,12 +397,50 @@ void TIM2_IRQHandler(void)
     	if (lastPeriodCount < 20) {lastPeriodCount = holdLastPeriodCount;};
     	periodCount = 0;
 
+    	if (controlMode == knobDutyCycle) {
+    		gateRatio12Bit = (lastGateCount << 12) / (lastPeriodCount << 12);
 
-		attackInc = (spanx2 / (float)(lastPeriodCount)) * ((time2Knob >> 8) / ((time1Knob >> 8) + 1));
-		releaseInc = (spanx2 / (float)(lastPeriodCount)) * ((time2Knob >> 8) / ((time1Knob >> 8) + 1)) ;
+    		lastGateCount = (lastPeriodCount * time2Knob) >> 12; // last period count times the ratio of the adc to full scale
+
+    		if (scaleMode == row) {
+    		    		denomMult = 1;
+    		    		rowSelect = gateRatio12Bit >> rowSelectBitShift;
+    		    		rowIndex = time1Knob >> rowIndexBitShift;
+    		    		numMult = *(*(rowScaleArray[rowScaleIndicator].scaleGrid + rowSelect) + rowIndex);
+    		    	}
+
+    		if (scaleMode == ratio) {
+    		    		denomMult = 1;
+    		    		rowIndex = time1Knob >> rowIndexBitShift;
+    		    		numMult = *(*(ratioScaleArray[ratioScaleIndicator].scaleGrid) + rowIndex);
+    		    		rowIndex = gateRatio12Bit >> rowIndexBitShift;
+    		    		denomMult = *(*(ratioScaleArray[ratioScaleIndicator].scaleGrid + 1) + rowIndex);
+    		    	}
+
+    	}
 
 
-    	//position = 0;
+    	else {
+
+    		if (scaleMode == row) {
+    			denomMult = 1;
+    			rowSelect = time2Knob >> rowSelectBitShift;
+    			rowIndex = time1CV >> rowIndexBitShift;
+    			numMult = *(*(rowScaleArray[rowScaleIndicator].scaleGrid + rowSelect) + rowIndex);
+    		}
+
+    		if (scaleMode == ratio) {
+    			denomMult = 1;
+    			rowIndex = time1Knob >> rowIndexBitShift;
+    			numMult = *(*(ratioScaleArray[ratioScaleIndicator].scaleGrid) + rowIndex);
+    			rowIndex = time2Knob >> rowIndexBitShift;
+    			denomMult = *(*(ratioScaleArray[ratioScaleIndicator].scaleGrid + 1) + rowIndex);
+    		}
+
+    	}
+
+		attackInc = (span * numMult) / (float)(lastGateCount * denomMult);
+		releaseInc = (span * numMult) / (float)((lastPeriodCount - lastGateCount) * denomMult);
 
     }
     else {
@@ -399,8 +449,8 @@ void TIM2_IRQHandler(void)
     	lastGateCount = periodCount;
     	if (lastGateCount < 20) {lastGateCount = holdLastGateCount;};
 
-
     }
+
 
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
@@ -416,32 +466,19 @@ void EXTI15_10_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
 
-
 	if (phaseState == 1) {
 		LEDC_ON;
 		LEDD_OFF;
-
-		if(drumRetrig == 1) {
-			drumCount = 0;
-			drumRetrig = 0;
-		}
-
-		else if (trigMode == nongatedretrigger) {
-			incSign = 1;
-			if (speed == low) {releaseTime = calcTime2;}
-		}
 	}
 	if (phaseState == 2) {
-			LEDC_OFF;
-			LEDD_ON;
-
-
-		}
+		LEDC_OFF;
+		LEDD_ON;
+	}
 	if (phaseState == 0) {
 		LEDC_OFF;
 		LEDD_OFF;
-
 	}
+
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_12);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
@@ -458,7 +495,7 @@ void TIM6_DAC_IRQHandler(void)
 	periodCount ++;
 
 
-	if (oscillatorActive || loop == looping){
+	if (oscillatorActive){
 
 					//write the current oscillator value to dac1, and its inverse to dac2 (crossfading)
 	  				dacbuffer2[0] = out;
@@ -680,15 +717,15 @@ void getPhase(void) {
 
 int calcTime1(void) {
 
-	time1 = (time1Knob + time1CV) >> 4;
-	return time1;
+	//time1 = (time1Knob + time1CV) >> 4;
+	//return time1;
 
 }
 
 int calcTime2(void) {
 
-	time2 = (time2Knob + time2CV) >> 4;
-	return time2;
+	//time2 = (time2Knob + time2CV) >> 4;
+	//return time2;
 
 }
 

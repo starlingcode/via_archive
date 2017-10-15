@@ -82,6 +82,8 @@ uint8_t modechanged;
 uint8_t displayNewMode;
 extern uint8_t morphBitShiftRight;
 extern uint8_t morphBitShiftLeft;
+extern uint8_t rowSelectBitShift;
+extern uint8_t rowIndexBitShift;
 uint8_t detectOn;
 uint8_t rgbOn;
 extern uint16_t dacbuffer1[1];
@@ -96,6 +98,9 @@ Family triFold;
 Family bounce;
 Family sineFold;
 Family perlin;
+
+Scale ratio1;
+Scale row1;
 
 
 const uint16_t sinefold_ctr_1[65] = {0,1755,3221,4645,6025,7357,8637,9863,11031,12137,13180,14156,15062,15896,16655,17337,17940,18463,18903,19259,19530,19715,19812,19822,19745,19579,19325,18984,18556,18042,17444,16762,15997,15259,14604,14034,13550,13154,12845,12624,12492,12448,12493,12624,12843,13148,13537,14009,14563,15197,15909,16696,17557,18488,19487,20551,21677,22863,24104,25398,26741,28130,29561,31030,32768};
@@ -195,13 +200,29 @@ const uint16_t moog2release2[65] = { 20920 ,  20863 ,  20794 ,  20714 ,  20623 ,
 const uint16_t moog1attack2[65] = { 20345 ,  20343 ,  20322 ,  20245 ,  20079 ,  19798 ,  19386 ,  18837 , 18157 ,  17358 ,  16460 ,  15489 ,  14471 ,  13438 ,  12418 ,  11443 , 10538 ,   9729 ,   9037 ,   8478 ,   8065 ,   7806 ,   7704 ,   7757 , 7960 ,   8302 ,   8771 ,   9350 ,  10020 ,  10760 ,  11548 ,  12362 , 13180 ,  13980 ,  14742 ,  15449 ,  16085 ,  16636 ,  17092 ,  17447 , 17696 ,  17839 ,  17879 ,  17820 ,  17670 ,  17440 ,  17141 ,  16787 , 16392 ,  15971 ,  15540 ,  15113 ,  14704 ,  14326 ,  13991 ,  13708 , 13486 ,  13331 ,  13245 ,  13232 ,  13289 ,  13415 ,  13606 ,  13855 , 14155  };
 const uint16_t moog1release2[65] = { 20381 ,  20395 ,  20418 ,  20447 ,  20479 ,  20511 ,  20540 ,  20564 , 20578 ,  20581 ,  20569 ,  20539 ,  20490 ,  20421 ,  20330 ,  20216 , 20081 ,  19924 ,  19748 ,  19555 ,  19348 ,  19130 ,  18904 ,  18676 , 18449 ,  18228 ,  18018 ,  17824 ,  17649 ,  17498 ,  17374 ,  17280 , 17217 ,  17186 ,  17189 ,  17223 ,  17287 ,  17379 ,  17495 ,  17629 , 17778 ,  17934 ,  18091 ,  18243 ,  18382 ,  18503 ,  18597 ,  18660 , 18685 ,  18669 ,  18607 ,  18498 ,  18341 ,  18135 ,  17883 ,  17588 , 17255 ,  16890 ,  16500 ,  16094 ,  15681 ,  15270 ,  14872 ,  14497 , 14155  };
 
+const float t1Row1[8] = {2, 3, 4, 5, 6, 8, 10, 12};
+const float t2Row1[8] = {2, 3, 4, 5, 6, 8, 10, 12};
+
+const float grid1Row1[8] = {noteC1, noteDsharp1, noteG1, noteAsharp1, noteD2, noteGsharp2, noteAsharp2, noteC3};
+const float grid1Row2[8] = {noteC1, noteDsharp1, noteD1, noteAsharp1, noteGsharp1, noteD2, noteC2, noteAsharp2};
+const float grid1Row3[8] = {noteDsharp1, noteG1, noteAsharp1, noteD2, noteF2, noteGsharp2, noteG2, noteAsharp2};
+const float grid1Row4[8] = {noteF1, noteG1, noteDsharp1, noteD2, noteC2, noteGsharp2, noteF2, noteC3};
+const float grid1Row5[8] = {noteG1, noteF1, noteD1, noteAsharp1, noteC2, noteD2, noteF2, noteG3};
+const float grid1Row6[8] = {noteD1, noteF1, noteA1, noteAsharp1, noteC2, noteAsharp2, noteF2, noteA3};
+const float grid1Row7[8] = {noteA1, noteGsharp1, noteFsharp1, noteCsharp1, noteE2, noteDsharp2, noteA2, noteGsharp2};
+const float grid1Row8[8] = {noteC1, noteFsharp1, noteG1, noteCsharp1, noteE2, noteGsharp2, noteD2, noteC3};
+
 
 extern Family familyArray[8];
 extern uint8_t familyIndicator;
-enum speedTypes speed;
-enum loopTypes loop;
-enum trigModeTypes trigMode;
-enum sampleHoldModeTypes sampleHoldMode;
+extern Scale rowScaleArray[1];
+extern uint8_t rowScaleIndicator;
+extern Scale ratioScaleArray[1];
+extern uint8_t ratioScaleIndicator;
+enum scaleModes scaleMode;
+enum controlModes controlMode;
+enum phaseLockModes phaseLockMode;
+enum sampleHoldModes sampleHoldMode;
 int trig;
 uint8_t phaseState;
 uint8_t lastAttackFlag;
@@ -318,6 +339,9 @@ int main(void)
     const uint16_t *moog2AttackFamily[9] = {moog1attack2, moog2attack2, moog3attack2, moog4attack2, moog5attack2, moog6attack2, moog7attack2, moog8attack2, moog9attack2};
     const uint16_t *moog2ReleaseFamily[9] = {moog1release2, moog2release2, moog3release2, moog4release2, moog5release2, moog6release2, moog7release2, moog8release2, moog9release2};
 
+    const float *ratio1ScaleGrid[2] = {t1Row1, t2Row1};
+    const float *row1ScaleGrid[9] = {grid1Row1, grid1Row2, grid1Row3, grid1Row4, grid1Row5, grid1Row6, grid1Row7, grid1Row8};
+
     perlin.attackFamily = perlinAttackFamily;
     perlin.releaseFamily = perlinReleaseFamily;
     perlin.tableLength = 64;
@@ -366,20 +390,33 @@ int main(void)
     moog2.familySize = 9;
     familyArray[7] = moog2;
 
+    ratio1.scaleGrid = ratio1ScaleGrid;
+    ratio1.numRows = 2;
+    ratio1.pitchesPerRow = 8;
+    ratioScaleArray[0] = ratio1;
+
+    row1.scaleGrid = row1ScaleGrid;
+    row1.numRows = 8;
+    row1.pitchesPerRow = 8;
+    rowScaleArray[0] = row1;
+
 	span = familyArray[0].tableLength;
 	spanx2 = familyArray[0].tableLength << 1;
 	morphBitShiftRight = 9;
-	morphBitShiftRight = 7;
+	morphBitShiftLeft = 7;
+	rowIndexBitShift = 9;
+	rowSelectBitShift = 9;
+	rowScaleIndicator = 0;
+	ratioScaleIndicator = 0;
 
 
 
-
-
+	HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 0, 0);
+	HAL_NVIC_SetPriority(TIM2_IRQn, 1, 0);
 
       HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
       HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
       HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
-      HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
       HAL_TIM_Base_Start(&htim1);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
@@ -394,6 +431,7 @@ int main(void)
 
       tsl_user_Init();
       HAL_TIM_Base_Start_IT(&htim6);
+      HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
 
 
 
@@ -863,7 +901,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 1-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 1500;
+  htim6.Init.Period = 2000;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
@@ -994,7 +1032,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
@@ -1012,21 +1050,21 @@ void readDetect(void){
 	    	detectOn = 1;
 			clearLEDs();
 	    	__HAL_TIM_SET_COUNTER(&htim4, 0);
-	    	showMode(speed);
+	    	showMode(scaleMode);
 	    }
 	    if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 2;
 	    	detectOn = 1;
 			clearLEDs();
 	    	__HAL_TIM_SET_COUNTER(&htim4, 0);
-	    	showMode(trigMode);
+	    	showMode(phaseLockMode);
 	    }
 	    if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 3;
 	    	detectOn = 1;
 			clearLEDs();
 	    	__HAL_TIM_SET_COUNTER(&htim4, 0);
-	    	showMode(loop);
+	    	showMode(controlMode);
 	    }
 	    if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
 	    	modeflag = 4;
@@ -1120,11 +1158,11 @@ void handleRelease(uint8_t pinMode) {
 	if (__HAL_TIM_GET_COUNTER(&htim4) < 10000) {
 		changeMode(pinMode);
 		switch (pinMode) {
-		case 1: showMode(speed);
+		case 1: showMode(scaleMode);
 				break;
-		case 2: showMode(trigMode);
+		case 2: showMode(phaseLockMode);
 				break;
-		case 3: showMode(loop);
+		case 3: showMode(controlMode);
 				break;
 		case 4: showMode(sampleHoldMode);
 				break;
@@ -1144,13 +1182,13 @@ void handleRelease(uint8_t pinMode) {
 
 void changeMode(uint8_t mode) {
 		if (mode == 1) {
-			speed = (speed + 1) % 2;
+			scaleMode = (scaleMode + 1) % 2;
 		}
 		if (mode == 2) {
-			trigMode = (trigMode + 1) % 5;
+			controlMode = (controlMode + 1) % 2;
 		}
 		if (mode == 3) {
-			loop = (loop + 1) % 2;
+			phaseLockMode = (phaseLockMode + 1) % 3;
 		}
 		if (mode == 4) {
 			sampleHoldMode = (sampleHoldMode + 1) % 6;

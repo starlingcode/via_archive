@@ -42,13 +42,13 @@
 
 /* USER CODE BEGIN Includes */
 
-enum speedTypes {high, low};
+enum scaleModes {row, ratio};
 
-enum loopTypes {noloop, looping};
+enum controlModes {gatedDutyCycle, knobDutyCycle};
 
-enum trigModeTypes {noretrigger, hardsync, gated, nongatedretrigger, pendulum};
+enum phaseLockModes {none, average, hardSync, nongatedretrigger, pendulum};
 
-enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
+enum sampleHoldModes {nosampleandhold, a, b, ab, antidecimate, decimate};
 
 /* USER CODE END Includes */
 
@@ -134,6 +134,44 @@ enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 #define SH_B_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_9;
 #define SH_B_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_9;
 
+
+#define noteC1 1
+#define noteCsharp1 1.05946309436
+#define noteD1 1.12246204831
+#define noteDsharp1 1.189207115
+#define noteE1 1.25992104989
+#define noteF1 1.33483985417
+#define noteFsharp1 1.41421356237
+#define noteG1 1.49830707688
+#define noteGsharp1 1.58740105197
+#define noteA1 1.68179283051
+#define noteAsharp1 1.78179743628
+#define noteB1 1.88774862536
+#define noteC2 2
+#define noteCsharp2 2.11892618872
+#define noteD2 2.24492409662
+#define noteDsharp2 2.37841423001
+#define noteE2 2.51984209979
+#define noteF2 2.66967970834
+#define noteFsharp2 2.82842712475
+#define noteG2 2.99661415375
+#define noteGsharp2 3.17480210394
+#define noteA2 3.36358566101
+#define noteAsharp2 3.56359487256
+#define noteB2 3.77549725073
+#define noteC3 4
+#define noteCsharp3 4.23785237744
+#define noteD3 4.48984819324
+#define noteDsharp3 4.75682846001
+#define noteE3 5.03968419958
+#define noteF3 5.33935941668
+#define noteFsharp3 5.65685424949
+#define noteG3 5.99322830751
+#define noteGsharp3 6.34960420787
+#define noteA3 6.72717132203
+#define noteAsharp3 7.12718974512
+#define noteB3 7.55099450145
+#define noteC4 8
 
 /* USER CODE END Private defines */
 
