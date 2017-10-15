@@ -141,6 +141,9 @@ enum sampleHoldDirection {toward_a, toward_b};
 extern uint16_t sampleHoldTimer;
 int drumCount;
 int subCount;
+uint8_t pitchOn;
+uint8_t morphOn;
+uint8_t ampOn;
 
 uint8_t pendulumDirection;
 
@@ -457,7 +460,7 @@ void TIM2_IRQHandler(void)
 
     else {
 
-    	if (trigMode == gated) {
+    	if (trigMode == gated && (speed != high && loop != noloop)) {
 
     		if (position < span) {
 
@@ -520,7 +523,8 @@ void TIM6_DAC_IRQHandler(void)
 	  		  	  		//call the fuction that generates our expo decay and increments the oscillator
 	  		  	  		drum();
 	  		  	  		//use the expo decay scaled by the manual morph control to modulate morph
-	  		  	  		fixMorph = myfix16_mul(exposcale, fixMorph);
+	  		  	  		if (morphOn != 0) {fixMorph = myfix16_mul(exposcale, fixMorph);}
+
 	  		  	  	}
 	  	  	  		if (phaseState != lastPhaseState) {
 
@@ -695,13 +699,16 @@ void getPhase(void) {
 		  if we are in drum mode, no linear FM*/
 		if (loop == noloop) {
 
-			inc = myfix16_mul(2000, lookuptable[4095 - ((time1Knob + time1CV))] >> 2);
 
+			if (pitchOn != 0) {inc = myfix16_mul((exposcale >> 5) + 2000, lookuptable[4095 - ((time1Knob + time1CV))] >> 2);}
+			else {inc = myfix16_mul(2000, lookuptable[4095 - ((time1Knob + time1CV))] >> 2);}
 		}
 
 		else {
 
 			inc = myfix16_mul(time2CV, lookuptable[4095 - ((time1Knob + time1CV))] >> 2);
+
+
 
 		}
 
@@ -722,18 +729,11 @@ void getPhase(void) {
 
 	inc *= incSign; //multiply inc by a sign per the retrigger mode
 
-	if (trigMode == gated) {
+	if (trigMode == gated && (speed != high && loop != noloop)) {
 		if (gateOn == 1 && (abs(inc) > abs(span - position))) {
 			inc = span - position;
 		}
 	}
-
-	  	if (speed == high && loop == noloop){
-	  		//call the fuction that generates our expo decay and increments the oscillator
-
-	  		//use the expo decay scaled by the manual morph control to modulate morph
-	  		inc = myfix16_mul(exposcale, inc) + 2000;
-	  	}
 
 	position = position + inc; // increment our phase position with our newly calculated value
 
@@ -793,7 +793,7 @@ void drum(void) {
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
 	exposcale = lookuptable[subCount] >> 10;
 	//scale the oscillator
-	out = myfix16_mul(out, exposcale);
+	if (ampOn != 0) {out = myfix16_mul(out, exposcale);}
 }
 
 int myfix16_mul(int in0, int in1) {

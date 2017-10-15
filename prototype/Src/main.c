@@ -437,6 +437,9 @@ enum speedTypes speed;
 enum loopTypes loop;
 enum trigModeTypes trigMode;
 enum sampleHoldModeTypes sampleHoldMode;
+uint8_t pitchOn;
+uint8_t morphOn;
+uint8_t ampOn;
 int trig;
 uint8_t phaseState;
 uint8_t lastAttackFlag;
@@ -570,8 +573,8 @@ int main(void)
     const uint16_t *gauss_lowReleaseFamily[33] = {gauss_low0, gauss_low1, gauss_low2, gauss_low3, gauss_low4, gauss_low5, gauss_low6, gauss_low7, gauss_low8, gauss_low9, gauss_low10, gauss_low11, gauss_low12, gauss_low13, gauss_low14, gauss_low15, gauss_low16, gauss_low17, gauss_low18, gauss_low19, gauss_low20, gauss_low21, gauss_low22, gauss_low23, gauss_low24, gauss_low25, gauss_low26, gauss_low27, gauss_low28, gauss_low29, gauss_low30, gauss_low31, gauss_low32};
     const uint16_t *gauss_low_noconformAttackFamily[33] = {gauss_low_noconform0, gauss_low_noconform1, gauss_low_noconform2, gauss_low_noconform3, gauss_low_noconform4, gauss_low_noconform5, gauss_low_noconform6, gauss_low_noconform7, gauss_low_noconform8, gauss_low_noconform9, gauss_low_noconform10, gauss_low_noconform11, gauss_low_noconform12, gauss_low_noconform13, gauss_low_noconform14, gauss_low_noconform15, gauss_low_noconform16, gauss_low_noconform17, gauss_low_noconform18, gauss_low_noconform19, gauss_low_noconform20, gauss_low_noconform21, gauss_low_noconform22, gauss_low_noconform23, gauss_low_noconform24, gauss_low_noconform25, gauss_low_noconform26, gauss_low_noconform27, gauss_low_noconform28, gauss_low_noconform29, gauss_low_noconform30, gauss_low_noconform31, gauss_low_noconform32};
     const uint16_t *gauss_low_noconformReleaseFamily[33] = {gauss_low_noconform0, gauss_low_noconform1, gauss_low_noconform2, gauss_low_noconform3, gauss_low_noconform4, gauss_low_noconform5, gauss_low_noconform6, gauss_low_noconform7, gauss_low_noconform8, gauss_low_noconform9, gauss_low_noconform10, gauss_low_noconform11, gauss_low_noconform12, gauss_low_noconform13, gauss_low_noconform14, gauss_low_noconform15, gauss_low_noconform16, gauss_low_noconform17, gauss_low_noconform18, gauss_low_noconform19, gauss_low_noconform20, gauss_low_noconform21, gauss_low_noconform22, gauss_low_noconform23, gauss_low_noconform24, gauss_low_noconform25, gauss_low_noconform26, gauss_low_noconform27, gauss_low_noconform28, gauss_low_noconform29, gauss_low_noconform30, gauss_low_noconform31, gauss_low_noconform32};
-    const uint16_t *algerianAttackFamily[5] = {algerian_t, algerian_e, algerian_r, algerian_w,  algerian_q};
-    const uint16_t *algerianReleaseFamily[5] = {algerian_a, algerian_o, algerian_s, algerian_i,  algerian_u};
+    const uint16_t *algerianAttackFamily[5] = {algerian_t, algerian_r, algerian_e, algerian_q, algerian_w,};
+    const uint16_t *algerianReleaseFamily[5] = {algerian_a, algerian_s, algerian_o, algerian_u, algerian_i,};
 
     perlin.attackFamily = perlinAttackFamily;
     perlin.releaseFamily = perlinReleaseFamily;
@@ -675,6 +678,9 @@ int main(void)
 	morphBitShiftRight = 9;
 	morphBitShiftLeft = 7;
 	rgbOn = 1;
+	ampOn = 1;
+	pitchOn = 1;
+	morphOn = 1;
 
 
 
@@ -1504,6 +1510,34 @@ void changeMode(uint8_t mode) {
 		}
 		if (mode == 2) {
 			trigMode = (trigMode + 1) % 5;
+			switch (trigMode) {
+			case 0:
+				ampOn = 1;
+				pitchOn = 1;
+				morphOn = 1;
+				break;
+			case 1:
+				ampOn = 1;
+				pitchOn = 0;
+				morphOn = 1;
+				break;
+			case 2:
+				ampOn = 1;
+				pitchOn = 0;
+				morphOn = 0;
+				break;
+			case 3:
+				ampOn = 0;
+				pitchOn = 0;
+				morphOn = 1;
+				break;
+			case 4:
+				ampOn = 0;
+				pitchOn = 1;
+				morphOn = 1;
+				break;
+
+			}
 		}
 		if (mode == 3) {
 			loop = (loop + 1) % 2;

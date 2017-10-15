@@ -398,14 +398,14 @@ void TIM2_IRQHandler(void)
     	periodCount = 0;
 
     	if (controlMode == knobDutyCycle) {
-    		gateRatio12Bit = (lastGateCount << 12) / (lastPeriodCount << 12);
+    		//gateRatio12Bit = ((lastGateCount << 12) / lastPeriodCount);
 
-    		lastGateCount = (lastPeriodCount * time2Knob) >> 12; // last period count times the ratio of the adc to full scale
+    		lastGateCount = ((lastPeriodCount * time2Knob) >> 12) + 1; // last period count times the ratio of the adc to full scale
 
     		if (scaleMode == row) {
     		    		denomMult = 1;
-    		    		rowSelect = gateRatio12Bit >> rowSelectBitShift;
-    		    		rowIndex = time1Knob >> rowIndexBitShift;
+    		    		rowSelect = time2CV >> rowSelectBitShift;
+    		    		rowIndex = time1CV >> rowIndexBitShift;
     		    		numMult = *(*(rowScaleArray[rowScaleIndicator].scaleGrid + rowSelect) + rowIndex);
     		    	}
 
@@ -413,7 +413,7 @@ void TIM2_IRQHandler(void)
     		    		denomMult = 1;
     		    		rowIndex = time1Knob >> rowIndexBitShift;
     		    		numMult = *(*(ratioScaleArray[ratioScaleIndicator].scaleGrid) + rowIndex);
-    		    		rowIndex = gateRatio12Bit >> rowIndexBitShift;
+    		    		rowIndex = time2CV >> rowIndexBitShift;
     		    		denomMult = *(*(ratioScaleArray[ratioScaleIndicator].scaleGrid + 1) + rowIndex);
     		    	}
 
