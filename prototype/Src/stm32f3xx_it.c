@@ -45,7 +45,7 @@
 
 // wavetable size - 1 in fix16 and that number doubled
 uint32_t span;
-uint32_t spanx2;
+int spanx2;
 
 //per family bit shift amounts to accomplish morph
 uint8_t morphBitShiftRight;
@@ -141,6 +141,7 @@ enum sampleHoldDirection {toward_a, toward_b};
 extern uint16_t sampleHoldTimer;
 int drumCount;
 int subCount;
+uint8_t drumModeOn;
 uint8_t pitchOn;
 uint8_t morphOn;
 uint8_t ampOn;
@@ -377,20 +378,21 @@ void DMA1_Channel4_IRQHandler(void)
 void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
-    if(	HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15) == GPIO_PIN_RESET) {
+    if((GPIOA->IDR & GPIO_PIN_15) != (uint32_t)GPIO_PIN_RESET){
 
 	  if (oscillatorActive == 0) {
 		oscillatorActive = 1;
-		gateOn = 1;
 		attackTime = calcTime1;
 		releaseTime = calcTime2;
-		incSign = 1;
-		}
+		//incSign = 1;
+		if (trigMode == gated) {gateOn = 1;}
+	  }
 	  else {
 
-	   if (loop == noloop && speed == high) {
+	   if (drumModeOn == 1) {
 			drumRetrig = 1;
 	   }
+
 	   else {
 
 		switch (trigMode) {
@@ -406,7 +408,7 @@ void TIM2_IRQHandler(void)
 
 			if (position < span) {
 
-				if (speed == low) {attackTime = &calcTime1;}
+				if (attackTime == &calcTime2) {attackTime = &calcTime1;}
 				incSign = 1; // 1 in int
 				gateOn = 1;
 
@@ -442,12 +444,14 @@ void TIM2_IRQHandler(void)
 			pendulumDirection = !pendulumDirection;
 
 			//reset our count to 0 so we always increment forward through attack when triggering from rest
-			//if  (loop == noloop && (position <= 0 || position >= spanx2)) {pendulumDirection = 0;}
+			//if  (position <= 0 || position >= spanx2) {pendulumDirection = 0;}
 
 			//reverse direction of the oscillator
 			if (pendulumDirection == 1) {
 				incSign = -1;
 			}
+			else {incSign = 1;}
+
 
 			break;
 
@@ -460,13 +464,13 @@ void TIM2_IRQHandler(void)
 
     else {
 
-    	if (trigMode == gated && (speed != high && loop != noloop)) {
+    	if (trigMode == gated && drumModeOn == 0) {
 
     		if (position < span) {
 
 				if (speed == low) {attackTime = calcTime2;}
 				incSign = -1; // -1 in int
-				gateOn = 1;
+				gateOn = 0;
 
 			}
     		else {
@@ -526,6 +530,7 @@ void TIM6_DAC_IRQHandler(void)
 	  		  	  		if (morphOn != 0) {fixMorph = myfix16_mul(exposcale, fixMorph);}
 
 	  		  	  	}
+	  		  	  	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, fixMorph);
 	  	  	  		if (phaseState != lastPhaseState) {
 
 	  	  	  			HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
@@ -640,7 +645,7 @@ void attack(void) {
 	//interpolate between those based upon morph (biinterpolation)
 	out = myfix16_lerp(interp1, interp2, morphFrac) >> 4;
 	if (out > 4095) {out = 4095;};
-	if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);}
+	if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);}
 
 
 
@@ -678,7 +683,7 @@ void release(void) {
 	//interpolate between those based upon morph (biinterpolation)
 	out = myfix16_lerp(interp1, interp2, morphFrac) >> 4;
 	if (out > 4095) {out = 4095;};
-	if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);}
+	if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);}
 
 
 }
@@ -700,13 +705,13 @@ void getPhase(void) {
 		if (loop == noloop) {
 
 
-			if (pitchOn != 0) {inc = myfix16_mul((exposcale >> 5) + 2000, lookuptable[4095 - ((time1Knob + time1CV))] >> 2);}
-			else {inc = myfix16_mul(2000, lookuptable[4095 - ((time1Knob + time1CV))] >> 2);}
+			if (pitchOn != 0) {inc = myfix16_mul((exposcale >> 5) + 2000, lookuptable[4095 - ((4095 - time1CV) - (time1Knob>> 1))] >> 2);}
+			else {inc = myfix16_mul(2000, lookuptable[4095 - ((4095 - time1CV) - (time1Knob >> 1))] >> 2);}
 		}
 
 		else {
 
-			inc = myfix16_mul(time2CV, lookuptable[4095 - ((time1Knob + time1CV))] >> 2);
+			inc = myfix16_mul((1900 - time2CV) + time2Knob, lookuptable[4095 - ((4095 - time1CV) - (time1Knob>> 1))] >> 2);
 
 
 
@@ -727,9 +732,11 @@ void getPhase(void) {
 			}
 	}
 
-	inc *= incSign; //multiply inc by a sign per the retrigger mode
+	if (incSign == -1) {inc = -inc;}
 
-	if (trigMode == gated && (speed != high && loop != noloop)) {
+	//if (inc < -1048576) {inc = -1048576;}//multiply inc by a sign per the retrigger mode
+
+	if (trigMode == gated && drumModeOn == 0) {
 		if (gateOn == 1 && (abs(inc) > abs(span - position))) {
 			inc = span - position;
 		}
@@ -769,14 +776,14 @@ void getPhase(void) {
 
 int calcTime1(void) {
 
-	time1 = (time1Knob + time1CV) >> 4;
+	time1 = lookuptable[((4095 - (time1Knob - ((4095 - time1CV) >> 2))) >> 1) + 500] >> 10;
 	return time1;
 
 }
 
 int calcTime2(void) {
 
-	time2 = (time2Knob + time2CV) >> 4;
+	time2 = lookuptable[(4095 - (time2Knob - ((4095 - time2CV) >> 2))) >> 1] >> 10;
 	return time2;
 
 }
@@ -789,7 +796,7 @@ void drum(void) {
 	//if we get a retrigger, wait to cycle back through the period then retrigger (no pops)
 	//if (intoattackfroml == 1 && retrig == 1) {retrig = 0, drumCount = 0;}
 	//if we get to the end of the table, reset the envelope
-	if (subCount <= 0) {oscillatorActive = 0, retrig = 0, drumCount = 0, position = 0; subCount = 0;}
+	if (subCount <= 0) {oscillatorActive = 0, drumCount = 0, position = 0; subCount = 0;}
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
 	exposcale = lookuptable[subCount] >> 10;
 	//scale the oscillator
@@ -822,24 +829,29 @@ void EXTI15_10_IRQHandler(void)
 
 
 	if (phaseState == 1) {
+
+		if (rgbOn != 0) {
 		LEDC_ON;
 		LEDD_OFF;
+		}
 
-		if(drumRetrig == 1) {
+		if (drumRetrig == 1) {
 			drumCount = 0;
 			drumRetrig = 0;
 		}
-
 		else if (trigMode == nongatedretrigger) {
 			incSign = 1;
 			if (speed == low) {releaseTime = calcTime2;}
+		//else if (trigMode == pendulum) {incSign *= -1;}
 		}
 	}
+
 	if (phaseState == 2) {
+		//if (trigMode == pendulum) {incSign *= -1;}
+		 if (rgbOn != 0) {
 			LEDC_OFF;
 			LEDD_ON;
-
-
+		 }
 		}
 	if (phaseState == 0) {
 		LEDC_OFF;
@@ -848,58 +860,6 @@ void EXTI15_10_IRQHandler(void)
 	}
 
 }
-
-/*this logic communicates entering and leaving the two stages in the main loop
-void setAttack(void) {
-	//indicate that we are not in release phase, and write the release gate low
-	lastReleaseFlag = 0;
-	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_RESET);
-
-	//this is a handy time to increment our decimate counter every sample
-	//addachange
-	sampleHoldTimer++;
-
-	//indicate the direction in which the oscillator is moving in the value of the attack flag variable
-	if (inc < 0) {attackFlag = 2;}
-	else {attackFlag = 1;};
-
-	//if the attack flag has changed since the last sample, raise the appropriate flag, if not, make sure that flag is set to 0
-	if (attackFlag == 2 && attackFlag ==! lastAttackFlag) {
-		intoattackfromr = 1;
-		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_10, GPIO_PIN_SET);
-		sampleHoldTimer = 0;}
-
-	else if (attackFlag == 1 && attackFlag ==! lastAttackFlag) {
-		intoattackfroml = 1;
-		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_10, GPIO_PIN_SET);
-		sampleHoldTimer = 0;}
-
-	else {intoattackfroml = 0; intoattackfroml = 0;};
-	//remember the value we set
-	lastAttackFlag = attackFlag;
-}
-
-
-
-//parallel to setAttack
-void setRelease(void) {
-	lastAttackFlag = 0;
-	sampleHoldTimer++;
-	if (inc < 0) {releaseFlag = 2;}
-	else {releaseFlag = 1;};
-	if (releaseFlag == 2 && releaseFlag ==! lastReleaseFlag) {
-		intoreleasefromr = 1;
-		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_SET);
-		sampleHoldTimer = 0;}
-	else if (releaseFlag == 1 && releaseFlag ==! lastReleaseFlag) {
-		intoreleasefroml = 1;
-		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_SET);
-		sampleHoldTimer = 0;}
-	else {intoreleasefroml = 0; intoreleasefroml = 0;};
-	lastReleaseFlag = releaseFlag;
-	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_10, GPIO_PIN_RESET);
-}
-
 
 
 

@@ -83,10 +83,13 @@ uint8_t displayNewMode;
 extern uint16_t dacbuffer1[1];
 extern uint16_t dacbuffer2[1];
 extern uint32_t span;
-extern uint32_t spanx2;
+extern int spanx2;
 extern uint8_t morphBitShiftRight;
 extern uint8_t morphBitShiftLeft;
 extern uint8_t rgbOn;
+extern uint8_t drumModeOn;
+extern int incSign;
+extern uint8_t gateOn;
 Family moog1;
 Family moog2;
 Family triFudge;
@@ -681,6 +684,7 @@ int main(void)
 	ampOn = 1;
 	pitchOn = 1;
 	morphOn = 1;
+	drumModeOn = 1;
 
 
 
@@ -1144,7 +1148,7 @@ static void MX_TIM4_Init(void)
   htim4.Instance = TIM4;
   htim4.Init.Prescaler = 10000-1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 60000;
+  htim4.Init.Period = 10000;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -1370,6 +1374,7 @@ static void MX_GPIO_Init(void)
 void readDetect(void){
 
 	    if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
+	    	rgbOn = 0;
 	    	modeflag = 1;
 	    	detectOn = 1;
 			clearLEDs();
@@ -1377,6 +1382,7 @@ void readDetect(void){
 	    	showMode(speed);
 	    }
 	    if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
+	    	rgbOn = 0;
 	    	modeflag = 2;
 	    	detectOn = 1;
 			clearLEDs();
@@ -1384,6 +1390,7 @@ void readDetect(void){
 	    	showMode(trigMode);
 	    }
 	    if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
+	    	rgbOn = 0;
 	    	modeflag = 3;
 	    	detectOn = 1;
 			clearLEDs();
@@ -1391,6 +1398,7 @@ void readDetect(void){
 	    	showMode(loop);
 	    }
 	    if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
+	    	rgbOn = 0;
 	    	modeflag = 4;
 	    	detectOn = 1;
 			clearLEDs();
@@ -1398,6 +1406,7 @@ void readDetect(void){
 	    	showMode(sampleHoldMode);
 	    }
 	    if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
+	    	rgbOn = 0;
 	    	modeflag = 5;
 	    	detectOn = 1;
 			clearLEDs();
@@ -1405,6 +1414,7 @@ void readDetect(void){
 	    	showMode(familyIndicator);
 	    }
 	    if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
+	    	rgbOn = 0;
 	    	modeflag = 6;
 	    	detectOn = 1;
 			clearLEDs();
@@ -1507,9 +1517,13 @@ void handleRelease(uint8_t pinMode) {
 void changeMode(uint8_t mode) {
 		if (mode == 1) {
 			speed = (speed + 1) % 2;
+			if (speed == high && loop == noloop) {drumModeOn = 1;}
+			else {drumModeOn = 0;}
 		}
 		if (mode == 2) {
 			trigMode = (trigMode + 1) % 5;
+			incSign = 1;
+			gateOn = 0;
 			switch (trigMode) {
 			case 0:
 				ampOn = 1;
@@ -1541,6 +1555,8 @@ void changeMode(uint8_t mode) {
 		}
 		if (mode == 3) {
 			loop = (loop + 1) % 2;
+			if (speed == high && loop == noloop) {drumModeOn = 1;}
+			else {drumModeOn = 0;}
 		}
 		if (mode == 4) {
 			sampleHoldMode = (sampleHoldMode + 1) % 6;
@@ -1606,6 +1622,7 @@ void changeMode(uint8_t mode) {
 
 
 void showMode(uint8_t currentmode) {
+
 	if (currentmode == familyIndicator) {familyRGB();}
 
 	else {
