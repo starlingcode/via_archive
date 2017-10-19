@@ -50,6 +50,12 @@ enum trigModeTypes {noretrigger, hardsync, gated, nongatedretrigger, pendulum};
 
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 
+int (*attackTime) (void);
+int (*releaseTime) (void);
+
+int calcTime1(void);
+int calcTime2(void);
+
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/

@@ -106,7 +106,16 @@ Family gauss_noconform;
 Family gauss_low;
 Family gauss_low_noconform;
 Family algerian;
-
+Family gammaSym;
+Family gammaAsym;
+Family sharpExpoSym;
+Family sharpExpoAsym;
+Family sharpLinSym;
+Family sharpLinAsym;
+Family quartSym;
+Family quartAsym;
+Family superEllipse1Sym;
+Family superEllipse1Asym;
 
 const uint16_t sinefold_ctr_1[65] = {0,1755,3221,4645,6025,7357,8637,9863,11031,12137,13180,14156,15062,15896,16655,17337,17940,18463,18903,19259,19530,19715,19812,19822,19745,19579,19325,18984,18556,18042,17444,16762,15997,15259,14604,14034,13550,13154,12845,12624,12492,12448,12493,12624,12843,13148,13537,14009,14563,15197,15909,16696,17557,18488,19487,20551,21677,22863,24104,25398,26741,28130,29561,31030,32768};
 const uint16_t sinefold_ctr_2[65] = {0,735,1259,1832,2482,3231,4097,5090,6218,7480,8869,10372,11969,13636,15341,17052,18730,20335,21825,23161,24303,25213,25859,26213,26252,25964,25339,24379,23093,21501,19628,17509,15187,12963,10988,9296,7917,6870,6166,5806,5785,6088,6693,7574,8696,10023,11515,13131,14828,16565,18303,20007,21645,23190,24621,25924,27091,28119,29012,29783,30447,31025,31543,32030,32768};
@@ -432,7 +441,36 @@ const uint16_t algerian_s[65] = {0,1643,4008,7152,10702,14895,27708,29476,29511,
 //horizontal Algerian
 
 
+const uint16_t iExpo[65] = {0,3367,6388,9099,11532,13715,15674,17432,19009,20425,21695,22835,23858,24776,25599,26339,27002,27597,28131,28610,29040,29426,29773,30083,30362,30612,30837,31038,31219,31382,31527,31658,31775,31880,31975,32059,32135,32204,32265,32320,32369,32413,32453,32489,32521,32549,32575,32598,32619,32637,32654,32669,32683,32695,32705,32715,32724,32732,32739,32745,32751,32756,32760,32764,32768};
+const uint16_t iQuint[65] = {0,2481,4810,6993,9038,10950,12738,14406,15961,17409,18755,20006,21165,22239,23231,24148,24992,25769,26483,27137,27735,28282,28780,29232,29643,30015,30350,30652,30923,31165,31381,31574,31744,31894,32026,32142,32243,32330,32405,32470,32525,32572,32611,32643,32670,32692,32710,32725,32736,32745,32752,32757,32760,32763,32765,32766,32767,32767,32768,32768,32768,32768,32768,32768,32768};
+const uint16_t iQuart[65] = {0,2000,3908,5725,7455,9101,10665,12151,13560,14896,16160,17357,18487,19555,20561,21509,22400,23237,24023,24759,25447,26091,26690,27249,27768,28250,28695,29108,29487,29837,30158,30452,30720,30964,31186,31387,31567,31730,31875,32005,32120,32221,32310,32388,32455,32513,32563,32605,32640,32669,32693,32712,32727,32739,32748,32755,32760,32763,32765,32767,32767,32768,32768,32768,32768};
+const uint16_t iCube[65] = {0,1512,2977,4395,5768,7096,8379,9619,10816,11971,13085,14158,15192,16187,17143,18062,18944,19790,20601,21377,22120,22830,23507,24153,24768,25353,25909,26436,26936,27409,27855,28276,28672,29044,29393,29719,30024,30308,30571,30815,31040,31247,31437,31610,31768,31911,32039,32154,32256,32346,32425,32493,32552,32602,32643,32677,32704,32725,32741,32752,32760,32765,32767,32768,32768};
+const uint16_t iQuad[65] = {0,1016,2016,3000,3968,4920,5856,6776,7680,8568,9440,10296,11136,11960,12768,13560,14336,15096,15840,16568,17280,17976,18656,19320,19968,20600,21216,21816,22400,22968,23520,24056,24576,25080,25568,26040,26496,26936,27360,27768,28160,28536,28896,29240,29568,29880,30176,30456,30720,30968,31200,31416,31616,31800,31968,32120,32256,32376,32480,32568,32640,32696,32736,32760,32768};
+const uint16_t linear[65] = {0,512,1024,1536,2048,2560,3072,3584,4096,4608,5120,5632,6144,6656,7168,7680,8192,8704,9216,9728,10240,10752,11264,11776,12288,12800,13312,13824,14336,14848,15360,15872,16384,16896,17408,17920,18432,18944,19456,19968,20480,20992,21504,22016,22528,23040,23552,24064,24576,25088,25600,26112,26624,27136,27648,28160,28672,29184,29696,30208,30720,31232,31744,32256,32768};
+const uint16_t quad[65] = {0,8,32,72,128,200,288,392,512,648,800,968,1152,1352,1568,1800,2048,2312,2592,2888,3200,3528,3872,4232,4608,5000,5408,5832,6272,6728,7200,7688,8192,8712,9248,9800,10368,10952,11552,12168,12800,13448,14112,14792,15488,16200,16928,17672,18432,19208,20000,20808,21632,22472,23328,24200,25088,25992,26912,27848,28800,29768,30752,31752,32768};
+const uint16_t cube[65] = {0,0,1,3,8,16,27,43,64,91,125,166,216,275,343,422,512,614,729,857,1000,1158,1331,1521,1728,1953,2197,2460,2744,3049,3375,3724,4096,4492,4913,5359,5832,6332,6859,7415,8000,8615,9261,9938,10648,11391,12167,12978,13824,14706,15625,16581,17576,18610,19683,20797,21952,23149,24389,25672,27000,28373,29791,31256,32768};
+const uint16_t quart[65] = {0,0,0,0,0,1,3,5,8,13,20,29,40,56,75,99,128,163,205,255,312,380,458,547,648,763,893,1038,1200,1381,1582,1804,2048,2316,2610,2931,3280,3660,4073,4518,5000,5519,6078,6677,7320,8009,8745,9531,10368,11259,12207,13213,14280,15411,16608,17872,19208,20617,22103,23667,25312,27043,28860,30768,32768};
+const uint16_t quint[65] = {0,0,0,0,0,0,0,1,1,2,3,5,8,11,16,23,32,43,58,76,98,125,157,196,243,298,363,438,525,626,742,874,1024,1194,1387,1603,1845,2116,2418,2753,3125,3536,3988,4486,5033,5631,6285,6999,7776,8620,9537,10529,11603,12762,14013,15359,16807,18362,20030,21818,23730,25775,27958,30287,32768};
+const uint16_t expo[65] = {0,4,8,12,17,23,29,36,44,53,63,73,85,99,114,131,149,170,193,219,247,279,315,355,399,448,503,564,633,709,793,888,993,1110,1241,1386,1549,1730,1931,2156,2406,2685,2995,3342,3728,4158,4637,5171,5766,6429,7169,7992,8910,9933,11073,12343,13759,15336,17094,19053,21236,23669,26380,29401,32768};
 
+
+const uint16_t gamma1[65] = {0,2481,4810,6993,9038,10950,12738,14406,15961,17409,18755,20006,21165,22239,23231,24148,24992,25769,26483,27137,27735,28282,28780,29232,29643,30015,30350,30652,30923,31165,31381,31574,31744,31894,32026,32142,32243,32330,32405,32470,32525,32572,32611,32643,32670,32692,32710,32725,32736,32745,32752,32757,32760,32763,32765,32766,32767,32767,32768,32768,32768,32768,32768,32768,32768};
+const uint16_t gamma2[65] = {0,2000,3908,5725,7455,9101,10665,12151,13560,14896,16160,17357,18487,19555,20561,21509,22400,23237,24023,24759,25447,26091,26690,27249,27768,28250,28695,29108,29487,29837,30158,30452,30720,30964,31186,31387,31567,31730,31875,32005,32120,32221,32310,32388,32455,32513,32563,32605,32640,32669,32693,32712,32727,32739,32748,32755,32760,32763,32765,32767,32767,32768,32768,32768,32768};
+const uint16_t gamma3[65] = {0,1512,2977,4395,5768,7096,8379,9619,10816,11971,13085,14158,15192,16187,17143,18062,18944,19790,20601,21377,22120,22830,23507,24153,24768,25353,25909,26436,26936,27409,27855,28276,28672,29044,29393,29719,30024,30308,30571,30815,31040,31247,31437,31610,31768,31911,32039,32154,32256,32346,32425,32493,32552,32602,32643,32677,32704,32725,32741,32752,32760,32765,32767,32768,32768};
+const uint16_t gamma4[65] = {0,1016,2016,3000,3968,4920,5856,6776,7680,8568,9440,10296,11136,11960,12768,13560,14336,15096,15840,16568,17280,17976,18656,19320,19968,20600,21216,21816,22400,22968,23520,24056,24576,25080,25568,26040,26496,26936,27360,27768,28160,28536,28896,29240,29568,29880,30176,30456,30720,30968,31200,31416,31616,31800,31968,32120,32256,32376,32480,32568,32640,32696,32736,32760,32768};
+// gamma5 = linear
+const uint16_t gamma6[65] = {0,8,32,72,128,200,288,392,512,648,800,968,1152,1352,1568,1800,2048,2312,2592,2888,3200,3528,3872,4232,4608,5000,5408,5832,6272,6728,7200,7688,8192,8712,9248,9800,10368,10952,11552,12168,12800,13448,14112,14792,15488,16200,16928,17672,18432,19208,20000,20808,21632,22472,23328,24200,25088,25992,26912,27848,28800,29768,30752,31752,32768};
+const uint16_t gamma7[65] = {0,0,1,3,8,16,27,43,64,91,125,166,216,275,343,422,512,614,729,857,1000,1158,1331,1521,1728,1953,2197,2460,2744,3049,3375,3724,4096,4492,4913,5359,5832,6332,6859,7415,8000,8615,9261,9938,10648,11391,12167,12978,13824,14706,15625,16581,17576,18610,19683,20797,21952,23149,24389,25672,27000,28373,29791,31256,32768};
+const uint16_t gamma8[65] = {0,0,0,0,0,1,3,5,8,13,20,29,40,56,75,99,128,163,205,255,312,380,458,547,648,763,893,1038,1200,1381,1582,1804,2048,2316,2610,2931,3280,3660,4073,4518,5000,5519,6078,6677,7320,8009,8745,9531,10368,11259,12207,13213,14280,15411,16608,17872,19208,20617,22103,23667,25312,27043,28860,30768,32768};
+const uint16_t gamma9[65] = {0,0,0,0,0,0,0,1,1,2,3,5,8,11,16,23,32,43,58,76,98,125,157,196,243,298,363,438,525,626,742,874,1024,1194,1387,1603,1845,2116,2418,2753,3125,3536,3988,4486,5033,5631,6285,6999,7776,8620,9537,10529,11603,12762,14013,15359,16807,18362,20030,21818,23730,25775,27958,30287,32768};
+
+// a=b=1, n= {.3, .66, 1.33, 2, 5}
+const uint16_t superEllipse1_1[65] = {0,0,0,0,0,0,1,1,2,3,4,6,7,10,13,16,21,26,32,39,47,56,67,79,93,109,128,149,172,198,228,262,300,342,389,442,502,568,642,725,818,922,1038,1169,1315,1480,1665,1874,2110,2378,2683,3032,3431,3893,4430,5060,5804,6696,7781,9130,10852,13143,16390,21558,32768};
+const uint16_t superEllipse1_2[65] = {0,54,131,227,338,464,602,752,914,1087,1271,1465,1670,1884,2108,2342,2586,2839,3102,3374,3657,3949,4250,4561,4882,5213,5554,5905,6267,6638,7021,7415,7819,8235,8663,9103,9554,10019,10497,10988,11494,12013,12548,13099,13667,14252,14854,15477,16121,16788,17476,18191,18934,19707,20513,21357,22242,23177,24167,25224,26363,27611,29007,30638,32768};
+//astroid
+const uint16_t superEllipse1_3[65] = {0,1392,2543,3578,4535,5436,6292,7112,7901,8662,9400,10116,10814,11493,12157,12805,13440,14061,14669,15265,15849,16424,16987,17540,18083,18617,19142,19657,20165,20663,21153,21635,22109,22574,23032,23482,23924,24359,24786,25205,25617,26021,26417,26806,27187,27560,27926,28283,28632,28973,29305,29629,29943,30249,30544,30830,31105,31368,31619,31858,32081,32288,32476,32639,32768};
+const uint16_t superEllipse1_4[65] = {0,3356,5639,7472,9037,10421,11666,12804,13853,14831,15744,16603,17414,18181,18909,19602,20262,20892,21495,22071,22623,23153,23661,24148,24616,25065,25497,25912,26310,26693,27061,27414,27753,28079,28392,28691,28978,29253,29516,29767,30007,30236,30454,30661,30858,31044,31220,31386,31542,31688,31825,31952,32070,32178,32277,32367,32447,32519,32581,32635,32679,32715,32741,32759,32768};
+const uint16_t superEllipse1_5[65] = {0,8438,12860,15907,18222,20078,21614,22913,24028,24996,25845,26593,27257,27849,28376,28849,29272,29653,29996,30303,30581,30830,31054,31255,31436,31598,31743,31873,31989,32092,32183,32265,32336,32399,32455,32503,32546,32582,32614,32641,32664,32684,32700,32714,32725,32735,32743,32749,32754,32757,32760,32763,32764,32766,32767,32767,32767,32768,32768,32768,32768,32768,32768,32768,32768};
 
 extern Family familyArray[15];
 extern uint8_t familyIndicator;
@@ -579,6 +617,43 @@ int main(void)
     const uint16_t *algerianAttackFamily[5] = {algerian_t, algerian_r, algerian_e, algerian_q, algerian_w,};
     const uint16_t *algerianReleaseFamily[5] = {algerian_a, algerian_s, algerian_o, algerian_u, algerian_i,};
 
+    const uint16_t *gammaSymAttackFamily[9] = {gamma1, gamma2, gamma3, gamma4, linear, gamma6, gamma7, gamma8, gamma9};
+    const uint16_t *gammaSymReleaseFamily[9] = {gamma1, gamma2, gamma3, gamma4, linear, gamma6, gamma7, gamma8, gamma9};
+
+    const uint16_t *gammaAsymAttackFamily[9] = {gamma1, gamma2, gamma3, gamma4, linear, gamma6, gamma7, gamma8, gamma9};
+    const uint16_t *gammaAsymReleaseFamily[9] = {gamma9, gamma8, gamma7, gamma6, linear, gamma4, gamma3, gamma2, gamma1};
+
+    // more dramatic transition to expo
+
+    const uint16_t *sharpExpoSymAttackFamily[9] = {iExpo, iQuart, iCube, iQuad, linear, quad, cube, quart, expo};
+    const uint16_t *sharpExpoSymReleaseFamily[9] = {iExpo, iQuart, iCube, iQuad, linear, quad, cube, quart, expo};
+
+    const uint16_t *sharpExpoAsymAttackFamily[9] = {iExpo, iQuart, iCube, iQuad, linear, quad, cube, quart, expo};
+    const uint16_t *sharpExpoAsymReleaseFamily[9] = {expo, quart, cube, quad, linear, iQuad, iCube, iQuart, iExpo};
+
+    // more dramatic transition to linear
+
+    const uint16_t *sharpLinSymAttackFamily[9] = {iExpo, iQuint, iQuart, iCube, linear, cube, quart, quint, expo};
+    const uint16_t *sharpLinSymReleaseFamily[9] = {iExpo, iQuint, iQuart, iCube, linear, cube, quart, quint, expo};
+
+    const uint16_t *sharpLinAsymAttackFamily[9] = {iExpo, iQuint, iQuart, iCube, linear, cube, quart, quint, expo};
+    const uint16_t *sharpLinAsymReleaseFamily[9] = {expo, quint, quart, cube, linear, iCube, iQuart, iQuint, iExpo};
+
+    // limit to quartic
+
+    const uint16_t *quartSymAttackFamily[9] = {iQuint, iQuart, iCube, iQuad, linear, cube, quart, quint, expo};
+    const uint16_t *quartSymReleaseFamily[9] = {iQuint, iQuart, iCube, iQuad, linear, cube, quart, quint, expo};
+
+    const uint16_t *quartAsymAttackFamily[9] = {iQuint, iQuart, iCube, iQuad, linear, cube, quart, quint, expo};
+    const uint16_t *quartAsymReleaseFamily[9] = {quint, quart, cube, quad, linear, iQuad, iCube, iQuart, iQuint};
+
+    const uint16_t *superEllipse1SymAttackFamily[5] = {superEllipse1_1, superEllipse1_2, superEllipse1_3, superEllipse1_4, superEllipse1_5};
+    const uint16_t *superEllipse1SymReleaseFamily[5] = {superEllipse1_1, superEllipse1_2, superEllipse1_3, superEllipse1_4, superEllipse1_5};
+
+
+    const uint16_t *superEllipse1AsymAttackFamily[5] = {superEllipse1_1, superEllipse1_2, superEllipse1_3, superEllipse1_4, superEllipse1_5};
+    const uint16_t *superEllipse1AsymReleaseFamily[5] = {superEllipse1_5, superEllipse1_4, superEllipse1_3, superEllipse1_2, superEllipse1_1};
+
     perlin.attackFamily = perlinAttackFamily;
     perlin.releaseFamily = perlinReleaseFamily;
     perlin.tableLength = 64;
@@ -613,55 +688,55 @@ int main(void)
     triFudge.releaseFamily = trifudgeReleaseFamily;
     triFudge.tableLength = 64;
     triFudge.familySize = 9;
-    familyArray[5] = triFudge;
+    //familyArray[5] = triFudge;
 
     moog1.attackFamily = moog1AttackFamily;
     moog1.releaseFamily = moog1ReleaseFamily;
     moog1.tableLength = 64;
     moog1.familySize = 9;
-    familyArray[6] = moog1;
+    //familyArray[6] = moog1;
 
     moog2.attackFamily = moog2AttackFamily;
     moog2.releaseFamily = moog2ReleaseFamily;
     moog2.tableLength = 64;
     moog2.familySize = 9;
-    familyArray[7] = moog2;
+    //familyArray[7] = moog2;
 
     sawBend.attackFamily = sawBendAttackFamily;
     sawBend.releaseFamily = sawBendReleaseFamily;
     sawBend.tableLength = 4;
     sawBend.familySize = 5;
-    familyArray[8] = sawBend;
+    //familyArray[8] = sawBend;
 
     exciteBike.attackFamily = exciteBikeAttackFamily;
     exciteBike.releaseFamily = exciteBikeReleaseFamily;
     exciteBike.tableLength = 8;
     exciteBike.familySize = 9;
-    familyArray[9] = exciteBike;
+    //familyArray[9] = exciteBike;
 
     rand.attackFamily = randAttackFamily;
     rand.releaseFamily = randReleaseFamily;
     rand.tableLength = 8;
     rand.familySize = 33;
-    familyArray[10] = rand;
+    //familyArray[10] = rand;
 
     gauss.attackFamily = gaussAttackFamily;
     gauss.releaseFamily = gaussReleaseFamily;
     gauss.tableLength = 8;
     gauss.familySize = 33;
-    familyArray[11] = gauss;
+    //familyArray[11] = gauss;
 
     gauss_noconform.attackFamily = gauss_noconformAttackFamily;
     gauss_noconform.releaseFamily = gauss_noconformReleaseFamily;
     gauss_noconform.tableLength = 8;
     gauss_noconform.familySize = 33;
-    familyArray[12] = gauss_noconform;
+    //familyArray[12] = gauss_noconform;
 
     gauss_low.attackFamily = gauss_lowAttackFamily;
     gauss_low.releaseFamily = gauss_lowReleaseFamily;
     gauss_low.tableLength = 8;
     gauss_low.familySize = 33;
-    familyArray[13] = gauss_low;
+    //familyArray[13] = gauss_low;
 
     gauss_low_noconform.attackFamily = gauss_low_noconformAttackFamily;
     gauss_low_noconform.releaseFamily = gauss_low_noconformReleaseFamily;
@@ -674,6 +749,70 @@ int main(void)
     algerian.tableLength = 64;
     algerian.familySize = 5;
     familyArray[14] = algerian;
+
+    quartSym.attackFamily = quartSymAttackFamily;
+    quartSym.releaseFamily = quartSymReleaseFamily;
+    quartSym.tableLength = 64;
+    quartSym.familySize = 9;
+    familyArray[5] = quartSym;
+
+    quartAsym.attackFamily = quartAsymAttackFamily;
+    quartAsym.releaseFamily = quartAsymReleaseFamily;
+    quartAsym.tableLength = 64;
+    quartAsym.familySize = 9;
+    familyArray[9] = quartAsym;
+
+    superEllipse1Sym.attackFamily = superEllipse1SymAttackFamily;
+    superEllipse1Sym.releaseFamily = superEllipse1SymReleaseFamily;
+    superEllipse1Sym.tableLength = 64;
+    superEllipse1Sym.familySize = 5;
+    familyArray[6] = superEllipse1Sym;
+
+    superEllipse1Asym.attackFamily = superEllipse1AsymAttackFamily;
+    superEllipse1Asym.releaseFamily = superEllipse1AsymReleaseFamily;
+    superEllipse1Asym.tableLength = 64;
+    superEllipse1Asym.familySize = 5;
+    familyArray[10] = superEllipse1Asym;
+
+
+    gammaSym.attackFamily = gammaSymAttackFamily;
+    gammaSym.releaseFamily = gammaSymReleaseFamily;
+    gammaSym.tableLength = 64;
+    gammaSym.familySize = 9;
+    familyArray[7] = gammaSym;
+
+    gammaAsym.attackFamily = gammaAsymAttackFamily;
+    gammaAsym.releaseFamily = gammaAsymReleaseFamily;
+    gammaAsym.tableLength = 64;
+    gammaAsym.familySize = 9;
+    familyArray[11] = gammaAsym;
+
+    sharpExpoSym.attackFamily = sharpExpoSymAttackFamily;
+    sharpExpoSym.releaseFamily = sharpExpoSymReleaseFamily;
+    sharpExpoSym.tableLength = 64;
+    sharpExpoSym.familySize = 9;
+    familyArray[8] = sharpExpoSym;
+
+    sharpExpoAsym.attackFamily = sharpExpoAsymAttackFamily;
+    sharpExpoAsym.releaseFamily = sharpExpoAsymReleaseFamily;
+    sharpExpoAsym.tableLength = 64;
+    sharpExpoAsym.familySize = 9;
+    familyArray[12] = sharpExpoAsym;
+
+
+    sharpLinSym.attackFamily = sharpLinSymAttackFamily;
+    sharpLinSym.releaseFamily = sharpLinSymReleaseFamily;
+    sharpLinSym.tableLength = 64;
+    sharpLinSym.familySize = 9;
+    familyArray[9] = sharpLinSym;
+
+    sharpLinAsym.attackFamily = sharpLinAsymAttackFamily;
+    sharpLinAsym.releaseFamily = sharpLinAsymReleaseFamily;
+    sharpLinAsym.tableLength = 64;
+    sharpLinAsym.familySize = 9;
+    familyArray[13] = sharpLinAsym;
+
+
 
 
     span = familyArray[0].tableLength << 16;
@@ -710,6 +849,9 @@ int main(void)
       tsl_user_Init();
       HAL_TIM_Base_Start_IT(&htim6);
 
+      attackTime = calcTime1;
+      releaseTime = calcTime2;
+
 
 
   /* USER CODE END 2 */
@@ -723,8 +865,10 @@ int main(void)
 
   	  	if (tsl_status != TSL_USER_STATUS_BUSY) {
 
-  	  		if (detectOn == 0) {readDetect();}
-  	  		else {readRelease(modeflag);}
+  	  		if (detectOn == 0) {
+  	  			readDetect();}
+  	  		else {
+  	  			readRelease(modeflag);}
 
   	  	}
 

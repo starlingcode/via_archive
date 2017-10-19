@@ -68,8 +68,7 @@ int inc;
 int incSign = 1;
 int time1;
 int time2;
-int (*attackTime) (void);
-int (*releaseTime) (void);
+
 
 
 
@@ -517,9 +516,9 @@ void TIM6_DAC_IRQHandler(void)
 	  	  	  		if (position >= span && position < spanx2) {release(); phaseState = 2;}
 	  	  	  		// pin set
 	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
-	  	  	  		fixMorph = morphKnob;
-		  	  		//if (fixMorph > 4095) {fixMorph = 4095;}
-		  	  		//if (fixMorph < 0) {fixMorph = 0;}
+	  	  	  		fixMorph = 4095 - morphCV + morphKnob ;
+		  	  		if (fixMorph > 4095) {fixMorph = 4095;}
+		  	  		if (fixMorph < 0) {fixMorph = 0;}
 
 
 	  	  	  		//if we are in high speed and not looping, activate drum mode
@@ -776,14 +775,14 @@ void getPhase(void) {
 
 int calcTime1(void) {
 
-	time1 = lookuptable[((4095 - (time1Knob - ((4095 - time1CV) >> 2))) >> 1) + 500] >> 10;
+	time1 = lookuptable[((4095 - (time1Knob - (4095 - time1CV))) >> 1) + 700] >> 12;
 	return time1;
 
 }
 
 int calcTime2(void) {
 
-	time2 = lookuptable[(4095 - (time2Knob - ((4095 - time2CV) >> 2))) >> 1] >> 10;
+	time2 = lookuptable[(4095 - (time2Knob - (4095 - time2CV))) >> 1] >> 14;
 	return time2;
 
 }

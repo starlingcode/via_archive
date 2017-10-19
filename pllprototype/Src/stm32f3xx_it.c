@@ -48,7 +48,7 @@ int span;
 int spanx2;
 
 //import array of structs that contain our wavetable family info
-Family familyArray[8];
+Family familyArray[15];
 uint8_t familyIndicator;
 
 //import two arrays of structs that contain our scale info
@@ -394,13 +394,13 @@ void TIM2_IRQHandler(void)
 
     	holdLastPeriodCount = lastPeriodCount;
     	lastPeriodCount = periodCount;
-    	if (lastPeriodCount < 20) {lastPeriodCount = holdLastPeriodCount;};
+    	if (lastPeriodCount < spanx2) {lastPeriodCount = holdLastPeriodCount;};
     	periodCount = 0;
 
     	if (controlMode == knobDutyCycle) {
     		//gateRatio12Bit = ((lastGateCount << 12) / lastPeriodCount);
 
-    		lastGateCount = ((lastPeriodCount * time2Knob) >> 12) + 1; // last period count times the ratio of the adc to full scale
+    		lastGateCount = ((lastPeriodCount * (time2Knob + time2CV)) >> 13); // last period count times the ratio of the adc to full scale
 
     		if (scaleMode == row) {
     		    		denomMult = 1;
@@ -424,16 +424,16 @@ void TIM2_IRQHandler(void)
 
     		if (scaleMode == row) {
     			denomMult = 1;
-    			rowSelect = time2Knob >> rowSelectBitShift;
-    			rowIndex = time1CV >> rowIndexBitShift;
+    			rowSelect = (time2Knob + time2CV) >> (rowSelectBitShift + 1);
+    			rowIndex = (time1CV + time1Knob) >> (rowIndexBitShift + 1);
     			numMult = *(*(rowScaleArray[rowScaleIndicator].scaleGrid + rowSelect) + rowIndex);
     		}
 
     		if (scaleMode == ratio) {
     			denomMult = 1;
-    			rowIndex = time1Knob >> rowIndexBitShift;
+    			rowIndex = (time1Knob + time1CV) >> (rowIndexBitShift + 1);
     			numMult = *(*(ratioScaleArray[ratioScaleIndicator].scaleGrid) + rowIndex);
-    			rowIndex = time2Knob >> rowIndexBitShift;
+    			rowIndex = (time2Knob + time2CV) >> (rowIndexBitShift + 1);
     			denomMult = *(*(ratioScaleArray[ratioScaleIndicator].scaleGrid + 1) + rowIndex);
     		}
 
@@ -447,7 +447,7 @@ void TIM2_IRQHandler(void)
 
     	holdLastGateCount = lastGateCount;
     	lastGateCount = periodCount;
-    	if (lastGateCount < 20) {lastGateCount = holdLastGateCount;};
+    	if (lastGateCount < span) {lastGateCount = holdLastGateCount;};
 
     }
 
@@ -520,6 +520,7 @@ void TIM6_DAC_IRQHandler(void)
 	  	  	  		//fixMorph = 0;
 		  	  		if (fixMorph > 4095) {fixMorph = 4095;}
 		  	  		if (fixMorph < 0) {fixMorph = 0;}
+		  	  		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, fixMorph);
 
 
 	  	  	  		//if we are in high speed and not looping, activate drum mode
