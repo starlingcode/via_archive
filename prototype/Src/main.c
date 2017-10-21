@@ -472,6 +472,7 @@ const uint16_t superEllipse1_3[65] = {0,1392,2543,3578,4535,5436,6292,7112,7901,
 const uint16_t superEllipse1_4[65] = {0,3356,5639,7472,9037,10421,11666,12804,13853,14831,15744,16603,17414,18181,18909,19602,20262,20892,21495,22071,22623,23153,23661,24148,24616,25065,25497,25912,26310,26693,27061,27414,27753,28079,28392,28691,28978,29253,29516,29767,30007,30236,30454,30661,30858,31044,31220,31386,31542,31688,31825,31952,32070,32178,32277,32367,32447,32519,32581,32635,32679,32715,32741,32759,32768};
 const uint16_t superEllipse1_5[65] = {0,8438,12860,15907,18222,20078,21614,22913,24028,24996,25845,26593,27257,27849,28376,28849,29272,29653,29996,30303,30581,30830,31054,31255,31436,31598,31743,31873,31989,32092,32183,32265,32336,32399,32455,32503,32546,32582,32614,32641,32664,32684,32700,32714,32725,32735,32743,32749,32754,32757,32760,32763,32764,32766,32767,32767,32767,32768,32768,32768,32768,32768,32768,32768,32768};
 
+const uint16_t sine[65] = {0,38,115,229,381,571,797,1060,1359,1693,2061,2462,2896,3362,3858,4383,4936,5516,6122,6751,7403,8076,8768,9478,10204,10944,11698,12462,13235,14016,14802,15592,16384,17176,17966,18752,19533,20306,21070,21824,22564,23290,24000,24692,25365,26017,26646,27252,27832,28385,28910,29406,29872,30306,30707,31075,31409,31708,31971,32197,32387,32539,32653,32730,32768};
 extern Family familyArray[15];
 extern uint8_t familyIndicator;
 enum speedTypes speed;
@@ -584,10 +585,10 @@ int main(void)
   /* USER CODE BEGIN 2 */
   //define our wavetable family as two arrays of 9 wavetables (defined in tables.h), one for attack, one for release
 
-  	const uint16_t *perlinAttackFamily[9] = {perlin6_1, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
-    const uint16_t *perlinReleaseFamily[9] = {perlin6_1, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
-    const uint16_t *sinefoldAttackFamily[9] = {sinefold_ctr_1, sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5, sinefold_ctr_6, sinefold_ctr_7, sinefold_ctr_8, sinefold_ctr_9};
-    const uint16_t *sinefoldReleaseFamily[9] = {sinefold_ctr_1, sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5, sinefold_ctr_6, sinefold_ctr_7, sinefold_ctr_8, sinefold_ctr_9};
+  	const uint16_t *perlinAttackFamily[9] = {sine, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
+    const uint16_t *perlinReleaseFamily[9] = {sine, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
+    const uint16_t *sinefoldAttackFamily[9] = {sine, sine, sine, sine, sine, sine, sinefold_ctr_7, sinefold_ctr_8, sinefold_ctr_9};
+    const uint16_t *sinefoldReleaseFamily[9] = {sine, sine, sine, sine, sine, sine, sinefold_ctr_7, sinefold_ctr_8, sinefold_ctr_9};
     const uint16_t *bounceAttackFamily[9] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8};
     const uint16_t *bounceReleaseFamily[9] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8};
     const uint16_t *trifoldAttackFamily[9] = {trifold_1, trifold_2, trifold_3, trifold_4, trifold_5, trifold_6, trifold_7, trifold_8, trifold_9};
@@ -824,6 +825,7 @@ int main(void)
 	pitchOn = 1;
 	morphOn = 1;
 	drumModeOn = 1;
+	//loop = looping;
 
 
 
@@ -841,12 +843,14 @@ int main(void)
       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
       HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
       HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
-      HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)dacbuffer1, 1, DAC_ALIGN_12B_R);
-      HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_2, (uint32_t*)dacbuffer2, 1, DAC_ALIGN_12B_R);
+      //HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)dacbuffer1, 1, DAC_ALIGN_12B_R);
+      //HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_2, (uint32_t*)dacbuffer2, 1, DAC_ALIGN_12B_R);
+
 
 
 
       tsl_user_Init();
+      //HAL_TIM_Base_Start_IT(&htim7);
       HAL_TIM_Base_Start_IT(&htim6);
 
       attackTime = calcTime1;
@@ -864,6 +868,8 @@ int main(void)
 		tsl_status = tsl_user_Exec();
 
   	  	if (tsl_status != TSL_USER_STATUS_BUSY) {
+
+
 
   	  		if (detectOn == 0) {
   	  			readDetect();}
@@ -1324,7 +1330,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 1-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 1500;
+  htim6.Init.Period = 1200;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
@@ -1347,16 +1353,16 @@ static void MX_TIM7_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim7.Instance = TIM7;
-  htim7.Init.Prescaler = 1000;
+  htim7.Init.Prescaler = 10;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim7.Init.Period = 10;
+  htim7.Init.Period = 1000;
   htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
 
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim7, &sMasterConfig) != HAL_OK)
   {
@@ -1408,7 +1414,7 @@ static void MX_TSC_Init(void)
     */
   htsc.Instance = TSC;
   htsc.Init.CTPulseHighLength = TSC_CTPH_2CYCLES;
-  htsc.Init.CTPulseLowLength = TSC_CTPL_2CYCLES;
+  htsc.Init.CTPulseLowLength = TSC_CTPL_9CYCLES;
   htsc.Init.SpreadSpectrum = DISABLE;
   htsc.Init.SpreadSpectrumDeviation = 1;
   htsc.Init.SpreadSpectrumPrescaler = TSC_SS_PRESC_DIV1;
@@ -1435,8 +1441,8 @@ static void MX_TSC_Init(void)
 static void MX_DMA_Init(void) 
 {
   /* DMA controller clock enable */
-  __HAL_RCC_DMA1_CLK_ENABLE();
   __HAL_RCC_DMA2_CLK_ENABLE();
+  __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
   /* DMA1_Channel1_IRQn interrupt configuration */

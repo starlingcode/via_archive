@@ -65,6 +65,7 @@ int getMorph;
 int position;
 int mirror;
 int inc;
+int incFromADCs;
 int incSign = 1;
 int time1;
 int time2;
@@ -110,6 +111,7 @@ int calcTime2(void);
 int myfix16_mul(int, int);
 int myfix16_lerp(int, int, uint16_t);
 int myfix16_lerp8(int, int, uint16_t);
+void getInc(void);
 void setAttack(void);
 void setRelease(void);
 void getAverages(void);
@@ -170,7 +172,8 @@ uint8_t family;
 
 extern TIM_HandleTypeDef htim1;
 
-
+uint32_t dac1HoldingReg;
+uint32_t dac2HoldingReg;
 
 /* USER CODE END 0 */
 
@@ -333,6 +336,8 @@ void DMA1_Channel1_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
 
+
+
   /* USER CODE END DMA1_Channel1_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_adc1);
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
@@ -482,8 +487,11 @@ void TIM2_IRQHandler(void)
 
     }
     }
+
+    __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC1);
+    //&htim2->Channel = HAL_TIM_ACTIVE_CHANNEL_1;
   /* USER CODE END TIM2_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim2);
+  //HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */
 
   /* USER CODE END TIM2_IRQn 1 */
@@ -497,90 +505,88 @@ void TIM6_DAC_IRQHandler(void)
   /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 
 
+
+
+	/*TIM Update event*/
+	//if(__HAL_TIM_GET_FLAG(&htim6, TIM_FLAG_UPDATE) != RESET)
+	  //{
+	    //if(__HAL_TIM_GET_IT_SOURCE(&htim6, TIM_IT_UPDATE) !=RESET)
+	    //{
+	      __HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
+	      //HAL_TIM_PeriodElapsedCallback(&htim6);
+	   // }
+	  //}
+
+
+
 	if (oscillatorActive || loop == looping){
+					((*(volatile uint32_t *)DAC1_ADDR) = (out));
+					((*(volatile uint32_t *)DAC2_ADDR) = (4095 - out));
 
 					//write the current oscillator value to dac1, and its inverse to dac2 (crossfading)
-	  				dacbuffer2[0] = out;
-					dacbuffer1[0] = 4095 - out;
+
+					LEDC_ON;
+
+					//HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 4095 - out);
+					//WRITE_DAC1(out);
+					//HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, out);
+					//WRITE_DAC2(4095 - out);
+
+
+
+					getInc();
+
 
 
 
 	  				//call the function to advance the phase of the oscillator
 
 	  		  	  	getPhase();
-	  		  	  	//GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
-	  		  	  	// pin reset
-	  		  	  	//call the appropriate
+
+
+
+
+
+	  		  	  	//store last "Phase State" (attack or release)
 	  	  	  		lastPhaseState = phaseState;
+
+	  	  	  		//call the appropriate interpolation routine per phase in the two part table
 	  	  	  		if (position < span) {attack(); phaseState = 1;}
-	  	  	  		if (position >= span && position < spanx2) {release(); phaseState = 2;}
-	  	  	  		// pin set
-	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
-	  	  	  		fixMorph = 4095 - morphCV + morphKnob ;
-		  	  		if (fixMorph > 4095) {fixMorph = 4095;}
-		  	  		if (fixMorph < 0) {fixMorph = 0;}
+	  	  	  		if (position >= span) {release(); phaseState = 2;}
+
+				  	//fixMorph = morphKnob - (morphCV + (abs(inc) >> 8));
+	  	  	  		fixMorph = ADCReadings3[0] - (ADCReadings1[2] + (abs(inc) >> 8));
+					if (fixMorph > 4095) {fixMorph = 4095;}
+					if (fixMorph < 0) {fixMorph = 0;}
+
 
 
 	  	  	  		//if we are in high speed and not looping, activate drum mode
-	  		  	  	if (speed == high && loop == noloop){
+	  		  	  	if (drumModeOn == 1){
+
 	  		  	  		//call the fuction that generates our expo decay and increments the oscillator
 	  		  	  		drum();
+
 	  		  	  		//use the expo decay scaled by the manual morph control to modulate morph
 	  		  	  		if (morphOn != 0) {fixMorph = myfix16_mul(exposcale, fixMorph);}
 
 	  		  	  	}
-	  		  	  	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, fixMorph);
+
+
+	  		  	  	//
+
+
+
+	  		  	  	// if we transition from one phase state to another, enable the transition handler interrupt
 	  	  	  		if (phaseState != lastPhaseState) {
-
 	  	  	  			HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
 	  	  	  		}
+	  	  	  	LEDC_OFF;
 
 	}
 
 
 
-
-
-
-					/*
-	  		  	  	//moving towards a, trigger the appropriate sample and hold routine with flag toa
-	  	  	  		if (intoattackfroml || intoreleasefromr) {
-	  	  	  			sampleHoldDirection = toward_a;
-	  	  	  			HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
-	  	  	  		}
-	  	  	  		//moving towards a, trigger the appropriate sample and hold routine with flag toa
-	  	  			if (intoattackfromr || intoreleasefroml) {
-		  	  	  		sampleHoldDirection = toward_b;
-		  	  	  		HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
-	  	  			}
-	  	  			//grab the sample for b that was dropped in the interrupt after a 4 sample delay for aquisition
-	  	  			if ((sampleHoldMode == b || sampleHoldMode == ab) && sampleHoldTimer == 4) {
-	  	  				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-	  	  			}
-	  	  			//grab the sample that was dropped in the interrupt after a 4 sample delay for aquisition
-	  	  			if (sampleHoldMode == decimate && sampleHoldTimer == 4) {
-	  	  			  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-	  	  			  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-	  	  			}
-	}
-	//allow the sample and holds to pass when the oscillator is at rest
-	else  {
-				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		  }*/
-
-
-
-
-	/*TIM Update event*/
-	if(__HAL_TIM_GET_FLAG(&htim6, TIM_FLAG_UPDATE) != RESET)
-	  {
-	    if(__HAL_TIM_GET_IT_SOURCE(&htim6, TIM_IT_UPDATE) !=RESET)
-	    {
-	      __HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
-	      HAL_TIM_PeriodElapsedCallback(&htim6);
-	    }
-	  }
 
 
   /* USER CODE END TIM6_DAC_IRQn 0 */
@@ -622,6 +628,7 @@ void DMA2_Channel5_IRQHandler(void)
 /* USER CODE BEGIN 1 */
 
 void attack(void) {
+
 	//calculate value based upon phase pointer "position"
 	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
 	LnSample = (int) (position >> 16);
@@ -649,6 +656,7 @@ void attack(void) {
 
 
 
+
 }
 
 
@@ -659,6 +667,7 @@ void attack(void) {
 
 
 void release(void) {
+
 	//calculate value based upon phase pointer "position" reflected over the span of the wavetable
 	mirror = spanx2 - position; //changed from myfix16_mul
 	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
@@ -685,6 +694,7 @@ void release(void) {
 	if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);}
 
 
+
 }
 
 
@@ -696,47 +706,14 @@ void release(void) {
 // Questioning whether this works properly when position has to be calculated using attack inc + decay inc (at transitions) i.e. increment rate overshoot
 
 void getPhase(void) {
-	//define increment function for high speed mode with limits, tim2 parameter controls is removed from the equation if we are in drum mode
-	if (speed == high) {
 
-		/*multiply a base (modulated by linear FM) by a lookup value from a 10 octave expo table (modulated by expo FM)
-		  if we are in drum mode, no linear FM*/
-		if (loop == noloop) {
-
-
-			if (pitchOn != 0) {inc = myfix16_mul((exposcale >> 5) + 2000, lookuptable[4095 - ((4095 - time1CV) - (time1Knob>> 1))] >> 2);}
-			else {inc = myfix16_mul(2000, lookuptable[4095 - ((4095 - time1CV) - (time1Knob >> 1))] >> 2);}
-		}
-
-		else {
-
-			inc = myfix16_mul((1900 - time2CV) + time2Knob, lookuptable[4095 - ((4095 - time1CV) - (time1Knob>> 1))] >> 2);
-
-
-
-		}
-
-		//if (inc > 1048576) {inc = 1048576;}
-		//if (inc < -1048576) {inc = -1048576;}
-	}
-
-	//define increment for low speed mode using function pointers to the appropriate knob/cv combo per the retirgger mode
-	else { //low speed
-
-		if (position < span) {
-			inc = (*attackTime)();
-			}
-		else {
-			inc = (*releaseTime)();
-			}
-	}
-
-	if (incSign == -1) {inc = -inc;}
+	inc = incFromADCs * incSign;
 
 	//if (inc < -1048576) {inc = -1048576;}//multiply inc by a sign per the retrigger mode
 
 	if (trigMode == gated && drumModeOn == 0) {
 		if (gateOn == 1 && (abs(inc) > abs(span - position))) {
+
 			inc = span - position;
 		}
 	}
@@ -771,6 +748,44 @@ void getPhase(void) {
 
 		}
 	}
+}
+
+void getInc(void) {
+	//define increment function for high speed mode with limits, tim2 parameter controls is removed from the equation if we are in drum mode
+	if (speed == high) {
+
+		/*multiply a base (modulated by linear FM) by a lookup value from a 10 octave expo table (modulated by expo FM)
+		  if we are in drum mode, no linear FM*/
+		if (loop == noloop) {
+
+			if (pitchOn == 1) {incFromADCs = myfix16_mul((exposcale >> 5) + 2000, lookuptable[4095 - ((4095 - time1CV) - (time1Knob >> 1))] >> 2);}
+
+			incFromADCs = myfix16_mul(2000, lookuptable[4095 - ((4095 - time1CV) - (time1Knob >> 1))] >> 2);
+
+		}
+
+		else {
+
+			incFromADCs = myfix16_mul((1800 - time2CV) + time2Knob, lookuptable[4095 - ((4095 - time1CV) - (time1Knob>> 1))] >> 2);
+
+		}
+
+		//if (inc > 1048576) {inc = 1048576;}
+		//if (inc < -1048576) {inc = -1048576;}
+	}
+
+	//define increment for low speed mode using function pointers to the appropriate knob/cv combo per the retirgger mode
+	else {
+
+		if (position < span) {
+			incFromADCs = (*attackTime)();
+			}
+		else {
+			incFromADCs = (*releaseTime)();
+			}
+
+	}
+
 }
 
 int calcTime1(void) {
@@ -830,7 +845,7 @@ void EXTI15_10_IRQHandler(void)
 	if (phaseState == 1) {
 
 		if (rgbOn != 0) {
-		LEDC_ON;
+		//LEDC_ON;
 		LEDD_OFF;
 		}
 
@@ -848,12 +863,12 @@ void EXTI15_10_IRQHandler(void)
 	if (phaseState == 2) {
 		//if (trigMode == pendulum) {incSign *= -1;}
 		 if (rgbOn != 0) {
-			LEDC_OFF;
+			//LEDC_OFF;
 			LEDD_ON;
 		 }
 		}
 	if (phaseState == 0) {
-		LEDC_OFF;
+		//LEDC_OFF;
 		LEDD_OFF;
 
 	}

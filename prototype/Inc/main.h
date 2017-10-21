@@ -142,6 +142,11 @@ int calcTime2(void);
 
 #define ClearTimCount(n)           (n.TIMx->CNT = 0)
 
+#define DAC1_ADDR     0x40007408
+#define DAC2_ADDR     0x40007414
+#define WRITE_DAC1(data) ((*(volatile uint32_t *)DAC1_ADDR) = (val))
+#define WRITE_DAC2(data) ((*(volatile uint32_t *)DAC2_ADDR) = (val))
+
 
 /* USER CODE END Private defines */
 
