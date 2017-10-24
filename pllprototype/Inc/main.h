@@ -46,7 +46,7 @@ enum scaleModes {row, ratio};
 
 enum controlModes {gatedDutyCycle, knobDutyCycle};
 
-enum phaseLockModes {none, average, hardSync, nongatedretrigger, pendulum};
+enum phaseLockModes {none, average, hardSync, phaseLock};
 
 enum sampleHoldModes {nosampleandhold, a, b, ab, antidecimate, decimate};
 

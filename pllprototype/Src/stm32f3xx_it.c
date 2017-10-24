@@ -73,11 +73,13 @@ int morphBuffer[8];
 int getMorph;
 float position = 0;
 float mirror;
-float attackInc = 1;
-float releaseInc = 1;
+uint32_t attackInc = 1;
+uint32_t releaseInc = 1;
 float numMult;
 float denomMult;
 float inc;
+float offset;
+float makeupInc;
 int (*attackTime) (void);
 int (*releaseTime) (void);
 
@@ -137,7 +139,7 @@ uint8_t lastPhaseState;
 uint8_t gateOn;
 uint8_t drumRetrig;
 uint32_t periodCount = 10000;
-uint32_t lastGateCount = 5000;
+uint32_t lastGateCount = 50;
 uint32_t lastPeriodCount = 10000;
 uint32_t holdLastGateCount = 10000;
 uint32_t holdLastPeriodCount = 10000;
@@ -196,6 +198,8 @@ extern DMA_HandleTypeDef hdma_dac_ch2;
 extern DAC_HandleTypeDef hdac;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim6;
+extern TIM_HandleTypeDef htim7;
+extern TIM_HandleTypeDef htim8;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -392,64 +396,33 @@ void TIM2_IRQHandler(void)
   /* USER CODE BEGIN TIM2_IRQn 0 */
     if(	HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15) == GPIO_PIN_RESET) {
 
-    	holdLastPeriodCount = lastPeriodCount;
-    	lastPeriodCount = periodCount;
-    	if (lastPeriodCount < spanx2) {lastPeriodCount = holdLastPeriodCount;};
-    	periodCount = 0;
-
-    	if (controlMode == knobDutyCycle) {
-    		//gateRatio12Bit = ((lastGateCount << 12) / lastPeriodCount);
-
-    		lastGateCount = ((lastPeriodCount * (time2Knob + time2CV)) >> 13); // last period count times the ratio of the adc to full scale
-
-    		if (scaleMode == row) {
-    		    		denomMult = 1;
-    		    		rowSelect = time2CV >> rowSelectBitShift;
-    		    		rowIndex = time1CV >> rowIndexBitShift;
-    		    		numMult = *(*(rowScaleArray[rowScaleIndicator].scaleGrid + rowSelect) + rowIndex);
-    		    	}
-
-    		if (scaleMode == ratio) {
-    		    		denomMult = 1;
-    		    		rowIndex = time1Knob >> rowIndexBitShift;
-    		    		numMult = *(*(ratioScaleArray[ratioScaleIndicator].scaleGrid) + rowIndex);
-    		    		rowIndex = time2CV >> rowIndexBitShift;
-    		    		denomMult = *(*(ratioScaleArray[ratioScaleIndicator].scaleGrid + 1) + rowIndex);
-    		    	}
-
-    	}
 
 
+    	lastPeriodCount = __HAL_TIM_GET_COUNTER(&htim2);
+    	if (lastPeriodCount < 100) {lastPeriodCount = 100;}
+
+    	__HAL_TIM_SET_COUNTER(&htim2, 0);
+
+    	if (phaseLockMode == hardSync) {position = 0;}
+
+    	//attackInc = (span << 16) / lastGateCount;
+    	//releaseInc = (span << 16) / (lastPeriodCount - lastGateCount);
+
+
+
+
+
+    	//__HAL_TIM_SET_PRESCALER(&htim7, 20000);
+    	//__HAL_TIM_SET_PRESCALER(&htim8, 20000);
+
+
+
+    }
     	else {
 
-    		if (scaleMode == row) {
-    			denomMult = 1;
-    			rowSelect = (time2Knob + time2CV) >> (rowSelectBitShift + 1);
-    			rowIndex = (time1CV + time1Knob) >> (rowIndexBitShift + 1);
-    			numMult = *(*(rowScaleArray[rowScaleIndicator].scaleGrid + rowSelect) + rowIndex);
-    		}
-
-    		if (scaleMode == ratio) {
-    			denomMult = 1;
-    			rowIndex = (time1Knob + time1CV) >> (rowIndexBitShift + 1);
-    			numMult = *(*(ratioScaleArray[ratioScaleIndicator].scaleGrid) + rowIndex);
-    			rowIndex = (time2Knob + time2CV) >> (rowIndexBitShift + 1);
-    			denomMult = *(*(ratioScaleArray[ratioScaleIndicator].scaleGrid + 1) + rowIndex);
-    		}
+    		lastGateCount = __HAL_TIM_GET_COUNTER(&htim2);
 
     	}
-
-		attackInc = (span * numMult) / (float)(lastGateCount * denomMult);
-		releaseInc = (span * numMult) / (float)((lastPeriodCount - lastGateCount) * denomMult);
-
-    }
-    else {
-
-    	holdLastGateCount = lastGateCount;
-    	lastGateCount = periodCount;
-    	if (lastGateCount < span) {lastGateCount = holdLastGateCount;};
-
-    }
 
 
   /* USER CODE END TIM2_IRQn 0 */
@@ -487,6 +460,31 @@ void EXTI15_10_IRQHandler(void)
 }
 
 /**
+* @brief This function handles TIM8 update interrupt.
+*/
+void TIM8_UP_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM8_UP_IRQn 0 */
+	LnSample ++;
+	if (LnSample == 64) {
+		LnSample = 63;
+		__HAL_TIM_DISABLE(&htim8);
+		__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
+		__HAL_TIM_ENABLE(&htim7);
+		__HAL_TIM_SET_COUNTER(&htim7, 0);
+		phaseState = 2;
+		HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
+	}
+
+	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
+  /* USER CODE END TIM8_UP_IRQn 0 */
+  //HAL_TIM_IRQHandler(&htim8);
+  /* USER CODE BEGIN TIM8_UP_IRQn 1 */
+
+  /* USER CODE END TIM8_UP_IRQn 1 */
+}
+
+/**
 * @brief This function handles Timer 6 interrupt and DAC underrun interrupts.
 */
 void TIM6_DAC_IRQHandler(void)
@@ -502,24 +500,15 @@ void TIM6_DAC_IRQHandler(void)
 					dacbuffer1[0] = 4095 - out;
 
 
-
-
-
-	  				//call the function to advance the phase of the oscillator
-
-	  		  	  	getPhase();
-	  		  	  	//GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
-	  		  	  	// pin reset
-	  		  	  	//call the appropriate
-	  	  	  		lastPhaseState = phaseState;
-	  	  	  		if (position < span) {attack(); phaseState = 1;}
-	  	  	  		if (position >= span && position < spanx2) {release(); phaseState = 2;}
-	  	  	  		// pin set
-	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
 	  	  	  		fixMorph = ADCReadings3[0] + ADCReadings1[2];
 	  	  	  		//fixMorph = 0;
 		  	  		if (fixMorph > 4095) {fixMorph = 4095;}
 		  	  		if (fixMorph < 0) {fixMorph = 0;}
+	  		  	  	//call the appropriate
+	  	  	  		if (phaseState == 1) {attack();}
+	  	  	  		if (phaseState == 2) {release();}
+	  	  	  		// pin set
+	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
 		  	  		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, fixMorph);
 
 
@@ -530,45 +519,7 @@ void TIM6_DAC_IRQHandler(void)
 	  		  	  		//use the expo decay scaled by the manual morph control to modulate morph
 	  		  	  		//fixMorph = myfix16_mul(exposcale, fixMorph);
 	  		  	  	//}
-	  	  	  		if (phaseState != lastPhaseState) {
-
-	  	  	  			HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
-	  	  	  		}
-
 	}
-
-
-
-
-
-
-
-					/*
-	  		  	  	//moving towards a, trigger the appropriate sample and hold routine with flag toa
-	  	  	  		if (intoattackfroml || intoreleasefromr) {
-	  	  	  			sampleHoldDirection = toward_a;
-	  	  	  			HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
-	  	  	  		}
-	  	  	  		//moving towards a, trigger the appropriate sample and hold routine with flag toa
-	  	  			if (intoattackfromr || intoreleasefroml) {
-		  	  	  		sampleHoldDirection = toward_b;
-		  	  	  		HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
-	  	  			}
-	  	  			//grab the sample for b that was dropped in the interrupt after a 4 sample delay for aquisition
-	  	  			if ((sampleHoldMode == b || sampleHoldMode == ab) && sampleHoldTimer == 4) {
-	  	  				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-	  	  			}
-	  	  			//grab the sample that was dropped in the interrupt after a 4 sample delay for aquisition
-	  	  			if (sampleHoldMode == decimate && sampleHoldTimer == 4) {
-	  	  			  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-	  	  			  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-	  	  			}
-	}
-	//allow the sample and holds to pass when the oscillator is at rest
-	else  {
-				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-		  }*/
 
 
 
@@ -585,11 +536,34 @@ void TIM6_DAC_IRQHandler(void)
 
 
   /* USER CODE END TIM6_DAC_IRQn 0 */
-//  HAL_TIM_IRQHandler(&htim6);
-  HAL_DAC_IRQHandler(&hdac);
+  //HAL_TIM_IRQHandler(&htim6);
+  //HAL_DAC_IRQHandler(&hdac);
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
 
   /* USER CODE END TIM6_DAC_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM7 global interrupt.
+*/
+void TIM7_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM7_IRQn 0 */
+	LnSample--;
+	if (LnSample == -1) {
+		LnSample = 0;
+		__HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
+		__HAL_TIM_ENABLE(&htim8);
+		__HAL_TIM_DISABLE(&htim7);
+		__HAL_TIM_SET_COUNTER(&htim8, 0);
+		phaseState = 1;
+		HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
+	}
+  /* USER CODE END TIM7_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim7);
+  /* USER CODE BEGIN TIM7_IRQn 1 */
+
+  /* USER CODE END TIM7_IRQn 1 */
 }
 
 /**
@@ -623,15 +597,13 @@ void DMA2_Channel5_IRQHandler(void)
 /* USER CODE BEGIN 1 */
 
 void attack(void) {
-	//calculate value based upon phase pointer "position"
-	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
-	LnSample = (int) position;
-	//RnSample = (LnSample + 1);
+
 	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
 	LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
-	//RnFamily = (LnFamily + 1);
+
 	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
-	waveFrac = (uint16_t) ((position - LnSample) * 65536);
+	waveFrac = __HAL_TIM_GET_COUNTER(&htim8);
+
 	morphFrac = ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
 	//get values from the relevant wavetables
 	Lnvalue1 = *(*(familyArray[familyIndicator].attackFamily + LnFamily) + LnSample);
@@ -661,21 +633,21 @@ void attack(void) {
 
 void release(void) {
 	//calculate value based upon phase pointer "position" reflected over the span of the wavetable
-	mirror = spanx2 - position; //changed from myfix16_mul
+	//mirror = spanx2 - position; //changed from myfix16_mul
 	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
-	LnSample = (int) mirror;
+	//LnSample = (int) mirror;
 	//RnSample = (LnSample + 1);
 	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
 	LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
 	//RnFamily = (LnFamily + 1);
 	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
-	waveFrac = (uint16_t) ((mirror - LnSample) * 65536);
+	waveFrac = 65536 - __HAL_TIM_GET_COUNTER(&htim7);
 	morphFrac = (uint16_t) ((fixMorph - (LnFamily <<  morphBitShiftRight)) << morphBitShiftLeft);
 	//get values from the relevant wavetables
-	Lnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample);
-	Rnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample + 1);
-	Lnvalue2 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily + 1) + LnSample);
-	Rnvalue2 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily + 1) + LnSample + 1);
+	Lnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + (LnSample - 1));
+	Rnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample);
+	Lnvalue2 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily + 1) + (LnSample - 1));
+	Rnvalue2 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily + 1) + LnSample);
 	//find the interpolated values for the adjacent wavetables
 	interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
 	interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
@@ -716,34 +688,6 @@ void getPhase(void) {
 
 }
 
-int calcTime1(void) {
-
-	//time1 = (time1Knob + time1CV) >> 4;
-	//return time1;
-
-}
-
-int calcTime2(void) {
-
-	//time2 = (time2Knob + time2CV) >> 4;
-	//return time2;
-
-}
-
-void drum(void) {
-	//advance the drumCount pointer according to the time2 knob
-	drumCount = drumCount + ((time2Knob + (4095 - time2CV)) >> 7) + 1;
-	//take the inverse of that in 12 bits
-	subCount = 3840 - (drumCount >> 7);
-	//if we get a retrigger, wait to cycle back through the period then retrigger (no pops)
-	//if (intoattackfroml == 1 && retrig == 1) {retrig = 0, drumCount = 0;}
-	//if we get to the end of the table, reset the envelope
-	if (subCount <= 0) {oscillatorActive = 0, retrig = 0, drumCount = 0, position = 0; subCount = 0;}
-	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
-	exposcale = lookuptable[subCount] >> 10;
-	//scale the oscillator
-	out = myfix16_mul(out, exposcale);
-}
 
 int myfix16_mul(int in0, int in1) {
 	int64_t result = (uint64_t)in0*in1;
