@@ -42,7 +42,7 @@
 
 /* USER CODE BEGIN Includes */
 
-enum speedTypes {high, low};
+enum speedTypes {audio, env, seq};
 
 enum loopTypes {noloop, looping};
 
@@ -53,8 +53,10 @@ enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 int (*attackTime) (void);
 int (*releaseTime) (void);
 
-int calcTime1(void);
-int calcTime2(void);
+int calcTime1Env(void);
+int calcTime2Env(void);
+int calcTime1Seq(void);
+int calcTime2Seq(void);
 
 /* USER CODE END Includes */
 
