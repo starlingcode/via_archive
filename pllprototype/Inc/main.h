@@ -134,6 +134,9 @@ enum sampleHoldModes {nosampleandhold, a, b, ab, antidecimate, decimate};
 #define SH_B_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_9;
 #define SH_B_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_9;
 
+#define DAC1_ADDR     0x40007408
+#define DAC2_ADDR     0x40007414
+
 
 #define noteC1 1
 #define noteCsharp1 1.05946309436

@@ -896,8 +896,8 @@ int main(void)
     rowScaleArray[0] = row1;
 
 
-	span = familyArray[0].tableLength;
-	spanx2 = familyArray[0].tableLength << 1;
+	span = familyArray[0].tableLength << 16;
+	spanx2 = familyArray[0].tableLength << 17;
 	morphBitShiftRight = 9;
 	morphBitShiftLeft = 7;
 	rowIndexBitShift = 9;
@@ -920,15 +920,16 @@ int main(void)
       HAL_TIM_Base_Start(&htim4);
       HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
       HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
-      HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)dacbuffer1, 1, DAC_ALIGN_12B_R);
-      HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_2, (uint32_t*)dacbuffer2, 1, DAC_ALIGN_12B_R);
+      //HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)dacbuffer1, 1, DAC_ALIGN_12B_R);
+      //HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_2, (uint32_t*)dacbuffer2, 1, DAC_ALIGN_12B_R);
 
 
 
       tsl_user_Init();
       HAL_TIM_Base_Start_IT(&htim6);
-      __HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
-      __HAL_TIM_ENABLE(&htim8);
+      //__HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
+      //__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
+      //__HAL_TIM_ENABLE(&htim8);
       //HAL_TIM_Base_Start_IT(&htim2);
       HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
 
@@ -1245,7 +1246,8 @@ static void MX_TIM1_Init(void)
   TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
 
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 2-1;
+  htim1.Init.Prescaler = 1
+		  -1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim1.Init.Period = 4095;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -1314,7 +1316,7 @@ static void MX_TIM2_Init(void)
   TIM_IC_InitTypeDef sConfigIC;
 
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 1024;
+  htim2.Init.Prescaler = 1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 4294967295;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -1417,7 +1419,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 1-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 1000;
+  htim6.Init.Period = 1024;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
@@ -1440,9 +1442,10 @@ static void MX_TIM7_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim7.Instance = TIM7;
-  htim7.Init.Prescaler = 10-1;
+  htim7.Init.Prescaler = 2-1;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim7.Init.Period = 65535;
+  htim7.Init.Period = 128
+		  ;
   htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
   {
@@ -1466,9 +1469,9 @@ static void MX_TIM8_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim8.Instance = TIM8;
-  htim8.Init.Prescaler = 10-1;
+  htim8.Init.Prescaler = 2-1;
   htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim8.Init.Period = 65535;
+  htim8.Init.Period = 128;
   htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim8.Init.RepetitionCounter = 0;
   htim8.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -1771,8 +1774,8 @@ void changeMode(uint8_t mode) {
 		}
 		if (mode == 5) {
 			familyIndicator = (familyIndicator + 1) % 15;
-			span = (familyArray[familyIndicator].tableLength);
-			spanx2 = (familyArray[familyIndicator].tableLength) << 1;
+			span = (familyArray[familyIndicator].tableLength) << 16;
+			spanx2 = (familyArray[familyIndicator].tableLength) << 17;
 			switch (familyArray[familyIndicator].familySize) {
 
 								case 5:
@@ -1800,8 +1803,8 @@ void changeMode(uint8_t mode) {
 		if (mode == 6) {
 			if (familyIndicator == 0) {familyIndicator = 14;}
 			else familyIndicator = (familyIndicator - 1);
-			span = (familyArray[familyIndicator].tableLength);
-			spanx2 = (familyArray[familyIndicator].tableLength) << 1;
+			span = (familyArray[familyIndicator].tableLength) << 16;
+			spanx2 = (familyArray[familyIndicator].tableLength) << 17;
 			switch (familyArray[familyIndicator].familySize) {
 
 					case 5:

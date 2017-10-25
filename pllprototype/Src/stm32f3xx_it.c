@@ -68,18 +68,18 @@ uint8_t morphBitShiftRight;
 uint8_t morphBitShiftLeft;
 uint8_t rowSelectBitShift;
 uint8_t rowIndexBitShift;
-int fixMorph;
-int morphBuffer[8];
-int getMorph;
-float position = 0;
-float mirror;
+uint32_t fixMorph;
+uint32_t morphBuffer[8];
+uint32_t getMorph;
+uint32_t position = 0;
+uint32_t mirror;
 uint32_t attackInc = 1;
 uint32_t releaseInc = 1;
-float numMult;
-float denomMult;
-float inc;
-float offset;
-float makeupInc;
+uint32_t numMult;
+uint32_t denomMult;
+uint32_t inc;
+uint32_t offset;
+int makeupInc;
 int (*attackTime) (void);
 int (*releaseTime) (void);
 
@@ -405,8 +405,24 @@ void TIM2_IRQHandler(void)
 
     	if (phaseLockMode == hardSync) {position = 0;}
 
-    	//attackInc = (span << 16) / lastGateCount;
-    	//releaseInc = (span << 16) / (lastPeriodCount - lastGateCount);
+    	if (position > span) {
+    		makeupInc = (spanx2 - position) << 8;
+    	}
+    	else {makeupInc = -(position << 8);};
+
+    	if (lastGateCount < 40000) {lastGateCount = 40000;}
+    	else if ((lastPeriodCount - lastGateCount) < 40000) {
+    		lastGateCount = lastPeriodCount - 40000;}
+
+
+    	attackInc = ((span << 9) + makeupInc) / lastGateCount;
+    	releaseInc = ((span << 9)  + makeupInc)/ (lastPeriodCount - lastGateCount) ;
+
+
+
+
+    	//attackInc = (span * numMult) / (lastGateCount * denomMult);
+    	//releaseInc = (span * numMult) / ((lastPeriodCount - lastGateCount) * denomMult);
 
 
 
@@ -421,6 +437,7 @@ void TIM2_IRQHandler(void)
     	else {
 
     		lastGateCount = __HAL_TIM_GET_COUNTER(&htim2);
+
 
     	}
 
@@ -465,18 +482,7 @@ void EXTI15_10_IRQHandler(void)
 void TIM8_UP_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM8_UP_IRQn 0 */
-	LnSample ++;
-	if (LnSample == 64) {
-		LnSample = 63;
-		__HAL_TIM_DISABLE(&htim8);
-		__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
-		__HAL_TIM_ENABLE(&htim7);
-		__HAL_TIM_SET_COUNTER(&htim7, 0);
-		phaseState = 2;
-		HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
-	}
 
-	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
   /* USER CODE END TIM8_UP_IRQn 0 */
   //HAL_TIM_IRQHandler(&htim8);
   /* USER CODE BEGIN TIM8_UP_IRQn 1 */
@@ -496,20 +502,21 @@ void TIM6_DAC_IRQHandler(void)
 	if (oscillatorActive){
 
 					//write the current oscillator value to dac1, and its inverse to dac2 (crossfading)
-	  				dacbuffer2[0] = out;
-					dacbuffer1[0] = 4095 - out;
+					((*(volatile uint32_t *)DAC1_ADDR) = (4095 - out));
+					((*(volatile uint32_t *)DAC2_ADDR) = (out));
 
+					getPhase();
 
+	  		  	  	//call the appropriate
+	  	  	  		if (position < span) {attack(); phaseState = 1;}
+	  	  	  		if (position >= span) {release(); phaseState = 2;}
+	  	  	  		// pin set
+	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
 	  	  	  		fixMorph = ADCReadings3[0] + ADCReadings1[2];
 	  	  	  		//fixMorph = 0;
 		  	  		if (fixMorph > 4095) {fixMorph = 4095;}
 		  	  		if (fixMorph < 0) {fixMorph = 0;}
-	  		  	  	//call the appropriate
-	  	  	  		if (phaseState == 1) {attack();}
-	  	  	  		if (phaseState == 2) {release();}
-	  	  	  		// pin set
-	  	  	  		//calculate the next morph index (we have it here for now so that it is ready to be scaled by drum mode, technically it is one sample behind)
-		  	  		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, fixMorph);
+	  	  	  		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, fixMorph);
 
 
 	  	  	  		//if we are in high speed and not looping, activate drum mode
@@ -525,14 +532,9 @@ void TIM6_DAC_IRQHandler(void)
 
 
 	/*TIM Update event*/
-	if(__HAL_TIM_GET_FLAG(&htim6, TIM_FLAG_UPDATE) != RESET)
-	  {
-	    if(__HAL_TIM_GET_IT_SOURCE(&htim6, TIM_IT_UPDATE) !=RESET)
-	    {
+
 	      __HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
-	      HAL_TIM_PeriodElapsedCallback(&htim6);
-	    }
-	  }
+	      //HAL_TIM_PeriodElapsedCallback(&htim6);
 
 
   /* USER CODE END TIM6_DAC_IRQn 0 */
@@ -549,18 +551,9 @@ void TIM6_DAC_IRQHandler(void)
 void TIM7_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM7_IRQn 0 */
-	LnSample--;
-	if (LnSample == -1) {
-		LnSample = 0;
-		__HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
-		__HAL_TIM_ENABLE(&htim8);
-		__HAL_TIM_DISABLE(&htim7);
-		__HAL_TIM_SET_COUNTER(&htim8, 0);
-		phaseState = 1;
-		HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
-	}
+
   /* USER CODE END TIM7_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim7);
+  //HAL_TIM_IRQHandler(&htim7);
   /* USER CODE BEGIN TIM7_IRQn 1 */
 
   /* USER CODE END TIM7_IRQn 1 */
@@ -598,26 +591,37 @@ void DMA2_Channel5_IRQHandler(void)
 
 void attack(void) {
 
+	//calculate value based upon phase pointer "position"
+
+	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
+	LnSample = position >> 16;
+
 	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
 	LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
 
 	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
-	waveFrac = __HAL_TIM_GET_COUNTER(&htim8);
+	waveFrac = (uint16_t) position;
+	morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
 
-	morphFrac = ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
 	//get values from the relevant wavetables
 	Lnvalue1 = *(*(familyArray[familyIndicator].attackFamily + LnFamily) + LnSample);
 	Rnvalue1 = *(*(familyArray[familyIndicator].attackFamily + LnFamily) + LnSample + 1);
 	Lnvalue2 = *(*(familyArray[familyIndicator].attackFamily + LnFamily + 1) + LnSample);
 	Rnvalue2 = *(*(familyArray[familyIndicator].attackFamily + LnFamily + 1) + LnSample + 1);
+
 	//find the interpolated values for the adjacent wavetables
 	interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
-	//
+
 	interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
+
 	//interpolate between those based upon morph (biinterpolation)
-	out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
+
+	out = myfix16_lerp(interp1, interp2, morphFrac) >> 4;
+
 	if (out > 4095) {out = 4095;};
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
+
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);
+
 
 
 
@@ -632,33 +636,39 @@ void attack(void) {
 
 
 void release(void) {
+
 	//calculate value based upon phase pointer "position" reflected over the span of the wavetable
-	//mirror = spanx2 - position; //changed from myfix16_mul
+	mirror = spanx2 - position;
+
 	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
-	//LnSample = (int) mirror;
-	//RnSample = (LnSample + 1);
+	LnSample = (int) (mirror >> 16);
+
 	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
+	//bit shift 9 for morph 6
 	LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
-	//RnFamily = (LnFamily + 1);
+
 	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
-	waveFrac = 65536 - __HAL_TIM_GET_COUNTER(&htim7);
+	waveFrac = (uint16_t) mirror;
 	morphFrac = (uint16_t) ((fixMorph - (LnFamily <<  morphBitShiftRight)) << morphBitShiftLeft);
+
 	//get values from the relevant wavetables
-	Lnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + (LnSample - 1));
-	Rnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample);
-	Lnvalue2 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily + 1) + (LnSample - 1));
-	Rnvalue2 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily + 1) + LnSample);
+	Lnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample);
+	Rnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample + 1);
+	Lnvalue2 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily + 1) + LnSample);
+	Rnvalue2 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily + 1) + LnSample + 1);
+
 	//find the interpolated values for the adjacent wavetables
 	interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
 	interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
+
 	//interpolate between those based upon morph (biinterpolation)
-	out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
+	out = myfix16_lerp(interp1, interp2, morphFrac) >> 4;
 	if (out > 4095) {out = 4095;};
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, out);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
+
 
 
 }
-
 
 
 
