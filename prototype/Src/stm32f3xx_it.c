@@ -114,9 +114,9 @@ int calcTime2Seq(void);
 int myfix16_mul(int, int);
 int myfix16_lerp(int, int, uint16_t);
 void getInc(void);
-void setAttack(void);
-void setRelease(void);
-void getAverages(void);
+void sampHoldB(void);
+void sampHoldA(void);
+
 
 // "playback" flags that set the oscillator in motion
 volatile int oscillatorActive = 0;
@@ -183,11 +183,11 @@ uint32_t dac2HoldingReg;
 extern DMA_HandleTypeDef hdma_adc1;
 extern DMA_HandleTypeDef hdma_adc2;
 extern DMA_HandleTypeDef hdma_adc3;
-extern DMA_HandleTypeDef hdma_dac_ch1;
-extern DMA_HandleTypeDef hdma_dac_ch2;
 extern DAC_HandleTypeDef hdac;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim6;
+extern TIM_HandleTypeDef htim7;
+extern TIM_HandleTypeDef htim8;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -348,37 +348,6 @@ void DMA1_Channel1_IRQHandler(void)
 }
 
 /**
-* @brief This function handles DMA1 channel3 global interrupt.
-*/
-void DMA1_Channel3_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel3_IRQn 0 */
-
-
-
-
-  /* USER CODE END DMA1_Channel3_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_dac_ch1);
-  /* USER CODE BEGIN DMA1_Channel3_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel3_IRQn 1 */
-}
-
-/**
-* @brief This function handles DMA1 channel4 global interrupt.
-*/
-void DMA1_Channel4_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel4_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel4_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_dac_ch2);
-  /* USER CODE BEGIN DMA1_Channel4_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel4_IRQn 1 */
-}
-
-/**
 * @brief This function handles TIM2 global interrupt.
 */
 void TIM2_IRQHandler(void)
@@ -511,6 +480,24 @@ void TIM2_IRQHandler(void)
 }
 
 /**
+* @brief This function handles TIM8 update interrupt.
+*/
+void TIM8_UP_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM8_UP_IRQn 0 */
+	SH_B_SAMPLE
+	LEDB_OFF
+	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
+	__HAL_TIM_DISABLE(&htim8);
+  /* USER CODE END TIM8_UP_IRQn 0 */
+  //HAL_TIM_IRQHandler(&htim8);
+  /* USER CODE BEGIN TIM8_UP_IRQn 1 */
+
+
+  /* USER CODE END TIM8_UP_IRQn 1 */
+}
+
+/**
 * @brief This function handles Timer 6 interrupt and DAC underrun interrupts.
 */
 void TIM6_DAC_IRQHandler(void)
@@ -518,17 +505,7 @@ void TIM6_DAC_IRQHandler(void)
   /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 
 
-
-
-	/*TIM Update event*/
-	//if(__HAL_TIM_GET_FLAG(&htim6, TIM_FLAG_UPDATE) != RESET)
-	  //{
-	    //if(__HAL_TIM_GET_IT_SOURCE(&htim6, TIM_IT_UPDATE) !=RESET)
-	    //{
-	      __HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
-	      //HAL_TIM_PeriodElapsedCallback(&htim6);
-	   // }
-	  //}
+	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
 
 
 
@@ -624,6 +601,25 @@ void TIM6_DAC_IRQHandler(void)
 }
 
 /**
+* @brief This function handles TIM7 global interrupt.
+*/
+void TIM7_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM7_IRQn 0 */
+	SH_A_SAMPLE
+	SH_B_SAMPLE
+	LEDA_ON
+	LEDB_ON
+	__HAL_TIM_CLEAR_FLAG(&htim7, TIM_FLAG_UPDATE);
+  /* USER CODE END TIM7_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim7);
+  /* USER CODE BEGIN TIM7_IRQn 1 */
+	__HAL_TIM_DISABLE(&htim7);
+
+  /* USER CODE END TIM7_IRQn 1 */
+}
+
+/**
 * @brief This function handles DMA2 channel1 global interrupt.
 */
 void DMA2_Channel1_IRQHandler(void)
@@ -702,17 +698,17 @@ void attack(void) {
 void release(void) {
 
 	//calculate value based upon phase pointer "position" reflected over the span of the wavetable
-	mirror = spanx2 - position;
+	//mirror = spanx2 - position;
 
 	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
-	LnSample = (int) (mirror >> 16);
+	LnSample = (int) ((spanx2 - position) >> 16);
 
 	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
 	//bit shift 9 for morph 6
 	LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
 
 	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
-	waveFrac = (uint16_t) mirror;
+	waveFrac = (uint16_t) (spanx2 - position);
 	morphFrac = (uint16_t) ((fixMorph - (LnFamily <<  morphBitShiftRight)) << morphBitShiftLeft);
 
 	//get values from the relevant wavetables
@@ -803,12 +799,12 @@ void getInc(void) {
 		else if (expoIndex < 0) {expoIndex = 0;}
 
 		/*multiply a base (modulated by linear FM) by a lookup value from a 10 octave expo table (modulated by expo FM)
-		  if we are in drum mode, no linear FM*/
+		  if we are in drum mode, replace linear fm with the drum envelope*/
 		if (loop == noloop) {
 
-			if (pitchOn == 1) {incFromADCs = myfix16_mul((exposcale >> 6) + 100, lookuptable[expoIndex]);}
+			if (pitchOn == 1) {incFromADCs = myfix16_mul((exposcale >> 8) + 100, lookuptable[expoIndex]);}
 
-			else {incFromADCs = myfix16_mul(2000, lookuptable[expoIndex] >> 2);}
+			else {incFromADCs = myfix16_mul(1000, lookuptable[expoIndex] >> 2);}
 
 		}
 
@@ -901,9 +897,23 @@ void EXTI15_10_IRQHandler(void)
 
 	if (phaseState == 1) {
 
+		if (drumRetrig == 1) {
+					drumCount = 0;
+					drumRetrig = 0;
+				}
+		else if (trigMode == nongatedretrigger) {
+			incSign = 1;
+			if (speed == env) {releaseTime = calcTime2Env;}
+			else if (speed == seq) {releaseTime = calcTime2Seq;}
+		}
+
+		EOR_JACK_HIGH
+		EOA_JACK_LOW
 		EOR_GATE_HIGH
 		EOA_GATE_LOW
 
+		if (inc < 0) {sampHoldB();}
+		else {sampHoldA();}
 
 		if (rgbOn != 0) {
 		LEDC_ON;
@@ -911,32 +921,93 @@ void EXTI15_10_IRQHandler(void)
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 		}
 
-		if (drumRetrig == 1) {
-			drumCount = 0;
-			drumRetrig = 0;
-		}
-
-		else if (trigMode == nongatedretrigger) {
-			incSign = 1;
-			if (speed == env) {releaseTime = calcTime2Env;}
-			else if (speed == seq) {releaseTime = calcTime2Seq;}
-		}
-
 	}
+	else if (phaseState == 2) {
 
-	if (phaseState == 2) {
-
+		EOA_JACK_HIGH
+		EOR_JACK_LOW
 		EOA_GATE_HIGH
 		EOR_GATE_LOW
 
-		 if (rgbOn != 0) {
+		if (inc < 0) {sampHoldA();}
+		else {sampHoldB();}
+
+		if (rgbOn != 0) {
 			LEDC_OFF;
 			LEDD_ON;
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
-		 }
+		}
 
 	}
 
+}
+
+void sampHoldB (void) {
+
+	switch (sampleHoldMode) {
+
+	case a: SH_A_TRACK
+			LEDA_OFF
+			break;
+
+	// case b: b remains sampled
+
+	case ab: 	SH_A_TRACK
+		 	 	LEDA_ON
+				// b remains sampled
+				break;
+
+
+	case antidecimate:  SH_A_SAMPLE
+						LEDA_ON
+						SH_B_TRACK
+						LEDB_OFF
+						break;
+
+	case decimate: 	__HAL_TIM_SET_COUNTER(&htim7, 0);
+					__HAL_TIM_ENABLE(&htim7);
+					break;
+
+	}
+
+}
+
+void sampHoldA (void) {
+
+	switch (sampleHoldMode) {
+
+	case a: SH_A_SAMPLE
+			LEDA_ON
+			break;
+
+	case b: __HAL_TIM_SET_COUNTER(&htim8, 0);
+			__HAL_TIM_ENABLE(&htim8);
+			SH_B_TRACK
+			LEDB_ON;
+			break;
+
+	case ab: 	SH_A_SAMPLE
+		 	 	 LEDB_ON
+				 SH_B_SAMPLE
+				LEDA_ON
+				 __HAL_TIM_SET_COUNTER(&htim8, 0);
+				 __HAL_TIM_ENABLE(&htim8);
+				 break;
+
+
+	case antidecimate:  SH_B_SAMPLE
+						LEDB_ON
+						SH_A_TRACK
+						LEDA_OFF
+						break;
+
+	case decimate: 	SH_A_TRACK;
+					SH_B_TRACK;
+					__HAL_TIM_SET_COUNTER(&htim7, 0);
+					__HAL_TIM_ENABLE(&htim7);
+					break;
+
+	}
 }
 
 

@@ -190,7 +190,7 @@
   - @warning The value is inverted in the sensor state machine
   - Enter Calibration state if delta is below
 */
-#define TSLPRM_TKEY_CALIB_TH (50)
+#define TSLPRM_TKEY_CALIB_TH (250)
 
 /** TouchKey, Linear and Rotary sensors thresholds coefficient (range=0..4)
     This multiplier coefficient is applied on Detect and Re-Calibration thresholds only.
@@ -447,7 +447,7 @@
     - 1000 gives around 125 �s delay whatever HCLK
     - 2000 gives around 250 �s delay whatever HCLK
 */
-#define TSLPRM_DELAY_DISCHARGE_ALL (2000)
+#define TSLPRM_DELAY_DISCHARGE_ALL (500)
 
 /** IOs default mode when no on-going acquisition (range=0..1)
     - 0: Output push-pull low

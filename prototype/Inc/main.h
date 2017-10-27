@@ -68,10 +68,6 @@ int calcTime2Seq(void);
 #define ATTACK_GATE_GPIO_Port GPIOC
 #define EOR_Pin GPIO_PIN_15
 #define EOR_GPIO_Port GPIOC
-#define RELEASE_GATE_Pin GPIO_PIN_0
-#define RELEASE_GATE_GPIO_Port GPIOF
-#define A_LED_Pin GPIO_PIN_1
-#define A_LED_GPIO_Port GPIOF
 #define _1v_oct_Pin GPIO_PIN_0
 #define _1v_oct_GPIO_Port GPIOA
 #define t2_cv_Pin GPIO_PIN_1
@@ -115,20 +111,20 @@ int calcTime2Seq(void);
 #define EOA_JACK_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 #define EOA_JACK_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
 
-#define EOA_GATE_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_14;
-#define EOA_GATE_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_14;
+#define EOA_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_11;
+#define EOA_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_11;
 
 #define EOR_JACK_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_15;
 #define EOR_JACK_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
 
-#define EOR_GATE_HIGH GPIOF->BRR = (uint32_t)GPIO_PIN_0;
-#define EOR_GATE_LOW GPIOF->BSRR = (uint32_t)GPIO_PIN_0;
+#define EOR_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
+#define EOR_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
 
-#define LEDA_ON GPIOF->BSRR = (uint32_t)GPIO_PIN_1;
-#define LEDA_OFF GPIOF->BRR = (uint32_t)GPIO_PIN_1;
+#define LEDB_ON GPIOC->BSRR = (uint32_t)GPIO_PIN_14;
+#define LEDB_OFF GPIOC->BRR = (uint32_t)GPIO_PIN_14;
 
-#define LEDB_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_5;
-#define LEDB_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_5;
+#define LEDA_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_5;
+#define LEDA_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_5;
 
 #define LEDC_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_10;
 #define LEDC_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_10;

@@ -56,16 +56,14 @@ DMA_HandleTypeDef hdma_adc2;
 DMA_HandleTypeDef hdma_adc3;
 
 DAC_HandleTypeDef hdac;
-DMA_HandleTypeDef hdma_dac_ch1;
-DMA_HandleTypeDef hdma_dac_ch2;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
-TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim7;
 TIM_HandleTypeDef htim8;
+TIM_HandleTypeDef htim16;
 
 TSC_HandleTypeDef htsc;
 
@@ -674,10 +672,10 @@ static void MX_TIM1_Init(void);
 static void MX_TSC_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM6_Init(void);
-static void MX_TIM3_Init(void);
-static void MX_TIM4_Init(void);
 static void MX_TIM7_Init(void);
 static void MX_TIM8_Init(void);
+static void MX_TIM16_Init(void);
+static void MX_TIM4_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
@@ -732,10 +730,10 @@ int main(void)
   MX_TSC_Init();
   MX_TIM2_Init();
   MX_TIM6_Init();
-  MX_TIM3_Init();
-  MX_TIM4_Init();
   MX_TIM7_Init();
   MX_TIM8_Init();
+  MX_TIM16_Init();
+  MX_TIM4_Init();
 
   /* USER CODE BEGIN 2 */
   //define our wavetable family as two arrays of 9 wavetables (defined in tables.h), one for attack, one for release
@@ -825,19 +823,19 @@ int main(void)
         moogShifted.releaseFamily = moogShiftedReleaseFamily;
         moogShifted.tableLength = 64;
         moogShifted.familySize = 9;
-        familyArray[0] = moogShifted;
+        //familyArray[0] = moogShifted;
 
         moogNormalized.attackFamily = moogNormalizedAttackFamily;
         moogNormalized.releaseFamily = moogNormalizedReleaseFamily;
         moogNormalized.tableLength = 64;
         moogNormalized.familySize = 9;
-        familyArray[1] = moogNormalized;
+        familyArray[3] = moogNormalized;
 
         moogInverted.attackFamily = moogInvertedAttackFamily;
                 moogInverted.releaseFamily = moogInvertedReleaseFamily;
                 moogInverted.tableLength = 64;
                 moogInverted.familySize = 9;
-                familyArray[2] = moogInverted;
+                //familyArray[2] = moogInverted;
 
 
 
@@ -845,19 +843,19 @@ int main(void)
     perlin.releaseFamily = perlinReleaseFamily;
     perlin.tableLength = 64;
     perlin.familySize = 9;
-    //familyArray[0] = perlin;
+    familyArray[0] = perlin;
 
     sineFold.attackFamily = sinefoldAttackFamily;
     sineFold.releaseFamily= sinefoldReleaseFamily;
     sineFold.tableLength = 64;
     sineFold.familySize = 9;
-    //familyArray[1] = sineFold;
+    familyArray[1] = sineFold;
 
     bounce.attackFamily= bounceAttackFamily;
     bounce.releaseFamily = bounceReleaseFamily;
     bounce.tableLength = 64;
     bounce.familySize = 9;
-    //familyArray[2] = bounce;
+    familyArray[2] = bounce;
 
     triFold.attackFamily = trifoldAttackFamily;
     triFold.releaseFamily = trifoldReleaseFamily;
@@ -1011,6 +1009,9 @@ int main(void)
 	pitchOn = 1;
 	morphOn = 1;
 	drumModeOn = 1;
+	SH_A_TRACK
+	SH_B_TRACK
+
 	//loop = looping;
 
 
@@ -1036,7 +1037,8 @@ int main(void)
 
 
       tsl_user_Init();
-      //HAL_TIM_Base_Start_IT(&htim7);
+      __HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
+      __HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
       HAL_TIM_Base_Start_IT(&htim6);
 
 
@@ -1087,12 +1089,13 @@ void SystemClock_Config(void)
 
     /**Initializes the CPU, AHB and APB busses clocks 
     */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = 16;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL16;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL3;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -1114,7 +1117,7 @@ void SystemClock_Config(void)
 
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1|RCC_PERIPHCLK_TIM8
                               |RCC_PERIPHCLK_ADC12|RCC_PERIPHCLK_ADC34;
-  PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV16;
+  PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV8;
   PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV16;
   PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
   PeriphClkInit.Tim8ClockSelection = RCC_TIM8CLK_HCLK;
@@ -1357,7 +1360,7 @@ static void MX_TIM1_Init(void)
   TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
 
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 10-1;
+  htim1.Init.Prescaler = 1-1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim1.Init.Period = 4095;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -1454,23 +1457,6 @@ static void MX_TIM2_Init(void)
 
 }
 
-/* TIM3 init function */
-static void MX_TIM3_Init(void)
-{
-
-  htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 0;
-  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 0;
-  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_OnePulse_Init(&htim3, TIM_OPMODE_SINGLE) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-}
-
 /* TIM4 init function */
 static void MX_TIM4_Init(void)
 {
@@ -1479,7 +1465,7 @@ static void MX_TIM4_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 10000-1;
+  htim4.Init.Prescaler = 10000;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim4.Init.Period = 10000;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -1495,7 +1481,7 @@ static void MX_TIM4_Init(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
   {
@@ -1513,7 +1499,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 1-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 1200;
+  htim6.Init.Period = 1000;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
@@ -1536,9 +1522,9 @@ static void MX_TIM7_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim7.Instance = TIM7;
-  htim7.Init.Prescaler = 10;
+  htim7.Init.Prescaler = 1;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim7.Init.Period = 1000;
+  htim7.Init.Period = 1500;
   htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
   {
@@ -1562,9 +1548,9 @@ static void MX_TIM8_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim8.Instance = TIM8;
-  htim8.Init.Prescaler = 0;
+  htim8.Init.Prescaler = 1-1;
   htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim8.Init.Period = 0;
+  htim8.Init.Period = 1500;
   htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim8.Init.RepetitionCounter = 0;
   htim8.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -1589,6 +1575,24 @@ static void MX_TIM8_Init(void)
 
 }
 
+/* TIM16 init function */
+static void MX_TIM16_Init(void)
+{
+
+  htim16.Instance = TIM16;
+  htim16.Init.Prescaler = 0;
+  htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim16.Init.Period = 0;
+  htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim16.Init.RepetitionCounter = 0;
+  htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim16) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /* TSC init function */
 static void MX_TSC_Init(void)
 {
@@ -1596,7 +1600,7 @@ static void MX_TSC_Init(void)
     /**Configure the TSC peripheral 
     */
   htsc.Instance = TSC;
-  htsc.Init.CTPulseHighLength = TSC_CTPH_2CYCLES;
+  htsc.Init.CTPulseHighLength = TSC_CTPH_9CYCLES;
   htsc.Init.CTPulseLowLength = TSC_CTPL_9CYCLES;
   htsc.Init.SpreadSpectrum = DISABLE;
   htsc.Init.SpreadSpectrumDeviation = 1;
@@ -1609,8 +1613,8 @@ static void MX_TSC_Init(void)
   htsc.Init.MaxCountInterrupt = DISABLE;
   htsc.Init.ChannelIOs = TSC_GROUP5_IO1|TSC_GROUP5_IO2|TSC_GROUP5_IO3|TSC_GROUP6_IO2
                     |TSC_GROUP6_IO3|TSC_GROUP6_IO4;
-  htsc.Init.ShieldIOs = TSC_GROUP3_IO4;
-  htsc.Init.SamplingIOs = TSC_GROUP3_IO3|TSC_GROUP5_IO4|TSC_GROUP6_IO1;
+  //htsc.Init.ShieldIOs = TSC_GROUP3_IO4;
+  htsc.Init.SamplingIOs = TSC_GROUP5_IO4|TSC_GROUP6_IO1;
   if (HAL_TSC_Init(&htsc) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -1631,12 +1635,6 @@ static void MX_DMA_Init(void)
   /* DMA1_Channel1_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 2, 1);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
-  /* DMA1_Channel3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
-  /* DMA1_Channel4_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
   /* DMA2_Channel1_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Channel1_IRQn, 3, 0);
   HAL_NVIC_EnableIRQ(DMA2_Channel1_IRQn);
@@ -1668,11 +1666,11 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, EOA_Pin|ATTACK_GATE_Pin|EOR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOF, RELEASE_GATE_Pin|A_LED_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, C_LED_Pin|D_LED_Pin|B_LED_Pin|S_H_A_Pin 
                           |S_H_B_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11|GPIO_PIN_12, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : EOA_Pin ATTACK_GATE_Pin EOR_Pin */
   GPIO_InitStruct.Pin = EOA_Pin|ATTACK_GATE_Pin|EOR_Pin;
@@ -1680,13 +1678,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : RELEASE_GATE_Pin A_LED_Pin */
-  GPIO_InitStruct.Pin = RELEASE_GATE_Pin|A_LED_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
   /*Configure GPIO pins : C_LED_Pin D_LED_Pin B_LED_Pin S_H_A_Pin 
                            S_H_B_Pin */
@@ -1696,6 +1687,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PA11 PA12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 
@@ -1916,7 +1914,7 @@ void changeMode(uint8_t mode) {
 			sampleHoldMode = (sampleHoldMode + 1) % 6;
 		}
 		if (mode == 5) {
-			familyIndicator = (familyIndicator + 1) % 4;
+			familyIndicator = (familyIndicator + 1) % 15;
 			span = (familyArray[familyIndicator].tableLength) << 16;
 			spanx2 = (familyArray[familyIndicator].tableLength) << 17;
 			switch (familyArray[familyIndicator].familySize) {
