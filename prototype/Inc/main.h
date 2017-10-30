@@ -42,6 +42,7 @@
 
 /* USER CODE BEGIN Includes */
 
+
 enum speedTypes {audio, env, seq};
 
 enum loopTypes {noloop, looping};
@@ -57,6 +58,20 @@ int calcTime1Env(void);
 int calcTime2Env(void);
 int calcTime1Seq(void);
 int calcTime2Seq(void);
+
+
+
+#define BUFF_SIZE 8
+#define BUFF_SIZE_MASK (BUFF_SIZE-1)
+
+typedef struct buffer{
+    int buff[BUFF_SIZE];
+    int writeIndex;
+}buffer;
+
+void write(buffer*,int);
+int readn(buffer*, int);
+
 
 /* USER CODE END Includes */
 

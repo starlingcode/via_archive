@@ -59,11 +59,11 @@ DAC_HandleTypeDef hdac;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim7;
 TIM_HandleTypeDef htim8;
-TIM_HandleTypeDef htim16;
 
 TSC_HandleTypeDef htsc;
 
@@ -88,6 +88,7 @@ extern uint8_t rgbOn;
 extern uint8_t drumModeOn;
 extern int incSign;
 extern uint8_t gateOn;
+//volatile int oscillatorActive = 0;
 Family moog1;
 Family moog2;
 Family triFudge;
@@ -118,6 +119,7 @@ Family moogShifted;
 Family moogNormalized;
 Family moogInverted;
 Family moogImpossible;
+Family moogSquare;
 
 
 const uint16_t sinefold_ctr_1[65] = {0,1755,3221,4645,6025,7357,8637,9863,11031,12137,13180,14156,15062,15896,16655,17337,17940,18463,18903,19259,19530,19715,19812,19822,19745,19579,19325,18984,18556,18042,17444,16762,15997,15259,14604,14034,13550,13154,12845,12624,12492,12448,12493,12624,12843,13148,13537,14009,14563,15197,15909,16696,17557,18488,19487,20551,21677,22863,24104,25398,26741,28130,29561,31030,32768};
@@ -622,7 +624,61 @@ const uint16_t moogInvertedTimeRelease8[65] =
 const uint16_t moogInvertedTimeRelease9[65] =
 {23726,27047,32768,29242,28371,29513,28908,28355,28375,28136,27812,27609,27384,27128,26893,26661,26419,26180,25944,25705,25467,25231,24992,24753,24515,24279,24040,23802,23563,23327,23088,22850,22611,22372,22136,21898,21659,21420,21185,20946,20707,20468,20233,19994,19755,19516,19281,19042,18803,18564,18325,18090,17851,17612,17374,17138,16899,16660,16422,16186,15947,15708,15470,15234,14995};
 //
+const uint16_t moogSquareShiftedAttack1[65] =
+{0,0,77,253,511,839,1222,1647,2101,2572,3047,3519,3977,4414,4822,5197,5535,5834,6091,6304,6476,6605,6696,6750,6769,6757,6718,6654,6570,6470,6358,6237,6110,5980,5851,5724,5604,5501,5454,5511,5720,6116,6724,7549,8587,9819,11223,12768,14419,16139,17895,19648,21369,23027,24599,26061,27396,28592,29638,30531,31268,31852,32284,32576,32733};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftedAttack2[65] =
+{0,130,465,958,1563,2237,2940,3635,4294,4893,5416,5851,6193,6440,6598,6671,6671,6609,6497,6348,6172,5985,5793,5607,5434,5281,5149,5041,4961,4904,4873,4862,4870,4893,4929,4973,5022,5075,5127,5176,5221,5260,5293,5319,5338,5351,5408,5645,6217,7219,8681,10567,12798,15268,17859,20455,22952,25260,27311,29053,30461,31523,32246,32651,32768};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftedAttack3[65] =
+{0,517,1350,2363,3420,4411,5258,5912,6357,6594,6649,6555,6357,6094,5806,5528,5281,5082,4940,4856,4824,4837,4882,4947,5025,5102,5173,5232,5277,5306,5319,5319,5310,5293,5274,5252,5232,5214,5201,5192,5187,5186,5187,5191,5197,5202,5207,5213,5217,5220,5221,5232,5442,6323,8190,11033,14593,18493,22345,25822,28688,30810,32156,32768,32754};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftedAttack4[65] =
+{0,392,1616,3172,4645,5771,6437,6654,6522,6174,5748,5355,5058,4889,4840,4883,4980,5097,5202,5280,5323,5333,5321,5292,5261,5232,5213,5202,5199,5203,5212,5220,5228,5232,5235,5236,5235,5232,5229,5228,5227,5227,5225,5227,5227,5228,5228,5228,5228,5228,5228,5228,5228,5228,5228,5228,5270,6072,8870,13678,19462,24962,29235,31832,32768};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftedAttack5[65] =
+{0,515,2636,4827,6186,6531,6163,5535,5011,4754,4750,4893,5060,5177,5217,5199,5154,5111,5088,5085,5094,5106,5116,5121,5120,5117,5113,5111,5110,5111,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5113,5286,7988,15104,23691,30097,32768};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftedAttack6[65] =
+{0,531,3910,5986,5955,5043,4436,4412,4656,4833,4849,4784,4732,4725,4742,4757,4759,4755,4751,4751,4751,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,4752,5423,13056,25734,32768};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftedAttack7[65] =
+{0,3094,6087,5333,4465,4643,4894,4853,4782,4790,4810,4809,4803,4803,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,4805,6973,22516,32768};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftedAttack8[65] =
+{0,2457,4246,2961,3357,3344,3291,3320,3314,3312,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,3314,9862,32768};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftedAttack9[65] =
+{0,3162,2547,2646,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,2636,16681,32768};
+//phase-aligned squarewave through ladder filter
 
+const uint16_t moogSquareShiftRelease1[65] =
+{185,473,904,1484,2219,3110,4155,5350,6687,8149,9722,11383,13107,14866,16626,18353,20011,21565,22979,24222,25269,26106,26725,27133,27353,27421,27381,27288,27175,27054,26929,26800,26671,26544,26423,26311,26213,26130,26067,26027,26017,26037,26091,26183,26313,26485,26699,26957,27254,27594,27969,28377,28813,29271,29741,30215,30684,31137,31559,31940,32265,32521,32692,32768,32733};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftRelease2[65] =
+{118,525,1249,2312,3722,5467,7519,9828,12328,14926,17518,19987,22218,24103,25563,26562,27130,27362,27413,27419,27433,27452,27478,27511,27550,27595,27644,27695,27747,27797,27841,27878,27901,27909,27898,27867,27811,27729,27622,27492,27337,27164,26979,26787,26600,26425,26275,26162,26101,26100,26174,26331,26578,26919,27353,27875,28474,29132,29828,30529,31204,31808,32302,32638,32768};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftRelease3[65] =
+{0,614,1959,4083,6947,10425,14278,18178,21738,24581,26448,27327,27537,27537,27548,27550,27552,27556,27562,27567,27573,27578,27582,27584,27582,27577,27569,27555,27537,27517,27495,27476,27460,27450,27450,27464,27492,27537,27596,27667,27745,27822,27888,27933,27945,27914,27829,27687,27488,27241,26963,26676,26414,26215,26121,26175,26412,26856,27511,28358,29350,30406,31419,32253,32754};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftRelease4[65] =
+{936,3533,7806,13306,19090,23898,26696,27498,27498,27540,27540,27540,27540,27540,27540,27540,27540,27540,27540,27540,27541,27541,27543,27541,27541,27540,27539,27536,27533,27532,27533,27536,27540,27548,27556,27565,27569,27566,27555,27536,27507,27476,27447,27435,27445,27488,27566,27671,27788,27885,27928,27879,27710,27413,27020,26594,26246,26114,26331,26997,28123,29596,31152,32376,32768};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftRelease5[65] =
+{2671,9077,17664,24780,27482,27482,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27655,27657,27658,27657,27655,27651,27648,27647,27652,27662,27674,27683,27680,27657,27614,27569,27551,27591,27708,27875,28018,28014,27757,27233,26605,26237,26582,27941,30132,32253,32768};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftRelease6[65] =
+{7034,19712,27345,27345,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28016,28017,28017,28017,28013,28009,28011,28026,28043,28036,27984,27919,27935,28112,28356,28332,27725,26813,26782,28858,32237,32768};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftRelease7[65] =
+{10252,25795,25795,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27963,27965,27965,27959,27958,27978,27986,27915,27874,28125,28303,27435,26681,29674,32768};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftRelease8[65] =
+{22906,22906,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29454,29456,29454,29448,29477,29424,29411,29807,28522,30311,32768};
+//phase-aligned squarewave through ladder filter
+const uint16_t moogSquareShiftRelease9[65] =
+{16087,16087,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30132,30122,30221,29606,32768};
+//phase-aligned squarewave through ladder filter
 
 
 const uint16_t sine[65] = {0,38,115,229,381,571,797,1060,1359,1693,2061,2462,2896,3362,3858,4383,4936,5516,6122,6751,7403,8076,8768,9478,10204,10944,11698,12462,13235,14016,14802,15592,16384,17176,17966,18752,19533,20306,21070,21824,22564,23290,24000,24692,25365,26017,26646,27252,27832,28385,28910,29406,29872,30306,30707,31075,31409,31708,31971,32197,32387,32539,32653,32730,32768};
@@ -674,8 +730,8 @@ static void MX_TIM2_Init(void);
 static void MX_TIM6_Init(void);
 static void MX_TIM7_Init(void);
 static void MX_TIM8_Init(void);
-static void MX_TIM16_Init(void);
 static void MX_TIM4_Init(void);
+static void MX_TIM3_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
@@ -732,18 +788,18 @@ int main(void)
   MX_TIM6_Init();
   MX_TIM7_Init();
   MX_TIM8_Init();
-  MX_TIM16_Init();
   MX_TIM4_Init();
+  MX_TIM3_Init();
 
   /* USER CODE BEGIN 2 */
   //define our wavetable family as two arrays of 9 wavetables (defined in tables.h), one for attack, one for release
 
   	const uint16_t *perlinAttackFamily[9] = {sine, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
     const uint16_t *perlinReleaseFamily[9] = {sine, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
-    const uint16_t *sinefoldAttackFamily[9] = {sine, sine, sine, sine, sine, sine, sinefold_ctr_7, sinefold_ctr_8, sinefold_ctr_9};
-    const uint16_t *sinefoldReleaseFamily[9] = {sine, sine, sine, sine, sine, sine, sinefold_ctr_7, sinefold_ctr_8, sinefold_ctr_9};
-    const uint16_t *bounceAttackFamily[9] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8};
-    const uint16_t *bounceReleaseFamily[9] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8};
+    const uint16_t *sinefoldAttackFamily[9] = {sine, sinefold_ctr_1, sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5, sinefold_ctr_6, sinefold_ctr_7, sinefold_ctr_8};
+    const uint16_t *sinefoldReleaseFamily[9] = {sine, sinefold_ctr_1, sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5, sinefold_ctr_6, sinefold_ctr_7, sinefold_ctr_8};
+    const uint16_t *bounceAttackFamily[9] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8, bounce8};
+    const uint16_t *bounceReleaseFamily[9] = {bounce1, bounce2, bounce3, bounce4, bounce5, bounce6, bounce7, bounce8, bounce8};
     const uint16_t *trifoldAttackFamily[9] = {trifold_1, trifold_2, trifold_3, trifold_4, trifold_5, trifold_6, trifold_7, trifold_8, trifold_9};
     const uint16_t *trifoldReleaseFamily[9] = {trifold_1, trifold_2, trifold_3, trifold_4, trifold_5, trifold_6, trifold_7, trifold_8, trifold_9};
     const uint16_t *trioddAttackFamily[9] = {triodd_1, triodd_2, triodd_3, triodd_4, triodd_5, triodd_6, triodd_7, triodd_8, triodd_9};
@@ -817,7 +873,8 @@ int main(void)
     const uint16_t *moogNormalizedAttackFamily[9] = {moogNormalizedAttack1, moogNormalizedAttack2, moogNormalizedAttack3, moogNormalizedAttack4, moogNormalizedAttack5, moogNormalizedAttack6, moogNormalizedAttack7, moogNormalizedAttack8, moogNormalizedAttack9};
     const uint16_t *moogNormalizedReleaseFamily[9] = {moogNormalizedRelease1, moogNormalizedRelease2, moogNormalizedRelease3, moogNormalizedRelease4, moogNormalizedRelease5, moogNormalizedRelease6, moogNormalizedRelease7, moogNormalizedRelease8, moogNormalizedRelease9};
 
-
+    const uint16_t *moogSquareShiftAttackFamily[9] = {moogSquareShiftedAttack1, moogSquareShiftedAttack2, moogSquareShiftedAttack3, moogSquareShiftedAttack4, moogSquareShiftedAttack5, moogSquareShiftedAttack6, moogSquareShiftedAttack7, moogSquareShiftedAttack8, moogSquareShiftedAttack9};
+    const uint16_t *moogSquareShiftReleaseFamily[9] = {moogSquareShiftRelease1, moogSquareShiftRelease2, moogSquareShiftRelease3, moogSquareShiftRelease4, moogSquareShiftRelease5, moogSquareShiftRelease6, moogSquareShiftRelease7, moogSquareShiftRelease8, moogSquareShiftRelease9};
 
         moogShifted.attackFamily = moogShiftedAttackFamily;
         moogShifted.releaseFamily = moogShiftedReleaseFamily;
@@ -829,13 +886,19 @@ int main(void)
         moogNormalized.releaseFamily = moogNormalizedReleaseFamily;
         moogNormalized.tableLength = 64;
         moogNormalized.familySize = 9;
-        familyArray[3] = moogNormalized;
+        //familyArray[3] = moogNormalized;
+
+        moogSquare.attackFamily = moogSquareShiftAttackFamily;
+        moogSquare.releaseFamily = moogSquareShiftReleaseFamily;
+        moogSquare.tableLength = 64;
+        moogSquare.familySize = 9;
+        familyArray[3] = moogSquare;
 
         moogInverted.attackFamily = moogInvertedAttackFamily;
                 moogInverted.releaseFamily = moogInvertedReleaseFamily;
                 moogInverted.tableLength = 64;
                 moogInverted.familySize = 9;
-                //familyArray[2] = moogInverted;
+                familyArray[4] = moogInverted;
 
 
 
@@ -867,13 +930,13 @@ int main(void)
     triOdd.releaseFamily = trioddReleaseFamily;
     triOdd.tableLength = 64;
     triOdd.familySize = 9;
-    familyArray[4] = triOdd;
+    familyArray[5] = triOdd;
 
     triFudge.attackFamily = trifudgeAttackFamily;
     triFudge.releaseFamily = trifudgeReleaseFamily;
     triFudge.tableLength = 64;
     triFudge.familySize = 9;
-    //familyArray[5] = triFudge;
+    familyArray[6] = triFudge;
 
     moog1.attackFamily = moog1AttackFamily;
     moog1.releaseFamily = moog1ReleaseFamily;
@@ -897,19 +960,19 @@ int main(void)
     exciteBike.releaseFamily = exciteBikeReleaseFamily;
     exciteBike.tableLength = 8;
     exciteBike.familySize = 9;
-    //familyArray[9] = exciteBike;
+    familyArray[7] = exciteBike;
 
     rand.attackFamily = randAttackFamily;
     rand.releaseFamily = randReleaseFamily;
     rand.tableLength = 8;
     rand.familySize = 33;
-    //familyArray[10] = rand;
+    familyArray[8] = rand;
 
     gauss.attackFamily = gaussAttackFamily;
     gauss.releaseFamily = gaussReleaseFamily;
     gauss.tableLength = 8;
     gauss.familySize = 33;
-    //familyArray[11] = gauss;
+    familyArray[9] = gauss;
 
     gauss_noconform.attackFamily = gauss_noconformAttackFamily;
     gauss_noconform.releaseFamily = gauss_noconformReleaseFamily;
@@ -933,69 +996,69 @@ int main(void)
     algerian.releaseFamily = algerianReleaseFamily;
     algerian.tableLength = 64;
     algerian.familySize = 5;
-    familyArray[14] = algerian;
+    familyArray[10] = algerian;
 
     quartSym.attackFamily = quartSymAttackFamily;
     quartSym.releaseFamily = quartSymReleaseFamily;
     quartSym.tableLength = 64;
     quartSym.familySize = 9;
-    familyArray[5] = quartSym;
+    familyArray[11] = quartSym;
 
     quartAsym.attackFamily = quartAsymAttackFamily;
     quartAsym.releaseFamily = quartAsymReleaseFamily;
     quartAsym.tableLength = 64;
     quartAsym.familySize = 9;
-    familyArray[9] = quartAsym;
+    familyArray[14] = quartAsym;
 
     superEllipse1Sym.attackFamily = superEllipse1SymAttackFamily;
     superEllipse1Sym.releaseFamily = superEllipse1SymReleaseFamily;
     superEllipse1Sym.tableLength = 64;
     superEllipse1Sym.familySize = 5;
-    familyArray[6] = superEllipse1Sym;
+    familyArray[12] = superEllipse1Sym;
 
     superEllipse1Asym.attackFamily = superEllipse1AsymAttackFamily;
     superEllipse1Asym.releaseFamily = superEllipse1AsymReleaseFamily;
     superEllipse1Asym.tableLength = 64;
     superEllipse1Asym.familySize = 5;
-    familyArray[10] = superEllipse1Asym;
+    familyArray[13] = superEllipse1Asym;
 
 
     gammaSym.attackFamily = gammaSymAttackFamily;
     gammaSym.releaseFamily = gammaSymReleaseFamily;
     gammaSym.tableLength = 64;
     gammaSym.familySize = 9;
-    familyArray[7] = gammaSym;
+    //familyArray[7] = gammaSym;
 
     gammaAsym.attackFamily = gammaAsymAttackFamily;
     gammaAsym.releaseFamily = gammaAsymReleaseFamily;
     gammaAsym.tableLength = 64;
     gammaAsym.familySize = 9;
-    familyArray[11] = gammaAsym;
+    //familyArray[11] = gammaAsym;
 
     sharpExpoSym.attackFamily = sharpExpoSymAttackFamily;
     sharpExpoSym.releaseFamily = sharpExpoSymReleaseFamily;
     sharpExpoSym.tableLength = 64;
     sharpExpoSym.familySize = 9;
-    familyArray[8] = sharpExpoSym;
+    //familyArray[8] = sharpExpoSym;
 
     sharpExpoAsym.attackFamily = sharpExpoAsymAttackFamily;
     sharpExpoAsym.releaseFamily = sharpExpoAsymReleaseFamily;
     sharpExpoAsym.tableLength = 64;
     sharpExpoAsym.familySize = 9;
-    familyArray[12] = sharpExpoAsym;
+    //familyArray[12] = sharpExpoAsym;
 
 
     sharpLinSym.attackFamily = sharpLinSymAttackFamily;
     sharpLinSym.releaseFamily = sharpLinSymReleaseFamily;
     sharpLinSym.tableLength = 64;
     sharpLinSym.familySize = 9;
-    familyArray[9] = sharpLinSym;
+    //familyArray[9] = sharpLinSym;
 
     sharpLinAsym.attackFamily = sharpLinAsymAttackFamily;
     sharpLinAsym.releaseFamily = sharpLinAsymReleaseFamily;
     sharpLinAsym.tableLength = 64;
     sharpLinAsym.familySize = 9;
-    familyArray[13] = sharpLinAsym;
+    //familyArray[13] = sharpLinAsym;
 
 
 
@@ -1039,6 +1102,7 @@ int main(void)
       tsl_user_Init();
       __HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
       __HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
+      __HAL_TIM_ENABLE_IT(&htim3, TIM_IT_UPDATE);
       HAL_TIM_Base_Start_IT(&htim6);
 
 
@@ -1457,6 +1521,39 @@ static void MX_TIM2_Init(void)
 
 }
 
+/* TIM3 init function */
+static void MX_TIM3_Init(void)
+{
+
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 1000-1;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_DOWN;
+  htim3.Init.Period = 4095;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /* TIM4 init function */
 static void MX_TIM4_Init(void)
 {
@@ -1499,7 +1596,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 1-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 1000;
+  htim6.Init.Period = 1200;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
@@ -1524,7 +1621,7 @@ static void MX_TIM7_Init(void)
   htim7.Instance = TIM7;
   htim7.Init.Prescaler = 1;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim7.Init.Period = 1500;
+  htim7.Init.Period = 3000;
   htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
   {
@@ -1550,7 +1647,7 @@ static void MX_TIM8_Init(void)
   htim8.Instance = TIM8;
   htim8.Init.Prescaler = 1-1;
   htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim8.Init.Period = 1500;
+  htim8.Init.Period = 3000;
   htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim8.Init.RepetitionCounter = 0;
   htim8.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -1575,24 +1672,6 @@ static void MX_TIM8_Init(void)
 
 }
 
-/* TIM16 init function */
-static void MX_TIM16_Init(void)
-{
-
-  htim16.Instance = TIM16;
-  htim16.Init.Prescaler = 0;
-  htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim16.Init.Period = 0;
-  htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim16.Init.RepetitionCounter = 0;
-  htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim16) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-}
-
 /* TSC init function */
 static void MX_TSC_Init(void)
 {
@@ -1600,8 +1679,8 @@ static void MX_TSC_Init(void)
     /**Configure the TSC peripheral 
     */
   htsc.Instance = TSC;
-  htsc.Init.CTPulseHighLength = TSC_CTPH_9CYCLES;
-  htsc.Init.CTPulseLowLength = TSC_CTPL_9CYCLES;
+  htsc.Init.CTPulseHighLength = TSC_CTPH_2CYCLES;
+  htsc.Init.CTPulseLowLength = TSC_CTPL_2CYCLES;
   htsc.Init.SpreadSpectrum = DISABLE;
   htsc.Init.SpreadSpectrumDeviation = 1;
   htsc.Init.SpreadSpectrumPrescaler = TSC_SS_PRESC_DIV1;
@@ -1613,8 +1692,8 @@ static void MX_TSC_Init(void)
   htsc.Init.MaxCountInterrupt = DISABLE;
   htsc.Init.ChannelIOs = TSC_GROUP5_IO1|TSC_GROUP5_IO2|TSC_GROUP5_IO3|TSC_GROUP6_IO2
                     |TSC_GROUP6_IO3|TSC_GROUP6_IO4;
-  //htsc.Init.ShieldIOs = TSC_GROUP3_IO4;
-  htsc.Init.SamplingIOs = TSC_GROUP5_IO4|TSC_GROUP6_IO1;
+  htsc.Init.ShieldIOs = TSC_GROUP3_IO4;
+  htsc.Init.SamplingIOs = TSC_GROUP3_IO3|TSC_GROUP5_IO4|TSC_GROUP6_IO1;
   if (HAL_TSC_Init(&htsc) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -1848,23 +1927,51 @@ void handleRelease(uint8_t pinMode) {
 void changeMode(uint8_t mode) {
 		if (mode == 1) {
 			speed = (speed + 1) % 3;
-			if (speed == audio && loop == noloop) {drumModeOn = 1;}
+			if (speed == audio && loop == noloop) {
+				drumModeOn = 1;
+				switch (trigMode) {
+							case 0:
+								ampOn = 1;
+								pitchOn = 1;
+								morphOn = 1;
+								break;
+							case 1:
+								ampOn = 1;
+								pitchOn = 0;
+								morphOn = 1;
+								break;
+							case 2:
+								ampOn = 1;
+								pitchOn = 0;
+								morphOn = 0;
+								break;
+							case 3:
+								ampOn = 0;
+								pitchOn = 0;
+								morphOn = 1;
+								break;
+							case 4:
+								ampOn = 0;
+								pitchOn = 1;
+								morphOn = 1;
+								break;
+
+							}
+			}
 			else {
 
 				drumModeOn = 0;
 				ampOn = 0;
 				pitchOn = 0;
 				morphOn = 0;
-				if (speed == env) {
-					attackTime = calcTime1Env;
-					releaseTime = calcTime2Env;
-				}
-				if (speed == seq) {
-					attackTime = calcTime1Seq;
-					releaseTime = calcTime2Seq;
-				}
-
-
+			}
+			if (speed == env) {
+				attackTime = calcTime1Env;
+				releaseTime = calcTime2Env;
+			}
+			if (speed == seq) {
+				attackTime = calcTime1Seq;
+				releaseTime = calcTime2Seq;
 			}
 		}
 		if (mode == 2) {
@@ -1902,7 +2009,38 @@ void changeMode(uint8_t mode) {
 		}
 		if (mode == 3) {
 			loop = (loop + 1) % 2;
-			if (speed == audio && loop == noloop) {drumModeOn = 1;}
+			if (speed == audio && loop == noloop) {
+				drumModeOn = 1;
+				__HAL_TIM_ENABLE(&htim3);
+				switch (trigMode) {
+							case 0:
+								ampOn = 1;
+								pitchOn = 1;
+								morphOn = 1;
+								break;
+							case 1:
+								ampOn = 1;
+								pitchOn = 0;
+								morphOn = 1;
+								break;
+							case 2:
+								ampOn = 1;
+								pitchOn = 0;
+								morphOn = 0;
+								break;
+							case 3:
+								ampOn = 0;
+								pitchOn = 0;
+								morphOn = 1;
+								break;
+							case 4:
+								ampOn = 0;
+								pitchOn = 1;
+								morphOn = 1;
+								break;
+
+							}
+			}
 			else {
 					drumModeOn = 0;
 					ampOn = 0;
@@ -1912,6 +2050,10 @@ void changeMode(uint8_t mode) {
 		}
 		if (mode == 4) {
 			sampleHoldMode = (sampleHoldMode + 1) % 6;
+			if (sampleHoldMode == 0) {
+				SH_A_TRACK
+				SH_B_TRACK
+			}
 		}
 		if (mode == 5) {
 			familyIndicator = (familyIndicator + 1) % 15;
@@ -2011,10 +2153,11 @@ void familyRGB(void) {
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4095 - (familyIndicator << 8));
 }
 void clearLEDs(void) {
-	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+	LEDA_OFF;
+	LEDB_OFF;
+	LEDC_OFF;
+	LEDD_OFF;
+
 }
 
 void restoreDisplay() {

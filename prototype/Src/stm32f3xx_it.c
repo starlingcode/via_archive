@@ -69,6 +69,7 @@ int incFromADCs;
 int incSign = 1;
 int time1;
 int time2;
+int storePhaseMod;
 
 
 
@@ -116,6 +117,7 @@ int myfix16_lerp(int, int, uint16_t);
 void getInc(void);
 void sampHoldB(void);
 void sampHoldA(void);
+void getAverages(void);
 
 
 // "playback" flags that set the oscillator in motion
@@ -130,24 +132,18 @@ uint8_t lastPhaseState;
 uint8_t gateOn;
 uint8_t rgbOn;
 uint8_t drumRetrig;
-extern uint8_t lastAttackFlag;
-extern uint8_t lastReleaseFlag;
-extern uint8_t intoattackfromr;
-extern uint8_t intoattackfroml;
-extern uint8_t intoreleasefromr;
-extern uint8_t intoreleasefroml;
 uint8_t sampleHoldDirection;
 enum sampleHoldDirection {toward_a, toward_b};
 
 
 // timers used for clocking the expo envelope in drum mode and resampling the sample and holds
-extern uint16_t sampleHoldTimer;
 int drumCount;
 int subCount;
 uint8_t drumModeOn;
 uint8_t pitchOn;
 uint8_t morphOn;
 uint8_t ampOn;
+uint32_t drumOff;
 
 uint8_t pendulumDirection;
 
@@ -155,14 +151,17 @@ uint8_t pendulumDirection;
 uint32_t ADCReadings1[4];
 uint32_t ADCReadings2[2];
 uint32_t ADCReadings3[2];
-#define time1Knob ADCReadings2[0]
-#define time2Knob ADCReadings2[1]
+#define time2Knob ADCReadings2[0]
+#define MorphKnob ADCReadings2[1]
 #define time1CV ADCReadings1[0]
 #define time2CV ADCReadings1[1]
 #define morphCV ADCReadings1[2]
-#define morphKnob ADCReadings3[0];
+#define time1Knob ADCReadings3[0]
 uint16_t dacbuffer1[1];
 uint16_t dacbuffer2[1];
+buffer time2CVBuffer;
+uint32_t time2Average;
+
 
 // mode indicators, determined in the main loop
 enum speedTypes speed;
@@ -185,6 +184,7 @@ extern DMA_HandleTypeDef hdma_adc2;
 extern DMA_HandleTypeDef hdma_adc3;
 extern DAC_HandleTypeDef hdac;
 extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim8;
@@ -357,13 +357,17 @@ void TIM2_IRQHandler(void)
 
 	  if (oscillatorActive == 0) {
 		oscillatorActive = 1;
+		if (drumModeOn) {__HAL_TIM_SET_COUNTER(&htim3, 3840);
+						 __HAL_TIM_SET_PRESCALER(&htim3, (lookuptable[(time2CV >> 2) + (time2Knob >> 2)] >> 6));
+						 __HAL_TIM_ENABLE(&htim3);
+		}
 		if (speed == env) {
 		attackTime = calcTime1Env;
 		releaseTime = calcTime2Env;
 		}
 		else if (speed == seq) {
-		attackTime = calcTime1Env;
-		releaseTime = calcTime2Env;
+		attackTime = calcTime1Seq;
+		releaseTime = calcTime2Seq;
 		}
 		//incSign = 1;
 		if (trigMode == gated) {gateOn = 1;}
@@ -480,13 +484,47 @@ void TIM2_IRQHandler(void)
 }
 
 /**
+* @brief This function handles TIM3 global interrupt.
+*/
+void TIM3_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM3_IRQn 0 */
+	if (drumRetrig) {
+		drumRetrig = 0;
+		__HAL_TIM_SET_COUNTER(&htim3, 3840);
+		position = 0;
+	}
+	else {
+	oscillatorActive = 0;
+	position = 0;
+	out = 0;
+	__HAL_TIM_DISABLE(&htim3);
+	SH_A_TRACK
+	SH_B_TRACK
+	if (rgbOn) {
+		LEDA_OFF
+		LEDB_OFF
+	}
+	}
+	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
+
+  /* USER CODE END TIM3_IRQn 0 */
+  //HAL_TIM_IRQHandler(&htim3);
+  /* USER CODE BEGIN TIM3_IRQn 1 */
+
+  /* USER CODE END TIM3_IRQn 1 */
+}
+
+/**
 * @brief This function handles TIM8 update interrupt.
 */
 void TIM8_UP_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM8_UP_IRQn 0 */
 	SH_B_SAMPLE
-	LEDB_OFF
+	if (rgbOn) {
+	LEDB_ON
+	}
 	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim8);
   /* USER CODE END TIM8_UP_IRQn 0 */
@@ -516,6 +554,8 @@ void TIM6_DAC_IRQHandler(void)
 					((*(volatile uint32_t *)DAC1_ADDR) = (4095 - out));
 					((*(volatile uint32_t *)DAC2_ADDR) = (out));
 
+					getAverages();
+
 					// call the function that calculates our increment from the ADC values
 
 					getInc();
@@ -535,7 +575,7 @@ void TIM6_DAC_IRQHandler(void)
 
 	  	  	  		//calculate our morph amount per sample as a function of inc and the morph knob and CV
 
-	  	  	  		fixMorph = ADCReadings3[0] - (ADCReadings1[2] + (abs(inc) >> 8));
+	  	  	  		fixMorph = ADCReadings2[1] - (ADCReadings1[2] + (abs(inc) >> 8));
 
 	  	  	  		//constrain it to an appropriate range
 
@@ -608,11 +648,13 @@ void TIM7_IRQHandler(void)
   /* USER CODE BEGIN TIM7_IRQn 0 */
 	SH_A_SAMPLE
 	SH_B_SAMPLE
-	LEDA_ON
-	LEDB_ON
+	if (rgbOn) {
+		LEDA_ON
+		LEDB_ON
+	}
 	__HAL_TIM_CLEAR_FLAG(&htim7, TIM_FLAG_UPDATE);
   /* USER CODE END TIM7_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim7);
+  //HAL_TIM_IRQHandler(&htim7);
   /* USER CODE BEGIN TIM7_IRQn 1 */
 	__HAL_TIM_DISABLE(&htim7);
 
@@ -752,8 +794,18 @@ void getPhase(void) {
 		}
 	}
 
-	position = position + inc; // increment our phase position with our newly calculated value
 
+
+
+
+	// increment our phase position with our newly calculated value
+	position = position + inc + (storePhaseMod - (time2Average << 7));
+
+	storePhaseMod = time2Average << 7;
+
+
+
+	//position = position + ((2000 - time2CV) * 4096);
 	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode
 
 	if (position >= spanx2) {
@@ -766,6 +818,14 @@ void getPhase(void) {
 			position = 0;
 			pendulumDirection = 0;
 			phaseState = 0;
+			SH_A_TRACK
+			SH_B_TRACK
+			if (rgbOn) {
+				LEDA_OFF
+				LEDB_OFF
+				LEDC_OFF
+				LEDD_OFF
+			}
 
 		}
 
@@ -781,6 +841,14 @@ void getPhase(void) {
 			pendulumDirection = 0;
 			position = 0;
 			phaseState = 0;
+			SH_A_TRACK
+			SH_B_TRACK
+			if (rgbOn) {
+				LEDA_OFF
+				LEDB_OFF
+				LEDC_OFF
+				LEDD_OFF
+			}
 
 		}
 
@@ -790,13 +858,22 @@ void getPhase(void) {
 
 void getInc(void) {
 
+
 	//calculate our increment value in high speed mode
-
+	uint16_t expoIndex;
 	if (speed == audio) {
+		if (drumModeOn == 0) {
+			expoIndex = 4095 - (1200 + time1CV - (time1Knob + (time2Knob >> 4)));
+			if (expoIndex > 4095) {expoIndex = 4095;}
+			else if (expoIndex < 0) {expoIndex = 0;}
+		}
+		else  {
+					expoIndex = 4095 - (1200 + time1CV - time1Knob);
+					if (expoIndex > 4095) {expoIndex = 4095;}
+					else if (expoIndex < 0) {expoIndex = 0;}
+				}
 
-		uint16_t expoIndex = 4095 - (time1CV - (time1Knob >> 1));
-		if (expoIndex > 4095) {expoIndex = 4095;}
-		else if (expoIndex < 0) {expoIndex = 0;}
+
 
 		/*multiply a base (modulated by linear FM) by a lookup value from a 10 octave expo table (modulated by expo FM)
 		  if we are in drum mode, replace linear fm with the drum envelope*/
@@ -810,7 +887,8 @@ void getInc(void) {
 
 		else {
 
-			incFromADCs = myfix16_mul((1800 - time2CV) + time2Knob, lookuptable[expoIndex] >> 2);
+			//incFromADCs = myfix16_mul((1800 - time2CV) + time2Knob, lookuptable[expoIndex] >> 2);
+			incFromADCs = myfix16_mul(3000, lookuptable[expoIndex] >> 2);
 
 		}
 
@@ -832,7 +910,7 @@ void getInc(void) {
 
 int calcTime1Env(void) {
 
-	time1 = lookuptable[((4095 - (time1Knob - (4095 - time1CV))) >> 1) + 700] >> 12;
+	time1 = lookuptable[((4095 - (time1Knob - (4095 - time1CV))) >> 1) + 700] >> 13;
 	return time1;
 
 }
@@ -846,31 +924,23 @@ int calcTime2Env(void) {
 
 int calcTime1Seq(void) {
 
-	time1 = lookuptable[(4095 - (time1Knob - (4095 - time1CV))) >> 1] >> 19;
+	time1 = lookuptable[(4095 - (time1Knob - (4095 - time1CV))) >> 1] >> 16;
 	return time1;
 
 }
 
 int calcTime2Seq(void) {
 
-	time2 = lookuptable[(4095 - (time2Knob - (4095 - time2CV))) >> 1] >> 19;
+	time2 = lookuptable[(4095 - (time2Knob - (4095 - time2CV))) >> 1] >> 16;
 	return time2;
 
 }
 
 void drum(void) {
 
-	//advance the drumCount pointer according to the time2 knob
-	drumCount = drumCount + ((time2Knob + (4095 - time2CV)) >> 7) + 1;
-
-	//subtract that drumCount from an initial index in our expo table
-	subCount = 3840 - (drumCount >> 7);
-
-	//if we get to the end of the table, reset the envelope
-	if (subCount <= 0) {oscillatorActive = 0, drumCount = 0, position = 0; subCount = 0;}
 
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
-	exposcale = lookuptable[subCount] >> 10;
+	exposcale = lookuptable[__HAL_TIM_GET_COUNTER(&htim3)] >> 10;
 
 	//scale the oscillator
 	if (ampOn != 0) {out = myfix16_mul(out, exposcale);}
@@ -897,10 +967,10 @@ void EXTI15_10_IRQHandler(void)
 
 	if (phaseState == 1) {
 
-		if (drumRetrig == 1) {
-					drumCount = 0;
-					drumRetrig = 0;
-				}
+		if (drumRetrig) {	__HAL_TIM_SET_PRESCALER(&htim3, (lookuptable[(time2CV >> 2) + (time2Knob >> 2)] >> 6));
+							HAL_TIM_GenerateEvent(&htim3, TIM_EVENTSOURCE_UPDATE);
+		}
+
 		else if (trigMode == nongatedretrigger) {
 			incSign = 1;
 			if (speed == env) {releaseTime = calcTime2Env;}
@@ -947,21 +1017,27 @@ void sampHoldB (void) {
 	switch (sampleHoldMode) {
 
 	case a: SH_A_TRACK
+			if (rgbOn){
 			LEDA_OFF
+			}
 			break;
 
 	// case b: b remains sampled
 
 	case ab: 	SH_A_TRACK
-		 	 	LEDA_ON
+				if (rgbOn){
+					LEDA_OFF
+				}
 				// b remains sampled
 				break;
 
 
-	case antidecimate:  SH_A_SAMPLE
-						LEDA_ON
-						SH_B_TRACK
-						LEDB_OFF
+	case antidecimate:  SH_A_TRACK
+						SH_B_SAMPLE
+						if (rgbOn){
+							LEDA_OFF
+							LEDB_ON
+						}
 						break;
 
 	case decimate: 	__HAL_TIM_SET_COUNTER(&htim7, 0);
@@ -977,32 +1053,45 @@ void sampHoldA (void) {
 	switch (sampleHoldMode) {
 
 	case a: SH_A_SAMPLE
-			LEDA_ON
+			if (rgbOn) {
+				LEDA_ON
+			}
 			break;
 
-	case b: __HAL_TIM_SET_COUNTER(&htim8, 0);
+	case b: SH_B_TRACK
+			__HAL_TIM_SET_COUNTER(&htim8, 0);
 			__HAL_TIM_ENABLE(&htim8);
-			SH_B_TRACK
-			LEDB_ON;
+			if (rgbOn) {
+				LEDB_OFF;
+			}
 			break;
 
 	case ab: 	SH_A_SAMPLE
-		 	 	 LEDB_ON
-				 SH_B_SAMPLE
-				LEDA_ON
+				SH_B_TRACK
+		 	 	if (rgbOn) {
+		 	 		LEDB_OFF
+					LEDA_ON
+		 	 	}
 				 __HAL_TIM_SET_COUNTER(&htim8, 0);
 				 __HAL_TIM_ENABLE(&htim8);
 				 break;
 
 
-	case antidecimate:  SH_B_SAMPLE
-						LEDB_ON
-						SH_A_TRACK
-						LEDA_OFF
+	case antidecimate:  SH_B_TRACK
+						SH_A_SAMPLE
+						if (rgbOn) {
+							LEDB_OFF
+							LEDA_ON
+						}
 						break;
 
 	case decimate: 	SH_A_TRACK;
 					SH_B_TRACK;
+					if (rgbOn) {
+						LEDA_OFF;
+						LEDB_OFF;
+					}
+
 					__HAL_TIM_SET_COUNTER(&htim7, 0);
 					__HAL_TIM_ENABLE(&htim7);
 					break;
@@ -1010,89 +1099,18 @@ void sampHoldA (void) {
 	}
 }
 
+void write(buffer* buffer,int value){
+    buffer->buff[(buffer->writeIndex++) & BUFF_SIZE_MASK] = value;
+}
 
+int readn(buffer* buffer, int Xn){
+    return buffer->buff[(buffer->writeIndex + (~Xn)) & BUFF_SIZE_MASK];
+}
 
-
-/*
 void getAverages(void) {
-	time1Knob = doAverage(0);
-	time2Knob  = doAverage(1);
-	time1CV = doAverage(2);
-	time2CV = doAverage(3);
-	morphCV = doAverage(4);
-	morphKnob = doAverage(5);
+	write(&time2CVBuffer, time2CV);
+	time2Average = time2Average + time2CV - readn(&time2CVBuffer, 7);
 }
-
-uint32_t doAverage(uint32_t reading) {
-	uint32_t averageCounter = 0;
-	for(int u = reading; reading < 48; reading + 6) {
-		averageCounter = averageCounter + ADCReadings[u];
-	}
-	return averageCounter >> 3;
-}
-*/
-
-//void EXTI15_10_IRQHandler(void)
-//{
-
-  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
-	/*
-	if (sampleHoldDirection == toward_a) { //this indicates that the pointer is "moving towards a", which informs our logic about which sample and hold operation should be performed per mode
-
-		  if (sampleHoldMode == a) { // sample a, for the sample and hold, pin low or GPIO_PIN_RESET holds and pin high or GPIO_PIN_SET tracks
-			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-			  GPIOB->BSRR = (uint32_t)4 << 16U;
-		  }
-		  else if (sampleHoldMode == b) { // drop b to be picked up by decimate counter (which samples after a delay allowing the sample and hold to track to the new value (time constant dependent on sampling cap size) so that b can be "resampled" per cycle to keep things interesting
-			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-			  GPIOB->BSRR = 5;
-		  	  sampleHoldTimer = 0;
-		  }
-		  else if (sampleHoldMode == ab) { // sample a and drop b to be picked up by decimate counter as above. since our oscillator generally rests at 0, b needs to remain sampled through the attack and release phase to avoid a discontinuity in attack
-			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-			  GPIOB->BSRR = (uint32_t)4 << 16U;
-			  GPIOB->BSRR = 5;
-			  sampleHoldTimer = 0;
-		  }
-		  else if (sampleHoldMode == antidecimate) { // sample a and drop b, weird pseudo decimate mode where a is sampled when moving to b while b tracks and likewise
-			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-			  GPIOB->BSRR = (uint32_t)4 << 16U;
-			  GPIOB->BSRR = 5;
-		  }
-	      else if (sampleHoldMode == decimate) {// drop b to be picked up by decimate counter, aka resample b when at a. this is true decimate mode
-			  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-			  GPIOB->BSRR = 5;
-		  	  sampleHoldTimer = 0;
-		  }
-	}
-	else {  // if we are moving toward b
-			if (sampleHoldMode == a) { // release a
-		  	  	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-		  	    GPIOB->BSRR = 4;
-		  	}
-			// if sampleHoldMode == 2, b remains sampled
-
-		  	else if (sampleHoldMode == ab) { // release a, b remains sampled
-		  	  	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-		  	    GPIOB->BSRR = 4;
-		  	}
-		  	else if (sampleHoldMode == antidecimate) {// sample b and drop a, mirroring what happens when moving towards b above
-		  	  	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-		  	  	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-		  		GPIOB->BSRR = 4;
-		  		GPIOB->BSRR = (uint32_t)5 << 16U;
-
-		  	}
-		  	else if (sampleHoldMode == decimate) {// drop a to be picked up by decimate counter
-		  	  	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-		  		GPIOB->BSRR = 4;
-		  		sampleHoldTimer = 0;
-		  	}
-
-	}*/
-//}
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

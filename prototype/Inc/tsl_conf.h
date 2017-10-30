@@ -447,7 +447,7 @@
     - 1000 gives around 125 �s delay whatever HCLK
     - 2000 gives around 250 �s delay whatever HCLK
 */
-#define TSLPRM_DELAY_DISCHARGE_ALL (500)
+#define TSLPRM_DELAY_DISCHARGE_ALL (1000)
 
 /** IOs default mode when no on-going acquisition (range=0..1)
     - 0: Output push-pull low
