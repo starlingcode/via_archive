@@ -553,7 +553,8 @@ void TIM6_DAC_IRQHandler(void)
 
 					((*(volatile uint32_t *)DAC1_ADDR) = (4095 - out));
 					((*(volatile uint32_t *)DAC2_ADDR) = (out));
-
+					//((*(volatile uint32_t *)DAC1_ADDR) = (0));
+					//((*(volatile uint32_t *)DAC2_ADDR) = (4095));
 					getAverages();
 
 					// call the function that calculates our increment from the ADC values
@@ -718,7 +719,7 @@ void attack(void) {
 
 	//interpolate between those based upon morph (biinterpolation)
 
-	out = myfix16_lerp(interp1, interp2, morphFrac) >> 4;
+	out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
 
 	if (out > 4095) {out = 4095;};
 
@@ -764,7 +765,7 @@ void release(void) {
 	interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
 
 	//interpolate between those based upon morph (biinterpolation)
-	out = myfix16_lerp(interp1, interp2, morphFrac) >> 4;
+	out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
 	if (out > 4095) {out = 4095;};
 	if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);}
 
@@ -1018,7 +1019,7 @@ void sampHoldB (void) {
 
 	case a: SH_A_TRACK
 			if (rgbOn){
-			LEDA_OFF
+			LEDA_ON
 			}
 			break;
 
@@ -1032,15 +1033,21 @@ void sampHoldB (void) {
 				break;
 
 
-	case antidecimate:  SH_A_TRACK
-						SH_B_SAMPLE
+	case antidecimate:  SH_B_SAMPLE
+						SH_A_TRACK
 						if (rgbOn){
-							LEDA_OFF
-							LEDB_ON
+							LEDB_OFF
+							LEDA_ON
 						}
 						break;
 
-	case decimate: 	__HAL_TIM_SET_COUNTER(&htim7, 0);
+	case decimate: 	SH_A_TRACK;
+					if (rgbOn) {
+						LEDA_OFF;
+						LEDB_OFF;
+					}
+
+					__HAL_TIM_SET_COUNTER(&htim7, 0);
 					__HAL_TIM_ENABLE(&htim7);
 					break;
 
@@ -1054,7 +1061,7 @@ void sampHoldA (void) {
 
 	case a: SH_A_SAMPLE
 			if (rgbOn) {
-				LEDA_ON
+				LEDA_OFF
 			}
 			break;
 
@@ -1077,15 +1084,15 @@ void sampHoldA (void) {
 				 break;
 
 
-	case antidecimate:  SH_B_TRACK
-						SH_A_SAMPLE
+	case antidecimate:  SH_A_SAMPLE
+						SH_B_TRACK
 						if (rgbOn) {
-							LEDB_OFF
-							LEDA_ON
+							LEDA_OFF
+							LEDB_ON
 						}
 						break;
 
-	case decimate: 	SH_A_TRACK;
+	case decimate:
 					SH_B_TRACK;
 					if (rgbOn) {
 						LEDA_OFF;
