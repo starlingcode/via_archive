@@ -161,6 +161,8 @@ uint16_t dacbuffer1[1];
 uint16_t dacbuffer2[1];
 buffer time2CVBuffer;
 uint32_t time2Average;
+buffer morphCVBuffer;
+uint32_t morphAverage;
 
 
 // mode indicators, determined in the main loop
@@ -358,7 +360,7 @@ void TIM2_IRQHandler(void)
 	  if (oscillatorActive == 0) {
 		oscillatorActive = 1;
 		if (drumModeOn) {__HAL_TIM_SET_COUNTER(&htim3, 3840);
-						 __HAL_TIM_SET_PRESCALER(&htim3, (lookuptable[(time2CV >> 2) + (time2Knob >> 2)] >> 6));
+						 __HAL_TIM_SET_PRESCALER(&htim3, (lookuptable[(time2CV >> 2) + (time2Knob >> 2)] >> 4));
 						 __HAL_TIM_ENABLE(&htim3);
 		}
 		if (speed == env) {
@@ -576,11 +578,11 @@ void TIM6_DAC_IRQHandler(void)
 
 	  	  	  		//calculate our morph amount per sample as a function of inc and the morph knob and CV
 
-	  	  	  		fixMorph = ADCReadings2[1] - (ADCReadings1[2] + (abs(inc) >> 8));
+	  	  	  		fixMorph = ADCReadings2[1] - (morphAverage + (abs(inc) >> 8));
 
 	  	  	  		//constrain it to an appropriate range
 
-					if (fixMorph > 4095) {fixMorph = 4095;}
+					if (fixMorph > 4094) {fixMorph = 4094;}
 					if (fixMorph < 0) {fixMorph = 0;}
 
 					// write that value to our RGB
@@ -800,10 +802,10 @@ void getPhase(void) {
 
 
 	// increment our phase position with our newly calculated value
-	position = position + inc + (storePhaseMod - (time2Average << 7));
+	//position = position + inc + (storePhaseMod - (time2Average << 7));
 
-	storePhaseMod = time2Average << 7;
-
+	//storePhaseMod = time2Average << 7;
+	position = position + inc;
 
 
 	//position = position + ((2000 - time2CV) * 4096);
@@ -813,7 +815,7 @@ void getPhase(void) {
 
 		position = position - spanx2;
 
-		if (loop == noloop && speed == env){
+		if (loop == noloop && speed != audio){
 
 			oscillatorActive = 0;
 			position = 0;
@@ -836,7 +838,7 @@ void getPhase(void) {
 
 		position = position + spanx2;
 
-		if (speed == env && loop == noloop){
+		if (speed != audio && loop == noloop){
 
 			oscillatorActive = 0;
 			pendulumDirection = 0;
@@ -889,7 +891,7 @@ void getInc(void) {
 		else {
 
 			//incFromADCs = myfix16_mul((1800 - time2CV) + time2Knob, lookuptable[expoIndex] >> 2);
-			incFromADCs = myfix16_mul(3000, lookuptable[expoIndex] >> 2);
+			incFromADCs = myfix16_mul(3000 - time2CV, lookuptable[expoIndex] >> 2);
 
 		}
 
@@ -968,7 +970,7 @@ void EXTI15_10_IRQHandler(void)
 
 	if (phaseState == 1) {
 
-		if (drumRetrig) {	__HAL_TIM_SET_PRESCALER(&htim3, (lookuptable[(time2CV >> 2) + (time2Knob >> 2)] >> 6));
+		if (drumRetrig) {	__HAL_TIM_SET_PRESCALER(&htim3, (lookuptable[time2CV] >> 10) + (lookuptable[time2Knob] >> 8));
 							HAL_TIM_GenerateEvent(&htim3, TIM_EVENTSOURCE_UPDATE);
 		}
 
@@ -1117,6 +1119,8 @@ int readn(buffer* buffer, int Xn){
 void getAverages(void) {
 	write(&time2CVBuffer, time2CV);
 	time2Average = time2Average + time2CV - readn(&time2CVBuffer, 7);
+	write(&morphCVBuffer, morphCV);
+	morphAverage = (morphAverage + morphCV - readn(&morphCVBuffer, 7));
 }
 
 /* USER CODE END 1 */

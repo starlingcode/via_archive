@@ -1596,7 +1596,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 1-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 5000;
+  htim6.Init.Period = 1200;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
@@ -1957,6 +1957,7 @@ void changeMode(uint8_t mode) {
 								break;
 
 							}
+				__HAL_TIM_ENABLE(&htim3);
 			}
 			else {
 
@@ -1964,20 +1965,22 @@ void changeMode(uint8_t mode) {
 				ampOn = 0;
 				pitchOn = 0;
 				morphOn = 0;
-			}
-			if (speed == env) {
-				attackTime = calcTime1Env;
-				releaseTime = calcTime2Env;
-			}
-			if (speed == seq) {
-				attackTime = calcTime1Seq;
-				releaseTime = calcTime2Seq;
+
+				if (speed == env) {
+					attackTime = calcTime1Env;
+					releaseTime = calcTime2Env;
+				}
+				if (speed == seq) {
+					attackTime = calcTime1Seq;
+					releaseTime = calcTime2Seq;
+				}
 			}
 		}
 		if (mode == 2) {
 			trigMode = (trigMode + 1) % 5;
 			incSign = 1;
 			gateOn = 0;
+			if (drumModeOn) {
 			switch (trigMode) {
 			case 0:
 				ampOn = 1;
@@ -2006,12 +2009,12 @@ void changeMode(uint8_t mode) {
 				break;
 
 			}
+			}
 		}
 		if (mode == 3) {
 			loop = (loop + 1) % 2;
 			if (speed == audio && loop == noloop) {
 				drumModeOn = 1;
-				__HAL_TIM_ENABLE(&htim3);
 				switch (trigMode) {
 							case 0:
 								ampOn = 1;
@@ -2040,6 +2043,7 @@ void changeMode(uint8_t mode) {
 								break;
 
 							}
+				__HAL_TIM_ENABLE(&htim3);
 			}
 			else {
 					drumModeOn = 0;
@@ -2160,6 +2164,9 @@ void clearLEDs(void) {
 	LEDB_OFF;
 	LEDC_OFF;
 	LEDD_OFF;
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 
 }
 
