@@ -132,6 +132,7 @@ uint8_t lastPhaseState;
 uint8_t gateOn;
 uint8_t rgbOn;
 uint8_t drumRetrig;
+uint16_t counterHold;
 uint8_t sampleHoldDirection;
 enum sampleHoldDirection {toward_a, toward_b};
 
@@ -185,11 +186,13 @@ extern DMA_HandleTypeDef hdma_adc1;
 extern DMA_HandleTypeDef hdma_adc2;
 extern DMA_HandleTypeDef hdma_adc3;
 extern DAC_HandleTypeDef hdac;
+extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim8;
+extern TIM_HandleTypeDef htim15;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -350,6 +353,30 @@ void DMA1_Channel1_IRQHandler(void)
 }
 
 /**
+* @brief This function handles TIM1 break and TIM15 interrupts.
+*/
+void TIM1_BRK_TIM15_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
+	if (drumRetrig) {
+		drumRetrig = 0;
+	}
+	__HAL_TIM_SET_COUNTER(&htim3, 3840);
+	__HAL_TIM_SET_COUNTER(&htim15, 0);
+	__HAL_TIM_CLEAR_FLAG(&htim15, TIM_FLAG_UPDATE);
+
+		__HAL_TIM_DISABLE(&htim15);
+		__HAL_TIM_ENABLE(&htim3);
+
+  /* USER CODE END TIM1_BRK_TIM15_IRQn 0 */
+  //HAL_TIM_IRQHandler(&htim1);
+  //HAL_TIM_IRQHandler(&htim15);
+  /* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 1 */
+
+  /* USER CODE END TIM1_BRK_TIM15_IRQn 1 */
+}
+
+/**
 * @brief This function handles TIM2 global interrupt.
 */
 void TIM2_IRQHandler(void)
@@ -359,9 +386,13 @@ void TIM2_IRQHandler(void)
 
 	  if (oscillatorActive == 0) {
 		oscillatorActive = 1;
-		if (drumModeOn) {__HAL_TIM_SET_COUNTER(&htim3, 3840);
-						 __HAL_TIM_SET_PRESCALER(&htim3, (lookuptable[(time2CV >> 2) + (time2Knob >> 2)] >> 4));
-						 __HAL_TIM_ENABLE(&htim3);
+		if (drumModeOn) {
+			drumRetrig = 1;
+			__HAL_TIM_SET_PRESCALER(&htim3, lookuptable[time2Knob] >> 8);
+			HAL_TIM_GenerateEvent(&htim3, TIM_EVENTSOURCE_UPDATE);
+			__HAL_TIM_SET_COUNTER(&htim3, 0);
+			__HAL_TIM_SET_COUNTER(&htim15, 0);
+			__HAL_TIM_ENABLE(&htim15);
 		}
 		if (speed == env) {
 		attackTime = calcTime1Env;
@@ -377,7 +408,23 @@ void TIM2_IRQHandler(void)
 	  else {
 
 	   if (drumModeOn == 1) {
-			drumRetrig = 1;
+		   //drumRetrig = 1;
+
+			//__HAL_TIM_SET_PRESCALER(&htim3, lookuptable[time2Knob] >> 8);
+			//HAL_TIM_GenerateEvent(&htim3, TIM_EVENTSOURCE_UPDATE);
+
+			//counterHold = __HAL_TIM_GET_COUNTER(&htim3);
+	 		  __HAL_TIM_SET_COUNTER(&htim3, 0);
+				__HAL_TIM_SET_COUNTER(&htim15, 0);
+				__HAL_TIM_ENABLE(&htim15);
+				__HAL_TIM_DISABLE(&htim3);
+
+
+			//__HAL_TIM_SET_PRESCALER(&htim3, lookuptable[time2Knob] >> 8);
+
+
+
+
 	   }
 
 	   else {
@@ -475,7 +522,6 @@ void TIM2_IRQHandler(void)
 
     }
     }
-
     __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC1);
 
   /* USER CODE END TIM2_IRQn 0 */
@@ -491,16 +537,17 @@ void TIM2_IRQHandler(void)
 void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
-	if (drumRetrig) {
+	__HAL_TIM_DISABLE(&htim3);
+	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
+	if (drumRetrig != 0) {
 		drumRetrig = 0;
-		__HAL_TIM_SET_COUNTER(&htim3, 3840);
-		position = 0;
 	}
 	else {
+		__HAL_TIM_SET_COUNTER(&htim3, 0);
+		__HAL_TIM_SET_COUNTER(&htim15, 0);
 	oscillatorActive = 0;
 	position = 0;
 	out = 0;
-	__HAL_TIM_DISABLE(&htim3);
 	SH_A_TRACK
 	SH_B_TRACK
 	if (rgbOn) {
@@ -508,7 +555,6 @@ void TIM3_IRQHandler(void)
 		LEDB_OFF
 	}
 	}
-	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
 
   /* USER CODE END TIM3_IRQn 0 */
   //HAL_TIM_IRQHandler(&htim3);
@@ -943,7 +989,7 @@ void drum(void) {
 
 
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
-	exposcale = lookuptable[__HAL_TIM_GET_COUNTER(&htim3)] >> 10;
+	exposcale = lookuptable[__HAL_TIM_GET_COUNTER(&htim3) + __HAL_TIM_GET_COUNTER(&htim15)] >> 10;
 
 	//scale the oscillator
 	if (ampOn != 0) {out = myfix16_mul(out, exposcale);}
@@ -970,12 +1016,11 @@ void EXTI15_10_IRQHandler(void)
 
 	if (phaseState == 1) {
 
-		if (drumRetrig) {	__HAL_TIM_SET_PRESCALER(&htim3, (lookuptable[time2CV] >> 10) + (lookuptable[time2Knob] >> 8));
-							HAL_TIM_GenerateEvent(&htim3, TIM_EVENTSOURCE_UPDATE);
-		}
 
-		else if (trigMode == nongatedretrigger) {
+
+		if (trigMode == nongatedretrigger) {
 			incSign = 1;
+
 			if (speed == env) {releaseTime = calcTime2Env;}
 			else if (speed == seq) {releaseTime = calcTime2Seq;}
 		}
