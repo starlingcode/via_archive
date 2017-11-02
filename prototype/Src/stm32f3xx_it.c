@@ -131,7 +131,9 @@ extern uint8_t phaseState;
 uint8_t lastPhaseState;
 uint8_t gateOn;
 uint8_t rgbOn;
-uint8_t drumRetrig;
+uint8_t updatePrescaler;
+uint8_t timerSafety;
+uint8_t drumAttackOn;
 uint16_t counterHold;
 uint8_t sampleHoldDirection;
 enum sampleHoldDirection {toward_a, toward_b};
@@ -164,6 +166,7 @@ buffer time2CVBuffer;
 uint32_t time2Average;
 buffer morphCVBuffer;
 uint32_t morphAverage;
+uint32_t lastExpo;
 
 
 // mode indicators, determined in the main loop
@@ -358,15 +361,8 @@ void DMA1_Channel1_IRQHandler(void)
 void TIM1_BRK_TIM15_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
-	if (drumRetrig) {
-		drumRetrig = 0;
-	}
-	__HAL_TIM_SET_COUNTER(&htim3, 3840);
-	__HAL_TIM_SET_COUNTER(&htim15, 0);
 	__HAL_TIM_CLEAR_FLAG(&htim15, TIM_FLAG_UPDATE);
 
-		__HAL_TIM_DISABLE(&htim15);
-		__HAL_TIM_ENABLE(&htim3);
 
   /* USER CODE END TIM1_BRK_TIM15_IRQn 0 */
   //HAL_TIM_IRQHandler(&htim1);
@@ -387,12 +383,13 @@ void TIM2_IRQHandler(void)
 	  if (oscillatorActive == 0) {
 		oscillatorActive = 1;
 		if (drumModeOn) {
-			drumRetrig = 1;
-			__HAL_TIM_SET_PRESCALER(&htim3, lookuptable[time2Knob] >> 8);
-			HAL_TIM_GenerateEvent(&htim3, TIM_EVENTSOURCE_UPDATE);
-			__HAL_TIM_SET_COUNTER(&htim3, 0);
-			__HAL_TIM_SET_COUNTER(&htim15, 0);
-			__HAL_TIM_ENABLE(&htim15);
+			drumAttackOn = 1;
+			updatePrescaler = 1; //logic to be used in the interrupt
+			TIM3->PSC = 120; // attack prescaler
+			TIM3->EGR = TIM_EGR_UG; //set the prescaler and immediately set an update event
+			TIM3->CNT = 3800;
+			TIM3->CR1 |= TIM_CR1_CEN; //enable timer
+
 		}
 		if (speed == env) {
 		attackTime = calcTime1Env;
@@ -407,22 +404,14 @@ void TIM2_IRQHandler(void)
 	  }
 	  else {
 
-	   if (drumModeOn == 1) {
-		   //drumRetrig = 1;
+	   if (drumModeOn == 1 && drumAttackOn == 0) {
 
-			//__HAL_TIM_SET_PRESCALER(&htim3, lookuptable[time2Knob] >> 8);
-			//HAL_TIM_GenerateEvent(&htim3, TIM_EVENTSOURCE_UPDATE);
-
-			//counterHold = __HAL_TIM_GET_COUNTER(&htim3);
-	 		  __HAL_TIM_SET_COUNTER(&htim3, 0);
-				__HAL_TIM_SET_COUNTER(&htim15, 0);
-				__HAL_TIM_ENABLE(&htim15);
-				__HAL_TIM_DISABLE(&htim3);
-
-
-			//__HAL_TIM_SET_PRESCALER(&htim3, lookuptable[time2Knob] >> 8);
-
-
+		   	timerSafety = 1;
+			updatePrescaler = 1; //logic to be used in the interrupt
+			TIM3->PSC = 120; // attack prescaler
+			TIM3->CNT = 3840 - TIM3->CNT;
+			drumAttackOn = 1;
+			TIM3->EGR = TIM_EGR_UG;//immediately set an update event to load the prescaler register
 
 
 	   }
@@ -537,24 +526,37 @@ void TIM2_IRQHandler(void)
 void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
-	__HAL_TIM_DISABLE(&htim3);
 	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
-	if (drumRetrig != 0) {
-		drumRetrig = 0;
+
+	if (updatePrescaler == 1) { // handle the update event to load the prescaler initially
+		updatePrescaler = 0;
+		LEDB_ON
+		TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[time2CV] >> 11); //release time, loaded when attack overflows
 	}
-	else {
-		__HAL_TIM_SET_COUNTER(&htim3, 0);
-		__HAL_TIM_SET_COUNTER(&htim15, 0);
-	oscillatorActive = 0;
-	position = 0;
-	out = 0;
-	SH_A_TRACK
-	SH_B_TRACK
-	if (rgbOn) {
-		LEDA_OFF
-		LEDB_OFF
+
+
+	else if (drumAttackOn) { // handle the update event from overflowing the counter while attacking
+		timerSafety = 0;
+		TIM3->CNT= 3800;
+		drumAttackOn = 0;
+
 	}
+
+	else { // put the drum mode to rest after overflowing the release portion
+		__HAL_TIM_DISABLE(&htim3);
+		oscillatorActive = 0;
+		position = 0;
+		out = 0;
+		SH_A_TRACK
+		SH_B_TRACK
+		if (rgbOn) {
+			LEDA_OFF
+			LEDB_OFF
+		}
+
 	}
+
+	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
 
   /* USER CODE END TIM3_IRQn 0 */
   //HAL_TIM_IRQHandler(&htim3);
@@ -573,8 +575,10 @@ void TIM8_UP_IRQHandler(void)
 	if (rgbOn) {
 	LEDB_ON
 	}
+
 	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim8);
+
   /* USER CODE END TIM8_UP_IRQn 0 */
   //HAL_TIM_IRQHandler(&htim8);
   /* USER CODE BEGIN TIM8_UP_IRQn 1 */
@@ -986,10 +990,23 @@ int calcTime2Seq(void) {
 }
 
 void drum(void) {
-
+	lastExpo = exposcale;
 
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
-	exposcale = lookuptable[__HAL_TIM_GET_COUNTER(&htim3) + __HAL_TIM_GET_COUNTER(&htim15)] >> 10;
+	if (drumAttackOn) {
+		if (timerSafety && counterHold > (3800 - TIM3->CNT)) {
+			exposcale = lookuptable[counterHold] >> 10;
+		}
+		else {exposcale = lookuptable[3800 - TIM3->CNT] >> 10;}
+	}
+	else {
+		counterHold = TIM3->CNT;
+		exposcale = lookuptable[counterHold] >> 10;
+	}
+
+	if (abs(exposcale - lastExpo) > 3000){
+		exposcale = lastExpo;
+	}
 
 	//scale the oscillator
 	if (ampOn != 0) {out = myfix16_mul(out, exposcale);}
