@@ -773,7 +773,7 @@ void attack(void) {
 
 	out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
 
-	if (out > 4095) {out = 4095;};
+	//if (out > 4095) {out = 4095;};
 
 	if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);}
 
@@ -818,7 +818,7 @@ void release(void) {
 
 	//interpolate between those based upon morph (biinterpolation)
 	out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
-	if (out > 4095) {out = 4095;};
+	//if (out > 4095) {out = 4095;};
 	if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);}
 
 
