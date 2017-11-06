@@ -75,20 +75,21 @@ tsl_user_status_t tsl_status;
 __IO uint32_t uhTSCAcquisitionValue1;
 __IO uint32_t uhTSCAcquisitionValue2;
 __IO uint32_t uhTSCAcquisitionValue3;
-uint8_t modeflag;
-uint8_t detectOn;
-uint8_t lastDetect;
-uint8_t displayNewMode;
+uint32_t modeflag;
+uint32_t detectOn;
+uint32_t lastDetect;
+uint32_t displayNewMode;
 extern uint16_t dacbuffer1[1];
 extern uint16_t dacbuffer2[1];
 extern uint32_t span;
 extern int spanx2;
-extern uint8_t morphBitShiftRight;
-extern uint8_t morphBitShiftLeft;
-extern uint8_t rgbOn;
-extern uint8_t drumModeOn;
+extern uint32_t morphBitShiftRight;
+extern uint32_t morphBitShiftLeft;
+extern uint32_t rgbOn;
+extern uint32_t drumModeOn;
 extern int incSign;
-extern uint8_t gateOn;
+extern uint32_t gateOn;
+extern uint32_t lastCycle;
 //volatile int oscillatorActive = 0;
 Family moog1;
 Family moog2;
@@ -758,23 +759,23 @@ const uint16_t summingAdditiveClamp9[65] =
 
 const uint16_t sine[65] = {0,38,115,229,381,571,797,1060,1359,1693,2061,2462,2896,3362,3858,4383,4936,5516,6122,6751,7403,8076,8768,9478,10204,10944,11698,12462,13235,14016,14802,15592,16384,17176,17966,18752,19533,20306,21070,21824,22564,23290,24000,24692,25365,26017,26646,27252,27832,28385,28910,29406,29872,30306,30707,31075,31409,31708,31971,32197,32387,32539,32653,32730,32767};
 extern Family familyArray[15];
-extern uint8_t familyIndicator;
+extern uint32_t familyIndicator;
 enum speedTypes speed;
 enum loopTypes loop;
 enum trigModeTypes trigMode;
 enum sampleHoldModeTypes sampleHoldMode;
-uint8_t pitchOn;
-uint8_t morphOn;
-uint8_t ampOn;
+uint32_t pitchOn;
+uint32_t morphOn;
+uint32_t ampOn;
 int trig;
-uint8_t phaseState;
-uint8_t lastAttackFlag;
-uint8_t lastReleaseFlag;
-uint8_t intoattackfroml;
-uint8_t intoreleasefroml;
-uint8_t intoattackfromr;
-uint8_t intoreleasefromr;
-uint8_t pintimer;
+uint32_t phaseState;
+uint32_t lastAttackFlag;
+uint32_t lastReleaseFlag;
+uint32_t intoattackfroml;
+uint32_t intoreleasefroml;
+uint32_t intoattackfromr;
+uint32_t intoreleasefromr;
+uint32_t pintimer;
 uint16_t sampleHoldTimer;
 int benchmark;
 int lastcount;
@@ -815,10 +816,10 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 void readDetect(void);
-void readRelease(uint8_t);
-void handleRelease(uint8_t);
-void changeMode(uint8_t);
-void showMode(uint8_t);
+void readRelease(uint32_t);
+void handleRelease(uint32_t);
+void changeMode(uint32_t);
+void showMode(uint32_t);
 void familyRGB(void);
 void restoreDisplay(void);
 void clearLEDs(void);
@@ -1214,6 +1215,8 @@ int main(void)
 	drumModeOn = 1;
 	SH_A_TRACK
 	SH_B_TRACK
+	((*(volatile uint32_t *)DAC1_ADDR) = (4095));
+	((*(volatile uint32_t *)DAC2_ADDR) = (0));
 
 	//loop = looping;
 
@@ -1243,7 +1246,7 @@ int main(void)
       __HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
       __HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
       __HAL_TIM_ENABLE_IT(&htim3, TIM_IT_UPDATE);
-      __HAL_TIM_ENABLE_IT(&htim15, TIM_IT_UPDATE);
+      HAL_TIM_Base_Start_IT(&htim15);
       HAL_TIM_Base_Start_IT(&htim6);
 
 
@@ -1705,7 +1708,7 @@ static void MX_TIM4_Init(void)
   htim4.Instance = TIM4;
   htim4.Init.Prescaler = 10000;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 10000;
+  htim4.Init.Period = 65535;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -1821,9 +1824,9 @@ static void MX_TIM15_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim15.Instance = TIM15;
-  htim15.Init.Prescaler = 2000-1;
+  htim15.Init.Prescaler = 10000;
   htim15.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim15.Init.Period = 3840;
+  htim15.Init.Period = 10000;
   htim15.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim15.Init.RepetitionCounter = 0;
   htim15.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -2010,7 +2013,7 @@ void readDetect(void){
 }
 
 
-void readRelease(uint8_t modeFlagHolder ) {
+void readRelease(uint32_t modeFlagHolder ) {
 
 	switch (modeFlagHolder) {
 
@@ -2073,8 +2076,8 @@ void readRelease(uint8_t modeFlagHolder ) {
 }
 
 
-void handleRelease(uint8_t pinMode) {
-	if (__HAL_TIM_GET_COUNTER(&htim4) < 10000) {
+void handleRelease(uint32_t pinMode) {
+	if (__HAL_TIM_GET_COUNTER(&htim4) < 1000) {
 		changeMode(pinMode);
 		switch (pinMode) {
 		case 1: showMode(speed);
@@ -2099,7 +2102,7 @@ void handleRelease(uint8_t pinMode) {
 	}
 }
 
-void changeMode(uint8_t mode) {
+void changeMode(uint32_t mode) {
 		if (mode == 1) {
 			speed = (speed + 1) % 3;
 			if (speed == audio && loop == noloop) {
@@ -2188,9 +2191,11 @@ void changeMode(uint8_t mode) {
 		}
 		if (mode == 3) {
 			loop = (loop + 1) % 2;
-			if (speed == audio && loop == noloop) {
-				drumModeOn = 1;
-				switch (trigMode) {
+			if (loop == noloop) {
+				lastCycle = 1;
+				if (speed == audio) {
+					drumModeOn = 1;
+					switch (trigMode) {
 							case 0:
 								ampOn = 1;
 								pitchOn = 1;
@@ -2218,14 +2223,24 @@ void changeMode(uint8_t mode) {
 								break;
 
 							}
-				__HAL_TIM_ENABLE(&htim3);
-			}
-			else {
+					__HAL_TIM_ENABLE(&htim3);
+				}
+				else {
 					drumModeOn = 0;
 					ampOn = 0;
 					pitchOn = 0;
 					morphOn = 0;
+					}
 			}
+			else {
+				lastCycle = 0;
+				drumModeOn = 0;
+				ampOn = 0;
+				pitchOn = 0;
+				morphOn = 0;
+				oscillatorActive = 1;
+			}
+
 		}
 		if (mode == 4) {
 			sampleHoldMode = (sampleHoldMode + 1) % 6;
@@ -2297,7 +2312,7 @@ void changeMode(uint8_t mode) {
 		}
 
 
-void showMode(uint8_t currentmode) {
+void showMode(uint32_t currentmode) {
 
 	if (currentmode == familyIndicator) {familyRGB();}
 

@@ -48,12 +48,12 @@ uint32_t span;
 int spanx2;
 
 //per family bit shift amounts to accomplish morph
-uint8_t morphBitShiftRight;
-uint8_t morphBitShiftLeft;
+uint32_t morphBitShiftRight;
+uint32_t morphBitShiftLeft;
 
 //import array of structs that contain our wavetable family info
 Family familyArray[15];
-uint8_t familyIndicator;
+uint32_t familyIndicator;
 
 //this is used for our 1v/oct and bonus expo envelope
 const int lookuptable[4096] = expotable10oct;
@@ -62,11 +62,11 @@ const int lookuptable[4096] = expotable10oct;
 int fixMorph;
 int morphBuffer[8];
 int getMorph;
-int position;
+volatile int position;
 int mirror;
-int inc;
+volatile int inc;
 int incFromADCs;
-int incSign = 1;
+volatile int incSign = 1;
 int time1;
 int time2;
 int storePhaseMod;
@@ -81,8 +81,8 @@ int RnSample;
 uint16_t waveFrac;
 
 //wavetable indices (within the family) and interpoation fraction for the morph interpolation
-uint8_t LnFamily;
-uint8_t RnFamily;
+uint32_t LnFamily;
+uint32_t RnFamily;
 uint16_t morphFrac;
 
 //actual values and interpolation result for one wavetable
@@ -121,41 +121,42 @@ void getAverages(void);
 
 
 // "playback" flags that set the oscillator in motion
-volatile int oscillatorActive = 0;
-volatile int retrig = 0;
+//volatile int oscillatorActive = 0;
+//volatile int retrig = 0;
 
 // logic used to signal oscillator phase position
-uint8_t attackFlag;
-uint8_t releaseFlag;
-extern uint8_t phaseState;
-uint8_t lastPhaseState;
-uint8_t gateOn;
-uint8_t rgbOn;
-uint8_t updatePrescaler;
-uint8_t timerSafety;
-uint8_t drumAttackOn;
+uint32_t attackFlag;
+uint32_t releaseFlag;
+extern uint32_t phaseState;
+uint32_t lastPhaseState;
+uint32_t gateOn;
+uint32_t rgbOn;
+uint32_t updatePrescaler;
+uint32_t timerSafety;
+uint32_t drumAttackOn;
 uint16_t counterHold;
-uint8_t sampleHoldDirection;
+uint32_t sampleHoldDirection;
 enum sampleHoldDirection {toward_a, toward_b};
 
 
 // timers used for clocking the expo envelope in drum mode and resampling the sample and holds
 int drumCount;
 int subCount;
-uint8_t drumModeOn;
-uint8_t pitchOn;
-uint8_t morphOn;
-uint8_t ampOn;
+uint32_t drumModeOn;
+uint32_t pitchOn;
+uint32_t morphOn;
+uint32_t ampOn;
 uint32_t drumOff;
+uint32_t lastCycle;
 
-uint8_t pendulumDirection;
+uint32_t pendulumDirection;
 
 // ADC/DAC DMA variables
 uint32_t ADCReadings1[4];
 uint32_t ADCReadings2[2];
 uint32_t ADCReadings3[2];
 #define time2Knob ADCReadings2[0]
-#define MorphKnob ADCReadings2[1]
+#define morphKnob ADCReadings2[1]
 #define time1CV ADCReadings1[0]
 #define time2CV ADCReadings1[1]
 #define morphCV ADCReadings1[2]
@@ -175,7 +176,7 @@ enum loopTypes loop;
 enum trigModeTypes trigMode;
 enum sampleHoldModeTypes sampleHoldMode;
 
-uint8_t family;
+uint32_t family;
 
 extern TIM_HandleTypeDef htim1;
 
@@ -378,7 +379,7 @@ void TIM1_BRK_TIM15_IRQHandler(void)
 void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
-    if((GPIOA->IDR & GPIO_PIN_15) != (uint32_t)GPIO_PIN_RESET){
+    if((GPIOA->IDR & GPIO_PIN_15) == (uint32_t)GPIO_PIN_RESET){
 
 	  if (oscillatorActive == 0) {
 		oscillatorActive = 1;
@@ -387,7 +388,7 @@ void TIM2_IRQHandler(void)
 			updatePrescaler = 1; //logic to be used in the interrupt
 			TIM3->PSC = 120; // attack prescaler
 			TIM3->EGR = TIM_EGR_UG; //set the prescaler and immediately set an update event
-			TIM3->CNT = 3800;
+			TIM3->CNT = 3840;
 			TIM3->CR1 |= TIM_CR1_CEN; //enable timer
 
 		}
@@ -469,17 +470,35 @@ void TIM2_IRQHandler(void)
 
 			pendulumDirection = !pendulumDirection;
 
-			//reset our count to 0 so we always increment forward through attack when triggering from rest
-			//if  (position <= 0 || position >= spanx2) {pendulumDirection = 0;}
+			if (pendulumDirection != 0) {
+				incSign = 1;
+				if (speed == env) {
+					attackTime = calcTime1Env;
+					releaseTime = calcTime2Env;
+				}
 
-			//reverse direction of the oscillator
-			if (pendulumDirection == 1) {
-				incSign = -1;
+				if (speed == seq) {
+					attackTime = calcTime1Seq;
+					releaseTime = calcTime2Seq;
+				}
 			}
-			else {incSign = 1;}
+			else {
 
+				incSign = -1;
+				if (speed == env) {
+					attackTime = calcTime2Env;
+					releaseTime = calcTime1Env;
+				}
+
+				if (speed == seq) {
+					attackTime = calcTime2Seq;
+					releaseTime = calcTime1Seq;
+				}
+			}
 
 			break;
+
+		default: break;
 
 		}
 
@@ -537,22 +556,23 @@ void TIM3_IRQHandler(void)
 
 	else if (drumAttackOn) { // handle the update event from overflowing the counter while attacking
 		timerSafety = 0;
-		TIM3->CNT= 3800;
+		TIM3->CNT= 3840;
 		drumAttackOn = 0;
 
 	}
 
 	else { // put the drum mode to rest after overflowing the release portion
 		__HAL_TIM_DISABLE(&htim3);
-		oscillatorActive = 0;
-		position = 0;
-		out = 0;
-		SH_A_TRACK
-		SH_B_TRACK
-		if (rgbOn) {
-			LEDA_OFF
-			LEDB_OFF
-		}
+		lastCycle = 1;
+//		oscillatorActive = 0;
+//		position = 0;
+//		out = 0;
+//		SH_A_TRACK
+//		SH_B_TRACK
+//		if (rgbOn) {
+//			LEDA_OFF
+//			LEDB_OFF
+//		}
 
 	}
 
@@ -599,7 +619,7 @@ void TIM6_DAC_IRQHandler(void)
 
 
 
-	if (oscillatorActive || loop == looping){
+	if (oscillatorActive){
 
 					//write the current oscillator value to dac1, and its inverse to dac2 (crossfading)
 
@@ -628,12 +648,12 @@ void TIM6_DAC_IRQHandler(void)
 
 	  	  	  		//calculate our morph amount per sample as a function of inc and the morph knob and CV
 
-	  	  	  		fixMorph = ADCReadings2[1] - (morphAverage + (abs(inc) >> 8));
-
-	  	  	  		//constrain it to an appropriate range
-
-					if (fixMorph > 4094) {fixMorph = 4094;}
-					if (fixMorph < 0) {fixMorph = 0;}
+	  	  	  		if (morphAverage >= 16384) {
+	  	  	  			fixMorph = myfix16_lerp(morphKnob, 4095, (morphAverage - 16384) << 2);
+	  	  	  		}
+	  	  	  		else {
+	  	  	  			fixMorph = myfix16_lerp(0, morphKnob, morphAverage << 2);
+	  	  	  		}
 
 					// write that value to our RGB
 
@@ -839,7 +859,7 @@ void getPhase(void) {
 	inc = incFromADCs * incSign;
 
 	// if trigmode is gated and we arent in Drum Mode
-	if (trigMode == gated && drumModeOn == 0) {
+	if (trigMode > 2 && drumModeOn == 0) {
 		if (gateOn == 1 && (abs(inc) > abs(span - position))) {
 
 			inc = span - position;
@@ -865,8 +885,8 @@ void getPhase(void) {
 
 		position = position - spanx2;
 
-		if (loop == noloop && speed != audio){
-
+		if ((loop == noloop && speed != audio) || lastCycle == 1){
+			lastCycle = 0;
 			oscillatorActive = 0;
 			position = 0;
 			pendulumDirection = 0;
@@ -888,8 +908,8 @@ void getPhase(void) {
 
 		position = position + spanx2;
 
-		if (speed != audio && loop == noloop){
-
+		if ((loop == noloop && speed != audio) || lastCycle == 1){
+			lastCycle = 0;
 			oscillatorActive = 0;
 			pendulumDirection = 0;
 			position = 0;
@@ -994,19 +1014,20 @@ void drum(void) {
 
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
 	if (drumAttackOn) {
-		if (timerSafety && counterHold > (3800 - TIM3->CNT)) {
+		if (timerSafety && counterHold > (3840 - TIM3->CNT)) {
 			exposcale = lookuptable[counterHold] >> 10;
 		}
-		else {exposcale = lookuptable[3800 - TIM3->CNT] >> 10;}
+		else {exposcale = lookuptable[3840 - TIM3->CNT] >> 10;}
 	}
 	else {
-		counterHold = TIM3->CNT;
-		exposcale = lookuptable[counterHold] >> 10;
+		exposcale = lookuptable[TIM3->CNT] >> 10;
 	}
 
 	if (abs(exposcale - lastExpo) > 3000){
 		exposcale = lastExpo;
 	}
+
+
 
 	//scale the oscillator
 	if (ampOn != 0) {out = myfix16_mul(out, exposcale);}

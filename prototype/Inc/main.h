@@ -47,7 +47,7 @@ enum speedTypes {audio, env, seq};
 
 enum loopTypes {noloop, looping};
 
-enum trigModeTypes {noretrigger, hardsync, gated, nongatedretrigger, pendulum};
+enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum};
 
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 
@@ -71,6 +71,9 @@ typedef struct buffer{
 
 void write(buffer*,int);
 int readn(buffer*, int);
+
+volatile int oscillatorActive;
+volatile int retrig;
 
 
 /* USER CODE END Includes */
