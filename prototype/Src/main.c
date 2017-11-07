@@ -89,6 +89,7 @@ extern uint32_t rgbOn;
 extern uint32_t drumModeOn;
 extern int incSign;
 extern uint32_t gateOn;
+extern uint32_t pendulumDirection;
 extern uint32_t lastCycle;
 //volatile int oscillatorActive = 0;
 Family moog1;
@@ -2158,6 +2159,7 @@ void changeMode(uint32_t mode) {
 			trigMode = (trigMode + 1) % 5;
 			incSign = 1;
 			gateOn = 0;
+			pendulumDirection = 0;
 			if (drumModeOn) {
 			switch (trigMode) {
 			case 0:

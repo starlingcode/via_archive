@@ -148,6 +148,7 @@ uint32_t morphOn;
 uint32_t ampOn;
 uint32_t drumOff;
 uint32_t lastCycle;
+uint32_t holdAtB;
 
 uint32_t pendulumDirection;
 
@@ -381,37 +382,37 @@ void TIM2_IRQHandler(void)
   /* USER CODE BEGIN TIM2_IRQn 0 */
     if((GPIOA->IDR & GPIO_PIN_15) == (uint32_t)GPIO_PIN_RESET){
 
-	  if (oscillatorActive == 0) {
-		oscillatorActive = 1;
-		if (drumModeOn) {
-			drumAttackOn = 1;
-			updatePrescaler = 1; //logic to be used in the interrupt
-			TIM3->PSC = 120; // attack prescaler
-			TIM3->EGR = TIM_EGR_UG; //set the prescaler and immediately set an update event
-			TIM3->CNT = 3840;
+	  if (oscillatorActive == 0) { // oscillator at rest
+		oscillatorActive = 1; // set the oscillator flag
+		if (drumModeOn) { // perform the operations needed to initiate a drum sound
+			drumAttackOn = 1; //set global flag indicating we are using the timer to generate "attack"
+			updatePrescaler = 1; //logic to be used in the timer interrupt so we pass through and just load prescaler to shadow register
+			TIM3->PSC = 120; // attack prescaler loaded to holding register
+			TIM3->EGR = TIM_EGR_UG; //immediately set an update event
+			TIM3->CNT = 3840; //reset the count for the down counter
 			TIM3->CR1 |= TIM_CR1_CEN; //enable timer
 
 		}
 		if (speed == env) {
-		attackTime = calcTime1Env;
-		releaseTime = calcTime2Env;
+		attackTime = calcTime1Env; //set the function pointers for attack and release to the envelope time scale
+		releaseTime = calcTime2Env; //i believe this needs to be done here to ensure that we recover from retrigger behavior
 		}
 		else if (speed == seq) {
-		attackTime = calcTime1Seq;
+		attackTime = calcTime1Seq; //set the function pointer for attack and release to the sequence time scale
 		releaseTime = calcTime2Seq;
 		}
 		//incSign = 1;
-		if (trigMode == gated) {gateOn = 1;}
+		if (trigMode > 2) {gateOn = 1;} //turn the gate flag on in gate and pendulum modes
 	  }
 	  else {
 
 	   if (drumModeOn == 1 && drumAttackOn == 0) {
 
-		   	timerSafety = 1;
+		   	timerSafety = 1; //more hackish logic used to shield against discontinuity
 			updatePrescaler = 1; //logic to be used in the interrupt
-			TIM3->PSC = 120; // attack prescaler
-			TIM3->CNT = 3840 - TIM3->CNT;
-			drumAttackOn = 1;
+			TIM3->PSC = 120; // attack prescaler time
+			TIM3->CNT = 3840 - TIM3->CNT; //the idea is to set the counter to its
+			drumAttackOn = 1; //same logic flag as before
 			TIM3->EGR = TIM_EGR_UG;//immediately set an update event to load the prescaler register
 
 
@@ -423,27 +424,27 @@ void TIM2_IRQHandler(void)
 
 		case hardsync:
 
-			position = 0;
+			position = 0; // hard reset to 0
 
 			break;
 
 
 		case gated :
 
-			if (position < span) {
+			if (position < span) { //look to see if we are backtracking, if so, reset the envelope behavior
 
 				if (attackTime == &calcTime2Env) {attackTime = &calcTime1Env;}
 				else if (attackTime == &calcTime2Seq) {attackTime = &calcTime1Seq;}
-				incSign = 1; // 1 in int
-				gateOn = 1;
+				incSign = 1; // this reverts our direction
+				gateOn = 1; // signal that the gate is on
 
 			}
 
-			else  {
+			else  { //if we are releasing and we get a new gate on, run back up the release slope at attack timescale
 
 				if (speed == env) {releaseTime = calcTime1Env;}
 				else if (speed == seq) {releaseTime = calcTime1Seq;}
-				incSign = -1;
+				incSign = -1; // this reverses the direction
 				gateOn = 1;
 
 
@@ -455,7 +456,7 @@ void TIM2_IRQHandler(void)
 
 		case nongatedretrigger:
 
-			if (position >= span) {
+			if (position >= span) { //if we are releasing and we get a new gate on, run back up the release slope at attack timescale
 
 				if (speed == env) {releaseTime = calcTime1Env;}
 				else if (speed == seq) {releaseTime = calcTime1Seq;}
@@ -468,33 +469,11 @@ void TIM2_IRQHandler(void)
 
 		case pendulum:
 
-			pendulumDirection = !pendulumDirection;
-
-			if (pendulumDirection != 0) {
-				incSign = 1;
-				if (speed == env) {
-					attackTime = calcTime1Env;
-					releaseTime = calcTime2Env;
-				}
-
-				if (speed == seq) {
-					attackTime = calcTime1Seq;
-					releaseTime = calcTime2Seq;
-				}
+			if (holdAtB == 0) { // if we arent currently gated, reverse the direction of the oscillator
+				incSign = incSign * -1;
 			}
-			else {
 
-				incSign = -1;
-				if (speed == env) {
-					attackTime = calcTime2Env;
-					releaseTime = calcTime1Env;
-				}
 
-				if (speed == seq) {
-					attackTime = calcTime2Seq;
-					releaseTime = calcTime1Seq;
-				}
-			}
 
 			break;
 
@@ -504,14 +483,30 @@ void TIM2_IRQHandler(void)
 
 	  }
 	 }
+	  if (trigMode == pendulum) { // regardless of whether the oscillator is at rest or not, toggle the gateOn every trigger with pendulum
+		if (pendulumDirection == 1) {
+			gateOn = 1; // this should probably be done with a simple logical negation on gateOn, it needs to be initialized correctly tho
+			pendulumDirection = 0;
+			LEDA_ON;
+			LEDB_OFF;
+
+		}
+		else {
+			gateOn = 0;
+			pendulumDirection = 1;
+			LEDB_ON;
+			LEDA_OFF;
+
+		}
+	  }
 
     }
 
     else {
 
-    	if (trigMode == gated && drumModeOn == 0) {
+    	if (trigMode == gated && drumModeOn == 0) {//aka, gate off when we aren't in drum mode
 
-    		if (position < span) {
+    		if (position < span) { //if we release the gate before making it through attack, run back through attack at release speed
 
 				if (speed == env) {attackTime = calcTime2Env;}
 				if (speed == seq) {attackTime = calcTime2Seq;}
@@ -519,7 +514,7 @@ void TIM2_IRQHandler(void)
 				gateOn = 0;
 
 			}
-    		else {
+    		else {//if we get a release when we are at or after span, reset the oscillator behavior and let it finish release
 
     			if (speed == env) {releaseTime = calcTime2Env;};
     			if (speed == seq) {releaseTime = calcTime2Seq;};
@@ -561,18 +556,9 @@ void TIM3_IRQHandler(void)
 
 	}
 
-	else { // put the drum mode to rest after overflowing the release portion
+	else { // raise the flag to put the drum mode to rest after overflowing the release portion
 		__HAL_TIM_DISABLE(&htim3);
 		lastCycle = 1;
-//		oscillatorActive = 0;
-//		position = 0;
-//		out = 0;
-//		SH_A_TRACK
-//		SH_B_TRACK
-//		if (rgbOn) {
-//			LEDA_OFF
-//			LEDB_OFF
-//		}
 
 	}
 
@@ -591,7 +577,7 @@ void TIM3_IRQHandler(void)
 void TIM8_UP_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM8_UP_IRQn 0 */
-	SH_B_SAMPLE
+	SH_B_SAMPLE //this handles the logic where we resample b at a
 	if (rgbOn) {
 	LEDB_ON
 	}
@@ -625,8 +611,9 @@ void TIM6_DAC_IRQHandler(void)
 
 					((*(volatile uint32_t *)DAC1_ADDR) = (4095 - out));
 					((*(volatile uint32_t *)DAC2_ADDR) = (out));
-					//((*(volatile uint32_t *)DAC1_ADDR) = (0));
-					//((*(volatile uint32_t *)DAC2_ADDR) = (4095));
+
+					// get our averages for t2 and morph cv (move to the ADC interrupt??)
+
 					getAverages();
 
 					// call the function that calculates our increment from the ADC values
@@ -646,7 +633,7 @@ void TIM6_DAC_IRQHandler(void)
 	  	  	  		if (position < span) {attack(); phaseState = 1;}
 	  	  	  		if (position >= span) {release(); phaseState = 2;}
 
-	  	  	  		//calculate our morph amount per sample as a function of inc and the morph knob and CV
+	  	  	  		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
 
 	  	  	  		if (morphAverage >= 16384) {
 	  	  	  			fixMorph = myfix16_lerp(morphKnob, 4095, (morphAverage - 16384) << 2);
@@ -691,7 +678,7 @@ void TIM6_DAC_IRQHandler(void)
 
 		if (rgbOn != 0) {
 
-			//LEDC_OFF;
+			LEDC_OFF;
 			LEDD_OFF;
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
@@ -719,7 +706,7 @@ void TIM6_DAC_IRQHandler(void)
 void TIM7_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM7_IRQn 0 */
-	SH_A_SAMPLE
+	SH_A_SAMPLE // this handles our decimate resampling
 	SH_B_SAMPLE
 	if (rgbOn) {
 		LEDA_ON
@@ -859,12 +846,14 @@ void getPhase(void) {
 	inc = incFromADCs * incSign;
 
 	// if trigmode is gated and we arent in Drum Mode
-	if (trigMode > 2 && drumModeOn == 0) {
+	if (trigMode > 2 && drumModeOn == 0) { // we look to see if we are about to increment past span
 		if (gateOn == 1 && (abs(inc) > abs(span - position))) {
 
+			holdAtB = 1; // if so, we
 			inc = span - position;
 
 		}
+		else {holdAtB = 0;}
 	}
 
 
@@ -887,9 +876,10 @@ void getPhase(void) {
 
 		if ((loop == noloop && speed != audio) || lastCycle == 1){
 			lastCycle = 0;
+			incSign = 1;
 			oscillatorActive = 0;
 			position = 0;
-			pendulumDirection = 0;
+			//pendulumDirection = 0;
 			phaseState = 0;
 			SH_A_TRACK
 			SH_B_TRACK
@@ -911,7 +901,8 @@ void getPhase(void) {
 		if ((loop == noloop && speed != audio) || lastCycle == 1){
 			lastCycle = 0;
 			oscillatorActive = 0;
-			pendulumDirection = 0;
+			incSign = 1;
+			//pendulumDirection = 0;
 			position = 0;
 			phaseState = 0;
 			SH_A_TRACK
@@ -936,7 +927,7 @@ void getInc(void) {
 	uint16_t expoIndex;
 	if (speed == audio) {
 		if (drumModeOn == 0) {
-			expoIndex = 4095 - (1200 + time1CV - (time1Knob + (time2Knob >> 4)));
+			expoIndex = 4095 - (1800 + time1CV - (time1Knob + (time2Knob >> 4)));
 			if (expoIndex > 4095) {expoIndex = 4095;}
 			else if (expoIndex < 0) {expoIndex = 0;}
 		}
@@ -961,7 +952,7 @@ void getInc(void) {
 		else {
 
 			//incFromADCs = myfix16_mul((1800 - time2CV) + time2Knob, lookuptable[expoIndex] >> 2);
-			incFromADCs = myfix16_mul(3000 - time2CV, lookuptable[expoIndex] >> 2);
+			incFromADCs = myfix16_mul((3000 - time2CV) << 2, lookuptable[expoIndex] >> 2);
 
 		}
 
