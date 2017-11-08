@@ -63,40 +63,17 @@ int fixMorph;
 int morphBuffer[8];
 int getMorph;
 volatile int position;
-int mirror;
 volatile int inc;
-int incFromADCs;
 volatile int incSign = 1;
 int time1;
 int time2;
-int storePhaseMod;
 
 
 
 
-
-//sample indices and interpolation fraction for the wavetable
-int LnSample;
-int RnSample;
-uint16_t waveFrac;
-
-//wavetable indices (within the family) and interpoation fraction for the morph interpolation
-uint32_t LnFamily;
-uint32_t RnFamily;
-uint16_t morphFrac;
-
-//actual values and interpolation result for one wavetable
-int Lnvalue1;
-int Rnvalue1;
-int interp1;
-
-//actual values and interpolation result for the adjacent wavetable
-int Lnvalue2;
-int Rnvalue2;
-int interp2;
 
 //most recent value from our expo decay
-int exposcale;
+int expoScale;
 
 //lastest result of the biinterpolation between interp1 and interp2 (scaled in drum mode)
 extern int out;
@@ -104,8 +81,7 @@ extern int out;
 
 
 
-void attack(void);
-void release(void);
+void getSample(uint32_t);
 void getPhase(void);
 void drum(void);
 int calcTime1Env(void);
@@ -125,23 +101,19 @@ void getAverages(void);
 //volatile int retrig = 0;
 
 // logic used to signal oscillator phase position
-uint32_t attackFlag;
-uint32_t releaseFlag;
 extern uint32_t phaseState;
 uint32_t lastPhaseState;
 uint32_t gateOn;
 uint32_t rgbOn;
 uint32_t updatePrescaler;
-uint32_t timerSafety;
 uint32_t drumAttackOn;
-uint16_t counterHold;
+uint32_t drumReleaseOn;
 uint32_t sampleHoldDirection;
 enum sampleHoldDirection {toward_a, toward_b};
 
 
 // timers used for clocking the expo envelope in drum mode and resampling the sample and holds
-int drumCount;
-int subCount;
+
 uint32_t drumModeOn;
 uint32_t pitchOn;
 uint32_t morphOn;
@@ -162,13 +134,9 @@ uint32_t ADCReadings3[2];
 #define time2CV ADCReadings1[1]
 #define morphCV ADCReadings1[2]
 #define time1Knob ADCReadings3[0]
-uint16_t dacbuffer1[1];
-uint16_t dacbuffer2[1];
-buffer time2CVBuffer;
 uint32_t time2Average;
-buffer morphCVBuffer;
 uint32_t morphAverage;
-uint32_t lastExpo;
+
 
 
 // mode indicators, determined in the main loop
@@ -387,7 +355,7 @@ void TIM2_IRQHandler(void)
 		if (drumModeOn) { // perform the operations needed to initiate a drum sound
 			drumAttackOn = 1; //set global flag indicating we are using the timer to generate "attack"
 			updatePrescaler = 1; //logic to be used in the timer interrupt so we pass through and just load prescaler to shadow register
-			TIM3->PSC = 120; // attack prescaler loaded to holding register
+			TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[time2CV] >> 11);  // release time prescaler loaded to holding register
 			TIM3->EGR = TIM_EGR_UG; //immediately set an update event
 			TIM3->CNT = 3840; //reset the count for the down counter
 			TIM3->CR1 |= TIM_CR1_CEN; //enable timer
@@ -407,12 +375,9 @@ void TIM2_IRQHandler(void)
 	  else {
 
 	   if (drumModeOn == 1 && drumAttackOn == 0) {
-
-		   	timerSafety = 1; //more hackish logic used to shield against discontinuity
-			updatePrescaler = 1; //logic to be used in the interrupt
-			TIM3->PSC = 120; // attack prescaler time
-			TIM3->CNT = 3840 - TIM3->CNT; //the idea is to set the counter to its
-			drumAttackOn = 1; //same logic flag as before
+		   	updatePrescaler = 1; //same logic flag as before
+			drumAttackOn = 1;
+			TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[time2CV] >> 11);
 			TIM3->EGR = TIM_EGR_UG;//immediately set an update event to load the prescaler register
 
 
@@ -540,26 +505,21 @@ void TIM2_IRQHandler(void)
 void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
+	drumReleaseOn = 0;
+
 	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
 
 	if (updatePrescaler == 1) { // handle the update event to load the prescaler initially
 		updatePrescaler = 0;
-		LEDB_ON
-		TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[time2CV] >> 11); //release time, loaded when attack overflows
 	}
 
-
-	else if (drumAttackOn) { // handle the update event from overflowing the counter while attacking
-		timerSafety = 0;
-		TIM3->CNT= 3840;
-		drumAttackOn = 0;
-
-	}
 
 	else { // raise the flag to put the drum mode to rest after overflowing the release portion
+		drumReleaseOn = 0;
+		expoScale = 0;
 		__HAL_TIM_DISABLE(&htim3);
+		__HAL_TIM_SET_COUNTER(&htim3, 0);
 		lastCycle = 1;
-
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
@@ -630,8 +590,8 @@ void TIM6_DAC_IRQHandler(void)
 
 	  	  	  		//call the appropriate interpolation routine per phase in the two part table and declare phase state as such
 
-	  	  	  		if (position < span) {attack(); phaseState = 1;}
-	  	  	  		if (position >= span) {release(); phaseState = 2;}
+	  	  	  		if (position < span) {phaseState = 1; getSample(1);}
+	  	  	  		if (position >= span) {phaseState = 2; getSample(2);}
 
 	  	  	  		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
 
@@ -658,7 +618,7 @@ void TIM6_DAC_IRQHandler(void)
 
 	  		  	  		//use the expo decay scaled by the manual morph control to modulate morph
 
-						if (morphOn != 0) {fixMorph = myfix16_mul(exposcale, fixMorph);}
+						if (morphOn != 0) {fixMorph = myfix16_mul(expoScale, fixMorph);}
 
 	  		  	  	}
 
@@ -751,90 +711,86 @@ void DMA2_Channel5_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 
-void attack(void) {
+void getSample(uint32_t phase) {
 
-	//calculate value based upon phase pointer "position"
+	 uint32_t LnSample;
+	 uint32_t LnFamily;
+	 uint32_t waveFrac;
+	 uint32_t morphFrac;
+	 uint32_t Lnvalue1;
+	 uint32_t Rnvalue1;
+	 uint32_t Lnvalue2;
+	 uint32_t Rnvalue2;
+	 uint32_t interp1;
+	 uint32_t interp2;
 
+
+	//calculate value based upon phase pointer "position" depending on attack or release
 	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
-	LnSample = (int) (position >> 16);
 
-	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
-	LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
+	if (phase == 1) {
+		//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
+		LnSample = (int) (position >> 16);
 
-	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
-	waveFrac = (uint16_t) position;
-	morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
+		//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
+		LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
 
-	//get values from the relevant wavetables
-	Lnvalue1 = *(*(familyArray[familyIndicator].attackFamily + LnFamily) + LnSample);
-	Rnvalue1 = *(*(familyArray[familyIndicator].attackFamily + LnFamily) + LnSample + 1);
-	Lnvalue2 = *(*(familyArray[familyIndicator].attackFamily + LnFamily + 1) + LnSample);
-	Rnvalue2 = *(*(familyArray[familyIndicator].attackFamily + LnFamily + 1) + LnSample + 1);
+		//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
+		waveFrac = (uint16_t) position;
+		morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
 
-	//find the interpolated values for the adjacent wavetables
-	interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
+		//get values from the relevant wavetables
+		Lnvalue1 = *(*(familyArray[familyIndicator].attackFamily + LnFamily) + LnSample);
+		Rnvalue1 = *(*(familyArray[familyIndicator].attackFamily + LnFamily) + LnSample + 1);
+		Lnvalue2 = *(*(familyArray[familyIndicator].attackFamily + LnFamily + 1) + LnSample);
+		Rnvalue2 = *(*(familyArray[familyIndicator].attackFamily + LnFamily + 1) + LnSample + 1);
 
-	interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
+		//find the interpolated values for the adjacent wavetables
+		interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
 
-	//interpolate between those based upon morph (biinterpolation)
+		interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
 
-	out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
+		//interpolate between those based upon morph (biinterpolation)
 
-	//if (out > 4095) {out = 4095;};
+		out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
 
-	if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);}
+		//if (out > 4095) {out = 4095;};
 
+		if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);}
+	}
 
+	else {
+		//calculate value based upon phase pointer "position" reflected over the span of the wavetable
+		//mirror = spanx2 - position;
 
+		//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
+		LnSample = (int) ((spanx2 - position) >> 16);
 
+		//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
+		//bit shift 9 for morph 6
+		LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
+
+		//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
+		waveFrac = (uint16_t) (spanx2 - position);
+		morphFrac = (uint16_t) ((fixMorph - (LnFamily <<  morphBitShiftRight)) << morphBitShiftLeft);
+
+		//get values from the relevant wavetables
+		Lnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample);
+		Rnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample + 1);
+		Lnvalue2 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily + 1) + LnSample);
+		Rnvalue2 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily + 1) + LnSample + 1);
+
+		//find the interpolated values for the adjacent wavetables
+		interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
+		interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
+
+		//interpolate between those based upon morph (biinterpolation)
+		out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
+		//if (out > 4095) {out = 4095;};
+		if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);}
+	}
 
 }
-
-
-
-
-
-
-
-
-void release(void) {
-
-	//calculate value based upon phase pointer "position" reflected over the span of the wavetable
-	//mirror = spanx2 - position;
-
-	//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
-	LnSample = (int) ((spanx2 - position) >> 16);
-
-	//bit shifting to divide by 512 takes full scale 12 bit and returns the quotient moudulo 512 (0-7)
-	//bit shift 9 for morph 6
-	LnFamily = (uint32_t) fixMorph >> morphBitShiftRight;
-
-	//determine the fractional parts of the above truncations, which should be 0 to full scale 16 bit
-	waveFrac = (uint16_t) (spanx2 - position);
-	morphFrac = (uint16_t) ((fixMorph - (LnFamily <<  morphBitShiftRight)) << morphBitShiftLeft);
-
-	//get values from the relevant wavetables
-	Lnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample);
-	Rnvalue1 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily) + LnSample + 1);
-	Lnvalue2 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily + 1) + LnSample);
-	Rnvalue2 = *(*(familyArray[familyIndicator].releaseFamily + LnFamily + 1) + LnSample + 1);
-
-	//find the interpolated values for the adjacent wavetables
-	interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
-	interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
-
-	//interpolate between those based upon morph (biinterpolation)
-	out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
-	//if (out > 4095) {out = 4095;};
-	if (rgbOn != 0) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);}
-
-
-
-}
-
-
-
-
 
 
 //defines an increment then checks the trigger mode, making the appropriate changes to playback when the oscillator is retriggered
@@ -842,32 +798,76 @@ void release(void) {
 
 void getPhase(void) {
 
+	//calculate our increment value in high speed mode
+	static int expoIndex;
+	static int incFromADCs;
+
+	if (speed == audio) {
+
+		/*multiply a base (modulated by linear FM) by a lookup value from a 10 octave expo table (modulated by expo FM)
+		  if we are in drum mode, replace linear fm with the drum envelope*/
+		if (loop == noloop) {
+
+			// NEEDS WORK !!!!!!!!!!!!!
+
+			expoIndex = 4095 - (1200 + time1CV - time1Knob);
+			if (expoIndex > 4095) {expoIndex = 4095;}
+			else if (expoIndex < 0) {expoIndex = 0;}
+
+
+			if (pitchOn == 1) {incFromADCs = myfix16_mul((expoScale >> 8) + 100, lookuptable[expoIndex]);}
+
+			else {incFromADCs = myfix16_mul(1000, lookuptable[expoIndex] >> 2);}
+
+		}
+
+		else {
+
+			// NEEDS WORK !!!!!!!!!!!!!
+
+			expoIndex = 4095 - (1800 + time1CV - (time1Knob + (time2Knob >> 4)));
+			if (expoIndex > 4095) {expoIndex = 4095;}
+			else if (expoIndex < 0) {expoIndex = 0;}
+
+			//incFromADCs = myfix16_mul((1800 - time2CV) + time2Knob, lookuptable[expoIndex] >> 2);
+			incFromADCs = myfix16_mul((3000 - time2CV) << 2, lookuptable[expoIndex] >> 2);
+
+		}
+
+	}
+
+	//define increment for env speed mode using function pointers to the appropriate knob/cv combo per the retirgger mode
+	else {
+
+		if (position < span) {
+			incFromADCs = (*attackTime)();
+			}
+		else {
+			incFromADCs = (*releaseTime)();
+			}
+
+	}
+
+
 	// apply the approrpiate signage to our inc per the retrigger behavior
 	inc = incFromADCs * incSign;
 
 	// if trigmode is gated and we arent in Drum Mode
 	if (trigMode > 2 && drumModeOn == 0) { // we look to see if we are about to increment past span
+
 		if (gateOn == 1 && (abs(inc) > abs(span - position))) {
 
 			holdAtB = 1; // if so, we
 			inc = span - position;
 
 		}
+
 		else {holdAtB = 0;}
+
 	}
 
-
-
-
-
-	// increment our phase position with our newly calculated value
-	//position = position + inc + (storePhaseMod - (time2Average << 7));
-
-	//storePhaseMod = time2Average << 7;
 	position = position + inc;
 
-
-	//position = position + ((2000 - time2CV) * 4096);
 	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode
 
 	if (position >= spanx2) {
@@ -923,52 +923,6 @@ void getPhase(void) {
 void getInc(void) {
 
 
-	//calculate our increment value in high speed mode
-	uint16_t expoIndex;
-	if (speed == audio) {
-		if (drumModeOn == 0) {
-			expoIndex = 4095 - (1800 + time1CV - (time1Knob + (time2Knob >> 4)));
-			if (expoIndex > 4095) {expoIndex = 4095;}
-			else if (expoIndex < 0) {expoIndex = 0;}
-		}
-		else  {
-					expoIndex = 4095 - (1200 + time1CV - time1Knob);
-					if (expoIndex > 4095) {expoIndex = 4095;}
-					else if (expoIndex < 0) {expoIndex = 0;}
-				}
-
-
-
-		/*multiply a base (modulated by linear FM) by a lookup value from a 10 octave expo table (modulated by expo FM)
-		  if we are in drum mode, replace linear fm with the drum envelope*/
-		if (loop == noloop) {
-
-			if (pitchOn == 1) {incFromADCs = myfix16_mul((exposcale >> 8) + 100, lookuptable[expoIndex]);}
-
-			else {incFromADCs = myfix16_mul(1000, lookuptable[expoIndex] >> 2);}
-
-		}
-
-		else {
-
-			//incFromADCs = myfix16_mul((1800 - time2CV) + time2Knob, lookuptable[expoIndex] >> 2);
-			incFromADCs = myfix16_mul((3000 - time2CV) << 2, lookuptable[expoIndex] >> 2);
-
-		}
-
-	}
-
-	//define increment for env speed mode using function pointers to the appropriate knob/cv combo per the retirgger mode
-	else {
-
-		if (position < span) {
-			incFromADCs = (*attackTime)();
-			}
-		else {
-			incFromADCs = (*releaseTime)();
-			}
-
-	}
 
 }
 
@@ -1001,27 +955,34 @@ int calcTime2Seq(void) {
 }
 
 void drum(void) {
-	lastExpo = exposcale;
 
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
 	if (drumAttackOn) {
-		if (timerSafety && counterHold > (3840 - TIM3->CNT)) {
-			exposcale = lookuptable[counterHold] >> 10;
+
+		static int attackCount;
+
+		attackCount = attackCount + 140;
+
+		if (attackCount > 3840) {
+			drumAttackOn = 0;
+			attackCount = 3840;
+			__HAL_TIM_ENABLE(&htim3);
+			expoScale = lookuptable[attackCount] >> 10;
+			attackCount = 0;
+			drumReleaseOn = 1;
 		}
-		else {exposcale = lookuptable[3840 - TIM3->CNT] >> 10;}
-	}
-	else {
-		exposcale = lookuptable[TIM3->CNT] >> 10;
-	}
+		else {
+			expoScale = lookuptable[attackCount] >> 10;
+		}
 
-	if (abs(exposcale - lastExpo) > 3000){
-		exposcale = lastExpo;
 	}
-
+	else if (drumReleaseOn) {
+		expoScale = lookuptable[TIM3->CNT] >> 10;
+	}
 
 
 	//scale the oscillator
-	if (ampOn != 0) {out = myfix16_mul(out, exposcale);}
+	if (ampOn != 0) {out = myfix16_mul(out, expoScale);}
 
 }
 
@@ -1127,6 +1088,8 @@ void sampHoldB (void) {
 					__HAL_TIM_ENABLE(&htim7);
 					break;
 
+	default: break;
+
 	}
 
 }
@@ -1179,7 +1142,11 @@ void sampHoldA (void) {
 					__HAL_TIM_ENABLE(&htim7);
 					break;
 
+	default: break;
+
 	}
+
+
 }
 
 void write(buffer* buffer,int value){
@@ -1191,10 +1158,15 @@ int readn(buffer* buffer, int Xn){
 }
 
 void getAverages(void) {
+
+	static buffer time2CVBuffer;
+	static buffer morphCVBuffer;
+
 	write(&time2CVBuffer, time2CV);
 	time2Average = time2Average + time2CV - readn(&time2CVBuffer, 7);
 	write(&morphCVBuffer, morphCV);
 	morphAverage = (morphAverage + morphCV - readn(&morphCVBuffer, 7));
+
 }
 
 /* USER CODE END 1 */

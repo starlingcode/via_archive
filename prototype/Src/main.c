@@ -1214,8 +1214,6 @@ int main(void)
 	pitchOn = 1;
 	morphOn = 1;
 	drumModeOn = 1;
-	SH_A_TRACK
-	SH_B_TRACK
 	((*(volatile uint32_t *)DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *)DAC2_ADDR) = (0));
 
@@ -1249,6 +1247,9 @@ int main(void)
       __HAL_TIM_ENABLE_IT(&htim3, TIM_IT_UPDATE);
       HAL_TIM_Base_Start_IT(&htim15);
       HAL_TIM_Base_Start_IT(&htim6);
+  	SH_A_TRACK
+  	SH_B_TRACK
+
 
 
 
@@ -1676,7 +1677,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 10000-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_DOWN;
-  htim3.Init.Period = 3800;
+  htim3.Init.Period = 3840;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
