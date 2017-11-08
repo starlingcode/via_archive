@@ -1710,7 +1710,7 @@ static void MX_TIM4_Init(void)
   htim4.Instance = TIM4;
   htim4.Init.Prescaler = 10000;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 65535;
+  htim4.Init.Period = 10000;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -1826,9 +1826,9 @@ static void MX_TIM15_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim15.Instance = TIM15;
-  htim15.Init.Prescaler = 10000;
+  htim15.Init.Prescaler = 1000-1;
   htim15.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim15.Init.Period = 10000;
+  htim15.Init.Period = 3084;
   htim15.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim15.Init.RepetitionCounter = 0;
   htim15.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -1892,13 +1892,13 @@ static void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA1_Channel1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 2, 1);
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 1, 1);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
   /* DMA2_Channel1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Channel1_IRQn, 3, 0);
+  HAL_NVIC_SetPriority(DMA2_Channel1_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(DMA2_Channel1_IRQn);
   /* DMA2_Channel5_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Channel5_IRQn, 2, 0);
+  HAL_NVIC_SetPriority(DMA2_Channel5_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(DMA2_Channel5_IRQn);
 
 }

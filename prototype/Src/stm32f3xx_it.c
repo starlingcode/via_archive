@@ -335,8 +335,8 @@ void TIM1_BRK_TIM15_IRQHandler(void)
 
 
   /* USER CODE END TIM1_BRK_TIM15_IRQn 0 */
-  //HAL_TIM_IRQHandler(&htim1);
-  //HAL_TIM_IRQHandler(&htim15);
+  HAL_TIM_IRQHandler(&htim1);
+  HAL_TIM_IRQHandler(&htim15);
   /* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 1 */
 
   /* USER CODE END TIM1_BRK_TIM15_IRQn 1 */
@@ -653,7 +653,7 @@ void TIM6_DAC_IRQHandler(void)
 
 
   /* USER CODE END TIM6_DAC_IRQn 0 */
-  //HAL_TIM_IRQHandler(&htim6);
+ // HAL_TIM_IRQHandler(&htim6);
   //HAL_DAC_IRQHandler(&hdac);
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
 
@@ -977,7 +977,7 @@ void drum(void) {
 
 	}
 	else if (drumReleaseOn) {
-		expoScale = lookuptable[TIM3->CNT] >> 10;
+		if (!__HAL_TIM_GET_FLAG(&htim3, TIM_FLAG_UPDATE)) {expoScale = lookuptable[TIM3->CNT] >> 10;}
 	}
 
 
