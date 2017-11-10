@@ -164,6 +164,7 @@ volatile int retrig;
 #define WRITE_DAC2(data) ((*(volatile uint32_t *)DAC2_ADDR) = (val))
 
 
+
 /* USER CODE END Private defines */
 
 void _Error_Handler(char *, int);

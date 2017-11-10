@@ -82,6 +82,7 @@ uint32_t displayNewMode;
 // these variables are used to represent the number of entries in a given wavetable stored in the currently selected family
 extern uint32_t span;
 extern int spanx2;
+extern int tableSizeCompensation;
 
 // these variables are used to represent the number of wavetables in the currently selected family when performing our morph function
 extern uint32_t morphBitShiftRight;
@@ -131,6 +132,8 @@ Family summingAdditiveClamp;
 Family ascendingAdditiveClamp;
 Family steps;
 Family moogImpossibleTri;
+
+extern Family currentFamily;
 
 // The following large chunk of code declares our wavetables as 15 bit integers.
 // Notice how several related wavetables are declared in each subsection.
@@ -200,69 +203,16 @@ const uint16_t sinefold_ctr_9[65] = { 0, 1208, 1408, 1616, 2871, 5455, 8387,
 		13488, 18015, 24142, 28274, 28564, 25840, 22689, 21546, 23154, 26386,
 		29340, 30779, 30849, 30655, 31193, 32767 };
 
-const uint16_t perlin6_1[65] = { 0, 506, 1016, 1530, 2048, 2571, 3098, 3630,
-		4167, 4710, 5257, 5809, 6366, 6928, 7494, 8065, 8640, 9220, 9803, 10389,
-		10933, 11475, 12016, 12554, 13089, 13621, 14150, 14676, 15197, 15715,
-		16231, 16744, 17256, 17766, 18275, 18781, 19286, 19789, 20290, 20789,
-		21287, 21783, 22277, 22770, 23261, 23750, 24182, 24615, 25048, 25482,
-		25917, 26354, 26792, 27232, 27675, 28119, 28567, 29017, 29470, 29926,
-		30386, 30850, 31317, 31788, 32767 };
-const uint16_t perlin6_2[65] = { 0, 509, 1030, 1565, 2116, 2686, 3276, 3889,
-		4524, 5184, 5869, 6581, 7318, 8081, 8870, 9683, 10520, 11380, 12259,
-		13157, 13870, 14574, 15268, 15949, 16614, 17263, 17893, 18501, 19087,
-		19648, 20197, 20734, 21260, 21776, 22280, 22773, 23255, 23726, 24187,
-		24636, 25075, 25504, 25921, 26329, 26726, 27113, 27263, 27418, 27580,
-		27749, 27928, 28118, 28320, 28537, 28770, 29020, 29288, 29577, 29887,
-		30220, 30576, 30958, 31366, 31801, 32767 };
-const uint16_t perlin6_3[65] = { 0, 637, 1150, 1548, 1842, 2049, 2186, 2275,
-		2335, 2390, 2463, 2576, 2753, 3013, 3377, 3863, 4484, 5252, 6175, 7256,
-		8573, 9949, 11363, 12796, 14225, 15624, 16967, 18225, 19367, 20374,
-		21300, 22158, 22947, 23670, 24327, 24920, 25450, 25919, 26331, 26687,
-		26992, 27249, 27461, 27633, 27769, 27874, 27703, 27559, 27450, 27383,
-		27364, 27399, 27490, 27640, 27850, 28120, 28447, 28827, 29255, 29724,
-		30223, 30741, 31263, 31774, 32767 };
-const uint16_t perlin6_4[65] = { 0, 1104, 2256, 3414, 4530, 5550, 6422, 7101,
-		7551, 7753, 7706, 7435, 6969, 6171, 5095, 3860, 2598, 1447, 539, 0, 442,
-		1391, 2821, 4676, 6872, 9297, 11811, 14244, 16402, 18109, 19518, 20675,
-		21586, 22265, 22729, 23001, 23109, 23084, 22963, 22788, 22606, 22466,
-		22427, 22548, 22894, 23537, 24453, 25507, 26569, 27550, 28392, 29063,
-		29553, 29874, 30049, 30115, 30113, 30092, 30097, 30171, 30346, 30647,
-		31079, 31626, 32767 };
-const uint16_t perlin6_5[65] = { 0, 499, 902, 1384, 2080, 3062, 4289, 5573,
-		6561, 7774, 9487, 11465, 13433, 15108, 16235, 16623, 16181, 14956,
-		13166, 10795, 7881, 5388, 3857, 3617, 4786, 7268, 10755, 14729, 18458,
-		21149, 23030, 24234, 24826, 24907, 24614, 24122, 23639, 23410, 23718,
-		24874, 26758, 28827, 30689, 32061, 32767, 32748, 31582, 30074, 28532,
-		27293, 26472, 25874, 25616, 25740, 26216, 26966, 27871, 28806, 29654,
-		30328, 30774, 31024, 31290, 31695, 32767 };
-const uint16_t perlin6_6[65] = { 0, 788, 1427, 2217, 3244, 4395, 5371, 5701,
-		4859, 3531, 2511, 2335, 3263, 5117, 7114, 8212, 10359, 13034, 15132,
-		15838, 14533, 11966, 8845, 5193, 2606, 2214, 4304, 8321, 12867, 15992,
-		17702, 18286, 18014, 17297, 16689, 16888, 18578, 20974, 22948, 23838,
-		23423, 21917, 19975, 18425, 17110, 16425, 16970, 18312, 20051, 21630,
-		22324, 21970, 21562, 21703, 22599, 24151, 26062, 27964, 29499, 30411,
-		30778, 30879, 31047, 31515, 32767 };
-const uint16_t perlin6_7[65] = { 0, 937, 1522, 2229, 4238, 7257, 9498, 9498,
-		7319, 5535, 6018, 7917, 9727, 9496, 5678, 2034, 1274, 3929, 8008, 10336,
-		14681, 17905, 17712, 14140, 8920, 3467, 1989, 5823, 12719, 17537, 19360,
-		19052, 17779, 17313, 19715, 23299, 25128, 24154, 21193, 18510, 16540,
-		16233, 17764, 20098, 20845, 18603, 16927, 17695, 20985, 25530, 29335,
-		30539, 29242, 27090, 26102, 24823, 24498, 25688, 27786, 29618, 30428,
-		30697, 30966, 31532, 32767 };
-const uint16_t perlin6_8[65] = { 0, 732, 1600, 2059, 1672, 2325, 5490, 7424,
-		6651, 5814, 9852, 16521, 17502, 11423, 7005, 8782, 11929, 10370, 2717,
-		0, 5062, 10222, 15607, 19933, 17642, 10620, 2893, 3240, 11926, 18684,
-		20047, 18398, 17675, 21936, 25633, 24350, 19955, 16641, 15944, 18468,
-		20719, 17637, 15180, 17907, 25024, 31174, 30392, 25532, 22472, 19214,
-		20437, 25394, 28710, 28524, 27257, 27795, 29755, 30221, 29518, 29293,
-		30185, 30903, 31182, 31418, 32767 };
-const uint16_t perlin6_9[65] = { 0, 891, 1396, 1274, 1955, 3741, 4554, 4824,
-		5999, 4396, 3821, 8798, 9933, 7145, 10625, 18843, 15572, 7019, 8364,
-		11363, 5181, 821, 6172, 10989, 16882, 15319, 7315, 2095, 9076, 16039,
-		16248, 14467, 17988, 21186, 17975, 13935, 13044, 15952, 15240, 12004,
-		15182, 22729, 24628, 19481, 15160, 12879, 18936, 23570, 22479, 21810,
-		25200, 25563, 23796, 24810, 26072, 25319, 22196, 22622, 27131, 30539,
-		30446, 29524, 29958, 31137, 32767 };
+const uint16_t perlin6_1[65] = {0,506,1016,1530,2048,2571,3098,3630,4167,4710,5257,5809,6366,6928,7494,8065,8640,9220,9803,10389,10933,11475,12016,12554,13089,13621,14150,14676,15197,15715,16231,16744,17256,17766,18275,18781,19286,19789,20290,20789,21287,21783,22277,22770,23261,23750,24182,24615,25048,25482,25917,26354,26792,27232,27675,28119,28567,29017,29470,29926,30386,30850,31317,31788,32768};
+const uint16_t perlin6_2[65] = {0,509,1030,1565,2116,2686,3276,3889,4524,5184,5869,6581,7318,8081,8870,9683,10520,11380,12259,13157,13870,14574,15268,15949,16614,17263,17893,18501,19087,19648,20197,20734,21260,21776,22280,22773,23255,23726,24187,24636,25075,25504,25921,26329,26726,27113,27263,27418,27580,27749,27928,28118,28320,28537,28770,29020,29288,29577,29887,30220,30576,30958,31366,31801,32768};
+const uint16_t perlin6_3[65] = {0,637,1150,1548,1842,2049,2186,2275,2335,2390,2463,2576,2753,3013,3377,3863,4484,5252,6175,7256,8573,9949,11363,12796,14225,15624,16967,18225,19367,20374,21300,22158,22947,23670,24327,24920,25450,25919,26331,26687,26992,27249,27461,27633,27769,27874,27703,27559,27450,27383,27364,27399,27490,27640,27850,28120,28447,28827,29255,29724,30223,30741,31263,31774,32768};
+const uint16_t perlin6_4[65] = {0,1104,2256,3414,4530,5550,6422,7101,7551,7753,7706,7435,6969,6171,5095,3860,2598,1447,539,0,442,1391,2821,4676,6872,9297,11811,14244,16402,18109,19518,20675,21586,22265,22729,23001,23109,23084,22963,22788,22606,22466,22427,22548,22894,23537,24453,25507,26569,27550,28392,29063,29553,29874,30049,30115,30113,30092,30097,30171,30346,30647,31079,31626,32768};
+const uint16_t perlin6_5[65] = {0,499,902,1384,2080,3062,4289,5573,6561,7774,9487,11465,13433,15108,16235,16623,16181,14956,13166,10795,7881,5388,3857,3617,4786,7268,10755,14729,18458,21149,23030,24234,24826,24907,24614,24122,23639,23410,23718,24874,26758,28827,30689,32061,32768,32748,31582,30074,28532,27293,26472,25874,25616,25740,26216,26966,27871,28806,29654,30328,30774,31024,31290,31695,32768};
+const uint16_t perlin6_6[65] = {0,788,1427,2217,3244,4395,5371,5701,4859,3531,2511,2335,3263,5117,7114,8212,10359,13034,15132,15838,14533,11966,8845,5193,2606,2214,4304,8321,12867,15992,17702,18286,18014,17297,16689,16888,18578,20974,22948,23838,23423,21917,19975,18425,17110,16425,16970,18312,20051,21630,22324,21970,21562,21703,22599,24151,26062,27964,29499,30411,30778,30879,31047,31515,32768};
+const uint16_t perlin6_7[65] = {0,937,1522,2229,4238,7257,9498,9498,7319,5535,6018,7917,9727,9496,5678,2034,1274,3929,8008,10336,14681,17905,17712,14140,8920,3467,1989,5823,12719,17537,19360,19052,17779,17313,19715,23299,25128,24154,21193,18510,16540,16233,17764,20098,20845,18603,16927,17695,20985,25530,29335,30539,29242,27090,26102,24823,24498,25688,27786,29618,30428,30697,30966,31532,32768};
+const uint16_t perlin6_8[65] = {0,732,1600,2059,1672,2325,5490,7424,6651,5814,9852,16521,17502,11423,7005,8782,11929,10370,2717,0,5062,10222,15607,19933,17642,10620,2893,3240,11926,18684,20047,18398,17675,21936,25633,24350,19955,16641,15944,18468,20719,17637,15180,17907,25024,31174,30392,25532,22472,19214,20437,25394,28710,28524,27257,27795,29755,30221,29518,29293,30185,30903,31182,31418,32768};
+const uint16_t perlin6_9[65] = {0,891,1396,1274,1955,3741,4554,4824,5999,4396,3821,8798,9933,7145,10625,18843,15572,7019,8364,11363,5181,821,6172,10989,16882,15319,7315,2095,9076,16039,16248,14467,17988,21186,17975,13935,13044,15952,15240,12004,15182,22729,24628,19481,15160,12879,18936,23570,22479,21810,25200,25563,23796,24810,26072,25319,22196,22622,27131,30539,30446,29524,29958,31137,32768};
+
 
 const uint16_t bounce1[65] = { 0, 543, 1136, 1766, 2419, 3082, 3741, 4384, 4999,
 		5575, 6099, 6564, 6962, 7284, 7526, 7684, 7756, 7741, 7640, 7455, 7190,
@@ -2234,8 +2184,9 @@ const uint16_t sine[65] = { 0, 38, 115, 229, 381, 571, 797, 1060, 1359, 1693,
 		29872, 30306, 30707, 31075, 31409, 31708, 31971, 32197, 32387, 32539,
 		32653, 32730, 32767 };
 
-extern Family familyArray[15];
-extern uint32_t familyIndicator;
+Family familyArray[16];
+uint32_t familyIndicator;
+extern Family currentFamily;
 
 // these enums contain our mode information
 enum speedTypes speed; // {audio, env, seq}
@@ -2333,10 +2284,6 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 	//define our wavetable family as two arrays of wavetables as defined above, one for attack, one for release
-	const uint16_t *perlinAttackFamily[9] = { sine, perlin6_2, perlin6_3,
-			perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8 };
-	const uint16_t *perlinReleaseFamily[9] = { sine, perlin6_2, perlin6_3,
-			perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8 };
 
 	const uint16_t *sinefoldAttackFamily[9] = { sine, sinefold_ctr_1,
 			sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5,
@@ -2344,6 +2291,8 @@ int main(void) {
 	const uint16_t *sinefoldReleaseFamily[9] = { sine, sinefold_ctr_1,
 			sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5,
 			sinefold_ctr_6, sinefold_ctr_7, sinefold_ctr_8 };
+  	const uint16_t *perlinAttackFamily[9] = {sine, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
+    const uint16_t *perlinReleaseFamily[9] = {sine, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
 
 	const uint16_t *bounceAttackFamily[9] = { bounce1, bounce2, bounce3,
 			bounce4, bounce5, bounce6, bounce7, bounce8, bounce8 };
@@ -2639,211 +2588,236 @@ int main(void) {
 	moogShifted.releaseFamily = moogShiftedReleaseFamily;
 	moogShifted.tableLength = 64;
 	moogShifted.familySize = 9;
-	//familyArray[0] = moogShifted;
+
 
 	moogNormalized.attackFamily = moogNormalizedAttackFamily;
 	moogNormalized.releaseFamily = moogNormalizedReleaseFamily;
 	moogNormalized.tableLength = 64;
 	moogNormalized.familySize = 9;
-	//familyArray[3] = moogNormalized;
+
 
 	moogSquare.attackFamily = moogSquareShiftAttackFamily;
 	moogSquare.releaseFamily = moogSquareShiftReleaseFamily;
 	moogSquare.tableLength = 64;
 	moogSquare.familySize = 9;
-	familyArray[3] = moogSquare;
+
 
 	moogInverted.attackFamily = moogInvertedAttackFamily;
 	moogInverted.releaseFamily = moogInvertedReleaseFamily;
 	moogInverted.tableLength = 64;
 	moogInverted.familySize = 9;
-	familyArray[4] = moogInverted;
+
 
 	perlin.attackFamily = perlinAttackFamily;
 	perlin.releaseFamily = perlinReleaseFamily;
 	perlin.tableLength = 64;
 	perlin.familySize = 9;
-	familyArray[0] = perlin;
+
 
 	sineFold.attackFamily = sinefoldAttackFamily;
 	sineFold.releaseFamily = sinefoldReleaseFamily;
 	sineFold.tableLength = 64;
 	sineFold.familySize = 9;
-	familyArray[1] = sineFold;
+
 
 	bounce.attackFamily = bounceAttackFamily;
 	bounce.releaseFamily = bounceReleaseFamily;
 	bounce.tableLength = 64;
 	bounce.familySize = 9;
-	familyArray[2] = bounce;
+
 
 	triFold.attackFamily = trifoldAttackFamily;
 	triFold.releaseFamily = trifoldReleaseFamily;
 	triFold.tableLength = 64;
 	triFold.familySize = 9;
-	//familyArray[3] = triFold;
+
 
 	triOdd.attackFamily = trioddAttackFamily;
 	triOdd.releaseFamily = trioddReleaseFamily;
 	triOdd.tableLength = 64;
 	triOdd.familySize = 9;
-	familyArray[5] = triOdd;
+
 
 	triFudge.attackFamily = trifudgeAttackFamily;
 	triFudge.releaseFamily = trifudgeReleaseFamily;
 	triFudge.tableLength = 64;
 	triFudge.familySize = 9;
-	familyArray[6] = triFudge;
+
 
 	moog1.attackFamily = moog1AttackFamily;
 	moog1.releaseFamily = moog1ReleaseFamily;
 	moog1.tableLength = 64;
 	moog1.familySize = 9;
-	//familyArray[6] = moog1;
+
 
 	moog2.attackFamily = moog2AttackFamily;
 	moog2.releaseFamily = moog2ReleaseFamily;
 	moog2.tableLength = 64;
 	moog2.familySize = 9;
-	//familyArray[7] = moog2;
+
 
 	sawBend.attackFamily = sawBendAttackFamily;
 	sawBend.releaseFamily = sawBendReleaseFamily;
 	sawBend.tableLength = 4;
 	sawBend.familySize = 5;
-	//familyArray[8] = sawBend;
+
 
 	exciteBike.attackFamily = exciteBikeAttackFamily;
 	exciteBike.releaseFamily = exciteBikeReleaseFamily;
 	exciteBike.tableLength = 8;
 	exciteBike.familySize = 9;
-	familyArray[7] = exciteBike;
+
 
 	rand.attackFamily = randAttackFamily;
 	rand.releaseFamily = randReleaseFamily;
 	rand.tableLength = 8;
 	rand.familySize = 33;
-	familyArray[8] = rand;
+
 
 	gauss.attackFamily = gaussAttackFamily;
 	gauss.releaseFamily = gaussReleaseFamily;
 	gauss.tableLength = 8;
 	gauss.familySize = 33;
-	familyArray[9] = gauss;
+
 
 	gauss_noconform.attackFamily = gauss_noconformAttackFamily;
 	gauss_noconform.releaseFamily = gauss_noconformReleaseFamily;
 	gauss_noconform.tableLength = 8;
 	gauss_noconform.familySize = 33;
-	//familyArray[12] = gauss_noconform;
+
 
 	gauss_low.attackFamily = gauss_lowAttackFamily;
 	gauss_low.releaseFamily = gauss_lowReleaseFamily;
 	gauss_low.tableLength = 8;
 	gauss_low.familySize = 33;
-	//familyArray[13] = gauss_low;
+
 
 	gauss_low_noconform.attackFamily = gauss_low_noconformAttackFamily;
 	gauss_low_noconform.releaseFamily = gauss_low_noconformReleaseFamily;
 	gauss_low_noconform.tableLength = 8;
 	gauss_low_noconform.familySize = 33;
-	//familyArray[14] = gauss_low_noconform;
+
 
 	algerian.attackFamily = algerianAttackFamily;
 	algerian.releaseFamily = algerianReleaseFamily;
 	algerian.tableLength = 64;
 	algerian.familySize = 5;
-	familyArray[10] = algerian;
+
 
 	quartSym.attackFamily = quartSymAttackFamily;
 	quartSym.releaseFamily = quartSymReleaseFamily;
 	quartSym.tableLength = 64;
 	quartSym.familySize = 9;
-	familyArray[11] = quartSym;
+
 
 	quartAsym.attackFamily = quartAsymAttackFamily;
 	quartAsym.releaseFamily = quartAsymReleaseFamily;
 	quartAsym.tableLength = 64;
 	quartAsym.familySize = 9;
-	familyArray[14] = quartAsym;
+
 
 	superEllipse1Sym.attackFamily = superEllipse1SymAttackFamily;
 	superEllipse1Sym.releaseFamily = superEllipse1SymReleaseFamily;
 	superEllipse1Sym.tableLength = 64;
 	superEllipse1Sym.familySize = 5;
-	familyArray[12] = superEllipse1Sym;
+
 
 	superEllipse1Asym.attackFamily = superEllipse1AsymAttackFamily;
 	superEllipse1Asym.releaseFamily = superEllipse1AsymReleaseFamily;
 	superEllipse1Asym.tableLength = 64;
 	superEllipse1Asym.familySize = 5;
-	familyArray[13] = superEllipse1Asym;
+
 
 	gammaSym.attackFamily = gammaSymAttackFamily;
 	gammaSym.releaseFamily = gammaSymReleaseFamily;
 	gammaSym.tableLength = 64;
 	gammaSym.familySize = 9;
-	//familyArray[7] = gammaSym;
+
 
 	gammaAsym.attackFamily = gammaAsymAttackFamily;
 	gammaAsym.releaseFamily = gammaAsymReleaseFamily;
 	gammaAsym.tableLength = 64;
 	gammaAsym.familySize = 9;
-	//familyArray[11] = gammaAsym;
+
 
 	sharpExpoSym.attackFamily = sharpExpoSymAttackFamily;
 	sharpExpoSym.releaseFamily = sharpExpoSymReleaseFamily;
 	sharpExpoSym.tableLength = 64;
 	sharpExpoSym.familySize = 9;
-	//familyArray[8] = sharpExpoSym;
+
 
 	sharpExpoAsym.attackFamily = sharpExpoAsymAttackFamily;
 	sharpExpoAsym.releaseFamily = sharpExpoAsymReleaseFamily;
 	sharpExpoAsym.tableLength = 64;
 	sharpExpoAsym.familySize = 9;
-	//familyArray[12] = sharpExpoAsym;
+
 
 	sharpLinSym.attackFamily = sharpLinSymAttackFamily;
 	sharpLinSym.releaseFamily = sharpLinSymReleaseFamily;
 	sharpLinSym.tableLength = 64;
 	sharpLinSym.familySize = 9;
-	//familyArray[9] = sharpLinSym;
 
 	sharpLinAsym.attackFamily = sharpLinAsymAttackFamily;
 	sharpLinAsym.releaseFamily = sharpLinAsymReleaseFamily;
 	sharpLinAsym.tableLength = 64;
 	sharpLinAsym.familySize = 9;
-	//familyArray[13] = sharpLinAsym;
+
 
 	ascendingAdditiveClamp.attackFamily = ascendingAdditiveClampAttackFamily;
 	ascendingAdditiveClamp.releaseFamily = ascendingAdditiveClampReleaseFamily;
 	ascendingAdditiveClamp.tableLength = 64;
 	ascendingAdditiveClamp.familySize = 9;
-	familyArray[0] = ascendingAdditiveClamp;
+
 
 	summingAdditiveClamp.attackFamily = summingAdditiveClampAttackFamily;
 	summingAdditiveClamp.releaseFamily = summingAdditiveClampReleaseFamily;
 	summingAdditiveClamp.tableLength = 64;
 	summingAdditiveClamp.familySize = 9;
-	familyArray[1] = summingAdditiveClamp;
+
 
 	moogImpossibleTri.attackFamily = moogImpossibleTriAttackFamily;
 	moogImpossibleTri.releaseFamily = moogImpossibleTriReleaseFamily;
 	moogImpossibleTri.tableLength = 64;
 	moogImpossibleTri.familySize = 9;
-	familyArray[2] = moogImpossibleTri;
+
 
 	steps.attackFamily = stepsAttackFamily;
 	steps.releaseFamily = stepsReleaseFamily;
 	steps.tableLength = 64;
 	steps.familySize = 9;
-	familyArray[3] = steps;
+
+	familyArray[0] = perlin;
+	familyArray[1] = ascendingAdditiveClamp;
+	familyArray[2] = bounce;
+	familyArray[3] = sineFold;
+	familyArray[4] = triFold;
+	familyArray[5] = triOdd;
+	familyArray[6] = moogSquare;
+	familyArray[7] = moogInverted;
+	familyArray[8] = moogImpossibleTri;
+	familyArray[9] = algerian;
+	familyArray[10] = exciteBike;
+	familyArray[11] = sawBend;
+	familyArray[12] = gauss_low;
+	familyArray[13] = gauss_noconform;
+	familyArray[14] = quartSym;
+	familyArray[15] = quartAsym;
+
+
+
+
+
 
 	// declare the initialization state
 	span = familyArray[0].tableLength << 16;
 	spanx2 = familyArray[0].tableLength << 17;
+	currentFamily = familyArray[0];
 	morphBitShiftRight = 9;
 	morphBitShiftLeft = 7;
+
+
+
+
 	rgbOn = 1;
 	ampOn = 1;
 	pitchOn = 1;
@@ -2895,6 +2869,8 @@ int main(void) {
 	//we must do this after the resampling interrupts have been enabled
 	SH_A_TRACK
 	SH_B_TRACK
+	attackTime = calcTime1Env;
+	releaseTime = calcTime2Env;
 
 	/* USER CODE END 2 */
 
@@ -3352,7 +3328,7 @@ static void MX_TIM6_Init(void) {
 	htim6.Instance = TIM6;
 	htim6.Init.Prescaler = 1 - 1;
 	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim6.Init.Period = 1200;
+	htim6.Init.Period = 1024;
 	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim6) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -3683,7 +3659,7 @@ void readRelease(uint32_t modeFlagHolder) {
 }
 
 void handleRelease(uint32_t pinMode) {
-	if (__HAL_TIM_GET_COUNTER(&htim4) < 1000) {
+	if (__HAL_TIM_GET_COUNTER(&htim4) < 3000) {
 		// if we havent exceeded the mode change timeout, change the appropriate mode and then display the new mode
 		// current value is probably too short
 		changeMode(pinMode);
@@ -3877,7 +3853,8 @@ void changeMode(uint32_t mode) {
 	if (mode == 5) {
 		// switch our family pointer and load the appropriate playback constants
 		// TO DO: SHIFT INC ACCORDING TO WAVETABLE SIZE
-		familyIndicator = (familyIndicator + 1) % 15;
+		familyIndicator = (familyIndicator + 1) % 16;
+		currentFamily = familyArray[familyIndicator];
 		span = (familyArray[familyIndicator].tableLength) << 16;
 		spanx2 = (familyArray[familyIndicator].tableLength) << 17;
 		switch (familyArray[familyIndicator].familySize) {
@@ -3903,12 +3880,35 @@ void changeMode(uint32_t mode) {
 			break;
 
 		}
+		switch (familyArray[familyIndicator].tableLength) {
+		// these are values that properly allow us to select a family and interpolation fraction for our morph
+		case 4:
+			tableSizeCompensation = 4;
+			break;
+
+		case 8:
+			tableSizeCompensation = 3;
+			break;
+
+		case 16:
+			tableSizeCompensation = 2;
+			break;
+
+		case 32:
+			tableSizeCompensation = 1;
+			break;
+
+		case 64:
+			tableSizeCompensation = 0;
+			break;
+
+		}
 	}
 	if (mode == 6) {
 		// wrap back to the end of the array of families if we go back from the first entry
 		// otherwise same as above
 		if (familyIndicator == 0) {
-			familyIndicator = 14;
+			familyIndicator = 15;
 		} else
 			familyIndicator = (familyIndicator - 1);
 		span = (familyArray[familyIndicator].tableLength) << 16;
@@ -3933,6 +3933,29 @@ void changeMode(uint32_t mode) {
 		case 33:
 			morphBitShiftRight = 7;
 			morphBitShiftLeft = 9;
+			break;
+
+		}
+		switch (familyArray[familyIndicator].tableLength) {
+		// these are values that properly allow us to select a family and interpolation fraction for our morph
+		case 4:
+			tableSizeCompensation = 4;
+			break;
+
+		case 8:
+			tableSizeCompensation = 3;
+			break;
+
+		case 16:
+			tableSizeCompensation = 2;
+			break;
+
+		case 32:
+			tableSizeCompensation = 1;
+			break;
+
+		case 64:
+			tableSizeCompensation = 0;
 			break;
 
 		}
@@ -3976,10 +3999,93 @@ void showMode(uint32_t currentmode) {
 }
 
 void familyRGB(void) {
-	//NEEDS WORK, not distinct enough
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, familyIndicator << 8);
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, familyIndicator << 4);
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4095 - (familyIndicator << 8));
+
+	switch (familyIndicator) {
+	case 0:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+		break;
+	case 1:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 1000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 1000);
+		break;
+	case 2:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 2000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 3000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+		break;
+	case 3:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 3000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 2000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 1000);
+		break;
+	case 4:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 4000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 1000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+		break;
+	case 5:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 4095);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+		break;
+	case 6:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 4000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 1000);
+		break;
+	case 7:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 3000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 2000);
+		break;
+	case 8:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 2000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 3000);
+		break;
+	case 9:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 1000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4000);
+		break;
+	case 10:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4095);
+		break;
+	case 11:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 1000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4000);
+		break;
+	case 12:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 2000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 3000);
+		break;
+	case 13:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 3000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 2000);
+		break;
+	case 14:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 1000);
+		break;
+	case 15:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 4000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4000);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4000);
+		break;
+	default:
+		break;
+	}
+
+
 }
 void clearLEDs(void) {
 	//pretty self explanatory
