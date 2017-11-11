@@ -2264,6 +2264,8 @@ void showMode(uint32_t);
 void familyRGB(void);
 void restoreDisplay(void);
 void clearLEDs(void);
+void restoreState(void);
+uint32_t saveState(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -2918,10 +2920,10 @@ int main(void) {
 	attackTime = calcTime1Env;
 	releaseTime = calcTime2Env;
 
-	HAL_FLASH_Unlock();
+	//HAL_FLASH_Unlock();
 
-	  ee_status = EE_Init();
-	  if( ee_status != EE_OK) {LEDC_ON}
+	//ee_status = EE_Init();
+	//if( ee_status != EE_OK) {LEDC_ON}
 
 	restoreState();
 
