@@ -290,7 +290,7 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
  */
 void TIM2_IRQHandler(void) {
 	/* USER CODE BEGIN TIM2_IRQn 0 */
-	if ((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET) {
+	if (((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET) || (TRIGGER_BUTTON)) {
 
 		if (!(OSCILLATOR_ACTIVE)) { // oscillator at rest
 			SET_OSCILLATOR_ACTIVE; // set the oscillator flag

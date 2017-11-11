@@ -2258,7 +2258,7 @@ void familyRGB(void);
 void restoreDisplay(void);
 void clearLEDs(void);
 void restoreState(void);
-uint32_t saveState(void);
+//uint32_t saveState(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -2918,13 +2918,27 @@ int main(void) {
 	//ee_status = EE_Init();
 	//if( ee_status != EE_OK) {LEDC_ON}
 
-	restoreState();
+	//restoreState();
 
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
+
+		if ((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET){
+			if (!(TRIGGER_BUTTON)) {
+				SET_TRIGGER_BUTTON;
+				HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
+			}
+		}
+		else if (TRIGGER_BUTTON){
+			RESET_TRIGGER_BUTTON;
+			HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
+		}
+
+
+
 
 		// run the state machine that gets us a reading on our touch sensors
 		tsl_status = tsl_user_Exec();
