@@ -72,6 +72,9 @@ int expoScale;
 //lastest result of the biinterpolation between interp1 and interp2 (scaled in drum mode)
 int out;
 
+//counter used to increment our drum attack envelope
+int attackCount;
+
 void getSample(uint32_t);
 void getPhase(void);
 void drum(void);
@@ -86,37 +89,8 @@ void sampHoldB(void);
 void sampHoldA(void);
 void getAverages(void);
 
-// "playback" flags that set the oscillator in motion
-//volatile int oscillatorActive = 0;
-//volatile int retrig = 0;
 
-// logic used to signal oscillator phase position
-uint32_t phaseState;
-uint32_t lastPhaseState;
-uint32_t gateOn;
-uint32_t rgbOn;
-uint32_t updatePrescaler;
-uint32_t drumAttackOn;
-uint32_t drumReleaseOn;
-uint32_t sampleHoldDirection;
-int attackCount;
-enum sampleHoldDirection {
-	toward_a, toward_b
-};
-
-// timers used for clocking the expo envelope in drum mode and resampling the sample and holds
-
-uint32_t drumModeOn;
-uint32_t pitchOn;
-uint32_t morphOn;
-uint32_t ampOn;
-uint32_t drumOff;
-uint32_t lastCycle;
-uint32_t holdAtB;
-
-uint32_t pendulumDirection;
-
-// ADC/DAC DMA variables
+// ADC variables and defines
 uint32_t ADCReadings1[4];
 uint32_t ADCReadings2[2];
 uint32_t ADCReadings3[2];
@@ -135,11 +109,9 @@ enum loopTypes loop;
 enum trigModeTypes trigMode;
 enum sampleHoldModeTypes sampleHoldMode;
 
-uint32_t family;
-
 extern TIM_HandleTypeDef htim1;
 
-uint32_t tableSizeComp;
+
 
 /* USER CODE END 0 */
 
@@ -320,11 +292,11 @@ void TIM2_IRQHandler(void) {
 	/* USER CODE BEGIN TIM2_IRQn 0 */
 	if ((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET) {
 
-		if (oscillatorActive == 0) { // oscillator at rest
-			oscillatorActive = 1; // set the oscillator flag
-			if (drumModeOn) { // perform the operations needed to initiate a drum sound
-				drumAttackOn = 1; //set global flag indicating we are using the timer to generate "attack"
-				updatePrescaler = 1; //logic to be used in the timer interrupt so we pass through and just load prescaler to shadow register
+		if (!(OSCILLATOR_ACTIVE)) { // oscillator at rest
+			SET_OSCILLATOR_ACTIVE; // set the oscillator flag
+			if (DRUM_MODE_ON) { // perform the operations needed to initiate a drum sound
+				SET_DRUM_ATTACK_ON; //set global flag indicating we are using the timer to generate "attack"
+				SET_UPDATE_PRESCALER; //logic to be used in the timer interrupt so we pass through and just load prescaler to shadow register
 				TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[time2CV] >> 11); // release time prescaler loaded to holding register
 				TIM3->EGR = TIM_EGR_UG; //immediately set an update event
 				TIM3->CNT = 3840; //reset the count for the down counter
@@ -339,14 +311,14 @@ void TIM2_IRQHandler(void) {
 				releaseTime = calcTime2Seq;
 			}
 			//incSign = 1;
-			if (trigMode == 3) {
-				gateOn = 1;
-			} //turn the gate flag on in gate and pendulum modes
+			if (trigMode == gated) {
+				SET_GATE_ON;
+			} //turn the gate flag on in gatemode
 		} else {
 
-			if (drumModeOn == 1 && drumAttackOn == 0) {
-				updatePrescaler = 1; //same logic flag as before
-				drumAttackOn = 1;
+			if ((DRUM_MODE_ON) && !(DRUM_ATTACK_ON)) {
+				SET_UPDATE_PRESCALER; //same logic flag as before
+				SET_DRUM_ATTACK_ON;
 				attackCount = TIM3->CNT;
 				__HAL_TIM_DISABLE(&htim3);
 				TIM3->CNT = 3840;
@@ -375,7 +347,7 @@ void TIM2_IRQHandler(void) {
 							attackTime = &calcTime1Seq;
 						}
 						incSign = 1; // this reverts our direction
-						gateOn = 1; // signal that the gate is on
+						SET_GATE_ON; // signal that the gate is on
 
 					}
 
@@ -387,7 +359,7 @@ void TIM2_IRQHandler(void) {
 							releaseTime = calcTime1Seq;
 						}
 						incSign = -1; // this reverses the direction
-						gateOn = 1;
+						SET_GATE_ON;
 
 					}
 
@@ -410,7 +382,7 @@ void TIM2_IRQHandler(void) {
 
 				case pendulum:
 
-					if (holdAtB == 0) { // if we arent currently gated, reverse the direction of the oscillator
+					if (HOLD_AT_B) { // if we arent currently gated, reverse the direction of the oscillator
 						incSign = incSign * -1;
 					}
 
@@ -425,7 +397,7 @@ void TIM2_IRQHandler(void) {
 		}
 		if (trigMode == pendulum && loop == noloop) { // regardless of whether the oscillator is at rest or not, toggle the gateOn every trigger with pendulum
 
-			gateOn = !gateOn;
+			TOGGLE_GATE_ON;
 
 		}
 
@@ -433,7 +405,7 @@ void TIM2_IRQHandler(void) {
 
 	else {
 
-		if (trigMode == gated && drumModeOn == 0) { //aka, gate off when we aren't in drum mode
+		if (trigMode == gated && !(DRUM_MODE_ON)) { //aka, gate off when we aren't in drum mode
 
 			if (position < span) { //if we release the gate before making it through attack, run back through attack at release speed
 
@@ -444,7 +416,7 @@ void TIM2_IRQHandler(void) {
 					attackTime = calcTime2Seq;
 				}
 				incSign = -1; // -1 in int
-				gateOn = 0;
+				RESET_GATE_ON;
 
 			} else { //if we get a release when we are at or after span, reset the oscillator behavior and let it finish release
 
@@ -455,7 +427,7 @@ void TIM2_IRQHandler(void) {
 					releaseTime = calcTime2Seq;
 				};
 				incSign = 1;
-				gateOn = 0;
+				RESET_GATE_ON;
 
 			}
 
@@ -479,16 +451,16 @@ void TIM3_IRQHandler(void) {
 
 	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
 
-	if (updatePrescaler == 1) { // handle the update event to load the prescaler initially
-		updatePrescaler = 0;
+	if (UPDATE_PRESCALER) { // handle the update event to load the prescaler initially
+		RESET_UPDATE_PRESCALER;
 	}
 
 	else { // raise the flag to put the drum mode to rest after overflowing the release portion
-		drumReleaseOn = 0;
+		RESET_DRUM_RELEASE_ON;
 		expoScale = 0;
 		__HAL_TIM_DISABLE(&htim3);
 		__HAL_TIM_SET_COUNTER(&htim3, 0);
-		lastCycle = 1;
+		SET_LAST_CYCLE;
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
@@ -507,7 +479,7 @@ void TIM8_UP_IRQHandler(void) {
 	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
 	SH_B_SAMPLE
 	//this handles the logic where we resample b at a
-	if (rgbOn) {
+	if (RGB_ON) {
 		LEDB_ON
 	}
 
@@ -527,9 +499,11 @@ void TIM8_UP_IRQHandler(void) {
 void TIM6_DAC_IRQHandler(void) {
 	/* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 
+	uint32_t storePhase;
+
 	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
 
-	if (oscillatorActive) {
+	if (OSCILLATOR_ACTIVE) {
 
 		//write the current oscillator value to dac1, and its inverse to dac2 (crossfading)
 
@@ -539,6 +513,9 @@ void TIM6_DAC_IRQHandler(void) {
 		// get our averages for t2 and morph cv (move to the ADC interrupt??)
 
 		getAverages();
+
+		storePhase = PHASE_STATE;
+
 
 		// call the function that calculates our increment from the ADC values
 
@@ -550,17 +527,17 @@ void TIM6_DAC_IRQHandler(void) {
 
 		//store last "Phase State" (attack or release)
 
-		lastPhaseState = phaseState;
+
 
 		//call the appropriate interpolation routine per phase in the two part table and declare phase state as such
 
 		if (position < span) {
-			phaseState = 1;
-			getSample(1);
+			RESET_PHASE_STATE;
+			getSample(0);
 		}
 		if (position >= span) {
-			phaseState = 2;
-			getSample(2);
+			SET_PHASE_STATE;
+			getSample(1);
 		}
 
 		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
@@ -578,7 +555,7 @@ void TIM6_DAC_IRQHandler(void) {
 
 		//if we are in high speed and not looping, activate drum mode
 
-		if (drumModeOn == 1) {
+		if (DRUM_MODE_ON) {
 
 			//call the fuction that generates our expo decay and scales amp
 
@@ -586,7 +563,7 @@ void TIM6_DAC_IRQHandler(void) {
 
 			//use the expo decay scaled by the manual morph control to modulate morph
 
-			if (morphOn != 0) {
+			if (MORPH_ON) {
 				fixMorph = myfix16_mul(expoScale, fixMorph);
 			}
 
@@ -594,7 +571,7 @@ void TIM6_DAC_IRQHandler(void) {
 
 		// if we transition from one phase state to another, enable the transition handler interrupt
 
-		if (phaseState != lastPhaseState) {
+		if ((PHASE_STATE) != storePhase) {
 
 			HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
 
@@ -606,7 +583,7 @@ void TIM6_DAC_IRQHandler(void) {
 
 		//turn off the display if the oscillator is inactive and we are not switching modes
 
-		if (rgbOn != 0) {
+		if (RGB_ON) {
 
 			LEDC_OFF
 			LEDD_OFF
@@ -634,7 +611,7 @@ void TIM7_IRQHandler(void) {
 	SH_A_SAMPLE
 	// this handles our decimate resampling
 	SH_B_SAMPLE
-	if (rgbOn) {
+	if (RGB_ON) {
 		LEDA_ON
 		LEDB_ON
 	}
@@ -700,7 +677,7 @@ void getSample(uint32_t phase) {
 
 
 
-	if (phase == 1) {
+	if (phase == 0) {
 		// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
 		//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
 		LnSample = (position >> 16);
@@ -732,7 +709,7 @@ void getSample(uint32_t phase) {
 
 		out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
 
-		if (rgbOn != 0) { //if the runtime display is on, show our mode
+		if (RGB_ON) { //if the runtime display is on, show our mode
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
 		}
 	}
@@ -762,7 +739,7 @@ void getSample(uint32_t phase) {
 
 		out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
 
-		if (rgbOn != 0) {
+		if (RGB_ON) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
 		}
 	}
@@ -784,13 +761,12 @@ void getPhase(void) {
 		 if we are in drum mode, replace linear fm with the drum envelope*/
 		if (loop == noloop) {
 
-			// NEEDS WORK !!!!!!!!!!!!!
 
 			expoIndex = 4095 - (1200 + time1CV- time1Knob);
 			if (expoIndex > 4095) {expoIndex = 4095;}
 			else if (expoIndex < 0) {expoIndex = 0;}
 
-			if (pitchOn == 1) {incFromADCs = myfix16_mul((expoScale >> 8) + 100, lookuptable[expoIndex]) >> tableSizeCompensation;}
+			if (PITCH_ON) {incFromADCs = myfix16_mul((expoScale >> 8) + 100, lookuptable[expoIndex]) >> tableSizeCompensation;}
 
 			else {incFromADCs = myfix16_mul(1000, lookuptable[expoIndex] >> 2) >> tableSizeCompensation;}
 
@@ -798,14 +774,9 @@ void getPhase(void) {
 
 		else {
 
-			// NEEDS WORK !!!!!!!!!!!!!
-
-			//expoIndex = 4095 - (1800 + time1CV - ((time1Knob >> 1) + (time2Knob >> 4)));
-			//if (expoIndex > 4095) {expoIndex = 4095;}
-			//else if (expoIndex < 0) {expoIndex = 0;}
 
 			incFromADCs = myfix16_mul(myfix16_mul(myfix16_mul((3000 - time2CV) << 4, lookuptable[4095 - time1CV] >> 6), lookuptable[time1Knob] >> 4), lookuptable[time2Knob >> 4]) >> tableSizeCompensation;
-			//incFromADCs = myfix16_mul((3000 - time2CV) << 4, lookuptable[expoIndex] >> 2);
+
 
 		}
 
@@ -827,17 +798,17 @@ void getPhase(void) {
 	inc = incFromADCs * incSign;
 
 	// if trigmode is gated and we arent in Drum Mode
-	if (trigMode > 2 && drumModeOn == 0) { // we look to see if we are about to increment past span
+	if (trigMode > 2 && !(DRUM_MODE_ON)) { // we look to see if we are about to increment past span
 
-		if (gateOn == 1 && (abs(inc) > abs(span - position))) {
+		if ((GATE_ON) && (abs(inc) > abs(span - position))) {
 
-			holdAtB = 1; // if so, we
+			SET_HOLD_AT_B; // if so, we
 			inc = span - position;
 
 		}
 
 		else {
-			holdAtB = 0;
+			RESET_HOLD_AT_B;
 		}
 
 	}
@@ -853,16 +824,16 @@ void getPhase(void) {
 
 		position = position - spanx2;
 
-		if ((loop == noloop && speed != audio) || lastCycle == 1) {
-			lastCycle = 0;
+		if ((loop == noloop && speed != audio) || (LAST_CYCLE)) {
+			RESET_LAST_CYCLE;
+			RESET_OSCILLATOR_ACTIVE;
 			incSign = 1;
-			oscillatorActive = 0;
-			position = 0;
 			//pendulumDirection = 0;
-			phaseState = 0;
+			position = 0;
+			SET_PHASE_STATE;
 			SH_A_TRACK
 			SH_B_TRACK
-			if (rgbOn) {
+			if (RGB_ON) {
 				LEDA_OFF
 				LEDB_OFF
 				LEDC_OFF
@@ -877,16 +848,16 @@ void getPhase(void) {
 
 		position = position + spanx2;
 
-		if ((loop == noloop && speed != audio) || lastCycle == 1) {
-			lastCycle = 0;
-			oscillatorActive = 0;
+		if ((loop == noloop && speed != audio) || (LAST_CYCLE)) {
+			RESET_LAST_CYCLE;
+			RESET_OSCILLATOR_ACTIVE;
 			incSign = 1;
 			//pendulumDirection = 0;
 			position = 0;
-			phaseState = 0;
+			RESET_PHASE_STATE;
 			SH_A_TRACK
 			SH_B_TRACK
-			if (rgbOn) {
+			if (RGB_ON) {
 				LEDA_OFF
 				LEDB_OFF
 				LEDC_OFF
@@ -934,29 +905,29 @@ int calcTime2Seq(void) {
 void drum(void) {
 
 	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
-	if (drumAttackOn) {
+	if (DRUM_ATTACK_ON) {
 
 		attackCount = attackCount + 10;
 
 		if (attackCount > 3840) {
-			drumAttackOn = 0;
+			RESET_DRUM_ATTACK_ON;
 			attackCount = 3840;
 			__HAL_TIM_ENABLE(&htim3);
 			expoScale = lookuptable[attackCount] >> 10;
 			attackCount = 0;
-			drumReleaseOn = 1;
+			SET_DRUM_RELEASE_ON;
 		} else {
 			expoScale = lookuptable[attackCount] >> 10;
 		}
 
-	} else if (drumReleaseOn) {
+	} else if (DRUM_RELEASE_ON) {
 		if (!__HAL_TIM_GET_FLAG(&htim3, TIM_FLAG_UPDATE)) {
 			expoScale = lookuptable[TIM3->CNT] >> 10;
 		}
 	}
 
 	//scale the oscillator
-	if (ampOn != 0) {
+	if (AMP_ON) {
 		out = myfix16_mul(out, expoScale);
 	}
 
@@ -978,7 +949,7 @@ int myfix16_lerp(int in0, int in1, uint16_t inFract) {
 
 void EXTI15_10_IRQHandler(void) {
 
-	if (phaseState == 1) {
+	if (!(PHASE_STATE)) {
 
 		if (trigMode == nongatedretrigger) {
 			incSign = 1;
@@ -1001,7 +972,7 @@ void EXTI15_10_IRQHandler(void) {
 			sampHoldA();
 		}
 
-		if (rgbOn != 0) {
+		if (RGB_ON) {
 			LEDC_ON
 			;
 			LEDD_OFF
@@ -1009,7 +980,7 @@ void EXTI15_10_IRQHandler(void) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 		}
 
-	} else if (phaseState == 2) {
+	} else {
 
 		EOA_JACK_HIGH
 		EOR_JACK_LOW
@@ -1022,7 +993,7 @@ void EXTI15_10_IRQHandler(void) {
 			sampHoldB();
 		}
 
-		if (rgbOn != 0) {
+		if (RGB_ON) {
 			LEDC_OFF
 			;
 			LEDD_ON
@@ -1040,7 +1011,7 @@ void sampHoldB(void) {
 
 	case a:
 		SH_A_TRACK
-		if (rgbOn) {
+		if (RGB_ON) {
 			LEDA_ON
 		}
 		break;
@@ -1049,7 +1020,7 @@ void sampHoldB(void) {
 
 	case ab:
 		SH_A_TRACK
-		if (rgbOn) {
+		if (RGB_ON) {
 			LEDA_OFF
 		}
 		// b remains sampled
@@ -1058,7 +1029,7 @@ void sampHoldB(void) {
 	case antidecimate:
 		SH_B_SAMPLE
 		SH_A_TRACK
-		if (rgbOn) {
+		if (RGB_ON) {
 			LEDB_OFF
 			LEDA_ON
 		}
@@ -1067,7 +1038,7 @@ void sampHoldB(void) {
 	case decimate:
 		SH_A_TRACK
 		;
-		if (rgbOn) {
+		if (RGB_ON) {
 			LEDA_OFF
 			;
 			LEDB_OFF
@@ -1091,7 +1062,7 @@ void sampHoldA(void) {
 
 	case a:
 		SH_A_SAMPLE
-		if (rgbOn) {
+		if (RGB_ON) {
 			LEDA_OFF
 		}
 		break;
@@ -1100,7 +1071,7 @@ void sampHoldA(void) {
 		SH_B_TRACK
 		__HAL_TIM_SET_COUNTER(&htim8, 0);
 		__HAL_TIM_ENABLE(&htim8);
-		if (rgbOn) {
+		if (RGB_ON) {
 			LEDB_OFF
 			;
 		}
@@ -1109,7 +1080,7 @@ void sampHoldA(void) {
 	case ab:
 		SH_A_SAMPLE
 		SH_B_TRACK
-		if (rgbOn) {
+		if (RGB_ON) {
 			LEDB_OFF
 			LEDA_ON
 		}
@@ -1120,7 +1091,7 @@ void sampHoldA(void) {
 	case antidecimate:
 		SH_A_SAMPLE
 		SH_B_TRACK
-		if (rgbOn) {
+		if (RGB_ON) {
 			LEDA_OFF
 			LEDB_ON
 		}
@@ -1129,7 +1100,7 @@ void sampHoldA(void) {
 	case decimate:
 		SH_B_TRACK
 		;
-		if (rgbOn) {
+		if (RGB_ON) {
 			LEDA_OFF
 			;
 			LEDB_OFF

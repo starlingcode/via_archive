@@ -98,12 +98,10 @@ extern uint32_t morphBitShiftRight;
 extern uint32_t morphBitShiftLeft;
 
 // these logic flags are used to communicate state between the main loop and the interrupts
-extern uint32_t rgbOn;
-extern uint32_t drumModeOn;
+
 extern int incSign;
-extern uint32_t gateOn;
-extern uint32_t pendulumDirection;
-extern uint32_t lastCycle;
+
+
 
 // here we initialize the "Family" structs for all of the wavetables that we will fill upon initialization
 Family moog1;
@@ -2221,11 +2219,6 @@ enum loopTypes loop; // {noloop, looping}
 enum trigModeTypes trigMode; // {noretrigger, hardsync, nongatedretrigger, gated, pendulum}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
 
-// flags to make sure that our drum mode gets reset properly
-// these are used in the interrupt to determine whether the drum envelope modulates the given parameters in drum mode
-uint32_t pitchOn;
-uint32_t morphOn;
-uint32_t ampOn;
 
 // initialize the arrays that will be used by DMA to store our Knob and CV values
 extern uint32_t ADCReadings1[4];
@@ -2866,11 +2859,11 @@ int main(void) {
 
 
 
-	rgbOn = 1;
-	ampOn = 1;
-	pitchOn = 1;
-	morphOn = 1;
-	drumModeOn = 1;
+	SET_RGB_ON;
+	SET_AMP_ON;
+	SET_PITCH_ON;
+	SET_MORPH_ON;
+	SET_DRUM_MODE_ON;
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
 
@@ -3599,7 +3592,7 @@ void readDetect(void) {
 	//check to see if any of our touch sensors have gone into detect state
 
 	if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
-		rgbOn = 0; //turn off the runtime display
+		RESET_RGB_ON; //turn off the runtime display
 		modeflag = 1; //indicate to the other mode change functions that we have pressed the speed button
 		detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
 		clearLEDs(); //wipe the vestiges of our runtimme display
@@ -3607,7 +3600,7 @@ void readDetect(void) {
 		showMode(speed); //show our currentm mode
 	}
 	if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
-		rgbOn = 0;
+		RESET_RGB_ON;
 		modeflag = 2; //indicate to the other mode change functions that we have pressed the trigger mode button
 		detectOn = 1;
 		clearLEDs();
@@ -3615,7 +3608,7 @@ void readDetect(void) {
 		showMode(trigMode);
 	}
 	if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
-		rgbOn = 0;
+		RESET_RGB_ON;
 		modeflag = 3; //indicate to the other mode change functions that we have pressed the loop button
 		detectOn = 1;
 		clearLEDs();
@@ -3623,7 +3616,7 @@ void readDetect(void) {
 		showMode(loop);
 	}
 	if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
-		rgbOn = 0;
+		RESET_RGB_ON;
 		modeflag = 4; //indicate to the other mode change functions that we have pressed the sample and hold mode button
 		detectOn = 1;
 		clearLEDs();
@@ -3631,7 +3624,7 @@ void readDetect(void) {
 		showMode(sampleHoldMode);
 	}
 	if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
-		rgbOn = 0;
+		RESET_RGB_ON;
 		modeflag = 5; //indicate to the other mode change functions that we have pressed the family up button
 		detectOn = 1;
 		clearLEDs();
@@ -3639,7 +3632,7 @@ void readDetect(void) {
 		showMode(familyIndicator);
 	}
 	if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
-		rgbOn = 0;
+		RESET_RGB_ON;
 		modeflag = 6; //indicate to the other mode change functions that we have pressed the family down button
 		detectOn = 1;
 		clearLEDs();
@@ -3742,7 +3735,7 @@ void handleRelease(uint32_t pinMode) {
 		__HAL_TIM_SET_COUNTER(&htim4, 0);
 	} else {
 		clearLEDs();
-		rgbOn = 1;
+		SET_RGB_ON;
 	}
 }
 
@@ -3755,43 +3748,42 @@ void changeMode(uint32_t mode) {
 
 		if (speed == audio && loop == noloop) {
 			//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
-			drumModeOn = 1;
+			SET_DRUM_MODE_ON;
 			switch (trigMode) {
 			case 0:
-				ampOn = 1;
-				pitchOn = 1;
-				morphOn = 1;
+				SET_AMP_ON;
+				SET_PITCH_ON;
+				SET_MORPH_ON;
 				break;
 			case 1:
-				ampOn = 1;
-				pitchOn = 0;
-				morphOn = 1;
+				SET_AMP_ON;
+				RESET_PITCH_ON;
+				SET_MORPH_ON;
 				break;
 			case 2:
-				ampOn = 1;
-				pitchOn = 0;
-				morphOn = 0;
+				SET_AMP_ON;
+				RESET_PITCH_ON;
+				RESET_MORPH_ON;
 				break;
 			case 3:
-				ampOn = 0;
-				pitchOn = 0;
-				morphOn = 1;
+				RESET_AMP_ON;
+				RESET_PITCH_ON;
+				SET_MORPH_ON;
 				break;
 			case 4:
-				ampOn = 0;
-				pitchOn = 1;
-				morphOn = 1;
+				RESET_AMP_ON;
+				SET_PITCH_ON;
+				SET_MORPH_ON;
 				break;
-
 			}
 			// i believe this is a holdover from old code
 			__HAL_TIM_ENABLE(&htim3);
 		} else {
 			// if we didnt just go into drum mode, make sure drum mode is off
-			drumModeOn = 0;
-			ampOn = 0;
-			pitchOn = 0;
-			morphOn = 0;
+			RESET_DRUM_MODE_ON;
+			RESET_AMP_ON;
+			RESET_PITCH_ON;
+			RESET_MORPH_ON;
 
 			// set the appropriate time calculation functions
 			if (speed == env) {
@@ -3804,102 +3796,99 @@ void changeMode(uint32_t mode) {
 			}
 		}
 	}
-	if (mode == 2) {
+	else if (mode == 2) {
 		trigMode = (trigMode + 1) % 5;
 		//initialize some essential retrigger variables
 
 		holdState |= trigMode << 3;
 
 		incSign = 1;
-		gateOn = 0;
-		pendulumDirection = 0;
+		RESET_GATE_ON;
 		//if drum mode is on, toggle through sets of modulation destinations
-		if (drumModeOn) {
-			switch (trigMode) {
-			case 0:
-				ampOn = 1;
-				pitchOn = 1;
-				morphOn = 1;
-				break;
-			case 1:
-				ampOn = 1;
-				pitchOn = 0;
-				morphOn = 1;
-				break;
-			case 2:
-				ampOn = 1;
-				pitchOn = 0;
-				morphOn = 0;
-				break;
-			case 3:
-				ampOn = 0;
-				pitchOn = 0;
-				morphOn = 1;
-				break;
-			case 4:
-				ampOn = 0;
-				pitchOn = 1;
-				morphOn = 1;
-				break;
+		switch (trigMode) {
+		case 0:
+			SET_AMP_ON;
+			SET_PITCH_ON;
+			SET_MORPH_ON;
+			break;
+		case 1:
+			SET_AMP_ON;
+			RESET_PITCH_ON;
+			SET_MORPH_ON;
+			break;
+		case 2:
+			SET_AMP_ON;
+			RESET_PITCH_ON;
+			RESET_MORPH_ON;
+			break;
+		case 3:
+			RESET_AMP_ON;
+			RESET_PITCH_ON;
+			SET_MORPH_ON;
+			break;
+		case 4:
+			RESET_AMP_ON;
+			SET_PITCH_ON;
+			SET_MORPH_ON;
+			break;
 
-			}
 		}
 	}
-	if (mode == 3) {
+	else if (mode == 3) {
 		loop = (loop + 1) % 2;
 
 		holdState |= loop;
 
 		if (loop == noloop) {
 			// signal to our oscillator that it should put itself to sleep
-			lastCycle = 1;
+			SET_LAST_CYCLE;
 			// switching to no loop when speed is at audio activates drum mode
 			// this is about the same as what we do in the speed mode case above
 			if (speed == audio) {
-				drumModeOn = 1;
+				SET_DRUM_MODE_ON;
 				switch (trigMode) {
 				case 0:
-					ampOn = 1;
-					pitchOn = 1;
-					morphOn = 1;
+					SET_AMP_ON;
+					SET_PITCH_ON;
+					SET_MORPH_ON;
 					break;
 				case 1:
-					ampOn = 1;
-					pitchOn = 0;
-					morphOn = 1;
+					SET_AMP_ON;
+					RESET_PITCH_ON;
+					SET_MORPH_ON;
 					break;
 				case 2:
-					ampOn = 1;
-					pitchOn = 0;
-					morphOn = 0;
+					SET_AMP_ON;
+					RESET_PITCH_ON;
+					RESET_MORPH_ON;
 					break;
 				case 3:
-					ampOn = 0;
-					pitchOn = 0;
-					morphOn = 1;
+					RESET_AMP_ON;
+					RESET_PITCH_ON;
+					SET_MORPH_ON;
 					break;
 				case 4:
-					ampOn = 0;
-					pitchOn = 1;
-					morphOn = 1;
+					RESET_AMP_ON;
+					SET_PITCH_ON;
+					SET_MORPH_ON;
 					break;
 
 				}
 				__HAL_TIM_ENABLE(&htim3);
 			} else {
-				drumModeOn = 0;
-				ampOn = 0;
-				pitchOn = 0;
-				morphOn = 0;
+				RESET_DRUM_MODE_ON;
+				RESET_AMP_ON;
+				RESET_PITCH_ON;
+				RESET_MORPH_ON;
 			}
 		} else {
-			lastCycle = 0;
-			drumModeOn = 0;
-			ampOn = 0;
-			pitchOn = 0;
-			morphOn = 0;
+			RESET_LAST_CYCLE;
+			RESET_DRUM_MODE_ON;
+			RESET_AMP_ON;
+			RESET_PITCH_ON;
+			RESET_MORPH_ON;
 			//set our oscillator active flag so enabling loop starts playback
-			oscillatorActive = 1;
+			SET_OSCILLATOR_ACTIVE;
 		}
 
 	}
@@ -4178,7 +4167,7 @@ void clearLEDs(void) {
 void restoreDisplay() {
 	if (__HAL_TIM_GET_COUNTER(&htim4) > 5000) {
 		clearLEDs(); // get rid of our last mode display
-		rgbOn = 1; // turn on the runtime display
+		SET_RGB_ON; // turn on the runtime display
 		displayNewMode = 0; // a bit of logic used to make sure that we show the mode during the main loop
 	}
 }
