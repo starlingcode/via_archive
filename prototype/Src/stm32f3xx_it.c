@@ -905,14 +905,14 @@ void getInc(void) {
 
 int calcTime1Env(void) {
 
-	time1 = lookuptable[((4095 - (time1Knob- (4095 - time1CV))) >> 1) + 700] >> 13;
+	time1 = lookuptable[(4095 - (time1Knob- (4095 - time1CV))) >> 1] >> 13;
 	return time1;
 
 }
 
 int calcTime2Env(void) {
 
-	time2 = lookuptable[(4095 - (time2Knob- (4095 - time2CV))) >> 1] >> 14;
+	time2 = lookuptable[(4095 - (time2Knob- (4095 - time2CV))) >> 1] >> 13;
 	return time2;
 
 }
