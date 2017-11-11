@@ -43,6 +43,7 @@
 
 #include "tables.h"
 #include "tsl_user.h"
+#include "eeprom.h"
 
 /* USER CODE END Includes */
 
@@ -80,6 +81,12 @@ uint32_t lastDetect;
 uint32_t displayNewMode;
 
 uint32_t holdState;
+
+uint16_t VirtAddVarTab[NB_OF_VAR] = {0x5555};
+uint16_t VarDataTab[NB_OF_VAR] = {0};
+uint16_t VarValue,VarDataTmp;
+
+
 
 // these variables are used to represent the number of entries in a given wavetable stored in the currently selected family
 extern uint32_t span;
@@ -2266,7 +2273,7 @@ void clearLEDs(void);
 int main(void) {
 
 	/* USER CODE BEGIN 1 */
-
+	uint32_t ee_status;
 	/* USER CODE END 1 */
 
 	/* MCU Configuration----------------------------------------------------------*/
@@ -2910,7 +2917,12 @@ int main(void) {
 	SH_B_TRACK
 	attackTime = calcTime1Env;
 	releaseTime = calcTime2Env;
-	holdState = 11;
+
+	HAL_FLASH_Unlock();
+
+	  ee_status = EE_Init();
+	  if( ee_status != EE_OK) {LEDC_ON}
+
 	restoreState();
 
 	/* USER CODE END 2 */
