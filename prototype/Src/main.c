@@ -2900,6 +2900,9 @@ int main(void) {
 	__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
 	__HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
 
+	//enable our trigger interrupt
+	__HAL_TIM_ENABLE_IT(&htim15, TIM_IT_UPDATE);
+
 	//enable our drum envelope interrupt
 	__HAL_TIM_ENABLE_IT(&htim3, TIM_IT_UPDATE);
 
@@ -3467,9 +3470,9 @@ static void MX_TIM15_Init(void) {
 	TIM_MasterConfigTypeDef sMasterConfig;
 
 	htim15.Instance = TIM15;
-	htim15.Init.Prescaler = 1000 - 1;
+	htim15.Init.Prescaler = 1 - 1;
 	htim15.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim15.Init.Period = 3084;
+	htim15.Init.Period = 6000;
 	htim15.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim15.Init.RepetitionCounter = 0;
 	htim15.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;

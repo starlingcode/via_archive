@@ -275,11 +275,13 @@ void DMA1_Channel1_IRQHandler(void) {
  */
 void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
+	EOA_JACK_LOW;
+	EOR_JACK_LOW;
+	__HAL_TIM_DISABLE(&htim15);
 	__HAL_TIM_CLEAR_FLAG(&htim15, TIM_FLAG_UPDATE);
-
 	/* USER CODE END TIM1_BRK_TIM15_IRQn 0 */
-	HAL_TIM_IRQHandler(&htim1);
-	HAL_TIM_IRQHandler(&htim15);
+	//HAL_TIM_IRQHandler(&htim1);
+	//HAL_TIM_IRQHandler(&htim15);
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 1 */
 
 	/* USER CODE END TIM1_BRK_TIM15_IRQn 1 */
@@ -382,7 +384,7 @@ void TIM2_IRQHandler(void) {
 
 				case pendulum:
 
-					if (HOLD_AT_B) { // if we arent currently gated, reverse the direction of the oscillator
+					if (!(HOLD_AT_B)) { // if we arent currently gated, reverse the direction of the oscillator
 						incSign = incSign * -1;
 					}
 
@@ -965,6 +967,8 @@ void EXTI15_10_IRQHandler(void) {
 		EOA_JACK_LOW
 		EOR_GATE_HIGH
 		EOA_GATE_LOW
+		__HAL_TIM_SET_COUNTER(&htim15, 0);
+		__HAL_TIM_ENABLE(&htim15);
 
 		if (inc < 0) {
 			sampHoldB();
@@ -974,9 +978,7 @@ void EXTI15_10_IRQHandler(void) {
 
 		if (RGB_ON) {
 			LEDC_ON
-			;
 			LEDD_OFF
-			;
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 		}
 
@@ -986,6 +988,8 @@ void EXTI15_10_IRQHandler(void) {
 		EOR_JACK_LOW
 		EOA_GATE_HIGH
 		EOR_GATE_LOW
+		__HAL_TIM_SET_COUNTER(&htim15, 0);
+		__HAL_TIM_ENABLE(&htim15);
 
 		if (inc < 0) {
 			sampHoldA();
@@ -995,9 +999,7 @@ void EXTI15_10_IRQHandler(void) {
 
 		if (RGB_ON) {
 			LEDC_OFF
-			;
 			LEDD_ON
-			;
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 		}
 
@@ -1037,12 +1039,9 @@ void sampHoldB(void) {
 
 	case decimate:
 		SH_A_TRACK
-		;
 		if (RGB_ON) {
 			LEDA_OFF
-			;
 			LEDB_OFF
-			;
 		}
 
 		__HAL_TIM_SET_COUNTER(&htim7, 0);
@@ -1073,7 +1072,6 @@ void sampHoldA(void) {
 		__HAL_TIM_ENABLE(&htim8);
 		if (RGB_ON) {
 			LEDB_OFF
-			;
 		}
 		break;
 
