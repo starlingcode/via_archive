@@ -316,6 +316,7 @@ void TIM2_IRQHandler(void) {
 			if (trigMode == gated) {
 				SET_GATE_ON;
 			} //turn the gate flag on in gatemode
+			sampHoldA();
 		} else {
 
 			if ((DRUM_MODE_ON) && !(DRUM_ATTACK_ON)) {
@@ -878,28 +879,28 @@ void getInc(void) {
 
 int calcTime1Env(void) {
 
-	time1 = lookuptable[(4095 - (time1Knob- (4095 - time1CV))) >> 1] >> 13;
+	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> 6;
 	return time1;
 
 }
 
 int calcTime2Env(void) {
 
-	time2 = lookuptable[(4095 - (time2Knob- (4095 - time2CV))) >> 1] >> 13;
+	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> 6;
 	return time2;
 
 }
 
 int calcTime1Seq(void) {
 
-	time1 = lookuptable[(4095 - (time1Knob- (4095 - time1CV))) >> 1] >> 16;
+	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> 10;
 	return time1;
 
 }
 
 int calcTime2Seq(void) {
 
-	time2 = lookuptable[(4095 - (time2Knob- (4095 - time2CV))) >> 1] >> 16;
+	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> 10;
 	return time2;
 
 }
@@ -972,7 +973,7 @@ void EXTI15_10_IRQHandler(void) {
 
 		if (inc < 0) {
 			sampHoldB();
-		} else {
+		} else if (OSCILLATOR_ACTIVE) {
 			sampHoldA();
 		}
 

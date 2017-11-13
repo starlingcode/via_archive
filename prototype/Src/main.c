@@ -1651,7 +1651,7 @@ void changeMode(uint32_t mode) {
 void showMode(uint32_t currentmode) {
 
 	// if we are switching families, show a color corresponding to that family
-	if (currentmode == familyIndicator) {
+	if (modeflag > 4) {
 		familyRGB();
 	}
 
@@ -1663,20 +1663,20 @@ void showMode(uint32_t currentmode) {
 			LEDA_ON
 			break;
 		case 1:
-			LEDB_ON
+			LEDC_ON
 			break;
 		case 2:
-			LEDC_ON
+			LEDB_ON
 			break;
 		case 3:
 			LEDD_ON
 			break;
 		case 4:
 			LEDA_ON
-			LEDB_ON
+			LEDC_ON
 			break;
 		case 5:
-			LEDC_ON
+			LEDB_ON
 			LEDD_ON
 			break;
 		}
@@ -1789,7 +1789,7 @@ void clearLEDs(void) {
 }
 
 void restoreDisplay() {
-	if (__HAL_TIM_GET_COUNTER(&htim4) > 5000) {
+	if (__HAL_TIM_GET_COUNTER(&htim4) > 10000) {
 		clearLEDs(); // get rid of our last mode display
 		SET_RGB_ON; // turn on the runtime display
 		displayNewMode = 0; // a bit of logic used to make sure that we show the mode during the main loop
