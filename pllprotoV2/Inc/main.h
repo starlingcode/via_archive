@@ -43,11 +43,11 @@
 /* USER CODE BEGIN Includes */
 
 
-enum speedTypes {audio, env, seq};
+enum pllTypes {none, true, catch, hardSync};
 
-enum loopTypes {noloop, looping};
+enum controlSchemes {gateLength, knobCV};
 
-enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum};
+enum scaleTypes {rhythms, pitches};
 
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 
@@ -167,7 +167,7 @@ int flagHolder;
 
 #define PHASE_STATE 		flagHolder & 0b00000000000000000000000000000001
 #define LAST_PHASE_STATE 	flagHolder & 0b00000000000000000000000000000010
-#define GATE_ON 			flagHolder & 0b00000000000000000000000000000100
+#define CATCH_UP 			flagHolder & 0b00000000000000000000000000000100
 #define RGB_ON 				flagHolder & 0b00000000000000000000000000001000
 #define UPDATE_PRESCALER 	flagHolder & 0b00000000000000000000000000010000
 #define DRUM_MODE_ON 		flagHolder & 0b00000000000000000000000000100000
@@ -185,7 +185,7 @@ int flagHolder;
 
 #define SET_PHASE_STATE 		flagHolder |= 0b00000000000000000000000000000001
 #define SET_LAST_PHASE_STATE 	flagHolder |= 0b00000000000000000000000000000010
-#define SET_GATE_ON 			flagHolder |= 0b00000000000000000000000000000100
+#define SET_CATCH_UP 			flagHolder |= 0b00000000000000000000000000000100
 #define SET_RGB_ON 				flagHolder |= 0b00000000000000000000000000001000
 #define SET_UPDATE_PRESCALER 	flagHolder |= 0b00000000000000000000000000010000
 #define SET_DRUM_MODE_ON 		flagHolder |= 0b00000000000000000000000000100000
@@ -202,7 +202,7 @@ int flagHolder;
 
 #define RESET_PHASE_STATE 		flagHolder &= 0b11111111111111111111111111111110
 #define RESET_LAST_PHASE_STATE 	flagHolder &= 0b11111111111111111111111111111101
-#define RESET_GATE_ON 			flagHolder &= 0b11111111111111111111111111111011
+#define RESET_CATCH_UP 			flagHolder &= 0b11111111111111111111111111111011
 #define RESET_RGB_ON 			flagHolder &= 0b11111111111111111111111111110111
 #define RESET_UPDATE_PRESCALER 	flagHolder &= 0b11111111111111111111111111101111
 #define RESET_DRUM_MODE_ON 		flagHolder &= 0b11111111111111111111111111011111

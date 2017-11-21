@@ -63,11 +63,13 @@ int getMorph;
 volatile uint32_t position;
 volatile uint32_t attackInc = 100;
 volatile uint32_t releaseInc = 100;
+volatile uint32_t catchupInc;
 uint32_t gateOnCount = 10000;
 uint32_t periodCount = 10000;
 volatile int incSign = 1;
 int time1;
 int time2;
+
 
 //most recent value from our expo decay
 int expoScale;
@@ -106,9 +108,9 @@ uint32_t time2Average;
 uint32_t morphAverage;
 
 // mode indicators, determined in the main loop
-enum speedTypes speed;
-enum loopTypes loop;
-enum trigModeTypes trigMode;
+enum pllTypes pll; // {none, true, catch, setCatch}
+enum controlSchemes controlScheme; // {gateLength, knobCV}
+enum scaleTypes scaleType; // {rhythms, pitches}
 enum sampleHoldModeTypes sampleHoldMode;
 
 extern TIM_HandleTypeDef htim1;
@@ -296,7 +298,12 @@ void TIM2_IRQHandler(void) {
 
 	/* USER CODE BEGIN TIM2_IRQn 0 */
 
-	int pllNudge;
+	int pllNudge = 0;
+	static uint32_t pllCounter;
+	uint32_t multiplier;
+	uint32_t divider;
+	uint32_t adjustedSpan;
+
 
 	if ((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET) {
 
@@ -306,15 +313,66 @@ void TIM2_IRQHandler(void) {
 		//reset the timer value
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
 
-		//pll nudge
-    	if (position > span) {
-    		pllNudge = (spanx2 - position) << 8;
-    	}
-    	else {pllNudge = -(position << 8);};
+
+		multiplier = 1 + (time1Knob >> 9);
+		divider = 1 + (time2Knob >> 9);
+
+		if (controlScheme == knobCV) {
+			gateOnCount = myfix16_mul(periodCount, time2CV << 4);
+		}
+
+
+		pllCounter ++;
+		if (pllCounter >= divider) {
+
+			if (pll == hardSync) {
+
+				position = 0;
+
+			} else if (pll == true) {
+				// if we are behind the phase of the clock, go faster, otherwise, go slower
+				if (position > span) {
+
+					pllNudge = (spanx2 - position) << 9;
+
+				} else {
+
+					pllNudge = -(position << 9);
+
+				}
+			} else if (pll == catch) {
+
+				// catch the next falling edge right on phase
+
+				SET_CATCH_UP;
+
+				adjustedSpan = span*multiplier/divider;
+
+				if (position < adjustedSpan) {
+
+					catchupInc =  ((adjustedSpan - position) << 9) / gateOnCount;
+
+
+
+				} else {
+
+					catchupInc =  (((spanx2 - position) + adjustedSpan) << 9) / gateOnCount;
+
+				}
+
+			}
+
+
+			pllCounter = 0;
+		}
+
 
 		//use this value to calculate our oscillator frequency
-		attackInc = ((span << 9) + pllNudge) / gateOnCount;
-		releaseInc = ((span << 9) + pllNudge) /(periodCount - gateOnCount);
+		attackInc = ((span << 9) + pllNudge) / (gateOnCount * divider);
+		releaseInc = ((span << 9) + pllNudge) / ((periodCount - gateOnCount) * divider);
+
+		attackInc = attackInc * multiplier;
+		releaseInc = releaseInc * multiplier;
 
 
 
@@ -398,7 +456,7 @@ void TIM6_DAC_IRQHandler(void) {
 
 	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
 
-	if (OSCILLATOR_ACTIVE) {
+
 
 		//write the current oscillator value to dac1, and its inverse to dac2 (crossfading)
 
@@ -449,23 +507,6 @@ void TIM6_DAC_IRQHandler(void) {
 
 		}
 
-	}
-
-	else {
-
-		//turn off the display if the oscillator is inactive and we are not switching modes
-
-		if (RGB_ON) {
-
-			LEDC_OFF
-			LEDD_OFF
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-
-		}
-
-	}
 
 	/* USER CODE END TIM6_DAC_IRQn 0 */
 	// HAL_TIM_IRQHandler(&htim6);
@@ -623,10 +664,14 @@ void getSample(uint32_t phase) {
 
 void getPhase(void) {
 
-	if (PHASE_STATE) {
-		position = position + attackInc;
+	if (CATCH_UP) {
+		position = position + catchupInc;
 	} else {
-		position = position + releaseInc;
+		if (PHASE_STATE) {
+			position = position + attackInc;
+		} else {
+			position = position + releaseInc;
+		}
 	}
 
 	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode
@@ -638,9 +683,7 @@ void getPhase(void) {
 	}
 }
 
-void getInc(void) {
 
-}
 
 int calcTime1Env(void) {
 
@@ -708,6 +751,8 @@ void EXTI15_10_IRQHandler(void) {
 		}
 
 	} else {
+
+		RESET_CATCH_UP;
 
 		EOA_JACK_HIGH
 		EOR_JACK_LOW

@@ -99,9 +99,6 @@ extern uint32_t morphBitShiftLeft;
 
 // these logic flags are used to communicate state between the main loop and the interrupts
 
-extern int incSign;
-
-
 
 // here we initialize the "Family" structs for all of the wavetables that we will fill upon initialization
 Family moog1;
@@ -145,9 +142,9 @@ uint32_t familyIndicator;
 extern Family currentFamily;
 
 // these enums contain our mode information
-enum speedTypes speed; // {audio, env, seq}
-enum loopTypes loop; // {noloop, looping}
-enum trigModeTypes trigMode; // {noretrigger, hardsync, nongatedretrigger, gated, pendulum}
+enum pllTypes pll; // {none, true, catch, setCatch}
+enum controlSchemes controlScheme; // {gateLength, knobCV}
+enum scaleTypes scaleType; // {rhythms, pitches}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
 
 
@@ -1221,7 +1218,7 @@ void readDetect(void) {
 		detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
 		clearLEDs(); //wipe the vestiges of our runtimme display
 		__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
-		showMode(speed); //show our currentm mode
+		showMode(scaleType); //show our currentm mode
 	}
 	if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
 		RESET_RGB_ON;
@@ -1229,7 +1226,7 @@ void readDetect(void) {
 		detectOn = 1;
 		clearLEDs();
 		__HAL_TIM_SET_COUNTER(&htim4, 0);
-		showMode(trigMode);
+		showMode(pll);
 	}
 	if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
 		RESET_RGB_ON;
@@ -1237,7 +1234,7 @@ void readDetect(void) {
 		detectOn = 1;
 		clearLEDs();
 		__HAL_TIM_SET_COUNTER(&htim4, 0);
-		showMode(loop);
+		showMode(controlScheme);
 	}
 	if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
 		RESET_RGB_ON;
@@ -1337,13 +1334,13 @@ void handleRelease(uint32_t pinMode) {
 		changeMode(pinMode);
 		switch (pinMode) {
 		case 1:
-			showMode(speed);
+			showMode(scaleType);
 			break;
 		case 2:
-			showMode(trigMode);
+			showMode(pll);
 			break;
 		case 3:
-			showMode(loop);
+			showMode(controlScheme);
 			break;
 		case 4:
 			showMode(sampleHoldMode);
@@ -1366,154 +1363,16 @@ void handleRelease(uint32_t pinMode) {
 void changeMode(uint32_t mode) {
 	if (mode == 1) {
 		// toggle through our 3 speed modes
-		speed = (speed + 1) % 3;
-
-		holdState |= speed << 1;
-
-		if (speed == audio && loop == noloop) {
-			//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
-			SET_DRUM_MODE_ON;
-			switch (trigMode) {
-			case 0:
-				SET_AMP_ON;
-				SET_PITCH_ON;
-				SET_MORPH_ON;
-				break;
-			case 1:
-				SET_AMP_ON;
-				RESET_PITCH_ON;
-				SET_MORPH_ON;
-				break;
-			case 2:
-				SET_AMP_ON;
-				RESET_PITCH_ON;
-				RESET_MORPH_ON;
-				break;
-			case 3:
-				RESET_AMP_ON;
-				RESET_PITCH_ON;
-				SET_MORPH_ON;
-				break;
-			case 4:
-				RESET_AMP_ON;
-				SET_PITCH_ON;
-				SET_MORPH_ON;
-				break;
-			}
-			// i believe this is a holdover from old code
-			__HAL_TIM_ENABLE(&htim3);
-		} else {
-			// if we didnt just go into drum mode, make sure drum mode is off
-			RESET_DRUM_MODE_ON;
-			RESET_AMP_ON;
-			RESET_PITCH_ON;
-			RESET_MORPH_ON;
-
-			// set the appropriate time calculation functions
-			if (speed == env) {
-				attackTime = calcTime1Env;
-				releaseTime = calcTime2Env;
-			}
-			if (speed == seq) {
-				attackTime = calcTime1Seq;
-				releaseTime = calcTime2Seq;
-			}
-		}
+		scaleType = (scaleType + 1) % 2;
 	}
 	else if (mode == 2) {
-		trigMode = (trigMode + 1) % 5;
-		//initialize some essential retrigger variables
 
-		holdState |= trigMode << 3;
+		pll = (pll + 1) % 4;
 
-		incSign = 1;
-		RESET_GATE_ON;
-		//if drum mode is on, toggle through sets of modulation destinations
-		switch (trigMode) {
-		case 0:
-			SET_AMP_ON;
-			SET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case 1:
-			SET_AMP_ON;
-			RESET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case 2:
-			SET_AMP_ON;
-			RESET_PITCH_ON;
-			RESET_MORPH_ON;
-			break;
-		case 3:
-			RESET_AMP_ON;
-			RESET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case 4:
-			RESET_AMP_ON;
-			SET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-
-		}
 	}
 	else if (mode == 3) {
-		loop = (loop + 1) % 2;
 
-		holdState |= loop;
-
-		if (loop == noloop) {
-			// signal to our oscillator that it should put itself to sleep
-			SET_LAST_CYCLE;
-			// switching to no loop when speed is at audio activates drum mode
-			// this is about the same as what we do in the speed mode case above
-			if (speed == audio) {
-				SET_DRUM_MODE_ON;
-				switch (trigMode) {
-				case 0:
-					SET_AMP_ON;
-					SET_PITCH_ON;
-					SET_MORPH_ON;
-					break;
-				case 1:
-					SET_AMP_ON;
-					RESET_PITCH_ON;
-					SET_MORPH_ON;
-					break;
-				case 2:
-					SET_AMP_ON;
-					RESET_PITCH_ON;
-					RESET_MORPH_ON;
-					break;
-				case 3:
-					RESET_AMP_ON;
-					RESET_PITCH_ON;
-					SET_MORPH_ON;
-					break;
-				case 4:
-					RESET_AMP_ON;
-					SET_PITCH_ON;
-					SET_MORPH_ON;
-					break;
-
-				}
-				__HAL_TIM_ENABLE(&htim3);
-			} else {
-				RESET_DRUM_MODE_ON;
-				RESET_AMP_ON;
-				RESET_PITCH_ON;
-				RESET_MORPH_ON;
-			}
-		} else {
-			RESET_LAST_CYCLE;
-			RESET_DRUM_MODE_ON;
-			RESET_AMP_ON;
-			RESET_PITCH_ON;
-			RESET_MORPH_ON;
-			//set our oscillator active flag so enabling loop starts playback
-			SET_OSCILLATOR_ACTIVE;
-		}
+		controlScheme = (controlScheme + 1) % 2;
 
 	}
 	if (mode == 4) {
@@ -1798,9 +1657,9 @@ void restoreDisplay() {
 
 void restoreState(){
 	//holdState = EE_ReadVariable(virtAddrVarTab, &varDataTab);
-	loop = holdState & 0x01;
-	speed = (holdState & 0x06) >> 1;
-	trigMode = (holdState & 0x38) >> 3;
+	controlScheme = holdState & 0x01;
+	scaleType = (holdState & 0x06) >> 1;
+	pll = (holdState & 0x38) >> 3;
 	sampleHoldMode = (holdState & 0x1C0) >> 6;
 	familyIndicator = (holdState & 0xE00) >> 9;
 }
