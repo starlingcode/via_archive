@@ -314,11 +314,13 @@ void TIM2_IRQHandler(void) {
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
 
 
-		multiplier = 1 + (time1Knob >> 9);
-		divider = 1 + (time2Knob >> 9);
+		multiplier = 1 + (time1Knob >> 9) + (time1CV >> 9);
+		divider = 1 + (time2Knob >> 9)  + (time2CV >> 9);
 
 		if (controlScheme == knobCV) {
-			gateOnCount = myfix16_mul(periodCount, time2CV << 4);
+			gateOnCount = myfix16_mul(periodCount, (time2Knob + time2CV) << 3);
+			// replace with
+			divider = 1;
 		}
 
 
@@ -333,28 +335,30 @@ void TIM2_IRQHandler(void) {
 				// if we are behind the phase of the clock, go faster, otherwise, go slower
 				if (position > span) {
 
-					pllNudge = (spanx2 - position) << 9;
+					pllNudge = (spanx2 - position) << 7;
 
 				} else {
 
-					pllNudge = -(position << 9);
+					pllNudge = -(position << 7);
 
 				}
 			} else if (pll == catch) {
 
 				// catch the next falling edge right on phase
 
-				SET_CATCH_UP;
 
-				adjustedSpan = span*multiplier/divider;
 
-				if (position < adjustedSpan) {
+				adjustedSpan = span*divider/multiplier;
+
+				if (position <= adjustedSpan) {
+					SET_CATCH_UP;
 
 					catchupInc =  ((adjustedSpan - position) << 9) / gateOnCount;
 
 
 
-				} else {
+				} else if (position > (spanx2 - adjustedSpan)) {
+					SET_CATCH_UP;
 
 					catchupInc =  (((spanx2 - position) + adjustedSpan) << 9) / gateOnCount;
 
@@ -740,7 +744,7 @@ void EXTI15_10_IRQHandler(void) {
 		EOA_GATE_LOW
 		__HAL_TIM_SET_COUNTER(&htim15, 0);
 		__HAL_TIM_ENABLE(&htim15);
-
+		RESET_CATCH_UP;
 
 		sampHoldA();
 
@@ -752,7 +756,7 @@ void EXTI15_10_IRQHandler(void) {
 
 	} else {
 
-		RESET_CATCH_UP;
+
 
 		EOA_JACK_HIGH
 		EOR_JACK_LOW
@@ -760,9 +764,17 @@ void EXTI15_10_IRQHandler(void) {
 		EOR_GATE_LOW
 		__HAL_TIM_SET_COUNTER(&htim15, 0);
 		__HAL_TIM_ENABLE(&htim15);
+		RESET_CATCH_UP;
+
 
 
 		sampHoldB();
+
+		if (RGB_ON) {
+			LEDC_OFF
+			LEDD_ON
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+		}
 
 	}
 
