@@ -536,12 +536,10 @@ int main(void) {
 		if ((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET){
 			if (!(TRIGGER_BUTTON)) {
 				SET_TRIGGER_BUTTON;
-				HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
 			}
 		}
 		else if (TRIGGER_BUTTON){
 			RESET_TRIGGER_BUTTON;
-			HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
 		}
 
 
@@ -1372,7 +1370,7 @@ void changeMode(uint32_t mode) {
 	}
 	else if (mode == 3) {
 
-		controlScheme = (controlScheme + 1) % 2;
+		controlScheme = (controlScheme + 1) % 4;
 
 	}
 	if (mode == 4) {

@@ -317,19 +317,30 @@ void TIM2_IRQHandler(void) {
 		multiplier = 1 + (time1Knob >> 9) + (time1CV >> 9);
 		divider = 1 + (time2Knob >> 9)  + (time2CV >> 9);
 
-		if (controlScheme == knobCV) {
+		if (controlScheme == CV) {
+			gateOnCount = myfix16_mul(periodCount, time2CV << 4);
+			// replace with
+			divider = 1 + (time2Knob >> 9);
+		} else if (controlScheme == knob) {
+			gateOnCount = myfix16_mul(periodCount, time2Knob << 4);
+			// replace with
+			divider = 1 + (time2CV >> 9);
+		} else if (controlScheme == knobCV) {
 			gateOnCount = myfix16_mul(periodCount, (time2Knob + time2CV) << 3);
 			// replace with
-			divider = 1;
+			divider = 2;
 		}
 
 
 		pllCounter ++;
-		if (pllCounter >= divider) {
+		if (pllCounter >= divider || (TRIGGER_BUTTON)) {
+
+			RESET_TRIGGER_BUTTON;
 
 			if (pll == hardSync) {
 
 				position = 0;
+				RESET_TRIGGER_BUTTON;
 
 			} else if (pll == true) {
 				// if we are behind the phase of the clock, go faster, otherwise, go slower
@@ -342,26 +353,34 @@ void TIM2_IRQHandler(void) {
 					pllNudge = -(position << 7);
 
 				}
+
+				RESET_TRIGGER_BUTTON;
 			} else if (pll == catch) {
 
 				// catch the next falling edge right on phase
+
+				RESET_CATCH_UP;
 
 
 
 				adjustedSpan = span*divider/multiplier;
 
-				if (position <= adjustedSpan) {
+				if (position < (adjustedSpan - (adjustedSpan >> 1))) {
 					SET_CATCH_UP;
+					RESET_TRIGGER_BUTTON;
 
 					catchupInc =  ((adjustedSpan - position) << 9) / gateOnCount;
 
 
 
-				} else if (position > (spanx2 - adjustedSpan)) {
+				} else if (position >= (spanx2 - adjustedSpan)) {
 					SET_CATCH_UP;
+					RESET_TRIGGER_BUTTON;
 
 					catchupInc =  (((spanx2 - position) + adjustedSpan) << 9) / gateOnCount;
 
+				} else {
+					RESET_TRIGGER_BUTTON;
 				}
 
 			}
@@ -467,9 +486,12 @@ void TIM6_DAC_IRQHandler(void) {
 		((*(volatile uint32_t *) DAC1_ADDR) = (4095 - out));
 		((*(volatile uint32_t *) DAC2_ADDR) = (out));
 
+
+
 		// get our averages for t2 and morph cv (move to the ADC interrupt??)
 
 		getAverages();
+
 
 		//store last "Phase State" (attack or release)
 

@@ -43,9 +43,9 @@
 /* USER CODE BEGIN Includes */
 
 
-enum pllTypes {none, true, catch, hardSync};
+enum pllTypes {none, true, hardSync, catch};
 
-enum controlSchemes {gateLength, knobCV};
+enum controlSchemes {gateLength, CV, knob, knobCV};
 
 enum scaleTypes {rhythms, pitches};
 
