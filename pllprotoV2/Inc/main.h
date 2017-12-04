@@ -47,7 +47,7 @@ enum pllTypes {none, true, hardSync, catch};
 
 enum controlSchemes {gateLength, CV, knob, knobCV};
 
-enum scaleTypes {rhythms, pitches};
+enum scaleTypes {rhythm, diatonic, primes};
 
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 

@@ -303,6 +303,12 @@ void TIM2_IRQHandler(void) {
 	uint32_t multiplier;
 	uint32_t divider;
 	uint32_t adjustedSpan;
+	uint32_t rhythmCoefficients[8] = {1, 2, 3, 4, 6, 8, 12, 16};
+	uint32_t diatonicCoefficients[8] = {1, 2, 3, 4, 5, 6, 8, 10};
+	uint32_t primesCoefficients[8] = {1, 2, 3, 5, 7, 11, 13, 17};
+	uint32_t scaleIndex1;
+	uint32_t scaleIndex2;
+
 
 
 	if ((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET) {
@@ -314,8 +320,26 @@ void TIM2_IRQHandler(void) {
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
 
 
-		multiplier = 1 + (time1Knob >> 9) + (time1CV >> 9);
-		divider = 1 + (time2Knob >> 9)  + (time2CV >> 9);
+		switch (scaleType) {
+		case rhythm:
+			multiplier = rhythmCoefficients[time1Knob >> 9] * rhythmCoefficients[time1CV >> 9];
+			divider = rhythmCoefficients[time2Knob >> 9] * rhythmCoefficients[time2CV >> 9];
+			break;
+
+		case diatonic:
+			multiplier = diatonicCoefficients[time1Knob >> 9] * diatonicCoefficients[time1CV >> 9];
+			divider = diatonicCoefficients[time2Knob >> 9] * diatonicCoefficients[time2CV >> 9];
+			break;
+
+		case primes:
+			multiplier = primesCoefficients[time1Knob >> 9] * primesCoefficients[time1CV >> 9];
+			divider = primesCoefficients[time2Knob >> 9] * primesCoefficients[time2CV >> 9];
+			break;
+
+		default:
+			break;
+		}
+
 
 		if (controlScheme == CV) {
 			gateOnCount = myfix16_mul(periodCount, time2CV << 4);

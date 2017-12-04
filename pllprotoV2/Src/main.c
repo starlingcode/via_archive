@@ -1361,7 +1361,7 @@ void handleRelease(uint32_t pinMode) {
 void changeMode(uint32_t mode) {
 	if (mode == 1) {
 		// toggle through our 3 speed modes
-		scaleType = (scaleType + 1) % 2;
+		scaleType = (scaleType + 1) % 3;
 	}
 	else if (mode == 2) {
 
