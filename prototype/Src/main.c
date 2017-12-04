@@ -139,6 +139,12 @@ Family summingAdditiveClamp;
 Family ascendingAdditiveClamp;
 Family steps;
 Family moogImpossibleTri;
+Family additive_16_Circular;
+Family perlin130_1;
+Family perlin130_2;
+Family perlin130_3;
+Family perlin130_4;
+Family perlin130_5;
 
 Family familyArray[16];
 uint32_t familyIndicator;
@@ -442,19 +448,50 @@ int main(void) {
 	steps.tableLength = 64;
 	steps.familySize = 9;
 
-	familyArray[0] = perlin;
-	familyArray[1] = ascendingAdditiveClamp;
-	familyArray[2] = bounce;
-	familyArray[3] = sineFold;
-	familyArray[4] = triFold;
-	familyArray[5] = triOdd;
-	familyArray[6] = moogSquare;
-	familyArray[7] = moogInverted;
+	additive_16_Circular.attackFamily = additive_16_circular1AttackFamily;
+	additive_16_Circular.releaseFamily = additive_16_circular1ReleaseFamily;
+	additive_16_Circular.tableLength = 128;
+	additive_16_Circular.familySize = 9;
+
+	perlin130_1.attackFamily = perlin130_1_noskewAttackFamily;
+	perlin130_1.releaseFamily = perlin130_1_noskewReleaseFamily;
+	perlin130_1.tableLength = 128;
+	perlin130_1.familySize = 9;
+
+	perlin130_2.attackFamily = perlin130_2_noskewAttackFamily;
+	perlin130_2.releaseFamily = perlin130_2_noskewReleaseFamily;
+	perlin130_2.tableLength = 128;
+	perlin130_2.familySize = 9;
+
+	perlin130_3.attackFamily = perlin130_3_noskewAttackFamily;
+	perlin130_3.releaseFamily = perlin130_3_noskewReleaseFamily;
+	perlin130_3.tableLength = 128;
+	perlin130_3.familySize = 9;
+
+	perlin130_4.attackFamily = perlin130_4_noskewAttackFamily;
+	perlin130_4.releaseFamily = perlin130_4_noskewReleaseFamily;
+	perlin130_4.tableLength = 128;
+	perlin130_4.familySize = 9;
+
+	perlin130_5.attackFamily = perlin130_5_noskewAttackFamily;
+	perlin130_5.releaseFamily = perlin130_5_noskewReleaseFamily;
+	perlin130_5.tableLength = 128;
+	perlin130_5.familySize = 9;
+
+
+	familyArray[0] = additive_16_Circular;
+	familyArray[1] = summingAdditiveClamp;
+	familyArray[2] = perlin;
+	familyArray[3] = perlin130_1;
+	familyArray[4] = perlin130_3;
+	familyArray[5] = perlin130_4;
+	familyArray[6] = perlin130_5;
+	familyArray[7] = moogSquare;
 	familyArray[8] = moogImpossibleTri;
-	familyArray[9] = algerian;
-	familyArray[10] = exciteBike;
-	familyArray[11] = sawBend;
-	familyArray[12] = gauss_low;
+	familyArray[9] = triOdd;
+	familyArray[10] = sineFold;
+	familyArray[11] = bounce;
+	familyArray[12] = sawBend;
 	familyArray[13] = gauss_noconform;
 	familyArray[14] = quartSym;
 	familyArray[15] = quartAsym;
@@ -499,6 +536,8 @@ int main(void) {
 	//initialize our dac
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
+
+	HAL_TIM_Base_Start_IT(&htim6);
 
 	// initialize our touch sensors
 	tsl_user_Init();
@@ -1625,24 +1664,27 @@ void changeMode(uint32_t mode) {
 		switch (familyArray[familyIndicator].tableLength) {
 		// these are values that properly allow us to select a family and interpolation fraction for our morph
 		case 4:
-			tableSizeCompensation = 4;
+			tableSizeCompensation = 5;
 			break;
 
 		case 8:
-			tableSizeCompensation = 3;
+			tableSizeCompensation = 4;
 			break;
 
 		case 16:
-			tableSizeCompensation = 2;
+			tableSizeCompensation = 3;
 			break;
 
 		case 32:
-			tableSizeCompensation = 1;
+			tableSizeCompensation = 2;
 			break;
 
 		case 64:
-			tableSizeCompensation = 0;
+			tableSizeCompensation = 1;
 			break;
+
+		case 128:
+			tableSizeCompensation = 0;
 
 		}
 	}
