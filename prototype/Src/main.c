@@ -139,12 +139,8 @@ Family summingAdditiveClamp;
 Family ascendingAdditiveClamp;
 Family steps;
 Family moogImpossibleTri;
-Family tenor1;
-Family tenor2;
-Family tenor3form1;
-Family tenor3form2;
-Family soprano;
-Family soprano3form;
+Family imp33;
+Family impevens;
 
 Family familyArray[16];
 uint32_t familyIndicator;
@@ -447,45 +443,26 @@ int main(void) {
 	steps.tableLength = 64;
 	steps.familySize = 9;
 
-	tenor1.attackFamily = tenorAttack;
-	tenor1.releaseFamily = tenorRelease;
-	tenor1.tableLength = 64;
-	tenor1.familySize = 5;
+	imp33.attackFamily = imp;
+	imp33.releaseFamily = imp;
+	imp33.tableLength = 64;
+	imp33.familySize = 33;
 
-	tenor2.attackFamily = tenorAttack;
-	tenor2.releaseFamily = tenorAttack;
-	tenor2.tableLength = 64;
-	tenor2.familySize = 5;
-
-	tenor3form1.attackFamily = tenor3Attack;
-	tenor3form1.releaseFamily = tenorRelease;
-	tenor3form1.tableLength = 64;
-	tenor3form1.familySize = 5;
-
-	soprano.attackFamily = sopranoAR;
-	soprano.releaseFamily = sopranoAR;
-	soprano.tableLength = 32;
-	soprano.familySize = 5;
-
-	soprano3form.attackFamily = soprano3AR;
-	soprano3form.releaseFamily = soprano3AR;
-	soprano3form.tableLength = 32;
-	soprano3form.familySize = 5;
-
+	impevens.attackFamily = impshort;
+	impevens.releaseFamily = impshort;
+	impevens.tableLength = 64;
+	impevens.familySize = 17;
 
 	/*familyArray[0] = perlin;
 	familyArray[1] = ascendingAdditiveClamp;
+
+	*/
+	familyArray[0] = imp33;
+	familyArray[1] = impevens;
 	familyArray[2] = bounce;
 	familyArray[3] = sineFold;
 	familyArray[4] = triFold;
 	familyArray[5] = triOdd;
-	*/
-	familyArray[0] = tenor1;
-	familyArray[1] = tenor2;
-	familyArray[2] = tenor3form1;
-	familyArray[3] = tenor3form2;
-	familyArray[4] = soprano;
-	familyArray[5] = soprano3form;
 	familyArray[6] = moogSquare;
 	familyArray[7] = moogInverted;
 	familyArray[8] = moogImpossibleTri;
