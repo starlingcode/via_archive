@@ -299,7 +299,7 @@ void TIM2_IRQHandler(void) {
 			if (DRUM_MODE_ON) { // perform the operations needed to initiate a drum sound
 				SET_DRUM_ATTACK_ON; //set global flag indicating we are using the timer to generate "attack"
 				SET_UPDATE_PRESCALER; //logic to be used in the timer interrupt so we pass through and just load prescaler to shadow register
-				TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[time2CV] >> 11); // release time prescaler loaded to holding register
+				TIM3->PSC = (lookuptable[time2Knob] >> 12) + (lookuptable[time2CV] >> 13); // release time prescaler loaded to holding register
 				TIM3->EGR = TIM_EGR_UG; //immediately set an update event
 				TIM3->CNT = 3840; //reset the count for the down counter
 				//TIM3->CR1 |= TIM_CR1_CEN; //enable timer
@@ -324,8 +324,7 @@ void TIM2_IRQHandler(void) {
 				SET_DRUM_ATTACK_ON;
 				attackCount = TIM3->CNT;
 				__HAL_TIM_DISABLE(&htim3);
-				TIM3->CNT = 3840;
-				TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[time2CV] >> 11);
+				TIM3->PSC = (lookuptable[time2Knob] >> 12) + (lookuptable[time2CV] >> 13);
 				TIM3->EGR = TIM_EGR_UG; //immediately set an update event to load the prescaler register
 
 			}
@@ -545,11 +544,12 @@ void TIM6_DAC_IRQHandler(void) {
 
 		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
 
+		if (inc > 1048575) {inc = 1048575;}
 		if (morphAverage >= 16384) {
-			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, (morphAverage - 16384) << 2), 65535 - (inc >> 5));
+			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, (morphAverage - 16384) << 2), 65535 - (inc >> 4));
 		}
 		else {
-			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, morphAverage << 2) , 65535 - (inc >> 5));
+			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, morphAverage << 2) , 65535 - (inc >> 4));
 		}
 
 		// write that value to our RGB
@@ -778,7 +778,7 @@ void getPhase(void) {
 		else {
 
 
-			incFromADCs = myfix16_mul(myfix16_mul(myfix16_mul((3000 - time2CV) << 4, lookuptable[4095 - time1CV] >> 6), lookuptable[time1Knob] >> 4), lookuptable[time2Knob >> 4]) >> tableSizeCompensation;
+			incFromADCs = myfix16_mul(myfix16_mul(myfix16_mul((3000 - time2CV) << 5, lookuptable[4095 - time1CV] >> 5), lookuptable[time1Knob] >> 4), lookuptable[time2Knob >> 4]) >> tableSizeCompensation;
 
 
 		}
@@ -816,8 +816,8 @@ void getPhase(void) {
 
 	}
 
-	if (inc > 2097152) {inc = 2097151;}
-	else if (inc < -2097152) {inc = -2097151;}
+	if (inc > 2097151) {inc = 2097151;}
+	else if (inc < -2097151) {inc = -2097151;}
 
 	position = position + inc;
 

@@ -141,6 +141,12 @@ Family steps;
 Family moogImpossibleTri;
 Family imp33;
 Family impevens;
+Family additive_16_Circular;
+Family perlin130_1;
+Family perlin130_2;
+Family perlin130_3;
+Family perlin130_4;
+Family perlin130_5;
 
 Family familyArray[16];
 uint32_t familyIndicator;
@@ -442,6 +448,35 @@ int main(void) {
 	steps.releaseFamily = stepsReleaseFamily;
 	steps.tableLength = 64;
 	steps.familySize = 9;
+	additive_16_Circular.attackFamily = additive_16_circular1AttackFamily;
+	additive_16_Circular.releaseFamily = additive_16_circular1ReleaseFamily;
+	additive_16_Circular.tableLength = 128;
+	additive_16_Circular.familySize = 9;
+
+	perlin130_1.attackFamily = perlin130_1_noskewAttackFamily;
+	perlin130_1.releaseFamily = perlin130_1_noskewReleaseFamily;
+	perlin130_1.tableLength = 128;
+	perlin130_1.familySize = 9;
+
+	perlin130_2.attackFamily = perlin130_2_noskewAttackFamily;
+	perlin130_2.releaseFamily = perlin130_2_noskewReleaseFamily;
+	perlin130_2.tableLength = 128;
+	perlin130_2.familySize = 9;
+
+	perlin130_3.attackFamily = perlin130_3_noskewAttackFamily;
+	perlin130_3.releaseFamily = perlin130_3_noskewReleaseFamily;
+	perlin130_3.tableLength = 128;
+	perlin130_3.familySize = 9;
+
+	perlin130_4.attackFamily = perlin130_4_noskewAttackFamily;
+	perlin130_4.releaseFamily = perlin130_4_noskewReleaseFamily;
+	perlin130_4.tableLength = 128;
+	perlin130_4.familySize = 9;
+
+	perlin130_5.attackFamily = perlin130_5_noskewAttackFamily;
+	perlin130_5.releaseFamily = perlin130_5_noskewReleaseFamily;
+	perlin130_5.tableLength = 128;
+	perlin130_5.familySize = 9;
 
 	imp33.attackFamily = imp;
 	imp33.releaseFamily = imp;
@@ -459,13 +494,13 @@ int main(void) {
 	*/
 	familyArray[0] = imp33;
 	familyArray[1] = impevens;
-	familyArray[2] = bounce;
-	familyArray[3] = sineFold;
-	familyArray[4] = triFold;
-	familyArray[5] = triOdd;
-	familyArray[6] = moogSquare;
-	familyArray[7] = moogInverted;
-	familyArray[8] = moogImpossibleTri;
+	familyArray[2] = additive_16_Circular;
+	familyArray[3] = summingAdditiveClamp;
+	familyArray[4] = perlin;
+	familyArray[5] = perlin130_1;
+	familyArray[6] = perlin130_3;
+	familyArray[7] = perlin130_4;
+	familyArray[8] = perlin130_5;
 	familyArray[9] = algerian;
 	familyArray[10] = exciteBike;
 	familyArray[11] = sawBend;
@@ -1038,7 +1073,7 @@ static void MX_TIM7_Init(void) {
 	htim7.Instance = TIM7;
 	htim7.Init.Prescaler = 1;
 	htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim7.Init.Period = 5000;
+	htim7.Init.Period = 2000;
 	htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim7) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -1062,7 +1097,7 @@ static void MX_TIM8_Init(void) {
 	htim8.Instance = TIM8;
 	htim8.Init.Prescaler = 1 - 1;
 	htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim8.Init.Period = 5000;
+	htim8.Init.Period = 2000;
 	htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim8.Init.RepetitionCounter = 0;
 	htim8.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -1535,14 +1570,10 @@ void changeMode(uint32_t mode) {
 		sampleHoldMode = (sampleHoldMode + 1) % 6;
 
 		holdState |= sampleHoldMode << 6;
-		// track both inputs when we turn off the sample and hold behavior
-		if (sampleHoldMode == 0) {
-			SH_A_TRACK
-			SH_B_TRACK
-		} else if (sampleHoldMode == b) {
-			// make sure we let go of A when switching out of A sample mode
-			SH_A_TRACK
-		}
+
+		SH_A_TRACK
+		SH_B_TRACK
+
 	}
 	if (mode == 5) {
 		// switch our family pointer and load the appropriate playback constants
@@ -1580,24 +1611,27 @@ void changeMode(uint32_t mode) {
 		switch (familyArray[familyIndicator].tableLength) {
 		// these are values that properly allow us to select a family and interpolation fraction for our morph
 		case 4:
-			tableSizeCompensation = 4;
+			tableSizeCompensation = 5;
 			break;
 
 		case 8:
-			tableSizeCompensation = 3;
+			tableSizeCompensation = 4;
 			break;
 
 		case 16:
-			tableSizeCompensation = 2;
+			tableSizeCompensation = 3;
 			break;
 
 		case 32:
-			tableSizeCompensation = 1;
+			tableSizeCompensation = 2;
 			break;
 
 		case 64:
-			tableSizeCompensation = 0;
+			tableSizeCompensation = 1;
 			break;
+
+		case 128:
+			tableSizeCompensation = 0;
 
 		}
 	}
@@ -1640,24 +1674,27 @@ void changeMode(uint32_t mode) {
 		switch (familyArray[familyIndicator].tableLength) {
 		// these are values that properly allow us to select a family and interpolation fraction for our morph
 		case 4:
-			tableSizeCompensation = 4;
+			tableSizeCompensation = 5;
 			break;
 
 		case 8:
-			tableSizeCompensation = 3;
+			tableSizeCompensation = 4;
 			break;
 
 		case 16:
-			tableSizeCompensation = 2;
+			tableSizeCompensation = 3;
 			break;
 
 		case 32:
-			tableSizeCompensation = 1;
+			tableSizeCompensation = 2;
 			break;
 
 		case 64:
-			tableSizeCompensation = 0;
+			tableSizeCompensation = 1;
 			break;
+
+		case 128:
+			tableSizeCompensation = 0;
 
 		}
 	}
