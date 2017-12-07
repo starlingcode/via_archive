@@ -105,7 +105,7 @@ extern int incSign;
 
 // here we initialize the "Family" structs for all of the wavetables that we will fill upon initialization
 // fill all the family structs stored above with the arrays of arrays that we just defined
-// "load them into the UI" by declaring a position for them in our "familyArray" index
+
 
 Family moogShifted =
 	{.attackFamily = moogShiftedAttackFamily,
@@ -359,6 +359,29 @@ Family impevens =
 	.tableLength = 64,
 	.familySize = 17};
 
+Family tenor129 =
+	{.attackFamily = tenor129AttackFamily,
+	.releaseFamily = tenor129ReleaseFamily,
+	.tableLength = 128,
+	.familySize = 5};
+
+Family tenor64 =
+	{.attackFamily = tenor64AttackFamily,
+	.releaseFamily = tenor64ReleaseFamily,
+	.tableLength = 128,
+	.familySize = 5};
+
+Family tenor32 =
+	{.attackFamily = tenor32AttackFamily,
+	.releaseFamily = tenor32ReleaseFamily,
+	.tableLength = 128,
+	.familySize = 5};
+
+Family tenor16 =
+	{.attackFamily = tenor16AttackFamily,
+	.releaseFamily = tenor16ReleaseFamily,
+	.tableLength = 128,
+	.familySize = 5};
 
 Family familyArray[16];
 uint32_t familyIndicator;
@@ -457,6 +480,7 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 
+	// "load wavetables into the UI" by declaring a position for them in our "familyArray" index
 
 	familyArray[0] = imp33;
 	familyArray[1] = impevens;
@@ -467,10 +491,10 @@ int main(void) {
 	familyArray[6] = perlin130_3;
 	familyArray[7] = perlin130_4;
 	familyArray[8] = perlin130_5;
-	familyArray[9] = algerian;
-	familyArray[10] = exciteBike;
-	familyArray[11] = sawBend;
-	familyArray[12] = gauss_low;
+	familyArray[9] = tenor129;
+	familyArray[10] = tenor64;
+	familyArray[11] = tenor32;
+	familyArray[12] = tenor16;
 	familyArray[13] = gauss_noconform;
 	familyArray[14] = quartSym;
 	familyArray[15] = quartAsym;
