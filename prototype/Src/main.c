@@ -104,49 +104,261 @@ extern int incSign;
 
 
 // here we initialize the "Family" structs for all of the wavetables that we will fill upon initialization
-Family moog1;
-Family moog2;
-Family triFudge;
-Family triOdd;
-Family triFold;
-Family bounce;
-Family sineFold;
-Family perlin;
-Family sawBend;
-Family exciteBike;
-Family rand;
-Family gauss;
-Family gauss_noconform;
-Family gauss_low;
-Family gauss_low_noconform;
-Family algerian;
-Family gammaSym;
-Family gammaAsym;
-Family sharpExpoSym;
-Family sharpExpoAsym;
-Family sharpLinSym;
-Family sharpLinAsym;
-Family quartSym;
-Family quartAsym;
-Family superEllipse1Sym;
-Family superEllipse1Asym;
-Family moogShifted;
-Family moogNormalized;
-Family moogInverted;
-Family moogImpossible;
-Family moogSquare;
-Family summingAdditiveClamp;
-Family ascendingAdditiveClamp;
-Family steps;
-Family moogImpossibleTri;
-Family imp33;
-Family impevens;
-Family additive_16_Circular;
-Family perlin130_1;
-Family perlin130_2;
-Family perlin130_3;
-Family perlin130_4;
-Family perlin130_5;
+// fill all the family structs stored above with the arrays of arrays that we just defined
+// "load them into the UI" by declaring a position for them in our "familyArray" index
+
+Family moogShifted =
+	{.attackFamily = moogShiftedAttackFamily,
+	.releaseFamily = moogShiftedReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family moogNormalized =
+	{.attackFamily = moogNormalizedAttackFamily,
+	.releaseFamily = moogNormalizedReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family moogSquare =
+	{.attackFamily = moogSquareShiftAttackFamily,
+	.releaseFamily = moogSquareShiftReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family moogInverted =
+	{.attackFamily = moogInvertedAttackFamily,
+	.releaseFamily = moogInvertedReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family perlin =
+	{.attackFamily = perlinAttackFamily,
+	.releaseFamily = perlinReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family sineFold =
+	{.attackFamily = sinefoldAttackFamily,
+	.releaseFamily = sinefoldReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family bounce =
+	{.attackFamily = bounceAttackFamily,
+	.releaseFamily = bounceReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family triodd =
+	{.attackFamily = trioddAttackFamily,
+	.releaseFamily = trioddReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family triOdd =
+	{.attackFamily = trioddAttackFamily,
+	.releaseFamily = trioddReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family triFudge =
+	{.attackFamily = trifudgeAttackFamily,
+	.releaseFamily = trifudgeReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family moog1 =
+	{.attackFamily = moog1AttackFamily,
+	.releaseFamily = moog1ReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family moog2 =
+	{.attackFamily = moog2AttackFamily,
+	.releaseFamily = moog2ReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family sawBend =
+	{.attackFamily = sawBendAttackFamily,
+	.releaseFamily = sawBendReleaseFamily,
+	.tableLength = 4,
+	.familySize = 5};
+
+Family exciteBike =
+	{.attackFamily = exciteBikeAttackFamily,
+	.releaseFamily = exciteBikeReleaseFamily,
+	.tableLength = 8,
+	.familySize = 9};
+
+Family rand =
+	{.attackFamily = randAttackFamily,
+	.releaseFamily = randReleaseFamily,
+	.tableLength = 8,
+	.familySize = 33};
+
+Family gauss =
+	{.attackFamily = gaussAttackFamily,
+	.releaseFamily = gaussReleaseFamily,
+	.tableLength = 8,
+	.familySize = 33};
+
+Family gauss_noconform =
+	{.attackFamily = gauss_noconformAttackFamily,
+	.releaseFamily = gauss_noconformReleaseFamily,
+	.tableLength = 8,
+	.familySize = 33};
+
+Family gauss_low =
+	{.attackFamily = gauss_lowAttackFamily,
+	.releaseFamily = gauss_lowReleaseFamily,
+	.tableLength = 8,
+	.familySize = 33};
+
+Family gauss_low_noconform =
+	{.attackFamily = gauss_low_noconformAttackFamily,
+	.releaseFamily = gauss_low_noconformReleaseFamily,
+	.tableLength = 8,
+	.familySize = 33};
+
+Family algerian =
+	{.attackFamily = algerianAttackFamily,
+	.releaseFamily = algerianReleaseFamily,
+	.tableLength = 64,
+	.familySize = 5};
+
+Family quartSym =
+	{.attackFamily = quartSymAttackFamily,
+	.releaseFamily = quartSymReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family quartAsym =
+	{.attackFamily = quartAsymAttackFamily,
+	.releaseFamily = quartAsymReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family superEllipse1Sym =
+	{.attackFamily = superEllipse1SymAttackFamily,
+	.releaseFamily = superEllipse1SymReleaseFamily,
+	.tableLength = 64,
+	.familySize = 5};
+
+Family superEllipse1Asym =
+	{.attackFamily = superEllipse1AsymAttackFamily,
+	.releaseFamily = superEllipse1AsymReleaseFamily,
+	.tableLength = 64,
+	.familySize = 5};
+
+Family gammaSym =
+	{.attackFamily = gammaSymAttackFamily,
+	.releaseFamily = gammaSymReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family gammaAsym =
+	{.attackFamily = gammaAsymAttackFamily,
+	.releaseFamily = gammaAsymReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family sharpExpoSym =
+	{.attackFamily = sharpExpoSymAttackFamily,
+	.releaseFamily = sharpExpoSymReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family sharpExpoAsym =
+	{.attackFamily = sharpExpoAsymAttackFamily,
+	.releaseFamily = sharpExpoAsymReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family sharpLinSym =
+	{.attackFamily = sharpLinSymAttackFamily,
+	.releaseFamily = sharpLinSymReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family sharpLinAsym =
+	{.attackFamily = sharpLinAsymAttackFamily,
+	.releaseFamily = sharpLinAsymReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family ascendingAdditiveClamp =
+	{.attackFamily = ascendingAdditiveClampAttackFamily,
+	.releaseFamily = ascendingAdditiveClampReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family summingAdditiveClamp =
+	{.attackFamily = summingAdditiveClampAttackFamily,
+	.releaseFamily = summingAdditiveClampReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family moogImpossibleTri =
+	{.attackFamily = moogImpossibleTriAttackFamily,
+	.releaseFamily = moogImpossibleTriReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family steps =
+	{.attackFamily = stepsAttackFamily,
+	.releaseFamily = stepsReleaseFamily,
+	.tableLength = 64,
+	.familySize = 9};
+
+Family additive16Circular =
+	{.attackFamily = additive_16_circular1AttackFamily,
+	.releaseFamily = additive_16_circular1ReleaseFamily,
+	.tableLength = 128,
+	.familySize = 9};
+
+Family perlin130_1 =
+	{.attackFamily = perlin130_1_noskewAttackFamily,
+	.releaseFamily = perlin130_1_noskewReleaseFamily,
+	.tableLength = 128,
+	.familySize = 9};
+
+Family perlin130_2 =
+	{.attackFamily = perlin130_2_noskewAttackFamily,
+	.releaseFamily = perlin130_2_noskewReleaseFamily,
+	.tableLength = 128,
+	.familySize = 9};
+
+Family perlin130_3 =
+	{.attackFamily = perlin130_3_noskewAttackFamily,
+	.releaseFamily = perlin130_3_noskewReleaseFamily,
+	.tableLength = 128,
+	.familySize = 9};
+
+Family perlin130_4 =
+	{.attackFamily = perlin130_4_noskewAttackFamily,
+	.releaseFamily = perlin130_4_noskewReleaseFamily,
+	.tableLength = 128,
+	.familySize = 9};
+
+Family perlin130_5 =
+	{.attackFamily = perlin130_5_noskewAttackFamily,
+	.releaseFamily = perlin130_5_noskewReleaseFamily,
+	.tableLength = 128,
+	.familySize = 9};
+
+Family imp33 =
+	{.attackFamily = imp,
+	.releaseFamily = imp,
+	.tableLength = 64,
+	.familySize = 33};
+
+Family impevens =
+	{.attackFamily = impshort,
+	.releaseFamily = impshort,
+	.tableLength = 64,
+	.familySize = 17};
+
 
 Family familyArray[16];
 uint32_t familyIndicator;
@@ -245,256 +457,10 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 
-	// fill all the family structs stored above with the arrays of arrays that we just defined
-	// "load them into the UI" by declaring a position for them in our "familyArray" index
 
-	moogShifted.attackFamily = moogShiftedAttackFamily;
-	moogShifted.releaseFamily = moogShiftedReleaseFamily;
-	moogShifted.tableLength = 64;
-	moogShifted.familySize = 9;
-
-
-	moogNormalized.attackFamily = moogNormalizedAttackFamily;
-	moogNormalized.releaseFamily = moogNormalizedReleaseFamily;
-	moogNormalized.tableLength = 64;
-	moogNormalized.familySize = 9;
-
-
-	moogSquare.attackFamily = moogSquareShiftAttackFamily;
-	moogSquare.releaseFamily = moogSquareShiftReleaseFamily;
-	moogSquare.tableLength = 64;
-	moogSquare.familySize = 9;
-
-
-	moogInverted.attackFamily = moogInvertedAttackFamily;
-	moogInverted.releaseFamily = moogInvertedReleaseFamily;
-	moogInverted.tableLength = 64;
-	moogInverted.familySize = 9;
-
-
-	perlin.attackFamily = perlinAttackFamily;
-	perlin.releaseFamily = perlinReleaseFamily;
-	perlin.tableLength = 64;
-	perlin.familySize = 9;
-
-
-	sineFold.attackFamily = sinefoldAttackFamily;
-	sineFold.releaseFamily = sinefoldReleaseFamily;
-	sineFold.tableLength = 64;
-	sineFold.familySize = 9;
-
-
-	bounce.attackFamily = bounceAttackFamily;
-	bounce.releaseFamily = bounceReleaseFamily;
-	bounce.tableLength = 64;
-	bounce.familySize = 9;
-
-
-	triFold.attackFamily = trifoldAttackFamily;
-	triFold.releaseFamily = trifoldReleaseFamily;
-	triFold.tableLength = 64;
-	triFold.familySize = 9;
-
-
-	triOdd.attackFamily = trioddAttackFamily;
-	triOdd.releaseFamily = trioddReleaseFamily;
-	triOdd.tableLength = 64;
-	triOdd.familySize = 9;
-
-
-	triFudge.attackFamily = trifudgeAttackFamily;
-	triFudge.releaseFamily = trifudgeReleaseFamily;
-	triFudge.tableLength = 64;
-	triFudge.familySize = 9;
-
-
-	moog1.attackFamily = moog1AttackFamily;
-	moog1.releaseFamily = moog1ReleaseFamily;
-	moog1.tableLength = 64;
-	moog1.familySize = 9;
-
-
-	moog2.attackFamily = moog2AttackFamily;
-	moog2.releaseFamily = moog2ReleaseFamily;
-	moog2.tableLength = 64;
-	moog2.familySize = 9;
-
-
-	sawBend.attackFamily = sawBendAttackFamily;
-	sawBend.releaseFamily = sawBendReleaseFamily;
-	sawBend.tableLength = 4;
-	sawBend.familySize = 5;
-
-
-	exciteBike.attackFamily = exciteBikeAttackFamily;
-	exciteBike.releaseFamily = exciteBikeReleaseFamily;
-	exciteBike.tableLength = 8;
-	exciteBike.familySize = 9;
-
-
-	rand.attackFamily = randAttackFamily;
-	rand.releaseFamily = randReleaseFamily;
-	rand.tableLength = 8;
-	rand.familySize = 33;
-
-
-	gauss.attackFamily = gaussAttackFamily;
-	gauss.releaseFamily = gaussReleaseFamily;
-	gauss.tableLength = 8;
-	gauss.familySize = 33;
-
-
-	gauss_noconform.attackFamily = gauss_noconformAttackFamily;
-	gauss_noconform.releaseFamily = gauss_noconformReleaseFamily;
-	gauss_noconform.tableLength = 8;
-	gauss_noconform.familySize = 33;
-
-
-	gauss_low.attackFamily = gauss_lowAttackFamily;
-	gauss_low.releaseFamily = gauss_lowReleaseFamily;
-	gauss_low.tableLength = 8;
-	gauss_low.familySize = 33;
-
-
-	gauss_low_noconform.attackFamily = gauss_low_noconformAttackFamily;
-	gauss_low_noconform.releaseFamily = gauss_low_noconformReleaseFamily;
-	gauss_low_noconform.tableLength = 8;
-	gauss_low_noconform.familySize = 33;
-
-
-	algerian.attackFamily = algerianAttackFamily;
-	algerian.releaseFamily = algerianReleaseFamily;
-	algerian.tableLength = 64;
-	algerian.familySize = 5;
-
-
-	quartSym.attackFamily = quartSymAttackFamily;
-	quartSym.releaseFamily = quartSymReleaseFamily;
-	quartSym.tableLength = 64;
-	quartSym.familySize = 9;
-
-
-	quartAsym.attackFamily = quartAsymAttackFamily;
-	quartAsym.releaseFamily = quartAsymReleaseFamily;
-	quartAsym.tableLength = 64;
-	quartAsym.familySize = 9;
-
-
-	superEllipse1Sym.attackFamily = superEllipse1SymAttackFamily;
-	superEllipse1Sym.releaseFamily = superEllipse1SymReleaseFamily;
-	superEllipse1Sym.tableLength = 64;
-	superEllipse1Sym.familySize = 5;
-
-
-	superEllipse1Asym.attackFamily = superEllipse1AsymAttackFamily;
-	superEllipse1Asym.releaseFamily = superEllipse1AsymReleaseFamily;
-	superEllipse1Asym.tableLength = 64;
-	superEllipse1Asym.familySize = 5;
-
-
-	gammaSym.attackFamily = gammaSymAttackFamily;
-	gammaSym.releaseFamily = gammaSymReleaseFamily;
-	gammaSym.tableLength = 64;
-	gammaSym.familySize = 9;
-
-
-	gammaAsym.attackFamily = gammaAsymAttackFamily;
-	gammaAsym.releaseFamily = gammaAsymReleaseFamily;
-	gammaAsym.tableLength = 64;
-	gammaAsym.familySize = 9;
-
-
-	sharpExpoSym.attackFamily = sharpExpoSymAttackFamily;
-	sharpExpoSym.releaseFamily = sharpExpoSymReleaseFamily;
-	sharpExpoSym.tableLength = 64;
-	sharpExpoSym.familySize = 9;
-
-
-	sharpExpoAsym.attackFamily = sharpExpoAsymAttackFamily;
-	sharpExpoAsym.releaseFamily = sharpExpoAsymReleaseFamily;
-	sharpExpoAsym.tableLength = 64;
-	sharpExpoAsym.familySize = 9;
-
-
-	sharpLinSym.attackFamily = sharpLinSymAttackFamily;
-	sharpLinSym.releaseFamily = sharpLinSymReleaseFamily;
-	sharpLinSym.tableLength = 64;
-	sharpLinSym.familySize = 9;
-
-	sharpLinAsym.attackFamily = sharpLinAsymAttackFamily;
-	sharpLinAsym.releaseFamily = sharpLinAsymReleaseFamily;
-	sharpLinAsym.tableLength = 64;
-	sharpLinAsym.familySize = 9;
-
-
-	ascendingAdditiveClamp.attackFamily = ascendingAdditiveClampAttackFamily;
-	ascendingAdditiveClamp.releaseFamily = ascendingAdditiveClampReleaseFamily;
-	ascendingAdditiveClamp.tableLength = 64;
-	ascendingAdditiveClamp.familySize = 9;
-
-
-	summingAdditiveClamp.attackFamily = summingAdditiveClampAttackFamily;
-	summingAdditiveClamp.releaseFamily = summingAdditiveClampReleaseFamily;
-	summingAdditiveClamp.tableLength = 64;
-	summingAdditiveClamp.familySize = 9;
-
-
-	moogImpossibleTri.attackFamily = moogImpossibleTriAttackFamily;
-	moogImpossibleTri.releaseFamily = moogImpossibleTriReleaseFamily;
-	moogImpossibleTri.tableLength = 64;
-	moogImpossibleTri.familySize = 9;
-
-	steps.attackFamily = stepsAttackFamily;
-	steps.releaseFamily = stepsReleaseFamily;
-	steps.tableLength = 64;
-	steps.familySize = 9;
-	additive_16_Circular.attackFamily = additive_16_circular1AttackFamily;
-	additive_16_Circular.releaseFamily = additive_16_circular1ReleaseFamily;
-	additive_16_Circular.tableLength = 128;
-	additive_16_Circular.familySize = 9;
-
-	perlin130_1.attackFamily = perlin130_1_noskewAttackFamily;
-	perlin130_1.releaseFamily = perlin130_1_noskewReleaseFamily;
-	perlin130_1.tableLength = 128;
-	perlin130_1.familySize = 9;
-
-	perlin130_2.attackFamily = perlin130_2_noskewAttackFamily;
-	perlin130_2.releaseFamily = perlin130_2_noskewReleaseFamily;
-	perlin130_2.tableLength = 128;
-	perlin130_2.familySize = 9;
-
-	perlin130_3.attackFamily = perlin130_3_noskewAttackFamily;
-	perlin130_3.releaseFamily = perlin130_3_noskewReleaseFamily;
-	perlin130_3.tableLength = 128;
-	perlin130_3.familySize = 9;
-
-	perlin130_4.attackFamily = perlin130_4_noskewAttackFamily;
-	perlin130_4.releaseFamily = perlin130_4_noskewReleaseFamily;
-	perlin130_4.tableLength = 128;
-	perlin130_4.familySize = 9;
-
-	perlin130_5.attackFamily = perlin130_5_noskewAttackFamily;
-	perlin130_5.releaseFamily = perlin130_5_noskewReleaseFamily;
-	perlin130_5.tableLength = 128;
-	perlin130_5.familySize = 9;
-
-	imp33.attackFamily = imp;
-	imp33.releaseFamily = imp;
-	imp33.tableLength = 64;
-	imp33.familySize = 33;
-
-	impevens.attackFamily = impshort;
-	impevens.releaseFamily = impshort;
-	impevens.tableLength = 64;
-	impevens.familySize = 17;
-
-	/*familyArray[0] = perlin;
-	familyArray[1] = ascendingAdditiveClamp;
-
-	*/
 	familyArray[0] = imp33;
 	familyArray[1] = impevens;
-	familyArray[2] = additive_16_Circular;
+	familyArray[2] = additive16Circular;
 	familyArray[3] = summingAdditiveClamp;
 	familyArray[4] = perlin;
 	familyArray[5] = perlin130_1;
