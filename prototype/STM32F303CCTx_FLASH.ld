@@ -160,7 +160,7 @@ SECTIONS
     *(.ccmram)
     *(.ccmram*)
 
-	stm32f3xx_it.o
+	stm32f3xx_it.o(*)
 	    
     . = ALIGN(4);
     _eccmram = .;       /* create a global symbol at ccmram end */
