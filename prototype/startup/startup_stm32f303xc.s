@@ -92,6 +92,7 @@ LoopCopyDataInit:
 	cmp	r2, r3
 	bcc	CopyDataInit
 
+
   b LoopCopyDataInit1
 CopyDataInit1:
 	ldr r3, =_siccmram
@@ -104,6 +105,10 @@ LoopCopyDataInit1:
 		adds r2, r0, r1
 	cmp r2, r3
 	bcc CopyDataInit1
+
+
+/*	movs	r1, #0 		maybe needed??? */
+
 
 	ldr	r2, =_sbss
 	b	LoopFillZerobss

@@ -50,9 +50,6 @@ int tableSizeCompensation;
 uint32_t morphBitShiftRight;
 uint32_t morphBitShiftLeft;
 
-//import pointer to struct that contains our wavetable family info
-Family currentFamily;
-
 //this is used for our 1v/oct and bonus expo envelope
 int lookuptable[4096] = expotable10oct;
 
@@ -299,7 +296,7 @@ void TIM2_IRQHandler(void) {
 			if (DRUM_MODE_ON) { // perform the operations needed to initiate a drum sound
 				SET_DRUM_ATTACK_ON; //set global flag indicating we are using the timer to generate "attack"
 				SET_UPDATE_PRESCALER; //logic to be used in the timer interrupt so we pass through and just load prescaler to shadow register
-				TIM3->PSC = (lookuptable[time2Knob] >> 12) + (lookuptable[time2CV] >> 13); // release time prescaler loaded to holding register
+				TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[time2CV] >> 11); // release time prescaler loaded to holding register
 				TIM3->EGR = TIM_EGR_UG; //immediately set an update event
 				TIM3->CNT = 3840; //reset the count for the down counter
 				//TIM3->CR1 |= TIM_CR1_CEN; //enable timer
@@ -324,7 +321,7 @@ void TIM2_IRQHandler(void) {
 				SET_DRUM_ATTACK_ON;
 				attackCount = TIM3->CNT;
 				__HAL_TIM_DISABLE(&htim3);
-				TIM3->PSC = (lookuptable[time2Knob] >> 12) + (lookuptable[time2CV] >> 13);
+				TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[time2CV] >> 11);
 				TIM3->EGR = TIM_EGR_UG; //immediately set an update event to load the prescaler register
 
 
@@ -465,6 +462,8 @@ void TIM3_IRQHandler(void) {
 		__HAL_TIM_SET_COUNTER(&htim3, 0);
 		SET_LAST_CYCLE;
 	}
+
+	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
 
 
 	/* USER CODE END TIM3_IRQn 0 */
@@ -806,9 +805,9 @@ void getPhase(void) {
 		if (loop == noloop) {
 
 
-			incFromADCs = myfix16_mul(myfix16_mul(3000<< 5, lookuptable[4095 - time1CV] >> 5), lookuptable[time1Knob] >> 10) >> tableSizeCompensation;
+			incFromADCs = myfix16_mul(myfix16_mul(150000, lookuptable[4095 - time1CV] >> 5), lookuptable[(time1Knob >> 1) + 2047] >> 10) >> tableSizeCompensation;
 
-			if (PITCH_ON) {incFromADCs = myfix16_mul((expoScale >> 16), incFromADCs);}
+			if (PITCH_ON) {incFromADCs = myfix16_mul(expoScale + 30000, incFromADCs);}
 
 		}
 
