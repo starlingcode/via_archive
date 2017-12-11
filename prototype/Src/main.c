@@ -146,7 +146,7 @@ Family perlin130_3;
 Family perlin130_4;
 Family perlin130_5;
 
-Family familyArray[16];
+Family familyArray[3][8];
 uint32_t familyIndicator;
 extern Family currentFamily;
 
@@ -195,6 +195,8 @@ void familyRGB(void);
 void restoreDisplay(void);
 void clearLEDs(void);
 void restoreState(void);
+void loadSampleArray(Family);
+void switchFamily(void);
 //uint32_t saveState(void);
 /* USER CODE END PFP */
 
@@ -242,6 +244,9 @@ int main(void) {
 	MX_TIM15_Init();
 
 	/* USER CODE BEGIN 2 */
+
+	attackHoldArray[17][129] = (int *)malloc(sizeof(uint16_t) * 17 * 129);  // allocate memory (size of data * length of table * num of tables)
+	releaseHoldArray[17][129] = (int *)malloc(sizeof(uint16_t) * 17 * 129);
 
 	// fill all the family structs stored above with the arrays of arrays that we just defined
 	// "load them into the UI" by declaring a position for them in our "familyArray" index
@@ -479,29 +484,36 @@ int main(void) {
 	perlin130_5.familySize = 9;
 
 
-	familyArray[0] = additive_16_Circular;
-	familyArray[1] = summingAdditiveClamp;
-	familyArray[2] = perlin;
-	familyArray[3] = perlin130_1;
-	familyArray[4] = perlin130_3;
-	familyArray[5] = perlin130_4;
-	familyArray[6] = perlin130_5;
-	familyArray[7] = moogSquare;
-	familyArray[8] = moogImpossibleTri;
-	familyArray[9] = triOdd;
-	familyArray[10] = sineFold;
-	familyArray[11] = bounce;
-	familyArray[12] = sawBend;
-	familyArray[13] = gauss_noconform;
-	familyArray[14] = quartSym;
-	familyArray[15] = quartAsym;
+	familyArray[0][0] = additive_16_Circular;
+	familyArray[0][1] = summingAdditiveClamp;
+	familyArray[0][2] = sineFold;
+	familyArray[0][3] = perlin130_1;
+	familyArray[0][4] = perlin130_5;
+	familyArray[0][5] = triOdd;
+	familyArray[0][6] = moogImpossibleTri;
+	familyArray[0][7] = moogSquare;
+	familyArray[1][0] = sawBend;
+	familyArray[1][1] = bounce;
+	familyArray[1][2] = gammaSym;
+	familyArray[1][3] = gammaAsym;
+	familyArray[1][4] = superEllipse1Sym;
+	familyArray[1][5] = superEllipse1Asym;
+	familyArray[1][6] = quartSym;
+	familyArray[1][7] = quartAsym;
+	familyArray[2][0] = steps;
+	familyArray[2][1] = triOdd;
+	familyArray[2][2] = bounce;
+	familyArray[2][2] = sineFold;
+	familyArray[2][3] = sawBend;
+	familyArray[2][4] = gammaSym;
+	familyArray[2][5] = gammaAsym;
+	familyArray[2][6] = perlin130_1;
+	familyArray[2][7] = summingAdditiveClamp;
 
 	// declare the initialization state
-	span = familyArray[0].tableLength << 16;
-	spanx2 = familyArray[0].tableLength << 17;
-	currentFamily = familyArray[0];
-	morphBitShiftRight = 9;
-	morphBitShiftLeft = 7;
+	currentFamily = familyArray[0][0];
+	switchFamily();
+
 
 	SET_RGB_ON;
 	SET_AMP_ON;
@@ -1409,6 +1421,8 @@ void changeMode(uint32_t mode) {
 
 		holdState |= speed << 1;
 
+		switchFamily();
+
 		if (speed == audio && loop == noloop) {
 			//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
 			SET_DRUM_MODE_ON;
@@ -1565,127 +1579,20 @@ void changeMode(uint32_t mode) {
 
 	}
 	if (mode == 5) {
-		// switch our family pointer and load the appropriate playback constants
-		// TO DO: SHIFT INC ACCORDING TO WAVETABLE SIZE
-		familyIndicator = (familyIndicator + 1) % 16;
-		currentFamily = familyArray[familyIndicator];
-
-		holdState |= familyIndicator << 9;
-
-		span = (familyArray[familyIndicator].tableLength) << 16;
-		spanx2 = (familyArray[familyIndicator].tableLength) << 17;
-		switch (familyArray[familyIndicator].familySize) {
-		// these are values that properly allow us to select a family and interpolation fraction for our morph
-		case 5:
-			morphBitShiftRight = 10;
-			morphBitShiftLeft = 6;
-			break;
-
-		case 9:
-			morphBitShiftRight = 9;
-			morphBitShiftLeft = 7;
-			break;
-
-		case 17:
-			morphBitShiftRight = 8;
-			morphBitShiftLeft = 8;
-			break;
-
-		case 33:
-			morphBitShiftRight = 7;
-			morphBitShiftLeft = 9;
-			break;
-
-		}
-		switch (familyArray[familyIndicator].tableLength) {
-		// these are values that properly allow us to select a family and interpolation fraction for our morph
-		case 4:
-			tableSizeCompensation = 5;
-			break;
-
-		case 8:
-			tableSizeCompensation = 4;
-			break;
-
-		case 16:
-			tableSizeCompensation = 3;
-			break;
-
-		case 32:
-			tableSizeCompensation = 2;
-			break;
-
-		case 64:
-			tableSizeCompensation = 1;
-			break;
-
-		case 128:
-			tableSizeCompensation = 0;
-
-		}
+		// increment our family pointer and swap in the correct family
+		familyIndicator = (familyIndicator + 1) % 8;
+		switchFamily();
 	}
 	if (mode == 6) {
 		// wrap back to the end of the array of families if we go back from the first entry
 		// otherwise same as above
 		if (familyIndicator == 0) {
-			familyIndicator = 15;
-		} else
+			familyIndicator = 7;
+		} else {
 			familyIndicator = (familyIndicator - 1);
-
-		holdState |= familyIndicator << 9;
-
-		currentFamily = familyArray[familyIndicator];
-		span = (familyArray[familyIndicator].tableLength) << 16;
-		spanx2 = (familyArray[familyIndicator].tableLength) << 17;
-		switch (familyArray[familyIndicator].familySize) {
-
-		case 5:
-			morphBitShiftRight = 10;
-			morphBitShiftLeft = 6;
-			break;
-
-		case 9:
-			morphBitShiftRight = 9;
-			morphBitShiftLeft = 7;
-			break;
-
-		case 17:
-			morphBitShiftRight = 8;
-			morphBitShiftLeft = 8;
-			break;
-
-		case 33:
-			morphBitShiftRight = 7;
-			morphBitShiftLeft = 9;
-			break;
-
 		}
-		switch (familyArray[familyIndicator].tableLength) {
-		// these are values that properly allow us to select a family and interpolation fraction for our morph
-		case 4:
-			tableSizeCompensation = 5;
-			break;
 
-		case 8:
-			tableSizeCompensation = 4;
-			break;
-
-		case 16:
-			tableSizeCompensation = 3;
-			break;
-
-		case 32:
-			tableSizeCompensation = 2;
-			break;
-
-		case 64:
-			tableSizeCompensation = 1;
-			break;
-
-		case 128:
-			tableSizeCompensation = 0;
-
-		}
+		switchFamily();
 	}
 }
 
@@ -1727,90 +1634,58 @@ void showMode(uint32_t currentmode) {
 
 void familyRGB(void) {
 
-	switch (familyIndicator) {
+	switch (speed) {
 	case 0:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
-		break;
-	case 1:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 1000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 1000);
-		break;
-	case 2:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 2000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 3000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
-		break;
-	case 3:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 3000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 2000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 1000);
-		break;
-	case 4:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 4000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 1000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
-		break;
-	case 5:
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 4095);
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 		break;
-	case 6:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 4000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 1000);
+
+	case 1:
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 		break;
-	case 7:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 3000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 2000);
-		break;
-	case 8:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 2000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 3000);
-		break;
-	case 9:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 1000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4000);
-		break;
-	case 10:
+
+	case 2:
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4095);
-		break;
-	case 11:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 1000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4000);
-		break;
-	case 12:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 2000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 3000);
-		break;
-	case 13:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 3000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 2000);
-		break;
-	case 14:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 1000);
-		break;
-	case 15:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 4000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4000);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4000);
-		break;
-	default:
-		break;
 	}
+
+	switch (familyIndicator) {
+	case 0:
+		LEDA_ON
+		break;
+	case 1:
+		LEDC_ON
+		break;
+	case 2:
+		LEDB_ON
+		break;
+
+	case 3:
+		LEDD_ON
+		break;
+	case 4:
+		LEDA_ON
+		LEDC_ON
+		break;
+	case 5:
+		LEDB_ON
+		LEDD_ON
+		break;
+	case 6:
+		LEDA_ON;
+		LEDB_ON;
+		break;
+	case 7:
+		LEDC_ON;
+		LEDD_ON;
+		break;
+
+	}
+
 
 
 }
@@ -1844,6 +1719,84 @@ void restoreState(){
 	trigMode = (holdState & 0x38) >> 3;
 	sampleHoldMode = (holdState & 0x1C0) >> 6;
 	familyIndicator = (holdState & 0xE00) >> 9;
+}
+
+void switchFamily(void) {
+	currentFamily = familyArray[speed][familyIndicator];
+
+	holdState |= familyIndicator << 9;
+
+	currentFamily = familyArray[speed][familyIndicator];
+	loadSampleArray(currentFamily);
+
+	span = (currentFamily.tableLength) << 16;
+	spanx2 = (currentFamily.tableLength) << 17;
+	switch (currentFamily.familySize) {
+	// these are values that properly allow us to select a family and interpolation fraction for our morph
+	case 5:
+		morphBitShiftRight = 10;
+		morphBitShiftLeft = 6;
+		break;
+
+	case 9:
+		morphBitShiftRight = 9;
+		morphBitShiftLeft = 7;
+		break;
+
+	case 17:
+		morphBitShiftRight = 8;
+		morphBitShiftLeft = 8;
+		break;
+
+	case 33:
+		morphBitShiftRight = 7;
+		morphBitShiftLeft = 9;
+		break;
+
+	}
+	switch (currentFamily.tableLength) {
+	// these are values that properly allow us to select a family and interpolation fraction for our morph
+	case 4:
+		tableSizeCompensation = 5;
+		break;
+
+	case 8:
+		tableSizeCompensation = 4;
+		break;
+
+	case 16:
+		tableSizeCompensation = 3;
+		break;
+
+	case 32:
+		tableSizeCompensation = 2;
+		break;
+
+	case 64:
+		tableSizeCompensation = 1;
+		break;
+
+	case 128:
+		tableSizeCompensation = 0;
+
+	}
+}
+
+
+void loadSampleArray(Family family) {
+
+	uint16_t **currentFamilyPointer;
+
+	for (int i = 0; i < family.familySize; i++) {
+		for (int j = 0; j <= family.tableLength; j++) {
+			// this just gets the appropriate samples and plops them into the global holding arrays
+			currentFamilyPointer = family.attackFamily + i;
+			attackHoldArray[i][j] = *(*(currentFamilyPointer) + j);
+
+			currentFamilyPointer = family.releaseFamily + i;
+			releaseHoldArray[i][j] = *(*(currentFamilyPointer) + j);
+		}
+	}
 }
 
 /* USER CODE END 4 */

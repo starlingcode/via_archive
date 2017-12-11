@@ -75,19 +75,19 @@ int out;
 //counter used to increment our drum attack envelope
 int attackCount;
 
-void getSample(uint32_t);
-void getPhase(void);
-void drum(void);
-int calcTime1Env(void);
-int calcTime2Env(void);
-int calcTime1Seq(void);
-int calcTime2Seq(void);
-int myfix16_mul(int, int);
-int myfix16_lerp(int, int, uint16_t);
-void getInc(void);
-void sampHoldB(void);
-void sampHoldA(void);
-void getAverages(void);
+void getSample(uint32_t) __attribute__((section("ccmram")));
+void getPhase(void) __attribute__((section("ccmram")));
+void drum(void) __attribute__((section("ccmram")));
+int calcTime1Env(void) __attribute__((section("ccmram")));
+int calcTime2Env(void) __attribute__((section("ccmram")));
+int calcTime1Seq(void) __attribute__((section("ccmram")));
+int calcTime2Seq(void) __attribute__((section("ccmram")));
+int myfix16_mul(int, int) __attribute__((section("ccmram")));
+int myfix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
+void getInc(void) __attribute__((section("ccmram")));
+void sampHoldB(void) __attribute__((section("ccmram")));
+void sampHoldA(void) __attribute__((section("ccmram")));
+void getAverages(void) __attribute__((section("ccmram")));
 
 
 // ADC variables and defines
@@ -327,6 +327,7 @@ void TIM2_IRQHandler(void) {
 				TIM3->PSC = (lookuptable[time2Knob] >> 12) + (lookuptable[time2CV] >> 13);
 				TIM3->EGR = TIM_EGR_UG; //immediately set an update event to load the prescaler register
 
+
 			}
 
 			else {
@@ -465,7 +466,6 @@ void TIM3_IRQHandler(void) {
 		SET_LAST_CYCLE;
 	}
 
-	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
 
 	/* USER CODE END TIM3_IRQn 0 */
 	//HAL_TIM_IRQHandler(&htim3);
@@ -554,20 +554,45 @@ void TIM6_DAC_IRQHandler(void) {
 
 		// write that value to our RGB
 
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph);
-
 		//if we are in high speed and not looping, activate drum mode
 
 		if (DRUM_MODE_ON) {
 
 			//call the fuction that generates our expo decay and scales amp
 
-			drum();
+
+
+			//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
+			if (DRUM_ATTACK_ON) {
+
+				attackCount = attackCount + 10;
+
+				if (attackCount > 3840) {
+					RESET_DRUM_ATTACK_ON;
+					attackCount = 3840;
+					__HAL_TIM_ENABLE(&htim3);
+					expoScale = lookuptable[attackCount] >> 10;
+					attackCount = 0;
+					SET_DRUM_RELEASE_ON;
+				} else {
+					expoScale = lookuptable[attackCount] >> 10;
+				}
+
+			} else if (DRUM_RELEASE_ON) {
+				if (!__HAL_TIM_GET_FLAG(&htim3, TIM_FLAG_UPDATE)) {
+					expoScale = lookuptable[TIM3->CNT] >> 10;
+				}
+			}
+
+			//scale the oscillator
+			if (AMP_ON) {
+				out = myfix16_mul(out, expoScale);
+			}
 
 			//use the expo decay scaled by the manual morph control to modulate morph
 
 			if (MORPH_ON) {
-				fixMorph = myfix16_mul(expoScale, fixMorph);
+				fixMorph = myfix16_mul(fixMorph, expoScale);
 			}
 
 		}
@@ -672,7 +697,6 @@ void getSample(uint32_t phase) {
 	uint32_t Rnvalue2;
 	uint32_t interp1; // results of those two interpolations
 	uint32_t interp2;
-	uint16_t **family;
 
 	// the above is used to perform our bi-interpolation
 	// essentially, interp 1 and interp 2 are the interpolated values in the two adjacent wavetables per the playback position
@@ -697,11 +721,18 @@ void getSample(uint32_t phase) {
 		// this is a funny looking method of referencing elements in a two dimensional array
 		// we need to do it like this because our struct contains a pointer to the array being used
 		// i feel like this could be optimized if we are loading from flash
-		family = currentFamily.attackFamily + LnFamily;
-		Lnvalue1 = *(*(family) + LnSample);
-		Rnvalue1 = *(*(family) + LnSample + 1);
-		Lnvalue2 = *(*(family + 1) + LnSample);
-		Rnvalue2 = *(*(family + 1) + LnSample + 1);
+//		family = currentFamily.attackFamily + LnFamily;
+//		Lnvalue1 = *(*(family) + LnSample);
+//		Rnvalue1 = *(*(family) + LnSample + 1);
+//		Lnvalue2 = *(*(family + 1) + LnSample);
+//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
+
+		//attempt at optimizing using fixed size array on the heap
+
+		Lnvalue1 = attackHoldArray[LnFamily][LnSample];
+		Rnvalue1 = attackHoldArray[LnFamily][LnSample + 1];
+		Lnvalue2 = attackHoldArray[LnFamily + 1][LnSample];
+		Rnvalue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
 
 		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
 		interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
@@ -714,6 +745,7 @@ void getSample(uint32_t phase) {
 
 		if (RGB_ON) { //if the runtime display is on, show our mode
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph);
 		}
 	}
 
@@ -731,11 +763,19 @@ void getSample(uint32_t phase) {
 		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
 
 		//pull the values from our "release family"
-		family = currentFamily.releaseFamily + LnFamily;
-		Lnvalue1 = *(*(family) + LnSample);
-		Rnvalue1 = *(*(family) + LnSample + 1);
-		Lnvalue2 = *(*(family + 1) + LnSample);
-		Rnvalue2 = *(*(family + 1) + LnSample + 1);
+//		family = currentFamily.releaseFamily + LnFamily;
+//		Lnvalue1 = *(*(family) + LnSample);
+//		Rnvalue1 = *(*(family) + LnSample + 1);
+//		Lnvalue2 = *(*(family + 1) + LnSample);
+//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
+
+
+		//attempt at optimizing using fixed size array on the heap
+
+		Lnvalue1 = releaseHoldArray[LnFamily][LnSample];
+		Rnvalue1 = releaseHoldArray[LnFamily][LnSample + 1];
+		Lnvalue2 = releaseHoldArray[LnFamily + 1][LnSample];
+		Rnvalue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
 
 		interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
 		interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
@@ -744,6 +784,7 @@ void getSample(uint32_t phase) {
 
 		if (RGB_ON) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph);
 		}
 	}
 
@@ -765,13 +806,9 @@ void getPhase(void) {
 		if (loop == noloop) {
 
 
-			expoIndex = 4095 - (1200 + time1CV- time1Knob);
-			if (expoIndex > 4095) {expoIndex = 4095;}
-			else if (expoIndex < 0) {expoIndex = 0;}
+			incFromADCs = myfix16_mul(myfix16_mul(3000<< 5, lookuptable[4095 - time1CV] >> 5), lookuptable[time1Knob] >> 10) >> tableSizeCompensation;
 
-			if (PITCH_ON) {incFromADCs = myfix16_mul((expoScale >> 8) + 100, lookuptable[expoIndex]) >> tableSizeCompensation;}
-
-			else {incFromADCs = myfix16_mul(1000, lookuptable[expoIndex] >> 2) >> tableSizeCompensation;}
+			if (PITCH_ON) {incFromADCs = myfix16_mul((expoScale >> 16), incFromADCs);}
 
 		}
 
@@ -907,32 +944,7 @@ int calcTime2Seq(void) {
 
 void drum(void) {
 
-	//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
-	if (DRUM_ATTACK_ON) {
 
-		attackCount = attackCount + 10;
-
-		if (attackCount > 3840) {
-			RESET_DRUM_ATTACK_ON;
-			attackCount = 3840;
-			__HAL_TIM_ENABLE(&htim3);
-			expoScale = lookuptable[attackCount] >> 10;
-			attackCount = 0;
-			SET_DRUM_RELEASE_ON;
-		} else {
-			expoScale = lookuptable[attackCount] >> 10;
-		}
-
-	} else if (DRUM_RELEASE_ON) {
-		if (!__HAL_TIM_GET_FLAG(&htim3, TIM_FLAG_UPDATE)) {
-			expoScale = lookuptable[TIM3->CNT] >> 10;
-		}
-	}
-
-	//scale the oscillator
-	if (AMP_ON) {
-		out = myfix16_mul(out, expoScale);
-	}
 
 }
 
