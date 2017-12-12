@@ -271,39 +271,60 @@ Family perlin130_5 =
 	.tableLength = 128,
 	.familySize = 9};
 
-Family imp33 =
+Family impBig =
 	{.attackFamily = imp,
 	.releaseFamily = imp,
-	.tableLength = 64,
+	.tableLength = 128,
 	.familySize = 33};
 
 Family impevens =
 	{.attackFamily = impshort,
 	.releaseFamily = impshort,
-	.tableLength = 64,
+	.tableLength = 128,
 	.familySize = 17};
 
-Family tenor129 =
-	{.attackFamily = tenor129AttackFamily,
-	.releaseFamily = tenor129ReleaseFamily,
+
+Family tenor48 =
+	{.attackFamily = tenor48AttackFamily,
+	.releaseFamily = tenor48ReleaseFamily,
 	.tableLength = 128,
 	.familySize = 5};
 
-Family tenor64 =
-	{.attackFamily = tenor64AttackFamily,
-	.releaseFamily = tenor64ReleaseFamily,
-	.tableLength = 128,
-	.familySize = 5};
-
-Family tenor32 =
-	{.attackFamily = tenor32AttackFamily,
-	.releaseFamily = tenor32ReleaseFamily,
-	.tableLength = 128,
-	.familySize = 5};
 
 Family tenor16 =
 	{.attackFamily = tenor16AttackFamily,
 	.releaseFamily = tenor16ReleaseFamily,
+	.tableLength = 128,
+	.familySize = 5};
+
+Family tenor12 =
+	{.attackFamily = tenor12AttackFamily,
+	.releaseFamily = tenor12ReleaseFamily,
+	.tableLength = 128,
+	.familySize = 5};
+
+Family soprano48 =
+	{.attackFamily = soprano48AttackFamily,
+	.releaseFamily = soprano48ReleaseFamily,
+	.tableLength = 128,
+	.familySize = 5};
+
+
+Family soprano16 =
+	{.attackFamily = soprano16AttackFamily,
+	.releaseFamily = soprano16ReleaseFamily,
+	.tableLength = 128,
+	.familySize = 5};
+
+Family soprano12 =
+	{.attackFamily = soprano12AttackFamily,
+	.releaseFamily = soprano12ReleaseFamily,
+	.tableLength = 128,
+	.familySize = 5};
+
+Family artificial_1 =
+	{.attackFamily = artificial_1_48AttackFamily,
+	.releaseFamily = artificial_1_48ReleaseFamily,
 	.tableLength = 128,
 	.familySize = 5};
 
@@ -313,9 +334,9 @@ void fillFamilyArray(void) {
 
 	familyArray[audio][0] = impevens;
 	familyArray[audio][1] = ascendingAdditiveClamp;
-	familyArray[audio][2] = perlin130_1;
-	familyArray[audio][3] = tenor64;
-	familyArray[audio][4] = perlin130_5;
+	familyArray[audio][2] = tenor48;
+	familyArray[audio][3] = soprano48;
+	familyArray[audio][4] = perlin130_1;
 	familyArray[audio][5] = triOdd;
 	familyArray[audio][6] = moogImpossibleTri;
 	familyArray[audio][7] = moogSquare;
