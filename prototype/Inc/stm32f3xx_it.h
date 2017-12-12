@@ -45,14 +45,14 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-void NMI_Handler(void);
-void HardFault_Handler(void);
-void MemManage_Handler(void);
-void BusFault_Handler(void);
-void UsageFault_Handler(void);
-void SVC_Handler(void);
-void DebugMon_Handler(void);
-void PendSV_Handler(void);
+void NMI_Handler(void) __attribute__((section("ccmram")));
+void HardFault_Handler(void) __attribute__((section("ccmram")));
+void MemManage_Handler(void) __attribute__((section("ccmram")));
+void BusFault_Handler(void) __attribute__((section("ccmram")));
+void UsageFault_Handler(void) __attribute__((section("ccmram")));
+void SVC_Handler(void) __attribute__((section("ccmram")));
+void DebugMon_Handler(void) __attribute__((section("ccmram")));
+void PendSV_Handler(void) __attribute__((section("ccmram")));
 void SysTick_Handler(void) __attribute__((section("ccmram")));
 void DMA1_Channel1_IRQHandler(void) __attribute__((section("ccmram")));
 void TIM1_BRK_TIM15_IRQHandler(void) __attribute__((section("ccmram")));

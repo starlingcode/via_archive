@@ -243,6 +243,10 @@ int main(void) {
 	attackTime = calcTime1Env;
 	releaseTime = calcTime2Env;
 
+
+
+
+
 	//HAL_FLASH_Unlock();
 
 	//ee_status = EE_Init();

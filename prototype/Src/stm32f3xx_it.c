@@ -227,8 +227,8 @@ void DMA1_Channel1_IRQHandler(void) {
  */
 void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
-	EOA_JACK_LOW;
-	EOR_JACK_LOW;
+//	EOA_JACK_LOW;
+//	EOR_JACK_LOW;
 	__HAL_TIM_DISABLE(&htim15);
 	__HAL_TIM_CLEAR_FLAG(&htim15, TIM_FLAG_UPDATE);
 	/* USER CODE END TIM1_BRK_TIM15_IRQn 0 */
@@ -413,6 +413,7 @@ void TIM3_IRQHandler(void) {
 	else { // raise the flag to put the drum mode to rest after overflowing the release portion
 		RESET_DRUM_RELEASE_ON;
 		expoScale = 0;
+		out = 0;
 		__HAL_TIM_DISABLE(&htim3);
 		__HAL_TIM_SET_COUNTER(&htim3, 0);
 		SET_LAST_CYCLE;
@@ -533,8 +534,8 @@ void EXTI15_10_IRQHandler(void) {
 			}
 		}
 
-		EOR_JACK_HIGH
-		EOA_JACK_LOW
+//		EOR_JACK_HIGH
+//		EOA_JACK_LOW
 		EOR_GATE_HIGH
 		EOA_GATE_LOW
 		__HAL_TIM_SET_COUNTER(&htim15, 0);
@@ -554,8 +555,8 @@ void EXTI15_10_IRQHandler(void) {
 
 	} else {
 
-		EOA_JACK_HIGH
-		EOR_JACK_LOW
+//		EOA_JACK_HIGH
+//		EOR_JACK_LOW
 		EOA_GATE_HIGH
 		EOR_GATE_LOW
 		__HAL_TIM_SET_COUNTER(&htim15, 0);

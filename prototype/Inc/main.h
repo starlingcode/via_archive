@@ -63,9 +63,9 @@ int familyIndicator;
 
 
 
-void readDetect(void);
-void readRelease(uint32_t);
-void restoreDisplay(void);
+void readDetect(void) __attribute__((section("ccmram")));
+void readRelease(uint32_t) __attribute__((section("ccmram")));
+void restoreDisplay(void) __attribute__((section("ccmram")));
 void switchFamily(void);
 void fillFamilyArray(void);
 void restoreState(void);

@@ -22,7 +22,7 @@ uint32_t ADCReadings3[2];
 uint32_t time2Average;
 uint32_t morphAverage;
 
-uint32_t out;
+
 
 int lookuptable[4095] = expotable10oct;
 
@@ -44,6 +44,8 @@ void getAverages(void) __attribute__((section("ccmram")));
 
 void dacISR(void) {
 
+
+
 	uint32_t storePhase;
 
 	if (OSCILLATOR_ACTIVE) {
@@ -60,11 +62,13 @@ void dacISR(void) {
 		storePhase = PHASE_STATE;
 
 
+
 		//call the function to advance the phase of the oscillator using that increment
 
 		getPhase();
 
 		//store last "Phase State" (attack or release)
+
 
 
 
@@ -79,8 +83,10 @@ void dacISR(void) {
 			getSample(1);
 		}
 
-		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
 
+
+		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
+		EOA_JACK_HIGH;
 		if (inc > 1048575) {inc = 1048575;}
 		if (morphAverage >= 16384) {
 			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, (morphAverage - 16384) << 2), 65535 - (inc >> 4));
@@ -88,6 +94,7 @@ void dacISR(void) {
 		else {
 			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, morphAverage << 2) , 65535 - (inc >> 4));
 		}
+
 
 		// write that value to our RGB
 
@@ -102,7 +109,7 @@ void dacISR(void) {
 			//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
 			if (DRUM_ATTACK_ON) {
 
-				attackCount = attackCount + 10;
+				attackCount = attackCount + (inc >> 11) ;
 
 				if (attackCount > 3840) {
 					RESET_DRUM_ATTACK_ON;
@@ -116,9 +123,11 @@ void dacISR(void) {
 				}
 
 			} else if (DRUM_RELEASE_ON) {
-				if (!__HAL_TIM_GET_FLAG(&htim3, TIM_FLAG_UPDATE)) {
-					expoScale = lookuptable[TIM3->CNT] >> 10;
-				}
+//				if (TIM3->EGR != TIM_EGR_UG) {
+//
+//				}
+				expoScale = lookuptable[TIM3->CNT] >> 10;
+
 			}
 
 			//scale the oscillator
@@ -133,6 +142,7 @@ void dacISR(void) {
 			}
 
 		}
+		EOA_JACK_LOW;
 
 		// if we transition from one phase state to another, enable the transition handler interrupt
 
@@ -159,6 +169,8 @@ void dacISR(void) {
 		}
 
 	}
+
+
 }
 
 
@@ -170,7 +182,6 @@ void dacISR(void) {
 void getPhase(void) {
 
 	//calculate our increment value in high speed mode
-	static int expoIndex;
 	static int incFromADCs;
 
 	if (speed == audio) {

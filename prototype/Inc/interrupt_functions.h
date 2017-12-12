@@ -13,7 +13,7 @@ void sampHoldB(void) __attribute__((section("ccmram")));
 void sampHoldA(void) __attribute__((section("ccmram")));
 
 
-void dacISR(void) __attribute__((section("ccmram")));
+void dacISR(void)  __attribute__((section("ccmram")));
 
 int (*attackTime) (void);
 int (*releaseTime) (void);
@@ -29,11 +29,13 @@ int time2;
 //most recent value from our expo decay
 int expoScale;
 
-volatile int position;
-volatile int inc;
-volatile int incSign;
+int position;
+int inc;
+int incSign;
 
-uint32_t attackCount;
+volatile int attackCount;
+
+uint32_t out;
 
 
 
