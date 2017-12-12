@@ -42,6 +42,13 @@
 
 /* USER CODE BEGIN Includes */
 
+#define time2Knob ADCReadings2[0]
+#define morphKnob ADCReadings2[1]
+#define time1CV ADCReadings1[0]
+#define time2CV ADCReadings1[1]
+#define morphCV ADCReadings1[2]
+#define time1Knob ADCReadings3[0]
+
 
 enum speedTypes {audio, env, seq};
 
@@ -51,13 +58,19 @@ enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum};
 
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 
-int (*attackTime) (void);
-int (*releaseTime) (void);
+int familyIndicator;
 
-int calcTime1Env(void);
-int calcTime2Env(void);
-int calcTime1Seq(void);
-int calcTime2Seq(void);
+
+
+
+void readDetect(void);
+void readRelease(uint32_t);
+void restoreDisplay(void);
+void switchFamily(void);
+void fillFamilyArray(void);
+void restoreState(void);
+
+
 
 
 
@@ -72,6 +85,7 @@ typedef struct buffer{
 void write(buffer*,int);
 int readn(buffer*, int);
 
+int holdState;
 
 
 /* USER CODE END Includes */
