@@ -86,7 +86,7 @@ void dacISR(void) {
 
 
 		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
-		EOA_JACK_HIGH;
+
 		if (inc > 1048575) {inc = 1048575;}
 		if (morphAverage >= 16384) {
 			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, (morphAverage - 16384) << 2), 65535 - (inc >> 4));
@@ -142,7 +142,7 @@ void dacISR(void) {
 			}
 
 		}
-		EOA_JACK_LOW;
+
 
 		// if we transition from one phase state to another, enable the transition handler interrupt
 
@@ -255,6 +255,7 @@ void getPhase(void) {
 			incSign = 1;
 			//pendulumDirection = 0;
 			position = 0;
+			//out = 0;
 			SET_PHASE_STATE;
 			SH_A_TRACK
 			SH_B_TRACK
@@ -279,6 +280,7 @@ void getPhase(void) {
 			incSign = 1;
 			//pendulumDirection = 0;
 			position = 0;
+			//out = 0;
 			RESET_PHASE_STATE;
 			SH_A_TRACK
 			SH_B_TRACK
