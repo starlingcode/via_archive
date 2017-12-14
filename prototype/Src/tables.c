@@ -217,11 +217,13 @@ Family ascendingAdditiveClamp =
 	.tableLength = 64,
 	.familySize = 9};
 
+/*
 Family summingAdditiveClamp =
 	{.attackFamily = summingAdditiveClampAttackFamily,
 	.releaseFamily = summingAdditiveClampReleaseFamily,
 	.tableLength = 64,
 	.familySize = 9};
+*/
 
 Family moogImpossibleTri =
 	{.attackFamily = moogImpossibleTriAttackFamily,
@@ -235,11 +237,7 @@ Family steps =
 	.tableLength = 64,
 	.familySize = 9};
 
-Family additive16Circular =
-	{.attackFamily = additive_16_circular1AttackFamily,
-	.releaseFamily = additive_16_circular1ReleaseFamily,
-	.tableLength = 128,
-	.familySize = 9};
+/*
 
 Family perlin130_1 =
 	{.attackFamily = perlin130_1_noskewAttackFamily,
@@ -270,6 +268,7 @@ Family perlin130_5 =
 	.releaseFamily = perlin130_5_noskewReleaseFamily,
 	.tableLength = 128,
 	.familySize = 9};
+*/
 
 Family impBig =
 	{.attackFamily = imp,
@@ -290,6 +289,7 @@ Family tenor48 =
 	.tableLength = 128,
 	.familySize = 5};
 
+/*
 
 Family tenor16 =
 	{.attackFamily = tenor16AttackFamily,
@@ -302,12 +302,14 @@ Family tenor12 =
 	.releaseFamily = tenor12ReleaseFamily,
 	.tableLength = 128,
 	.familySize = 5};
+*/
 
 Family soprano48 =
 	{.attackFamily = soprano48AttackFamily,
 	.releaseFamily = soprano48ReleaseFamily,
 	.tableLength = 128,
 	.familySize = 5};
+/*
 
 Family soprano16 =
 	{.attackFamily = soprano16AttackFamily,
@@ -320,6 +322,7 @@ Family soprano12 =
 	.releaseFamily = soprano12ReleaseFamily,
 	.tableLength = 128,
 	.familySize = 5};
+*/
 
 Family artificial_1 =
 	{.attackFamily = artificial_1_48AttackFamily,
@@ -339,6 +342,7 @@ Family filterbank_48 =
 	.tableLength = 128,
 	.familySize = 9};
 
+/*
 Family filterbankTight_24 =
 	{.attackFamily = fbankTight_24,
 	.releaseFamily = fbankTight_24,
@@ -350,6 +354,7 @@ Family filterbankTight_48 =
 	.releaseFamily = fbankTight_48,
 	.tableLength = 128,
 	.familySize = 9};
+*/
 
 Family skipSaw =
 	{.attackFamily = skipsaw,
@@ -375,8 +380,8 @@ void fillFamilyArray(void) {
 
 	familyArray[audio][0] = filterbank_24;
 	familyArray[audio][1] = filterbank_48;
-	familyArray[audio][2] = filterbankTight_24;
-	familyArray[audio][3] = filterbankTight_48;
+	familyArray[audio][2] = impevens;
+	familyArray[audio][3] = impBig;
 	familyArray[audio][4] = skipSaw;
 	familyArray[audio][5] = hopSaw;
 	familyArray[audio][6] = assortedEnvs;
@@ -397,8 +402,8 @@ void fillFamilyArray(void) {
 	familyArray[seq][3] = sawBend;
 	familyArray[seq][4] = gammaSym;
 	familyArray[seq][5] = gammaAsym;
-	familyArray[seq][6] = perlin130_5;
-	familyArray[seq][7] = summingAdditiveClamp;
+	familyArray[seq][6] = algerian;
+	familyArray[seq][7] = exciteBike;
 
 	currentFamily = familyArray[0][0];
 	switchFamily();
