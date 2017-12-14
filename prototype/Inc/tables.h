@@ -2304,6 +2304,16 @@ static const uint16_t fbank_tight9_24[129] = {11061, 10266, 12562, 17151, 21948,
 static const uint16_t fbank_tight9_48[129] = {0, 5038, 17043, 28611, 32767, 27280, 15855, 5563, 2347, 7533, 17436, 26018, 28646, 24568, 16804, 9915, 7308, 9667, 15129, 20695, 23822, 23417, 19993, 15235, 11280, 9913, 11831, 16221, 20972, 23610, 22614, 18386, 13179, 9902, 10423, 14426, 19579, 22928, 22664, 19141, 14544, 11496, 11511, 14252, 17943, 20537, 20868, 19118, 16473, 14330, 13578, 14301, 15939, 17676, 18813, 18989, 18234, 16905, 15545, 14690, 14677, 15513, 16863, 18178, 18901, 18692, 17571, 15957, 14538, 14016, 14767, 16581, 18655, 19915, 19584, 17670, 15079, 13188, 13086, 14923, 17769, 20115, 20712, 19252, 16499, 13844, 12570, 13257, 15586, 18528, 20783, 21266, 19555, 16181, 12599, 10684, 11802, 15870, 21030, 24387, 23626, 18611, 11861, 7339, 8084, 14130, 22166, 27361, 26353, 19484, 10755, 5428, 6750, 13919, 22606, 27671, 26296, 19564, 11586, 6883, 7777, 13318, 20185, 24757, 24993, 21189, 15464, 10562, 8652};
 
 
+static const uint16_t *fbank_24[9] = {fbank1_24, fbank2_24, fbank3_24, fbank4_24, fbank5_24, fbank6_24, fbank7_24, fbank8_24, fbank9_24};
+static const uint16_t *fbank_48[9] = {fbank1_48, fbank2_48, fbank3_48, fbank4_48, fbank5_48, fbank6_48, fbank7_48, fbank8_48, fbank9_48};
+
+static const uint16_t *fbankTight_24[9] = {fbank_tight1_24, fbank_tight2_24, fbank_tight3_24, fbank_tight4_24, fbank_tight5_24, fbank_tight6_24, fbank_tight7_24, fbank_tight8_24, fbank_tight9_24};
+static const uint16_t *fbankTight_48[9] = {fbank_tight1_48, fbank_tight2_48, fbank_tight3_48, fbank_tight4_48, fbank_tight5_48, fbank_tight6_48, fbank_tight7_48, fbank_tight8_48, fbank_tight9_48};
+
+static const uint16_t *skipsaw[5] = {linear, skipsaw2, skipsaw3, skipsaw4, skipsaw5};
+static const uint16_t *hopsaw[5] = {linear, hopsaw2, hopsaw3, hopsaw4, hopsaw5};
+
+static const uint16_t *assorted[5] = {sharkfin, bushy, nested_threes, anduh, flipsaw2}; 
 
 static const uint16_t *tenor12AttackFamily[5] = {tenora12Atk,tenore12Atk,tenori12Atk,tenoro12Atk,tenoru12Atk};
 static const uint16_t *tenor12ReleaseFamily[5] = {tenora12Rls,tenore12Rls,tenori12Rls,tenoro12Rls,tenoru12Rls};
@@ -2332,7 +2342,7 @@ static const uint16_t *sinefoldAttackFamily[9] = { sine, sinefold_ctr_1,
 static const uint16_t *sinefoldReleaseFamily[9] = { sine, sinefold_ctr_1,
 		sinefold_ctr_2, sinefold_ctr_3, sinefold_ctr_4, sinefold_ctr_5,
 		sinefold_ctr_6, sinefold_ctr_7, sinefold_ctr_8 };
-	static const uint16_t *perlinAttackFamily[9] = {sine, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
+static const uint16_t *perlinAttackFamily[9] = {sine, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
 static const uint16_t *perlinReleaseFamily[9] = {sine, perlin6_2, perlin6_3, perlin6_4, perlin6_5, perlin6_6, perlin6_7, perlin6_8, perlin6_8};
 
 static const uint16_t *bounceAttackFamily[9] = { bounce1, bounce2, bounce3,
@@ -2664,6 +2674,3 @@ static const uint16_t *perlin130_5_noskewAttackFamily[9] = {
 static const uint16_t *perlin130_5_noskewReleaseFamily[9] = {
 		perlin130_5_noskew1, perlin130_5_noskew2, perlin130_5_noskew3, perlin130_5_noskew4, perlin130_5_noskew5, perlin130_5_noskew6, perlin130_5_noskew7, perlin130_5_noskew8, perlin130_5_noskew9
 };
-
-//this is used for our 1v/oct and bonus expo envelope
-

@@ -309,7 +309,6 @@ Family soprano48 =
 	.tableLength = 128,
 	.familySize = 5};
 
-
 Family soprano16 =
 	{.attackFamily = soprano16AttackFamily,
 	.releaseFamily = soprano16ReleaseFamily,
@@ -328,31 +327,73 @@ Family artificial_1 =
 	.tableLength = 128,
 	.familySize = 5};
 
+Family filterbank_24 =
+	{.attackFamily = fbank_24,
+	.releaseFamily = fbank_24,
+	.tableLength = 128,
+	.familySize = 9};
+
+Family filterbank_48 =
+	{.attackFamily = fbank_48,
+	.releaseFamily = fbank_48,
+	.tableLength = 128,
+	.familySize = 9};
+
+Family filterbankTight_24 =
+	{.attackFamily = fbankTight_24,
+	.releaseFamily = fbankTight_24,
+	.tableLength = 128,
+	.familySize = 9};
+
+Family filterbankTight_48 =
+	{.attackFamily = fbankTight_48,
+	.releaseFamily = fbankTight_48,
+	.tableLength = 128,
+	.familySize = 9};
+
+Family skipSaw =
+	{.attackFamily = skipsaw,
+	.releaseFamily = skipsaw,
+	.tableLength = 64,
+	.familySize = 5};
+
+Family hopSaw =
+	{.attackFamily = hopsaw,
+	.releaseFamily = hopsaw,
+	.tableLength = 64,
+	.familySize = 5};
+
+Family assortedEnvs =
+	{.attackFamily = assorted,
+	.releaseFamily = assorted,
+	.tableLength = 64,
+	.familySize = 5};
+
 // specify the family in our family bank per speed
 
 void fillFamilyArray(void) {
 
-	familyArray[audio][0] = impevens;
-	familyArray[audio][1] = ascendingAdditiveClamp;
-	familyArray[audio][2] = tenor48;
-	familyArray[audio][3] = soprano48;
-	familyArray[audio][4] = perlin130_1;
-	familyArray[audio][5] = triOdd;
-	familyArray[audio][6] = moogImpossibleTri;
-	familyArray[audio][7] = moogSquare;
+	familyArray[audio][0] = filterbank_24;
+	familyArray[audio][1] = filterbank_48;
+	familyArray[audio][2] = filterbankTight_24;
+	familyArray[audio][3] = filterbankTight_48;
+	familyArray[audio][4] = skipSaw;
+	familyArray[audio][5] = hopSaw;
+	familyArray[audio][6] = assortedEnvs;
+	familyArray[audio][7] = tenor48;
 
-	familyArray[env][0] = sawBend;
-	familyArray[env][1] = bounce;
-	familyArray[env][2] = quartSym;
+	familyArray[env][0] = skipSaw;
+	familyArray[env][1] = hopSaw;
+	familyArray[env][2] = assortedEnvs;
 	familyArray[env][3] = quartAsym;
 	familyArray[env][4] = superEllipse1Sym;
 	familyArray[env][5] = superEllipse1Asym;
 	familyArray[env][6] = impevens;
 	familyArray[env][7] = exciteBike;
 
-	familyArray[seq][0] = steps;
-	familyArray[seq][1] = triOdd;
-	familyArray[seq][2] = bounce;
+	familyArray[seq][0] = skipSaw;
+	familyArray[seq][1] = hopSaw;
+	familyArray[seq][2] = assortedEnvs;
 	familyArray[seq][3] = sawBend;
 	familyArray[seq][4] = gammaSym;
 	familyArray[seq][5] = gammaAsym;
