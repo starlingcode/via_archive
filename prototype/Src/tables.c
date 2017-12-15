@@ -428,7 +428,7 @@ Family threeSineFoldsLinAtk =
 void fillFamilyArray(void) {
 
 	familyArray[audio][0] = tenor48;
-	familyArray[audio][1] = filterbank_48;
+	familyArray[audio][1] = artificial_1;
 	familyArray[audio][2] = impevens;
 	familyArray[audio][3] = ascendingAdditiveClamp;
 	familyArray[audio][4] = skipSaw;

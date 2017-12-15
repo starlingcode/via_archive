@@ -88,11 +88,11 @@ void dacISR(void) {
 		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
 
 		if (inc > 1048575) {inc = 1048575;}
-		if (morphCV >= 2048) {
-			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, (morphCV - 2048) << 5), 65535 - (inc >> 4));
+		if ((4095 - morphCV) >= 2048) {
+			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, ((4095 - morphCV) - 2048) << 5), 65535 - (inc >> 4));
 		}
 		else {
-			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, morphCV << 5) , 65535 - (inc >> 4));
+			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, (4095 - morphCV) << 5) , 65535 - (inc >> 4));
 		}
 
 
