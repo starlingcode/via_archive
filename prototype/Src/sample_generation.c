@@ -57,7 +57,7 @@ void dacISR(void) {
 
 		// get our averages for t2 and morph cv (move to the ADC interrupt??)
 
-		getAverages();
+		//getAverages();
 
 		storePhase = PHASE_STATE;
 
@@ -88,11 +88,11 @@ void dacISR(void) {
 		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
 
 		if (inc > 1048575) {inc = 1048575;}
-		if (morphAverage >= 16384) {
-			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, (morphAverage - 16384) << 2), 65535 - (inc >> 4));
+		if (morphCV >= 2048) {
+			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, (morphCV - 2048) << 5), 65535 - (inc >> 4));
 		}
 		else {
-			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, morphAverage << 2) , 65535 - (inc >> 4));
+			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, morphCV << 5) , 65535 - (inc >> 4));
 		}
 
 
@@ -299,28 +299,28 @@ void getPhase(void) {
 
 int calcTime1Env(void) {
 
-	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> 6;
+	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> (5 + tableSizeCompensation);
 	return time1;
 
 }
 
 int calcTime2Env(void) {
 
-	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> 6;
+	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> (7 + tableSizeCompensation);
 	return time2;
 
 }
 
 int calcTime1Seq(void) {
 
-	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> 10;
+	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> (9 + tableSizeCompensation);
 	return time1;
 
 }
 
 int calcTime2Seq(void) {
 
-	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> 10;
+	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> (9 + tableSizeCompensation);
 	return time2;
 
 }

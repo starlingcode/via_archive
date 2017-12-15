@@ -109,8 +109,20 @@ Family sawBend =
 	.tableLength = 4,
 	.familySize = 5};
 
+Family sawBendLinAtk =
+	{.attackFamily = allLinear5_5,
+	.releaseFamily = sawBendReleaseFamily,
+	.tableLength = 4,
+	.familySize = 5};
+
 Family exciteBike =
 	{.attackFamily = exciteBikeAttackFamily,
+	.releaseFamily = exciteBikeReleaseFamily,
+	.tableLength = 8,
+	.familySize = 9};
+
+Family exciteBikeLinAtk =
+	{.attackFamily = allLinear9_9,
 	.releaseFamily = exciteBikeReleaseFamily,
 	.tableLength = 8,
 	.familySize = 9};
@@ -342,19 +354,19 @@ Family filterbank_48 =
 	.tableLength = 128,
 	.familySize = 9};
 
-/*
-Family filterbankTight_24 =
-	{.attackFamily = fbankTight_24,
-	.releaseFamily = fbankTight_24,
-	.tableLength = 128,
-	.familySize = 9};
 
-Family filterbankTight_48 =
-	{.attackFamily = fbankTight_48,
-	.releaseFamily = fbankTight_48,
-	.tableLength = 128,
-	.familySize = 9};
-*/
+//Family filterbankTight_24 =
+//	{.attackFamily = fbankTight_24,
+//	.releaseFamily = fbankTight_24,
+//	.tableLength = 128,
+//	.familySize = 9};
+//
+//Family filterbankTight_48 =
+//	{.attackFamily = fbankTight_48,
+//	.releaseFamily = fbankTight_48,
+//	.tableLength = 128,
+//	.familySize = 9};
+
 
 Family skipSaw =
 	{.attackFamily = skipsaw,
@@ -374,34 +386,71 @@ Family assortedEnvs =
 	.tableLength = 64,
 	.familySize = 5};
 
+Family lump3rdDegLinAtk =
+	{.attackFamily = allLinear129_5,
+	.releaseFamily = lump3rdDeg,
+	.tableLength = 128,
+	.familySize = 5};
+
+Family lump2ndDegLinAtk =
+	{.attackFamily = allLinear129_5,
+	.releaseFamily = lump2ndDeg,
+	.tableLength = 128,
+	.familySize = 5};
+Family doubleLump3rdDegLinAtk =
+	{.attackFamily = allLinear129_5,
+	.releaseFamily = lump3rdDeg,
+	.tableLength = 128,
+	.familySize = 5};
+
+Family doubleLump2ndDegLinAtk =
+	{.attackFamily = allLinear129_5,
+	.releaseFamily = lump2ndDeg,
+	.tableLength = 128,
+	.familySize = 5};
+
+Family threeBounceLinAtk =
+	{.attackFamily = allLinear65_3,
+	.releaseFamily = threeBounce,
+	.tableLength = 64,
+	.familySize = 3};
+
+Family threeSineFoldsLinAtk =
+	{.attackFamily = allLinear65_3,
+	.releaseFamily = threeSineFolds,
+	.tableLength = 64,
+	.familySize = 3};
+
+
+
 // specify the family in our family bank per speed
 
 void fillFamilyArray(void) {
 
-	familyArray[audio][0] = filterbank_24;
+	familyArray[audio][0] = tenor48;
 	familyArray[audio][1] = filterbank_48;
 	familyArray[audio][2] = impevens;
-	familyArray[audio][3] = impBig;
+	familyArray[audio][3] = ascendingAdditiveClamp;
 	familyArray[audio][4] = skipSaw;
-	familyArray[audio][5] = hopSaw;
-	familyArray[audio][6] = assortedEnvs;
-	familyArray[audio][7] = tenor48;
+	familyArray[audio][5] = triOdd;
+	familyArray[audio][6] = moogImpossibleTri;
+	familyArray[audio][7] = moogSquare;
 
-	familyArray[env][0] = skipSaw;
-	familyArray[env][1] = hopSaw;
-	familyArray[env][2] = assortedEnvs;
-	familyArray[env][3] = quartAsym;
-	familyArray[env][4] = superEllipse1Sym;
-	familyArray[env][5] = superEllipse1Asym;
-	familyArray[env][6] = impevens;
-	familyArray[env][7] = exciteBike;
+	familyArray[env][0] = superEllipse1Sym;
+	familyArray[env][1] = superEllipse1Asym;
+	familyArray[env][2] = doubleLump2ndDegLinAtk;
+	familyArray[env][3] = lump2ndDegLinAtk;
+	familyArray[env][4] = steps;
+	familyArray[env][5] = sawBendLinAtk;
+	familyArray[env][6] = threeSineFoldsLinAtk;
+	familyArray[env][7] = threeBounceLinAtk;
 
 	familyArray[seq][0] = skipSaw;
-	familyArray[seq][1] = hopSaw;
-	familyArray[seq][2] = assortedEnvs;
+	familyArray[seq][1] = exciteBike;
+	familyArray[seq][2] = bounce;
 	familyArray[seq][3] = sawBend;
-	familyArray[seq][4] = gammaSym;
-	familyArray[seq][5] = gammaAsym;
+	familyArray[seq][4] = triOdd;
+	familyArray[seq][5] = moogSquare;
 	familyArray[seq][6] = algerian;
 	familyArray[seq][7] = exciteBike;
 
@@ -424,6 +473,11 @@ void switchFamily(void) {
 	spanx2 = (currentFamily.tableLength) << 17;
 	switch (currentFamily.familySize) {
 	// these are values that properly allow us to select a family and interpolation fraction for our morph
+	case 3:
+		morphBitShiftRight = 11;
+		morphBitShiftLeft = 5;
+		break;
+
 	case 5:
 		morphBitShiftRight = 10;
 		morphBitShiftLeft = 6;
