@@ -411,9 +411,10 @@ void TIM3_IRQHandler(void) {
 	}
 
 	else { // raise the flag to put the drum mode to rest after overflowing the release portion
+
+		if (trigMode < 3) {
 		RESET_DRUM_RELEASE_ON;
 		expoScale = 0;
-		if (trigMode < 3) {
 		out = 0;
 		}
 		__HAL_TIM_DISABLE(&htim3);
