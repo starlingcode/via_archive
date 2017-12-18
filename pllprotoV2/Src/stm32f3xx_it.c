@@ -437,8 +437,8 @@ void TIM2_IRQHandler(void) {
 		attackInc = ((span << 8) + pllNudge) / (gateOnCount * divider);
 		releaseInc = ((span << 8) + pllNudge) / ((periodCount - gateOnCount) * divider);
 
-		attackInc = (attackInc << 1) * multiplier >> tableSizeCompensation;
-		releaseInc = (releaseInc << 1) * multiplier >> tableSizeCompensation;
+		attackInc = (attackInc << 1) * multiplier;
+		releaseInc = (releaseInc << 1) * multiplier;
 
 		if (attackInc > 1048575) {attackInc = 1048575;}
 		if (releaseInc > 1048575) {releaseInc = 1048575;}
@@ -569,7 +569,7 @@ void TIM6_DAC_IRQHandler(void) {
 
 		// write that value to our RGB
 
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph);
+		if (RGB_ON) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph);}
 
 		// if we transition from one phase state to another, enable the transition handler interrupt
 
