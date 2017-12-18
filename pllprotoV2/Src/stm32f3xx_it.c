@@ -77,18 +77,11 @@ int expoScale;
 //lastest result of the biinterpolation between interp1 and interp2 (scaled in drum mode)
 int out;
 
-//counter used to increment our drum attack envelope
-int attackCount;
 
 void getSample(uint32_t);
 void getPhase(void);
-int calcTime1Env(void);
-int calcTime2Env(void);
-int calcTime1Seq(void);
-int calcTime2Seq(void);
 int myfix16_mul(int, int);
 int myfix16_lerp(int, int, uint16_t);
-void getInc(void);
 void sampHoldB(void);
 void sampHoldA(void);
 void getAverages(void);
@@ -316,6 +309,8 @@ void TIM2_IRQHandler(void) {
 		//get the timer value that which was reset on last rising edge
 		periodCount = __HAL_TIM_GET_COUNTER(&htim2);
 
+
+
 		//reset the timer value
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
 
@@ -344,15 +339,39 @@ void TIM2_IRQHandler(void) {
 		if (controlScheme == CV) {
 			gateOnCount = myfix16_mul(periodCount, time2CV << 4);
 			// replace with
-			divider = 1 + (time2Knob >> 9);
+			switch (scaleType) {
+			case rhythm:
+				divider = rhythmCoefficients[time2Knob >> 9];
+				break;
+			case diatonic:
+				divider = diatonicCoefficients[time2Knob >> 9];
+				break;
+			case primes:
+				divider = primesCoefficients[time2Knob >> 9];
+				break;
+			default:
+				break;
+			}
 		} else if (controlScheme == knob) {
 			gateOnCount = myfix16_mul(periodCount, time2Knob << 4);
 			// replace with
-			divider = 1 + (time2CV >> 9);
+			switch (scaleType) {
+			case rhythm:
+				divider = rhythmCoefficients[time2CV >> 9];
+				break;
+			case diatonic:
+				divider = diatonicCoefficients[time2CV >> 9];
+				break;
+			case primes:
+				divider = primesCoefficients[time2CV >> 9];
+				break;
+			default:
+				break;
+			}
 		} else if (controlScheme == knobCV) {
 			gateOnCount = myfix16_mul(periodCount, (time2Knob + time2CV) << 3);
 			// replace with
-			divider = 2;
+			divider = 1;
 		}
 
 
@@ -370,11 +389,11 @@ void TIM2_IRQHandler(void) {
 				// if we are behind the phase of the clock, go faster, otherwise, go slower
 				if (position > span) {
 
-					pllNudge = (spanx2 - position) << 7;
+					pllNudge = (spanx2 - position) << 5;
 
 				} else {
 
-					pllNudge = -(position << 7);
+					pllNudge = -(position << 5);
 
 				}
 
@@ -415,11 +434,14 @@ void TIM2_IRQHandler(void) {
 
 
 		//use this value to calculate our oscillator frequency
-		attackInc = ((span << 9) + pllNudge) / (gateOnCount * divider);
-		releaseInc = ((span << 9) + pllNudge) / ((periodCount - gateOnCount) * divider);
+		attackInc = ((span << 8) + pllNudge) / (gateOnCount * divider);
+		releaseInc = ((span << 8) + pllNudge) / ((periodCount - gateOnCount) * divider);
 
-		attackInc = attackInc * multiplier;
-		releaseInc = releaseInc * multiplier;
+		attackInc = (attackInc << 1) * multiplier >> tableSizeCompensation;
+		releaseInc = (releaseInc << 1) * multiplier >> tableSizeCompensation;
+
+		if (attackInc > 1048575) {attackInc = 1048575;}
+		if (releaseInc > 1048575) {releaseInc = 1048575;}
 
 
 
@@ -527,11 +549,11 @@ void TIM6_DAC_IRQHandler(void) {
 
 		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
 
-		if (morphAverage >= 16384) {
-			fixMorph = myfix16_lerp(morphKnob, 4095, (morphAverage - 16384) << 2);
+		if ((32767 - morphAverage) >= 16384) {
+			fixMorph = myfix16_lerp(morphKnob, 4095, ((32767 - morphAverage) - 16384) << 2);
 		}
 		else {
-			fixMorph = myfix16_lerp(0, morphKnob, morphAverage << 2);
+			fixMorph = myfix16_lerp(0, morphKnob, (32767 - morphAverage) << 2);
 		}
 
 		//call the appropriate interpolation routine per phase in the two part table and declare phase state as such
@@ -632,7 +654,6 @@ void getSample(uint32_t phase) {
 	uint32_t Rnvalue2;
 	uint32_t interp1; // results of those two interpolations
 	uint32_t interp2;
-	uint16_t **family;
 
 	// the above is used to perform our bi-interpolation
 	// essentially, interp 1 and interp 2 are the interpolated values in the two adjacent wavetables per the playback position
@@ -657,11 +678,18 @@ void getSample(uint32_t phase) {
 		// this is a funny looking method of referencing elements in a two dimensional array
 		// we need to do it like this because our struct contains a pointer to the array being used
 		// i feel like this could be optimized if we are loading from flash
-		family = currentFamily.attackFamily + LnFamily;
-		Lnvalue1 = *(*(family) + LnSample);
-		Rnvalue1 = *(*(family) + LnSample + 1);
-		Lnvalue2 = *(*(family + 1) + LnSample);
-		Rnvalue2 = *(*(family + 1) + LnSample + 1);
+//		family = currentFamily.attackFamily + LnFamily;
+//		Lnvalue1 = *(*(family) + LnSample);
+//		Rnvalue1 = *(*(family) + LnSample + 1);
+//		Lnvalue2 = *(*(family + 1) + LnSample);
+//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
+
+		//attempt at optimizing using fixed size array on the heap
+
+		Lnvalue1 = attackHoldArray[LnFamily][LnSample];
+		Rnvalue1 = attackHoldArray[LnFamily][LnSample + 1];
+		Lnvalue2 = attackHoldArray[LnFamily + 1][LnSample];
+		Rnvalue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
 
 		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
 		interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
@@ -674,6 +702,7 @@ void getSample(uint32_t phase) {
 
 		if (RGB_ON) { //if the runtime display is on, show our mode
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph);
 		}
 	}
 
@@ -691,11 +720,19 @@ void getSample(uint32_t phase) {
 		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
 
 		//pull the values from our "release family"
-		family = currentFamily.releaseFamily + LnFamily;
-		Lnvalue1 = *(*(family) + LnSample);
-		Rnvalue1 = *(*(family) + LnSample + 1);
-		Lnvalue2 = *(*(family + 1) + LnSample);
-		Rnvalue2 = *(*(family + 1) + LnSample + 1);
+//		family = currentFamily.releaseFamily + LnFamily;
+//		Lnvalue1 = *(*(family) + LnSample);
+//		Rnvalue1 = *(*(family) + LnSample + 1);
+//		Lnvalue2 = *(*(family + 1) + LnSample);
+//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
+
+
+		//attempt at optimizing using fixed size array on the heap
+
+		Lnvalue1 = releaseHoldArray[LnFamily][LnSample];
+		Rnvalue1 = releaseHoldArray[LnFamily][LnSample + 1];
+		Lnvalue2 = releaseHoldArray[LnFamily + 1][LnSample];
+		Rnvalue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
 
 		interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
 		interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
@@ -704,8 +741,10 @@ void getSample(uint32_t phase) {
 
 		if (RGB_ON) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph);
 		}
 	}
+
 
 }
 
@@ -734,34 +773,6 @@ void getPhase(void) {
 }
 
 
-
-int calcTime1Env(void) {
-
-	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> 6;
-	return time1;
-
-}
-
-int calcTime2Env(void) {
-
-	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> 6;
-	return time2;
-
-}
-
-int calcTime1Seq(void) {
-
-	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> 10;
-	return time1;
-
-}
-
-int calcTime2Seq(void) {
-
-	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> 10;
-	return time2;
-
-}
 
 
 

@@ -51,6 +51,19 @@ enum scaleTypes {rhythm, diatonic, primes};
 
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 
+int familyIndicator;
+
+int holdState;
+
+
+void readDetect(void) __attribute__((section("ccmram")));
+void readRelease(uint32_t) __attribute__((section("ccmram")));
+void restoreDisplay(void) __attribute__((section("ccmram")));
+void switchFamily(void);
+void fillFamilyArray(void);
+void restoreState(void);
+
+
 int (*attackTime) (void);
 int (*releaseTime) (void);
 
