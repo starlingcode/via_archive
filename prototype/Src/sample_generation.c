@@ -57,7 +57,7 @@ void dacISR(void) {
 
 		// get our averages for t2 and morph cv (move to the ADC interrupt??)
 
-		//getAverages();
+		getAverages();
 
 		storePhase = PHASE_STATE;
 
@@ -88,11 +88,11 @@ void dacISR(void) {
 		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
 
 		if (inc > 1048575) {inc = 1048575;}
-		if ((4095 - morphCV) >= 2048) {
-			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, ((4095 - morphCV) - 2048) << 5), 65535 - (inc >> 4));
+		if ((32767 - morphAverage) >= 16383) {
+			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, ((32767 - morphAverage) - 16383) << 2), 65535 - (inc >> 4));
 		}
 		else {
-			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, (4095 - morphCV) << 5) , 65535 - (inc >> 4));
+			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, (32767 - morphAverage) << 2) , 65535 - (inc >> 4));
 		}
 
 
@@ -446,11 +446,11 @@ int readn(buffer* buffer, int Xn) {
 
 void getAverages(void) {
 
-	static buffer time2CVBuffer;
+	//static buffer time2CVBuffer;
 	static buffer morphCVBuffer;
 
-	write(&time2CVBuffer, time2CV);
-	time2Average = time2Average + time2CV- readn(&time2CVBuffer, 7);
+//	write(&time2CVBuffer, time2CV);
+//	time2Average = time2Average + time2CV- readn(&time2CVBuffer, 7);
 	write(&morphCVBuffer, morphCV);
 	morphAverage = (morphAverage + morphCV- readn(&morphCVBuffer, 7));
 
