@@ -317,18 +317,18 @@ void TIM2_IRQHandler(void) {
 
 		switch (scaleType) {
 		case rhythm:
-			multiplier = rhythmCoefficients[time1Knob >> 9] * rhythmCoefficients[time1CV >> 9];
-			divider = rhythmCoefficients[time2Knob >> 9] * rhythmCoefficients[time2CV >> 9];
+			multiplier = rhythmCoefficients[time1Knob >> 9] * rhythmCoefficients[(4095 - time1CV)  >> 9];
+			divider = rhythmCoefficients[time2Knob >> 9] * rhythmCoefficients[(4095 - time2CV)  >> 9];
 			break;
 
 		case diatonic:
-			multiplier = diatonicCoefficients[time1Knob >> 9] * diatonicCoefficients[time1CV >> 9];
-			divider = diatonicCoefficients[time2Knob >> 9] * diatonicCoefficients[time2CV >> 9];
+			multiplier = diatonicCoefficients[time1Knob >> 9] * diatonicCoefficients[(4095 - time1CV)  >> 9];
+			divider = diatonicCoefficients[time2Knob >> 9] * diatonicCoefficients[(4095 - time2CV)  >> 9];
 			break;
 
 		case primes:
-			multiplier = primesCoefficients[time1Knob >> 9] * primesCoefficients[time1CV >> 9];
-			divider = primesCoefficients[time2Knob >> 9] * primesCoefficients[time2CV >> 9];
+			multiplier = primesCoefficients[time1Knob >> 9] * primesCoefficients[(4095 - time1CV)  >> 9];
+			divider = primesCoefficients[time2Knob >> 9] * primesCoefficients[(4095 - time2CV)  >> 9];
 			break;
 
 		default:
@@ -337,7 +337,7 @@ void TIM2_IRQHandler(void) {
 
 
 		if (controlScheme == CV) {
-			gateOnCount = myfix16_mul(periodCount, time2CV << 4);
+			gateOnCount = myfix16_mul(periodCount, (4095 - time2CV)  << 4);
 			// replace with
 			switch (scaleType) {
 			case rhythm:
@@ -357,19 +357,19 @@ void TIM2_IRQHandler(void) {
 			// replace with
 			switch (scaleType) {
 			case rhythm:
-				divider = rhythmCoefficients[time2CV >> 9];
+				divider = rhythmCoefficients[(4095 - time2CV)  >> 9];
 				break;
 			case diatonic:
-				divider = diatonicCoefficients[time2CV >> 9];
+				divider = diatonicCoefficients[(4095 - time2CV)  >> 9];
 				break;
 			case primes:
-				divider = primesCoefficients[time2CV >> 9];
+				divider = primesCoefficients[(4095 - time2CV)  >> 9];
 				break;
 			default:
 				break;
 			}
 		} else if (controlScheme == knobCV) {
-			gateOnCount = myfix16_mul(periodCount, (time2Knob + time2CV) << 3);
+			gateOnCount = myfix16_mul(periodCount, (time2Knob + (4095 - time2CV) ) << 3);
 			// replace with
 			divider = 1;
 		}
@@ -434,11 +434,20 @@ void TIM2_IRQHandler(void) {
 
 
 		//use this value to calculate our oscillator frequency
-		attackInc = ((span << 8) + pllNudge) / (gateOnCount * divider);
-		releaseInc = ((span << 8) + pllNudge) / ((periodCount - gateOnCount) * divider);
+//		attackInc = ((span << 8) + pllNudge) / (gateOnCount * divider);
+//		releaseInc = ((span << 8) + pllNudge) / ((periodCount - gateOnCount) * divider);
+//
+//		attackInc = (attackInc << 1) * multiplier;
+//		releaseInc = (releaseInc << 1) * multiplier;
 
-		attackInc = (attackInc << 1) * multiplier;
-		releaseInc = (releaseInc << 1) * multiplier;
+				attackInc = ((span << 8) + pllNudge) / gateOnCount;
+				releaseInc = ((span << 8) + pllNudge) / (periodCount - gateOnCount);
+
+				attackInc = (attackInc << 1);
+				releaseInc = (releaseInc << 1);
+
+				attackInc = attackInc * multiplier/divider;
+				releaseInc = releaseInc * multiplier/divider;
 
 		if (attackInc > 1048575) {attackInc = 1048575;}
 		if (releaseInc > 1048575) {releaseInc = 1048575;}
@@ -830,7 +839,7 @@ void EXTI15_10_IRQHandler(void) {
 		if (RGB_ON) {
 			LEDC_OFF
 			LEDD_ON
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 		}
 
 	}
@@ -961,8 +970,10 @@ void getAverages(void) {
 
 	write(&time2CVBuffer, time2CV);
 	time2Average = time2Average + time2CV- readn(&time2CVBuffer, 7);
-	write(&morphCVBuffer, morphCV);
+
 	morphAverage = (morphAverage + morphCV- readn(&morphCVBuffer, 7));
+
+	write(&morphCVBuffer, morphCV);
 
 }
 

@@ -205,6 +205,10 @@ int main(void) {
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
+	HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
+	HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
+	HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
+
 	//initialize our ADCs and their respective DMA arrays
 	HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
 	HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
