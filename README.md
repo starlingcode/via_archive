@@ -57,6 +57,8 @@ main.c contains some initialization code drudgery to get the timers, DAC, and AD
 
 stm32f4xx_it.c contains the interrupt service routines (ISR) which do most of the work in our program. For those who are unfamiliar, an "interrupt" is a block of code that can take precendence over the main loop at run time. This is ideal for digital audio, which requires us to update the DAC (digital to analog converter) at a precise rate. Essentially, whenver it's time to come up with the next sample value in our signal, the processor pauses whatever it had been doing and completes the routine needed to come up with the next sample. Once that is complete, it goes back to what it had been doing (usually watching our UI for button presses and lighting up the RGB indicator). This also allows it to react in almost real time to its control inputs.
 
+The functions used in the interrupt file are largely outsourced to sample_generation.c
+
 The architecture of the program is as follows: Timer 6 triggers an interrupt routine at roughly 64khz, our contour generator sample rate. The contour generator is implemented within that interrupt service function, TIM6_DAC_IRQHandler(). The behavior of that ISR is beholden to a few global variables, namely the variables that hold the current mode, the ADC readings (knobs and jacks, which always live in the arrays ADCReadings1, ADCReadings2, and ADCReadings3 and are constantly updated using DMA), and a flag word that passes around the data used to maintain or change state. The same interrupt also drives our RGB indicator.  The current morph value is indicated by the brightness of the green LED. The blue LED goes on at A and increases in intensity as it approaches B, switching to red for the release phase, and decreases in intensity as it approaches A.
 
 In this interrupt, we look for a change in "PHASE_STATE" wherein we travel from attack to release or vice versa. This sets a pending interrupt for EXTI15_10_IRQHandler, which outputs an appropriate logic signal over the logic out jacks and also implements our sample and hold behavior. The sample and holds use two timers as well as their respective interrupts (TIM7 and TIM8) to handle the somewhat tricky task of letting a sample and hold track breifly to get to a new value and then sampling it again a ms or so later so that we can quickly "resample" one of the inputs without letting it fully track for a cycle.
@@ -128,6 +130,8 @@ x   	x
 O 	  O
 
 Families are indicated by the color of the RGB. We also initate a timer to keep track of how long we have had our finger on the sensor. Once that sensor enters "release state", we check the timer. If it is below the timeout threshold, we call a function to change the mode that is associated with the sensor that was just pressed. We then show that mode for about a second before returning to our runtime display. If we have exceeded our timer threshold, we return immediately to the runtime display without changing modes. The mode change function also does some extra initialization of our boolean flags to ensure that the mode we are switching to behaves as we would expect and no vestiges of the last mode remain.
+
+Helper functions to set up tables are in tables.c and the nuts and bolts of the mode change handling can be found in user_interface.c
 
 More nuance in the code comments, contact liquidcitymotors@gmail.com if this doesn't have what you need!
 
