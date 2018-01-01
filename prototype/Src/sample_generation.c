@@ -200,7 +200,7 @@ void getPhase(void) {
 		else {
 
 
-			incFromADCs = myfix16_mul(myfix16_mul(myfix16_mul((3000 - time2CV) << 5, lookuptable[4095 - time1CV] >> 5), lookuptable[time1Knob] >> 4), lookuptable[time2Knob >> 4]) >> tableSizeCompensation;
+			incFromADCs = myfix16_mul(myfix16_mul(myfix16_mul((3000 - time2CV) << 7, lookuptable[4095 - time1CV] >> 7), lookuptable[time1Knob] >> 4), lookuptable[time2Knob >> 4]) >> tableSizeCompensation;
 
 
 		}
@@ -451,8 +451,10 @@ void getAverages(void) {
 
 //	write(&time2CVBuffer, time2CV);
 //	time2Average = time2Average + time2CV- readn(&time2CVBuffer, 7);
-	write(&morphCVBuffer, morphCV);
+
 	morphAverage = (morphAverage + morphCV- readn(&morphCVBuffer, 7));
+
+	write(&morphCVBuffer, morphCV);
 
 }
 

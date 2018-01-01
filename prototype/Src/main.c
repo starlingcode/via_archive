@@ -91,6 +91,8 @@ uint16_t VirtAddVarTab[NB_OF_VAR] = {0x5555};
 uint16_t VarDataTab[NB_OF_VAR] = {0};
 uint16_t VarValue,VarDataTmp;
 
+int holdCalibration;
+
 
 // initialize the arrays that will be used by DMA to store our Knob and CV values
 extern uint32_t ADCReadings1[4];
@@ -197,6 +199,10 @@ int main(void) {
 	// set the priority and enable an interrupt line to be used by our phase state change interrupt
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
+	HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
+	HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
+	HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
 
 	//initialize our ADCs and their respective DMA arrays
 	HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
@@ -834,8 +840,8 @@ static void MX_TSC_Init(void) {
 	/**Configure the TSC peripheral
 	 */
 	htsc.Instance = TSC;
-	htsc.Init.CTPulseHighLength = TSC_CTPH_2CYCLES;
-	htsc.Init.CTPulseLowLength = TSC_CTPL_2CYCLES;
+	htsc.Init.CTPulseHighLength = TSC_CTPH_5CYCLES;
+	htsc.Init.CTPulseLowLength = TSC_CTPL_5CYCLES;
 	htsc.Init.SpreadSpectrum = DISABLE;
 	htsc.Init.SpreadSpectrumDeviation = 1;
 	htsc.Init.SpreadSpectrumPrescaler = TSC_SS_PRESC_DIV1;

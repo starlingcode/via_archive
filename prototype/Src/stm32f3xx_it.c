@@ -271,9 +271,10 @@ void TIM2_IRQHandler(void) {
 			sampHoldA();
 		} else {
 
-			if ((DRUM_MODE_ON) && !(DRUM_ATTACK_ON)) {
+			if ((DRUM_MODE_ON)) {
 				SET_UPDATE_PRESCALER; //same logic flag as before
 				SET_DRUM_ATTACK_ON;
+				RESET_LAST_CYCLE;
 				attackCount = TIM3->CNT;
 				__HAL_TIM_DISABLE(&htim3);
 				TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[4095 - time2CV] >> 11);
@@ -416,10 +417,14 @@ void TIM3_IRQHandler(void) {
 		RESET_DRUM_RELEASE_ON;
 		expoScale = 0;
 		out = 0;
+		} else {
+			fixMorph = 0;
 		}
+
+		SET_LAST_CYCLE;
 		__HAL_TIM_DISABLE(&htim3);
 		__HAL_TIM_SET_COUNTER(&htim3, 0);
-		SET_LAST_CYCLE;
+
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);

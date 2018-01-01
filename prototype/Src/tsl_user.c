@@ -88,7 +88,7 @@ CONST TSL_Bank_T MyBanks[TSLPRM_TOTAL_BANKS] = {
   {&MyChannels_Src[4], &MyChannels_Dest[4], MyChannels_Data, BANK_4_NBCHANNELS, BANK_4_MSK_CHANNELS, BANK_4_MSK_GROUPS},
   {&MyChannels_Src[5], &MyChannels_Dest[5], MyChannels_Data, BANK_5_NBCHANNELS, BANK_5_MSK_CHANNELS, BANK_5_MSK_GROUPS},
 
-  // {&MyChannels_Src[3], &MyChannels_Dest[3], MyChannels_Data, BANK_1_NBCHANNELS, BANK_1_MSK_CHANNELS, BANK_1_MSK_GROUPS},
+   //{&MyChannels_Src[3], &MyChannels_Dest[3], MyChannels_Data, BANK_1_NBCHANNELS, BANK_1_MSK_CHANNELS, BANK_1_MSK_GROUPS},
 };
 
 /*============================================================================*/

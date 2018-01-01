@@ -115,6 +115,8 @@
 */
 #define TSLPRM_USE_ZONE (0)
 
+#define TSLPRM_USE_SHIELD (1)
+
 /** @} Common_Parameters_Options */
 
 /*============================================================================*/
@@ -179,12 +181,12 @@
 /** TouchKeys Detect state input threshold (range=0..255)
   - Enter Detect state if delta is above
 */
-#define TSLPRM_TKEY_DETECT_IN_TH (100)
+#define TSLPRM_TKEY_DETECT_IN_TH (60)
 
 /** TouchKeys Detect state output threshold (range=0..255)
   - Exit Detect state if delta is below
 */
-#define TSLPRM_TKEY_DETECT_OUT_TH (80)
+#define TSLPRM_TKEY_DETECT_OUT_TH (40)
 
 /** TouchKeys re-Calibration threshold (range=0..255)
   - @warning The value is inverted in the sensor state machine
@@ -224,12 +226,12 @@
 /** Linear/Rotary Detect state input threshold (range=0..255)
   - Enter Detect state if delta is above
 */
-#define TSLPRM_LINROT_DETECT_IN_TH (80)
+#define TSLPRM_LINROT_DETECT_IN_TH (55)
 
 /** Linear/Rotary Detect state output threshold (range=0..255)
   - Exit Detect state if delta is below
 */
-#define TSLPRM_LINROT_DETECT_OUT_TH (75)
+#define TSLPRM_LINROT_DETECT_OUT_TH (40)
 
 /** Linear/Rotary re-Calibration threshold (range=0..255)
   - @warning The value is inverted in the sensor state machine
