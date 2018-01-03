@@ -271,7 +271,7 @@ void TIM2_IRQHandler(void) {
 			sampHoldA();
 		} else {
 
-			if ((DRUM_MODE_ON)) {
+			if ((DRUM_MODE_ON) && !(DRUM_ATTACK_ON)) {
 				SET_UPDATE_PRESCALER; //same logic flag as before
 				SET_DRUM_ATTACK_ON;
 				RESET_LAST_CYCLE;

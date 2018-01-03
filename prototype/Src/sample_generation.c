@@ -342,6 +342,8 @@ void getSample(uint32_t phase) {
 	uint32_t Rnvalue2;
 	uint32_t interp1; // results of those two interpolations
 	uint32_t interp2;
+	uint32_t sampleCalculation;
+	uint32_t deltaSign;
 
 	// the above is used to perform our bi-interpolation
 	// essentially, interp 1 and interp 2 are the interpolated values in the two adjacent wavetables per the playback position
@@ -380,13 +382,19 @@ void getSample(uint32_t phase) {
 		Rnvalue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
 
 		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-		interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
-
-		interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
+		interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
+		interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
 
 		//interpolate between those based upon morph (biinterpolation)
 
-		out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
+		sampleCalculation = myfix16_lerp(interp1, interp2, waveFrac) >> 3;
+
+		if (interp1 < interp2) {
+			EOA_GATE_HIGH
+		} else if (interp2 < interp1) {
+			EOA_GATE_LOW
+		}
+		out = sampleCalculation;
 
 		if (RGB_ON) { //if the runtime display is on, show our mode
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
@@ -422,10 +430,19 @@ void getSample(uint32_t phase) {
 		Lnvalue2 = releaseHoldArray[LnFamily + 1][LnSample];
 		Rnvalue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
 
-		interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
-		interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
+		interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
+		interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
 
-		out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
+
+		sampleCalculation = myfix16_lerp(interp1, interp2, waveFrac) >> 3;
+
+		if (interp1 < interp2) {
+			EOA_GATE_HIGH
+		} else if (interp2 < interp1) {
+			EOA_GATE_LOW
+		}
+
+		out = sampleCalculation;
 
 		if (RGB_ON) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
