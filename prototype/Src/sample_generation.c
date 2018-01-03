@@ -7,72 +7,75 @@
 #include "int64.h"
 #include "interrupt_functions.h"
 
-// wavetable size - 1 in fix16 and that number doubled
+//wavetable size - 1 in fix16 and that number doubled
 uint32_t span;
 int spanx2;
+
+//this is an integer that compensates for wavetable size in our frequency calculation (defined on wavetable family change)
 int tableSizeCompensation;
 
-//per family bit shift amounts to accomplish morph
+//per family bit shift amounts to determine the morph  (defined on wavetable family change)
 uint32_t morphBitShiftRight;
 uint32_t morphBitShiftLeft;
 
+//these arrays are filled with our ADC values using DMA (set up in main.c)
 uint32_t ADCReadings1[4];
 uint32_t ADCReadings2[2];
 uint32_t ADCReadings3[2];
+
+//averaged ADC values
 uint32_t time2Average;
 uint32_t morphAverage;
 
-
-
+//store and decalre our exponential lookup tabe in RAM (defined in tables.h)
 int lookuptable[4095] = expotable10oct;
 
-// mode indicators, determined in the main loop
+//mode indicators, defined in functions found in user_interface.c
 enum speedTypes speed;
 enum loopTypes loop;
 enum trigModeTypes trigMode;
 enum sampleHoldModeTypes sampleHoldMode;
 
+//declare the necessary timer handles for use in these functions (set up in main.c, interrupts in stm32f3xx_it.c)
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim3;
 
-
+//declarations for the functions defined below, attribute places them in "CCMRAM" for maximum efficiency
 void getSample(uint32_t) __attribute__((section("ccmram")));
 void getPhase(void) __attribute__((section("ccmram")));
 int myfix16_mul(int, int) __attribute__((section("ccmram")));
 int myfix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
 void getAverages(void) __attribute__((section("ccmram")));
 
+//this is called to write our last sample to the dacs and generate a new sample
 void dacISR(void) {
-
-
 
 	uint32_t storePhase;
 
 	if (OSCILLATOR_ACTIVE) {
 
-		//write the current oscillator value to dac1, and its inverse to dac2 (crossfading)
+		//write the current oscillator value to dac1, and its inverse to dac2 (this actually performs the interpolation)
 
 		((*(volatile uint32_t *) DAC1_ADDR) = (4095 - out));
 		((*(volatile uint32_t *) DAC2_ADDR) = (out));
 
-		// get our averages for t2 and morph cv (move to the ADC interrupt??)
+		//get our averages for t2 and morph cv
 
 		getAverages();
+
+		//hold the phase state (attack or release) from the last sample
 
 		storePhase = PHASE_STATE;
 
 
 
-		//call the function to advance the phase of the oscillator using that increment
+		//call the function to advance the phase of the oscillator
 
 		getPhase();
 
-		//store last "Phase State" (attack or release)
-
-
-
-
-		//call the appropriate interpolation routine per phase in the two part table and declare phase state as such
+		//determine whether our newly calculated phase value "position" is in the "attack" or "release" portion of the cycle
+		//call the function that generates our next sample based upon the phase value "position"
+		//pass that function a 1 or a 0 to indicate whether we are in attack or release
 
 		if (position < span) {
 			RESET_PHASE_STATE;
@@ -84,39 +87,62 @@ void dacISR(void) {
 		}
 
 
+		//calculate our "morph" parameter as a function of the morph knob, CV, and our contour generator frequency
 
-		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
+		//we use morphAverage, which is a running sum of the last 8 values (a running average without the division)
+
+		//we basically check whether the morphCV is less than or greater than half of its full scale value
+		//if it is less than half of full scale, we do a linear interpolation between our current knob value and 0 using the CV value as the interpolation fraction
+		//if it is more than half of full scale, we do a linear interpolation between our current knob value and full scale using the CV value as the interpolation fraction
+		//in both of these cases, we generate our interpolation fraction by simple bit shifting a sum involving the halfway scale value and the CV
+		//basically, we figure out how far our morphCV is away from the halfway point and then scale that up to a 16 bit integer
+		//this works because we assume that all of our ADC ranges are a power of two
+
+
+		//we then scale back our morph value as frequency increases. with a table that exhibits a steadily increasing spectral content as morph increases, this serves as anti-aliasing
+
+		//first we clamp our "inc" variable (which is analogous to our contour generator frequency) to max out at 2^20
+		//this is our "maximum frequency" at which we find that our "morph" parameter is scaled all the way to 0
 
 		if (inc > 1048575) {inc = 1048575;}
+
+		//is our CV greater than half-scale (the big numbers are because we have a running sum of 8
 		if ((32767 - morphAverage) >= 16383) {
+			//this first does the aforementioned interpolation between the knob value and full scale then scales back the value according to frequency
 			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, ((32767 - morphAverage) - 16383) << 2), 65535 - (inc >> 4));
 		}
 		else {
+			//analogous to above except in this case, morphCV is less than halfway
 			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, (32767 - morphAverage) << 2) , 65535 - (inc >> 4));
 		}
 
-
-		// write that value to our RGB
 
 		//if we are in high speed and not looping, activate drum mode
 
 		if (DRUM_MODE_ON) {
 
-			//call the fuction that generates our expo decay and scales amp
+			//this next bit generates our expo decay and scales amp
+			//it gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
 
-
-
-			//this gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
 			if (DRUM_ATTACK_ON) {
 
+				//maintain a software-based counter to increment through a linear "attack" slope sample per sample
 				attackCount = attackCount + (inc >> 11) ;
 
+				//if we get to our maximum value (this is the index where the value is 2^26)
+				//this gives us a known range for our values from the lookup table
 				if (attackCount > 3840) {
+					//write to the flag word that we are done with our attack slope
 					RESET_DRUM_ATTACK_ON;
+					//since we use this to look up from the table, clamp it at our max value
 					attackCount = 3840;
+					//enable the timer that will generate our release slope
 					__HAL_TIM_ENABLE(&htim3);
+					//get our value from the lookup table, scale it, this will be 2^16
 					expoScale = lookuptable[attackCount] >> 10;
+					//reset our counter to 0
 					attackCount = 0;
+					//indicate that we are now in the "release" phase of our drum envelope
 					SET_DRUM_RELEASE_ON;
 				} else {
 					expoScale = lookuptable[attackCount] >> 10;
