@@ -419,14 +419,25 @@ Family threeSineFoldsLinAtk =
 	.tableLength = 64,
 	.familySize = 3};
 
+Family euclidean8_5 =
+	{.attackFamily = euclidean8_5Stack,
+	.releaseFamily = euclidean8_5Stack,
+	.tableLength = 64,
+	.familySize = 5};
+
+Family euclidean5_5 =
+	{.attackFamily = euclidean5_5Stack,
+	.releaseFamily = euclidean5_5Stack,
+	.tableLength = 64,
+	.familySize = 5};
 
 
 // specify the family in our family bank per speed
 
 void fillFamilyArray(void) {
 
-	familyArray[0] = tenor48;
-	familyArray[1] = artificial_1;
+	familyArray[0] = euclidean8_5;
+	familyArray[1] = euclidean5_5;
 	familyArray[2] = impevens;
 	familyArray[3] = ascendingAdditiveClamp;
 	familyArray[4] = skipSaw;

@@ -304,6 +304,8 @@ void TIM2_IRQHandler(void) {
 
 
 
+
+
 	if ((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET) {
 
 		//get the timer value that which was reset on last rising edge
@@ -318,17 +320,17 @@ void TIM2_IRQHandler(void) {
 		switch (scaleType) {
 		case rhythm:
 			multiplier = rhythmCoefficients[time1Knob >> 9] * rhythmCoefficients[(4095 - time1CV)  >> 9];
-			divider = rhythmCoefficients[time2Knob >> 9] * rhythmCoefficients[(4095 - time2CV)  >> 9];
+			divider = rhythmCoefficients[time2Knob >> 9] * rhythmCoefficients[(4095 - time1CV)  >> 9];
 			break;
 
 		case diatonic:
 			multiplier = diatonicCoefficients[time1Knob >> 9] * diatonicCoefficients[(4095 - time1CV)  >> 9];
-			divider = diatonicCoefficients[time2Knob >> 9] * diatonicCoefficients[(4095 - time2CV)  >> 9];
+			divider = diatonicCoefficients[time2Knob >> 9] * diatonicCoefficients[(4095 - time1CV)  >> 9];
 			break;
 
 		case primes:
 			multiplier = primesCoefficients[time1Knob >> 9] * primesCoefficients[(4095 - time1CV)  >> 9];
-			divider = primesCoefficients[time2Knob >> 9] * primesCoefficients[(4095 - time2CV)  >> 9];
+			divider = primesCoefficients[time2Knob >> 9] * primesCoefficients[(4095 - time1CV)  >> 9];
 			break;
 
 		default:
@@ -336,42 +338,10 @@ void TIM2_IRQHandler(void) {
 		}
 
 
-		if (controlScheme == CV) {
+		if (controlScheme == dutyCycle) {
+
 			gateOnCount = myfix16_mul(periodCount, (4095 - time2CV)  << 4);
-			// replace with
-			switch (scaleType) {
-			case rhythm:
-				divider = rhythmCoefficients[time2Knob >> 9];
-				break;
-			case diatonic:
-				divider = diatonicCoefficients[time2Knob >> 9];
-				break;
-			case primes:
-				divider = primesCoefficients[time2Knob >> 9];
-				break;
-			default:
-				break;
-			}
-		} else if (controlScheme == knob) {
-			gateOnCount = myfix16_mul(periodCount, time2Knob << 4);
-			// replace with
-			switch (scaleType) {
-			case rhythm:
-				divider = rhythmCoefficients[(4095 - time2CV)  >> 9];
-				break;
-			case diatonic:
-				divider = diatonicCoefficients[(4095 - time2CV)  >> 9];
-				break;
-			case primes:
-				divider = primesCoefficients[(4095 - time2CV)  >> 9];
-				break;
-			default:
-				break;
-			}
-		} else if (controlScheme == knobCV) {
-			gateOnCount = myfix16_mul(periodCount, (time2Knob + (4095 - time2CV) ) << 3);
-			// replace with
-			divider = 1;
+
 		}
 
 
@@ -449,8 +419,8 @@ void TIM2_IRQHandler(void) {
 				attackInc = attackInc * multiplier/divider;
 				releaseInc = releaseInc * multiplier/divider;
 
-		if (attackInc > 1048575) {attackInc = 1048575;}
-		if (releaseInc > 1048575) {releaseInc = 1048575;}
+		if (attackInc >= span - 1) {attackInc = span - 1;}
+		if (releaseInc >= span - 1) {releaseInc = span - 1;}
 
 
 
@@ -701,13 +671,23 @@ void getSample(uint32_t phase) {
 		Rnvalue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
 
 		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-		interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
+				interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
+				interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
 
-		interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
+				//interpolate between those based upon the fractional part of our phase pointer
 
-		//interpolate between those based upon morph (biinterpolation)
+				out = myfix16_lerp(interp1, interp2, waveFrac) >> 3;
 
-		out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
+				//we use the interpolated nearest neighbor samples to determine the sign of rate of change
+				//aka, are we moving towrds a, or towards b
+				//we use this to generate our gate output
+				if (interp1 < interp2) {
+					EOA_GATE_HIGH
+
+				} else if (interp2 < interp1) {
+					EOA_GATE_LOW
+
+				}
 
 		if (RGB_ON) { //if the runtime display is on, show our mode
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
@@ -743,10 +723,24 @@ void getSample(uint32_t phase) {
 		Lnvalue2 = releaseHoldArray[LnFamily + 1][LnSample];
 		Rnvalue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
 
-		interp1 = myfix16_lerp(Lnvalue1, Rnvalue1, waveFrac);
-		interp2 = myfix16_lerp(Lnvalue2, Rnvalue2, waveFrac);
+		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
+				interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
+				interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
 
-		out = myfix16_lerp(interp1, interp2, morphFrac) >> 3;
+				//interpolate between those based upon the fractional part of our phase pointer
+
+				out = myfix16_lerp(interp1, interp2, waveFrac) >> 3;
+
+				//we use the interpolated nearest neighbor samples to determine the sign of rate of change
+				//aka, are we moving towrds a, or towards b
+				//we use this to generate our gate output
+				if (interp1 < interp2) {
+					EOA_GATE_HIGH
+
+				} else if (interp2 < interp1) {
+					EOA_GATE_LOW
+
+				}
 
 		if (RGB_ON) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
@@ -762,21 +756,41 @@ void getSample(uint32_t phase) {
 
 void getPhase(void) {
 
+	static int lastCV;
+
 	if (CATCH_UP) {
 		position = position + catchupInc;
 	} else {
-		if (PHASE_STATE) {
-			position = position + attackInc;
+		if (controlScheme == FM) {
+			if (PHASE_STATE) {
+				position = position + ((attackInc * (4095 - time2CV)) >> 11);
+			} else {
+				position = position + ((releaseInc * time2CV) >> 11);
+			}
 		} else {
-			position = position + releaseInc;
+			if (PHASE_STATE) {
+				position = position + attackInc;
+			} else {
+				position = position + releaseInc;
+			}
 		}
 	}
+
+
+
+	lastCV = time2CV;
 
 	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode
 
 	if (position >= spanx2) {
 
 		position = position - spanx2;
+
+	}
+
+	if (position < 0) {
+
+		position = position + spanx2;
 
 	}
 }
