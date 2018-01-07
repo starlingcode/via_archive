@@ -245,6 +245,8 @@ int main(void) {
 	//we must do this after the resampling interrupts have been enabled
 	SH_A_TRACK
 	SH_B_TRACK
+	SET_GATEA;
+	SET_GATEB;
 	incSign = 1;
 	attackTime = calcTime1Env;
 	releaseTime = calcTime2Env;

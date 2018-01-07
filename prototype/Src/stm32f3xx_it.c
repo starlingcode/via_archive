@@ -227,8 +227,12 @@ void DMA1_Channel1_IRQHandler(void) {
  */
 void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
-	EOA_JACK_LOW;
-	EOR_JACK_LOW;
+	if (TRIGB) {
+		EOA_JACK_LOW;
+	}
+	if (TRIGA) {
+		EOR_JACK_LOW;
+	}
 	__HAL_TIM_DISABLE(&htim15);
 	__HAL_TIM_CLEAR_FLAG(&htim15, TIM_FLAG_UPDATE);
 	/* USER CODE END TIM1_BRK_TIM15_IRQn 0 */
@@ -244,30 +248,37 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
  */
 void TIM2_IRQHandler(void) {
 	/* USER CODE BEGIN TIM2_IRQn 0 */
+
+	//this is how we parse logic signals at the trigger input and pass info to the contour generator
+	//this is where the re-trigger modes are actuated
+
 	if (((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET) || (TRIGGER_BUTTON)) {
 
-		if (!(OSCILLATOR_ACTIVE)) { // oscillator at rest
-			SET_OSCILLATOR_ACTIVE; // set the oscillator flag
+		if (!(OSCILLATOR_ACTIVE)) { // contour generator at rest
+
+			//this is how we properly wake up our contour generator
+
+			SET_OSCILLATOR_ACTIVE; // set the flag that our contour generator is active
 			if (DRUM_MODE_ON) { // perform the operations needed to initiate a drum sound
 				SET_DRUM_ATTACK_ON; //set global flag indicating we are using the timer to generate "attack"
 				SET_UPDATE_PRESCALER; //logic to be used in the timer interrupt so we pass through and just load prescaler to shadow register
 				TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[4095 - time2CV] >> 11); // release time prescaler loaded to holding register
 				TIM3->EGR = TIM_EGR_UG; //immediately set an update event
 				TIM3->CNT = 3840; //reset the count for the down counter
-				//TIM3->CR1 |= TIM_CR1_CEN; //enable timer
 
 			}
 			if (speed == env) {
 				attackTime = calcTime1Env; //set the function pointers for attack and release to the envelope time scale
-				releaseTime = calcTime2Env; //i believe this needs to be done here to ensure that we recover from retrigger behavior
+				releaseTime = calcTime2Env; //this needs to be done here to ensure that we recover from retrigger behavior
 			} else if (speed == seq) {
 				attackTime = calcTime1Seq; //set the function pointer for attack and release to the sequence time scale
 				releaseTime = calcTime2Seq;
 			}
-			//incSign = 1;
+
 			if (trigMode == gated) {
-				SET_GATE_ON;
-			} //turn the gate flag on in gatemode
+				SET_GATE_ON; //turn the gate flag on in gate mode
+			}
+
 			sampHoldA();
 		} else {
 
@@ -338,7 +349,7 @@ void TIM2_IRQHandler(void) {
 
 				case pendulum:
 
-					if (!(HOLD_AT_B)) { // if we arent currently gated, reverse the direction of the oscillator
+					if (!(HOLD_AT_B)) { // if we arent currently gated, reverse the direction of the contour generator
 						incSign = incSign * -1;
 					}
 
@@ -351,7 +362,7 @@ void TIM2_IRQHandler(void) {
 
 			}
 		}
-		if (trigMode == pendulum && loop == noloop) { // regardless of whether the oscillator is at rest or not, toggle the gateOn every trigger with pendulum
+		if (trigMode == pendulum && loop == noloop) { // regardless of whether the contour generator is at rest or not, toggle the gateOn every trigger with pendulum
 
 			TOGGLE_GATE_ON;
 
@@ -374,7 +385,7 @@ void TIM2_IRQHandler(void) {
 				incSign = -1; // -1 in int
 				RESET_GATE_ON;
 
-			} else { //if we get a release when we are at or after span, reset the oscillator behavior and let it finish release
+			} else { //if we get a release when we are at or after span, reset the contour generator behavior and let it finish release
 
 				if (speed == env) {
 					releaseTime = calcTime2Env;
@@ -542,12 +553,20 @@ void EXTI15_10_IRQHandler(void) {
 			}
 		}
 
-		EOR_JACK_HIGH
-		EOA_JACK_LOW
 		EOR_GATE_HIGH
 		EOA_GATE_LOW
-		__HAL_TIM_SET_COUNTER(&htim15, 0);
-		__HAL_TIM_ENABLE(&htim15);
+
+		if (TRIGA) {
+					EOR_JACK_HIGH
+					__HAL_TIM_SET_COUNTER(&htim15, 0);
+					__HAL_TIM_ENABLE(&htim15);
+				} else if (GATEA) {
+					EOR_JACK_HIGH
+				}
+				if (GATEB) {
+					EOA_JACK_LOW
+				}
+
 
 		if (inc < 0) {
 			sampHoldB();
@@ -563,12 +582,22 @@ void EXTI15_10_IRQHandler(void) {
 
 	} else {
 
-		EOA_JACK_HIGH
-		EOR_JACK_LOW
 		EOA_GATE_HIGH
 		EOR_GATE_LOW
-		__HAL_TIM_SET_COUNTER(&htim15, 0);
-		__HAL_TIM_ENABLE(&htim15);
+
+		if (TRIGB) {
+					EOA_JACK_HIGH
+					__HAL_TIM_SET_COUNTER(&htim15, 0);
+					__HAL_TIM_ENABLE(&htim15);
+				} else if (GATEB) {
+					EOA_JACK_HIGH
+				}
+				if (GATEA) {
+					EOR_JACK_LOW
+				}
+
+
+
 
 		if (inc < 0) {
 			sampHoldA();

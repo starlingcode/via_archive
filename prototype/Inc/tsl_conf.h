@@ -344,19 +344,19 @@
   - A Low value will result in a higher sensitivity during the Proximity detection but with less noise filtering.
   - A High value will result in improving the system noise immunity but will increase the system response time.
 */
-#define TSLPRM_DEBOUNCE_PROX (20)
+#define TSLPRM_DEBOUNCE_PROX (5)
 
 /** Detect state debounce in samples unit (range=0..63)
   - A Low value will result in a higher sensitivity during the detection but with less noise filtering.
   - A High value will result in improving the system noise immunity but will increase the system response time.
 */
-#define TSLPRM_DEBOUNCE_DETECT (1)
+#define TSLPRM_DEBOUNCE_DETECT (0)
 
 /** Release state debounce in samples unit (range=0..63)
   - A Low value will result in a higher sensitivity during the end-detection but with less noise filtering.
   - A High value will result in a lower sensitivity during the end-detection but with more noise filtering.
 */
-#define TSLPRM_DEBOUNCE_RELEASE (1)
+#define TSLPRM_DEBOUNCE_RELEASE (0)
 
 /** Re-calibration state debounce in samples unit (range=0..63)
   - A Low value will result in a higher sensitivity during the recalibration but with less noise filtering.
@@ -441,7 +441,7 @@
 /** Timing tick frequency in Hz (range=125, 250, 500, 1000, 2000)
   - Result to a timing interrupt respectively every 8ms, 4ms, 2ms, 1ms, 0.5ms
 */
-#define TSLPRM_TICK_FREQ (1000)
+#define TSLPRM_TICK_FREQ (250)
 
 /** Delay for discharging Cx and Cs capacitors (range=0..65535)
     - The value corresponds to the Softdelay function parameter.
@@ -449,7 +449,7 @@
     - 1000 gives around 125 �s delay whatever HCLK
     - 2000 gives around 250 �s delay whatever HCLK
 */
-#define TSLPRM_DELAY_DISCHARGE_ALL (1000)
+#define TSLPRM_DELAY_DISCHARGE_ALL (500)
 
 /** IOs default mode when no on-going acquisition (range=0..1)
     - 0: Output push-pull low

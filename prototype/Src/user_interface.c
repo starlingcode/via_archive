@@ -23,12 +23,8 @@ enum speedTypes speed; // {audio, env, seq}
 enum loopTypes loop; // {noloop, looping}
 enum trigModeTypes trigMode; // {noretrigger, hardsync, nongatedretrigger, gated, pendulum}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
-
-
-
-
-// these logic flags are used to communicate state between the main loop and the interrupts
-
+enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA}
+enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB}
 
 
 
@@ -122,6 +118,24 @@ void readRelease(uint32_t modeFlagHolder) {
 
 	case 2:
 
+		if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
+			SET_AUX_MENU;
+			modeflag = 7; //indicate to the other mode change functions that we have pressed the logic a button
+			detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
+			clearLEDs(); //wipe the vestiges of our runtimme display
+			__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
+			showMode(logicOutA); //show our currentm mode
+		}
+
+		if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
+			SET_AUX_MENU;
+			modeflag = 8; //indicate to the other mode change functions that we have pressed the logic b button
+			detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
+			clearLEDs(); //wipe the vestiges of our runtime display
+			__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
+			showMode(logicOutB); //show our current mode
+		}
+
 		if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
 			detectOn = 0;
 			clearLEDs();
@@ -165,6 +179,30 @@ void readRelease(uint32_t modeFlagHolder) {
 		}
 		break;
 
+	case 7:
+
+		if (MyTKeys[3].p_Data->StateId == TSL_STATEID_RELEASE) {
+			if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
+				detectOn = 0;
+			}
+			clearLEDs();
+			RESET_AUX_MENU;
+			handleRelease(modeFlagHolder);
+		}
+		break;
+
+	case 8:
+
+		if (MyTKeys[1].p_Data->StateId == TSL_STATEID_RELEASE) {
+			if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
+				detectOn = 0;
+			}
+			clearLEDs();
+			RESET_AUX_MENU;
+			handleRelease(modeFlagHolder);
+		}
+		break;
+
 	}
 
 }
@@ -193,10 +231,21 @@ void handleRelease(uint32_t pinMode) {
 		case 6:
 			showMode(familyIndicator);
 			break;
+		case 7:
+			modeflag = 2;
+			showMode(logicOutA);
+			break;
+		case 8:
+			modeflag = 2;
+			showMode(logicOutB);
+			break;
 		}
 		displayNewMode = 1;
 		__HAL_TIM_SET_COUNTER(&htim4, 0);
 	} else {
+		if (AUX_MENU) {
+			modeflag = 2;
+		}
 		clearLEDs();
 		SET_RGB_ON;
 	}
@@ -362,7 +411,7 @@ void changeMode(uint32_t mode) {
 		}
 
 	}
-	if (mode == 4) {
+	else if (mode == 4) {
 		sampleHoldMode = (sampleHoldMode + 1) % 6;
 
 		holdState |= sampleHoldMode << 6;
@@ -371,12 +420,12 @@ void changeMode(uint32_t mode) {
 		SH_B_TRACK
 
 	}
-	if (mode == 5) {
+	else if (mode == 5) {
 		// increment our family pointer and swap in the correct family
 		familyIndicator = (familyIndicator + 1) % 8;
 		switchFamily();
 	}
-	if (mode == 6) {
+	else if (mode == 6) {
 		// wrap back to the end of the array of families if we go back from the first entry
 		// otherwise same as above
 		if (familyIndicator == 0) {
@@ -386,6 +435,49 @@ void changeMode(uint32_t mode) {
 		}
 
 		switchFamily();
+	}
+	else if (mode == 7) {
+		logicOutA = (logicOutA + 1) % 3;
+		switch (logicOutA) {
+		case 0:
+			SET_GATEA;
+			RESET_TRIGA;
+			RESET_DELTAA;
+			break;
+		case 1:
+			RESET_GATEA;
+			SET_TRIGA;
+			RESET_DELTAA;
+			break;
+		case 2:
+			RESET_GATEA;
+			RESET_TRIGA;
+			SET_DELTAA;
+			break;
+		}
+
+
+	}
+	else if (mode == 8) {
+		logicOutB = (logicOutB + 1) % 3;
+		switch (logicOutB) {
+		case 0:
+			SET_GATEB;
+			RESET_TRIGB;
+			RESET_DELTAB;
+			break;
+		case 1:
+			RESET_GATEB;
+			SET_TRIGB;
+			RESET_DELTAB;
+			break;
+		case 2:
+			RESET_GATEB;
+			RESET_TRIGB;
+			SET_DELTAB;
+			break;
+		}
+
 	}
 }
 
