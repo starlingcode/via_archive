@@ -34,6 +34,7 @@
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
+#include "scales.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -272,8 +273,12 @@ void DMA1_Channel1_IRQHandler(void) {
  */
 void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
-	EOA_JACK_LOW;
-	EOR_JACK_LOW;
+	if ((TRIGB) || (RATIO_DELTAB) || (PLL_DIVB)){
+		EOA_JACK_LOW;
+	}
+	if ((TRIGA) || (RATIO_DELTAA) || (PLL_DIVA)){
+		EOR_JACK_LOW;
+	}
 	__HAL_TIM_DISABLE(&htim15);
 	__HAL_TIM_CLEAR_FLAG(&htim15, TIM_FLAG_UPDATE);
 	/* USER CODE END TIM1_BRK_TIM15_IRQn 0 */
@@ -294,13 +299,16 @@ void TIM2_IRQHandler(void) {
 	int pllNudge = 0;
 	static uint32_t pllCounter;
 	uint32_t multiplier;
-	uint32_t divider;
+	uint32_t gcd;
 	uint32_t adjustedSpan;
 	uint32_t rhythmCoefficients[8] = {1, 2, 3, 4, 6, 8, 12, 16};
 	uint32_t diatonicCoefficients[8] = {1, 2, 3, 4, 5, 6, 8, 10};
 	uint32_t primesCoefficients[8] = {1, 2, 3, 5, 7, 11, 13, 17};
-	uint32_t scaleIndex1;
-	uint32_t scaleIndex2;
+	uint32_t noteIndex;
+	uint32_t rootIndex;
+	static uint32_t lastMultiplier;
+
+
 
 
 
@@ -316,26 +324,53 @@ void TIM2_IRQHandler(void) {
 		//reset the timer value
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
 
+		if ((4095 - time1CV) >= 2048) {
+			noteIndex = (myfix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) >> 9;
+		}
+		else {
+			noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 9;
+		}
+
+		if (controlScheme == root) {
+			if ((4095 - time2CV) >= 2048) {
+				rootIndex = (myfix16_lerp(time2Knob, 4095, ((4095 - time2CV) - 2048) << 5)) >> 9;
+			}
+			else {
+				rootIndex = (myfix16_lerp(0, time2Knob, (4095 - time2CV) << 5)) >> 9;
+			}
+		} else {
+			rootIndex = time2Knob >> 9;
+		}
 
 		switch (scaleType) {
-		case rhythm:
-			multiplier = rhythmCoefficients[time1Knob >> 9] * rhythmCoefficients[(4095 - time1CV)  >> 9];
-			divider = rhythmCoefficients[time2Knob >> 9] * rhythmCoefficients[(4095 - time1CV)  >> 9];
+
+		case 0:
+			multiplier = diatonicMinor7ths[rootIndex][noteIndex] & 0b00000011111111111111111111111111;
+			gcd = diatonicMinor7ths[rootIndex][noteIndex] >> 26;
 			break;
 
-		case diatonic:
-			multiplier = diatonicCoefficients[time1Knob >> 9] * diatonicCoefficients[(4095 - time1CV)  >> 9];
-			divider = diatonicCoefficients[time2Knob >> 9] * diatonicCoefficients[(4095 - time1CV)  >> 9];
-			break;
-
-		case primes:
-			multiplier = primesCoefficients[time1Knob >> 9] * primesCoefficients[(4095 - time1CV)  >> 9];
-			divider = primesCoefficients[time2Knob >> 9] * primesCoefficients[(4095 - time1CV)  >> 9];
+		case 1:
+			multiplier = diatonicMajor7ths[rootIndex][noteIndex] & 0b00000011111111111111111111111111;
+			gcd = diatonicMajor7ths[rootIndex][noteIndex] >> 26;
 			break;
 
 		default:
 			break;
 		}
+
+		if (lastMultiplier != multiplier) {
+			if (RATIO_DELTAA) {
+				EOR_JACK_HIGH
+				__HAL_TIM_SET_COUNTER(&htim15, 0);
+				__HAL_TIM_ENABLE(&htim15);
+			}
+			if (RATIO_DELTAB) {
+				EOA_JACK_HIGH
+				__HAL_TIM_SET_COUNTER(&htim15, 0);
+				__HAL_TIM_ENABLE(&htim15);
+			}
+		}
+		lastMultiplier = multiplier;
 
 
 		if (controlScheme == dutyCycle) {
@@ -346,9 +381,20 @@ void TIM2_IRQHandler(void) {
 
 
 		pllCounter ++;
-		if (pllCounter >= divider || (TRIGGER_BUTTON)) {
+		if (pllCounter >= gcd || (TRIGGER_BUTTON)) {
 
 			RESET_TRIGGER_BUTTON;
+
+			if (PLL_DIVA) {
+				EOR_JACK_HIGH
+				__HAL_TIM_SET_COUNTER(&htim15, 0);
+				__HAL_TIM_ENABLE(&htim15);
+			}
+			if (PLL_DIVB) {
+				EOA_JACK_HIGH
+				__HAL_TIM_SET_COUNTER(&htim15, 0);
+				__HAL_TIM_ENABLE(&htim15);
+			}
 
 			if (pll == hardSync) {
 
@@ -376,7 +422,7 @@ void TIM2_IRQHandler(void) {
 
 
 
-				adjustedSpan = span*divider/multiplier;
+				adjustedSpan = span*gcd/multiplier;
 
 				if (position < (adjustedSpan - (adjustedSpan >> 1))) {
 					SET_CATCH_UP;
@@ -404,20 +450,18 @@ void TIM2_IRQHandler(void) {
 
 
 		//use this value to calculate our oscillator frequency
-//		attackInc = ((span << 8) + pllNudge) / (gateOnCount * divider);
-//		releaseInc = ((span << 8) + pllNudge) / ((periodCount - gateOnCount) * divider);
+//		attackInc = ((span << 8) + pllNudge) / (gateOnCount * gcd);
+//		releaseInc = ((span << 8) + pllNudge) / ((periodCount - gateOnCount) * gcd);
 //
 //		attackInc = (attackInc << 1) * multiplier;
 //		releaseInc = (releaseInc << 1) * multiplier;
 
-				attackInc = ((span << 8) + pllNudge) / gateOnCount;
-				releaseInc = ((span << 8) + pllNudge) / (periodCount - gateOnCount);
+				attackInc = ((span << 9) + pllNudge) / gateOnCount;
+				releaseInc = ((span << 9) + pllNudge) / (periodCount - gateOnCount);
 
-				attackInc = (attackInc << 1);
-				releaseInc = (releaseInc << 1);
 
-				attackInc = attackInc * multiplier/divider;
-				releaseInc = releaseInc * multiplier/divider;
+				attackInc = myfix16_mul(attackInc, multiplier) >> 3;
+				releaseInc = myfix16_mul(releaseInc, multiplier)>>3;
 
 		if (attackInc >= span - 1) {attackInc = span - 1;}
 		if (releaseInc >= span - 1) {releaseInc = span - 1;}
@@ -450,19 +494,7 @@ void TIM3_IRQHandler(void) {
 	/* USER CODE BEGIN TIM3_IRQn 0 */
 	//drumReleaseOn = 0;
 
-	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
 
-	if (UPDATE_PRESCALER) { // handle the update event to load the prescaler initially
-		RESET_UPDATE_PRESCALER;
-	}
-
-	else { // raise the flag to put the drum mode to rest after overflowing the release portion
-		RESET_DRUM_RELEASE_ON;
-		expoScale = 0;
-		__HAL_TIM_DISABLE(&htim3);
-		__HAL_TIM_SET_COUNTER(&htim3, 0);
-		SET_LAST_CYCLE;
-	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
 
@@ -683,10 +715,20 @@ void getSample(uint32_t phase) {
 				//we use this to generate our gate output
 				if (interp1 < interp2) {
 					EOA_GATE_HIGH
-
+					if (DELTAB) {
+						EOA_JACK_HIGH
+					}
+					if (DELTAA) {
+						EOR_JACK_LOW
+					}
 				} else if (interp2 < interp1) {
 					EOA_GATE_LOW
-
+					if (DELTAB) {
+						EOA_JACK_LOW
+					}
+					if (DELTAA) {
+						EOR_JACK_HIGH
+					}
 				}
 
 		if (RGB_ON) { //if the runtime display is on, show our mode
@@ -736,10 +778,20 @@ void getSample(uint32_t phase) {
 				//we use this to generate our gate output
 				if (interp1 < interp2) {
 					EOA_GATE_HIGH
-
+					if (DELTAB) {
+						EOA_JACK_HIGH
+					}
+					if (DELTAA) {
+						EOR_JACK_LOW
+					}
 				} else if (interp2 < interp1) {
 					EOA_GATE_LOW
-
+					if (DELTAB) {
+						EOA_JACK_LOW
+					}
+					if (DELTAA) {
+						EOR_JACK_HIGH
+					}
 				}
 
 		if (RGB_ON) {
@@ -815,18 +867,30 @@ int myfix16_lerp(int in0, int in1, uint16_t inFract) {
 
 void EXTI15_10_IRQHandler(void) {
 
+
 	if (!(PHASE_STATE)) {
 
 
-		EOR_JACK_HIGH
-		EOA_JACK_LOW
+
 		EOR_GATE_HIGH
 		EOA_GATE_LOW
-		__HAL_TIM_SET_COUNTER(&htim15, 0);
-		__HAL_TIM_ENABLE(&htim15);
-		RESET_CATCH_UP;
 
-		sampHoldA();
+		if (TRIGA) {
+					EOR_JACK_HIGH
+					__HAL_TIM_SET_COUNTER(&htim15, 0);
+					__HAL_TIM_ENABLE(&htim15);
+				} else if (GATEA) {
+					EOR_JACK_HIGH
+				}
+				if (GATEB) {
+					EOA_JACK_LOW
+				}
+
+
+
+
+			sampHoldA();
+
 
 		if (RGB_ON) {
 			LEDC_ON
@@ -836,19 +900,26 @@ void EXTI15_10_IRQHandler(void) {
 
 	} else {
 
-
-
-		EOA_JACK_HIGH
-		EOR_JACK_LOW
 		EOA_GATE_HIGH
 		EOR_GATE_LOW
-		__HAL_TIM_SET_COUNTER(&htim15, 0);
-		__HAL_TIM_ENABLE(&htim15);
-		RESET_CATCH_UP;
+
+		if (TRIGB) {
+					EOA_JACK_HIGH
+					__HAL_TIM_SET_COUNTER(&htim15, 0);
+					__HAL_TIM_ENABLE(&htim15);
+				} else if (GATEB) {
+					EOA_JACK_HIGH
+				}
+				if (GATEA) {
+					EOR_JACK_LOW
+				}
 
 
 
-		sampHoldB();
+
+
+			sampHoldB();
+
 
 		if (RGB_ON) {
 			LEDC_OFF

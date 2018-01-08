@@ -45,6 +45,8 @@
 #include "tsl_user.h"
 #include "eeprom.h"
 
+#include "scales.h"
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -185,18 +187,14 @@ int main(void) {
 
 	SET_RGB_ON;
 	SET_AMP_ON;
-	SET_PITCH_ON;
 	SET_MORPH_ON;
-	SET_DRUM_MODE_ON;
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
 
 
 	SET_RGB_ON;
 	SET_AMP_ON;
-	SET_PITCH_ON;
 	SET_MORPH_ON;
-	SET_DRUM_MODE_ON;
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
 
@@ -243,6 +241,8 @@ int main(void) {
 	//enable our drum envelope interrupt
 	__HAL_TIM_ENABLE_IT(&htim3, TIM_IT_UPDATE);
 
+	switchScale(0);
+
 	//start our DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);
 
@@ -250,6 +250,10 @@ int main(void) {
 	//we must do this after the resampling interrupts have been enabled
 	SH_A_TRACK
 	SH_B_TRACK
+	SET_RATIO_DELTAB;
+	SET_TRIGA;
+
+
 
 	//HAL_FLASH_Unlock();
 
@@ -343,8 +347,8 @@ void SystemClock_Config(void) {
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1 | RCC_PERIPHCLK_TIM8
 			| RCC_PERIPHCLK_ADC12 | RCC_PERIPHCLK_ADC34;
-	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV8;
-	PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV16;
+	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV2;
+	PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV128;
 	PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
 	PeriphClkInit.Tim8ClockSelection = RCC_TIM8CLK_HCLK;
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
