@@ -42,6 +42,8 @@
 
 /* USER CODE BEGIN Includes */
 
+
+
 #define time2Knob ADCReadings2[0]
 #define morphKnob ADCReadings2[1]
 #define time1CV ADCReadings1[0]
@@ -90,7 +92,7 @@ typedef struct buffer{
 void write(buffer*,int);
 int readn(buffer*, int);
 
-int holdState;
+
 
 
 /* USER CODE END Includes */

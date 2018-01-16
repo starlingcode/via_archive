@@ -80,6 +80,8 @@ enum speedTypes speed;
 enum loopTypes loop;
 enum trigModeTypes trigMode;
 enum sampleHoldModeTypes sampleHoldMode;
+enum logicOutATypes logicOutA;
+enum logicOutBTypes logicOutB;
 
 //these are the UI variables that we need in our main loop
 uint32_t modeflag;
@@ -90,6 +92,10 @@ uint32_t displayNewMode;
 uint16_t VirtAddVarTab[NB_OF_VAR] = {0x5555};
 uint16_t VarDataTab[NB_OF_VAR] = {0};
 uint16_t VarValue,VarDataTmp;
+
+extern uint16_t holdState;
+
+extern uint32_t ee_status;
 
 int holdCalibration;
 
@@ -133,7 +139,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 int main(void) {
 
 	/* USER CODE BEGIN 1 */
-	//uint32_t ee_status;
+
 
 
 
@@ -188,12 +194,14 @@ int main(void) {
 
 
 	SET_RGB_ON;
-	SET_AMP_ON;
-	SET_PITCH_ON;
-	SET_MORPH_ON;
-	SET_DRUM_MODE_ON;
+//	SET_TRIGA;
+//	SET_DELTAB;
+//	SET_MORPH_ON;
+//	SET_DRUM_MODE_ON;
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
+
+
 
 
 	// set the priority and enable an interrupt line to be used by our phase state change interrupt
@@ -245,22 +253,25 @@ int main(void) {
 	//we must do this after the resampling interrupts have been enabled
 	SH_A_TRACK
 	SH_B_TRACK
-	SET_GATEA;
-	SET_GATEB;
+
 	incSign = 1;
-	attackTime = calcTime1Env;
-	releaseTime = calcTime2Env;
+
+
+
+	HAL_FLASH_Unlock();
+
+	ee_status = EE_Init();
+	if( ee_status != EE_OK) {LEDC_ON}
+
+	restoreState();
 
 
 
 
 
-	//HAL_FLASH_Unlock();
 
-	//ee_status = EE_Init();
-	//if( ee_status != EE_OK) {LEDC_ON}
 
-	//restoreState();
+
 
 	/* USER CODE END 2 */
 
@@ -269,7 +280,7 @@ int main(void) {
 	while (1) {
 
 		//check if the trigger button has been pressed
-		if ((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET){
+		if (((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET) || ((GPIOA->IDR & GPIO_PIN_11) == (uint32_t) GPIO_PIN_RESET)){
 			//if we havent raised the trigger button flag, do so and set a pending interrupt
 			if (!(TRIGGER_BUTTON)) {
 				SET_TRIGGER_BUTTON;
@@ -735,7 +746,7 @@ static void MX_TIM6_Init(void) {
 	htim6.Instance = TIM6;
 	htim6.Init.Prescaler = 1 - 1;
 	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim6.Init.Period = 1150;
+	htim6.Init.Period = 1000;
 	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim6) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -936,7 +947,7 @@ static void MX_GPIO_Init(void) {
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	/*Configure GPIO pins : PA11 PA12 */
-	GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
+	GPIO_InitStruct.Pin = GPIO_PIN_12;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -945,7 +956,111 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
+void restoreState(){
+	ee_status = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
+	holdState = VarDataTab[0];
+	holdState = 536;
+	loop = holdState & 0x01;
+	speed = (holdState & 0x06) >> 1;
+	trigMode = (holdState & 0x38) >> 3;
+	sampleHoldMode = (holdState & 0x1C0) >> 6;
+	familyIndicator = (holdState & 0xE00) >> 9;
+	logicOutA = (holdState & 0x3000) >> 13;
+	logicOutB = (holdState & 0xC000) >> 15;
 
+
+	if (loop == looping) {
+		SET_OSCILLATOR_ACTIVE;
+		RESET_LAST_CYCLE;
+	}
+
+	switch (logicOutA) {
+	case 0:
+		SET_GATEA;
+		RESET_TRIGA;
+		RESET_DELTAA;
+		break;
+	case 1:
+		RESET_GATEA;
+		SET_TRIGA;
+		RESET_DELTAA;
+		break;
+	case 2:
+		RESET_GATEA;
+		RESET_TRIGA;
+		SET_DELTAA;
+		break;
+	}
+
+	switch (logicOutB) {
+	case 0:
+		SET_GATEB;
+		RESET_TRIGB;
+		RESET_DELTAB;
+		break;
+	case 1:
+		RESET_GATEB;
+		SET_TRIGB;
+		RESET_DELTAB;
+		break;
+	case 2:
+		RESET_GATEB;
+		RESET_TRIGB;
+		SET_DELTAB;
+		break;
+	}
+
+	if (speed == audio && loop == noloop) {
+		//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
+		SET_DRUM_MODE_ON;
+		TIM6->ARR = 1150;
+		switch (trigMode) {
+		case 0:
+			SET_AMP_ON;
+			SET_PITCH_ON;
+			SET_MORPH_ON;
+			break;
+		case 1:
+			SET_AMP_ON;
+			RESET_PITCH_ON;
+			SET_MORPH_ON;
+			break;
+		case 2:
+			SET_AMP_ON;
+			RESET_PITCH_ON;
+			RESET_MORPH_ON;
+			break;
+		case 3:
+			RESET_AMP_ON;
+			RESET_PITCH_ON;
+			SET_MORPH_ON;
+			break;
+		case 4:
+			RESET_AMP_ON;
+			SET_PITCH_ON;
+			SET_MORPH_ON;
+			break;
+		}
+		__HAL_TIM_ENABLE(&htim3);
+}
+
+		// set the appropriate time calculation functions
+		if (speed == env) {
+			attackTime = calcTime1Env;
+			releaseTime = calcTime2Env;
+		}
+		if (speed == seq) {
+			attackTime = calcTime1Seq;
+			releaseTime = calcTime2Seq;
+		}
+
+		incSign = 1;
+		RESET_GATE_ON;
+
+		switchFamily();
+
+
+}
 
 
 

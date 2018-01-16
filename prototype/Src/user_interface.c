@@ -8,10 +8,13 @@
 
 #include "interrupt_functions.h"
 
+#include "eeprom.h"
 
 #include "int64.h"
 
-int holdState;
+uint16_t holdState;
+
+uint32_t ee_status;
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim3;
@@ -25,6 +28,10 @@ enum trigModeTypes trigMode; // {noretrigger, hardsync, nongatedretrigger, gated
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
 enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA}
 enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB}
+
+uint16_t VirtAddVarTab[NB_OF_VAR];
+uint16_t VarDataTab[NB_OF_VAR];
+uint16_t VarValue,VarDataTmp;
 
 
 
@@ -422,7 +429,9 @@ void changeMode(uint32_t mode) {
 	}
 	else if (mode == 5) {
 		// increment our family pointer and swap in the correct family
+
 		familyIndicator = (familyIndicator + 1) % 8;
+		holdState |= familyIndicator << 9;
 		switchFamily();
 	}
 	else if (mode == 6) {
@@ -433,11 +442,12 @@ void changeMode(uint32_t mode) {
 		} else {
 			familyIndicator = (familyIndicator - 1);
 		}
-
+		holdState |= familyIndicator << 9;
 		switchFamily();
 	}
 	else if (mode == 7) {
 		logicOutA = (logicOutA + 1) % 3;
+		holdState |= logicOutA << 13;
 		switch (logicOutA) {
 		case 0:
 			SET_GATEA;
@@ -460,6 +470,7 @@ void changeMode(uint32_t mode) {
 	}
 	else if (mode == 8) {
 		logicOutB = (logicOutB + 1) % 3;
+		holdState |= logicOutB << 15;
 		switch (logicOutB) {
 		case 0:
 			SET_GATEB;
@@ -479,6 +490,8 @@ void changeMode(uint32_t mode) {
 		}
 
 	}
+	ee_status = EE_WriteVariable(VirtAddVarTab[0], holdState);
+
 }
 
 void showMode(uint32_t currentmode) {
@@ -514,6 +527,7 @@ void showMode(uint32_t currentmode) {
 			break;
 		}
 	}
+
 
 }
 
@@ -597,13 +611,6 @@ void restoreDisplay() {
 	}
 }
 
-void restoreState(){
-	//holdState = EE_ReadVariable(virtAddrVarTab, &varDataTab);
-	loop = holdState & 0x01;
-	speed = (holdState & 0x06) >> 1;
-	trigMode = (holdState & 0x38) >> 3;
-	sampleHoldMode = (holdState & 0x1C0) >> 6;
-	familyIndicator = (holdState & 0xE00) >> 9;
-}
+
 
 

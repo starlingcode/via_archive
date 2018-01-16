@@ -464,8 +464,6 @@ void fillFamilyArray(void) {
 void switchFamily(void) {
 	currentFamily = familyArray[speed][familyIndicator];
 
-	holdState |= familyIndicator << 9;
-
 	currentFamily = familyArray[speed][familyIndicator];
 	loadSampleArray(currentFamily);
 
