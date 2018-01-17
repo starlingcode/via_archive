@@ -58,6 +58,9 @@ enum logicOutBTypes {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
 int familyIndicator;
 
 int holdState;
+int holdLogicOut;
+
+int ee_status;
 
 
 void readDetect(void) __attribute__((section("ccmram")));

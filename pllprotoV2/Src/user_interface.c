@@ -3,6 +3,7 @@
 #include "tsl_user.h"
 
 #include "scales.h"
+#include "eeprom.h"
 
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
@@ -29,7 +30,8 @@ enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA, ratioDeltaA, pllCloc
 enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
 
 
-
+extern uint16_t VirtAddVarTab[NB_OF_VAR];
+extern uint16_t VarDataTab[NB_OF_VAR];
 // these logic flags are used to communicate state between the main controlScheme and the interrupts
 
 
@@ -261,23 +263,28 @@ void handleRelease(uint32_t pinMode) {
 void changeMode(uint32_t mode) {
 	if (mode == 1) {
 		// toggle through our 3 scaleType modes
-		scaleType = (scaleType + 1) % 2;
-		//switchScale(scaleType);
+		scaleType = (scaleType + 1) % 3;
+		switchScale(scaleType);
+		holdState = (holdState & 0b1111111100111111) | (scaleType << 6);
 	}
 	else if (mode == 2) {
 
 		pll = (pll + 1) % 4;
+		holdState = (holdState & 0b1111111111000111) | (pll << 3);
+
 
 	}
 	else if (mode == 3) {
 
 		controlScheme = (controlScheme + 1) % 4;
+		holdState = (holdState & 0b1111111111111000) | controlScheme;
 
 	}
 	else if (mode == 4) {
+
 		sampleHoldMode = (sampleHoldMode + 1) % 6;
 
-		holdState |= sampleHoldMode << 6;
+		holdState = (holdState & 0b1111100011111111) | (sampleHoldMode << 8);
 
 		SH_A_TRACK
 		SH_B_TRACK
@@ -287,6 +294,7 @@ void changeMode(uint32_t mode) {
 		// increment our family pointer and swap in the correct family
 		familyIndicator = (familyIndicator + 1) % 16;
 		switchFamily();
+		holdState = (holdState & 0b1000011111111111) | (familyIndicator << 11);
 	}
 	else if (mode == 6) {
 		// wrap back to the end of the array of families if we go back from the first entry
@@ -298,8 +306,15 @@ void changeMode(uint32_t mode) {
 		}
 
 		switchFamily();
+		holdState = (holdState & 0b1000011111111111) | (familyIndicator << 11);
 	}	else if (mode == 7) {
 		logicOutA = (logicOutA + 1) % 5;
+		holdLogicOut = (holdLogicOut & 0b1111111111111000) | logicOutA;
+
+		ee_status = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
+	    ee_status|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
+
+
 		switch (logicOutA) {
 		case 0:
 			SET_GATEA;
@@ -340,9 +355,15 @@ void changeMode(uint32_t mode) {
 		}
 
 
+
 	}
 	else if (mode == 8) {
 		logicOutB = (logicOutB + 1) % 5;
+		holdLogicOut = (holdLogicOut & 0b1111111111000111) | (logicOutB << 3);
+
+		ee_status = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
+	    ee_status|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
+
 		switch (logicOutB) {
 		case 0:
 			SET_GATEB;
@@ -380,7 +401,12 @@ void changeMode(uint32_t mode) {
 			SET_PLL_DIVB;
 			break;
 		}
+
+
 	}
+
+	ee_status = EE_WriteVariable(VirtAddVarTab[0], holdState);
+    ee_status|= EE_ReadVariable(VirtAddVarTab[0],  &VarDataTab[0]);
 
 }
 
@@ -495,13 +521,6 @@ void restoreDisplay() {
 	}
 }
 
-void restoreState(){
-	//holdState = EE_ReadVariable(virtAddrVarTab, &varDataTab);
-	controlScheme = holdState & 0x01;
-	scaleType = (holdState & 0x06) >> 1;
-	pll = (holdState & 0x38) >> 3;
-	sampleHoldMode = (holdState & 0x1C0) >> 6;
-	familyIndicator = (holdState & 0xE00) >> 9;
-}
+
 
 

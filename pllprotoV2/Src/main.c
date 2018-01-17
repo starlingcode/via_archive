@@ -82,8 +82,8 @@ uint32_t detectOn;
 uint32_t displayNewMode;
 
 
-uint16_t VirtAddVarTab[NB_OF_VAR] = {0x5555};
-uint16_t VarDataTab[NB_OF_VAR] = {0};
+uint16_t VirtAddVarTab[NB_OF_VAR] = {0x5555, 0x6666};
+uint16_t VarDataTab[NB_OF_VAR] = {0, 0};
 uint16_t VarValue,VarDataTmp;
 
 // these enums contain our mode information
@@ -91,7 +91,8 @@ enum pllTypes pll; // {none, true, catch, setCatch}
 enum controlSchemes controlScheme; // {gateLength, knobCV}
 enum scaleTypes scaleType; // {rhythms, pitches}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
-
+enum scaleTypes logicOutA;
+enum sampleHoldModeTypes logicOutB;
 
 // initialize the arrays that will be used by DMA to store our Knob and CV values
 extern uint32_t ADCReadings1[4];
@@ -123,7 +124,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
-//uint32_t saveState(void);
+
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -186,17 +187,10 @@ int main(void) {
 
 
 	SET_RGB_ON;
-	SET_AMP_ON;
-	SET_MORPH_ON;
+
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
 
-
-	SET_RGB_ON;
-	SET_AMP_ON;
-	SET_MORPH_ON;
-	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
-	((*(volatile uint32_t *) DAC2_ADDR) = (0));
 
 
 	// set the priority and enable an interrupt line to be used by our phase state change interrupt
@@ -250,17 +244,16 @@ int main(void) {
 	//we must do this after the resampling interrupts have been enabled
 	SH_A_TRACK
 	SH_B_TRACK
-	SET_RATIO_DELTAB;
-	SET_TRIGA;
 
 
 
-	//HAL_FLASH_Unlock();
 
-	//ee_status = EE_Init();
-	//if( ee_status != EE_OK) {LEDC_ON}
+	HAL_FLASH_Unlock();
 
-	//restoreState();
+	ee_status = EE_Init();
+	if( ee_status != EE_OK) {LEDC_ON}
+
+	restoreState();
 
 	/* USER CODE END 2 */
 
@@ -941,7 +934,99 @@ static void MX_GPIO_Init(void) {
 
 /* USER CODE BEGIN 4 */
 
+void restoreState(){
+	ee_status = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
+	holdState = VarDataTab[0];
+	ee_status = EE_ReadVariable(VirtAddVarTab[1], &VarDataTab[1]);
+	holdLogicOut = VarDataTab[1];
+	controlScheme = holdState & 0b0000000000000111;
+	scaleType = (holdState & 0b0000000011000000) >> 6;
+	pll = (holdState & 0b0000000000111000) >> 3;
+	sampleHoldMode = (holdState & 0b0000011100000000) >> 8;
+	familyIndicator = (holdState & 0b0111100000000000) >> 11;
+	logicOutA = holdLogicOut & 0b0000000000000111;
+	logicOutB = (holdLogicOut & 0b0000000000111000) >> 3;
 
+	switchScale(scaleType);
+
+	switch (logicOutA) {
+	case 0:
+		SET_GATEA;
+		RESET_DELTAB;
+		RESET_DELTAA;
+		RESET_RATIO_DELTAA;
+		RESET_PLL_DIVA;
+		break;
+	case 1:
+		RESET_GATEA;
+		SET_TRIGA;
+		RESET_DELTAA;
+		RESET_RATIO_DELTAA;
+		RESET_PLL_DIVA;
+		break;
+	case 2:
+		RESET_GATEA;
+		RESET_TRIGA;
+		SET_DELTAA;
+		RESET_RATIO_DELTAA;
+		RESET_PLL_DIVA;
+		break;
+	case 3:
+		RESET_GATEA;
+		RESET_TRIGA;
+		RESET_DELTAA;
+		SET_RATIO_DELTAA;
+		RESET_PLL_DIVA;
+		break;
+	case 4:
+		RESET_GATEA;
+		RESET_TRIGA;
+		RESET_DELTAA;
+		RESET_RATIO_DELTAA;
+		SET_PLL_DIVA;
+		break;
+
+	}
+
+	switch (logicOutB) {
+	case 0:
+		SET_GATEB;
+		RESET_TRIGB;
+		RESET_DELTAB;
+		RESET_RATIO_DELTAB;
+		RESET_PLL_DIVB;
+		break;
+	case 1:
+		RESET_GATEB;
+		SET_TRIGB;
+		RESET_DELTAA;
+		RESET_RATIO_DELTAB;
+		RESET_PLL_DIVB;
+		break;
+	case 2:
+		RESET_GATEB;
+		RESET_TRIGB;
+		SET_DELTAB;
+		RESET_RATIO_DELTAB;
+		RESET_PLL_DIVB;
+		break;
+	case 3:
+		RESET_GATEB;
+		RESET_TRIGB;
+		RESET_DELTAB;
+		SET_RATIO_DELTAB;
+		RESET_PLL_DIVB;
+		break;
+	case 4:
+		RESET_GATEB;
+		RESET_TRIGB;
+		RESET_DELTAB;
+		RESET_RATIO_DELTAB;
+		SET_PLL_DIVB;
+		break;
+	}
+
+}
 
 
 /* USER CODE END 4 */

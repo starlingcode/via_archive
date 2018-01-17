@@ -14,12 +14,22 @@ void switchScale(uint32_t scaleIndex) {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				// this just gets the appropriate samples and plops them into the global holding arrays
+				evaluationHolder = rhythms[i][j];
+				scale[i][j] = evaluationHolder;
+			}
+		}
+		break;
+
+	case 1:
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				// this just gets the appropriate samples and plops them into the global holding arrays
 				evaluationHolder = diatonicMinor7ths[i][j];
 				scale[i][j] = evaluationHolder;
 			}
 		}
 		break;
-	case 1:
+	case 2:
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				// this just gets the appropriate samples and plops them into the global holding arrays
@@ -28,6 +38,7 @@ void switchScale(uint32_t scaleIndex) {
 			}
 		}
 		break;
+
 	}
 }
 

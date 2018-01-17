@@ -450,7 +450,7 @@ void fillFamilyArray(void) {
 	familyArray[10] = doubleLump2ndDegLinAtk;
 	familyArray[11] = lump2ndDegLinAtk;
 	familyArray[12] = steps;
-	familyArray[13] = perlin;
+	familyArray[13] = tenor48;
 	familyArray[14] = threeSineFoldsLinAtk;
 	familyArray[15] = threeBounceLinAtk;
 

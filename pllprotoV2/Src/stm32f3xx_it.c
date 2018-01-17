@@ -345,13 +345,18 @@ void TIM2_IRQHandler(void) {
 		switch (scaleType) {
 
 		case 0:
-			multiplier = diatonicMinor7ths[rootIndex][noteIndex] & 0b00000011111111111111111111111111;
-			gcd = diatonicMinor7ths[rootIndex][noteIndex] >> 26;
+			multiplier = rhythms[rootIndex][noteIndex] & 0b00000001111111111111111111111111;
+			gcd = rhythms[rootIndex][noteIndex] >> 26;
 			break;
 
 		case 1:
-			multiplier = diatonicMajor7ths[rootIndex][noteIndex] & 0b00000011111111111111111111111111;
+			multiplier = diatonicMajor7ths[rootIndex][noteIndex] & 0b00000001111111111111111111111111;
 			gcd = diatonicMajor7ths[rootIndex][noteIndex] >> 26;
+			break;
+
+		case 2:
+			multiplier = diatonicMinor7ths[rootIndex][noteIndex] & 0b00000001111111111111111111111111;
+			gcd = diatonicMinor7ths[rootIndex][noteIndex] >> 26;
 			break;
 
 		default:
@@ -375,7 +380,7 @@ void TIM2_IRQHandler(void) {
 
 		if (controlScheme == dutyCycle) {
 
-			gateOnCount = myfix16_mul(periodCount, (4095 - time2CV)  << 4);
+			gateOnCount = myfix16_mul(periodCount, time2CV  << 4);
 
 		}
 
