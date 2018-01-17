@@ -12,9 +12,8 @@
 
 #include "int64.h"
 
-uint16_t holdState;
 
-uint32_t ee_status;
+//uint32_t ee_status;
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim3;
@@ -29,9 +28,10 @@ enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antideci
 enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA}
 enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB}
 
-uint16_t VirtAddVarTab[NB_OF_VAR];
-uint16_t VarDataTab[NB_OF_VAR];
-uint16_t VarValue,VarDataTmp;
+extern uint16_t VirtAddVarTab[NB_OF_VAR];
+extern uint16_t VarDataTab[NB_OF_VAR];
+
+
 
 
 
@@ -263,7 +263,7 @@ void changeMode(uint32_t mode) {
 		// toggle through our 3 speed modes
 		speed = (speed + 1) % 3;
 
-		holdState |= speed << 1;
+		holdState = (holdState & 0xb1111111111111001) | (speed << 1);
 
 		switchFamily();
 
@@ -323,7 +323,7 @@ void changeMode(uint32_t mode) {
 		trigMode = (trigMode + 1) % 5;
 		//initialize some essential retrigger variables
 
-		holdState |= trigMode << 3;
+		holdState = (holdState & 0xb1111111111000111) | (trigMode << 3);
 
 		incSign = 1;
 		RESET_GATE_ON;
@@ -360,7 +360,7 @@ void changeMode(uint32_t mode) {
 	else if (mode == 3) {
 		loop = (loop + 1) % 2;
 
-		holdState |= loop;
+		holdState = (holdState & 0xb1111111111111110) | loop;
 
 		if (loop == noloop) {
 			// signal to our oscillator that it should put itself to sleep
@@ -421,7 +421,7 @@ void changeMode(uint32_t mode) {
 	else if (mode == 4) {
 		sampleHoldMode = (sampleHoldMode + 1) % 6;
 
-		holdState |= sampleHoldMode << 6;
+		holdState = (holdState & 0xb1111111000111111) | (sampleHoldMode << 6);
 
 		SH_A_TRACK
 		SH_B_TRACK
@@ -431,8 +431,8 @@ void changeMode(uint32_t mode) {
 		// increment our family pointer and swap in the correct family
 
 		familyIndicator = (familyIndicator + 1) % 8;
-		holdState |= familyIndicator << 9;
 		switchFamily();
+		holdState = (holdState & 0xb1111000111111111) | (familyIndicator << 9);
 	}
 	else if (mode == 6) {
 		// wrap back to the end of the array of families if we go back from the first entry
@@ -442,12 +442,12 @@ void changeMode(uint32_t mode) {
 		} else {
 			familyIndicator = (familyIndicator - 1);
 		}
-		holdState |= familyIndicator << 9;
 		switchFamily();
+		holdState = (holdState & 0xb1111000111111111) | (familyIndicator << 9);
 	}
 	else if (mode == 7) {
 		logicOutA = (logicOutA + 1) % 3;
-		holdState |= logicOutA << 13;
+		holdState = (holdState & 0xb1100111111111111) | (logicOutA << 13);;
 		switch (logicOutA) {
 		case 0:
 			SET_GATEA;
@@ -470,7 +470,7 @@ void changeMode(uint32_t mode) {
 	}
 	else if (mode == 8) {
 		logicOutB = (logicOutB + 1) % 3;
-		holdState |= logicOutB << 15;
+		holdState = (holdState & 0xb0011111111111111) | (logicOutB << 15);
 		switch (logicOutB) {
 		case 0:
 			SET_GATEB;
@@ -490,7 +490,10 @@ void changeMode(uint32_t mode) {
 		}
 
 	}
+
+
 	ee_status = EE_WriteVariable(VirtAddVarTab[0], holdState);
+    ee_status|= EE_ReadVariable(VirtAddVarTab[0],  &VarDataTab[0]);
 
 }
 

@@ -42,7 +42,10 @@
 
 /* USER CODE BEGIN Includes */
 
-
+#include "stm32f3xx_hal.h"
+#include "stm32f3xx.h"
+#include "stm32f3xx_it.h"
+#include "eeprom.h"
 
 #define time2Knob ADCReadings2[0]
 #define morphKnob ADCReadings2[1]
@@ -68,6 +71,12 @@ enum logicOutBTypes {triggerB, gateB, deltaB};
 int familyIndicator;
 
 
+
+int holdState;
+
+
+
+uint32_t ee_status;
 
 
 void readDetect(void) __attribute__((section("ccmram")));

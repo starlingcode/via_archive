@@ -302,6 +302,7 @@ void getPhase(void) {
 				LEDC_OFF
 				LEDD_OFF
 			}
+			//HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
 
 		}
 
@@ -328,6 +329,7 @@ void getPhase(void) {
 				LEDC_OFF
 				LEDD_OFF
 			}
+			//HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
 
 		}
 

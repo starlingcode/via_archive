@@ -91,11 +91,11 @@ uint32_t displayNewMode;
 
 uint16_t VirtAddVarTab[NB_OF_VAR] = {0x5555};
 uint16_t VarDataTab[NB_OF_VAR] = {0};
-uint16_t VarValue,VarDataTmp;
 
-extern uint16_t holdState;
 
-extern uint32_t ee_status;
+
+
+
 
 int holdCalibration;
 
@@ -194,10 +194,7 @@ int main(void) {
 
 
 	SET_RGB_ON;
-//	SET_TRIGA;
-//	SET_DELTAB;
-//	SET_MORPH_ON;
-//	SET_DRUM_MODE_ON;
+
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
 
@@ -258,10 +255,12 @@ int main(void) {
 
 
 
+
 	HAL_FLASH_Unlock();
 
 	ee_status = EE_Init();
 	if( ee_status != EE_OK) {LEDC_ON}
+	HAL_Delay(500);
 
 	restoreState();
 
@@ -278,6 +277,9 @@ int main(void) {
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
+
+
+		if( ee_status == EE_ERROR) {LEDA_ON; LEDB_ON; LEDC_ON; LEDD_ON}
 
 		//check if the trigger button has been pressed
 		if (((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET) || ((GPIOA->IDR & GPIO_PIN_11) == (uint32_t) GPIO_PIN_RESET)){
@@ -959,7 +961,7 @@ static void MX_GPIO_Init(void) {
 void restoreState(){
 	ee_status = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
 	holdState = VarDataTab[0];
-	holdState = 536;
+	//holdState = 0;
 	loop = holdState & 0x01;
 	speed = (holdState & 0x06) >> 1;
 	trigMode = (holdState & 0x38) >> 3;
@@ -967,6 +969,22 @@ void restoreState(){
 	familyIndicator = (holdState & 0xE00) >> 9;
 	logicOutA = (holdState & 0x3000) >> 13;
 	logicOutB = (holdState & 0xC000) >> 15;
+
+	if (speed < 2) {
+		attackTime = calcTime1Env;
+		releaseTime = calcTime2Env;
+	}
+	if (speed == seq) {
+		attackTime = calcTime1Seq;
+		releaseTime = calcTime2Seq;
+	}
+
+	incSign = 1;
+
+	SH_A_TRACK
+	SH_B_TRACK
+
+	switchFamily();
 
 
 	if (loop == looping) {
@@ -1041,23 +1059,11 @@ void restoreState(){
 			SET_MORPH_ON;
 			break;
 		}
-		__HAL_TIM_ENABLE(&htim3);
 }
 
 		// set the appropriate time calculation functions
-		if (speed == env) {
-			attackTime = calcTime1Env;
-			releaseTime = calcTime2Env;
-		}
-		if (speed == seq) {
-			attackTime = calcTime1Seq;
-			releaseTime = calcTime2Seq;
-		}
 
-		incSign = 1;
-		RESET_GATE_ON;
 
-		switchFamily();
 
 
 }
