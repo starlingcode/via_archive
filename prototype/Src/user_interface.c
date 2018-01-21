@@ -263,7 +263,7 @@ void changeMode(uint32_t mode) {
 		// toggle through our 3 speed modes
 		speed = (speed + 1) % 3;
 
-		holdState = (holdState & 0xb1111111111111001) | (speed << 1);
+		holdState = (holdState & 0b1111111111111001) | (speed << 1);
 
 		switchFamily();
 
@@ -323,7 +323,7 @@ void changeMode(uint32_t mode) {
 		trigMode = (trigMode + 1) % 5;
 		//initialize some essential retrigger variables
 
-		holdState = (holdState & 0xb1111111111000111) | (trigMode << 3);
+		holdState = (holdState & 0b1111111111000111) | (trigMode << 3);
 
 		incSign = 1;
 		RESET_GATE_ON;
@@ -360,7 +360,7 @@ void changeMode(uint32_t mode) {
 	else if (mode == 3) {
 		loop = (loop + 1) % 2;
 
-		holdState = (holdState & 0xb1111111111111110) | loop;
+		holdState = (holdState & 0b1111111111111110) | loop;
 
 		if (loop == noloop) {
 			// signal to our oscillator that it should put itself to sleep
@@ -421,7 +421,7 @@ void changeMode(uint32_t mode) {
 	else if (mode == 4) {
 		sampleHoldMode = (sampleHoldMode + 1) % 6;
 
-		holdState = (holdState & 0xb1111111000111111) | (sampleHoldMode << 6);
+		holdState = (holdState & 0b1111111000111111) | (sampleHoldMode << 6);
 
 		SH_A_TRACK
 		SH_B_TRACK
@@ -432,7 +432,7 @@ void changeMode(uint32_t mode) {
 
 		familyIndicator = (familyIndicator + 1) % 8;
 		switchFamily();
-		holdState = (holdState & 0xb1111000111111111) | (familyIndicator << 9);
+		holdState = (holdState & 0b1111000111111111) | (familyIndicator << 9);
 	}
 	else if (mode == 6) {
 		// wrap back to the end of the array of families if we go back from the first entry
@@ -443,11 +443,11 @@ void changeMode(uint32_t mode) {
 			familyIndicator = (familyIndicator - 1);
 		}
 		switchFamily();
-		holdState = (holdState & 0xb1111000111111111) | (familyIndicator << 9);
+		holdState = (holdState & 0b1111000111111111) | (familyIndicator << 9);
 	}
 	else if (mode == 7) {
 		logicOutA = (logicOutA + 1) % 3;
-		holdState = (holdState & 0xb1100111111111111) | (logicOutA << 13);;
+		holdState = (holdState & 0b1100111111111111) | (logicOutA << 13);;
 		switch (logicOutA) {
 		case 0:
 			SET_GATEA;
@@ -470,7 +470,7 @@ void changeMode(uint32_t mode) {
 	}
 	else if (mode == 8) {
 		logicOutB = (logicOutB + 1) % 3;
-		holdState = (holdState & 0xb0011111111111111) | (logicOutB << 15);
+		holdState = (holdState & 0b0011111111111111) | (logicOutB << 15);
 		switch (logicOutB) {
 		case 0:
 			SET_GATEB;

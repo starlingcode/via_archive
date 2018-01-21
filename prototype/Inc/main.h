@@ -72,7 +72,7 @@ int familyIndicator;
 
 
 
-int holdState;
+uint32_t holdState;
 
 
 

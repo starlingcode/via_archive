@@ -271,7 +271,6 @@ int main(void) {
 
 
 
-
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -282,7 +281,7 @@ int main(void) {
 		if( ee_status == EE_ERROR) {LEDA_ON; LEDB_ON; LEDC_ON; LEDD_ON}
 
 		//check if the trigger button has been pressed
-		if (((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET) || ((GPIOA->IDR & GPIO_PIN_11) == (uint32_t) GPIO_PIN_RESET)){
+		if (((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET)){
 			//if we havent raised the trigger button flag, do so and set a pending interrupt
 			if (!(TRIGGER_BUTTON)) {
 				SET_TRIGGER_BUTTON;
