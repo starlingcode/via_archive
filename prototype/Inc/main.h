@@ -90,7 +90,7 @@ void restoreState(void);
 
 
 
-#define BUFF_SIZE 8
+#define BUFF_SIZE 32
 #define BUFF_SIZE_MASK (BUFF_SIZE-1)
 
 typedef struct buffer{

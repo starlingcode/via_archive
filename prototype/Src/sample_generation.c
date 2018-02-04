@@ -105,14 +105,16 @@ void dacISR(void) {
 		}
 
 		//is our CV greater than half-scale (the big numbers are because we have a running sum of 8
-		if ((32767 - morphAverage) >= 16383) {
+		if ((131071 - morphAverage) >= 65536) {
 			//this first does the aforementioned interpolation between the knob value and full scale then scales back the value according to frequency
-			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, ((32767 - morphAverage) - 16383) << 2), 65535 - (inc >> 4));
+			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, ((131071 - morphAverage) - 65536)), 65535 - (inc >> 4));
 		}
 		else {
 			//analogous to above except in this case, morphCV is less than halfway
-			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, (32767 - morphAverage) << 2) , 65535 - (inc >> 4));
+			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, (131071 - morphAverage)) , 65535 - (inc >> 4));
 		}
+
+//		fixMorph = morphKnob;
 
 		//if we are in high speed and not looping, activate drum mode
 
@@ -422,19 +424,33 @@ void getSample(uint32_t phase) {
 		//we use this to generate our gate output
 		if (interp1 < interp2) {
 			EOA_GATE_HIGH
+			EOR_GATE_HIGH
 			if (DELTAB) {
 				EOA_JACK_HIGH
+				if (RGB_ON) {
+					LEDC_ON
+				}
 			}
 			if (DELTAA) {
 				EOR_JACK_LOW
+				if (RGB_ON) {
+					LEDD_OFF
+				}
 			}
 		} else if (interp2 < interp1) {
 			EOA_GATE_LOW
+			EOR_GATE_LOW
 			if (DELTAB) {
 				EOA_JACK_LOW
+				if (RGB_ON) {
+					LEDC_OFF
+				}
 			}
 			if (DELTAA) {
 				EOR_JACK_HIGH
+				if (RGB_ON) {
+					LEDD_ON
+				}
 			}
 		}
 
@@ -473,17 +489,29 @@ void getSample(uint32_t phase) {
 			EOA_GATE_HIGH
 			if (DELTAB) {
 				EOA_JACK_HIGH
+				if (RGB_ON) {
+					LEDD_ON
+				}
 			}
 			if (DELTAA) {
 				EOR_JACK_LOW
+				if (RGB_ON) {
+					LEDC_OFF
+				}
 			}
 		} else if (interp2 < interp1) {
 			EOA_GATE_LOW
 			if (DELTAB) {
 				EOA_JACK_LOW
+				if (RGB_ON) {
+					LEDD_OFF
+				}
 			}
 			if (DELTAA) {
 				EOR_JACK_HIGH
+				if (RGB_ON) {
+					LEDC_ON
+				}
 			}
 		}
 
@@ -514,7 +542,7 @@ void getAverages(void) {
 
 	//keep a running sum of our last 8 morph CV readings
 
-	morphAverage = (morphAverage + morphCV- readn(&morphCVBuffer, 7));
+	morphAverage = (morphAverage + morphCV- readn(&morphCVBuffer, 31));
 
 	write(&morphCVBuffer, morphCV);
 

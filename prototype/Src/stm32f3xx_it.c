@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
- * @file    stm32f3xx_it.c
+GAT * @file    stm32f3xx_it.c
  * @brief   Interrupt Service Routines.
  ******************************************************************************
  *
@@ -229,9 +229,16 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
 	if (TRIGB) {
 		EOA_JACK_LOW;
+		if (RGB_ON) {
+			LEDD_OFF
+		}
+
 	}
 	if (TRIGA) {
 		EOR_JACK_LOW;
+		if (RGB_ON) {
+			LEDC_OFF
+		}
 	}
 	__HAL_TIM_DISABLE(&htim15);
 	__HAL_TIM_CLEAR_FLAG(&htim15, TIM_FLAG_UPDATE);
@@ -558,13 +565,22 @@ void EXTI15_10_IRQHandler(void) {
 
 		if (TRIGA) {
 					EOR_JACK_HIGH
+					if (RGB_ON) {
+						LEDC_ON
+					}
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
 				} else if (GATEA) {
 					EOR_JACK_HIGH
+					if (RGB_ON) {
+						LEDC_ON
+					}
 				}
 				if (GATEB) {
 					EOA_JACK_LOW
+					if (RGB_ON) {
+						LEDD_OFF
+					}
 				}
 
 
@@ -575,8 +591,6 @@ void EXTI15_10_IRQHandler(void) {
 		}
 
 		if (RGB_ON) {
-			LEDC_ON
-			LEDD_OFF
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 		}
 
@@ -587,13 +601,22 @@ void EXTI15_10_IRQHandler(void) {
 
 		if (TRIGB) {
 					EOA_JACK_HIGH
+					if (RGB_ON) {
+						LEDD_ON
+					}
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
 				} else if (GATEB) {
 					EOA_JACK_HIGH
+					if (RGB_ON) {
+						LEDD_ON
+					}
 				}
 				if (GATEA) {
 					EOR_JACK_LOW
+					if (RGB_ON) {
+						LEDC_OFF
+					}
 				}
 
 
@@ -606,8 +629,6 @@ void EXTI15_10_IRQHandler(void) {
 		}
 
 		if (RGB_ON) {
-			LEDC_OFF
-			LEDD_ON
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 		}
 
