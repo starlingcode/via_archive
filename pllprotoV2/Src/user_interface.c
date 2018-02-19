@@ -269,7 +269,7 @@ void changeMode(uint32_t mode) {
 	}
 	else if (mode == 2) {
 
-		pll = (pll + 1) % 4;
+		pll = (pll + 1) % 3;
 		holdState = (holdState & 0b1111111111000111) | (pll << 3);
 
 

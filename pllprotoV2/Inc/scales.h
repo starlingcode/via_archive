@@ -2,74 +2,17 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 
-uint32_t scale[8][8];
+typedef struct {
+	uint32_t simplifiedRatio;
+	uint32_t fundamentalDivision;
 
-/*
-#define noteC1 			((1 << 20)/1) | (1 << 27)
-#define noteCsharp1 	((16 << 20)/15) | (15 << 27)
-#define noteD1 			((9 << 20)/8) | (8 << 27)
-#define noteDsharp1 	((6 << 20)/5) | (5 << 27)
-#define noteE1 			((5 << 20)/4) | (4 << 27)
-#define noteF1 			((4 << 20)/3) | (3 << 27)
-#define noteFsharp1 	((25 << 20)/18) | (18 << 27)
-#define noteG1 			((3<< 20)/2) | (2 << 27)
-#define noteGsharp1 	((8<< 20)/5) | (5 << 27)
-#define noteA2 			((5 << 20)/3) | (3 << 27)
-#define noteAsharp2 	((9 << 20)/5) | (5 << 27)
-#define noteB2 			((15 << 20)/8) | (8 << 27)
-#define noteC2 			((2 << 20)/1) | (1 << 27)
-#define noteCsharp2 	((32 << 20)/15) | (15 << 27)
-#define noteD2 			((18 << 20)/8) | (4 << 27)
-#define noteDsharp2 	((12 << 20)/5) | (1 << 27)
-#define noteE2 			((10 << 20)/4) | (2 << 27)
-#define noteF2 			((8 << 20)/3) | (1 << 27)
-#define noteFsharp2 	((50 << 20)/18) | (9 << 27)
-#define noteG2 			((6<< 20)/2) | (1 << 27)
-#define noteGsharp2 	((16<< 20)/5) | (5 << 27)
-#define noteA3 			((10 << 20)/3) | (3 << 27)
-#define noteAsharp3 	((18 << 20)/5) | (5 << 27)
-#define noteB3 			((30 << 20)/8) | (4 << 27)
-#define noteC3 			((4 << 20)/1) | (1 << 27)
-#define noteCsharp3 	((64 << 20)/15) | (15 << 27)
-#define noteD3 			((36 << 20)/8) | (2 << 27)
-#define noteDsharp3 	((24 << 20)/5) | (5 << 27)
-#define noteE3 			((20 << 20)/4) | (1 << 27)
-#define noteF3 			((16 << 20)/3) | (3 << 27)
-#define noteFsharp3 	((100 << 20)/18) | (9 << 27)
-#define noteG3 			((12<< 20)/2) | (1 << 27)
-#define noteGsharp3 	((32<< 20)/5) | (5 << 27)
-#define noteA4 			((20 << 20)/3) | (3 << 27)
-#define noteAsharp4 	((36 << 20)/5) | (5 << 27)
-#define noteB4 			((60 << 20)/8) | (2 << 27)
-#define noteC4 			((8 << 20)/1) | (1 << 27)
+} ScaleNote;
 
+ScaleNote scale[8][8];
 
+ScaleNote *diatonicMinor7ths[8];
+ScaleNote *diatonicMajor7ths[8];
 
-#define rhythm_16clock_1_16			((1 << 20)/1) | (1 << 27)
-#define rhythm_16clock_1_8			((1 << 20)/2) | (1 << 27)
-#define rhythm_16clock_3_16			((1 << 20)/3) | (3 << 27)
-#define rhythm_16clock_1_4			((1 << 20)/4) | (1 << 27)
-#define rhythm_16clock_5_16			((1 << 20)/5) | (5 << 27)
-#define rhythm_16clock_3_8			((1 << 20)/6) | (3 << 27)
-#define rhythm_16clock_7_16			((1 << 20)/7) | (7 << 27)
-#define rhythm_16clock_1_2			((1 << 20)/8) | (1 << 27)
-#define rhythm_16clock_9_16			((1 << 20)/9) | (9 << 27)
-#define rhythm_16clock_5_8			((1 << 20)/10) | (5 << 27)
-#define rhythm_16clock_11_16		((1 << 20)/11) | (11 << 27)
-#define rhythm_16clock_3_4			((1 << 20)/12) | (3 << 27)
-#define rhythm_16clock_13_16		((1 << 20)/13) | (13 << 27)
-#define rhythm_16clock_7_8			((1 << 20)/14) | (7 << 27)
-#define rhythm_16clock_15_16		((1 << 20)/15) | (15 << 27)
-
-#define rhythm_16clock_1_12			((3 << 20)/4) | (1 << 27)
-#define rhythm_16clock_1_6			((3 << 20)/8) | (1 << 27)
-#define rhythm_16clock_5_12			((3 << 20)/20) | (3 << 27)
-#define rhythm_16clock_7_12			((3 << 20)/28) | (1 << 27)
-#define rhythm_16clock_2_3			((3 << 20)/32) | (5 << 27)
-#define rhythm_16clock_5_6			((3 << 20)/40) | (5 << 27)
-#define rhythm_16clock_11_12		((3 << 20)/44) | (11 << 27)
-
-*/
 
 #define rhythm_16clock_1_16			135266304
 #define rhythm_16clock_1_8			134742016
@@ -186,7 +129,7 @@ uint32_t scale[8][8];
 
 
 
-
+/*
 #define noteC1 			68157440
 #define noteCsharp1 	1007751441
 #define noteD1 			538050560
@@ -224,6 +167,7 @@ uint32_t scale[8][8];
 #define noteAsharp4 	343094067
 #define noteB4 			142082048
 #define noteC4 			75497472
+/*
 
 /*
 static const uint32_t diatonicMinor7thsRow1[8] = {noteC1, noteD1, noteDsharp1, noteF1 , noteG1 , noteGsharp1, noteAsharp2, noteC2};
@@ -245,24 +189,6 @@ static const uint32_t diatonicMajor7thsRow7[8] = {noteA2, noteC2, noteE2, noteG2
 static const uint32_t diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3 , noteB3, noteD3, noteF3, noteA4 };
 */
 
- #define diatonicMinor7thsRow1 {noteC1, noteD1, noteDsharp1, noteF1 , noteG1 , noteGsharp1, noteAsharp2, noteC2}
- #define diatonicMinor7thsRow2 {noteC1, noteDsharp1, noteG1, noteAsharp2 , noteC2, noteDsharp2, noteG2, noteAsharp3 }
- #define diatonicMinor7thsRow3 {noteD1, noteF1, noteA2, noteC2 , noteD2, noteF2, noteA3, noteC3}
- #define diatonicMinor7thsRow4 {noteDsharp1, noteG1, noteAsharp2, noteD2, noteDsharp2 , noteG2, noteAsharp3, noteD3}
- #define diatonicMinor7thsRow5 {noteF1, noteGsharp1, noteC2, noteDsharp2, noteF2 , noteGsharp2, noteC3, noteDsharp3}
- #define diatonicMinor7thsRow6 {noteG1, noteAsharp2, noteD2, noteF2 , noteG2, noteAsharp3, noteD3, noteF3}
- #define diatonicMinor7thsRow7 {noteGsharp1, noteC2, noteDsharp2, noteG2 , noteGsharp2, noteC3, noteDsharp3, noteG3 }
- #define diatonicMinor7thsRow8 {noteAsharp2, noteD2, noteF2, noteA3 , noteAsharp3, noteD3, noteF3, noteA4 }
-
- #define diatonicMajor7thsRow1 {noteC1, noteD1, noteE1, noteF1 , noteG1 , noteA2, noteB2, noteC2}
- #define diatonicMajor7thsRow2 {noteC1, noteE1, noteG1, noteB2 , noteC2, noteE2, noteG2, noteB3 }
- #define diatonicMajor7thsRow3 {noteD1, noteF1, noteA2, noteC2 , noteD2, noteF2, noteA3, noteC3}
- #define diatonicMajor7thsRow4 {noteE1, noteG1, noteB2, noteD2, noteE2 , noteG2, noteB3, noteD3}
- #define diatonicMajor7thsRow5 {noteF1, noteA2, noteC2, noteE2, noteF2 , noteA3, noteC3, noteE3}
- #define diatonicMajor7thsRow6 {noteG1, noteB2, noteD2, noteF2 , noteG2, noteB3, noteD3, noteF3}
- #define diatonicMajor7thsRow7 {noteA2, noteC2, noteE2, noteG2 , noteA3, noteC3, noteE3, noteG3 }
- #define diatonicMajor7thsRow8 {noteB2, noteD2, noteF2, noteA3 , noteB3, noteD3, noteF3, noteA4 }
-
  #define rhythmsRow1 {rhythm_16clock_1_16, rhythm_16clock_1_8, rhythm_16clock_3_16, rhythm_16clock_1_4, rhythm_16clock_5_16, rhythm_16clock_3_8, rhythm_16clock_7_16, rhythm_16clock_1_2}
  #define rhythmsRow2 {rhythm_16clock_1_12, rhythm_16clock_1_16, rhythm_16clock_1_6, rhythm_16clock_1_8, rhythm_16clock_3_16, rhythm_16clock_1_6, rhythm_16clock_1_4, rhythm_16clock_1_2}
  #define rhythmsRow3 {rhythm_8clock_1_16, rhythm_8clock_1_8, rhythm_8clock_3_16, rhythm_8clock_1_4, rhythm_8clock_5_16, rhythm_8clock_3_8, rhythm_8clock_7_16, rhythm_8clock_1_2}
@@ -272,10 +198,46 @@ static const uint32_t diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3
  #define rhythmsRow7 {rhythm_2clock_1_16, rhythm_2clock_1_8, rhythm_2clock_3_16, rhythm_2clock_1_4, rhythm_2clock_5_16, rhythm_2clock_3_8, rhythm_2clock_7_16, rhythm_2clock_1_2}
  #define rhythmsRow8 {rhythm_2clock_1_12, rhythm_2clock_1_16, rhythm_2clock_1_6, rhythm_2clock_1_8, rhythm_2clock_3_16, rhythm_2clock_1_6, rhythm_2clock_1_4, rhythm_2clock_1_6}
 
-static const uint32_t diatonicMinor7ths[8][8] = {diatonicMinor7thsRow1, diatonicMinor7thsRow2,diatonicMinor7thsRow3,diatonicMinor7thsRow4,diatonicMinor7thsRow5,diatonicMinor7thsRow6,diatonicMinor7thsRow7,diatonicMinor7thsRow8};
+#define noteC1 {16777216, 1}
+#define noteCsharp1 {17895697, 15}
+#define noteD1 {18874368, 8}
+#define noteDsharp1 {20132659, 5}
+#define noteE1 {20971520, 4}
+#define noteF1 {22369621, 3}
+#define noteFsharp1 {23301689, 18}
+#define noteG1 {25165824, 2}
+#define noteGsharp1 {26843546, 5}
+#define noteA2 {27962026.7, 3}
+#define noteAsharp2 {30198989, 5}
+#define noteB2 {31457280, 8}
+#define noteC2 {33554432, 1}
+#define noteCsharp2 {35791394, 15}
+#define noteD2 {37748736, 4}
+#define noteDsharp2 {40265318, 1}
+#define noteE2 {41943040, 2}
+#define noteF2 {44739243, 1}
+#define noteFsharp2 {46603378, 9}
+#define noteG2 {50331648, 1}
+#define noteGsharp2 {53687091, 5}
+#define noteA3 {55924053, 3}
+#define noteAsharp3 {60397978, 5}
+#define noteB3 {62914560, 4}
+#define noteC3 {67108864, 1}
+#define noteCsharp3 {71582788, 15}
+#define noteD3 {75497472, 2}
+#define noteDsharp3 {80530637, 5}
+#define noteE3 {83886080, 1}
+#define noteF3 {89478485, 3}
+#define noteFsharp3 {93206756, 9}
+#define noteG3 {100663296, 1}
+#define noteGsharp3 {107374182, 5}
+#define noteA4 {111848107, 3}
+#define noteAsharp4 {120795955, 5}
+#define noteB4 {125829120, 2}
+#define noteC4 {134217728, 1}
 
-static const uint32_t diatonicMajor7ths[8][8] = {diatonicMajor7thsRow1, diatonicMajor7thsRow2,diatonicMajor7thsRow3,diatonicMajor7thsRow4,diatonicMajor7thsRow5,diatonicMajor7thsRow6,diatonicMajor7thsRow7,diatonicMajor7thsRow8};
 
-static const uint32_t rhythms[8][8] = {rhythmsRow1, rhythmsRow2,rhythmsRow3,rhythmsRow4,rhythmsRow5,rhythmsRow6,rhythmsRow7,rhythmsRow8};
+
+
 
 

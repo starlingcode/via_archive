@@ -61,7 +61,7 @@ int lookuptable[4096] = expotable10oct;
 int fixMorph;
 int morphBuffer[8];
 int getMorph;
-volatile uint32_t position;
+volatile int position;
 volatile uint32_t attackInc = 100;
 volatile uint32_t releaseInc = 100;
 volatile uint32_t catchupInc;
@@ -345,18 +345,18 @@ void TIM2_IRQHandler(void) {
 		switch (scaleType) {
 
 		case 0:
-			multiplier = rhythms[rootIndex][noteIndex] & 0b00000001111111111111111111111111;
-			gcd = rhythms[rootIndex][noteIndex] >> 26;
+			multiplier = diatonicMajor7ths[rootIndex][noteIndex].simplifiedRatio;
+			gcd = diatonicMajor7ths[rootIndex][noteIndex].fundamentalDivision;
 			break;
 
 		case 1:
-			multiplier = diatonicMajor7ths[rootIndex][noteIndex] & 0b00000001111111111111111111111111;
-			gcd = diatonicMajor7ths[rootIndex][noteIndex] >> 26;
+			multiplier = diatonicMajor7ths[rootIndex][noteIndex].simplifiedRatio;
+			gcd = diatonicMajor7ths[rootIndex][noteIndex].fundamentalDivision;
 			break;
 
 		case 2:
-			multiplier = diatonicMinor7ths[rootIndex][noteIndex] & 0b00000001111111111111111111111111;
-			gcd = diatonicMinor7ths[rootIndex][noteIndex] >> 26;
+			multiplier = diatonicMinor7ths[rootIndex][noteIndex].simplifiedRatio;
+			gcd = diatonicMinor7ths[rootIndex][noteIndex].fundamentalDivision;
 			break;
 
 		default:
@@ -465,8 +465,8 @@ void TIM2_IRQHandler(void) {
 				releaseInc = ((span << 9) + pllNudge) / (periodCount - gateOnCount);
 
 
-				attackInc = myfix16_mul(attackInc, multiplier) >> 3;
-				releaseInc = myfix16_mul(releaseInc, multiplier)>>3;
+				attackInc = myfix24_mul(attackInc, multiplier);
+				releaseInc = myfix24_mul(releaseInc, multiplier);
 
 		if (attackInc >= span - 1) {attackInc = span - 1;}
 		if (releaseInc >= span - 1) {releaseInc = span - 1;}
@@ -809,11 +809,17 @@ void getSample(uint32_t phase) {
 }
 
 //defines an increment then checks the trigger mode, making the appropriate changes to playback when the oscillator is retriggered
-// Questioning whether this works properly when position has to be calculated using attack inc + decay inc (at transitions) i.e. increment rate overshoot
 
 void getPhase(void) {
 
 	static int lastCV;
+
+	if (controlScheme == 3) {
+
+		position = position + ((time2CV - lastCV) << 10);
+		lastCV = time2CV;
+
+	}
 
 	if (CATCH_UP) {
 		position = position + catchupInc;
@@ -832,6 +838,8 @@ void getPhase(void) {
 			}
 		}
 	}
+
+
 
 
 
@@ -860,6 +868,12 @@ int myfix16_mul(int in0, int in1) {
 	//taken from the fixmathlib library
 	int64_t result = (uint64_t) in0 * in1;
 	return result >> 16;
+}
+
+int myfix24_mul(int in0, int in1) {
+	//taken from the fixmathlib library
+	int64_t result = (uint64_t) in0 * in1;
+	return result >> 24;
 }
 
 int myfix16_lerp(int in0, int in1, uint16_t inFract) {
