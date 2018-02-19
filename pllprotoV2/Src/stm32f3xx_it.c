@@ -275,9 +275,15 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
 	if ((TRIGB) || (RATIO_DELTAB) || (PLL_DIVB)){
 		EOA_JACK_LOW;
+		if (RGB_ON) {
+			LEDD_OFF;
+		}
 	}
 	if ((TRIGA) || (RATIO_DELTAA) || (PLL_DIVA)){
 		EOR_JACK_LOW;
+		if (RGB_ON) {
+			LEDC_OFF;
+		}
 	}
 	__HAL_TIM_DISABLE(&htim15);
 	__HAL_TIM_CLEAR_FLAG(&htim15, TIM_FLAG_UPDATE);
@@ -370,11 +376,17 @@ void TIM2_IRQHandler(void) {
 				EOR_JACK_HIGH
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
 				__HAL_TIM_ENABLE(&htim15);
+				if (RGB_ON) {
+					LEDC_ON;
+				}
 			}
 			if (RATIO_DELTAB) {
 				EOA_JACK_HIGH
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
 				__HAL_TIM_ENABLE(&htim15);
+				if (RGB_ON) {
+					LEDD_ON;
+				}
 			}
 		}
 		lastMultiplier = multiplier;
@@ -396,11 +408,17 @@ void TIM2_IRQHandler(void) {
 				EOR_JACK_HIGH
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
 				__HAL_TIM_ENABLE(&htim15);
+				if (RGB_ON) {
+					LEDC_ON;
+				}
 			}
 			if (PLL_DIVB) {
 				EOA_JACK_HIGH
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
 				__HAL_TIM_ENABLE(&htim15);
+				if (RGB_ON) {
+					LEDD_ON;
+				}
 			}
 
 			if (pll == hardSync) {
@@ -409,8 +427,14 @@ void TIM2_IRQHandler(void) {
 				RESET_TRIGGER_BUTTON;
 				if (GATEA) {
 					EOR_JACK_HIGH;
+					if (RGB_ON) {
+						LEDC_ON;
+					}
 				} else if (TRIGA) {
 					EOR_JACK_HIGH;
+					if (RGB_ON) {
+						LEDC_ON;
+					}
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
 				}
@@ -470,12 +494,12 @@ void TIM2_IRQHandler(void) {
 //		attackInc = (attackInc << 1) * multiplier;
 //		releaseInc = (releaseInc << 1) * multiplier;
 
-				attackInc = ((span << 9) + pllNudge) / gateOnCount;
-				releaseInc = ((span << 9) + pllNudge) / (periodCount - gateOnCount);
+				attackInc = ((span << 8) + pllNudge) / gateOnCount;
+				releaseInc = ((span << 8) + pllNudge) / (periodCount - gateOnCount);
 
 
-				attackInc = myfix24_mul(attackInc, multiplier);
-				releaseInc = myfix24_mul(releaseInc, multiplier);
+				attackInc = myfix24_mul(attackInc, multiplier) << 1;
+				releaseInc = myfix24_mul(releaseInc, multiplier) << 1;
 
 		if (attackInc >= span - 1) {attackInc = span - 1;}
 		if (releaseInc >= span - 1) {releaseInc = span - 1;}
@@ -731,17 +755,29 @@ void getSample(uint32_t phase) {
 					EOA_GATE_HIGH
 					if (DELTAB) {
 						EOA_JACK_HIGH
+						if (RGB_ON) {
+							LEDD_ON;
+						}
 					}
 					if (DELTAA) {
 						EOR_JACK_LOW
+						if (RGB_ON) {
+							LEDC_OFF;
+						}
 					}
 				} else if (interp2 < interp1) {
 					EOA_GATE_LOW
 					if (DELTAB) {
 						EOA_JACK_LOW
+						if (RGB_ON) {
+							LEDD_OFF;
+						}
 					}
 					if (DELTAA) {
 						EOR_JACK_HIGH
+						if (RGB_ON) {
+							LEDC_ON;
+						}
 					}
 				}
 
@@ -794,17 +830,29 @@ void getSample(uint32_t phase) {
 					EOA_GATE_HIGH
 					if (DELTAB) {
 						EOA_JACK_HIGH
+						if (RGB_ON) {
+							LEDD_ON;
+						}
 					}
 					if (DELTAA) {
 						EOR_JACK_LOW
+						if (RGB_ON) {
+							LEDC_OFF;
+						}
 					}
 				} else if (interp2 < interp1) {
 					EOA_GATE_LOW
 					if (DELTAB) {
 						EOA_JACK_LOW
+						if (RGB_ON) {
+							LEDD_OFF;
+						}
 					}
 					if (DELTAA) {
 						EOR_JACK_HIGH
+						if (RGB_ON) {
+							LEDC_ON;
+						}
 					}
 				}
 
@@ -905,13 +953,22 @@ void EXTI15_10_IRQHandler(void) {
 
 		if (TRIGA) {
 					EOR_JACK_HIGH
+					if (RGB_ON) {
+						LEDC_ON;
+					}
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
 				} else if (GATEA) {
 					EOR_JACK_HIGH
+					if (RGB_ON) {
+						LEDC_ON;
+					}
 				}
 				if (GATEB) {
 					EOA_JACK_LOW
+					if (RGB_ON) {
+						LEDD_OFF;
+					}
 				}
 
 
@@ -921,8 +978,6 @@ void EXTI15_10_IRQHandler(void) {
 
 
 		if (RGB_ON) {
-			LEDC_ON
-			LEDD_OFF
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 		}
 
@@ -935,11 +990,20 @@ void EXTI15_10_IRQHandler(void) {
 					EOA_JACK_HIGH
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
+					if (RGB_ON) {
+						LEDD_ON;
+					}
 				} else if (GATEB) {
 					EOA_JACK_HIGH
+					if (RGB_ON) {
+						LEDD_ON;
+					}
 				}
 				if (GATEA) {
 					EOR_JACK_LOW
+					if (RGB_ON) {
+						LEDC_OFF;
+					}
 				}
 
 
@@ -950,8 +1014,6 @@ void EXTI15_10_IRQHandler(void) {
 
 
 		if (RGB_ON) {
-			LEDC_OFF
-			LEDD_ON
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 		}
 

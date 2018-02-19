@@ -397,13 +397,13 @@ Family lump2ndDegLinAtk =
 	.familySize = 5};
 Family doubleLump3rdDegLinAtk =
 	{.attackFamily = allLinear129_5,
-	.releaseFamily = lump3rdDeg,
+	.releaseFamily = doubleLump3rdDeg,
 	.tableLength = 128,
 	.familySize = 5};
 
 Family doubleLump2ndDegLinAtk =
 	{.attackFamily = allLinear129_5,
-	.releaseFamily = lump2ndDeg,
+	.releaseFamily = doubleLump2ndDeg,
 	.tableLength = 128,
 	.familySize = 5};
 
@@ -447,8 +447,8 @@ void fillFamilyArray(void) {
 
 	familyArray[8] = superEllipse1Sym;
 	familyArray[9] = superEllipse1Asym;
-	familyArray[10] = doubleLump2ndDegLinAtk;
-	familyArray[11] = lump2ndDegLinAtk;
+	familyArray[10] = hopSaw;
+	familyArray[11] = assortedEnvs;
 	familyArray[12] = steps;
 	familyArray[13] = tenor48;
 	familyArray[14] = threeSineFoldsLinAtk;

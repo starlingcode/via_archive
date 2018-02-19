@@ -413,7 +413,7 @@ void changeMode(uint32_t mode) {
 void showMode(uint32_t currentmode) {
 
 	// if we are switching families, show a color corresponding to that family
-	if (modeflag > 4) {
+	if ((modeflag == 5) || modeflag == 6) {
 		familyRGB();
 	}
 
