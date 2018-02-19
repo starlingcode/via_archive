@@ -198,43 +198,43 @@ static const uint32_t diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3
  #define rhythmsRow7 {rhythm_2clock_1_16, rhythm_2clock_1_8, rhythm_2clock_3_16, rhythm_2clock_1_4, rhythm_2clock_5_16, rhythm_2clock_3_8, rhythm_2clock_7_16, rhythm_2clock_1_2}
  #define rhythmsRow8 {rhythm_2clock_1_12, rhythm_2clock_1_16, rhythm_2clock_1_6, rhythm_2clock_1_8, rhythm_2clock_3_16, rhythm_2clock_1_6, rhythm_2clock_1_4, rhythm_2clock_1_6}
 
-#define noteC1 {16777216, 1}
-#define noteCsharp1 {17895697, 15}
-#define noteD1 {18874368, 8}
-#define noteDsharp1 {20132659, 5}
-#define noteE1 {20971520, 4}
-#define noteF1 {22369621, 3}
-#define noteFsharp1 {23301689, 18}
-#define noteG1 {25165824, 2}
-#define noteGsharp1 {26843546, 5}
-#define noteA2 {27962026.7, 3}
-#define noteAsharp2 {30198989, 5}
-#define noteB2 {31457280, 8}
-#define noteC2 {33554432, 1}
-#define noteCsharp2 {35791394, 15}
-#define noteD2 {37748736, 4}
-#define noteDsharp2 {40265318, 1}
-#define noteE2 {41943040, 2}
-#define noteF2 {44739243, 1}
-#define noteFsharp2 {46603378, 9}
-#define noteG2 {50331648, 1}
-#define noteGsharp2 {53687091, 5}
-#define noteA3 {55924053, 3}
-#define noteAsharp3 {60397978, 5}
-#define noteB3 {62914560, 4}
-#define noteC3 {67108864, 1}
-#define noteCsharp3 {71582788, 15}
-#define noteD3 {75497472, 2}
-#define noteDsharp3 {80530637, 5}
-#define noteE3 {83886080, 1}
-#define noteF3 {89478485, 3}
-#define noteFsharp3 {93206756, 9}
-#define noteG3 {100663296, 1}
-#define noteGsharp3 {107374182, 5}
-#define noteA4 {111848107, 3}
-#define noteAsharp4 {120795955, 5}
-#define noteB4 {125829120, 2}
-#define noteC4 {134217728, 1}
+#define noteC1 {16777216, 1} // 1/1
+#define noteCsharp1 {17895697, 15} // 16/15
+#define noteD1 {18874368, 8} // 9/8
+#define noteDsharp1 {20132659, 5} // 6/5
+#define noteE1 {20971520, 4} // 5/4
+#define noteF1 {22369621, 3} // 4/3
+#define noteFsharp1 {23301689, 18} // 25/18
+#define noteG1 {25165824, 2} // 3/2
+#define noteGsharp1 {26843546, 5} // 8/5
+#define noteA2 {27962026.7, 3} // 5/3
+#define noteAsharp2 {30198989, 5} // 9/5
+#define noteB2 {31457280, 8} // 15/8
+#define noteC2 {33554432, 1} // 2/1
+#define noteCsharp2 {35791394, 15} // 32/15
+#define noteD2 {37748736, 4} // 18/4
+#define noteDsharp2 {40265318, 1} // 12/1
+#define noteE2 {41943040, 2} // 10/2
+#define noteF2 {44739243, 1} // 8/1
+#define noteFsharp2 {46603378, 9} // 50/9
+#define noteG2 {50331648, 1} // 6/1
+#define noteGsharp2 {53687091, 5} // 16/5
+#define noteA3 {55924053, 3} // 10/3
+#define noteAsharp3 {60397978, 5} // 18/5
+ #define noteB3 {62914560, 4} //30/8
+#define noteC3 {67108864, 1} // 4/1
+#define noteCsharp3 {71582788, 15} // 64/15
+#define noteD3 {75497472, 2} // 36/8
+#define noteDsharp3 {80530637, 5} // 24/5
+#define noteE3 {83886080, 1} // 20/4
+#define noteF3 {89478485, 3} // 16/3
+#define noteFsharp3 {93206756, 9} // 200/18
+#define noteG3 {100663296, 1} // 12/2
+#define noteGsharp3 {107374182, 5} // 32/5
+#define noteA4 {111848107, 3} // 20/3
+#define noteAsharp4 {120795955, 5} // 36/5
+#define noteB4 {125829120, 2} // 60/8
+#define noteC4 {134217728, 1} // 8/1
 
 
 
