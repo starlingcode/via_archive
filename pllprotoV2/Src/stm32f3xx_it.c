@@ -301,9 +301,6 @@ void TIM2_IRQHandler(void) {
 	uint32_t multiplier;
 	uint32_t gcd;
 	uint32_t adjustedSpan;
-	uint32_t rhythmCoefficients[8] = {1, 2, 3, 4, 6, 8, 12, 16};
-	uint32_t diatonicCoefficients[8] = {1, 2, 3, 4, 5, 6, 8, 10};
-	uint32_t primesCoefficients[8] = {1, 2, 3, 5, 7, 11, 13, 17};
 	uint32_t noteIndex;
 	uint32_t rootIndex;
 	static uint32_t lastMultiplier;
@@ -345,16 +342,21 @@ void TIM2_IRQHandler(void) {
 		switch (scaleType) {
 
 		case 0:
-			multiplier = diatonicMajor7ths[rootIndex][noteIndex].simplifiedRatio;
-			gcd = diatonicMajor7ths[rootIndex][noteIndex].fundamentalDivision;
+			multiplier = rhythms1[rootIndex][noteIndex].simplifiedRatio;
+			gcd = rhythms1[rootIndex][noteIndex].fundamentalDivision;
 			break;
 
 		case 1:
+			multiplier = rhythms2[rootIndex][noteIndex].simplifiedRatio;
+			gcd = rhythms2[rootIndex][noteIndex].fundamentalDivision;
+			break;
+
+		case 2:
 			multiplier = diatonicMajor7ths[rootIndex][noteIndex].simplifiedRatio;
 			gcd = diatonicMajor7ths[rootIndex][noteIndex].fundamentalDivision;
 			break;
 
-		case 2:
+		case 3:
 			multiplier = diatonicMinor7ths[rootIndex][noteIndex].simplifiedRatio;
 			gcd = diatonicMinor7ths[rootIndex][noteIndex].fundamentalDivision;
 			break;
@@ -405,16 +407,23 @@ void TIM2_IRQHandler(void) {
 
 				position = 0;
 				RESET_TRIGGER_BUTTON;
+				if (GATEA) {
+					EOR_JACK_HIGH;
+				} else if (TRIGA) {
+					EOR_JACK_HIGH;
+					__HAL_TIM_SET_COUNTER(&htim15, 0);
+					__HAL_TIM_ENABLE(&htim15);
+				}
 
 			} else if (pll == true) {
 				// if we are behind the phase of the clock, go faster, otherwise, go slower
 				if (position > span) {
 
-					pllNudge = (spanx2 - position) << 5;
+					pllNudge = (spanx2 - position) << 7;
 
 				} else {
 
-					pllNudge = -(position << 5);
+					pllNudge = -(position << 7);
 
 				}
 

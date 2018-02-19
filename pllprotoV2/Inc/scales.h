@@ -12,6 +12,8 @@ ScaleNote scale[8][8];
 
 ScaleNote *diatonicMinor7ths[8];
 ScaleNote *diatonicMajor7ths[8];
+ScaleNote *rhythms1[8];
+ScaleNote *rhythms2[8];
 
 
 #define rhythm_16clock_1_16			135266304
@@ -189,14 +191,6 @@ static const uint32_t diatonicMajor7thsRow7[8] = {noteA2, noteC2, noteE2, noteG2
 static const uint32_t diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3 , noteB3, noteD3, noteF3, noteA4 };
 */
 
- #define rhythmsRow1 {rhythm_16clock_1_16, rhythm_16clock_1_8, rhythm_16clock_3_16, rhythm_16clock_1_4, rhythm_16clock_5_16, rhythm_16clock_3_8, rhythm_16clock_7_16, rhythm_16clock_1_2}
- #define rhythmsRow2 {rhythm_16clock_1_12, rhythm_16clock_1_16, rhythm_16clock_1_6, rhythm_16clock_1_8, rhythm_16clock_3_16, rhythm_16clock_1_6, rhythm_16clock_1_4, rhythm_16clock_1_2}
- #define rhythmsRow3 {rhythm_8clock_1_16, rhythm_8clock_1_8, rhythm_8clock_3_16, rhythm_8clock_1_4, rhythm_8clock_5_16, rhythm_8clock_3_8, rhythm_8clock_7_16, rhythm_8clock_1_2}
- #define rhythmsRow4 {rhythm_8clock_1_12, rhythm_8clock_1_16, rhythm_8clock_1_6, rhythm_8clock_1_8, rhythm_8clock_3_16, rhythm_8clock_1_6, rhythm_8clock_1_4, rhythm_8clock_1_6}
- #define rhythmsRow5 {rhythm_4clock_1_16, rhythm_4clock_1_8, rhythm_4clock_3_16, rhythm_4clock_1_4, rhythm_4clock_5_16, rhythm_4clock_3_8, rhythm_4clock_7_16, rhythm_4clock_1_2}
- #define rhythmsRow6 {rhythm_4clock_1_12, rhythm_4clock_1_16, rhythm_4clock_1_6, rhythm_4clock_1_8, rhythm_4clock_3_16, rhythm_4clock_1_6, rhythm_4clock_1_4, rhythm_4clock_1_6}
- #define rhythmsRow7 {rhythm_2clock_1_16, rhythm_2clock_1_8, rhythm_2clock_3_16, rhythm_2clock_1_4, rhythm_2clock_5_16, rhythm_2clock_3_8, rhythm_2clock_7_16, rhythm_2clock_1_2}
- #define rhythmsRow8 {rhythm_2clock_1_12, rhythm_2clock_1_16, rhythm_2clock_1_6, rhythm_2clock_1_8, rhythm_2clock_3_16, rhythm_2clock_1_6, rhythm_2clock_1_4, rhythm_2clock_1_6}
 
 #define noteC1 {16777216, 1} // 1/1
 #define noteCsharp1 {17895697, 15} // 16/15
@@ -204,7 +198,7 @@ static const uint32_t diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3
 #define noteDsharp1 {20132659, 5} // 6/5
 #define noteE1 {20971520, 4} // 5/4
 #define noteF1 {22369621, 3} // 4/3
-#define noteFsharp1 {23301689, 18} // 25/18
+#define noteFsharp1 {23301689, 12} // 25/18
 #define noteG1 {25165824, 2} // 3/2
 #define noteGsharp1 {26843546, 5} // 8/5
 #define noteA2 {27962026.7, 3} // 5/3
@@ -221,7 +215,7 @@ static const uint32_t diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3
 #define noteGsharp2 {53687091, 5} // 16/5
 #define noteA3 {55924053, 3} // 10/3
 #define noteAsharp3 {60397978, 5} // 18/5
- #define noteB3 {62914560, 4} //30/8
+#define noteB3 {62914560, 4} //30/8
 #define noteC3 {67108864, 1} // 4/1
 #define noteCsharp3 {71582788, 15} // 64/15
 #define noteD3 {75497472, 2} // 36/8
@@ -235,6 +229,127 @@ static const uint32_t diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3
 #define noteAsharp4 {120795955, 5} // 36/5
 #define noteB4 {125829120, 2} // 60/8
 #define noteC4 {134217728, 1} // 8/1
+
+#define rhythm16clock_1_32_no_reset {33554432, 1} // 2/1
+#define rhythm16clock_1_24_no_reset {25165824, 2} // 3/2
+#define rhythm16clock_1_16_no_reset {16777216, 1} // 1/1
+#define rhythm16clock_1_12_no_reset {12582912, 4} // 3/4
+#define rhythm16clock_1_8_no_reset {8388608, 2} // 1/2
+#define rhythm16clock_1_6_no_reset {6291456, 8} // 3/8
+#define rhythm16clock_3_16_no_reset {5592405, 3} // 1/3
+#define rhythm16clock_1_4_no_reset {4194304, 4} // 1/4
+#define rhythm16clock_5_16_no_reset {3355443, 5} // 1/5
+#define rhythm16clock_1_3_no_reset {3145728, 7} // 3/16
+#define rhythm16clock_3_8_no_reset {2796203, 6} // 1/6
+#define rhythm16clock_7_16_no_reset {2396745, 7} // 1/7
+#define rhythm16clock_1_2_no_reset {2097152, 8} // 1/8
+#define rhythm16clock_9_16_no_reset {1864135, 9} // 1/9
+#define rhythm16clock_5_8_no_reset {1677721, 10} // 1/10
+#define rhythm16clock_11_16_no_reset {1677721, 11} // 1/11
+#define rhythm16clock_3_4_no_reset {1525201, 12} // 1/12
+#define rhythm16clock_13_16_no_reset {1290555, 13} // 1/13
+#define rhythm16clock_7_8_no_reset {1198373, 14} // 1/14
+#define rhythm16clock_15_16_no_reset {1118481, 15} // 1/15
+
+#define rhythm16clock_1_32_8_reset {33554432, 8} // 2/1
+#define rhythm16clock_1_24_8_reset {25165824, 8} // 3/2
+#define rhythm16clock_1_16_8_reset {16777216, 8} // 1/1
+#define rhythm16clock_1_12_8_reset {12582912, 8} // 3/4
+#define rhythm16clock_1_8_8_reset {8388608, 8} // 1/2
+#define rhythm16clock_1_6_8_reset {6291456, 8} // 3/8
+#define rhythm16clock_3_16_8_reset {5592405, 8} // 1/3
+#define rhythm16clock_1_4_8_reset {4194304, 8} // 1/4
+#define rhythm16clock_5_16_8_reset {3355443, 8} // 1/5
+#define rhythm16clock_1_3_8_reset {3145728, 8} // 3/16
+#define rhythm16clock_3_8_8_reset {2796203, 8} // 1/6
+#define rhythm16clock_7_16_8_reset {2396745, 8} // 1/7
+#define rhythm16clock_1_2_8_reset {2097152, 8} // 1/8
+
+
+
+#define rhythm16clock_1_32_16_reset {33554432, 16} // 2/1
+#define rhythm16clock_1_24_16_reset {25165824, 16} // 3/2
+#define rhythm16clock_1_16_16_reset {16777216, 16} // 1/1
+#define rhythm16clock_1_12_16_reset {12582912, 16} // 3/4
+#define rhythm16clock_1_8_16_reset {8388608, 16} // 1/2
+#define rhythm16clock_1_6_16_reset {6291456, 16} // 3/8
+#define rhythm16clock_3_16_16_reset {5592405, 16} // 1/3
+#define rhythm16clock_1_4_16_reset {4194304, 16} // 1/4
+#define rhythm16clock_5_16_16_reset {3355443, 16} // 1/5
+#define rhythm16clock_1_3_16_reset {3145728, 16} // 3/16
+#define rhythm16clock_3_8_16_reset {2796203, 16} // 1/6
+#define rhythm16clock_7_16_16_reset {2396745, 16} // 1/7
+#define rhythm16clock_1_2_16_reset {2097152, 16} // 1/8
+#define rhythm16clock_9_16_16_reset {1864135, 16} // 1/9
+#define rhythm16clock_5_8_16_reset {1677721, 16} // 1/10
+#define rhythm16clock_11_16_16_reset {1677721, 16} // 1/11
+#define rhythm16clock_3_4_16_reset {1525201, 16} // 1/12
+#define rhythm16clock_13_16_16_reset {1290555, 16} // 1/13
+#define rhythm16clock_7_8_16_reset {1198373, 16} // 1/14
+#define rhythm16clock_15_16_16_reset {1118481, 16} // 1/15
+
+
+
+#define rhythm4clock_1_32_no_reset {33554432 << 2, 1} // 2/1
+#define rhythm4clock_1_24_no_reset {25165824 << 2, 2} // 3/2
+#define rhythm4clock_1_16_no_reset {16777216 << 2, 1} // 1/1
+#define rhythm4clock_1_12_no_reset {12582912 << 2, 4} // 3/4
+#define rhythm4clock_1_8_no_reset {8388608 << 2, 2} // 1/2
+#define rhythm4clock_1_6_no_reset {6291456 << 2, 8} // 3/8
+#define rhythm4clock_3_16_no_reset {5592405 << 2, 3} // 1/3
+#define rhythm4clock_1_4_no_reset {4194304 << 2, 4} // 1/4
+#define rhythm4clock_5_16_no_reset {3355443 << 2, 5} // 1/5
+#define rhythm4clock_1_3_no_reset {3145728 << 2, 7} // 3/16
+#define rhythm4clock_3_8_no_reset {2796203 << 2, 6} // 1/6
+#define rhythm4clock_7_16_no_reset {2396745 << 2, 7} // 1/7
+#define rhythm4clock_1_2_no_reset {2097152 << 2, 8} // 1/8
+#define rhythm4clock_9_16_no_reset {1864135 << 2, 9} // 1/9
+#define rhythm4clock_5_8_no_reset {1677721 << 2, 10} // 1/10
+#define rhythm4clock_11_16_no_reset {1677721 << 2, 11} // 1/11
+#define rhythm4clock_3_4_no_reset {1525201 << 2, 12} // 1/12
+#define rhythm4clock_13_16_no_reset {1290555 << 2, 13} // 1/13
+#define rhythm4clock_7_8_no_reset {1198373 << 2, 14} // 1/14
+#define rhythm4clock_15_16_no_reset {1118481 << 2, 15} // 1/15
+
+#define rhythm4clock_1_32_8_reset {33554432 << 2, 2} // 2/1
+#define rhythm4clock_1_24_8_reset {25165824 << 2, 2} // 3/2
+#define rhythm4clock_1_16_8_reset {16777216 << 2, 2} // 1/1
+#define rhythm4clock_1_12_8_reset {12582912 << 2, 2} // 3/4
+#define rhythm4clock_1_8_8_reset {8388608 << 2, 2} // 1/2
+#define rhythm4clock_1_6_8_reset {6291456 << 2, 2} // 3/8
+#define rhythm4clock_3_16_8_reset {5592405 << 2, 2} // 1/3
+#define rhythm4clock_1_4_8_reset {4194304 << 2, 2} // 1/4
+#define rhythm4clock_5_16_8_reset {3355443 << 2, 2} // 1/5
+#define rhythm4clock_1_3_8_reset {3145728 << 2, 2} // 3/16
+#define rhythm4clock_3_8_8_reset {2796203 << 2, 2} // 1/6
+#define rhythm4clock_7_16_8_reset {2396745 << 2, 2} // 1/7
+#define rhythm4clock_1_2_8_reset {2097152 << 2, 2} // 1/8
+
+
+
+#define rhythm4clock_1_32_16_reset {33554432 << 2, 4} // 2/1
+#define rhythm4clock_1_24_16_reset {25165824 << 2, 4} // 3/2
+#define rhythm4clock_1_16_16_reset {16777216 << 2, 4} // 1/1
+#define rhythm4clock_1_12_16_reset {12582912 << 2, 4} // 3/4
+#define rhythm4clock_1_8_16_reset {8388608 << 2, 4} // 1/2
+#define rhythm4clock_1_6_16_reset {6291456 << 2, 4} // 3/8
+#define rhythm4clock_3_16_16_reset {5592405 << 2, 4} // 1/3
+#define rhythm4clock_1_4_16_reset {4194304 << 2, 4} // 1/4
+#define rhythm4clock_5_16_16_reset {3355443 << 2, 4} // 1/5
+#define rhythm4clock_1_3_16_reset {3145728 << 2, 4} // 3/16
+#define rhythm4clock_3_8_16_reset {2796203 << 2, 4} // 1/6
+#define rhythm4clock_7_16_16_reset {2396745 << 2, 4} // 1/7
+#define rhythm4clock_1_2_16_reset {2097152 << 2, 4} // 1/8
+#define rhythm4clock_9_16_16_reset {1864135 << 2, 4} // 1/9
+#define rhythm4clock_5_8_16_reset {1677721 << 2, 4} // 1/10
+#define rhythm4clock_11_16_16_reset {1677721 << 2, 4} // 1/11
+#define rhythm4clock_3_4_16_reset {1525201 << 2, 4} // 1/12
+#define rhythm4clock_13_16_16_reset {1290555 << 2, 4} // 1/13
+#define rhythm4clock_7_8_16_reset {1198373 << 2, 4} // 1/14
+#define rhythm4clock_15_16_16_reset {1118481 << 2, 4} // 1/15
+
+
+
 
 
 

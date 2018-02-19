@@ -47,7 +47,7 @@
 
 
 
- #define rhythm_16clock_1_16			((1 << 20)/1) | (1 << 27)
+ #define rhythm16clock_1_16			((1 << 20)/1) | (1 << 27)
  #define rhythm_16clock_1_8			((1 << 20)/2) | (1 << 27)
  #define rhythm_16clock_3_16			((1 << 20)/3) | (3 << 27)
  #define rhythm_16clock_1_4			((1 << 20)/4) | (1 << 27)
@@ -91,6 +91,23 @@ const ScaleNote diatonicMajor7thsRow6[8] = {noteG1, noteB2, noteD2, noteF2 , not
 const ScaleNote diatonicMajor7thsRow7[8] = {noteA2, noteC2, noteE2, noteG2 , noteA3, noteC3, noteE3, noteG3 };
 const ScaleNote diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3 , noteB3, noteD3, noteF3, noteA4 };
 
+const ScaleNote rhythms1Row1[8] = {rhythm16clock_1_32_no_reset, rhythm16clock_1_24_no_reset, rhythm16clock_1_16_no_reset, rhythm16clock_1_8_no_reset, rhythm16clock_1_6_no_reset, rhythm16clock_3_16_no_reset, rhythm16clock_1_4_no_reset, rhythm16clock_5_16_no_reset};
+const ScaleNote rhythms1Row2[8] = {rhythm16clock_1_8_no_reset, rhythm16clock_1_6_no_reset, rhythm16clock_3_16_no_reset, rhythm16clock_1_4_no_reset, rhythm16clock_5_16_no_reset, rhythm16clock_1_3_no_reset, rhythm16clock_3_8_no_reset, rhythm16clock_7_16_no_reset};
+const ScaleNote rhythms1Row3[8] = {rhythm16clock_1_32_8_reset, rhythm16clock_1_24_8_reset, rhythm16clock_1_16_8_reset, rhythm16clock_1_8_8_reset, rhythm16clock_1_6_8_reset, rhythm16clock_3_16_8_reset, rhythm16clock_1_4_8_reset, rhythm16clock_5_16_8_reset};
+const ScaleNote rhythms1Row4[8] = {rhythm16clock_1_8_8_reset, rhythm16clock_1_6_8_reset, rhythm16clock_3_16_8_reset, rhythm16clock_1_4_8_reset, rhythm16clock_5_16_8_reset, rhythm16clock_1_3_8_reset, rhythm16clock_3_8_8_reset, rhythm16clock_7_16_8_reset};
+const ScaleNote rhythms1Row5[8] = {rhythm16clock_1_32_16_reset, rhythm16clock_1_24_16_reset, rhythm16clock_1_16_16_reset, rhythm16clock_1_8_16_reset, rhythm16clock_1_6_16_reset, rhythm16clock_3_16_16_reset, rhythm16clock_1_4_16_reset, rhythm16clock_5_16_16_reset};
+const ScaleNote rhythms1Row6[8] = {rhythm16clock_1_8_16_reset, rhythm16clock_1_6_16_reset, rhythm16clock_3_16_16_reset, rhythm16clock_1_4_16_reset, rhythm16clock_5_16_16_reset, rhythm16clock_1_3_16_reset, rhythm16clock_3_8_16_reset, rhythm16clock_7_16_16_reset};
+const ScaleNote rhythms1Row7[8] = {rhythm16clock_1_2_no_reset, rhythm16clock_9_16_no_reset, rhythm16clock_5_8_no_reset, rhythm16clock_11_16_no_reset, rhythm16clock_3_4_no_reset, rhythm16clock_13_16_no_reset, rhythm16clock_7_8_no_reset, rhythm16clock_15_16_no_reset};
+const ScaleNote rhythms1Row8[8] = {rhythm16clock_1_2_16_reset, rhythm16clock_9_16_16_reset, rhythm16clock_5_8_16_reset, rhythm16clock_11_16_16_reset, rhythm16clock_3_4_16_reset, rhythm16clock_13_16_16_reset, rhythm16clock_7_8_16_reset, rhythm16clock_15_16_16_reset};
+
+const ScaleNote rhythms2Row1[8] = {rhythm4clock_1_32_no_reset, rhythm4clock_1_24_no_reset, rhythm4clock_1_16_no_reset, rhythm4clock_1_8_no_reset, rhythm4clock_1_6_no_reset, rhythm4clock_3_16_no_reset, rhythm4clock_1_4_no_reset, rhythm4clock_5_16_no_reset};
+const ScaleNote rhythms2Row2[8] = {rhythm4clock_1_8_no_reset, rhythm4clock_1_6_no_reset, rhythm4clock_3_16_no_reset, rhythm4clock_1_4_no_reset, rhythm4clock_5_16_no_reset, rhythm4clock_1_3_no_reset, rhythm4clock_3_8_no_reset, rhythm4clock_7_16_no_reset};
+const ScaleNote rhythms2Row3[8] = {rhythm4clock_1_32_8_reset, rhythm4clock_1_24_8_reset, rhythm4clock_1_16_8_reset, rhythm4clock_1_8_8_reset, rhythm4clock_1_6_8_reset, rhythm4clock_3_16_8_reset, rhythm4clock_1_4_8_reset, rhythm4clock_5_16_8_reset};
+const ScaleNote rhythms2Row4[8] = {rhythm4clock_1_8_8_reset, rhythm4clock_1_6_8_reset, rhythm4clock_3_16_8_reset, rhythm4clock_1_4_8_reset, rhythm4clock_5_16_8_reset, rhythm4clock_1_3_8_reset, rhythm4clock_3_8_8_reset, rhythm4clock_7_16_8_reset};
+const ScaleNote rhythms2Row5[8] = {rhythm16clock_1_32_no_reset, rhythm16clock_1_24_no_reset, rhythm16clock_1_16_no_reset, rhythm16clock_1_8_no_reset, rhythm16clock_1_6_no_reset, rhythm16clock_3_16_no_reset, rhythm16clock_1_4_no_reset, rhythm16clock_5_16_no_reset};
+const ScaleNote rhythms2Row6[8] = {rhythm16clock_1_8_no_reset, rhythm16clock_1_6_no_reset, rhythm16clock_3_16_no_reset, rhythm16clock_1_4_no_reset, rhythm16clock_5_16_no_reset, rhythm16clock_1_3_no_reset, rhythm16clock_3_8_no_reset, rhythm16clock_7_16_no_reset};
+const ScaleNote rhythms2Row7[8] = {rhythm16clock_1_32_8_reset, rhythm16clock_1_24_8_reset, rhythm16clock_1_16_8_reset, rhythm16clock_1_8_8_reset, rhythm16clock_1_6_8_reset, rhythm16clock_3_16_8_reset, rhythm16clock_1_4_8_reset, rhythm16clock_5_16_8_reset};
+const ScaleNote rhythms2Row8[8] = {rhythm16clock_1_8_8_reset, rhythm16clock_1_6_8_reset, rhythm16clock_3_16_8_reset, rhythm16clock_1_4_8_reset, rhythm16clock_5_16_8_reset, rhythm16clock_1_3_8_reset, rhythm16clock_3_8_8_reset, rhythm16clock_7_16_8_reset};
 
 
 ScaleNote *diatonicMinor7ths[8] = { diatonicMinor7thsRow1,
@@ -102,6 +119,20 @@ ScaleNote *diatonicMajor7ths[8] = { diatonicMajor7thsRow1,
 		diatonicMajor7thsRow2, diatonicMajor7thsRow3, diatonicMajor7thsRow4,
 		diatonicMajor7thsRow5, diatonicMajor7thsRow6, diatonicMajor7thsRow7,
 		diatonicMajor7thsRow8 };
+
+
+ScaleNote *rhythms1[8] = { rhythms1Row1,
+		rhythms1Row2, rhythms1Row3, rhythms1Row4,
+		rhythms1Row5, rhythms1Row6, rhythms1Row7,
+		rhythms1Row8 };
+
+
+ScaleNote *rhythms2[8] = { rhythms2Row1,
+		rhythms2Row2, rhythms2Row3, rhythms2Row4,
+		rhythms2Row5, rhythms2Row6, rhythms2Row7,
+		rhythms2Row8 };
+
+
 //static const uint32_t rhythms[8][8] = {rhythmsRow1, rhythmsRow2,rhythmsRow3,rhythmsRow4,rhythmsRow5,rhythmsRow6,rhythmsRow7,rhythmsRow8};;
 
 void switchScale(uint32_t scaleIndex) {
