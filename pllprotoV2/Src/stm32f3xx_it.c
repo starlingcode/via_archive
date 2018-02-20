@@ -327,11 +327,19 @@ void TIM2_IRQHandler(void) {
 		//reset the timer value
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
 
-		if ((4095 - time1CV) >= 2048) {
-			noteIndex = (myfix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) >> 9;
-		}
-		else {
-			noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 9;
+		if (scaleType > 0) {
+			if ((4095 - time1CV) >= 2048) {
+				noteIndex = (myfix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) >> 9;
+			}
+			else {
+				noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 9;
+			}
+		} else {
+			int holdT1 = (4095 - time1CV) + (time1Knob >> 2);
+			if (holdT1 > 4095) {
+				holdT1 = 4095;
+			}
+			noteIndex = holdT1 >> 5;
 		}
 
 		if (controlScheme == root) {
@@ -348,21 +356,26 @@ void TIM2_IRQHandler(void) {
 		switch (scaleType) {
 
 		case 0:
+			multiplier = fullChromatic[rootIndex][noteIndex].simplifiedRatio;
+			gcd = fullChromatic[rootIndex][noteIndex].fundamentalDivision;
+			break;
+
+		case 1:
 			multiplier = rhythms1[rootIndex][noteIndex].simplifiedRatio;
 			gcd = rhythms1[rootIndex][noteIndex].fundamentalDivision;
 			break;
 
-		case 1:
+		case 2:
 			multiplier = rhythms2[rootIndex][noteIndex].simplifiedRatio;
 			gcd = rhythms2[rootIndex][noteIndex].fundamentalDivision;
 			break;
 
-		case 2:
+		case 3:
 			multiplier = diatonicMajor7ths[rootIndex][noteIndex].simplifiedRatio;
 			gcd = diatonicMajor7ths[rootIndex][noteIndex].fundamentalDivision;
 			break;
 
-		case 3:
+		case 4:
 			multiplier = diatonicMinor7ths[rootIndex][noteIndex].simplifiedRatio;
 			gcd = diatonicMinor7ths[rootIndex][noteIndex].fundamentalDivision;
 			break;

@@ -14,7 +14,7 @@ ScaleNote *diatonicMinor7ths[8];
 ScaleNote *diatonicMajor7ths[8];
 ScaleNote *rhythms1[8];
 ScaleNote *rhythms2[8];
-
+ScaleNote *fullChromatic[8];
 
 #define rhythm_16clock_1_16			135266304
 #define rhythm_16clock_1_8			134742016
@@ -191,7 +191,61 @@ static const uint32_t diatonicMajor7thsRow7[8] = {noteA2, noteC2, noteE2, noteG2
 static const uint32_t diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3 , noteB3, noteD3, noteF3, noteA4 };
 */
 
+#define noteA_3 {13981016 >> 4, 3 << 4} // 5/3
+#define noteAsharp_3 {15099494 >> 4, 5 << 4} // 9/5
+#define noteB_3 {15728640 >> 4, 8 << 4} // 15/8
+#define noteC_3 {16777216 >> 4, 1 << 4} // 1/1
+#define noteCsharp_3 {17895697 >> 4, 15 << 4} // 16/15
+#define noteD_3 {18874368 >> 4, 8 << 4} // 9/8
+#define noteDsharp_3 {20132659 >> 4, 5 << 4} // 6/5
+#define noteE_3 {20971520 >> 4, 4 << 4} // 5/4
+#define noteF_3 {22369621 >> 4, 3 << 4} // 4/3
+#define noteFsharp_3 {23301689 >> 4, 12 << 4} // 25/18
+#define noteG_3 {25165824 >> 4, 2 << 4} // 3/2
+#define noteGsharp_3 {26843546 >> 4, 5 << 4} // 8/5
 
+#define noteA_2 {13981016 >> 3, 3 << 3} // 5/3
+#define noteAsharp_2 {15099494 >> 3, 5 << 3} // 9/5
+#define noteB_2 {15728640 >> 3, 8 << 3} // 15/8
+#define noteC_2 {16777216 >> 3, 1 << 3} // 1/1
+#define noteCsharp_2 {17895697 >> 3, 15 << 3} // 16/15
+#define noteD_2 {18874368 >> 3, 8 << 3} // 9/8
+#define noteDsharp_2 {20132659 >> 3, 5 << 3} // 6/5
+#define noteE_2 {20971520 >> 3, 4 << 3} // 5/4
+#define noteF_2 {22369621 >> 3, 3 << 3} // 4/3
+#define noteFsharp_2 {23301689 >> 3, 12 << 3} // 25/18
+#define noteG_2 {25165824 >> 3, 2 << 3} // 3/2
+#define noteGsharp_2 {26843546 >> 3, 5 << 3} // 8/5
+
+#define noteA_1 {13981016 >> 2, 3 << 2} // 5/3
+#define noteAsharp_1 {15099494 >> 2, 5 << 2} // 9/5
+#define noteB_1 {15728640 >> 2, 8 << 2} // 15/8
+#define noteC_1 {16777216 >> 2, 1 << 2} // 1/1
+#define noteCsharp_1 {17895697 >> 2, 15 << 2} // 16/15
+#define noteD_1 {18874368 >> 2, 8 << 2} // 9/8
+#define noteDsharp_1 {20132659 >> 2, 5 << 2} // 6/5
+#define noteE_1 {20971520 >> 2, 4 << 2} // 5/4
+#define noteF_1 {22369621 >> 2, 3 << 2} // 4/3
+#define noteFsharp_1 {23301689 >> 2, 12 << 2} // 25/18
+#define noteG_1 {25165824 >> 2, 2 << 2} // 3/2
+#define noteGsharp_1 {26843546 >> 2, 5 << 2} // 8/5
+
+#define noteA0 {13981016 >> 1, 3 << 1} // 5/3
+#define noteAsharp0 {15099494 >> 1, 5 << 1} // 9/5
+#define noteB0 {15728640 >> 1, 8 << 1} // 15/8
+#define noteC0 {16777216 >> 1, 1 << 1} // 1/1
+#define noteCsharp0 {17895697 >> 1, 15 << 1} // 16/15
+#define noteD0 {18874368 >> 1, 8 << 1} // 9/8
+#define noteDsharp0 {20132659 >> 1, 5 << 1} // 6/5
+#define noteE0 {20971520 >> 1, 4 << 1} // 5/4
+#define noteF0 {22369621 >> 1, 3 << 1} // 4/3
+#define noteFsharp0 {23301689 >> 1, 12 << 1} // 25/18
+#define noteG0 {25165824 >> 1, 2 << 1} // 3/2
+#define noteGsharp0 {26843546 >> 1, 5 << 1} // 8/5
+
+#define noteA1 {13981016, 3} // 5/3
+#define noteAsharp1 {15099494, 5} // 9/5
+#define noteB1 {15728640, 8} // 15/8
 #define noteC1 {16777216, 1} // 1/1
 #define noteCsharp1 {17895697, 15} // 16/15
 #define noteD1 {18874368, 8} // 9/8
@@ -201,7 +255,8 @@ static const uint32_t diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3
 #define noteFsharp1 {23301689, 12} // 25/18
 #define noteG1 {25165824, 2} // 3/2
 #define noteGsharp1 {26843546, 5} // 8/5
-#define noteA2 {27962026.7, 3} // 5/3
+
+#define noteA2 {27962027, 3} // 5/3
 #define noteAsharp2 {30198989, 5} // 9/5
 #define noteB2 {31457280, 8} // 15/8
 #define noteC2 {33554432, 1} // 2/1
@@ -213,6 +268,7 @@ static const uint32_t diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3
 #define noteFsharp2 {46603378, 9} // 50/9
 #define noteG2 {50331648, 1} // 6/1
 #define noteGsharp2 {53687091, 5} // 16/5
+
 #define noteA3 {55924053, 3} // 10/3
 #define noteAsharp3 {60397978, 5} // 18/5
 #define noteB3 {62914560, 4} //30/8
@@ -225,10 +281,59 @@ static const uint32_t diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3
 #define noteFsharp3 {93206756, 9} // 200/18
 #define noteG3 {100663296, 1} // 12/2
 #define noteGsharp3 {107374182, 5} // 32/5
-#define noteA4 {111848107, 3} // 20/3
-#define noteAsharp4 {120795955, 5} // 36/5
-#define noteB4 {125829120, 2} // 60/8
-#define noteC4 {134217728, 1} // 8/1
+
+#define noteA4 {55924053 << 1, 3} // 10/3
+#define noteAsharp4 {60397978 << 1, 5} // 18/5
+#define noteB4 {62914560 << 1, 4} //30/8
+#define noteC4 {67108864 << 1, 1} // 4/1
+#define noteCsharp4 {71582788 << 1, 15} // 64/15
+#define noteD4 {75497472 << 1, 2} // 36/8
+#define noteDsharp4 {80530637 << 1, 5} // 24/5
+#define noteE4 {83886080 << 1, 1} // 20/4
+#define noteF4 {89478485 << 1, 3} // 16/3
+#define noteFsharp4 {93206756 << 1, 9} // 200/18
+#define noteG4 {100663296 << 1, 1} // 12/2
+#define noteGsharp4 {107374182 << 1, 5} // 32/5
+
+#define noteA5 {55924053 << 2, 3} // 10/3
+#define noteAsharp5 {60397978 << 2, 5} // 18/5
+#define noteB5 {62914560 << 2, 4} //30/8
+#define noteC5 {67108864 << 2, 1} // 4/1
+#define noteCsharp5 {71582788 << 2, 15} // 64/15
+#define noteD5 {75497472 << 2, 2} // 36/8
+#define noteDsharp5 {80530637 << 2, 5} // 24/5
+#define noteE5 {83886080 << 2, 1} // 20/4
+#define noteF5 {89478485 << 2, 3} // 16/3
+#define noteFsharp5 {93206756 << 2, 9} // 200/18
+#define noteG5 {100663296 << 2, 1} // 12/2
+#define noteGsharp5 {107374182 << 2, 5} // 32/5
+
+#define noteA6 {55924053 << 3, 3} // 10/3
+#define noteAsharp6 {60397978 << 3, 5} // 18/5
+#define noteB6 {62914560 << 3, 4} //30/8
+#define noteC6 {67108864 << 3, 1} // 4/1
+#define noteCsharp6 {71582788 << 3, 15} // 64/15
+#define noteD6 {75497472 << 3, 2} // 36/8
+#define noteDsharp6 {80530637 << 3, 5} // 24/5
+#define noteE6 {83886080 << 3, 1} // 20/4
+#define noteF6 {89478485 << 3, 3} // 16/3
+#define noteFsharp6 {93206756 << 3, 9} // 200/18
+#define noteG6 {100663296 << 3, 1} // 12/2
+#define noteGsharp6 {107374182 << 3, 5} // 32/5
+
+#define noteA7 {55924053 << 4, 3} // 10/3
+#define noteAsharp7 {60397978 << 4, 5} // 18/5
+#define noteB7 {62914560 << 4, 4} //30/8
+#define noteC7 {67108864 << 4, 1} // 4/1
+#define noteCsharp7 {71582788 << 4, 15} // 64/15
+#define noteD7 {75497472 << 4, 2} // 36/8
+#define noteDsharp7 {80530637 << 4, 5} // 24/5
+#define noteE7 {83886080 << 4, 1} // 20/4
+
+
+
+
+
 
 #define rhythm16clock_1_32_no_reset {33554432, 1} // 2/1
 #define rhythm16clock_1_24_no_reset {25165824, 2} // 3/2
