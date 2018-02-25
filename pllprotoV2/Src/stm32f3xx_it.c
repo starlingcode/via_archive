@@ -335,9 +335,11 @@ void TIM2_IRQHandler(void) {
 				noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 9;
 			}
 		} else {
-			int holdT1 = (4095 - time1CV) + (time1Knob >> 2);
+			int holdT1 = (4095 - time1CV) + (time1Knob >> 2) - 1400;
 			if (holdT1 > 4095) {
 				holdT1 = 4095;
+			} else if (holdT1 < 0) {
+				holdT1 = 0;
 			}
 			noteIndex = holdT1 >> 5;
 		}
@@ -456,11 +458,11 @@ void TIM2_IRQHandler(void) {
 				// if we are behind the phase of the clock, go faster, otherwise, go slower
 				if (position > span) {
 
-					pllNudge = (spanx2 - position) << 7;
+					pllNudge = (spanx2 - position) << 4;
 
 				} else {
 
-					pllNudge = -(position << 7);
+					pllNudge = -(position) << 4;
 
 				}
 
@@ -525,7 +527,11 @@ void TIM2_IRQHandler(void) {
 
 
 		//get the timer value that which was reset on last rising edge
-		gateOnCount = __HAL_TIM_GET_COUNTER(&htim2);
+		if (AUTODUTY) {
+			gateOnCount = __HAL_TIM_GET_COUNTER(&htim2);
+		} else {
+			gateOnCount = periodCount >> 1;
+		}
 
 	}
 
@@ -628,10 +634,6 @@ void TIM6_DAC_IRQHandler(void) {
 			SET_PHASE_STATE;
 			getSample(1);
 		}
-
-		// write that value to our RGB
-
-		if (RGB_ON) {__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph);}
 
 		// if we transition from one phase state to another, enable the transition handler interrupt
 
@@ -796,7 +798,7 @@ void getSample(uint32_t phase) {
 
 		if (RGB_ON) { //if the runtime display is on, show our mode
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
 	}
 
@@ -871,7 +873,7 @@ void getSample(uint32_t phase) {
 
 		if (RGB_ON) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
 	}
 

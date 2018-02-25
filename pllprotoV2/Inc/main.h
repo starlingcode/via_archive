@@ -55,6 +55,8 @@ enum logicOutATypes {triggerA, gateA, deltaA, ratioDeltaA, pllClockA};
 
 enum logicOutBTypes {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
 
+enum autoDutyTypes {autoDutyOn, autoDutyOff};
+
 int familyIndicator;
 
 int holdState;
@@ -211,6 +213,7 @@ int flagHolder;
 #define GATEB		 		flagHolder & 0b00000000001000000000000000000000
 #define TRIGB		 		flagHolder & 0b00000000010000000000000000000000
 #define DELTAB		 		flagHolder & 0b00000000100000000000000000000000
+#define AUTODUTY		 	flagHolder & 0b00000001000000000000000000000000
 
 
 #define SET_PHASE_STATE 		flagHolder |= 0b00000000000000000000000000000001
@@ -237,7 +240,7 @@ int flagHolder;
 #define SET_GATEB		 		flagHolder |= 0b00000000001000000000000000000000
 #define SET_TRIGB		 		flagHolder |= 0b00000000010000000000000000000000
 #define SET_DELTAB		 		flagHolder |= 0b00000000100000000000000000000000
-
+#define SET_AUTODUTY	 		flagHolder |= 0b00000001000000000000000000000000
 
 
 
@@ -265,6 +268,7 @@ int flagHolder;
 #define RESET_GATEB				flagHolder &= 0b11111111110111111111111111111111
 #define RESET_TRIGB				flagHolder &= 0b11111111101111111111111111111111
 #define RESET_DELTAB			flagHolder &= 0b11111111011111111111111111111111
+#define RESET_AUTODUTY			flagHolder &= 0b11111110111111111111111111111111
 
 
 #define TOGGLE_GATE_ON 			flagHolder ^= 0b00000000000000000000000000000100

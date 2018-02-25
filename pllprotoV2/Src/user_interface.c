@@ -28,7 +28,7 @@ enum scaleTypes scaleType; // {rhythms, pitches}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
 enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA, ratioDeltaA, pllClock};
 enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
-
+enum autoDutyTypes autoDuty;
 
 extern uint16_t VirtAddVarTab[NB_OF_VAR];
 extern uint16_t VarDataTab[NB_OF_VAR];
@@ -145,9 +145,20 @@ void readRelease(uint32_t modeFlagHolder) {
 			showMode(logicOutB); //show our current mode
 		}
 
+		if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
+			SET_AUX_MENU;
+			modeflag = 9; //indicate to the other mode change functions that we have pressed the logic b button
+			detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
+			clearLEDs(); //wipe the vestiges of our runtime display
+			__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
+			showMode(autoDuty); //show our current mode
+		}
+
 		if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
 			detectOn = 0;
-			clearLEDs();
+			if (!(AUX_MENU)) {
+				clearLEDs();
+			}
 			handleRelease(modeFlagHolder);
 		}
 		break;
@@ -194,7 +205,6 @@ void readRelease(uint32_t modeFlagHolder) {
 				detectOn = 0;
 			}
 			clearLEDs();
-			RESET_AUX_MENU;
 			handleRelease(modeFlagHolder);
 		}
 		break;
@@ -206,7 +216,16 @@ void readRelease(uint32_t modeFlagHolder) {
 				detectOn = 0;
 			}
 			clearLEDs();
-			RESET_AUX_MENU;
+			handleRelease(modeFlagHolder);
+		}
+		break;
+	case 9:
+
+		if (MyTKeys[4].p_Data->StateId == TSL_STATEID_RELEASE) {
+			if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
+				detectOn = 0;
+			}
+			clearLEDs();
 			handleRelease(modeFlagHolder);
 		}
 		break;
@@ -247,6 +266,10 @@ void handleRelease(uint32_t pinMode) {
 		case 8:
 			modeflag = 2;
 			showMode(logicOutB);
+			break;
+		case 9:
+			modeflag = 2;
+			showMode(autoDuty);
 			break;
 		}
 		displayNewMode = 1;
@@ -401,6 +424,20 @@ void changeMode(uint32_t mode) {
 			SET_PLL_DIVB;
 			break;
 		}
+	} else if (mode == 9) {
+
+		autoDuty = (autoDuty + 1) % 2;
+		holdLogicOut = (holdLogicOut & 0b1111111111000111) | (autoDuty << 6);
+
+		if (autoDuty == autoDutyOn) {
+			RESET_AUTODUTY;
+		} else {
+			SET_AUTODUTY;
+		}
+
+		ee_status = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
+	    ee_status|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
+
 
 
 	}
