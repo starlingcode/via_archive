@@ -15,6 +15,8 @@ ScaleNote *diatonicMajor7ths[8];
 ScaleNote *rhythms1[8];
 ScaleNote *rhythms2[8];
 ScaleNote *fullChromatic[8];
+ScaleNote *pureRhythms[8];
+ScaleNote *pureNotes[8];
 
 #define rhythm_16clock_1_16			135266304
 #define rhythm_16clock_1_8			134742016
@@ -330,9 +332,27 @@ static const uint32_t diatonicMajor7thsRow8[8] = {noteB2, noteD2, noteF2, noteA3
 #define noteDsharp7 {80530637 << 4, 5} // 24/5
 #define noteE7 {83886080 << 4, 1} // 20/4
 
+#define note_pureA1 {83886080, 6} // 5/3
+#define note_pureAsharp1 {150994944, 10} // 9/5
+#define note_pureB1 {251658240, 16} // 15/8
+#define note_pureC1 {16777216, 1} // 1/1
+#define note_pureCsharp1 {268435456, 15} // 16/15
+#define note_pureD1 {150994944, 8} // 9/8
+#define note_pureDsharp1 {100663296, 5} // 6/5
+#define note_pureE1 {83886080, 4} // 5/4
+#define note_pureF1 {67108864, 3} // 4/3
+#define note_pureFsharp1 {419430400, 18} // 25/18
+#define note_pureG1 {50331648, 2} // 3/2
+#define note_pureGsharp1 {134217728, 5} // 8/5
 
-
-
+#define rhythm_pure1_16 {16777216, 1} // 1/1
+#define rhythm_pure2_16 {16777216, 2}
+#define rhythm_pure3_16 {16777216, 3}
+#define rhythm_pure4_16 {16777216, 4}
+#define rhythm_pure5_16 {16777216, 5}
+#define rhythm_pure6_16 {16777216, 6}
+#define rhythm_pure7_16 {16777216, 7}
+#define rhythm_pure8_16 {16777216, 8}
 
 
 #define rhythm16clock_1_32_no_reset {33554432, 1} // 2/1

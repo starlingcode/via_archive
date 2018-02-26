@@ -109,6 +109,10 @@ const ScaleNote rhythms2Row6[8] = {rhythm16clock_1_8_no_reset, rhythm16clock_1_6
 const ScaleNote rhythms2Row7[8] = {rhythm16clock_1_32_8_reset, rhythm16clock_1_24_8_reset, rhythm16clock_1_16_8_reset, rhythm16clock_1_8_8_reset, rhythm16clock_1_6_8_reset, rhythm16clock_3_16_8_reset, rhythm16clock_1_4_8_reset, rhythm16clock_5_16_8_reset};
 const ScaleNote rhythms2Row8[8] = {rhythm16clock_1_8_8_reset, rhythm16clock_1_6_8_reset, rhythm16clock_3_16_8_reset, rhythm16clock_1_4_8_reset, rhythm16clock_5_16_8_reset, rhythm16clock_1_3_8_reset, rhythm16clock_3_8_8_reset, rhythm16clock_7_16_8_reset};
 
+const ScaleNote pureRhythmsRow1[8] = {rhythm_pure1_16, rhythm_pure2_16, rhythm_pure3_16, rhythm_pure4_16, rhythm_pure5_16, rhythm_pure6_16, rhythm_pure7_16, rhythm_pure8_16};
+
+const ScaleNote pureNotesRow1[8] = {note_pureA1, note_pureB1, note_pureC1, note_pureD1, note_pureE1, note_pureF1, note_pureG1, note_pureGsharp1};
+
 const ScaleNote fullChromaticRow1[128] = {
 		noteA_3, noteAsharp_3, noteB_3, noteC_3, noteCsharp_3, noteD_3, noteDsharp_3, noteE_3, noteF_3, noteFsharp_3, noteG_3, noteGsharp_3,
 		noteA_2, noteAsharp_2, noteB_2, noteC_2, noteCsharp_2, noteD_2, noteDsharp_2, noteE_2, noteF_2, noteFsharp_2, noteG_2, noteGsharp_2,
@@ -263,6 +267,16 @@ ScaleNote *fullChromatic[8] = {
 		fullChromaticRow2, fullChromaticRow3, fullChromaticRow4,
 		fullChromaticRow5, fullChromaticRow6, fullChromaticRow7,
 		fullChromaticRow8, fullChromaticRow9 };
+
+ScaleNote *pureRhythms[8] = {
+		pureRhythmsRow1, pureRhythmsRow1, pureRhythmsRow1,
+		pureRhythmsRow1, pureRhythmsRow1, pureRhythmsRow1,
+		pureRhythmsRow1, pureRhythmsRow1 };
+
+ScaleNote *pureNotes[8] = {
+		pureNotesRow1, pureNotesRow1, pureNotesRow1,
+		pureNotesRow1, pureNotesRow1, pureNotesRow1,
+		pureNotesRow1, pureNotesRow1 };
 
 
 //static const uint32_t rhythms[8][8] = {rhythmsRow1, rhythmsRow2,rhythmsRow3,rhythmsRow4,rhythmsRow5,rhythmsRow6,rhythmsRow7,rhythmsRow8};;

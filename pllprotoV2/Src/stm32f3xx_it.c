@@ -382,6 +382,16 @@ void TIM2_IRQHandler(void) {
 			gcd = diatonicMinor7ths[rootIndex][noteIndex].fundamentalDivision;
 			break;
 
+		case 5:
+			multiplier = pureRhythms[rootIndex][noteIndex].simplifiedRatio;
+			gcd = pureRhythms[rootIndex][noteIndex].fundamentalDivision;
+			break;
+
+		case 6:
+			multiplier = pureNotes[rootIndex][noteIndex].simplifiedRatio;
+			gcd = pureNotes[rootIndex][noteIndex].fundamentalDivision;
+			break;
+
 		default:
 			break;
 		}
@@ -509,12 +519,16 @@ void TIM2_IRQHandler(void) {
 //		attackInc = (attackInc << 1) * multiplier;
 //		releaseInc = (releaseInc << 1) * multiplier;
 
-				attackInc = ((span << 8) + pllNudge) / gateOnCount;
-				releaseInc = ((span << 8) + pllNudge) / (periodCount - gateOnCount);
+		if (scale > 4) {
+			attackInc = ((span << 8) + pllNudge) / (gateOnCount * gcd);
+			releaseInc = ((span << 8) + pllNudge) / ((periodCount - gateOnCount) * gcd);
+		} else {
+			attackInc = ((span << 8) + pllNudge) / gateOnCount;
+			releaseInc = ((span << 8) + pllNudge) / (periodCount - gateOnCount);
+		}
 
-
-				attackInc = myfix24_mul(attackInc, multiplier) << 1;
-				releaseInc = myfix24_mul(releaseInc, multiplier) << 1;
+		attackInc = myfix24_mul(attackInc, multiplier) << 1;
+		releaseInc = myfix24_mul(releaseInc, multiplier) << 1;
 
 		if (attackInc >= span - 1) {attackInc = span - 1;}
 		if (releaseInc >= span - 1) {releaseInc = span - 1;}
