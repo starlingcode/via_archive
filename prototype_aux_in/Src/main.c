@@ -1063,6 +1063,12 @@ void restoreState(){
 			SET_PITCH_ON;
 			SET_MORPH_ON;
 			break;
+
+		case 5:
+			RESET_AMP_ON;
+			SET_PITCH_ON;
+			RESET_MORPH_ON;
+			break;
 		}
 }
 

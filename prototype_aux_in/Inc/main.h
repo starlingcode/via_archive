@@ -59,7 +59,7 @@ enum speedTypes {audio, env, seq};
 
 enum loopTypes {noloop, looping};
 
-enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum};
+enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum, pendulum2};
 
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 

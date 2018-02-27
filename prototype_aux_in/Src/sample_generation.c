@@ -298,8 +298,14 @@ void getPhase(void) {
 
 			RESET_LAST_CYCLE;
 			RESET_OSCILLATOR_ACTIVE;
-			incSign = 1;
-			position = 0;
+			if (trigMode == pendulum && !(DRUM_MODE_ON))  {
+				incSign = -1;
+				position = spanx2;
+			}
+			else {
+				incSign = 1;
+				position = 0;
+			}
 			SET_PHASE_STATE;
 			SH_A_TRACK
 			SH_B_TRACK

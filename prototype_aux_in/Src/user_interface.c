@@ -320,7 +320,7 @@ void changeMode(uint32_t mode) {
 		}
 	}
 	else if (mode == 2) {
-		trigMode = (trigMode + 1) % 5;
+		trigMode = (trigMode + 1) % 6;
 		//initialize some essential retrigger variables
 
 		holdState = (holdState & 0b1111111111000111) | (trigMode << 3);
@@ -353,6 +353,12 @@ void changeMode(uint32_t mode) {
 			RESET_AMP_ON;
 			SET_PITCH_ON;
 			SET_MORPH_ON;
+			break;
+
+		case 5:
+			RESET_AMP_ON;
+			SET_PITCH_ON;
+			RESET_MORPH_ON;
 			break;
 
 		}

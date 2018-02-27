@@ -61,7 +61,7 @@ void readDetect(void) {
 
 	if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
 		RESET_RGB_ON; //turn off the runtime display
-		modeflag = 1; //indicate to the other mode change functions that we have pressed the scaleType button
+		modeflag = 10; //indicate to the other mode change functions that we have pressed the scaleType button
 		detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
 		clearLEDs(); //wipe the vestiges of our runtimme display
 		__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
@@ -116,12 +116,52 @@ void readRelease(uint32_t modeFlagHolder) {
 
 	switch (modeFlagHolder) {
 
+	case 0:
+
+		if (MyTKeys[5].p_Data->StateId == TSL_STATEID_RELEASE) {
+			if (MyTKeys[3].p_Data->StateId == TSL_STATEID_RELEASE) {
+				detectOn = 0;
+			}
+			clearLEDs();
+			handleRelease(modeFlagHolder);
+		}
+		break;
 	case 1:
+
+		if (MyTKeys[0].p_Data->StateId == TSL_STATEID_RELEASE) {
+			if (MyTKeys[3].p_Data->StateId == TSL_STATEID_RELEASE) {
+				detectOn = 0;
+			}
+			clearLEDs();
+			handleRelease(modeFlagHolder);
+		}
+		break;
+
+
+	case 10:
 
 		if (MyTKeys[3].p_Data->StateId == TSL_STATEID_RELEASE) {
 			detectOn = 0; // indicate that we no longer have a touch sensor in detect state
 			clearLEDs(); // clear the display that showed the current mode
 			handleRelease(modeFlagHolder); //take the appropriate action per the button that had been pressed
+		}
+
+		if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
+			SET_AUX_MENU;
+			modeflag = 0; //indicate to the other mode change functions that we have pressed the logic a button
+			detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
+			clearLEDs(); //wipe the vestiges of our runtimme display
+			__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
+			showMode(scaleType); //show our currentm mode
+		}
+
+		if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
+			SET_AUX_MENU;
+			modeflag = 1; //indicate to the other mode change functions that we have pressed the logic b button
+			detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
+			clearLEDs(); //wipe the vestiges of our runtime display
+			__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
+			showMode(scaleType); //show our current mode
 		}
 		break;
 
@@ -241,7 +281,12 @@ void handleRelease(uint32_t pinMode) {
 		// current value is probably too short
 		changeMode(pinMode);
 		switch (pinMode) {
+		case 0:
+			modeflag = 10;
+			showMode(scaleType);
+			break;
 		case 1:
+			modeflag = 10;
 			showMode(scaleType);
 			break;
 		case 2:
@@ -271,6 +316,10 @@ void handleRelease(uint32_t pinMode) {
 			modeflag = 2;
 			showMode(autoDuty);
 			break;
+		case 10:
+			modeflag = 2;
+			showMode(scaleType);
+			break;
 		}
 		displayNewMode = 1;
 		__HAL_TIM_SET_COUNTER(&htim4, 0);
@@ -284,9 +333,16 @@ void handleRelease(uint32_t pinMode) {
 }
 
 void changeMode(uint32_t mode) {
-	if (mode == 1) {
-		// toggle through our 3 scaleType modes
-		scaleType = (scaleType + 1) % 7;
+	if (mode == 0) {
+		// toggle up through our 8 scaleType modes
+		scaleType = (scaleType + 1) % 8;
+		switchScale(scaleType);
+		holdState = (holdState & 0b1111111100111111) | (scaleType << 6);
+	}
+	else if (mode == 1) {
+		// toggle down through our 8 scaleType modes
+		scaleType = (scaleType - 1);
+		if (scaleType < 0) {scaleType = 0;}
 		switchScale(scaleType);
 		holdState = (holdState & 0b1111111100111111) | (scaleType << 6);
 	}

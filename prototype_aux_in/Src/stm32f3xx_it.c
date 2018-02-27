@@ -356,9 +356,17 @@ void TIM2_IRQHandler(void) {
 
 				case pendulum:
 
+					incSign = incSign * -1;
+
+					break;
+
+				case pendulum2:
+
+
 					if (!(HOLD_AT_B)) { // if we arent currently gated, reverse the direction of the contour generator
 						incSign = incSign * -1;
 					}
+
 
 					break;
 
@@ -369,7 +377,7 @@ void TIM2_IRQHandler(void) {
 
 			}
 		}
-		if (trigMode == pendulum && loop == noloop) { // regardless of whether the contour generator is at rest or not, toggle the gateOn every trigger with pendulum
+		if (trigMode == pendulum2 && loop == noloop && !(DRUM_MODE_ON)) { // regardless of whether the contour generator is at rest or not, toggle the gateOn every trigger with pendulum
 
 			TOGGLE_GATE_ON;
 
