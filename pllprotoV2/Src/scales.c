@@ -2,9 +2,9 @@
 
 #include "main.h"
 
-#include "stm32F3xx_hal.h"
-#include "stm32F3xx.h"
-#include "stm32F3xx_it.h"
+#include "stm32f3xx_hal.h"
+#include "stm32f3xx.h"
+#include "stm32f3xx_it.h"
 
 /*
  #define noteC1 			((1 << 20)/1) | (1 << 27)
