@@ -335,7 +335,7 @@ void handleRelease(uint32_t pinMode) {
 void changeMode(uint32_t mode) {
 	if (mode == 0) {
 		// toggle up through our 8 scaleType modes
-		scaleType = (scaleType + 1) % 8;
+		scaleType = (scaleType + 1) % 7;
 		switchScale(scaleType);
 		holdState = (holdState & 0b1111111100111111) | (scaleType << 6);
 	}
