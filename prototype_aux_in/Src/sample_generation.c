@@ -208,6 +208,7 @@ void getPhase(void) {
 	int attackTransferHolder;
 	int releaseTransferHolder;
 
+
 	//calculate our increment value in high speed mode
 
 	if (speed == audio) {
@@ -314,12 +315,22 @@ void getPhase(void) {
 
 		}
 
-		if (holdPosition < (myfix16_mul(spanx2, (4095 - time2Knob) << 5))) {
-			attackTransferHolder = (65535 << 16)/((4095 - time2Knob) << 5); // 1/(T2*2)
+		if ((4095 - time2CV) >= 2047) {
+			//this first does the aforementioned interpolation between the knob value and full scale then scales back the value according to frequency
+			skewMod = myfix16_lerp(time2Knob, 4095, ((4095 - time2CV) - 2048) << 4);
+		}
+		else {
+			//analogous to above except in this case, morphCV is less than halfway
+			skewMod = myfix16_lerp(0, time2Knob, (4095 - time2CV) << 4);
+		}
+
+
+		if (holdPosition < (myfix16_mul(spanx2, (4095 - skewMod) << 5))) {
+			attackTransferHolder = (65535 << 16)/((4095 - skewMod) << 5); // 1/(T2*2)
 			position = myfix16_mul(holdPosition, attackTransferHolder);
 //			position = 2 * holdPosition;
 		} else {
-			releaseTransferHolder = (65535 << 16)/(time2Knob << 5); // 1/((1-T2)*2)
+			releaseTransferHolder = (65535 << 16)/(skewMod << 5); // 1/((1-T2)*2)
 			position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
 //			position = myfix16_mul(holdPosition, 43690) + spanx2 - myfix16_mul(spanx2, 43690);
 		}
