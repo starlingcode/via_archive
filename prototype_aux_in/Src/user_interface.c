@@ -303,7 +303,7 @@ void changeMode(uint32_t mode) {
 		} else {
 			// if we didnt just go into drum mode, make sure drum mode is off
 			RESET_DRUM_MODE_ON;
-			TIM6->ARR = 1000;
+			TIM6->ARR = 1100;
 			RESET_AMP_ON;
 			RESET_PITCH_ON;
 			RESET_MORPH_ON;
@@ -407,7 +407,7 @@ void changeMode(uint32_t mode) {
 				__HAL_TIM_ENABLE(&htim3);
 			} else {
 				RESET_DRUM_MODE_ON;
-				TIM6->ARR = 1000;
+				TIM6->ARR = 1100;
 				RESET_AMP_ON;
 				RESET_PITCH_ON;
 				RESET_MORPH_ON;
@@ -415,7 +415,7 @@ void changeMode(uint32_t mode) {
 		} else {
 			RESET_LAST_CYCLE;
 			RESET_DRUM_MODE_ON;
-			TIM6->ARR = 1000;
+			TIM6->ARR = 1100;
 			RESET_AMP_ON;
 			RESET_PITCH_ON;
 			RESET_MORPH_ON;
@@ -611,6 +611,8 @@ void clearLEDs(void) {
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 
 }
+
+
 
 void restoreDisplay() {
 	if (__HAL_TIM_GET_COUNTER(&htim4) > 10000) {

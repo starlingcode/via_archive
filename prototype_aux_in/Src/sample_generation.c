@@ -171,7 +171,7 @@ void dacISR(void) {
 
 		// if we transition from one phase state to another, enable the transition handler interrupt
 
-		if ((PHASE_STATE) != storePhase) {
+		if (((PHASE_STATE) != storePhase) && (inc < (span >> 1))) {
 
 			HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
 
@@ -205,6 +205,9 @@ void getPhase(void) {
 
 	static int incFromADCs;
 
+	int attackTransferHolder;
+	int releaseTransferHolder;
+
 	//calculate our increment value in high speed mode
 
 	if (speed == audio) {
@@ -236,7 +239,7 @@ void getPhase(void) {
 
 	//define increment for env and seq modes using function pointers to the appropriate knob/cv combo
 	//these can be swapped around by the retrigger interrupt
-	else {
+	else if (speed == env) {
 
 		if (position < span) {
 			incFromADCs = (*attackTime)();
@@ -244,6 +247,83 @@ void getPhase(void) {
 		else {
 			incFromADCs = (*releaseTime)();
 		}
+
+	}
+
+	else if (speed == seq) {
+
+		holdPosition = calcTime1Seq() + holdPosition;
+
+		if (holdPosition >= spanx2) {
+
+			holdPosition = holdPosition - spanx2;
+			if ((loop == noloop) || (LAST_CYCLE)) {
+
+				//this is the logic maintenance needed to properly put the contour generator to rest
+				//this keeps behavior on the next trigger predictable
+
+				RESET_LAST_CYCLE;
+				RESET_OSCILLATOR_ACTIVE;
+				if (trigMode == pendulum && !(DRUM_MODE_ON))  {
+					incSign = -1;
+					position = spanx2;
+					holdPosition = spanx2;
+				}
+				else {
+					incSign = 1;
+					position = 0;
+					holdPosition = 0;
+				}
+				SET_PHASE_STATE;
+				SH_A_TRACK
+				SH_B_TRACK
+				if (RGB_ON) {
+					LEDA_OFF
+					LEDB_OFF
+					LEDC_OFF
+					LEDD_OFF
+				}
+			}
+			}
+
+
+		if (holdPosition < 0) {
+
+			holdPosition = holdPosition + spanx2;
+
+			if ((loop == noloop) || (LAST_CYCLE)) {
+
+					//same as above, we are putting our contour generator to rest
+
+					RESET_LAST_CYCLE;
+					RESET_OSCILLATOR_ACTIVE;
+					incSign = 1;
+					position = 0;
+					holdPosition = 0;
+					RESET_PHASE_STATE;
+					SH_A_TRACK
+					SH_B_TRACK
+					if (RGB_ON) {
+						LEDA_OFF
+						LEDB_OFF
+						LEDC_OFF
+						LEDD_OFF
+					}
+
+			}
+
+		}
+
+		if (holdPosition < (myfix16_mul(spanx2, (4095 - time2Knob) << 5))) {
+			attackTransferHolder = (65535 << 16)/((4095 - time2Knob) << 5); // 1/(T2*2)
+			position = myfix16_mul(holdPosition, attackTransferHolder);
+//			position = 2 * holdPosition;
+		} else {
+			releaseTransferHolder = (65535 << 16)/(time2Knob << 5); // 1/((1-T2)*2)
+			position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
+//			position = myfix16_mul(holdPosition, 43690) + spanx2 - myfix16_mul(spanx2, 43690);
+		}
+
 
 	}
 

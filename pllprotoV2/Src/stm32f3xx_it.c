@@ -71,6 +71,8 @@ volatile int incSign = 1;
 int time1;
 int time2;
 
+int holdPosition;
+
 
 //most recent value from our expo decay
 int expoScale;
@@ -419,7 +421,7 @@ void TIM2_IRQHandler(void) {
 
 		if (controlScheme == dutyCycle) {
 
-			gateOnCount = myfix16_mul(periodCount, time2CV  << 4);
+			gateOnCount = periodCount >> 1;
 
 		}
 
@@ -449,6 +451,7 @@ void TIM2_IRQHandler(void) {
 			if (pll == hardSync) {
 
 				position = 0;
+				holdPosition =0;
 				RESET_TRIGGER_BUTTON;
 				if (GATEA) {
 					EOR_JACK_HIGH;
@@ -899,6 +902,8 @@ void getSample(uint32_t phase) {
 void getPhase(void) {
 
 	static int lastCV;
+	int attackTransferHolder;
+	int releaseTransferHolder;
 
 	if (controlScheme == 3) {
 
@@ -907,31 +912,49 @@ void getPhase(void) {
 
 	}
 
-	if (CATCH_UP) {
-		position = position + catchupInc;
+
+	if (controlScheme == dutyCycle)  {
+			holdPosition = attackInc + holdPosition;
+
+			if (holdPosition >= spanx2) {
+
+				holdPosition = holdPosition - spanx2;
+
+			}
+
+			if (holdPosition < 0) {
+
+				holdPosition = holdPosition + spanx2;
+
+			}
+
+			if (holdPosition < (myfix16_mul(spanx2, (4095 - time2CV) << 5))) {
+				attackTransferHolder = (65535 << 16)/((4095 - time2CV) << 5); // 1/(T2*2)
+				position = myfix16_mul(holdPosition, attackTransferHolder);
+	//			position = 2 * holdPosition;
+			} else {
+				releaseTransferHolder = (65535 << 16)/(time2CV << 5); // 1/((1-T2)*2)
+				position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
+	//			position = myfix16_mul(holdPosition, 43690) + spanx2 - myfix16_mul(spanx2, 43690);
+			}
+
+
 	} else {
-		if (controlScheme == FM) {
-			if (PHASE_STATE) {
-				position = position + ((attackInc * (4095 - time2CV)) >> 11);
-			} else {
-				position = position + ((releaseInc * time2CV) >> 11);
-			}
+	if (controlScheme == FM) {
+		if (PHASE_STATE) {
+			position = position + ((attackInc * (4095 - time2CV)) >> 11);
 		} else {
-			if (PHASE_STATE) {
+			position = position + ((releaseInc * time2CV) >> 11);
+		}
+	} else {
+		if (PHASE_STATE) {
 				position = position + attackInc;
-			} else {
+		} else {
 				position = position + releaseInc;
-			}
 		}
 	}
 
-
-
-
-
-	lastCV = time2CV;
-
-	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode
+	}
 
 	if (position >= spanx2) {
 
@@ -944,6 +967,18 @@ void getPhase(void) {
 		position = position + spanx2;
 
 	}
+
+
+
+
+
+
+
+	lastCV = time2CV;
+
+	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode
+
+
 }
 
 

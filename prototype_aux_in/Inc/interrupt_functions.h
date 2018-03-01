@@ -37,5 +37,7 @@ volatile int attackCount;
 
 uint32_t out;
 
+int holdPosition;
+
 
 
