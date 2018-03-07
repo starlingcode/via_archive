@@ -36,7 +36,7 @@ int incSign;
 
 volatile int attackCount;
 
-uint32_t out;
+int out;
 
 int holdPosition;
 

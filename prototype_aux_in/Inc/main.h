@@ -154,17 +154,17 @@ int readn(buffer*, int);
 #define S_H_B_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-#define EOA_JACK_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
-#define EOA_JACK_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
+#define BLOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+#define BLOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
 
 #define EOA_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_11;
 #define EOA_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_11;
 
-#define EOR_JACK_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_15;
-#define EOR_JACK_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
+#define ALOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_15;
+#define ALOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
 
-#define EOR_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
-#define EOR_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
+#define EXPAND_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
+#define EXPAND_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
 
 #define LEDB_ON GPIOC->BSRR = (uint32_t)GPIO_PIN_14;
 #define LEDB_OFF GPIOC->BRR = (uint32_t)GPIO_PIN_14;

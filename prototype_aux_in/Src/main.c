@@ -745,9 +745,9 @@ static void MX_TIM6_Init(void) {
 	TIM_MasterConfigTypeDef sMasterConfig;
 
 	htim6.Instance = TIM6;
-	htim6.Init.Prescaler = 1 - 1;
+	htim6.Init.Prescaler = 1;
 	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim6.Init.Period = 1100;
+	htim6.Init.Period = 750;
 	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim6) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -770,7 +770,7 @@ static void MX_TIM7_Init(void) {
 	htim7.Instance = TIM7;
 	htim7.Init.Prescaler = 1;
 	htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim7.Init.Period = 2000;
+	htim7.Init.Period = 1000;
 	htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim7) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -794,7 +794,7 @@ static void MX_TIM8_Init(void) {
 	htim8.Instance = TIM8;
 	htim8.Init.Prescaler = 1 - 1;
 	htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim8.Init.Period = 2000;
+	htim8.Init.Period = 1000;
 	htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim8.Init.RepetitionCounter = 0;
 	htim8.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -1036,7 +1036,7 @@ void restoreState(){
 	if (speed == audio && loop == noloop) {
 		//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
 		SET_DRUM_MODE_ON;
-		TIM6->ARR = 1150;
+		//TIM6->ARR = 1150;
 		switch (trigMode) {
 		case 0:
 			SET_AMP_ON;
