@@ -278,7 +278,6 @@ int main(void) {
 	while (1) {
 
 
-		if( ee_status == EE_ERROR) {LEDA_ON; LEDB_ON; LEDC_ON; LEDD_ON}
 
 		//check if the trigger button has been pressed
 		if (((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET)){
@@ -745,9 +744,9 @@ static void MX_TIM6_Init(void) {
 	TIM_MasterConfigTypeDef sMasterConfig;
 
 	htim6.Instance = TIM6;
-	htim6.Init.Prescaler = 1 - 1;
+	htim6.Init.Prescaler = 1;
 	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim6.Init.Period = 1000;
+	htim6.Init.Period = 500;
 	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim6) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -770,7 +769,7 @@ static void MX_TIM7_Init(void) {
 	htim7.Instance = TIM7;
 	htim7.Init.Prescaler = 1;
 	htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim7.Init.Period = 2000;
+	htim7.Init.Period = 1000;
 	htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim7) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -794,7 +793,7 @@ static void MX_TIM8_Init(void) {
 	htim8.Instance = TIM8;
 	htim8.Init.Prescaler = 1 - 1;
 	htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim8.Init.Period = 2000;
+	htim8.Init.Period = 1000;
 	htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim8.Init.RepetitionCounter = 0;
 	htim8.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -929,7 +928,7 @@ static void MX_GPIO_Init(void) {
 			GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11 | GPIO_PIN_12, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET);
 
 	/*Configure GPIO pins : EOA_Pin ATTACK_GATE_Pin EOR_Pin */
 	GPIO_InitStruct.Pin = EOA_Pin | ATTACK_GATE_Pin | EOR_Pin;
@@ -948,9 +947,15 @@ static void MX_GPIO_Init(void) {
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	/*Configure GPIO pins : PA11 PA12 */
-	GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
+	GPIO_InitStruct.Pin = GPIO_PIN_12;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	GPIO_InitStruct.Pin = GPIO_PIN_11;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_PULLUP;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
@@ -966,14 +971,15 @@ void restoreState(){
 	trigMode = (holdState & 0x38) >> 3;
 	sampleHoldMode = (holdState & 0x1C0) >> 6;
 	familyIndicator = (holdState & 0xE00) >> 9;
-	logicOutA = (holdState & 0x3000) >> 13;
-	logicOutB = (holdState & 0xC000) >> 15;
+	logicOutA = (holdState & 0x3000) >> 12;
+	logicOutB = (holdState & 0xC000) >> 14;
 
 	if (speed < 2) {
 		attackTime = calcTime1Env;
 		releaseTime = calcTime2Env;
 	}
 	if (speed == seq) {
+		TIM6->ARR = 2000;
 		attackTime = calcTime1Seq;
 		releaseTime = calcTime2Seq;
 	}
@@ -1030,7 +1036,7 @@ void restoreState(){
 	if (speed == audio && loop == noloop) {
 		//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
 		SET_DRUM_MODE_ON;
-		TIM6->ARR = 1150;
+		TIM6->ARR = 750;
 		switch (trigMode) {
 		case 0:
 			SET_AMP_ON;
@@ -1056,6 +1062,12 @@ void restoreState(){
 			RESET_AMP_ON;
 			SET_PITCH_ON;
 			SET_MORPH_ON;
+			break;
+
+		case 5:
+			RESET_AMP_ON;
+			SET_PITCH_ON;
+			RESET_MORPH_ON;
 			break;
 		}
 }

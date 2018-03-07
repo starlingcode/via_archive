@@ -8,7 +8,7 @@
 #include "interrupt_functions.h"
 
 //wavetable size - 1 in fix16 and that number doubled
-uint32_t span;
+int span;
 int spanx2;
 
 //this is an integer that compensates for wavetable size in our frequency calculation (defined on wavetable family change)
@@ -42,22 +42,29 @@ extern TIM_HandleTypeDef htim3;
 
 //declarations for the functions defined below, attribute places them in "CCMRAM" for maximum efficiency
 void getSample(uint32_t) __attribute__((section("ccmram")));
+void getBandlimitedSample(uint32_t) __attribute__((section("ccmram")));
 void getPhase(void) __attribute__((section("ccmram")));
 int myfix16_mul(int, int) __attribute__((section("ccmram")));
 int myfix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
 void getAverages(void) __attribute__((section("ccmram")));
 
+
 //this is called to write our last sample to the dacs and generate a new sample
 void dacISR(void) {
 
 	uint32_t storePhase;
+	uint32_t interp2;
+	static int gateToggle;
 
-	if (OSCILLATOR_ACTIVE) {
+	// remove for compatibility w/ rev2 (black back) boards
+	// if ((GPIOA->IDR & GPIO_PIN_11) != (uint32_t) GPIO_PIN_RESET) {
+	if ((OSCILLATOR_ACTIVE)) {
 
 		//write the current contour generator value to dac1, and its inverse to dac2 (this actually performs the interpolation)
 
 		((*(volatile uint32_t *) DAC1_ADDR) = (4095 - out));
 		((*(volatile uint32_t *) DAC2_ADDR) = (out));
+
 
 		//get our averages for t2 and morph cv
 
@@ -170,7 +177,7 @@ void dacISR(void) {
 
 		// if we transition from one phase state to another, enable the transition handler interrupt
 
-		if ((PHASE_STATE) != storePhase) {
+		if (((PHASE_STATE) != storePhase)) {
 
 			HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
 
@@ -192,13 +199,19 @@ void dacISR(void) {
 
 		}
 
-	}
+
+  }
+//} remove for compativility with rev2 boards
 
 }
 
 void getPhase(void) {
 
 	static int incFromADCs;
+
+	int attackTransferHolder;
+	int releaseTransferHolder;
+
 
 	//calculate our increment value in high speed mode
 
@@ -215,7 +228,7 @@ void getPhase(void) {
 		if (loop == noloop) {
 
 			incFromADCs = myfix16_mul(
-					myfix16_mul(150000, lookuptable[4095 - time1CV] >> 5), lookuptable[(time1Knob >> 1) + 2047] >> 10) >> tableSizeCompensation;
+					myfix16_mul(150000, lookuptable[4095 - time1CV] >> 6), lookuptable[(time1Knob >> 1) + 2047] >> 10) >> tableSizeCompensation;
 
 			if (PITCH_ON) {incFromADCs = myfix16_mul(expoScale + 30000, incFromADCs);}
 
@@ -231,7 +244,7 @@ void getPhase(void) {
 
 	//define increment for env and seq modes using function pointers to the appropriate knob/cv combo
 	//these can be swapped around by the retrigger interrupt
-	else {
+	else if (speed == env) {
 
 		if (position < span) {
 			incFromADCs = (*attackTime)();
@@ -239,6 +252,93 @@ void getPhase(void) {
 		else {
 			incFromADCs = (*releaseTime)();
 		}
+
+	}
+
+	else if (speed == seq) {
+
+		holdPosition = calcTime1Seq() + holdPosition;
+
+		if (holdPosition >= spanx2) {
+
+			holdPosition = holdPosition - spanx2;
+			if ((loop == noloop) || (LAST_CYCLE)) {
+
+				//this is the logic maintenance needed to properly put the contour generator to rest
+				//this keeps behavior on the next trigger predictable
+
+				RESET_LAST_CYCLE;
+				RESET_OSCILLATOR_ACTIVE;
+				if (trigMode == pendulum && !(DRUM_MODE_ON))  {
+					incSign = -1;
+					position = spanx2;
+					holdPosition = spanx2;
+				}
+				else {
+					incSign = 1;
+					position = 0;
+					holdPosition = 0;
+				}
+				SET_PHASE_STATE;
+				SH_A_TRACK
+				SH_B_TRACK
+				if (RGB_ON) {
+					LEDA_OFF
+					LEDB_OFF
+					LEDC_OFF
+					LEDD_OFF
+				}
+			}
+			}
+
+
+		if (holdPosition < 0) {
+
+			holdPosition = holdPosition + spanx2;
+
+			if ((loop == noloop) || (LAST_CYCLE)) {
+
+					//same as above, we are putting our contour generator to rest
+
+					RESET_LAST_CYCLE;
+					RESET_OSCILLATOR_ACTIVE;
+					incSign = 1;
+					position = 0;
+					holdPosition = 0;
+					RESET_PHASE_STATE;
+					SH_A_TRACK
+					SH_B_TRACK
+					if (RGB_ON) {
+						LEDA_OFF
+						LEDB_OFF
+						LEDC_OFF
+						LEDD_OFF
+					}
+
+			}
+
+		}
+
+		if ((4095 - time2CV) >= 2047) {
+			//this first does the aforementioned interpolation between the knob value and full scale then scales back the value according to frequency
+			skewMod = myfix16_lerp(time2Knob, 4095, ((4095 - time2CV) - 2048) << 4);
+		}
+		else {
+			//analogous to above except in this case, morphCV is less than halfway
+			skewMod = myfix16_lerp(0, time2Knob, (4095 - time2CV) << 4);
+		}
+
+
+		if (holdPosition < (myfix16_mul(spanx2, (4095 - skewMod) << 4))) {
+			attackTransferHolder = (65535 << 16)/((4095 - skewMod) << 5); // 1/(T2*2)
+			position = myfix16_mul(holdPosition, attackTransferHolder);
+
+		} else {
+			releaseTransferHolder = (65535 << 16)/(skewMod << 5); // 1/((1-T2)*2)
+			position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
+
+		}
+
 
 	}
 
@@ -293,8 +393,14 @@ void getPhase(void) {
 
 			RESET_LAST_CYCLE;
 			RESET_OSCILLATOR_ACTIVE;
-			incSign = 1;
-			position = 0;
+			if (trigMode == pendulum && !(DRUM_MODE_ON))  {
+				incSign = -1;
+				position = spanx2;
+			}
+			else {
+				incSign = 1;
+				position = 0;
+			}
 			SET_PHASE_STATE;
 			SH_A_TRACK
 			SH_B_TRACK
@@ -343,28 +449,28 @@ void getPhase(void) {
 
 int calcTime1Env(void) {
 
-	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> (5 + tableSizeCompensation);
+	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> (6 + tableSizeCompensation);
 	return time1;
 
 }
 
 int calcTime2Env(void) {
 
-	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> (7 + tableSizeCompensation);
+	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> (8 + tableSizeCompensation);
 	return time2;
 
 }
 
 int calcTime1Seq(void) {
 
-	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> (9 + tableSizeCompensation);
+	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> (8 + tableSizeCompensation);
 	return time1;
 
 }
 
 int calcTime2Seq(void) {
 
-	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> (9 + tableSizeCompensation);
+	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> (8 + tableSizeCompensation);
 	return time2;
 
 }
@@ -385,7 +491,8 @@ void getSample(uint32_t phase) {
 	uint32_t Lnvalue2;
 	uint32_t Rnvalue2;
 	uint32_t interp1; // results of those two interpolations
-	uint32_t interp2;
+	uint32_t interp2; // results of those two interpolations
+
 
 	// 0 means we are attacking from A to B, aka we are reading from the slopetable from left to right
 	// 1 means we are releasing from B to A, aka we are reading from the slopetable from right to left
@@ -423,41 +530,43 @@ void getSample(uint32_t phase) {
 		//aka, are we moving towrds a, or towards b
 		//we use this to generate our gate output
 		if (interp1 < interp2) {
-			EOA_GATE_HIGH
-			EOR_GATE_HIGH
+			EXPAND_GATE_HIGH
+			REV2_GATE_HIGH
 			if (DELTAB) {
-				EOA_JACK_HIGH
+				BLOGIC_HIGH
 				if (RGB_ON) {
 					LEDC_ON
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_LOW
+				ALOGIC_LOW
 				if (RGB_ON) {
 					LEDD_OFF
 				}
 			}
 		} else if (interp2 < interp1) {
-			EOA_GATE_LOW
-			EOR_GATE_LOW
+			EXPAND_GATE_LOW
+			REV2_GATE_LOW
 			if (DELTAB) {
-				EOA_JACK_LOW
+				BLOGIC_LOW
 				if (RGB_ON) {
 					LEDC_OFF
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_HIGH
+				ALOGIC_HIGH
 				if (RGB_ON) {
 					LEDD_ON
 				}
 			}
 		}
 
+
+
 		if (RGB_ON) {
 			//if the runtime display is on, show the current value of our contour generator in blue and morph in green
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
 	}
 
@@ -485,44 +594,50 @@ void getSample(uint32_t phase) {
 
 		out = myfix16_lerp(interp1, interp2, phaseFrac) >> 3;
 
-		if (interp1 < interp2) {
-			EOA_GATE_HIGH
+		if (interp2 < interp1) {
+			EXPAND_GATE_HIGH
+			REV2_GATE_HIGH
 			if (DELTAB) {
-				EOA_JACK_HIGH
+				BLOGIC_HIGH
 				if (RGB_ON) {
 					LEDD_ON
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_LOW
+				ALOGIC_LOW
 				if (RGB_ON) {
 					LEDC_OFF
 				}
 			}
-		} else if (interp2 < interp1) {
-			EOA_GATE_LOW
+		} else if (interp1 < interp2) {
+			EXPAND_GATE_LOW
+			REV2_GATE_LOW
 			if (DELTAB) {
-				EOA_JACK_LOW
+				BLOGIC_LOW
 				if (RGB_ON) {
 					LEDD_OFF
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_HIGH
+				ALOGIC_HIGH
 				if (RGB_ON) {
 					LEDC_ON
 				}
 			}
 		}
 
+
+
 		//if the runtime display is on, show the current value of our contour generator in blue and morph in green
 		if (RGB_ON) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
 	}
 
 }
+
+
 
 //helper functions to maintain and read from a circular buffer
 

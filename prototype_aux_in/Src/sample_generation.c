@@ -54,8 +54,9 @@ void dacISR(void) {
 
 	uint32_t storePhase;
 	uint32_t interp2;
-	static int gateToggle;
 
+
+	// remove for compatibility w/ rev2 (black back) boards
 	if ((GPIOA->IDR & GPIO_PIN_11) != (uint32_t) GPIO_PIN_RESET) {
 	if ((OSCILLATOR_ACTIVE)) {
 
@@ -200,9 +201,7 @@ void dacISR(void) {
 
 
   }
-	} else {
-
-	}
+} //remove for compativility with rev2 boards
 
 }
 
@@ -330,14 +329,14 @@ void getPhase(void) {
 		}
 
 
-		if (holdPosition < (myfix16_mul(spanx2, (4095 - skewMod) << 5))) {
+		if (holdPosition < (myfix16_mul(spanx2, (4095 - skewMod) << 4))) {
 			attackTransferHolder = (65535 << 16)/((4095 - skewMod) << 5); // 1/(T2*2)
 			position = myfix16_mul(holdPosition, attackTransferHolder);
-//			position = 2 * holdPosition;
+
 		} else {
 			releaseTransferHolder = (65535 << 16)/(skewMod << 5); // 1/((1-T2)*2)
 			position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
-//			position = myfix16_mul(holdPosition, 43690) + spanx2 - myfix16_mul(spanx2, 43690);
+
 		}
 
 
@@ -464,14 +463,14 @@ int calcTime2Env(void) {
 
 int calcTime1Seq(void) {
 
-	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> (10 + tableSizeCompensation);
+	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> (8 + tableSizeCompensation);
 	return time1;
 
 }
 
 int calcTime2Seq(void) {
 
-	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> (10 + tableSizeCompensation);
+	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> (8 + tableSizeCompensation);
 	return time2;
 
 }
@@ -532,6 +531,7 @@ void getSample(uint32_t phase) {
 		//we use this to generate our gate output
 		if (interp1 < interp2) {
 			EXPAND_GATE_HIGH
+			REV2_GATE_HIGH
 			if (DELTAB) {
 				BLOGIC_HIGH
 				if (RGB_ON) {
@@ -546,6 +546,7 @@ void getSample(uint32_t phase) {
 			}
 		} else if (interp2 < interp1) {
 			EXPAND_GATE_LOW
+			REV2_GATE_LOW
 			if (DELTAB) {
 				BLOGIC_LOW
 				if (RGB_ON) {
@@ -595,6 +596,7 @@ void getSample(uint32_t phase) {
 
 		if (interp2 < interp1) {
 			EXPAND_GATE_HIGH
+			REV2_GATE_HIGH
 			if (DELTAB) {
 				BLOGIC_HIGH
 				if (RGB_ON) {
@@ -609,6 +611,7 @@ void getSample(uint32_t phase) {
 			}
 		} else if (interp1 < interp2) {
 			EXPAND_GATE_LOW
+			REV2_GATE_LOW
 			if (DELTAB) {
 				BLOGIC_LOW
 				if (RGB_ON) {

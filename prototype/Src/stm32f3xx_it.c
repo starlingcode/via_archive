@@ -228,14 +228,14 @@ void DMA1_Channel1_IRQHandler(void) {
 void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
 	if (TRIGB) {
-		EOA_JACK_LOW;
+		BLOGIC_LOW;
 		if (RGB_ON) {
 			LEDD_OFF
 		}
 
 	}
 	if (TRIGA) {
-		EOR_JACK_LOW;
+		ALOGIC_LOW;
 		if (RGB_ON) {
 			LEDC_OFF
 		}
@@ -343,11 +343,9 @@ void TIM2_IRQHandler(void) {
 
 					if (position >= span) { //if we are releasing and we get a new gate on, run back up the release slope at attack timescale
 
-						if (speed == env) {
+
 							releaseTime = calcTime1Env;
-						} else if (speed == seq) {
-							releaseTime = calcTime1Seq;
-						}
+
 						incSign = -1;
 
 					}
@@ -356,9 +354,17 @@ void TIM2_IRQHandler(void) {
 
 				case pendulum:
 
+					incSign = incSign * -1;
+
+					break;
+
+				case pendulum2:
+
+
 					if (!(HOLD_AT_B)) { // if we arent currently gated, reverse the direction of the contour generator
 						incSign = incSign * -1;
 					}
+
 
 					break;
 
@@ -369,7 +375,7 @@ void TIM2_IRQHandler(void) {
 
 			}
 		}
-		if (trigMode == pendulum && loop == noloop) { // regardless of whether the contour generator is at rest or not, toggle the gateOn every trigger with pendulum
+		if (trigMode == pendulum2 && loop == noloop && !(DRUM_MODE_ON)) { // regardless of whether the contour generator is at rest or not, toggle the gateOn every trigger with pendulum
 
 			TOGGLE_GATE_ON;
 
@@ -553,35 +559,28 @@ void EXTI15_10_IRQHandler(void) {
 		if (trigMode == nongatedretrigger) {
 			incSign = 1;
 
-			if (speed == env) {
-				releaseTime = calcTime2Env;
-			} else if (speed == seq) {
-				releaseTime = calcTime2Seq;
-			}
+
+			releaseTime = calcTime2Env;
+
 		}
 
-		EOR_GATE_HIGH
-		EOA_GATE_LOW
+		EXPAND_GATE_HIGH
+		REV2_GATE_HIGH
+		ALOGIC_HIGH
+		BLOGIC_LOW
+		if (RGB_ON) {
+			LEDD_OFF
+		}
+		if (RGB_ON) {
+			LEDC_ON
+		}
 
 		if (TRIGA) {
-					EOR_JACK_HIGH
-					if (RGB_ON) {
-						LEDC_ON
-					}
-					__HAL_TIM_SET_COUNTER(&htim15, 0);
-					__HAL_TIM_ENABLE(&htim15);
-				} else if (GATEA) {
-					EOR_JACK_HIGH
-					if (RGB_ON) {
-						LEDC_ON
-					}
-				}
-				if (GATEB) {
-					EOA_JACK_LOW
-					if (RGB_ON) {
-						LEDD_OFF
-					}
-				}
+
+			__HAL_TIM_SET_COUNTER(&htim15, 0);
+			__HAL_TIM_ENABLE(&htim15);
+		}
+
 
 
 		if (inc < 0) {
@@ -596,28 +595,25 @@ void EXTI15_10_IRQHandler(void) {
 
 	} else {
 
-		EOA_GATE_HIGH
-		EOR_GATE_LOW
+		EXPAND_GATE_LOW
+		REV2_GATE_LOW
+
+		ALOGIC_LOW
+		if (RGB_ON) {
+			LEDC_OFF
+		}
+
+
+		BLOGIC_HIGH
+		if (RGB_ON) {
+			LEDD_ON
+		}
+
 
 		if (TRIGB) {
-					EOA_JACK_HIGH
-					if (RGB_ON) {
-						LEDD_ON
-					}
-					__HAL_TIM_SET_COUNTER(&htim15, 0);
-					__HAL_TIM_ENABLE(&htim15);
-				} else if (GATEB) {
-					EOA_JACK_HIGH
-					if (RGB_ON) {
-						LEDD_ON
-					}
-				}
-				if (GATEA) {
-					EOR_JACK_LOW
-					if (RGB_ON) {
-						LEDC_OFF
-					}
-				}
+			__HAL_TIM_SET_COUNTER(&htim15, 0);
+			__HAL_TIM_ENABLE(&htim15);
+		}
 
 
 

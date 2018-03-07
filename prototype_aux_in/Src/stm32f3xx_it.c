@@ -565,6 +565,7 @@ void EXTI15_10_IRQHandler(void) {
 		}
 
 		EXPAND_GATE_HIGH
+		REV2_GATE_HIGH
 		ALOGIC_HIGH
 		BLOGIC_LOW
 		if (RGB_ON) {
@@ -595,6 +596,7 @@ void EXTI15_10_IRQHandler(void) {
 	} else {
 
 		EXPAND_GATE_LOW
+		REV2_GATE_LOW
 
 		ALOGIC_LOW
 		if (RGB_ON) {

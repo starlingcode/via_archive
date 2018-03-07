@@ -270,7 +270,7 @@ void changeMode(uint32_t mode) {
 		if (speed == audio && loop == noloop) {
 			//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
 			SET_DRUM_MODE_ON;
-			TIM6->ARR = 1150;
+			TIM6->ARR = 750;
 			switch (trigMode) {
 			case 0:
 				SET_AMP_ON;
@@ -303,24 +303,26 @@ void changeMode(uint32_t mode) {
 		} else {
 			// if we didnt just go into drum mode, make sure drum mode is off
 			RESET_DRUM_MODE_ON;
-			TIM6->ARR = 1000;
+			TIM6->ARR = 500;
 			RESET_AMP_ON;
 			RESET_PITCH_ON;
 			RESET_MORPH_ON;
 
 			// set the appropriate time calculation functions
 			if (speed == env) {
+				TIM6->ARR = 500;
 				attackTime = calcTime1Env;
 				releaseTime = calcTime2Env;
 			}
 			if (speed == seq) {
+				TIM6->ARR = 2000;
 				attackTime = calcTime1Seq;
 				releaseTime = calcTime2Seq;
 			}
 		}
 	}
 	else if (mode == 2) {
-		trigMode = (trigMode + 1) % 5;
+		trigMode = (trigMode + 1) % 6;
 		//initialize some essential retrigger variables
 
 		holdState = (holdState & 0b1111111111000111) | (trigMode << 3);
@@ -355,6 +357,12 @@ void changeMode(uint32_t mode) {
 			SET_MORPH_ON;
 			break;
 
+		case 5:
+			RESET_AMP_ON;
+			SET_PITCH_ON;
+			RESET_MORPH_ON;
+			break;
+
 		}
 	}
 	else if (mode == 3) {
@@ -369,7 +377,7 @@ void changeMode(uint32_t mode) {
 			// this is about the same as what we do in the speed mode case above
 			if (speed == audio) {
 				SET_DRUM_MODE_ON;
-				TIM6->ARR = 1150;
+				TIM6->ARR = 750;
 				switch (trigMode) {
 				case 0:
 					SET_AMP_ON;
@@ -401,7 +409,7 @@ void changeMode(uint32_t mode) {
 				__HAL_TIM_ENABLE(&htim3);
 			} else {
 				RESET_DRUM_MODE_ON;
-				TIM6->ARR = 1000;
+				TIM6->ARR = 500;
 				RESET_AMP_ON;
 				RESET_PITCH_ON;
 				RESET_MORPH_ON;
@@ -409,12 +417,12 @@ void changeMode(uint32_t mode) {
 		} else {
 			RESET_LAST_CYCLE;
 			RESET_DRUM_MODE_ON;
-			TIM6->ARR = 1000;
+			TIM6->ARR = 500;
 			RESET_AMP_ON;
 			RESET_PITCH_ON;
 			RESET_MORPH_ON;
-			//set our oscillator active flag so enabling loop starts playback
-			//SET_OSCILLATOR_ACTIVE;
+			//set our oscillator active flag so enabling loop starts playback (not for ken!)
+			SET_OSCILLATOR_ACTIVE;
 		}
 
 	}
@@ -605,6 +613,8 @@ void clearLEDs(void) {
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 
 }
+
+
 
 void restoreDisplay() {
 	if (__HAL_TIM_GET_COUNTER(&htim4) > 10000) {

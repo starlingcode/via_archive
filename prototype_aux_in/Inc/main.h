@@ -157,8 +157,8 @@ int readn(buffer*, int);
 #define BLOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 #define BLOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
 
-#define EOA_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_11;
-#define EOA_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_11;
+#define REV2_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_11;
+#define REV2_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_11;
 
 #define ALOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_15;
 #define ALOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
