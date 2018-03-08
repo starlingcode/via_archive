@@ -517,17 +517,14 @@ void TIM2_IRQHandler(void) {
 
 
 
-//		if (scale > 4) {
-//			attackInc = ((span << 8) + pllNudge)*3 / (gateOnCount * gcd);
-//			releaseInc = ((span << 8) + pllNudge)*3 / ((periodCount - gateOnCount) * gcd);
-//		} else {
-//			attackInc = ((span << 8) + pllNudge)*3 / gateOnCount;
-//			releaseInc = ((span << 8) + pllNudge)*3 / (periodCount - gateOnCount);
-//		}
+		if (scaleType > 4) {
+			attackInc = ((span << 8) + pllNudge)*3 / (gateOnCount * gcd);
+			releaseInc = ((span << 8) + pllNudge)*3 / ((periodCount - gateOnCount) * gcd);
+		} else {
+			attackInc = ((span << 8) + pllNudge)*3 / gateOnCount;
+			releaseInc = ((span << 8) + pllNudge)*3 / (periodCount - gateOnCount);
+		}
 
-
-		attackInc = ((span << 8) + pllNudge)*3 / gateOnCount;
-		releaseInc = ((span << 8) + pllNudge)*3 / (periodCount - gateOnCount);
 
 
 		attackInc = myfix24_mul(attackInc, multiplier);
