@@ -337,7 +337,7 @@ void TIM2_IRQHandler(void) {
 				noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 9;
 			}
 		} else {
-			int holdT1 = (4095 - time1CV) + (time1Knob >> 2) - 1400;
+			int holdT1 = (4095 - time1CV) + (time1Knob >> 2) -1435;
 			if (holdT1 > 4095) {
 				holdT1 = 4095;
 			} else if (holdT1 < 0) {
@@ -515,23 +515,24 @@ void TIM2_IRQHandler(void) {
 		}
 
 
-		//use this value to calculate our oscillator frequency
-//		attackInc = ((span << 8) + pllNudge) / (gateOnCount * gcd);
-//		releaseInc = ((span << 8) + pllNudge) / ((periodCount - gateOnCount) * gcd);
-//
-//		attackInc = (attackInc << 1) * multiplier;
-//		releaseInc = (releaseInc << 1) * multiplier;
 
-		if (scale > 4) {
-			attackInc = ((span << 8) + pllNudge) / (gateOnCount * gcd);
-			releaseInc = ((span << 8) + pllNudge) / ((periodCount - gateOnCount) * gcd);
-		} else {
-			attackInc = ((span << 8) + pllNudge) / gateOnCount;
-			releaseInc = ((span << 8) + pllNudge) / (periodCount - gateOnCount);
-		}
 
-		attackInc = myfix24_mul(attackInc, multiplier) << 1;
-		releaseInc = myfix24_mul(releaseInc, multiplier) << 1;
+//		if (scale > 4) {
+//			attackInc = ((span << 8) + pllNudge)*3 / (gateOnCount * gcd);
+//			releaseInc = ((span << 8) + pllNudge)*3 / ((periodCount - gateOnCount) * gcd);
+//		} else {
+//			attackInc = ((span << 8) + pllNudge)*3 / gateOnCount;
+//			releaseInc = ((span << 8) + pllNudge)*3 / (periodCount - gateOnCount);
+//		}
+
+
+		attackInc = ((span << 8) + pllNudge)*3 / gateOnCount;
+		releaseInc = ((span << 8) + pllNudge)*3 / (periodCount - gateOnCount);
+
+
+		attackInc = myfix24_mul(attackInc, multiplier);
+		releaseInc = myfix24_mul(releaseInc, multiplier);
+
 
 		if (attackInc >= span - 1) {attackInc = span - 1;}
 		if (releaseInc >= span - 1) {releaseInc = span - 1;}
@@ -928,7 +929,7 @@ void getPhase(void) {
 
 			}
 
-			if (holdPosition < (myfix16_mul(spanx2, (4095 - time2CV) << 5))) {
+			if (holdPosition < (myfix16_mul(spanx2, (4095 - time2CV) << 4))) {
 				attackTransferHolder = (65535 << 16)/((4095 - time2CV) << 5); // 1/(T2*2)
 				position = myfix16_mul(holdPosition, attackTransferHolder);
 	//			position = 2 * holdPosition;

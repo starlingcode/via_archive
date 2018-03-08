@@ -264,7 +264,7 @@ ScaleNote *rhythms2[8] = { rhythms2Row1,
 		rhythms2Row8 };
 
 ScaleNote *fullChromatic[8] = {
-		fullChromaticRow2, fullChromaticRow3, fullChromaticRow4,
+		fullChromaticRow1, fullChromaticRow3, fullChromaticRow4,
 		fullChromaticRow5, fullChromaticRow6, fullChromaticRow7,
 		fullChromaticRow8, fullChromaticRow9 };
 
