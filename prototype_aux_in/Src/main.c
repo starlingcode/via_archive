@@ -746,7 +746,7 @@ static void MX_TIM6_Init(void) {
 	htim6.Instance = TIM6;
 	htim6.Init.Prescaler = 1;
 	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim6.Init.Period = 500;
+	htim6.Init.Period = 750;
 	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim6) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -979,7 +979,7 @@ void restoreState(){
 		releaseTime = calcTime2Env;
 	}
 	if (speed == seq) {
-		TIM6->ARR = 2000;
+		//TIM6->ARR = 2000;
 		attackTime = calcTime1Seq;
 		releaseTime = calcTime2Seq;
 	}
@@ -1036,7 +1036,7 @@ void restoreState(){
 	if (speed == audio && loop == noloop) {
 		//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
 		SET_DRUM_MODE_ON;
-		TIM6->ARR = 750;
+		//TIM6->ARR = 750;
 		switch (trigMode) {
 		case 0:
 			SET_AMP_ON;

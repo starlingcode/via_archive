@@ -47,6 +47,7 @@ void getPhase(void) __attribute__((section("ccmram")));
 int myfix16_mul(int, int) __attribute__((section("ccmram")));
 int myfix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
 void getAverages(void) __attribute__((section("ccmram")));
+void implementBiquadFilter(void) __attribute__((section("ccmram")));
 
 
 //this is called to write our last sample to the dacs and generate a new sample
@@ -54,6 +55,7 @@ void dacISR(void) {
 
 	uint32_t storePhase;
 	uint32_t interp2;
+	int morphLimit;
 
 
 	// remove for compatibility w/ rev2 (black back) boards
@@ -114,12 +116,23 @@ void dacISR(void) {
 		//is our CV greater than half-scale (the big numbers are because we have a running sum of 8
 		if ((131071 - morphAverage) >= 65536) {
 			//this first does the aforementioned interpolation between the knob value and full scale then scales back the value according to frequency
-			fixMorph = myfix16_mul(myfix16_lerp(morphKnob, 4095, ((131071 - morphAverage) - 65536)), 65535 - (inc >> 4));
+			fixMorph = myfix16_lerp(morphKnob, 4095, ((131071 - morphAverage) - 65536));
+
 		}
 		else {
 			//analogous to above except in this case, morphCV is less than halfway
-			fixMorph = myfix16_mul(myfix16_lerp(0, morphKnob, (131071 - morphAverage)) , 65535 - (inc >> 4));
+			fixMorph = myfix16_lerp(0, morphKnob, (131071 - morphAverage));
+
 		}
+
+		if (BANDLIMIT) {
+			morphLimit = myfix16_mul(4095, 65536 - ((abs(inc) - 110000) >> 4));
+			if (morphLimit < 0) {morphLimit = 0;}
+			if (fixMorph > morphLimit) {
+				fixMorph = morphLimit;
+			}
+		}
+
 
 //		fixMorph = morphKnob;
 
@@ -174,6 +187,12 @@ void dacISR(void) {
 			}
 
 		}
+
+		implementBiquadFilter();
+//		implementBiquadFilter();
+
+
+
 
 		// if we transition from one phase state to another, enable the transition handler interrupt
 
@@ -370,10 +389,10 @@ void getPhase(void) {
 
 	//this keeps us from asking the contour generator to jump all the way through the wavetable
 
-	if (inc >= spanx2) {
-		inc = spanx2 - 1;
-	} else if (inc <= -spanx2) {
-		inc = -spanx2 + 1;
+	if (inc >= span) {
+		inc = span;
+	} else if (inc <= -span) {
+		inc = -span;
 	}
 
 	//increment our phase pointer by the newly calculated increment value
@@ -663,12 +682,55 @@ void getAverages(void) {
 
 }
 
+void implementBiquadFilter(void) {
+
+	static buffer inputs;
+	static buffer outputs;
+
+	//18k
+#define a0 257588
+#define a1 515176
+#define a2 257588
+#define b0 -27182000
+#define b1 11435135
+
+	write(&outputs, out);
+	out = myfix24_mul(readn(&outputs, 0), a0) + myfix24_mul(readn(&outputs, 1), a1) + myfix24_mul(readn(&outputs, 2), a2)
+			+ myfix24_mul(readn(&outputs, 0), b0) + myfix24_mul(readn(&outputs, 1), b1);
+	if (out > 4095) {
+		out = 4095;
+	}
+	if (out < 0) {
+		out = 0;
+	}
+	write(&outputs, out);
+	write(&inputs, out);
+	out = myfix24_mul(readn(&inputs, 0), a0) + myfix24_mul(readn(&inputs, 1), a1) + myfix24_mul(readn(&inputs, 2), a2)
+			+ myfix24_mul(readn(&outputs, 0), b0) + myfix24_mul(readn(&outputs, 1), b1);
+	if (out > 4095) {
+		out = 4095;
+	}
+	if (out < 0) {
+		out = 0;
+	}
+	write(&outputs, out);
+
+
+
+}
+
 //our 16 bit fixed point multiply and linear interpolate functions
 
 int myfix16_mul(int in0, int in1) {
 	//taken from the fixmathlib library
 	int64_t result = (uint64_t) in0 * in1;
 	return result >> 16;
+}
+
+int myfix24_mul(int in0, int in1) {
+	//taken from the fixmathlib library
+	int64_t result = (uint64_t) in0 * in1;
+	return result >> 24;
 }
 
 int myfix16_lerp(int in0, int in1, uint16_t inFract) {

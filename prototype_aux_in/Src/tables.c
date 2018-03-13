@@ -301,7 +301,8 @@ Family tenor48 =
 	{.attackFamily = tenor48AttackFamily,
 	.releaseFamily = tenor48ReleaseFamily,
 	.tableLength = 128,
-	.familySize = 5};
+	.familySize = 5,
+	.bandlimitOff = 1};
 
 /*
 
@@ -423,20 +424,58 @@ Family threeSineFoldsLinAtk =
 	.tableLength = 64,
 	.familySize = 3};
 
+Family sawPWM =
+	{.attackFamily = sawPWMAttackFamily,
+	.releaseFamily = sawPWMReleaseFamily,
+	.tableLength = 256,
+	.familySize = 9,
+	.bandlimitOff = 1};
+
+Family linwavefold_257 =
+	{.attackFamily = linwavefold_257_Family,
+	.releaseFamily = linwavefold_257_Family,
+	.tableLength = 256,
+	.familySize = 5};
+
+Family sinwavefold_257 =
+	{.attackFamily = sinwavefold_257_Family,
+	.releaseFamily = sinwavefold_257_Family,
+	.tableLength = 256,
+	.familySize = 9};
+
+Family additive_tri_to_pulse =
+	{.attackFamily = additive_tri_to_pulseFamily,
+	.releaseFamily = additive_tri_to_pulseFamily,
+	.tableLength = 256,
+	.familySize = 5};
+
+Family newBounce =
+	{.attackFamily = newBounceFamily,
+	.releaseFamily = newBounceFamily,
+	.tableLength = 256,
+	.familySize = 5};
+
+Family tenor257 =
+	{.attackFamily = tenor257Atk,
+	.releaseFamily = tenor257Rls,
+	.tableLength = 256,
+	.familySize = 5,
+	.bandlimitOff = 1};
+
 
 
 // specify the family in our family bank per speed
 
 void fillFamilyArray(void) {
 
-	familyArray[audio][0] = tenor48;
-	familyArray[audio][1] = artificial_1;
+	familyArray[audio][0] = tenor257;
+	familyArray[audio][1] = sawPWM;
 	familyArray[audio][2] = impevens;
-	familyArray[audio][3] = ascendingAdditiveClamp;
+	familyArray[audio][3] = linwavefold_257;
 	familyArray[audio][4] = skipSaw;
-	familyArray[audio][5] = triOdd;
-	familyArray[audio][6] = moogImpossibleTri;
-	familyArray[audio][7] = moogSquare;
+	familyArray[audio][5] = sinwavefold_257;
+	familyArray[audio][6] = additive_tri_to_pulse;
+	familyArray[audio][7] = newBounce;
 
 	familyArray[env][0] = superEllipse1Sym;
 	familyArray[env][1] = superEllipse1Asym;
@@ -444,12 +483,12 @@ void fillFamilyArray(void) {
 	familyArray[env][3] = lump2ndDegLinAtk;
 	familyArray[env][4] = steps;
 	familyArray[env][5] = sawBendLinAtk;
-	familyArray[env][6] = threeSineFoldsLinAtk;
+	familyArray[env][6] = newBounce;
 	familyArray[env][7] = threeBounceLinAtk;
 
 	familyArray[seq][0] = skipSaw;
 	familyArray[seq][1] = exciteBike;
-	familyArray[seq][2] = bounce;
+	familyArray[seq][2] = newBounce;
 	familyArray[seq][3] = sawBend;
 	familyArray[seq][4] = triOdd;
 	familyArray[seq][5] = moogSquare;
@@ -468,6 +507,12 @@ void switchFamily(void) {
 
 	currentFamily = familyArray[speed][familyIndicator];
 	loadSampleArray(currentFamily);
+
+	if (currentFamily.bandlimitOff) {
+		RESET_BANDLIMIT;
+	} else {
+		SET_BANDLIMIT;
+	}
 
 	span = (currentFamily.tableLength) << 16;
 	spanx2 = (currentFamily.tableLength) << 17;
@@ -502,26 +547,29 @@ void switchFamily(void) {
 	switch (currentFamily.tableLength) {
 	// these are values that properly allow us to select a family and interpolation fraction for our morph
 	case 4:
-		tableSizeCompensation = 5;
+		tableSizeCompensation = 6;
 		break;
 
 	case 8:
-		tableSizeCompensation = 4;
+		tableSizeCompensation = 5;
 		break;
 
 	case 16:
-		tableSizeCompensation = 3;
+		tableSizeCompensation = 4;
 		break;
 
 	case 32:
-		tableSizeCompensation = 2;
+		tableSizeCompensation = 3;
 		break;
 
 	case 64:
-		tableSizeCompensation = 1;
+		tableSizeCompensation = 2;
 		break;
 
 	case 128:
+		tableSizeCompensation = 1;
+
+	case 256:
 		tableSizeCompensation = 0;
 
 	}

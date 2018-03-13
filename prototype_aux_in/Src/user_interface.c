@@ -270,7 +270,7 @@ void changeMode(uint32_t mode) {
 		if (speed == audio && loop == noloop) {
 			//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
 			SET_DRUM_MODE_ON;
-			TIM6->ARR = 750;
+			//TIM6->ARR = 750;
 			switch (trigMode) {
 			case 0:
 				SET_AMP_ON;
@@ -303,19 +303,19 @@ void changeMode(uint32_t mode) {
 		} else {
 			// if we didnt just go into drum mode, make sure drum mode is off
 			RESET_DRUM_MODE_ON;
-			TIM6->ARR = 500;
+			//TIM6->ARR = 500;
 			RESET_AMP_ON;
 			RESET_PITCH_ON;
 			RESET_MORPH_ON;
 
 			// set the appropriate time calculation functions
 			if (speed == env) {
-				TIM6->ARR = 500;
+				//TIM6->ARR = 500;
 				attackTime = calcTime1Env;
 				releaseTime = calcTime2Env;
 			}
 			if (speed == seq) {
-				TIM6->ARR = 2000;
+				//TIM6->ARR = 2000;
 				attackTime = calcTime1Seq;
 				releaseTime = calcTime2Seq;
 			}
@@ -377,7 +377,7 @@ void changeMode(uint32_t mode) {
 			// this is about the same as what we do in the speed mode case above
 			if (speed == audio) {
 				SET_DRUM_MODE_ON;
-				TIM6->ARR = 750;
+				//TIM6->ARR = 750;
 				switch (trigMode) {
 				case 0:
 					SET_AMP_ON;
@@ -409,7 +409,7 @@ void changeMode(uint32_t mode) {
 				__HAL_TIM_ENABLE(&htim3);
 			} else {
 				RESET_DRUM_MODE_ON;
-				TIM6->ARR = 500;
+				//TIM6->ARR = 500;
 				RESET_AMP_ON;
 				RESET_PITCH_ON;
 				RESET_MORPH_ON;
@@ -417,7 +417,7 @@ void changeMode(uint32_t mode) {
 		} else {
 			RESET_LAST_CYCLE;
 			RESET_DRUM_MODE_ON;
-			TIM6->ARR = 500;
+			//TIM6->ARR = 500;
 			RESET_AMP_ON;
 			RESET_PITCH_ON;
 			RESET_MORPH_ON;
