@@ -554,13 +554,13 @@ void getSample(uint32_t phase) {
 			if (DELTAB) {
 				BLOGIC_HIGH
 				if (RGB_ON) {
-					LEDC_ON
+					LEDD_ON
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_LOW
 				if (RGB_ON) {
-					LEDD_OFF
+					LEDC_OFF
 				}
 			}
 		} else if (interp2 < interp1) {
@@ -569,13 +569,13 @@ void getSample(uint32_t phase) {
 			if (DELTAB) {
 				BLOGIC_LOW
 				if (RGB_ON) {
-					LEDC_OFF
+					LEDD_OFF
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_HIGH
 				if (RGB_ON) {
-					LEDD_ON
+					LEDC_ON
 				}
 			}
 		}
