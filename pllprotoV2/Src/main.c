@@ -235,7 +235,7 @@ int main(void) {
 	//enable our drum envelope interrupt
 	__HAL_TIM_ENABLE_IT(&htim3, TIM_IT_UPDATE);
 
-	switchScale(0);
+	//switchScale(0);
 
 	//start our DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);
@@ -948,7 +948,7 @@ void restoreState(){
 	logicOutA = holdLogicOut & 0b0000000000000111;
 	logicOutB = (holdLogicOut & 0b0000000000111000) >> 3;
 
-	switchScale(scaleType);
+	//switchScale(scaleType);
 
 	switch (logicOutA) {
 	case 0:

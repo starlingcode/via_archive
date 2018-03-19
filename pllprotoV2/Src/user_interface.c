@@ -336,14 +336,14 @@ void changeMode(uint32_t mode) {
 	if (mode == 0) {
 		// toggle up through our 8 scaleType modes
 		scaleType = (scaleType + 1) % 7;
-		switchScale(scaleType);
+		//switchScale(scaleType);
 		holdState = (holdState & 0b1111111100111111) | (scaleType << 6);
 	}
 	else if (mode == 1) {
 		// toggle down through our 8 scaleType modes
 		scaleType = (scaleType - 1);
 		if (scaleType < 0) {scaleType = 0;}
-		switchScale(scaleType);
+		//switchScale(scaleType);
 		holdState = (holdState & 0b1111111100111111) | (scaleType << 6);
 	}
 	else if (mode == 2) {

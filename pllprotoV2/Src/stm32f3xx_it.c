@@ -84,6 +84,7 @@ int out;
 void getSample(uint32_t);
 void getPhase(void);
 int myfix16_mul(int, int);
+int myfix48_mul(uint32_t, uint32_t);
 int myfix16_lerp(int, int, uint16_t);
 void sampHoldB(void);
 void sampHoldA(void);
@@ -306,11 +307,12 @@ void TIM2_IRQHandler(void) {
 
 	int pllNudge = 0;
 	static uint32_t pllCounter;
-	uint32_t multiplier;
+	uint32_t fracMultiplier;
+	uint32_t intMultiplier;
 	uint32_t gcd;
-	uint32_t adjustedSpan;
 	uint32_t noteIndex;
 	uint32_t rootIndex;
+	uint32_t multKey;
 	static uint32_t lastMultiplier;
 
 
@@ -329,22 +331,24 @@ void TIM2_IRQHandler(void) {
 		//reset the timer value
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
 
-		if (scaleType > 0) {
-			if ((4095 - time1CV) >= 2048) {
-				noteIndex = (myfix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) >> 9;
-			}
-			else {
-				noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 9;
-			}
-		} else {
-			int holdT1 = (4095 - time1CV) + (time1Knob >> 2) -1435;
+//		if (scaleType > 0) {
+//			if ((4095 - time1CV) >= 2048) {
+//				noteIndex = (myfix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) >> 9;
+//			}
+//			else {
+//				noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 9;
+//			}
+//		} else {
+			int holdT1 = (4095 - time1CV) + (time1Knob >> 2) -1390;
 			if (holdT1 > 4095) {
 				holdT1 = 4095;
 			} else if (holdT1 < 0) {
 				holdT1 = 0;
 			}
 			noteIndex = holdT1 >> 5;
-		}
+//		}
+
+		//noteIndex = time1Knob >> 5;
 
 		if (controlScheme == root) {
 			if ((4095 - time2CV) >= 2048) {
@@ -357,48 +361,13 @@ void TIM2_IRQHandler(void) {
 			rootIndex = time2Knob >> 9;
 		}
 
-		switch (scaleType) {
 
-		case 0:
-			multiplier = fullChromatic[rootIndex][noteIndex].simplifiedRatio;
-			gcd = fullChromatic[rootIndex][noteIndex].fundamentalDivision;
-			break;
+		fracMultiplier = chromatic5prime[rootIndex][noteIndex].fractionalPart;
+		intMultiplier = chromatic5prime[rootIndex][noteIndex].integerPart;
+		gcd = chromatic5prime[rootIndex][noteIndex].fundamentalDivision;
+		multKey = fracMultiplier + intMultiplier;
 
-		case 1:
-			multiplier = rhythms1[rootIndex][noteIndex].simplifiedRatio;
-			gcd = rhythms1[rootIndex][noteIndex].fundamentalDivision;
-			break;
-
-		case 2:
-			multiplier = rhythms2[rootIndex][noteIndex].simplifiedRatio;
-			gcd = rhythms2[rootIndex][noteIndex].fundamentalDivision;
-			break;
-
-		case 3:
-			multiplier = diatonicMajor7ths[rootIndex][noteIndex].simplifiedRatio;
-			gcd = diatonicMajor7ths[rootIndex][noteIndex].fundamentalDivision;
-			break;
-
-		case 4:
-			multiplier = diatonicMinor7ths[rootIndex][noteIndex].simplifiedRatio;
-			gcd = diatonicMinor7ths[rootIndex][noteIndex].fundamentalDivision;
-			break;
-
-		case 5:
-			multiplier = pureRhythms[rootIndex][noteIndex].simplifiedRatio;
-			gcd = pureRhythms[rootIndex][noteIndex].fundamentalDivision;
-			break;
-
-		case 6:
-			multiplier = pureNotes[rootIndex][noteIndex].simplifiedRatio;
-			gcd = pureNotes[rootIndex][noteIndex].fundamentalDivision;
-			break;
-
-		default:
-			break;
-		}
-
-		if (lastMultiplier != multiplier) {
+		if (lastMultiplier != multKey) {
 			if (RATIO_DELTAA) {
 				EOR_JACK_HIGH
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
@@ -416,7 +385,7 @@ void TIM2_IRQHandler(void) {
 				}
 			}
 		}
-		lastMultiplier = multiplier;
+		lastMultiplier = multKey;
 
 
 		if (controlScheme == dutyCycle) {
@@ -480,34 +449,6 @@ void TIM2_IRQHandler(void) {
 				}
 
 				RESET_TRIGGER_BUTTON;
-			} else if (pll == catch) {
-
-				// catch the next falling edge right on phase
-
-				RESET_CATCH_UP;
-
-
-
-				adjustedSpan = span*gcd/multiplier;
-
-				if (position < (adjustedSpan - (adjustedSpan >> 1))) {
-					SET_CATCH_UP;
-					RESET_TRIGGER_BUTTON;
-
-					catchupInc =  ((adjustedSpan - position) << 9) / gateOnCount;
-
-
-
-				} else if (position >= (spanx2 - adjustedSpan)) {
-					SET_CATCH_UP;
-					RESET_TRIGGER_BUTTON;
-
-					catchupInc =  (((spanx2 - position) + adjustedSpan) << 9) / gateOnCount;
-
-				} else {
-					RESET_TRIGGER_BUTTON;
-				}
-
 			}
 
 
@@ -527,8 +468,8 @@ void TIM2_IRQHandler(void) {
 
 
 
-		attackInc = myfix24_mul(attackInc, multiplier);
-		releaseInc = myfix24_mul(releaseInc, multiplier);
+		attackInc = myfix48_mul(attackInc, fracMultiplier) + myfix16_mul(attackInc, intMultiplier);
+		releaseInc = myfix48_mul(releaseInc, fracMultiplier) + myfix16_mul(releaseInc, intMultiplier);
 
 
 		if (attackInc >= span - 1) {attackInc = span - 1;}
@@ -905,7 +846,7 @@ void getPhase(void) {
 
 	if (controlScheme == 3) {
 
-		position = position + ((time2CV - lastCV) << 10);
+		position = position + ((time2CV - lastCV) << 8);
 		lastCV = time2CV;
 
 	}
@@ -989,10 +930,10 @@ int myfix16_mul(int in0, int in1) {
 	return result >> 16;
 }
 
-int myfix24_mul(int in0, int in1) {
+int myfix48_mul(uint32_t in0, uint32_t in1) {
 	//taken from the fixmathlib library
 	int64_t result = (uint64_t) in0 * in1;
-	return result >> 24;
+	return result >> 48;
 }
 
 int myfix16_lerp(int in0, int in1, uint16_t inFract) {
