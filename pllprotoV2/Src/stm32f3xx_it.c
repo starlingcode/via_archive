@@ -362,9 +362,9 @@ void TIM2_IRQHandler(void) {
 		}
 
 
-		fracMultiplier = chromatic5prime[rootIndex][noteIndex].fractionalPart;
-		intMultiplier = chromatic5prime[rootIndex][noteIndex].integerPart;
-		gcd = chromatic5prime[rootIndex][noteIndex].fundamentalDivision;
+		fracMultiplier = harmSubharm[rootIndex][noteIndex].fractionalPart;
+		intMultiplier = harmSubharm[rootIndex][noteIndex].integerPart;
+		gcd = harmSubharm[rootIndex][noteIndex].fundamentalDivision;
 		multKey = fracMultiplier + intMultiplier;
 
 		if (lastMultiplier != multKey) {
