@@ -71,7 +71,7 @@ void restoreDisplay(void) __attribute__((section("ccmram")));
 void switchFamily(void);
 void fillFamilyArray(void);
 void restoreState(void);
-void switchScale(uint32_t);
+void initializeScales(void);
 
 
 int (*attackTime) (void);

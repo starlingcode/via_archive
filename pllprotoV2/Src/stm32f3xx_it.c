@@ -314,6 +314,7 @@ void TIM2_IRQHandler(void) {
 	uint32_t rootIndex;
 	uint32_t multKey;
 	static uint32_t lastMultiplier;
+	Scale currentScale;
 
 
 
@@ -331,14 +332,16 @@ void TIM2_IRQHandler(void) {
 		//reset the timer value
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
 
-//		if (scaleType > 0) {
-//			if ((4095 - time1CV) >= 2048) {
-//				noteIndex = (myfix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) >> 9;
-//			}
-//			else {
-//				noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 9;
-//			}
-//		} else {
+		currentScale = scaleGroup[scaleType];
+
+		if (currentScale.oneVoltOct == 0) {
+			if ((4095 - time1CV) >= 2048) {
+				noteIndex = (myfix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) >> 5;
+			}
+			else {
+				noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 5;
+			}
+		} else {
 			int holdT1 = (4095 - time1CV) + (time1Knob >> 2) -1390;
 			if (holdT1 > 4095) {
 				holdT1 = 4095;
@@ -346,25 +349,24 @@ void TIM2_IRQHandler(void) {
 				holdT1 = 0;
 			}
 			noteIndex = holdT1 >> 5;
-//		}
-
-		//noteIndex = time1Knob >> 5;
-
-		if (controlScheme == root) {
-			if ((4095 - time2CV) >= 2048) {
-				rootIndex = (myfix16_lerp(time2Knob, 4095, ((4095 - time2CV) - 2048) << 5)) >> 9;
-			}
-			else {
-				rootIndex = (myfix16_lerp(0, time2Knob, (4095 - time2CV) << 5)) >> 9;
-			}
-		} else {
-			rootIndex = time2Knob >> 9;
 		}
 
 
-		fracMultiplier = harmSubharm[rootIndex][noteIndex].fractionalPart;
-		intMultiplier = harmSubharm[rootIndex][noteIndex].integerPart;
-		gcd = harmSubharm[rootIndex][noteIndex].fundamentalDivision;
+		if (controlScheme == root) {
+			if ((4095 - time2CV) >= 2048) {
+				rootIndex = (myfix16_lerp(time2Knob, 4095, ((4095 - time2CV) - 2048) << 5)) >> currentScale.t2Bitshift;
+			}
+			else {
+				rootIndex = (myfix16_lerp(0, time2Knob, (4095 - time2CV) << 5)) >> currentScale.t2Bitshift;
+			}
+		} else {
+			rootIndex = time2Knob >> currentScale.t2Bitshift;
+		}
+
+
+		fracMultiplier = currentScale.grid[rootIndex][noteIndex].fractionalPart;
+		intMultiplier = currentScale.grid[rootIndex][noteIndex].integerPart;
+		gcd = currentScale.grid[rootIndex][noteIndex].fundamentalDivision;
 		multKey = fracMultiplier + intMultiplier;
 
 		if (lastMultiplier != multKey) {

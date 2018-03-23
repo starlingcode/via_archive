@@ -178,7 +178,7 @@ int main(void) {
 
 
 
-
+	initializeScales();
 	fillFamilyArray();
 
 
