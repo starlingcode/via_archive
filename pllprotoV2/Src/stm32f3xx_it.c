@@ -364,9 +364,9 @@ void TIM2_IRQHandler(void) {
 		}
 
 
-		fracMultiplier = currentScale.grid[rootIndex][noteIndex].fractionalPart;
-		intMultiplier = currentScale.grid[rootIndex][noteIndex].integerPart;
-		gcd = currentScale.grid[rootIndex][noteIndex].fundamentalDivision;
+		fracMultiplier = currentScale.grid[rootIndex][noteIndex]->fractionalPart;
+		intMultiplier = currentScale.grid[rootIndex][noteIndex]->integerPart;
+		gcd = currentScale.grid[rootIndex][noteIndex]->fundamentalDivision;
 		multKey = fracMultiplier + intMultiplier;
 
 		if (lastMultiplier != multKey) {

@@ -1,10 +1,9 @@
 #include "scales.h"
-
 #include "main.h"
-
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
+
 
 
 Scale harmSubharm = {
@@ -45,4 +44,3 @@ void initializeScales() {
    scaleGroup[14] = harmSubharmfullspan;
    scaleGroup[15] = modal5primefullspan;
 }
-
