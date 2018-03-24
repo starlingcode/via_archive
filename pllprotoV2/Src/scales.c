@@ -7,32 +7,42 @@
 #include "stm32f3xx_it.h"
 
 
+Scale harmSubharm = {
+   .grid = harmSubharmGrid,
+   .t2Bitshift = 9,
+   .oneVoltOct = 1};
 
+Scale modal5prime = {
+   .grid = modal5primeGrid,
+   .t2Bitshift = 9,
+   .oneVoltOct = 1};
 
+Scale harmSubharmfullspan = {
+   .grid = harmSubharmfullspanGrid,
+   .t2Bitshift = 9,
+   .oneVoltOct = 0};
 
-
-
-
-Scale harmSubHarm =
-				{.grid = harmSubharmGrid,
-				.t2Bitshift = 9,
-				.oneVoltOct = 1};
+Scale modal5primefullspan = {
+   .grid = modal5primefullspanGrid,
+   .t2Bitshift = 9,
+   .oneVoltOct = 0};
 
 void initializeScales() {
-	scaleGroup[0] =  harmSubHarm;
-	scaleGroup[1] =  harmSubHarm;
-	scaleGroup[2] =  harmSubHarm;
-	scaleGroup[3] =  harmSubHarm;
-	scaleGroup[4] =  harmSubHarm;
-	scaleGroup[5] =  harmSubHarm;
-	scaleGroup[6] =  harmSubHarm;
-	scaleGroup[7] =  harmSubHarm;
-	scaleGroup[8] =  harmSubHarm;
-	scaleGroup[9] =  harmSubHarm;
-	scaleGroup[10] =  harmSubHarm;
-	scaleGroup[11] =  harmSubHarm;
-	scaleGroup[12] =  harmSubHarm;
-	scaleGroup[13] =  harmSubHarm;
-	scaleGroup[14] =  harmSubHarm;
-	scaleGroup[15] =  harmSubHarm;
+   scaleGroup[0] = harmSubharm;
+   scaleGroup[1] = modal5prime;
+   scaleGroup[2] = harmSubharmfullspan;
+   scaleGroup[3] = modal5primefullspan;
+   scaleGroup[4] = harmSubharm;
+   scaleGroup[5] = modal5prime;
+   scaleGroup[6] = harmSubharmfullspan;
+   scaleGroup[7] = modal5primefullspan;
+   scaleGroup[8] = harmSubharm;
+   scaleGroup[9] = modal5prime;
+   scaleGroup[10] = harmSubharmfullspan;
+   scaleGroup[11] = modal5primefullspan;
+   scaleGroup[12] = harmSubharm;
+   scaleGroup[13] = modal5prime;
+   scaleGroup[14] = harmSubharmfullspan;
+   scaleGroup[15] = modal5primefullspan;
 }
+
