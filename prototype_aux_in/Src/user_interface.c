@@ -51,6 +51,17 @@ void clearLEDs(void);
 
 
 void switchFamily(void);
+void loadSampleArray(Family);
+
+// these variables are used to represent the number of entries in a given wavetable stored in the currently selected family
+// they are shared by tim6IRQ
+extern uint32_t span;
+extern int spanx2;
+extern int tableSizeCompensation;
+
+// these variables are used to represent the number of wavetables in the currently selected family when performing our morph function
+extern uint32_t morphBitShiftRight;
+extern uint32_t morphBitShiftLeft;
 
 
 void readDetect(void) {
@@ -621,6 +632,99 @@ void restoreDisplay() {
 		clearLEDs(); // get rid of our last mode display
 		SET_RGB_ON; // turn on the runtime display
 		displayNewMode = 0; // a bit of logic used to make sure that we show the mode during the main loop
+	}
+}
+
+// this sets the flags to be used in the interrupt and also fills the holding array on the heap
+
+void switchFamily(void) {
+	currentFamily = familyArray[speed][familyIndicator];
+
+	currentFamily = familyArray[speed][familyIndicator];
+	loadSampleArray(currentFamily);
+
+	if (currentFamily.bandlimitOff) {
+		RESET_BANDLIMIT;
+	} else {
+		SET_BANDLIMIT;
+	}
+
+	span = (currentFamily.tableLength) << 16;
+	spanx2 = (currentFamily.tableLength) << 17;
+	switch (currentFamily.familySize) {
+	// these are values that properly allow us to select a family and interpolation fraction for our morph
+	case 3:
+		morphBitShiftRight = 11;
+		morphBitShiftLeft = 5;
+		break;
+
+	case 5:
+		morphBitShiftRight = 10;
+		morphBitShiftLeft = 6;
+		break;
+
+	case 9:
+		morphBitShiftRight = 9;
+		morphBitShiftLeft = 7;
+		break;
+
+	case 17:
+		morphBitShiftRight = 8;
+		morphBitShiftLeft = 8;
+		break;
+
+	case 33:
+		morphBitShiftRight = 7;
+		morphBitShiftLeft = 9;
+		break;
+
+	}
+	switch (currentFamily.tableLength) {
+	// these are values that properly allow us to select a family and interpolation fraction for our morph
+	case 4:
+		tableSizeCompensation = 6;
+		break;
+
+	case 8:
+		tableSizeCompensation = 5;
+		break;
+
+	case 16:
+		tableSizeCompensation = 4;
+		break;
+
+	case 32:
+		tableSizeCompensation = 3;
+		break;
+
+	case 64:
+		tableSizeCompensation = 2;
+		break;
+
+	case 128:
+		tableSizeCompensation = 1;
+
+	case 256:
+		tableSizeCompensation = 0;
+
+	}
+}
+
+//this actually shuttles the data from flash to ram and fills our holding array
+
+void loadSampleArray(Family family) {
+
+	uint16_t **currentFamilyPointer;
+
+	for (int i = 0; i < family.familySize; i++) {
+		for (int j = 0; j <= family.tableLength; j++) {
+			// this just gets the appropriate samples and plops them into the global holding arrays
+			currentFamilyPointer = family.attackFamily + i;
+			attackHoldArray[i][j] = *(*(currentFamilyPointer) + j);
+
+			currentFamilyPointer = family.releaseFamily + i;
+			releaseHoldArray[i][j] = *(*(currentFamilyPointer) + j);
+		}
 	}
 }
 

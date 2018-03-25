@@ -2498,7 +2498,7 @@ static const uint16_t *artificial_1_48AttackFamily[5] = {artificial148Atk,artifi
 static const uint16_t *artificial_1_48ReleaseFamily[5] = {artificial148Rls,artificial248Rls,artificial348Rls,artificial448Rls,artificial548Rls};
 
 
-static const uint16_t *imp[33] = {imp1, imp1, imp2, imp3, imp4, imp5, imp6, imp7, imp8, imp9, imp10, imp11, imp12, imp13, imp14, imp15, imp16, imp17, imp18, imp19, imp20, imp21, imp22, imp23, imp24, imp25, imp26, imp27, imp28, imp29, imp30, imp31, imp32, imp33};
+static const uint16_t *imp[33] = {imp1, imp1, imp2, imp3, imp4, imp5, imp6, imp7, imp8, imp9, imp10, imp11, imp12, imp13, imp14, imp15, imp16, imp17, imp18, imp19, imp20, imp21, imp22, imp23, imp24, imp25, imp26, imp27, imp28, imp29, imp30, imp31, imp32};
 static const uint16_t *impshort[17] = {sine_129, imp1, imp2, imp4, imp6, imp8, imp10, imp12, imp14, imp16, imp18, imp20, imp22, imp24, imp26, imp28, imp33};
 
 static const uint16_t *sinefoldAttackFamily[9] = { sine, sinefold_ctr_1,
