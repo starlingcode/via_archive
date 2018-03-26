@@ -25,7 +25,12 @@ uint32_t ADCReadings3[2];
 
 //averaged ADC values
 uint32_t time2Average;
-uint32_t morphAverage;
+uint32_t morphCVAverage;
+uint32_t t1KnobAverage;
+uint32_t t2KnobAverage;
+uint32_t morphKnobAverage;
+uint32_t t1CVAverage;
+uint32_t t2CVAverage;
 
 //store and decalre our exponential lookup tabe in RAM (defined in tables.h)
 int lookuptable[4095] = expotable10oct;
@@ -45,8 +50,11 @@ void getSample(uint32_t) __attribute__((section("ccmram")));
 void getBandlimitedSample(uint32_t) __attribute__((section("ccmram")));
 void getPhase(void) __attribute__((section("ccmram")));
 int myfix16_mul(int, int) __attribute__((section("ccmram")));
+int myfix24_mul(int, int) __attribute__((section("ccmram")));
+
 int myfix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
 void getAverages(void) __attribute__((section("ccmram")));
+void getAveragesAudio(void) __attribute__((section("ccmram")));
 void implementBiquadFilter(void) __attribute__((section("ccmram")));
 
 
@@ -57,10 +65,17 @@ void dacISR(void) {
 	uint32_t interp2;
 	int morphLimit;
 
+	if (HOLD_AT_B) {
+		LEDA_ON
+	} else {
+		LEDA_OFF
+	}
+
 
 	// remove for compatibility w/ rev2 (black back) boards
 	if ((GPIOA->IDR & GPIO_PIN_11) != (uint32_t) GPIO_PIN_RESET) {
 	if ((OSCILLATOR_ACTIVE)) {
+
 
 		//write the current contour generator value to dac1, and its inverse to dac2 (this actually performs the interpolation)
 
@@ -69,8 +84,6 @@ void dacISR(void) {
 
 
 		//get our averages for t2 and morph cv
-
-		getAverages();
 
 		//hold the phase state (attack or release) from the last sample
 
@@ -106,35 +119,24 @@ void dacISR(void) {
 
 		//we then scale back our morph value as frequency increases. with a table that exhibits a steadily increasing spectral content as morph increases, this serves as anti-aliasing
 
-		//first we clamp our "inc" variable (which is analogous to our contour generator frequency) to max out at 2^20
-		//this is our "maximum frequency" at which we find that our "morph" parameter is scaled all the way to 0
 
-		if (inc > 1048575) {
-			inc = 1048575;
-		}
 
 		//is our CV greater than half-scale (the big numbers are because we have a running sum of 8
-		if ((131071 - morphAverage) >= 65536) {
+		if ((131071 - morphCVAverage) >= 65536) {
 			//this first does the aforementioned interpolation between the knob value and full scale then scales back the value according to frequency
-			fixMorph = myfix16_lerp(morphKnob, 4095, ((131071 - morphAverage) - 65536));
+			fixMorph = myfix16_lerp(morphKnobAverage, 4095, ((131071 - morphCVAverage) - 65536));
 
 		}
 		else {
 			//analogous to above except in this case, morphCV is less than halfway
-			fixMorph = myfix16_lerp(0, morphKnob, (131071 - morphAverage));
+			fixMorph = myfix16_lerp(0, morphKnobAverage, (131071 - morphCVAverage));
 
 		}
 
-		if (BANDLIMIT) {
-			morphLimit = myfix16_mul(4095, 65536 - ((abs(inc) - 110000) >> 4));
-			if (morphLimit < 0) {morphLimit = 0;}
-			if (fixMorph > morphLimit) {
-				fixMorph = morphLimit;
-			}
-		}
 
 
-//		fixMorph = morphKnob;
+
+//		fixMorph = 2000;
 
 		//if we are in high speed and not looping, activate drum mode
 
@@ -186,9 +188,17 @@ void dacISR(void) {
 				fixMorph = myfix16_mul(fixMorph, expoScale);
 			}
 
+		} else {
+			if (BANDLIMIT) {
+				morphLimit = myfix16_mul(4095, 65536 - ((abs(inc) - 110000) >> 4));
+				if (morphLimit < 0) {morphLimit = 0;}
+				if (fixMorph > morphLimit) {
+					fixMorph = morphLimit;
+				}
+			}
 		}
 
-		implementBiquadFilter();
+//		implementBiquadFilter();
 //		implementBiquadFilter();
 
 
@@ -205,11 +215,11 @@ void dacISR(void) {
 	}
 
 	else {
-
 		//turn off the display if the contour generator is inactive and we are not switching modes
 
 		if (RGB_ON) {
-
+			((*(volatile uint32_t *) DAC1_ADDR) = (4095));
+			((*(volatile uint32_t *) DAC2_ADDR) = (0));
 			LEDC_OFF
 			LEDD_OFF
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
@@ -246,8 +256,10 @@ void getPhase(void) {
 		 if we are in drum mode, replace linear fm with the scaling factor from the drum envelope*/
 		if (loop == noloop) {
 
+			getAveragesDrum();
+
 			incFromADCs = myfix16_mul(
-					myfix16_mul(150000, lookuptable[4095 - time1CV] >> 6), lookuptable[(time1Knob >> 1) + 2047] >> 10) >> tableSizeCompensation;
+					myfix16_mul(150000, lookuptable[4095 - t1CVAverage] >> 6), lookuptable[(t1KnobAverage >> 1) + 2047] >> 10) >> tableSizeCompensation;
 
 			if (PITCH_ON) {incFromADCs = myfix16_mul(expoScale + 30000, incFromADCs);}
 
@@ -255,7 +267,9 @@ void getPhase(void) {
 
 		else {
 
-			incFromADCs = myfix16_mul(myfix16_mul(myfix16_mul((3000 - time2CV) << 7, lookuptable[4095 - time1CV] >> 7), lookuptable[time1Knob] >> 4), lookuptable[time2Knob >> 4]) >> tableSizeCompensation;
+			getAveragesAudio();
+
+			incFromADCs = myfix16_mul(myfix16_mul(myfix16_mul((2050 - t2CVAverage) << 9, lookuptable[4095 - t1CVAverage] >> 5), lookuptable[t1KnobAverage] >> 4), lookuptable[t2KnobAverage >> 4]) >> tableSizeCompensation;
 
 		}
 
@@ -264,6 +278,8 @@ void getPhase(void) {
 	//define increment for env and seq modes using function pointers to the appropriate knob/cv combo
 	//these can be swapped around by the retrigger interrupt
 	else if (speed == env) {
+
+		getAverages();
 
 		if (position < span) {
 			incFromADCs = (*attackTime)();
@@ -276,7 +292,17 @@ void getPhase(void) {
 
 	else if (speed == seq) {
 
-		holdPosition = calcTime1Seq() + holdPosition;
+		getAverages();
+
+		inc = incSign*calcTime1Seq();
+
+		incFromADCs = 0;
+
+
+
+		if (!(HOLD_AT_B)) {
+			holdPosition = inc + holdPosition;
+		}
 
 		if (holdPosition >= spanx2) {
 
@@ -298,6 +324,7 @@ void getPhase(void) {
 					position = 0;
 					holdPosition = 0;
 				}
+				out = 0;
 				SET_PHASE_STATE;
 				SH_A_TRACK
 				SH_B_TRACK
@@ -324,6 +351,7 @@ void getPhase(void) {
 					incSign = 1;
 					position = 0;
 					holdPosition = 0;
+					out = 0;
 					RESET_PHASE_STATE;
 					SH_A_TRACK
 					SH_B_TRACK
@@ -338,13 +366,13 @@ void getPhase(void) {
 
 		}
 
-		if ((4095 - time2CV) >= 2047) {
+		if ((4095 - t2CVAverage) >= 2047) {
 			//this first does the aforementioned interpolation between the knob value and full scale then scales back the value according to frequency
-			skewMod = myfix16_lerp(time2Knob, 4095, ((4095 - time2CV) - 2048) << 4);
+			skewMod = myfix16_lerp(t2KnobAverage, 4095, ((4095 - t2CVAverage) - 2048) << 4);
 		}
 		else {
 			//analogous to above except in this case, morphCV is less than halfway
-			skewMod = myfix16_lerp(0, time2Knob, (4095 - time2CV) << 4);
+			skewMod = myfix16_lerp(0, t2KnobAverage, (4095 - t2CVAverage) << 4);
 		}
 
 
@@ -352,11 +380,24 @@ void getPhase(void) {
 			attackTransferHolder = (65535 << 16)/((4095 - skewMod) << 5); // 1/(T2*2)
 			position = myfix16_mul(holdPosition, attackTransferHolder);
 
-		} else {
+		} else if (!(HOLD_AT_B)) {
 			releaseTransferHolder = (65535 << 16)/(skewMod << 5); // 1/((1-T2)*2)
 			position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
 
 		}
+
+		if ((GATE_ON) && ((abs(inc) > abs(span - position)) || (HOLD_AT_B))) {
+
+			// if so, we set a logic flag that we have frozen the contour generator in this transition
+			SET_HOLD_AT_B;
+
+		}
+
+		//if any of the above changes, we indicate that we are no longer frozen
+		else {
+			RESET_HOLD_AT_B;
+		}
+
 
 
 	}
@@ -366,7 +407,7 @@ void getPhase(void) {
 	inc = incFromADCs * incSign;
 
 	// if trigmode is gated and we arent in Drum Mode
-	if (trigMode > 2 && !(DRUM_MODE_ON)) {
+	if (trigMode > 2 && !(DRUM_MODE_ON) && speed != seq) {
 
 		// we look to see if we are about to increment past the attack->release transition
 
@@ -415,10 +456,12 @@ void getPhase(void) {
 			if (trigMode == pendulum && !(DRUM_MODE_ON))  {
 				incSign = -1;
 				position = spanx2;
+				holdPosition = position;
 			}
 			else {
 				incSign = 1;
 				position = 0;
+				holdPosition = position;
 			}
 			SET_PHASE_STATE;
 			SH_A_TRACK
@@ -447,6 +490,7 @@ void getPhase(void) {
 			RESET_OSCILLATOR_ACTIVE;
 			incSign = 1;
 			position = 0;
+			holdPosition = 0;
 			RESET_PHASE_STATE;
 			SH_A_TRACK
 			SH_B_TRACK
@@ -468,28 +512,28 @@ void getPhase(void) {
 
 int calcTime1Env(void) {
 
-	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> (6 + tableSizeCompensation);
+	time1 = ((lookuptable[t1CVAverage] >> 13) * (lookuptable[(4095 - t1KnobAverage)] >> 13)) >> (6 + tableSizeCompensation);
 	return time1;
 
 }
 
 int calcTime2Env(void) {
 
-	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> (8 + tableSizeCompensation);
+	time2 = ((lookuptable[t2CVAverage] >> 13) * (lookuptable[(4095 - t2KnobAverage)] >> 13)) >> (8 + tableSizeCompensation);
 	return time2;
 
 }
 
 int calcTime1Seq(void) {
 
-	time1 = ((lookuptable[time1CV] >> 13) * (lookuptable[(4095 - time1Knob)] >> 13)) >> (8 + tableSizeCompensation);
+	time1 = ((lookuptable[t1CVAverage] >> 13) * (lookuptable[(4095 - t1KnobAverage)] >> 13)) >> (8 + tableSizeCompensation);
 	return time1;
 
 }
 
 int calcTime2Seq(void) {
 
-	time2 = ((lookuptable[time2CV] >> 13) * (lookuptable[(4095 - time2Knob)] >> 13)) >> (8 + tableSizeCompensation);
+	time2 = ((lookuptable[t2CVAverage] >> 13) * (lookuptable[(4095 - t2KnobAverage)] >> 13)) >> (8 + tableSizeCompensation);
 	return time2;
 
 }
@@ -660,64 +704,167 @@ void getSample(uint32_t phase) {
 
 //helper functions to maintain and read from a circular buffer
 
-void write(buffer* buffer, int value) {
-	buffer->buff[(buffer->writeIndex++) & BUFF_SIZE_MASK] = value;
+void write1024(buffer1024* buffer, int value) {
+	buffer->buff[(buffer->writeIndex++) & 1023] = value;
 }
 
-int readn(buffer* buffer, int Xn) {
-	return buffer->buff[(buffer->writeIndex + (~Xn)) & BUFF_SIZE_MASK];
+int readn1024(buffer1024* buffer, int Xn) {
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 1023];
+}
+
+void write256(buffer256* buffer, int value) {
+	buffer->buff[(buffer->writeIndex++) & 255] = value;
+}
+
+int readn256(buffer256* buffer, int Xn) {
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 255];
+}
+
+void write32(buffer32* buffer, int value) {
+	buffer->buff[(buffer->writeIndex++) & 31] = value;
+}
+
+int readn32(buffer32* buffer, int Xn) {
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
 }
 
 //noise at the morph CV is noise in the contour generator signal
 
 void getAverages(void) {
 
-	static buffer morphCVBuffer;
+	static buffer256 t1KnobBuffer;
+	static buffer256 t2KnobBuffer;
+	static buffer256 t1CVBuffer;
+	static buffer256 t2CVBuffer;
+	static buffer256 morphKnobBuffer;
+	static buffer256 morphCVBuffer;
+	static uint32_t t1KnobSum;
+	static uint32_t t2KnobSum;
+	static uint32_t morphKnobSum;
+	static uint32_t morphCVSum;
+	static uint32_t t1CVSum;
+	static uint32_t t2CVSum;
+	static uint32_t bufferCounter;
 
-	//keep a running sum of our last 8 morph CV readings
+	t1KnobSum = (t1KnobSum + time1Knob- readn256(&t1KnobBuffer, 255));
+	t2KnobSum = (t2KnobSum + time2Knob- readn256(&t2KnobBuffer, 255));
+	morphKnobSum = (morphKnobSum + morphKnob- readn256(&morphKnobBuffer, 255));
+	morphCVSum = (morphCVSum + morphCV- readn256(&morphCVBuffer, 255));
+	t1CVSum = (t1CVSum + time1CV- readn256(&t1CVBuffer, 255));
+	t2CVSum = (t2CVSum + time2CV- readn256(&t2CVBuffer, 255));
 
-	morphAverage = (morphAverage + morphCV- readn(&morphCVBuffer, 31));
+	t1KnobAverage = t1KnobSum >> 8;
+	t2KnobAverage = t2KnobSum >> 8;
+	morphKnobAverage = morphKnobSum >> 8;
+	t1CVAverage = t1CVSum >> 8;
+	t2CVAverage = t2CVSum >> 8;
+	morphCVAverage = morphCVSum >> 3;
 
-	write(&morphCVBuffer, morphCV);
+
+	write256(&morphCVBuffer, morphCV);
+	write256(&t1CVBuffer, time1CV);
+	write256(&t2CVBuffer, time2CV);
+	write256(&t1KnobBuffer, time1Knob);
+	write256(&t2KnobBuffer, time2Knob);
+	write256(&morphKnobBuffer, morphKnob);
+
+}
+
+void getAveragesAudio(void) {
+
+	static buffer32 t1KnobBuffer;
+	static buffer32 t2KnobBuffer;
+	static buffer32 t1CVBuffer;
+	static buffer32 t2CVBuffer;
+	static buffer1024 morphKnobBuffer;
+	static buffer32 morphCVBuffer;
+	static uint32_t t1KnobSum;
+	static uint32_t t2KnobSum;
+	static uint32_t morphKnobSum;
+	static uint32_t morphCVSum;
+	static uint32_t t1CVSum;
+	static uint32_t t2CVSum;
+
+	t1KnobSum = (t1KnobSum + time1Knob- readn32(&t1KnobBuffer, 31));
+	t2KnobSum = (t2KnobSum + time2Knob- readn32(&t2KnobBuffer, 31));
+	morphKnobSum = (morphKnobSum + morphKnob- readn1024(&morphKnobBuffer, 1023));
+	morphCVSum = (morphCVSum + morphCV- readn32(&morphCVBuffer, 31));
+	t1CVSum = (t1CVSum + time1CV- readn32(&t1CVBuffer, 31));
+	t2CVSum = (t2CVSum + time2CV- readn32(&t2CVBuffer, 31));
+
+	t1KnobAverage = t1KnobSum >> 5;
+	t2KnobAverage = t2KnobSum >> 5;
+	morphKnobAverage = morphKnobSum >> 10;
+	t1CVAverage = t1CVSum >> 5;
+	t2CVAverage = t2CVSum >> 5;
+	morphCVAverage = morphCVSum;
+
+	write32(&morphCVBuffer, morphCV);
+	write32(&t1CVBuffer, time1CV);
+	write32(&t2CVBuffer, time2CV);
+	write32(&t1KnobBuffer, time1Knob);
+	write32(&t2KnobBuffer, time2Knob);
+	write1024(&morphKnobBuffer, morphKnob);
 
 }
 
-void implementBiquadFilter(void) {
+void getAveragesDrum(void) {
 
-	static buffer inputs;
-	static buffer outputs;
-
-	//18k
-#define a0 257588
-#define a1 515176
-#define a2 257588
-#define b0 -27182000
-#define b1 11435135
-
-	write(&outputs, out);
-	out = myfix24_mul(readn(&outputs, 0), a0) + myfix24_mul(readn(&outputs, 1), a1) + myfix24_mul(readn(&outputs, 2), a2)
-			+ myfix24_mul(readn(&outputs, 0), b0) + myfix24_mul(readn(&outputs, 1), b1);
-	if (out > 4095) {
-		out = 4095;
-	}
-	if (out < 0) {
-		out = 0;
-	}
-	write(&outputs, out);
-	write(&inputs, out);
-	out = myfix24_mul(readn(&inputs, 0), a0) + myfix24_mul(readn(&inputs, 1), a1) + myfix24_mul(readn(&inputs, 2), a2)
-			+ myfix24_mul(readn(&outputs, 0), b0) + myfix24_mul(readn(&outputs, 1), b1);
-	if (out > 4095) {
-		out = 4095;
-	}
-	if (out < 0) {
-		out = 0;
-	}
-	write(&outputs, out);
-
-
+	t1KnobAverage = time1Knob;
+	t2KnobAverage = time2Knob;
+	morphKnobAverage = morphKnob;
+	t1CVAverage = time1CV;
+	t2CVAverage = time1CV;
+	morphCVAverage = morphCV << 5;
 
 }
+
+//void implementBiquadFilter(void) {
+//
+//
+////18k
+//#define a0 257588
+//#define a1 515176
+//#define a2 257588
+//#define b0 -27182000
+//#define b1 11435135
+//
+////20k
+////#define a0 29
+////#define a1 57
+////#define a2 29
+////#define b0 -33492315
+////#define b1 16715214
+//
+//	static buffer32 inputs;
+//	static buffer32 outputs;
+//
+//
+//
+//	write(&outputs, out);
+//	out = myfix24_mul(readn32(&outputs, 0), a0) + myfix24_mul(readn32(&outputs, 1), a1) + myfix24_mul(readn32(&outputs, 2), a2)
+//			+ myfix24_mul(readn32(&outputs, 0), b0) + myfix24_mul(readn32(&outputs, 1), b1);
+//	if (out > 4095) {
+//		out = 4095;
+//	}
+//	if (out < 0) {
+//		out = 0;
+//	}
+//	write(&outputs, out);
+//	write(&inputs, out);
+//	out = myfix24_mul(readn32(&inputs, 0), a0) + myfix24_mul(readn32(&inputs, 1), a1) + myfix24_mul(readn32(&inputs, 2), a2)
+//			+ myfix24_mul(readn32(&outputs, 0), b0) + myfix24_mul(readn32(&outputs, 1), b1);
+//	if (out > 4095) {
+//		out = 4095;
+//	}
+//	if (out < 0) {
+//		out = 0;
+//	}
+//	write(&outputs, out);
+//
+//
+//
+//}
 
 //our 16 bit fixed point multiply and linear interpolate functions
 

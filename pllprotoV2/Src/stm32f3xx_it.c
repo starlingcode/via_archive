@@ -52,7 +52,6 @@ uint32_t morphBitShiftRight;
 uint32_t morphBitShiftLeft;
 
 //import pointer to struct that contains our wavetable family info
-Family currentFamily;
 
 //this is used for our 1v/oct and bonus expo envelope
 int lookuptable[4096] = expotable10oct;
@@ -102,7 +101,8 @@ uint32_t ADCReadings3[2];
 #define morphCV ADCReadings1[2]
 #define time1Knob ADCReadings3[0]
 uint32_t time2Average;
-uint32_t morphAverage;
+uint32_t morphKnobAverage;
+uint32_t morphCVAverage;
 
 // mode indicators, determined in the main loop
 enum pllTypes pll; // {none, true, catch, setCatch}
@@ -460,13 +460,10 @@ void TIM2_IRQHandler(void) {
 
 
 
-		if (scaleType > 4) {
-			attackInc = ((span << 8) + pllNudge)*3 / (gateOnCount * gcd);
-			releaseInc = ((span << 8) + pllNudge)*3 / ((periodCount - gateOnCount) * gcd);
-		} else {
-			attackInc = ((span << 8) + pllNudge)*3 / gateOnCount;
-			releaseInc = ((span << 8) + pllNudge)*3 / (periodCount - gateOnCount);
-		}
+
+		attackInc = (((span << 7) + pllNudge) / gateOnCount) << 2;
+		releaseInc = (((span << 7) + pllNudge) / (periodCount - gateOnCount)) << 2;
+
 
 
 
@@ -575,11 +572,11 @@ void TIM6_DAC_IRQHandler(void) {
 
 		//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
 
-		if ((32767 - morphAverage) >= 16384) {
-			fixMorph = myfix16_lerp(morphKnob, 4095, ((32767 - morphAverage) - 16384) << 2);
+		if ((32767 - morphCVAverage) >= 16384) {
+			fixMorph = myfix16_lerp(morphKnobAverage, 4095, ((32767 - morphCVAverage) - 16384) << 2);
 		}
 		else {
-			fixMorph = myfix16_lerp(0, morphKnob, (32767 - morphAverage) << 2);
+			fixMorph = myfix16_lerp(0, morphKnobAverage, (32767 - morphCVAverage) << 2);
 		}
 
 		//call the appropriate interpolation routine per phase in the two part table and declare phase state as such
@@ -854,33 +851,33 @@ void getPhase(void) {
 	}
 
 
-	if (controlScheme == dutyCycle)  {
-			holdPosition = attackInc + holdPosition;
-
-			if (holdPosition >= spanx2) {
-
-				holdPosition = holdPosition - spanx2;
-
-			}
-
-			if (holdPosition < 0) {
-
-				holdPosition = holdPosition + spanx2;
-
-			}
-
-			if (holdPosition < (myfix16_mul(spanx2, (4095 - time2CV) << 4))) {
-				attackTransferHolder = (65535 << 16)/((4095 - time2CV) << 5); // 1/(T2*2)
-				position = myfix16_mul(holdPosition, attackTransferHolder);
-	//			position = 2 * holdPosition;
-			} else {
-				releaseTransferHolder = (65535 << 16)/(time2CV << 5); // 1/((1-T2)*2)
-				position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
-	//			position = myfix16_mul(holdPosition, 43690) + spanx2 - myfix16_mul(spanx2, 43690);
-			}
-
-
-	} else {
+//	if (controlScheme == dutyCycle)  {
+//			holdPosition = attackInc + holdPosition;
+//
+//			if (holdPosition >= spanx2) {
+//
+//				holdPosition = holdPosition - spanx2;
+//
+//			}
+//
+//			if (holdPosition < 0) {
+//
+//				holdPosition = holdPosition + spanx2;
+//
+//			}
+//
+//			if (holdPosition < (myfix16_mul(spanx2, (4095 - time2CV) << 4))) {
+//				attackTransferHolder = (65535 << 16)/((4095 - time2CV) << 5); // 1/(T2*2)
+//				position = myfix16_mul(holdPosition, attackTransferHolder);
+//	//			position = 2 * holdPosition;
+//			} else {
+//				releaseTransferHolder = (65535 << 16)/(time2CV << 5); // 1/((1-T2)*2)
+//				position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
+//	//			position = myfix16_mul(holdPosition, 43690) + spanx2 - myfix16_mul(spanx2, 43690);
+//			}
+//
+//
+//	} else {
 	if (controlScheme == FM) {
 		if (PHASE_STATE) {
 			position = position + ((attackInc * (4095 - time2CV)) >> 11);
@@ -895,7 +892,7 @@ void getPhase(void) {
 		}
 	}
 
-	}
+//	}
 
 	if (position >= spanx2) {
 
@@ -1147,13 +1144,19 @@ void getAverages(void) {
 
 	static buffer time2CVBuffer;
 	static buffer morphCVBuffer;
+	static buffer morphKnobBuffer;
+	static uint32_t morphKnobSum;
 
 	write(&time2CVBuffer, time2CV);
-	time2Average = time2Average + time2CV- readn(&time2CVBuffer, 7);
+	time2Average = time2Average + time2CV- readn(&time2CVBuffer, 31);
+	morphKnobSum = morphKnobSum + morphKnob- readn(&morphKnobBuffer, 255);
+	morphCVAverage = (morphCVAverage + morphCV- readn(&morphCVBuffer, 31));
 
-	morphAverage = (morphAverage + morphCV- readn(&morphCVBuffer, 7));
+	morphKnobAverage = morphKnobSum >> 8;
 
 	write(&morphCVBuffer, morphCV);
+
+	write(&morphKnobBuffer, morphKnob);
 
 }
 

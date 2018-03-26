@@ -180,8 +180,6 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 
-	attackHoldArray[17][129] = (int *)malloc(sizeof(uint16_t) * 17 * 129);  // allocate memory (size of data * length of table * num of tables)
-	releaseHoldArray[17][129] = (int *)malloc(sizeof(uint16_t) * 17 * 129);
 
 
 
@@ -243,8 +241,7 @@ int main(void) {
 	//enable our drum envelope interrupt
 	__HAL_TIM_ENABLE_IT(&htim3, TIM_IT_UPDATE);
 
-	//start our DAC time base
-	HAL_TIM_Base_Start_IT(&htim6);
+
 
 	//initialize our sample and holds to track
 	//we must do this after the resampling interrupts have been enabled
@@ -265,7 +262,8 @@ int main(void) {
 	restoreState();
 
 
-
+	//start our DAC time base
+	HAL_TIM_Base_Start_IT(&htim6);
 
 
 
@@ -979,7 +977,7 @@ void restoreState(){
 		releaseTime = calcTime2Env;
 	}
 	if (speed == seq) {
-		//TIM6->ARR = 2000;
+		TIM6->ARR = 1000;
 		attackTime = calcTime1Seq;
 		releaseTime = calcTime2Seq;
 	}

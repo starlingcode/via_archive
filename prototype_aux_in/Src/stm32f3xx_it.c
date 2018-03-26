@@ -284,6 +284,7 @@ void TIM2_IRQHandler(void) {
 
 			if (trigMode == gated) {
 				SET_GATE_ON; //turn the gate flag on in gate mode
+				incSign = 1;
 			}
 
 			sampHoldA();
@@ -308,6 +309,7 @@ void TIM2_IRQHandler(void) {
 				case hardsync:
 
 					position = 0; // hard reset to 0
+					holdPosition = 0;
 
 					break;
 
@@ -395,7 +397,7 @@ void TIM2_IRQHandler(void) {
 				if (speed == seq) {
 					attackTime = calcTime2Seq;
 				}
-				incSign = -1; // -1 in int
+				if (!(HOLD_AT_B)) {incSign = -1;} // -1 in int
 				RESET_GATE_ON;
 
 			} else { //if we get a release when we are at or after span, reset the contour generator behavior and let it finish release

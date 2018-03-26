@@ -54,18 +54,26 @@
 #define morphCV ADCReadings1[2]
 #define time1Knob ADCReadings3[0]
 
+//#define time2Knob 3000
+//#define morphKnob 2000
+//#define time1CV 2000
+//#define time2CV 2000
+//#define morphCV 2000
+//#define time1Knob 3000
 
-enum speedTypes {audio, env, seq};
+
+
+enum speedTypes {audio, env, seq} __attribute__((section("ccmram")));;
 
 enum loopTypes {noloop, looping};
 
-enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum, pendulum2};
+enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum, pendulum2} __attribute__((section("ccmram")));;
 
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 
-enum logicOutATypes {triggerA, gateA, deltaA};
+enum logicOutATypes {triggerA, gateA, deltaA} ;
 
-enum logicOutBTypes {triggerB, gateB, deltaB};
+enum logicOutBTypes {triggerB, gateB, deltaB} ;
 
 
 int familyIndicator;
@@ -89,18 +97,30 @@ void restoreState(void);
 
 
 
-
-#define BUFF_SIZE 32
-#define BUFF_SIZE_MASK (BUFF_SIZE-1)
-
-typedef struct buffer{
-    int buff[BUFF_SIZE];
+typedef struct buffer1024 {
+    int buff[1024];
     int writeIndex;
-}buffer;
+}buffer1024;
 
-void write(buffer*,int);
-int readn(buffer*, int);
+void write1024(buffer1024*,int);
+int readn1024(buffer1024*, int);
 
+
+typedef struct buffer256 {
+    int buff[256];
+    int writeIndex;
+}buffer256;
+
+void write256(buffer256*,int);
+int readn256(buffer256*, int);
+
+typedef struct buffer32 {
+    int buff[32];
+    int writeIndex;
+}buffer32;
+
+void write32(buffer32*,int);
+int readn32(buffer32*, int);
 
 
 
@@ -220,6 +240,7 @@ int flagHolder;
 #define TRIGB		 		flagHolder & 0b00000000010000000000000000000000
 #define DELTAB		 		flagHolder & 0b00000000100000000000000000000000
 #define BANDLIMIT		 	flagHolder & 0b00000001000000000000000000000000
+#define CLEARBUFFER		 	flagHolder & 0b00000010000000000000000000000000
 
 
 #define SET_PHASE_STATE 		flagHolder |= 0b00000000000000000000000000000001
@@ -247,7 +268,7 @@ int flagHolder;
 #define SET_TRIGB		 		flagHolder |= 0b00000000010000000000000000000000
 #define SET_DELTAB		 		flagHolder |= 0b00000000100000000000000000000000
 #define SET_BANDLIMIT		 	flagHolder |= 0b00000001000000000000000000000000
-
+#define SET_CLEARBUFFER		 	flagHolder |= 0b00000010000000000000000000000000
 
 
 
@@ -276,6 +297,7 @@ int flagHolder;
 #define RESET_TRIGB				flagHolder &= 0b11111111101111111111111111111111
 #define RESET_DELTAB			flagHolder &= 0b11111111011111111111111111111111
 #define RESET_BANDLIMIT			flagHolder &= 0b11111110111111111111111111111111
+#define RESET_CLEARBUFFER		flagHolder &= 0b11111101111111111111111111111111
 
 
 

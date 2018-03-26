@@ -173,8 +173,6 @@ int main(void) {
 	/* USER CODE BEGIN 2 */
 
 
-	attackHoldArray[17][129] = (int *)malloc(sizeof(uint16_t) * 17 * 129);  // allocate memory (size of data * length of table * num of tables)
-	releaseHoldArray[17][129] = (int *)malloc(sizeof(uint16_t) * 17 * 129);
 
 
 
@@ -237,8 +235,7 @@ int main(void) {
 
 	//switchScale(0);
 
-	//start our DAC time base
-	HAL_TIM_Base_Start_IT(&htim6);
+
 
 	//initialize our sample and holds to track
 	//we must do this after the resampling interrupts have been enabled
@@ -254,6 +251,9 @@ int main(void) {
 	if( ee_status != EE_OK) {LEDC_ON}
 
 	restoreState();
+
+	//start our DAC time base
+	HAL_TIM_Base_Start_IT(&htim6);
 
 	/* USER CODE END 2 */
 
@@ -724,7 +724,7 @@ static void MX_TIM6_Init(void) {
 	htim6.Instance = TIM6;
 	htim6.Init.Prescaler = 1 - 1;
 	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim6.Init.Period = 767;
+	htim6.Init.Period = 1023;
 	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim6) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);

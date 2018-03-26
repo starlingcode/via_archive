@@ -21,8 +21,6 @@ int (*releaseTime) (void);
 //these are the variables used to generate the phase information that feeds our interpolations
 int fixMorph;
 uint32_t skewMod;
-int morphBuffer[8];
-int getMorph;
 
 int time1;
 int time2;

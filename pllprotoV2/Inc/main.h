@@ -59,6 +59,8 @@ enum autoDutyTypes {autoDutyOn, autoDutyOff};
 
 int familyIndicator;
 
+
+
 int holdState;
 int holdLogicOut;
 
@@ -84,7 +86,7 @@ int calcTime2Seq(void);
 
 
 
-#define BUFF_SIZE 8
+#define BUFF_SIZE 256
 #define BUFF_SIZE_MASK (BUFF_SIZE-1)
 
 typedef struct buffer{

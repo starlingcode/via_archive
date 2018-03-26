@@ -81,8 +81,8 @@ Family steps = {
 Family impevens = {
 	.attackFamily = impshort,
 	.releaseFamily = impshort,
-	.tableLength = 0,
-	.familySize = 0,
+	.tableLength = 128,
+	.familySize = 9,
 	.bandlimitOff = 0};
 
 
@@ -127,10 +127,10 @@ Family sawPWM = {
 
 
 Family tenor257 = {
-	.attackFamily =  tenor257Atk,
-	.releaseFamily =  tenor257Rls,
-	.tableLength = 0,
-	.familySize = 0,
+	.attackFamily = tenor257Atk,
+	.releaseFamily = tenor257Rls,
+	.tableLength = 256,
+	.familySize = 5,
 	.bandlimitOff = 1};
 
 
