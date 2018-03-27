@@ -326,7 +326,7 @@ void changeMode(uint32_t mode) {
 				attackTime = calcTime1Env;
 				releaseTime = calcTime2Env;
 			} else if (speed == seq) {
-				TIM6->ARR = 1000;
+				TIM6->ARR = 750;
 				attackTime = calcTime1Seq;
 				releaseTime = calcTime2Seq;
 			} else {

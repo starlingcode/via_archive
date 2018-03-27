@@ -55,7 +55,7 @@ int myfix24_mul(int, int) __attribute__((section("ccmram")));
 int myfix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
 void getAverages(void) __attribute__((section("ccmram")));
 void getAveragesAudio(void) __attribute__((section("ccmram")));
-void implementBiquadFilter(void) __attribute__((section("ccmram")));
+void implementButter10(void) __attribute__((section("ccmram")));
 
 
 //this is called to write our last sample to the dacs and generate a new sample
@@ -64,12 +64,6 @@ void dacISR(void) {
 	uint32_t storePhase;
 	uint32_t interp2;
 	int morphLimit;
-
-	if (HOLD_AT_B) {
-		LEDA_ON
-	} else {
-		LEDA_OFF
-	}
 
 
 	// remove for compatibility w/ rev2 (black back) boards
@@ -198,7 +192,7 @@ void dacISR(void) {
 			}
 		}
 
-//		implementBiquadFilter();
+		//implementButter10();
 //		implementBiquadFilter();
 
 
@@ -819,15 +813,73 @@ void getAveragesDrum(void) {
 
 }
 
-//void implementBiquadFilter(void) {
+void implementButter10(void) {
+
+
+#define a0 65536
+#define a1 262144
+#define a2 393216
+
+#define b0 -172925
+#define b1 -181490
+#define b2 -87771
+#define b3 -16372
+#define GAIN 134166020
+
+	static buffer32 inputs;
+	static buffer32 outputs;
+
+
+	write32(&inputs, myfix24_mul(GAIN, out));
+
+	out =
+		(myfix24_mul(readn32(&inputs, 4) + readn32(&inputs, 0), a0) +
+		myfix24_mul(readn32(&inputs, 3) + readn32(&inputs, 1), a1) +
+		myfix24_mul(readn32(&inputs, 2), a2) +
+
+		myfix24_mul(readn32(&outputs, 0), b0) +
+		myfix24_mul(readn32(&outputs, 1), b1) +
+		myfix24_mul(readn32(&outputs, 2), b2) +
+		myfix24_mul(readn32(&outputs, 3), b3)) << 1;
+
+
+	if (out > 4095) {
+		out = 4095;
+	}
+	if (out < 0) {
+		out = 0;
+	}
+
+
+	write32(&outputs, out);
+
+
 //
 //
-////18k
-//#define a0 257588
-//#define a1 515176
-//#define a2 257588
-//#define b0 -27182000
-//#define b1 11435135
+////20k
+//#define a0 65536
+//#define a1 655360
+//#define a2 2949120
+//#define a3 7864320
+//#define a4 13762560
+//#define a5 16515072
+//#define a6 13762560
+//#define a7 7864320
+//#define a8 2949120
+//#define a9 655360
+//#define a10 65536
+//#define b0 -436164
+//#define b1 -1332764
+//#define b2 -2455439
+//#define b3 -3014375
+//#define b4 -2572360
+//#define b5 -1543337
+//#define b6 -642126
+//#define b7 -177149
+//#define b8 -29239
+//#define b9 -2191
+//
+//#define GAIN 3067671
 //
 ////20k
 ////#define a0 29
@@ -840,31 +892,41 @@ void getAveragesDrum(void) {
 //	static buffer32 outputs;
 //
 //
+//	write32(&inputs, myfix24_mul(GAIN, out));
 //
-//	write(&outputs, out);
-//	out = myfix24_mul(readn32(&outputs, 0), a0) + myfix24_mul(readn32(&outputs, 1), a1) + myfix24_mul(readn32(&outputs, 2), a2)
-//			+ myfix24_mul(readn32(&outputs, 0), b0) + myfix24_mul(readn32(&outputs, 1), b1);
+//	out =
+//		myfix16_mul(readn32(&inputs, 10) + readn32(&inputs, 0), a0) +
+//		myfix16_mul(readn32(&inputs, 9) + readn32(&inputs, 1), a1) +
+//		myfix16_mul(readn32(&inputs, 8) + readn32(&inputs, 2), a2) +
+//		myfix16_mul(readn32(&inputs, 7) + readn32(&inputs, 3), a3) +
+//		myfix16_mul(readn32(&inputs, 6) + readn32(&inputs, 4), a4) +
+//		myfix16_mul(readn32(&inputs, 5), a5) +
+//		myfix16_mul(readn32(&outputs, 0), b0) +
+//		myfix16_mul(readn32(&outputs, 1), b1) +
+//		myfix16_mul(readn32(&outputs, 2), b2) +
+//		myfix16_mul(readn32(&outputs, 3), b3) +
+//		myfix16_mul(readn32(&outputs, 4), b4) +
+//		myfix16_mul(readn32(&outputs, 5), b5) +
+//		myfix16_mul(readn32(&outputs, 6), b6) +
+//		myfix16_mul(readn32(&outputs, 7), b7) +
+//		myfix16_mul(readn32(&outputs, 8), b8) +
+//		myfix16_mul(readn32(&outputs, 9), b9);
+//
 //	if (out > 4095) {
 //		out = 4095;
 //	}
 //	if (out < 0) {
 //		out = 0;
 //	}
-//	write(&outputs, out);
-//	write(&inputs, out);
-//	out = myfix24_mul(readn32(&inputs, 0), a0) + myfix24_mul(readn32(&inputs, 1), a1) + myfix24_mul(readn32(&inputs, 2), a2)
-//			+ myfix24_mul(readn32(&outputs, 0), b0) + myfix24_mul(readn32(&outputs, 1), b1);
-//	if (out > 4095) {
-//		out = 4095;
-//	}
-//	if (out < 0) {
-//		out = 0;
-//	}
-//	write(&outputs, out);
 //
 //
+//	write32(&outputs, out);
 //
-//}
+
+
+
+
+}
 
 //our 16 bit fixed point multiply and linear interpolate functions
 
