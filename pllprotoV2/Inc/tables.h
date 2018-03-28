@@ -2890,7 +2890,7 @@ static const uint16_t *skipsaw[5] = {
 	linear, skipsaw2, skipsaw3, skipsaw4, skipsaw5};
 
 
-static const uint16_t *impshort[17] = {
+static const uint16_t *impshort[9] = {
 	sine_129, imp2, imp4, imp8, imp12,
 	imp16, imp20, imp24, imp28};
 

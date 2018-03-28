@@ -382,7 +382,7 @@ void changeMode(uint32_t mode) {
 	}
 	else if (mode == 5) {
 		// increment our family pointer and swap in the correct family
-		familyIndicator = (familyIndicator + 1) % 7;
+		familyIndicator = (familyIndicator + 1) % 16;
 		switchFamily();
 		holdState = (holdState & 0b1000011111111111) | (familyIndicator << 11);
 	}
@@ -390,7 +390,7 @@ void changeMode(uint32_t mode) {
 		// wrap back to the end of the array of families if we go back from the first entry
 		// otherwise same as above
 		if (familyIndicator == 0) {
-			familyIndicator = 7;
+			familyIndicator = 15;
 		} else {
 			familyIndicator = (familyIndicator - 1);
 		}
@@ -629,6 +629,8 @@ void restoreDisplay() {
 // this sets the flags to be used in the interrupt and also fills the holding array on the heap
 
 void switchFamily(void) {
+
+	position = 0;
 
 	holdState |= familyIndicator << 9;
 

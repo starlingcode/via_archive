@@ -99,6 +99,11 @@ extern uint32_t ADCReadings1[4];
 extern uint32_t ADCReadings2[2];
 extern uint32_t ADCReadings3[1];
 
+
+extern void initialise_monitor_handles(void);
+
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -171,6 +176,7 @@ int main(void) {
 	MX_TIM15_Init();
 
 	/* USER CODE BEGIN 2 */
+
 
 
 
@@ -251,6 +257,9 @@ int main(void) {
 	if( ee_status != EE_OK) {LEDC_ON}
 
 	restoreState();
+
+	//initialise_monitor_handles();
+	//printf("testing123\n");
 
 	//start our DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);
@@ -341,7 +350,7 @@ void SystemClock_Config(void) {
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1 | RCC_PERIPHCLK_TIM8
 			| RCC_PERIPHCLK_ADC12 | RCC_PERIPHCLK_ADC34;
-	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV2;
+	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV4;
 	PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV128;
 	PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
 	PeriphClkInit.Tim8ClockSelection = RCC_TIM8CLK_HCLK;
@@ -724,7 +733,7 @@ static void MX_TIM6_Init(void) {
 	htim6.Instance = TIM6;
 	htim6.Init.Prescaler = 1 - 1;
 	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim6.Init.Period = 1023;
+	htim6.Init.Period = 767;
 	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim6) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -948,7 +957,8 @@ void restoreState(){
 	logicOutA = holdLogicOut & 0b0000000000000111;
 	logicOutB = (holdLogicOut & 0b0000000000111000) >> 3;
 
-	//switchScale(scaleType);
+	switchFamily();
+
 
 	switch (logicOutA) {
 	case 0:

@@ -59,7 +59,7 @@ enum autoDutyTypes {autoDutyOn, autoDutyOff};
 
 int familyIndicator;
 
-
+volatile int position;
 
 int holdState;
 int holdLogicOut;
