@@ -80,26 +80,20 @@ uint32_t modeflag;
 uint32_t detectOn;
 uint32_t displayNewMode;
 
-
+// addresses, data for flash EEPROM emulation (state store and recall after power cycling)
 uint16_t VirtAddVarTab[NB_OF_VAR] = {0x5555, 0x6666};
 uint16_t VarDataTab[NB_OF_VAR] = {0, 0};
 uint16_t VarValue,VarDataTmp;
 
 // these enums contain our mode information
-enum pllTypes pll; // {none, true, catch, setCatch}
+enum pllTypes pll; // {none, true, hardSync, catch}
 enum controlSchemes controlScheme; // {gateLength, knobCV}
 enum scaleTypes scaleType; // {rhythms, pitches}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
 enum scaleTypes logicOutA;
 enum sampleHoldModeTypes logicOutB;
 
-// initialize the arrays that will be used by DMA to store our Knob and CV values
-
-
-
 //extern void initialise_monitor_handles(void);
-
-
 
 /* USER CODE END PV */
 
@@ -136,7 +130,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 int main(void) {
 
 	/* USER CODE BEGIN 1 */
-	//uint32_t ee_status;
+	//uint32_t eepromStatus;
 	/* USER CODE END 1 */
 
 	/* MCU Configuration----------------------------------------------------------*/
@@ -174,11 +168,6 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 
-
-
-
-
-
 	initializeScales();
 	fillFamilyArray();
 
@@ -186,16 +175,13 @@ int main(void) {
 
 
 	// declare the initialization state
-
-
 	SET_RGB_ON;
 
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
 
 
-
-	// set the priority and enable an interrupt line to be used by our phase state change interrupt
+	// set the priority and enable an interrupt line to be used by phase state change interrupt
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
@@ -203,35 +189,35 @@ int main(void) {
 	HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
 	HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
 
-	//initialize our ADCs and their respective DMA arrays
+	// initialize ADCs and their respective DMA arrays
 	HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
 	HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
 	HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
 
-	//initialize the timer that is used to detect our triggers
+	// initialize trigger detection timer
 	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
 
-	//initialize the timer that is used for touch sensor press timeout
+	// initialize touch sensor press timeout timer
 	HAL_TIM_Base_Start(&htim4);
 
-	// intitialize the timer that runs the PWM for our RGB led
+	// initialize the RGB LED PWM timer
 	HAL_TIM_Base_Start(&htim1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 
-	//initialize our dac
+	// initialize DAC
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
 
-	// initialize our touch sensors
+	// initialize touch sensors
 	tsl_user_Init();
 
-	//enable our S&H resampling interrupts
+	// enable S&H resampling interrupts
 	__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
 	__HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
 
-	//enable our trigger interrupt
+	// enable trigger interrupt
 	__HAL_TIM_ENABLE_IT(&htim15, TIM_IT_UPDATE);
 
 
@@ -242,16 +228,14 @@ int main(void) {
 
 	//initialize our sample and holds to track
 	//we must do this after the resampling interrupts have been enabled
-	SH_A_TRACK
-	SH_B_TRACK
+	SH_A_TRACK;
+	SH_B_TRACK;
 
-
-
-
+	// read last state data in from virtual EEPROM
 	HAL_FLASH_Unlock();
 
-	ee_status = EE_Init();
-	if( ee_status != EE_OK) {LEDC_ON}
+	eepromStatus = EE_Init();
+	if( eepromStatus != EE_OK) {LEDC_ON}
 
 	restoreState();
 
@@ -259,7 +243,7 @@ int main(void) {
 	//initialise_monitor_handles();
 	//printf("testing123\n");
 
-	//start our DAC time base
+	// start DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);
 
 	/* USER CODE END 2 */
@@ -277,18 +261,15 @@ int main(void) {
 			RESET_TRIGGER_BUTTON;
 		}
 
-
-
-
-		// run the state machine that gets us a reading on our touch sensors
+		// run the state machine that gets us touch sensor readings
 		tsl_status = tsl_user_Exec();
 
-		// if we have completed our touch sensor aquisitions
+		// if touch sensor acquisitions are complete
 		if (tsl_status != TSL_USER_STATUS_BUSY) {
 
 			// if no sensors were touched the last time we ran the state machine
 			if (detectOn == 0) {
-				// check to see if any are in detect state
+				// check if any are in detect state
 				readDetect();
 			} else {
 				// check to see if we have released the sensor
@@ -298,7 +279,7 @@ int main(void) {
 		}
 
 		if (displayNewMode == 1) {
-			//this turns our runtime display back on if we were just showing a mode change
+			// turn runtime display back on if currently displaying a mode change
 			restoreDisplay();
 			RESET_AUX_MENU;
 		}
@@ -942,10 +923,11 @@ static void MX_GPIO_Init(void) {
 
 /* USER CODE BEGIN 4 */
 
+// reads back last values stored in flash virtual EEPROM and updates current state
 void restoreState(){
-	ee_status = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
+	eepromStatus = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
 	holdState = VarDataTab[0];
-	ee_status = EE_ReadVariable(VirtAddVarTab[1], &VarDataTab[1]);
+	eepromStatus = EE_ReadVariable(VirtAddVarTab[1], &VarDataTab[1]);
 	holdLogicOut = VarDataTab[1];
 	controlScheme = holdState & 0b0000000000000111;
 	scaleType = (holdState & 0b0000000011000000) >> 6;

@@ -66,7 +66,7 @@ volatile int position;
 int holdState;
 int holdLogicOut;
 
-int ee_status;
+int eepromStatus;
 
 void inputCaptureSetup(void);
 
