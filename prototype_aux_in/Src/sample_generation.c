@@ -55,7 +55,7 @@ int myfix24_mul(int, int) __attribute__((section("ccmram")));
 int myfix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
 void getAverages(void) __attribute__((section("ccmram")));
 void getAveragesAudio(void) __attribute__((section("ccmram")));
-void implementButter10(void) __attribute__((section("ccmram")));
+//void implementButter10(void) __attribute__((section("ccmram")));
 
 
 //this is called to write our last sample to the dacs and generate a new sample
@@ -65,6 +65,8 @@ void dacISR(void) {
 	uint32_t interp2;
 	int morphLimit;
 
+
+	//PROFILING_START("MAIN startup timing");
 
 	// remove for compatibility w/ rev2 (black back) boards
 	if ((GPIOA->IDR & GPIO_PIN_11) != (uint32_t) GPIO_PIN_RESET) {
@@ -82,11 +84,12 @@ void dacISR(void) {
 		//hold the phase state (attack or release) from the last sample
 
 		storePhase = PHASE_STATE;
+		//PROFILING_EVENT("DAC Uptdated");
 
 		//call the function to advance the phase of the contour generator
 
 		getPhase();
-
+		//PROFILING_EVENT("Phase Accquired");
 		//determine whether our newly calculated phase value "position" is in the "attack" or "release" portion of the cycle
 		//call the function that generates our next sample based upon the phase value "position"
 		//pass that function a 1 or a 0 to indicate whether we are in attack or release
@@ -99,6 +102,8 @@ void dacISR(void) {
 			SET_PHASE_STATE;
 			getSample(1);
 		}
+
+		//PROFILING_EVENT("Sampling Complete");
 
 		//calculate our "morph" parameter as a function of the morph knob, CV, and our contour generator frequency
 
@@ -184,7 +189,7 @@ void dacISR(void) {
 
 		} else {
 			if (BANDLIMIT) {
-				morphLimit = myfix16_mul(4095, 65536 - ((abs(inc) - 110000) >> 4));
+				morphLimit = myfix16_mul(4095, 65536 - ((abs(inc)) >> 5));
 				if (morphLimit < 0) {morphLimit = 0;}
 				if (fixMorph > morphLimit) {
 					fixMorph = morphLimit;
@@ -205,6 +210,8 @@ void dacISR(void) {
 			HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
 
 		}
+		//PROFILING_EVENT("ISR_Complete");
+		//PROFILING_STOP();
 
 	}
 
@@ -729,7 +736,7 @@ void getAverages(void) {
 	static buffer256 t1KnobBuffer;
 	static buffer256 t2KnobBuffer;
 	static buffer256 t1CVBuffer;
-	static buffer256 t2CVBuffer;
+	//static buffer256 t2CVBuffer;
 	static buffer256 morphKnobBuffer;
 	static buffer256 morphCVBuffer;
 	static uint32_t t1KnobSum;
@@ -745,19 +752,20 @@ void getAverages(void) {
 	morphKnobSum = (morphKnobSum + morphKnob- readn256(&morphKnobBuffer, 255));
 	morphCVSum = (morphCVSum + morphCV- readn256(&morphCVBuffer, 255));
 	t1CVSum = (t1CVSum + time1CV- readn256(&t1CVBuffer, 255));
-	t2CVSum = (t2CVSum + time2CV- readn256(&t2CVBuffer, 255));
+	//t2CVSum = (t2CVSum + time2CV- readn256(&t2CVBuffer, 255));
 
 	t1KnobAverage = t1KnobSum >> 8;
 	t2KnobAverage = t2KnobSum >> 8;
 	morphKnobAverage = morphKnobSum >> 8;
 	t1CVAverage = t1CVSum >> 8;
-	t2CVAverage = t2CVSum >> 8;
+//	t2CVAverage = t2CVSum >> 8;
+	t2CVAverage = time2CV;
 	morphCVAverage = morphCVSum >> 3;
 
 
 	write256(&morphCVBuffer, morphCV);
 	write256(&t1CVBuffer, time1CV);
-	write256(&t2CVBuffer, time2CV);
+	//write256(&t2CVBuffer, time2CV);
 	write256(&t1KnobBuffer, time1Knob);
 	write256(&t2KnobBuffer, time2Knob);
 	write256(&morphKnobBuffer, morphKnob);

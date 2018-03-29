@@ -39,10 +39,8 @@ extern uint16_t VarDataTab[NB_OF_VAR];
 
 
 // these variables are passed between our functions that read the touch sensors and change modes
-extern uint32_t modeflag;
-extern uint32_t detectOn;
 uint32_t lastDetect;
-extern uint32_t displayNewMode;
+
 
 
 void handleRelease(uint32_t);
@@ -54,15 +52,12 @@ void clearLEDs(void);
 
 void switchFamily(void);
 void loadSampleArray(Family);
-// these variables are used to represent the number of entries in a given wavetable stored in the currently selected family
-// they are shared by tim6IRQ
-extern uint32_t span;
-extern int spanx2;
-extern int tableSizeCompensation;
 
-// these variables are used to represent the number of wavetables in the currently selected family when performing our morph function
-extern uint32_t morphBitShiftRight;
-extern uint32_t morphBitShiftLeft;
+extern uint32_t modeflag;
+extern uint32_t detectOn;
+uint32_t lastDetect;
+extern uint32_t displayNewMode;
+
 
 
 

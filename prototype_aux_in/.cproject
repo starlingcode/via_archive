@@ -62,8 +62,9 @@
 									<listOptionValue builtIn="false" value="&quot;/Users/willmitchell/Documents/stm32 workspace/prototype/Release/Src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;/Users/willmitchell/Documents/stm32 workspace/prototype/Debug/Src&quot;"/>
 								</option>
-								<option id="gnu.c.link.option.ldflags.1237309336" name="Linker flags" superClass="gnu.c.link.option.ldflags" useByScannerDiscovery="false" value="-specs=nosys.specs -specs=nano.specs" valueType="string"/>
+								<option id="gnu.c.link.option.ldflags.1237309336" name="Linker flags" superClass="gnu.c.link.option.ldflags" useByScannerDiscovery="false" value="-specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -lc -lrdimon" valueType="string"/>
 								<option id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.gcsections.2094716203" name="Discard unused sections (-Wl,--gc-sections)" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker.gcsections" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+								<option id="gnu.c.link.option.other.471017741" name="Other options (-Xlinker [option])" superClass="gnu.c.link.option.other" useByScannerDiscovery="false" valueType="stringList"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.58629688" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

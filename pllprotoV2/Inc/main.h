@@ -41,7 +41,9 @@
   /* Includes ------------------------------------------------------------------*/
 
 /* USER CODE BEGIN Includes */
-
+#include "stm32f3xx_hal.h"
+#include "stm32f3xx.h"
+#include "stm32f3xx_it.h"
 
 enum pllTypes {none, true, hardSync, catch};
 
@@ -66,6 +68,7 @@ int holdLogicOut;
 
 int ee_status;
 
+void inputCaptureSetup(void);
 
 void readDetect(void) __attribute__((section("ccmram")));
 void readRelease(uint32_t) __attribute__((section("ccmram")));
@@ -84,7 +87,9 @@ int calcTime2Env(void);
 int calcTime1Seq(void);
 int calcTime2Seq(void);
 
-
+uint32_t ADCReadings1[4];
+uint32_t ADCReadings2[2];
+uint32_t ADCReadings3[2];
 
 #define BUFF_SIZE 256
 #define BUFF_SIZE_MASK (BUFF_SIZE-1)

@@ -105,6 +105,8 @@ extern uint32_t ADCReadings1[4];
 extern uint32_t ADCReadings2[2];
 extern uint32_t ADCReadings3[1];
 
+
+extern void initialise_monitor_handles(void);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -261,11 +263,13 @@ int main(void) {
 
 	restoreState();
 
+	//initialise_monitor_handles();
+
+
+
 
 	//start our DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);
-
-
 
 
 
@@ -954,6 +958,8 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Pin = GPIO_PIN_11;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
+//	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; //rev2
+//	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
