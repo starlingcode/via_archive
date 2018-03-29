@@ -41,8 +41,6 @@
 #include "interrupt_functions.h"
 
 
-
-
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -204,6 +202,7 @@ void DMA1_Channel1_IRQHandler(void) {
  */
 void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
+	// times logic A and logic B triggers (turns LED off / logic low at appropriate time)
 	if ((TRIGB) || (RATIO_DELTAB) || (PLL_DIVB)){
 		EOA_JACK_LOW;
 		if (RGB_ON) {
@@ -250,10 +249,10 @@ void TIM2_IRQHandler(void) {
  */
 void TIM8_UP_IRQHandler(void) {
 	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
-	SH_B_SAMPLE
+	SH_B_SAMPLE;
 	//this handles the logic where we resample b at a
 	if (RGB_ON) {
-		LEDB_ON
+		LEDB_ON;
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
@@ -293,12 +292,12 @@ void TIM6_DAC_IRQHandler(void) {
  */
 void TIM7_IRQHandler(void) {
 	/* USER CODE BEGIN TIM7_IRQn 0 */
-	SH_A_SAMPLE
+	SH_A_SAMPLE;
 	// this handles our decimate resampling
-	SH_B_SAMPLE
+	SH_B_SAMPLE;
 	if (RGB_ON) {
-		LEDA_ON
-		LEDB_ON
+		LEDA_ON;
+		LEDB_ON;
 	}
 	__HAL_TIM_CLEAR_FLAG(&htim7, TIM_FLAG_UPDATE);
 	/* USER CODE END TIM7_IRQn 0 */

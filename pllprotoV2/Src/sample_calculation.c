@@ -11,8 +11,6 @@
 
 #include "interrupt_functions.h"
 
-
-
 #include "int64.h"
 
 extern TIM_HandleTypeDef htim15;
@@ -20,7 +18,7 @@ extern TIM_HandleTypeDef htim8;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim1;
 
-enum pllTypes pll; // {none, true, catch, setCatch}
+enum pllTypes pll; // {none, true, hardSync, catch}
 enum controlSchemes controlScheme; // {gateLength, knobCV}
 enum sampleHoldModeTypes sampleHoldMode;
 
@@ -39,28 +37,28 @@ void dacISR(void) {
 
 	uint32_t storePhase;
 
-	//write the current oscillator value to dac1, and its inverse to dac2 (crossfading)
+	// write the current contour generator value to dac1, and its inverse to dac2 (crossfading)
 
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095 - out));
 	((*(volatile uint32_t *) DAC2_ADDR) = (out));
 
 
 
-	// get our averages for t2 and morph cv (move to the ADC interrupt??)
+	// get averages for t2 and morph cv (move to the ADC interrupt??)
 
 	getAverages();
 
 
-	//store last "Phase State" (attack or release)
+	// store last "Phase State" (attack or release)
 
 	storePhase = PHASE_STATE;
-//		PROFILING_EVENT("DAC Uptdated");
+//		PROFILING_EVENT("DAC Updated");
 
-	//call the function to advance the phase of the oscillator using that increment
+	// call the function to advance the phase of the oscillator using that increment
 
 	getPhase();
-	//PROFILING_EVENT("Phase Accquired");
-	//calculate our morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
+	//PROFILING_EVENT("Phase Acquired");
+	//calculate morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
 
 	if ((32767 - morphCVAverage) >= 16384) {
 		fixMorph = myfix16_lerp(morphKnobAverage, 4095, ((32767 - morphCVAverage) - 16384) << 2);
@@ -98,100 +96,101 @@ void dacISR(void) {
 
 void getSample(uint32_t phase) {
 
-	// in this function, we use our phase position to get the sample to give to our dacs using "biinterpolation"
+	// in this function, we use the phase position to get the sample to give to our DACs using "biinterpolation"
 	// essentially, we need to get 4 sample values and two "fractional arguments" (where are we at in between those sample values)
 	// think of locating a position on a rectangular surface based upon how far you are between the bottom and top and how far you are between the left and right sides
-	// that is basically what we are doing here
 
-	uint32_t LnSample; // indicates the nearest neighbor to our position in the wavetable
-	uint32_t LnFamily; // indicates the nearest neighbor (wavetable) to our morph value in the family
-	uint32_t waveFrac; // indicates the factional distance between our nearest neighbors in the wavetable
-	uint32_t morphFrac; // indicates the factional distance between our nearest neighbors in the family
-	uint32_t Lnvalue1; // sample values used by our two interpolations in
+	uint32_t LnSample;  // indicates the nearest neighbor to our position in the wavetable
+	uint32_t LnFamily;  // indicates the nearest neighbor (wavetable) to our morph value in the family
+	uint32_t waveFrac;  // indicates the fractional distance between our nearest neighbors in the wavetable
+	uint32_t morphFrac; // indicates the fractional distance between our nearest neighbors in the family
+	uint32_t Lnvalue1;  // sample values used by our two interpolations
 	uint32_t Rnvalue1;
 	uint32_t Lnvalue2;
 	uint32_t Rnvalue2;
-	uint32_t interp1; // results of those two interpolations
+	uint32_t interp1;   // results of those two interpolations
 	uint32_t interp2;
 
 	// the above is used to perform our bi-interpolation
-	// essentially, interp 1 and interp 2 are the interpolated values in the two adjacent wavetables per the playback position
-	// out is the "crossfade" between those according to morphFrac
+	// interp 1 and interp 2 are the interpolated values in the two adjacent wavetables per the playback position
+	// out is the "crossfade" between those given the value of morphFrac
 
 
 
 	if (phase == 0) {
 		// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
-		//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
+		// truncate position, that sample n and n+1 are the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
 		LnSample = (position >> 16);
 
-		//bit shifting to divide by the correct power of two takes a 12 bit number (our fixMorph) and returns the a quotient in the range of our family size
+		// bit shifting to divide by the correct power of two takes a 12 bit number (our fixMorph) and returns the a quotient in the range of our family size
 		LnFamily = fixMorph >> morphBitShiftRight;
 
-		//determine the fractional part of our phase position by masking off the integer
+		// determine the fractional part of our phase position by masking off the integer
 		waveFrac = 0x0000FFFF & position;
-		// we have to calculate the fractional portion and get it up to full scale
+
+		// calculate the fractional portion and get it up to full scale
 		morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
 
-		//get values from the relevant wavetables
+		// get values from the relevant wavetables
 		// this is a funny looking method of referencing elements in a two dimensional array
 		// we need to do it like this because our struct contains a pointer to the array being used
 		// i feel like this could be optimized if we are loading from flash
+
 //		family = currentFamily.attackFamily + LnFamily;
 //		Lnvalue1 = *(*(family) + LnSample);
 //		Rnvalue1 = *(*(family) + LnSample + 1);
 //		Lnvalue2 = *(*(family + 1) + LnSample);
 //		Rnvalue2 = *(*(family + 1) + LnSample + 1);
 
-		//attempt at optimizing using fixed size array on the heap
-
+		// attempt at optimizing using fixed size array on the heap
 		Lnvalue1 = attackHoldArray[LnFamily][LnSample];
 		Rnvalue1 = attackHoldArray[LnFamily][LnSample + 1];
 		Lnvalue2 = attackHoldArray[LnFamily + 1][LnSample];
 		Rnvalue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
 
-		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-				interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
-				interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
+		// find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
+		interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
+		interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
 
-				//interpolate between those based upon the fractional part of our phase pointer
+		// interpolate between those based upon the fractional part of our phase pointer
 
-				out = myfix16_lerp(interp1, interp2, waveFrac) >> 3;
+		out = myfix16_lerp(interp1, interp2, waveFrac) >> 3;
 
-				//we use the interpolated nearest neighbor samples to determine the sign of rate of change
-				//aka, are we moving towrds a, or towards b
-				//we use this to generate our gate output
-				if (interp1 < interp2) {
-					EOA_GATE_HIGH
-					if (DELTAB) {
-						EOA_JACK_HIGH
-						if (RGB_ON) {
-							LEDD_ON;
-						}
-					}
-					if (DELTAA) {
-						EOR_JACK_LOW
-						if (RGB_ON) {
-							LEDC_OFF;
-						}
-					}
-				} else if (interp2 < interp1) {
-					EOA_GATE_LOW
-					if (DELTAB) {
-						EOA_JACK_LOW
-						if (RGB_ON) {
-							LEDD_OFF;
-						}
-					}
-					if (DELTAA) {
-						EOR_JACK_HIGH
-						if (RGB_ON) {
-							LEDC_ON;
-						}
-					}
+		// we use the interpolated nearest neighbor samples to determine the sign of rate of change
+		// aka, are we moving towards a, or towards b
+		// used to generate the "direction" gate output
+		if (interp1 < interp2) {
+			EOA_GATE_HIGH
+			if (DELTAB) {
+				EOA_JACK_HIGH
+				if (RGB_ON) {
+					LEDD_ON;
 				}
+			}
+			if (DELTAA) {
+				EOR_JACK_LOW
+				if (RGB_ON) {
+					LEDC_OFF;
+				}
+			}
+		} else if (interp2 < interp1) {
+			EOA_GATE_LOW
+			if (DELTAB) {
+				EOA_JACK_LOW
+				if (RGB_ON) {
+					LEDD_OFF;
+				}
+			}
+			if (DELTAA) {
+				EOR_JACK_HIGH
+				if (RGB_ON) {
+					LEDC_ON;
+				}
+			}
+		}
 
-		if (RGB_ON) { //if the runtime display is on, show our mode
+		// if the runtime display is on, show our mode
+		if (RGB_ON) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
@@ -199,7 +198,7 @@ void getSample(uint32_t phase) {
 
 	else {
 
-		//this section is similar, but subtly different to implement our "release"
+		// this section is similar, but subtly different to implement "release"
 		// notice, we reflect position back over span
 		LnSample = ((spanx2 - position) >> 16);
 
@@ -210,7 +209,7 @@ void getSample(uint32_t phase) {
 		//
 		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
 
-		//pull the values from our "release family"
+		// pull the values from our "release family"
 //		family = currentFamily.releaseFamily + LnFamily;
 //		Lnvalue1 = *(*(family) + LnSample);
 //		Rnvalue1 = *(*(family) + LnSample + 1);
@@ -226,45 +225,45 @@ void getSample(uint32_t phase) {
 		Rnvalue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
 
 		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-				interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
-				interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
+		interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
+		interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
 
-				//interpolate between those based upon the fractional part of our phase pointer
+		//interpolate between those based upon the fractional part of our phase pointer
 
-				out = myfix16_lerp(interp1, interp2, waveFrac) >> 3;
+		out = myfix16_lerp(interp1, interp2, waveFrac) >> 3;
 
-				//we use the interpolated nearest neighbor samples to determine the sign of rate of change
-				//aka, are we moving towrds a, or towards b
-				//we use this to generate our gate output
-				if (interp1 < interp2) {
-					EOA_GATE_HIGH
-					if (DELTAB) {
-						EOA_JACK_HIGH
-						if (RGB_ON) {
-							LEDD_ON;
-						}
-					}
-					if (DELTAA) {
-						EOR_JACK_LOW
-						if (RGB_ON) {
-							LEDC_OFF;
-						}
-					}
-				} else if (interp2 < interp1) {
-					EOA_GATE_LOW
-					if (DELTAB) {
-						EOA_JACK_LOW
-						if (RGB_ON) {
-							LEDD_OFF;
-						}
-					}
-					if (DELTAA) {
-						EOR_JACK_HIGH
-						if (RGB_ON) {
-							LEDC_ON;
-						}
-					}
+		// we use the interpolated nearest neighbor samples to determine the sign of rate of change
+		// aka, are we moving towards a, or towards b
+		// used to generate the "direction" gate output
+		if (interp1 < interp2) {
+			EOA_GATE_HIGH
+			if (DELTAB) {
+				EOA_JACK_HIGH
+				if (RGB_ON) {
+					LEDD_ON;
 				}
+			}
+			if (DELTAA) {
+				EOR_JACK_LOW
+				if (RGB_ON) {
+					LEDC_OFF;
+				}
+			}
+		} else if (interp2 < interp1) {
+			EOA_GATE_LOW
+			if (DELTAB) {
+				EOA_JACK_LOW
+				if (RGB_ON) {
+					LEDD_OFF;
+				}
+			}
+			if (DELTAA) {
+				EOR_JACK_HIGH
+				if (RGB_ON) {
+					LEDC_ON;
+				}
+			}
+		}
 
 		if (RGB_ON) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
