@@ -48,10 +48,10 @@
 #include "eeprom.h"
 
 #define time2Knob ADCReadings2[0]
-#define morphKnob ADCReadings2[1]
+#define morphKnob (ADCReadings2[1] & 0b11111111111111111111111111111000)
 #define time1CV ADCReadings1[0]
 #define time2CV ADCReadings1[1]
-#define morphCV ADCReadings1[2]
+#define morphCV (ADCReadings1[2] & 0b111111111111111111111111111100)
 #define time1Knob ADCReadings3[0]
 
 //#define time2Knob 3000

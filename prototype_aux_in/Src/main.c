@@ -365,7 +365,7 @@ void SystemClock_Config(void) {
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1 | RCC_PERIPHCLK_TIM8
 			| RCC_PERIPHCLK_ADC12 | RCC_PERIPHCLK_ADC34;
-	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV2;
+	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV16;
 	PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV128;
 	PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
 	PeriphClkInit.Tim8ClockSelection = RCC_TIM8CLK_HCLK;
