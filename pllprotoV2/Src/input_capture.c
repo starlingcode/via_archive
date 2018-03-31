@@ -36,6 +36,7 @@ void inputCapture(void) {
 	uint32_t multKey;
 	static uint32_t lastMultiplier;
 	Scale currentScale;
+	static int hysterisis;
 
 
 
@@ -55,10 +56,10 @@ void inputCapture(void) {
 
 		if (currentScale.oneVoltOct == 0) {
 			if ((4095 - time1CV) >= 2048) {
-				noteIndex = (myfix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) >> 5;
+				noteIndex = (myfix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) + hysterisis;
 			}
 			else {
-				noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 5;
+				noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) + hysterisis;
 			}
 		} else {
 			int holdT1 = (4095 - time1CV) + (time1Knob >> 2) -1390;
@@ -67,8 +68,13 @@ void inputCapture(void) {
 			} else if (holdT1 < 0) {
 				holdT1 = 0;
 			}
-			noteIndex = holdT1 >> 5;
+			noteIndex = holdT1 + hysterisis;
 		}
+
+		if ((noteIndex - (noteIndex >> 5)) > 64) {hysterisis = -24;}
+		else if ((noteIndex - (noteIndex >> 5)) < 64) {hysterisis = 24;}
+		else {hysterisis = 0;}
+		noteIndex = noteIndex >> 5;
 
 
 		if (controlScheme == root) {

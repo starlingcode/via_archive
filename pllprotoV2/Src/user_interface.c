@@ -396,8 +396,8 @@ void changeMode(uint32_t mode) {
 		logicOutA = (logicOutA + 1) % 5;
 		holdLogicOut = (holdLogicOut & 0b1111111111111000) | logicOutA;
 
-		ee_status = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
-	    ee_status|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
+		eepromStatus = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
+		eepromStatus|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
 
 
 		switch (logicOutA) {
@@ -446,8 +446,8 @@ void changeMode(uint32_t mode) {
 		logicOutB = (logicOutB + 1) % 5;
 		holdLogicOut = (holdLogicOut & 0b1111111111000111) | (logicOutB << 3);
 
-		ee_status = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
-	    ee_status|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
+		eepromStatus = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
+		eepromStatus|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
 
 		switch (logicOutB) {
 		case 0:
@@ -497,15 +497,15 @@ void changeMode(uint32_t mode) {
 			SET_AUTODUTY;
 		}
 
-		ee_status = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
-	    ee_status|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
+		eepromStatus = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
+		eepromStatus|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
 
 
 
 	}
 
-	ee_status = EE_WriteVariable(VirtAddVarTab[0], holdState);
-    ee_status|= EE_ReadVariable(VirtAddVarTab[0],  &VarDataTab[0]);
+	eepromStatus = EE_WriteVariable(VirtAddVarTab[0], holdState);
+	eepromStatus|= EE_ReadVariable(VirtAddVarTab[0],  &VarDataTab[0]);
 
 }
 
