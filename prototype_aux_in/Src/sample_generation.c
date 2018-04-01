@@ -48,6 +48,7 @@ extern TIM_HandleTypeDef htim3;
 //declarations for the functions defined below, attribute places them in "CCMRAM" for maximum efficiency
 void getSample(uint32_t) __attribute__((section("ccmram")));
 void getSampleCubicSpline(uint32_t) __attribute__((section("ccmram")));
+void getSampleQuinticSpline(uint32_t) __attribute__((section("ccmram")));
 void getPhase(void) __attribute__((section("ccmram")));
 int myfix16_mul(int, int) __attribute__((section("ccmram")));
 int myfix24_mul(int, int) __attribute__((section("ccmram")));
@@ -98,11 +99,13 @@ void dacISR(void) {
 			RESET_PHASE_STATE;
 			//getSample(0);
 			getSampleCubicSpline(0);
+			//getSampleQuinticSpline(0);
 		}
 		if (position >= span) {
 			SET_PHASE_STATE;
 			//getSample(1);
 			getSampleCubicSpline(1);
+			//getSampleQuinticSpline(1);
 		}
 
 		//PROFILING_EVENT("Sampling Complete");
@@ -244,6 +247,15 @@ void getPhase(void) {
 	int attackTransferHolder;
 	int releaseTransferHolder;
 
+	static int lastSkewMod;
+	static int hysterisis;
+	static int smoothingOn;
+	static int smoothingCount;
+	int smoothSkewMod;
+	static buffer256 skewBuffer;
+	static int skewSum;
+	int skewAverage;
+
 
 	//calculate our increment value in high speed mode
 
@@ -371,20 +383,32 @@ void getPhase(void) {
 
 		if ((4095 - t2CVAverage) >= 2047) {
 			//this first does the aforementioned interpolation between the knob value and full scale then scales back the value according to frequency
-			skewMod = (myfix16_lerp(t2KnobAverage, 4095, ((4095 - t2CVAverage) - 2048) << 4) & 0b11111111111111111111111111000000);
+			skewMod = myfix16_lerp(t2KnobAverage, 4095, ((4095 - t2CVAverage) - 2048) << 4) + hysterisis;
 		}
 		else {
 			//analogous to above except in this case, morphCV is less than halfway
-			skewMod = (myfix16_lerp(0, t2KnobAverage, (4095 - t2CVAverage) << 4) & 0b11111111111111111111111111000000);
+			skewMod = myfix16_lerp(0, t2KnobAverage, (4095 - t2CVAverage) << 4) + hysterisis;
 		}
 
+		if ((skewMod - (skewMod >> 6)) > 32) {hysterisis = -24;}
+		else if ((skewMod - (skewMod >> 6)) < 32) {hysterisis = 24;}
+		else {hysterisis = 0;}
+		skewMod = skewMod & 0b11111111111111111111111111000000;
 
-		if (holdPosition < (myfix16_mul(spanx2, (4095 - skewMod) << 4))) {
-			attackTransferHolder = (65535 << 11)/(4095 - skewMod); // 1/(T2*2)
+
+		skewSum = (skewSum + skewMod- readn256(&skewBuffer, 255));
+
+		skewAverage = skewSum >> 8;
+
+		write256(&skewBuffer, skewMod);
+
+
+		if (holdPosition < (myfix16_mul(spanx2, (4095 - skewAverage) << 4))) {
+			attackTransferHolder = (65535 << 11)/(4095 - skewAverage); // 1/(T2*2)
 			position = myfix16_mul(holdPosition, attackTransferHolder);
 
 		} else if (!(HOLD_AT_B)) {
-			releaseTransferHolder = (65535 << 11)/(skewMod); // 1/((1-T2)*2)
+			releaseTransferHolder = (65535 << 11)/(skewAverage); // 1/((1-T2)*2)
 			position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
 
 		}
@@ -823,124 +847,6 @@ void getAveragesDrum(void) {
 
 }
 
-
-
-
-//void implementButter10(void) {
-//
-//
-//#define a0 65536
-//#define a1 262144
-//#define a2 393216
-//
-//#define b0 -172925
-//#define b1 -181490
-//#define b2 -87771
-//#define b3 -16372
-//#define GAIN 134166020
-//
-//	static buffer32 inputs;
-//	static buffer32 outputs;
-//
-//
-//	write32(&inputs, myfix24_mul(GAIN, out));
-//
-//	out =
-//		(myfix24_mul(readn32(&inputs, 4) + readn32(&inputs, 0), a0) +
-//		myfix24_mul(readn32(&inputs, 3) + readn32(&inputs, 1), a1) +
-//		myfix24_mul(readn32(&inputs, 2), a2) +
-//
-//		myfix24_mul(readn32(&outputs, 0), b0) +
-//		myfix24_mul(readn32(&outputs, 1), b1) +
-//		myfix24_mul(readn32(&outputs, 2), b2) +
-//		myfix24_mul(readn32(&outputs, 3), b3)) << 1;
-//
-//
-//	if (out > 4095) {
-//		out = 4095;
-//	}
-//	if (out < 0) {
-//		out = 0;
-//	}
-//
-//
-//	write32(&outputs, out);
-//
-//
-////
-////
-//////20k
-////#define a0 65536
-////#define a1 655360
-////#define a2 2949120
-////#define a3 7864320
-////#define a4 13762560
-////#define a5 16515072
-////#define a6 13762560
-////#define a7 7864320
-////#define a8 2949120
-////#define a9 655360
-////#define a10 65536
-////#define b0 -436164
-////#define b1 -1332764
-////#define b2 -2455439
-////#define b3 -3014375
-////#define b4 -2572360
-////#define b5 -1543337
-////#define b6 -642126
-////#define b7 -177149
-////#define b8 -29239
-////#define b9 -2191
-////
-////#define GAIN 3067671
-////
-//////20k
-//////#define a0 29
-//////#define a1 57
-//////#define a2 29
-//////#define b0 -33492315
-//////#define b1 16715214
-////
-////	static buffer32 inputs;
-////	static buffer32 outputs;
-////
-////
-////	write32(&inputs, myfix24_mul(GAIN, out));
-////
-////	out =
-////		myfix16_mul(readn32(&inputs, 10) + readn32(&inputs, 0), a0) +
-////		myfix16_mul(readn32(&inputs, 9) + readn32(&inputs, 1), a1) +
-////		myfix16_mul(readn32(&inputs, 8) + readn32(&inputs, 2), a2) +
-////		myfix16_mul(readn32(&inputs, 7) + readn32(&inputs, 3), a3) +
-////		myfix16_mul(readn32(&inputs, 6) + readn32(&inputs, 4), a4) +
-////		myfix16_mul(readn32(&inputs, 5), a5) +
-////		myfix16_mul(readn32(&outputs, 0), b0) +
-////		myfix16_mul(readn32(&outputs, 1), b1) +
-////		myfix16_mul(readn32(&outputs, 2), b2) +
-////		myfix16_mul(readn32(&outputs, 3), b3) +
-////		myfix16_mul(readn32(&outputs, 4), b4) +
-////		myfix16_mul(readn32(&outputs, 5), b5) +
-////		myfix16_mul(readn32(&outputs, 6), b6) +
-////		myfix16_mul(readn32(&outputs, 7), b7) +
-////		myfix16_mul(readn32(&outputs, 8), b8) +
-////		myfix16_mul(readn32(&outputs, 9), b9);
-////
-////	if (out > 4095) {
-////		out = 4095;
-////	}
-////	if (out < 0) {
-////		out = 0;
-////	}
-////
-////
-////	write32(&outputs, out);
-////
-//
-//
-//
-//
-//}
-
 //our 16 bit fixed point multiply and linear interpolate functions
 
 int myfix16_mul(int in0, int in1) {
@@ -964,8 +870,7 @@ int myfix16_lerp(int in0, int in1, uint16_t inFract) {
 }
 
 void getSampleCubicSpline(uint32_t phase) {
-
-#define PRECALC1_6 2796202
+#define PRECALC1_6 2796203
 
 
 	// in this function, we use our phase position to get the sample to give to our dacs using "biinterpolation"
@@ -985,22 +890,15 @@ void getSampleCubicSpline(uint32_t phase) {
 	uint32_t rFvalue2;
 	uint32_t lFvalue3;
 	uint32_t rFvalue3;
-	uint32_t lFvalue4;
-	uint32_t rFvalue4;
-	uint32_t lFvalue5;
-	uint32_t rFvalue5;
-	uint32_t interp0; // results of those two interpolations
+	uint32_t interp0;
 	uint32_t interp1;
-	uint32_t interp2; // results of those two interpolations
+	uint32_t interp2;
 	uint32_t interp3;
-	uint32_t interp4;
-	uint32_t interp5;
-	uint32_t a0; // results of those two interpolations
+	uint32_t a0;
 	uint32_t a1;
-	uint32_t a2; // results of those two interpolations
+	uint32_t a2;
 	uint32_t a3;
-	uint32_t a4;
-	uint32_t a5;
+
 
 
 	// the above is used to perform our bi-interpolation
@@ -1023,16 +921,6 @@ void getSampleCubicSpline(uint32_t phase) {
 		morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
 
 		//get values from the relevant wavetables
-		// this is a funny looking method of referencing elements in a two dimensional array
-		// we need to do it like this because our struct contains a pointer to the array being used
-		// i feel like this could be optimized if we are loading from flash
-//		family = currentFamily.attackFamily + LnFamily;
-//		Lnvalue1 = *(*(family) + LnSample);
-//		Rnvalue1 = *(*(family) + LnSample + 1);
-//		Lnvalue2 = *(*(family + 1) + LnSample);
-//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
-
-		//attempt at optimizing using fixed size array on the heap
 
 
 		lFvalue1 = attackHoldArray[LnFamily][LnSample];
@@ -1045,7 +933,7 @@ void getSampleCubicSpline(uint32_t phase) {
 			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample];
 			lFvalue3 = attackHoldArray[LnFamily][LnSample + 2];
 			rFvalue3 = attackHoldArray[LnFamily + 1][LnSample + 2];
-		} else if (LnSample >= ((span >> 16) - 1)) {
+		} else if (LnSample >= (span >> 16) - 1) {
 			lFvalue0 = attackHoldArray[LnFamily][LnSample - 1];
 			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample - 1];
 			lFvalue3 = attackHoldArray[LnFamily][LnSample + 1];
@@ -1081,8 +969,7 @@ void getSampleCubicSpline(uint32_t phase) {
 								myfix16_mul(a3, myfix24_mul(interp3, PRECALC1_6))) >> 3;
 
 				if (out > 4095){out = 4095;}
-				if (out < 0){out = 0;}
-
+				else if (out < 0){out = 0;}
 
 				//we use the interpolated nearest neighbor samples to determine the sign of rate of change
 				//aka, are we moving towrds a, or towards b
@@ -1139,13 +1026,6 @@ void getSampleCubicSpline(uint32_t phase) {
 		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
 
 		//pull the values from our "release family"
-//		family = currentFamily.releaseFamily + LnFamily;
-//		Lnvalue1 = *(*(family) + LnSample);
-//		Rnvalue1 = *(*(family) + LnSample + 1);
-//		Lnvalue2 = *(*(family + 1) + LnSample);
-//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
-
-
 
 		lFvalue1 = releaseHoldArray[LnFamily][LnSample];
 		lFvalue2 = releaseHoldArray[LnFamily][LnSample + 1];
@@ -1193,7 +1073,7 @@ void getSampleCubicSpline(uint32_t phase) {
 								myfix16_mul(a3, myfix24_mul(interp3, PRECALC1_6))) >> 3;
 
 				if (out > 4095){out = 4095;}
-				if (out < 0){out = 0;}
+				else if (out < 0){out = 0;}
 
 				//we use the interpolated nearest neighbor samples to determine the sign of rate of change
 				//aka, are we moving towrds a, or towards b
@@ -1229,6 +1109,354 @@ void getSampleCubicSpline(uint32_t phase) {
 						}
 					}
 				}
+		if (RGB_ON) {
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
+		}
+	}
+
+
+}
+
+void getSampleQuinticSpline(uint32_t phase) {
+
+#define PRECALC1_6 2796202
+
+
+	// in this function, we use our phase position to get the sample to give to our dacs using "biinterpolation"
+	// essentially, we need to get 4 sample values and two "fractional arguments" (where are we at in between those sample values)
+	// think of locating a position on a rectangular surface based upon how far you are between the bottom and top and how far you are between the left and right sides
+	// that is basically what we are doing here
+
+	uint32_t LnSample; // indicates the nearest neighbor to our position in the wavetable
+	uint32_t LnFamily; // indicates the nearest neighbor (wavetable) to our morph value in the family
+	uint32_t waveFrac; // indicates the factional distance between our nearest neighbors in the wavetable
+	uint32_t morphFrac; // indicates the factional distance between our nearest neighbors in the family
+	uint32_t lFvalue0; // sample values used by our two interpolations in
+	uint32_t rFvalue0;
+	uint32_t lFvalue1;
+	uint32_t rFvalue1;
+	uint32_t lFvalue2;
+	uint32_t rFvalue2;
+	uint32_t lFvalue3;
+	uint32_t rFvalue3;
+	uint32_t lFvalue4;
+	uint32_t rFvalue4;
+	uint32_t lFvalue5;
+	uint32_t rFvalue5;
+	uint32_t interp0; // results of those two interpolations
+	uint32_t interp1;
+	uint32_t interp2; // results of those two interpolations
+	uint32_t interp3;
+	uint32_t interp4;
+	uint32_t interp5;
+	int calc;
+
+
+
+	// the above is used to perform our bi-interpolation
+	// essentially, interp 1 and interp 2 are the interpolated values in the two adjacent wavetables per the playback position
+	// out is the "crossfade" between those according to morphFrac
+
+
+
+	if (phase == 0) {
+		// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
+		//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
+		LnSample = (position >> 16);
+
+		//bit shifting to divide by the correct power of two takes a 12 bit number (our fixMorph) and returns the a quotient in the range of our family size
+		LnFamily = fixMorph >> morphBitShiftRight;
+
+		//determine the fractional part of our phase position by masking off the integer
+		waveFrac = 0x0000FFFF & position;
+		// we have to calculate the fractional portion and get it up to full scale
+		morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
+
+		//get values from the relevant wavetables
+		// this is a funny looking method of referencing elements in a two dimensional array
+		// we need to do it like this because our struct contains a pointer to the array being used
+		// i feel like this could be optimized if we are loading from flash
+//		family = currentFamily.attackFamily + LnFamily;
+//		Lnvalue1 = *(*(family) + LnSample);
+//		Rnvalue1 = *(*(family) + LnSample + 1);
+//		Lnvalue2 = *(*(family + 1) + LnSample);
+//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
+
+		//attempt at optimizing using fixed size array on the heap
+
+
+		lFvalue2 = attackHoldArray[LnFamily][LnSample];
+		lFvalue3 = attackHoldArray[LnFamily][LnSample + 1];
+		rFvalue2 = attackHoldArray[LnFamily + 1][LnSample];
+		rFvalue3 = attackHoldArray[LnFamily + 1][LnSample + 1];
+
+		switch (LnSample) {
+		case 0:
+			lFvalue0 = releaseHoldArray[LnFamily][1];
+			rFvalue0 = releaseHoldArray[LnFamily + 1][1];
+			lFvalue1 = releaseHoldArray[LnFamily][0];
+			rFvalue1 = releaseHoldArray[LnFamily + 1][0];
+			lFvalue4 = attackHoldArray[LnFamily][LnSample + 2];
+			rFvalue4 = attackHoldArray[LnFamily + 1][LnSample + 2];
+			lFvalue5 = attackHoldArray[LnFamily][LnSample + 3];
+			rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 3];
+			break;
+
+		case 1:
+			lFvalue0 = releaseHoldArray[LnFamily][0];
+			rFvalue0 = releaseHoldArray[LnFamily + 1][0];
+			lFvalue1 = attackHoldArray[LnFamily][0];
+			rFvalue1 = attackHoldArray[LnFamily + 1][0];
+			lFvalue4 = attackHoldArray[LnFamily][LnSample + 2];
+			rFvalue4 = attackHoldArray[LnFamily + 1][LnSample + 2];
+			lFvalue5 = attackHoldArray[LnFamily][LnSample + 3];
+			rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 3];
+			break;
+
+		default: break;
+		}
+
+		if (LnSample == ((span >> 16) - 1)) {
+			lFvalue0 = attackHoldArray[LnFamily][LnSample - 2];
+			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample - 2];
+			lFvalue1 = attackHoldArray[LnFamily][LnSample - 1];
+			rFvalue1 = attackHoldArray[LnFamily + 1][LnSample - 1];
+			lFvalue4 = attackHoldArray[LnFamily][LnSample + 2];
+			rFvalue4 = attackHoldArray[LnFamily + 1][LnSample + 2];
+			lFvalue5 = attackHoldArray[LnFamily][LnSample + 2];
+			rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 2];
+		} else if (LnSample == (span >> 16)) {
+			lFvalue0 = attackHoldArray[LnFamily][LnSample - 2];
+			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample - 2];
+			lFvalue1 = attackHoldArray[LnFamily][LnSample - 1];
+			rFvalue1 = attackHoldArray[LnFamily + 1][LnSample - 1];
+			lFvalue4 = attackHoldArray[LnFamily][LnSample + 1];
+			rFvalue4 = attackHoldArray[LnFamily + 1][LnSample + 1];
+			lFvalue5 = attackHoldArray[LnFamily][LnSample + 1];
+			rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 1];
+		} else {
+			lFvalue0 = attackHoldArray[LnFamily][LnSample - 2];
+			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample - 2];
+			lFvalue1 = attackHoldArray[LnFamily][LnSample - 1];
+			rFvalue1 = attackHoldArray[LnFamily + 1][LnSample - 1];
+			lFvalue4 = attackHoldArray[LnFamily][LnSample + 2];
+			rFvalue4 = attackHoldArray[LnFamily + 1][LnSample + 2];
+			lFvalue5 = attackHoldArray[LnFamily][LnSample + 3];
+			rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 3];
+		}
+
+
+		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
+		interp0 = myfix16_lerp(lFvalue0, rFvalue0, morphFrac);
+		interp1 = myfix16_lerp(lFvalue1, rFvalue1, morphFrac);
+		interp2 = myfix16_lerp(lFvalue2, rFvalue2, morphFrac);
+		interp3 = myfix16_lerp(lFvalue3, rFvalue3, morphFrac);
+		interp4 = myfix16_lerp(lFvalue4, rFvalue4, morphFrac);
+		interp5 = myfix16_lerp(lFvalue5, rFvalue5, morphFrac);
+
+		 out = interp2
+			 + myfix24_mul(699051, myfix16_mul(waveFrac, ((interp3-interp1)*16 + (interp0-interp4)*2
+				+ myfix16_mul(waveFrac, ((interp3+interp1)*16 - interp0 - interp2*30 - interp4
+					+ myfix16_mul(waveFrac, (interp3*66 - interp2*70 - interp4*33 + interp1*39 + interp5*7 - interp0*9
+						+ myfix16_mul(waveFrac, ( interp2*126 - interp3*124 + interp4*61 - interp1*64 - interp5*12 + interp0*13
+							+ myfix16_mul(waveFrac, ((interp3-interp2)*50 + (interp1-interp4)*25 + (interp5-interp0) * 5))
+						))
+					))
+				))
+			))
+		);
+
+		 out = out >> 3;
+
+				if (out > 4095){out = 4095;}
+				else if (out < 0){out = 0;}
+
+
+				//we use the interpolated nearest neighbor samples to determine the sign of rate of change
+				//aka, are we moving towrds a, or towards b
+				//we use this to generate our gate output
+				if (interp2 < interp3) {
+					EXPAND_GATE_HIGH
+					REV2_GATE_HIGH
+					if (DELTAB) {
+						BLOGIC_HIGH
+						if (RGB_ON) {
+							LEDD_ON
+						}
+					}
+					if (DELTAA) {
+						ALOGIC_LOW
+						if (RGB_ON) {
+							LEDC_OFF
+						}
+					}
+				} else if (interp3 < interp2) {
+					EXPAND_GATE_LOW
+					REV2_GATE_LOW
+					if (DELTAB) {
+						BLOGIC_LOW
+						if (RGB_ON) {
+							LEDD_OFF
+						}
+					}
+					if (DELTAA) {
+						ALOGIC_HIGH
+						if (RGB_ON) {
+							LEDC_ON
+						}
+					}
+				}
+
+		if (RGB_ON) { //if the runtime display is on, show our mode
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
+		}
+	}
+
+	else {
+
+		//this section is similar, but subtly different to implement our "release"
+		// notice, we reflect position back over span
+		LnSample = ((spanx2 - position) >> 16);
+
+		LnFamily = fixMorph >> morphBitShiftRight;
+
+		// here, again, we use that reflected value
+		waveFrac = 0x0000FFFF & (spanx2 - position);
+		//
+		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
+
+		//pull the values from our "release family"
+//		family = currentFamily.releaseFamily + LnFamily;
+//		Lnvalue1 = *(*(family) + LnSample);
+//		Rnvalue1 = *(*(family) + LnSample + 1);
+//		Lnvalue2 = *(*(family + 1) + LnSample);
+//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
+
+
+		lFvalue2 = releaseHoldArray[LnFamily][LnSample];
+		lFvalue3 = releaseHoldArray[LnFamily][LnSample + 1];
+		rFvalue2 = releaseHoldArray[LnFamily + 1][LnSample];
+		rFvalue3 = releaseHoldArray[LnFamily + 1][LnSample + 1];
+
+		switch (LnSample) {
+		case 0:
+			lFvalue0 = attackHoldArray[LnFamily][1];
+			rFvalue0 = attackHoldArray[LnFamily + 1][1];
+			lFvalue1 = attackHoldArray[LnFamily][0];
+			rFvalue1 = attackHoldArray[LnFamily + 1][0];
+			lFvalue4 = releaseHoldArray[LnFamily][LnSample + 2];
+			rFvalue4 = releaseHoldArray[LnFamily + 1][LnSample + 2];
+			lFvalue5 = releaseHoldArray[LnFamily][LnSample + 3];
+			rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 3];
+			break;
+
+		case 1:
+			lFvalue0 = attackHoldArray[LnFamily][0];
+			rFvalue0 = attackHoldArray[LnFamily + 1][0];
+			lFvalue1 = releaseHoldArray[LnFamily][0];
+			rFvalue1 = releaseHoldArray[LnFamily + 1][0];
+			lFvalue4 = releaseHoldArray[LnFamily][LnSample + 2];
+			rFvalue4 = releaseHoldArray[LnFamily + 1][LnSample + 2];
+			lFvalue5 = releaseHoldArray[LnFamily][LnSample + 3];
+			rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 3];
+			break;
+
+		default: break;
+		}
+
+		if (LnSample == ((span >> 16) - 1)) {
+			lFvalue0 = releaseHoldArray[LnFamily][LnSample - 2];
+			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample - 2];
+			lFvalue1 = releaseHoldArray[LnFamily][LnSample - 1];
+			rFvalue1 = releaseHoldArray[LnFamily + 1][LnSample - 1];
+			lFvalue4 = releaseHoldArray[LnFamily][LnSample + 2];
+			rFvalue4 = releaseHoldArray[LnFamily + 1][LnSample + 2];
+			lFvalue5 = releaseHoldArray[LnFamily][LnSample + 2];
+			rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 2];
+		} else if (LnSample == (span >> 16)) {
+			lFvalue0 = releaseHoldArray[LnFamily][LnSample - 2];
+			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample - 2];
+			lFvalue1 = releaseHoldArray[LnFamily][LnSample - 1];
+			rFvalue1 = releaseHoldArray[LnFamily + 1][LnSample - 1];
+			lFvalue4 = releaseHoldArray[LnFamily][LnSample + 1];
+			rFvalue4 = releaseHoldArray[LnFamily + 1][LnSample + 1];
+			lFvalue5 = releaseHoldArray[LnFamily][LnSample + 1];
+			rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 1];
+		} else {
+			lFvalue0 = releaseHoldArray[LnFamily][LnSample - 2];
+			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample - 2];
+			lFvalue1 = releaseHoldArray[LnFamily][LnSample - 1];
+			rFvalue1 = releaseHoldArray[LnFamily + 1][LnSample - 1];
+			lFvalue4 = releaseHoldArray[LnFamily][LnSample + 2];
+			rFvalue4 = releaseHoldArray[LnFamily + 1][LnSample + 2];
+			lFvalue5 = releaseHoldArray[LnFamily][LnSample + 3];
+			rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 3];
+		}
+
+
+		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
+		interp0 = myfix16_lerp(lFvalue0, rFvalue0, morphFrac);
+		interp1 = myfix16_lerp(lFvalue1, rFvalue1, morphFrac);
+		interp2 = myfix16_lerp(lFvalue2, rFvalue2, morphFrac);
+		interp3 = myfix16_lerp(lFvalue3, rFvalue3, morphFrac);
+		interp4 = myfix16_lerp(lFvalue4, rFvalue4, morphFrac);
+		interp5 = myfix16_lerp(lFvalue5, rFvalue5, morphFrac);
+
+
+		 out = interp2
+			 + myfix24_mul(699051, myfix16_mul(waveFrac, ((interp3-interp1)*16 + (interp0-interp4)*2
+				+ myfix16_mul(waveFrac, ((interp3+interp1)*16 - interp0 - interp2*30 - interp4
+					+ myfix16_mul(waveFrac, (interp3*66 - interp2*70 - interp4*33 + interp1*39 + interp5*7 - interp0*9
+						+ myfix16_mul(waveFrac, ( interp2*126 - interp3*124 + interp4*61 - interp1*64 - interp5*12 + interp0*13
+							+ myfix16_mul(waveFrac, ((interp3-interp2)*50 + (interp1-interp4)*25 + (interp5-interp0) * 5))
+						))
+					))
+				))
+			))
+		);
+
+		 out = out >> 3;
+
+
+		if (out > 4095){out = 4095;}
+		if (out < 0){out = 0;}
+
+		//we use the interpolated nearest neighbor samples to determine the sign of rate of change
+		//aka, are we moving towrds a, or towards b
+		//we use this to generate our gate output
+		if (interp1 < interp2) {
+			EXPAND_GATE_HIGH
+			REV2_GATE_HIGH
+			if (DELTAB) {
+				BLOGIC_HIGH
+				if (RGB_ON) {
+					LEDD_ON
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_LOW
+				if (RGB_ON) {
+					LEDC_OFF
+				}
+			}
+		} else if (interp1 < interp2) {
+			EXPAND_GATE_LOW
+			REV2_GATE_LOW
+			if (DELTAB) {
+				BLOGIC_LOW
+				if (RGB_ON) {
+					LEDD_OFF
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_HIGH
+				if (RGB_ON) {
+					LEDC_ON
+				}
+			}
+		}
 		if (RGB_ON) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);

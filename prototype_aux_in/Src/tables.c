@@ -171,7 +171,7 @@ Family newBounce = {
 void fillFamilyArray(void) {
 
 	familyArray[audio][0] = tenor257;
-	familyArray[audio][1] = sawPWM;
+	familyArray[audio][1] = algerian;
 	familyArray[audio][2] = impevens;
 	familyArray[audio][3] = linwavefold_257;
 	familyArray[audio][4] = skipSaw;

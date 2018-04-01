@@ -102,7 +102,8 @@ typedef struct buffer{
 void write(buffer*,int);
 int readn(buffer*, int);
 
-
+uint32_t time1CVAverage;
+uint32_t time1KnobAverage;
 
 /* USER CODE END Includes */
 

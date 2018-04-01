@@ -24,7 +24,7 @@ enum sampleHoldModeTypes sampleHoldMode;
 
 uint32_t time2Average;
 uint32_t morphKnobAverage;
-uint32_t morphCVAverage;
+
 
 void getSample(uint32_t) __attribute__((section("ccmram")));
 void getSampleLaGrange(uint32_t);
@@ -36,6 +36,7 @@ void getAverages(void)  __attribute__((section("ccmram")));
 void dacISR(void) {
 
 	uint32_t storePhase;
+
 
 	// write the current contour generator value to dac1, and its inverse to dac2 (crossfading)
 
@@ -60,11 +61,13 @@ void dacISR(void) {
 	//PROFILING_EVENT("Phase Acquired");
 	//calculate morph amount per sample as a function of inc and the morph knob and CV (move to the interrupt?)
 
-	if ((32767 - morphCVAverage) >= 16384) {
-		fixMorph = myfix16_lerp(morphKnobAverage, 4095, ((32767 - morphCVAverage) - 16384) << 2);
+
+
+	if ((32767 - *getMorph) >= 16384) {
+		fixMorph = myfix16_lerp(morphKnobAverage, 4095, ((32767 - *getMorph) - 16384) << 2);
 	}
 	else {
-		fixMorph = myfix16_lerp(0, morphKnobAverage, (32767 - morphCVAverage) << 2);
+		fixMorph = myfix16_lerp(0, morphKnobAverage, (32767 - *getMorph) << 2);
 	}
 
 //		fixMorph = 1000;
@@ -73,13 +76,13 @@ void dacISR(void) {
 
 	if (position < span) {
 		RESET_PHASE_STATE;
-		//getSampleLaGrange(0);
-		getSample(0);
+		getSampleLaGrange(0);
+		//getSample(0);
 	}
 	if (position >= span) {
 		SET_PHASE_STATE;
-//			getSampleLaGrange(1);
-		getSample(1);
+			getSampleLaGrange(1);
+		//getSample(1);
 	}
 //		PROFILING_EVENT("Sampling Complete");
 	// if we transition from one phase state to another, enable the transition handler interrupt
@@ -136,11 +139,6 @@ void getSample(uint32_t phase) {
 		// we need to do it like this because our struct contains a pointer to the array being used
 		// i feel like this could be optimized if we are loading from flash
 
-//		family = currentFamily.attackFamily + LnFamily;
-//		Lnvalue1 = *(*(family) + LnSample);
-//		Rnvalue1 = *(*(family) + LnSample + 1);
-//		Lnvalue2 = *(*(family + 1) + LnSample);
-//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
 
 		// attempt at optimizing using fixed size array on the heap
 		Lnvalue1 = attackHoldArray[LnFamily][LnSample];
@@ -207,14 +205,7 @@ void getSample(uint32_t phase) {
 		// here, again, we use that reflected value
 		waveFrac = 0x0000FFFF & (spanx2 - position);
 		//
-		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
-
-		// pull the values from our "release family"
-//		family = currentFamily.releaseFamily + LnFamily;
-//		Lnvalue1 = *(*(family) + LnSample);
-//		Rnvalue1 = *(*(family) + LnSample + 1);
-//		Lnvalue2 = *(*(family + 1) + LnSample);
-//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
+		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);;
 
 
 		//attempt at optimizing using fixed size array on the heap
@@ -276,7 +267,7 @@ void getSample(uint32_t phase) {
 
 void getSampleLaGrange(uint32_t phase) {
 
-#define PRECALC1_6 2796202
+#define PRECALC1_6 2796203
 
 
 	// in this function, we use our phase position to get the sample to give to our dacs using "biinterpolation"
@@ -296,14 +287,16 @@ void getSampleLaGrange(uint32_t phase) {
 	uint32_t rFvalue2;
 	uint32_t lFvalue3;
 	uint32_t rFvalue3;
-	uint32_t interp0; // results of those two interpolations
+	uint32_t interp0;
 	uint32_t interp1;
-	uint32_t interp2; // results of those two interpolations
+	uint32_t interp2;
 	uint32_t interp3;
-	uint32_t a0; // results of those two interpolations
+	uint32_t a0;
 	uint32_t a1;
-	uint32_t a2; // results of those two interpolations
+	uint32_t a2;
 	uint32_t a3;
+
+
 
 	// the above is used to perform our bi-interpolation
 	// essentially, interp 1 and interp 2 are the interpolated values in the two adjacent wavetables per the playback position
@@ -325,16 +318,6 @@ void getSampleLaGrange(uint32_t phase) {
 		morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
 
 		//get values from the relevant wavetables
-		// this is a funny looking method of referencing elements in a two dimensional array
-		// we need to do it like this because our struct contains a pointer to the array being used
-		// i feel like this could be optimized if we are loading from flash
-//		family = currentFamily.attackFamily + LnFamily;
-//		Lnvalue1 = *(*(family) + LnSample);
-//		Rnvalue1 = *(*(family) + LnSample + 1);
-//		Lnvalue2 = *(*(family + 1) + LnSample);
-//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
-
-		//attempt at optimizing using fixed size array on the heap
 
 
 		lFvalue1 = attackHoldArray[LnFamily][LnSample];
@@ -345,7 +328,11 @@ void getSampleLaGrange(uint32_t phase) {
 		if (LnSample == 0) {
 			lFvalue0 = attackHoldArray[LnFamily][LnSample];
 			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample];
-		} else if (LnSample >= ((span >> 16) - 1)) {
+			lFvalue3 = attackHoldArray[LnFamily][LnSample + 2];
+			rFvalue3 = attackHoldArray[LnFamily + 1][LnSample + 2];
+		} else if (LnSample >= (span >> 16) - 1) {
+			lFvalue0 = attackHoldArray[LnFamily][LnSample - 1];
+			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample - 1];
 			lFvalue3 = attackHoldArray[LnFamily][LnSample + 1];
 			rFvalue3 = attackHoldArray[LnFamily + 1][LnSample + 1];
 		} else {
@@ -379,7 +366,7 @@ void getSampleLaGrange(uint32_t phase) {
 								myfix16_mul(a3, myfix24_mul(interp3, PRECALC1_6))) >> 3;
 
 				if (out > 4095){out = 4095;}
-				if (out < 0){out = 0;}
+				else if (out < 0){out = 0;}
 
 
 				//we use the interpolated nearest neighbor samples to determine the sign of rate of change
@@ -414,7 +401,6 @@ void getSampleLaGrange(uint32_t phase) {
 						}
 					}
 				}
-
 		if (RGB_ON) { //if the runtime display is on, show our mode
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
@@ -435,13 +421,6 @@ void getSampleLaGrange(uint32_t phase) {
 		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
 
 		//pull the values from our "release family"
-//		family = currentFamily.releaseFamily + LnFamily;
-//		Lnvalue1 = *(*(family) + LnSample);
-//		Rnvalue1 = *(*(family) + LnSample + 1);
-//		Lnvalue2 = *(*(family + 1) + LnSample);
-//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
-
-
 
 		lFvalue1 = releaseHoldArray[LnFamily][LnSample];
 		lFvalue2 = releaseHoldArray[LnFamily][LnSample + 1];
@@ -451,7 +430,11 @@ void getSampleLaGrange(uint32_t phase) {
 		if (LnSample == 0) {
 			lFvalue0 = releaseHoldArray[LnFamily][LnSample];
 			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample];
+			lFvalue3 = releaseHoldArray[LnFamily][LnSample + 2];
+			rFvalue3 = releaseHoldArray[LnFamily + 1][LnSample + 2];
 		} else if (LnSample >= ((span >> 16) - 1)) {
+			lFvalue0 = releaseHoldArray[LnFamily][LnSample - 1];
+			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample - 1];
 			lFvalue3 = releaseHoldArray[LnFamily][LnSample + 1];
 			rFvalue3 = releaseHoldArray[LnFamily + 1][LnSample + 1];
 		} else {
@@ -485,7 +468,7 @@ void getSampleLaGrange(uint32_t phase) {
 								myfix16_mul(a3, myfix24_mul(interp3, PRECALC1_6))) >> 3;
 
 				if (out > 4095){out = 4095;}
-				if (out < 0){out = 0;}
+				else if (out < 0){out = 0;}
 
 				//we use the interpolated nearest neighbor samples to determine the sign of rate of change
 				//aka, are we moving towrds a, or towards b
@@ -529,7 +512,6 @@ void getSampleLaGrange(uint32_t phase) {
 
 }
 
-
 //defines an increment then checks the trigger mode, making the appropriate changes to playback when the oscillator is retriggered
 
 void getPhase(void) {
@@ -537,11 +519,16 @@ void getPhase(void) {
 	static int lastCV;
 	int attackTransferHolder;
 	int releaseTransferHolder;
+	static uint32_t hysterisis;
+	static uint32_t skewSum;
+	static buffer skewBuffer;
+	uint32_t skewAverage;
 
 	if (controlScheme == 3) {
 
-		position = position + ((time2CV - lastCV) << 8);
-		lastCV = time2CV;
+		position = position + ((time2Average - lastCV) << 6);
+		lastCV = time2Average;
+		if (position < 0) {position = 0;}
 
 	}
 
@@ -561,18 +548,32 @@ void getPhase(void) {
 
 			}
 
+			time2Average = time2Average + hysterisis;
+
 			if (time2Average > 4094) {
 				time2Average = 4094;
 			} else if (time2Average < 1) {
 				time2Average = 1;
 			}
 
-			if (holdPosition < (myfix16_mul(spanx2, (4095 - time2Average) << 4))) {
-				attackTransferHolder = (65535 << 11)/(4095 - time2Average); // 1/(T2*2)
+			if ((time2Average - (time2Average >> 6)) > 32) {hysterisis = -24;}
+			else if ((time2Average - (time2Average >> 6)) < 32) {hysterisis = 24;}
+			else {hysterisis = 0;}
+			time2Average = time2Average & 0b111111111111111111111111100000;
+
+
+			skewSum = (skewSum + time2Average- readn(&skewBuffer, 32));
+
+			skewAverage = skewSum >> 5;
+
+			write(&skewBuffer, time2Average);
+
+			if (holdPosition < (myfix16_mul(spanx2, (4095 - skewAverage) << 4))) {
+				attackTransferHolder = (65535 << 11)/(4095 - skewAverage); // 1/(T2*2)
 				position = myfix16_mul(holdPosition, attackTransferHolder);
 	//			position = 2 * holdPosition;
 			} else {
-				releaseTransferHolder = (65535 << 11)/(time2Average); // 1/((1-T2)*2)
+				releaseTransferHolder = (65535 << 11)/(skewAverage); // 1/((1-T2)*2)
 				position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
 	//			position = myfix16_mul(holdPosition, 43690) + spanx2 - myfix16_mul(spanx2, 43690);
 			}
@@ -850,23 +851,36 @@ int readn(buffer* buffer, int Xn) {
 void getAverages(void) {
 
 	static buffer time2CVBuffer;
+	static buffer time1CVBuffer;
+	static buffer time1KnobBuffer;
 	static buffer morphCVBuffer;
 	static buffer morphKnobBuffer;
 	static uint32_t morphKnobSum;
 	static uint32_t morphCVSum;
+	static uint32_t morphCVLongSum;
 	static uint32_t time2Sum;
+	static uint32_t time1CVSum;
+	static uint32_t time1KnobSum;
 
-	write(&time2CVBuffer, time2CV);
+
 	time2Sum = time2Sum + time2CV- readn(&time2CVBuffer, 31);
+	time1CVSum = time1CVSum + time1CV- readn(&time1CVBuffer, 31);
+	time1KnobSum = time1KnobSum + time1Knob- readn(&time1KnobBuffer, 255);
 	morphKnobSum = morphKnobSum + morphKnob- readn(&morphKnobBuffer, 255);
 	morphCVSum = (morphCVSum + morphCV- readn(&morphCVBuffer, 31));
+	morphCVLongSum = (morphCVLongSum + morphCV- readn(&morphCVBuffer, 255));
 
 	morphKnobAverage = morphKnobSum >> 8;
 	morphCVAverage = morphCVSum >> 2;
 	time2Average = time2Sum >> 5;
+	time1CVAverage = time1CVSum >> 5;
+	time1KnobAverage = time1KnobSum >> 8;
+	morphCVLongAverage = morphCVLongSum >> 5;
 
 	write(&morphCVBuffer, morphCV);
-
+	write(&time2CVBuffer, time2CV);
+	write(&time1CVBuffer, time1CV);
+	write(&time1KnobBuffer, time1Knob);
 	write(&morphKnobBuffer, morphKnob);
 
 }

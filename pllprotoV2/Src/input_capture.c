@@ -40,6 +40,7 @@ void inputCapture(void) {
 
 
 
+
 	if ((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET) {
 
 		//get the timer value that which was reset on last rising edge
@@ -55,24 +56,24 @@ void inputCapture(void) {
 		currentScale = scaleGroup[scaleType];
 
 		if (currentScale.oneVoltOct == 0) {
-			if ((4095 - time1CV) >= 2048) {
-				noteIndex = (myfix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) + hysterisis;
+			if ((4095 - time1CVAverage) >= 2048) {
+				noteIndex = (myfix16_lerp(time1KnobAverage, 4095, ((4095 - time1CVAverage) - 2048) << 5));
 			}
 			else {
-				noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) + hysterisis;
+				noteIndex = (myfix16_lerp(0, time1KnobAverage, (4095 - time1CVAverage) << 5));
 			}
 		} else {
-			int holdT1 = (4095 - time1CV) + (time1Knob >> 2) -1390;
+			int holdT1 = (4095 - time1CVAverage) + (time1KnobAverage >> 2) -1390  + hysterisis;
 			if (holdT1 > 4095) {
 				holdT1 = 4095;
 			} else if (holdT1 < 0) {
 				holdT1 = 0;
 			}
-			noteIndex = holdT1 + hysterisis;
+			noteIndex = holdT1;
 		}
 
-		if ((noteIndex - (noteIndex >> 5)) > 64) {hysterisis = -24;}
-		else if ((noteIndex - (noteIndex >> 5)) < 64) {hysterisis = 24;}
+		if ((noteIndex - (noteIndex >> 5)) > 80 ) {hysterisis = -48;}
+		else if ((noteIndex - (noteIndex >> 5)) < 48) {hysterisis = 48;}
 		else {hysterisis = 0;}
 		noteIndex = noteIndex >> 5;
 
@@ -169,11 +170,11 @@ void inputCapture(void) {
 				// if we are behind the phase of the clock, go faster, otherwise, go slower
 				if (position > span) {
 
-					pllNudge = (spanx2 - position) << 4;
+					pllNudge = (spanx2 - position) << 6;
 
 				} else {
 
-					pllNudge = -(position) << 4;
+					pllNudge = -(position) << 6;
 
 				}
 
@@ -189,8 +190,11 @@ void inputCapture(void) {
 
 
 
-		attackInc = (((span << 7) + pllNudge) / gateOnCount) << 2;
-		releaseInc = (((span << 7) + pllNudge) / (periodCount - gateOnCount)) << 2;
+		attackInc = (((span << 7) + pllNudge) / gateOnCount) << 1;
+		releaseInc = (((span << 7) + pllNudge) / (periodCount - gateOnCount)) << 1;
+
+		attackInc = attackInc * 3;
+		releaseInc = releaseInc * 3;
 
 
 
@@ -199,8 +203,9 @@ void inputCapture(void) {
 		releaseInc = myfix48_mul(releaseInc, fracMultiplier) + myfix16_mul(releaseInc, intMultiplier);
 
 
-		if (attackInc >= span - 1) {attackInc = span - 1;}
-		if (releaseInc >= span - 1) {releaseInc = span - 1;}
+		if (attackInc < 5000) {getMorph = &morphCVLongAverage;}
+		else if (releaseInc < 5000) {getMorph = &morphCVLongAverage;}
+		else {getMorph = &morphCVAverage;}
 
 		//PROFILING_EVENT("Inc Gen Complete");
 		//PROFILING_STOP();
