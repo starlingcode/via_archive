@@ -88,23 +88,15 @@ uint32_t modeflag;
 uint32_t detectOn;
 uint32_t displayNewMode;
 
-
 uint16_t VirtAddVarTab[NB_OF_VAR] = {0x5555};
 uint16_t VarDataTab[NB_OF_VAR] = {0};
 
-
-
-
-
-
 int holdCalibration;
-
 
 // initialize the arrays that will be used by DMA to store our Knob and CV values
 extern uint32_t ADCReadings1[4];
 extern uint32_t ADCReadings2[2];
 extern uint32_t ADCReadings3[1];
-
 
 extern void initialise_monitor_handles(void);
 /* USER CODE END PV */
@@ -141,10 +133,6 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 int main(void) {
 
 	/* USER CODE BEGIN 1 */
-
-
-
-
 	/* USER CODE END 1 */
 
 	/* MCU Configuration----------------------------------------------------------*/
@@ -153,14 +141,12 @@ int main(void) {
 	HAL_Init();
 
 	/* USER CODE BEGIN Init */
-
 	/* USER CODE END Init */
 
 	/* Configure the system clock */
 	SystemClock_Config();
 
 	/* USER CODE BEGIN SysInit */
-
 	/* USER CODE END SysInit */
 
 	/* Initialize all configured peripherals */
@@ -182,24 +168,13 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 
-
-
-
-
 	fillFamilyArray();
 
-
-
 	// declare the initialization state
-
-
 	SET_RGB_ON;
 
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
-
-
-
 
 	// set the priority and enable an interrupt line to be used by our phase state change interrupt
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
@@ -209,41 +184,39 @@ int main(void) {
 	HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
 	HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
 
-	//initialize our ADCs and their respective DMA arrays
+	// initialize our ADCs and their respective DMA arrays
 	HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
 	HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
 	HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
 
-	//initialize the timer that is used to detect our triggers
+	// initialize the timer that is used to detect our triggers
 	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
 
-	//initialize the timer that is used for touch sensor press timeout
+	// initialize the timer that is used for touch sensor press timeout
 	HAL_TIM_Base_Start(&htim4);
 
-	// intitialize the timer that runs the PWM for our RGB led
+	// initialize the timer that runs the PWM for our RGB led
 	HAL_TIM_Base_Start(&htim1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 
-	//initialize our dac
+	// initialize our dac
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
 
 	// initialize our touch sensors
 	tsl_user_Init();
 
-	//enable our S&H resampling interrupts
+	// enable our S&H resampling interrupts
 	__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
 	__HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
 
-	//enable our trigger interrupt
+	// enable our trigger interrupt
 	__HAL_TIM_ENABLE_IT(&htim15, TIM_IT_UPDATE);
 
-	//enable our drum envelope interrupt
+	// enable our drum envelope interrupt
 	__HAL_TIM_ENABLE_IT(&htim3, TIM_IT_UPDATE);
-
-
 
 	//initialize our sample and holds to track
 	//we must do this after the resampling interrupts have been enabled
@@ -252,35 +225,21 @@ int main(void) {
 
 	incSign = 1;
 
-
-
-
 	HAL_FLASH_Unlock();
-
 	ee_status = EE_Init();
 	if( ee_status != EE_OK) {LEDC_ON}
 	HAL_Delay(500);
-
 	restoreState();
 
 	//initialise_monitor_handles();
 
-
-
-
 	//start our DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);
-
-
-
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-
-
-
 		//check if the trigger button has been pressed
 		if (((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET)){
 			//if we havent raised the trigger button flag, do so and set a pending interrupt
@@ -294,10 +253,6 @@ int main(void) {
 			RESET_TRIGGER_BUTTON;
 			HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
 		}
-
-
-
-
 		// run the state machine that gets us a reading on our touch sensors
 		tsl_status = tsl_user_Exec();
 
@@ -312,21 +267,15 @@ int main(void) {
 				// check to see if we have released the sensor
 				readRelease(modeflag);
 			}
-
 		}
-
 		if (displayNewMode == 1) {
 			//this turns our runtime display back on if we were just showing a mode change
 			restoreDisplay();
 		}
-
 		/* USER CODE END WHILE */
-
 		/* USER CODE BEGIN 3 */
-
 	}
 	/* USER CODE END 3 */
-
 }
 
 /** System Clock Configuration
@@ -882,7 +831,7 @@ static void MX_TSC_Init(void) {
 static void MX_DMA_Init(void) {
 	/* DMA controller clock enable */
 	__HAL_RCC_DMA2_CLK_ENABLE()
-	;
+			;
 	__HAL_RCC_DMA1_CLK_ENABLE()
 	;
 
@@ -958,8 +907,8 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Pin = GPIO_PIN_11;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
-//	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; //rev2
-//	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	//	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; //rev2
+	//	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
@@ -989,12 +938,9 @@ void restoreState(){
 	}
 
 	incSign = 1;
-
 	SH_A_TRACK;
 	SH_B_TRACK;
-
 	switchFamily();
-
 
 	if (loop == looping) {
 		SET_OSCILLATOR_ACTIVE;
@@ -1067,24 +1013,15 @@ void restoreState(){
 			SET_PITCH_ON;
 			SET_MORPH_ON;
 			break;
-
 		case 5:
 			RESET_AMP_ON;
 			SET_PITCH_ON;
 			RESET_MORPH_ON;
 			break;
 		}
+	}
+	// set the appropriate time calculation functions
 }
-
-		// set the appropriate time calculation functions
-
-
-
-
-}
-
-
-
 /* USER CODE END 4 */
 
 /**

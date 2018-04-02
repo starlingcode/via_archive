@@ -52,6 +52,7 @@
 ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
 ADC_HandleTypeDef hadc3;
+
 DMA_HandleTypeDef hdma_adc1;
 DMA_HandleTypeDef hdma_adc2;
 DMA_HandleTypeDef hdma_adc3;
@@ -74,8 +75,7 @@ TSC_HandleTypeDef htsc;
 // this is part of the user code needed to run the STM32 touch sense library
 tsl_user_status_t tsl_status;
 
-
-//these are the UI variables that we need in our main loop
+// these are the UI variables that we need in our main loop
 uint32_t modeflag;
 uint32_t detectOn;
 uint32_t displayNewMode;
@@ -170,9 +170,7 @@ int main(void) {
 
 	initializeScales();
 	fillFamilyArray();
-
 	inputCaptureSetup();
-
 
 	// declare the initialization state
 	SET_RGB_ON;
@@ -180,11 +178,11 @@ int main(void) {
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
 
-
 	// set the priority and enable an interrupt line to be used by phase state change interrupt
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
+	// calibrate ADCs
 	HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
 	HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
 	HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
@@ -220,14 +218,9 @@ int main(void) {
 	// enable trigger interrupt
 	__HAL_TIM_ENABLE_IT(&htim15, TIM_IT_UPDATE);
 
-
-
 	//switchScale(0);
-
-
-
-	//initialize our sample and holds to track
-	//we must do this after the resampling interrupts have been enabled
+	// initialize our sample and holds to track
+	// we must do this after the resampling interrupts have been enabled
 	SH_A_TRACK;
 	SH_B_TRACK;
 
@@ -238,7 +231,6 @@ int main(void) {
 	if( eepromStatus != EE_OK) {LEDC_ON}
 
 	restoreState();
-
 
 	//initialise_monitor_handles();
 	//printf("testing123\n");
@@ -260,7 +252,6 @@ int main(void) {
 		else if (TRIGGER_BUTTON){
 			RESET_TRIGGER_BUTTON;
 		}
-
 		// run the state machine that gets us touch sensor readings
 		tsl_status = tsl_user_Exec();
 
@@ -275,22 +266,17 @@ int main(void) {
 				// check to see if we have released the sensor
 				readRelease(modeflag);
 			}
-
 		}
-
 		if (displayNewMode == 1) {
 			// turn runtime display back on if currently displaying a mode change
 			restoreDisplay();
 			RESET_AUX_MENU;
 		}
-
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-
 	}
 	/* USER CODE END 3 */
-
 }
 
 /** System Clock Configuration
@@ -939,7 +925,6 @@ void restoreState(){
 
 	switchFamily();
 
-
 	switch (logicOutA) {
 	case 0:
 		SET_GATEA;
@@ -976,7 +961,6 @@ void restoreState(){
 		RESET_RATIO_DELTAA;
 		SET_PLL_DIVA;
 		break;
-
 	}
 
 	switch (logicOutB) {
@@ -1016,10 +1000,7 @@ void restoreState(){
 		SET_PLL_DIVB;
 		break;
 	}
-
 }
-
-
 /* USER CODE END 4 */
 
 /**

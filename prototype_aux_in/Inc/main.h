@@ -64,31 +64,18 @@
 //#define morphCV 2000
 //#define time1Knob 3000
 
-
-
 enum speedTypes {audio, env, seq} __attribute__((section("ccmram")));
-
 enum loopTypes {noloop, looping}__attribute__((section("ccmram")));
-
 enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum, pendulum2} __attribute__((section("ccmram")));
-
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate}__attribute__((section("ccmram")));
-
 enum logicOutATypes {triggerA, gateA, deltaA};
-
 enum logicOutBTypes {triggerB, gateB, deltaB};
 
-
 int familyIndicator;
-
-
+int flagHolder;
 
 uint32_t holdState;
-
-
-
 uint32_t ee_status;
-
 
 void readDetect(void) __attribute__((section("ccmram")));
 void readRelease(uint32_t) __attribute__((section("ccmram")));
@@ -96,36 +83,27 @@ void restoreDisplay(void) __attribute__((section("ccmram")));
 void switchFamily(void);
 void fillFamilyArray(void);
 void restoreState(void);
-
-
-
+static inline void write1024(buffer1024*,int) __attribute__((section("ccmram")));
+static inline int readn1024(buffer1024*, int) __attribute__((section("ccmram")));
+static inline void write256(buffer256*,int) __attribute__((section("ccmram")));
+static inline int readn256(buffer256*, int) __attribute__((section("ccmram")));
+static inline void write32(buffer32*,int) __attribute__((section("ccmram")));
+static inline int readn32(buffer32*, int) __attribute__((section("ccmram")));
 
 typedef struct buffer1024 {
     int buff[1024];
     int writeIndex;
 }buffer1024;
 
-static inline void write1024(buffer1024*,int) __attribute__((section("ccmram")));
-static inline int readn1024(buffer1024*, int) __attribute__((section("ccmram")));
-
-
 typedef struct buffer256 {
     int buff[256];
     int writeIndex;
 }buffer256;
 
-static inline void write256(buffer256*,int) __attribute__((section("ccmram")));
-static inline int readn256(buffer256*, int) __attribute__((section("ccmram")));
-
 typedef struct buffer32 {
     int buff[32];
     int writeIndex;
 }buffer32;
-
-static inline void write32(buffer32*,int) __attribute__((section("ccmram")));
-static inline int readn32(buffer32*, int) __attribute__((section("ccmram")));
-
-
 
 /* USER CODE END Includes */
 
@@ -216,8 +194,6 @@ static inline int readn32(buffer32*, int) __attribute__((section("ccmram")));
 #define WRITE_DAC2(data) ((*(volatile uint32_t *)DAC2_ADDR) = (val))
 
 
-int flagHolder;
-
 #define PHASE_STATE 		flagHolder & 0b00000000000000000000000000000001
 #define LAST_PHASE_STATE 	flagHolder & 0b00000000000000000000000000000010
 #define GATE_ON 			flagHolder & 0b00000000000000000000000000000100
@@ -274,7 +250,6 @@ int flagHolder;
 #define SET_CLEARBUFFER		 	flagHolder |= 0b00000010000000000000000000000000
 
 
-
 #define RESET_PHASE_STATE 		flagHolder &= 0b11111111111111111111111111111110
 #define RESET_LAST_PHASE_STATE 	flagHolder &= 0b11111111111111111111111111111101
 #define RESET_GATE_ON 			flagHolder &= 0b11111111111111111111111111111011
@@ -303,11 +278,9 @@ int flagHolder;
 #define RESET_CLEARBUFFER		flagHolder &= 0b11111101111111111111111111111111
 
 
-
 #define TOGGLE_GATE_ON 			flagHolder ^= 0b00000000000000000000000000000100
 
 #define REMEMBER_PHASE_STATE	flagHolder ^= (-((PHASE_STATE) ^ flagHolder) & (1UL << 1))
-
 
 /* USER CODE END Private defines */
 

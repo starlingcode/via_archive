@@ -1,25 +1,17 @@
 #include "tables.h"
 #include "main.h"
 #include "tsl_user.h"
-
 #include "scales.h"
 #include "eeprom.h"
-
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
-
 #include "interrupt_functions.h"
-
-
 #include "int64.h"
-
-int holdState;
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
-
 
 // these enums contain our mode information
 enum pllTypes pll; // {none, true, catch, setCatch}
@@ -32,50 +24,39 @@ enum autoDutyTypes autoDuty;
 
 extern uint16_t VirtAddVarTab[NB_OF_VAR];
 extern uint16_t VarDataTab[NB_OF_VAR];
+
 // these logic flags are used to communicate state between the main controlScheme and the interrupts
-
-
-
-
 
 // these variables are passed between our functions that read the touch sensors and change modes
 uint32_t lastDetect;
-
-
 
 void handleRelease(uint32_t);
 void changeMode(uint32_t);
 void showMode(uint32_t);
 void familyRGB(void);
 void clearLEDs(void);
-
-
 void switchFamily(void);
 void loadSampleArray(Family);
 
 extern uint32_t modeflag;
 extern uint32_t detectOn;
-uint32_t lastDetect;
 extern uint32_t displayNewMode;
-
-
-
+uint32_t lastDetect;
+int holdState;
 
 void readDetect(void) {
-
-	//check to see if any of our touch sensors have gone into detect state
-
+	// check to see if any of our touch sensors have gone into detect state
 	if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON; //turn off the runtime display
-		modeflag = 10; //indicate to the other mode change functions that we have pressed the scaleType button
-		detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
-		clearLEDs(); //wipe the vestiges of our runtimme display
+		RESET_RGB_ON;  // turn off the runtime display
+		modeflag = 10; // indicate to the other mode change functions that we have pressed the scaleType button
+		detectOn = 1;  // indicate that a touch sensor was in detect state during this aquisition cycle
+		clearLEDs();   // wipe the vestiges of our runtimme display
 		__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
 		showMode(scaleType); //show our currentm mode
 	}
 	if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
 		RESET_RGB_ON;
-		modeflag = 2; //indicate to the other mode change functions that we have pressed the trigger mode button
+		modeflag = 2;  //indicate to the other mode change functions that we have pressed the trigger mode button
 		detectOn = 1;
 		clearLEDs();
 		__HAL_TIM_SET_COUNTER(&htim4, 0);
@@ -83,7 +64,7 @@ void readDetect(void) {
 	}
 	if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
 		RESET_RGB_ON;
-		modeflag = 3; //indicate to the other mode change functions that we have pressed the controlScheme button
+		modeflag = 3; // indicate to the other mode change functions that we have pressed the controlScheme button
 		detectOn = 1;
 		clearLEDs();
 		__HAL_TIM_SET_COUNTER(&htim4, 0);
@@ -91,7 +72,7 @@ void readDetect(void) {
 	}
 	if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
 		RESET_RGB_ON;
-		modeflag = 4; //indicate to the other mode change functions that we have pressed the sample and hold mode button
+		modeflag = 4; // indicate to the other mode change functions that we have pressed the sample and hold mode button
 		detectOn = 1;
 		clearLEDs();
 		__HAL_TIM_SET_COUNTER(&htim4, 0);
@@ -99,7 +80,7 @@ void readDetect(void) {
 	}
 	if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
 		RESET_RGB_ON;
-		modeflag = 5; //indicate to the other mode change functions that we have pressed the family up button
+		modeflag = 5; // indicate to the other mode change functions that we have pressed the family up button
 		detectOn = 1;
 		clearLEDs();
 		__HAL_TIM_SET_COUNTER(&htim4, 0);
@@ -107,23 +88,19 @@ void readDetect(void) {
 	}
 	if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
 		RESET_RGB_ON;
-		modeflag = 6; //indicate to the other mode change functions that we have pressed the family down button
+		modeflag = 6; // indicate to the other mode change functions that we have pressed the family down button
 		detectOn = 1;
 		clearLEDs();
 		__HAL_TIM_SET_COUNTER(&htim4, 0);
 		showMode(familyIndicator);
 	}
-
 }
 
 void readRelease(uint32_t modeFlagHolder) {
-
 	// look for a change to release state on the button that was pressed (passed in with the function argument)
-
 	switch (modeFlagHolder) {
 
 	case 0:
-
 		if (MyTKeys[5].p_Data->StateId == TSL_STATEID_RELEASE) {
 			if (MyTKeys[3].p_Data->StateId == TSL_STATEID_RELEASE) {
 				detectOn = 0;
@@ -132,8 +109,8 @@ void readRelease(uint32_t modeFlagHolder) {
 			handleRelease(modeFlagHolder);
 		}
 		break;
-	case 1:
 
+	case 1:
 		if (MyTKeys[0].p_Data->StateId == TSL_STATEID_RELEASE) {
 			if (MyTKeys[3].p_Data->StateId == TSL_STATEID_RELEASE) {
 				detectOn = 0;
@@ -143,61 +120,54 @@ void readRelease(uint32_t modeFlagHolder) {
 		}
 		break;
 
-
 	case 10:
-
 		if (MyTKeys[3].p_Data->StateId == TSL_STATEID_RELEASE) {
 			detectOn = 0; // indicate that we no longer have a touch sensor in detect state
-			clearLEDs(); // clear the display that showed the current mode
-			handleRelease(modeFlagHolder); //take the appropriate action per the button that had been pressed
+			clearLEDs();  // clear the display that showed the current mode
+			handleRelease(modeFlagHolder); // take the appropriate action per the button that had been pressed
 		}
-
 		if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
 			SET_AUX_MENU;
-			modeflag = 0; //indicate to the other mode change functions that we have pressed the logic a button
-			detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
-			clearLEDs(); //wipe the vestiges of our runtimme display
-			__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
-			showMode(scaleType); //show our currentm mode
+			modeflag = 0; // indicate to the other mode change functions that we have pressed the logic a button
+			detectOn = 1; // indicate that a touch sensor was in detect state during this acquisition cycle
+			clearLEDs();  // wipe the vestiges of our runtimme display
+			__HAL_TIM_SET_COUNTER(&htim4, 0); // reset the timer that we use for mode change timeout
+			showMode(scaleType); // show our current mode
 		}
-
 		if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
 			SET_AUX_MENU;
-			modeflag = 1; //indicate to the other mode change functions that we have pressed the logic b button
-			detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
-			clearLEDs(); //wipe the vestiges of our runtime display
-			__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
-			showMode(scaleType); //show our current mode
+			modeflag = 1; // indicate to the other mode change functions that we have pressed the logic b button
+			detectOn = 1; // indicate that a touch sensor was in detect state during this acquisition cycle
+			clearLEDs();  // wipe the vestiges of our runtime display
+			__HAL_TIM_SET_COUNTER(&htim4, 0); // reset the timer that we use for mode change timeout
+			showMode(scaleType); // show our current mode
 		}
 		break;
 
 	case 2:
-
 		if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
 			SET_AUX_MENU;
-			modeflag = 7; //indicate to the other mode change functions that we have pressed the logic a button
-			detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
-			clearLEDs(); //wipe the vestiges of our runtimme display
-			__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
-			showMode(logicOutA); //show our currentm mode
+			modeflag = 7; // indicate to the other mode change functions that we have pressed the logic a button
+			detectOn = 1; // indicate that a touch sensor was in detect state during this acquisition cycle
+			clearLEDs();  // wipe the vestiges of our runtimme display
+			__HAL_TIM_SET_COUNTER(&htim4, 0); // reset the timer that we use for mode change timeout
+			showMode(logicOutA); // show our current mode
 		}
-
 		if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
 			SET_AUX_MENU;
-			modeflag = 8; //indicate to the other mode change functions that we have pressed the logic b button
-			detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
-			clearLEDs(); //wipe the vestiges of our runtime display
-			__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
-			showMode(logicOutB); //show our current mode
+			modeflag = 8; // indicate to the other mode change functions that we have pressed the logic b button
+			detectOn = 1; // indicate that a touch sensor was in detect state during this acquisition cycle
+			clearLEDs();  // wipe the vestiges of our runtime display
+			__HAL_TIM_SET_COUNTER(&htim4, 0); // reset the timer that we use for mode change timeout
+			showMode(logicOutB); // show our current mode
 		}
-
 		if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
 			SET_AUX_MENU;
-			modeflag = 9; //indicate to the other mode change functions that we have pressed the logic b button
-			detectOn = 1; //indicate that a touch sensor was in detect state during this aquisition cycle
-			clearLEDs(); //wipe the vestiges of our runtime display
-			__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
-			showMode(autoDuty); //show our current mode
+			modeflag = 9; // indicate to the other mode change functions that we have pressed the logic b button
+			detectOn = 1; // indicate that a touch sensor was in detect state during this aquisition cycle
+			clearLEDs();  // wipe the vestiges of our runtime display
+			__HAL_TIM_SET_COUNTER(&htim4, 0); // reset the timer that we use for mode change timeout
+			showMode(autoDuty); // show our current mode
 		}
 
 		if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
@@ -208,8 +178,8 @@ void readRelease(uint32_t modeFlagHolder) {
 			handleRelease(modeFlagHolder);
 		}
 		break;
-	case 3:
 
+	case 3:
 		if (MyTKeys[1].p_Data->StateId == TSL_STATEID_RELEASE) {
 			detectOn = 0;
 			clearLEDs();
@@ -218,7 +188,6 @@ void readRelease(uint32_t modeFlagHolder) {
 		break;
 
 	case 4:
-
 		if (MyTKeys[4].p_Data->StateId == TSL_STATEID_RELEASE) {
 			detectOn = 0;
 			clearLEDs();
@@ -227,7 +196,6 @@ void readRelease(uint32_t modeFlagHolder) {
 		break;
 
 	case 5:
-
 		if (MyTKeys[5].p_Data->StateId == TSL_STATEID_RELEASE) {
 			detectOn = 0;
 			clearLEDs();
@@ -236,7 +204,6 @@ void readRelease(uint32_t modeFlagHolder) {
 		break;
 
 	case 6:
-
 		if (MyTKeys[0].p_Data->StateId == TSL_STATEID_RELEASE) {
 			detectOn = 0;
 			clearLEDs();
@@ -245,7 +212,6 @@ void readRelease(uint32_t modeFlagHolder) {
 		break;
 
 	case 7:
-
 		if (MyTKeys[3].p_Data->StateId == TSL_STATEID_RELEASE) {
 			if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
 				detectOn = 0;
@@ -256,7 +222,6 @@ void readRelease(uint32_t modeFlagHolder) {
 		break;
 
 	case 8:
-
 		if (MyTKeys[1].p_Data->StateId == TSL_STATEID_RELEASE) {
 			if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
 				detectOn = 0;
@@ -265,8 +230,8 @@ void readRelease(uint32_t modeFlagHolder) {
 			handleRelease(modeFlagHolder);
 		}
 		break;
-	case 9:
 
+	case 9:
 		if (MyTKeys[4].p_Data->StateId == TSL_STATEID_RELEASE) {
 			if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
 				detectOn = 0;
@@ -275,10 +240,7 @@ void readRelease(uint32_t modeFlagHolder) {
 			handleRelease(modeFlagHolder);
 		}
 		break;
-
-
 	}
-
 }
 
 void handleRelease(uint32_t pinMode) {
@@ -353,27 +315,19 @@ void changeMode(uint32_t mode) {
 		holdState = (holdState & 0b1111111100111111) | (scaleType << 6);
 	}
 	else if (mode == 2) {
-
 		pll = (pll + 1) % 3;
 		holdState = (holdState & 0b1111111111000111) | (pll << 3);
 
-
 	}
 	else if (mode == 3) {
-
 		controlScheme = (controlScheme + 1) % 4;
 		holdState = (holdState & 0b1111111111111000) | controlScheme;
-
 	}
 	else if (mode == 4) {
-
 		sampleHoldMode = (sampleHoldMode + 1) % 6;
-
 		holdState = (holdState & 0b1111100011111111) | (sampleHoldMode << 8);
-
 		SH_A_TRACK;
 		SH_B_TRACK;
-
 	}
 	else if (mode == 5) {
 		// increment our family pointer and swap in the correct family
@@ -389,16 +343,14 @@ void changeMode(uint32_t mode) {
 		} else {
 			familyIndicator = (familyIndicator - 1);
 		}
-
 		switchFamily();
 		holdState = (holdState & 0b1000011111111111) | (familyIndicator << 11);
-	}	else if (mode == 7) {
+	}
+	else if (mode == 7) {
 		logicOutA = (logicOutA + 1) % 5;
 		holdLogicOut = (holdLogicOut & 0b1111111111111000) | logicOutA;
-
 		ee_status = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
 	    ee_status|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
-
 
 		switch (logicOutA) {
 		case 0:
@@ -436,19 +388,13 @@ void changeMode(uint32_t mode) {
 			RESET_RATIO_DELTAA;
 			SET_PLL_DIVA;
 			break;
-
 		}
-
-
-
 	}
 	else if (mode == 8) {
 		logicOutB = (logicOutB + 1) % 5;
 		holdLogicOut = (holdLogicOut & 0b1111111111000111) | (logicOutB << 3);
-
 		ee_status = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
 	    ee_status|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
-
 		switch (logicOutB) {
 		case 0:
 			SET_GATEB;
@@ -486,36 +432,27 @@ void changeMode(uint32_t mode) {
 			SET_PLL_DIVB;
 			break;
 		}
-	} else if (mode == 9) {
-
+	}
+	else if (mode == 9) {
 		autoDuty = (autoDuty + 1) % 2;
 		holdLogicOut = (holdLogicOut & 0b1111111111000111) | (autoDuty << 6);
-
 		if (autoDuty == autoDutyOn) {
 			RESET_AUTODUTY;
 		} else {
 			SET_AUTODUTY;
 		}
-
 		ee_status = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
 	    ee_status|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
-
-
-
 	}
-
 	ee_status = EE_WriteVariable(VirtAddVarTab[0], holdState);
     ee_status|= EE_ReadVariable(VirtAddVarTab[0],  &VarDataTab[0]);
-
 }
 
 void showMode(uint32_t currentmode) {
-
 	// if we are switching families, show a color corresponding to that family
 	if ((modeflag == 5) || modeflag == 6) {
 		familyRGB();
 	}
-
 	else {
 		switch (currentmode) {
 		// represent a 4 bit number with our LEDs
@@ -540,16 +477,11 @@ void showMode(uint32_t currentmode) {
 			LEDB_ON;
 			LEDD_ON;
 			break;
-
 		}
 	}
-
 }
 
 void familyRGB(void) {
-
-
-
 	if (familyIndicator < 8) {
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
@@ -560,7 +492,6 @@ void familyRGB(void) {
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4095);
 	}
-
 	switch (familyIndicator % 8) {
 	case 0:
 		LEDA_ON;
@@ -571,7 +502,6 @@ void familyRGB(void) {
 	case 2:
 		LEDB_ON;
 		break;
-
 	case 3:
 		LEDD_ON;
 		break;
@@ -591,49 +521,38 @@ void familyRGB(void) {
 		LEDC_ON;
 		LEDD_ON;
 		break;
-
 	}
-
-
-
 }
-void clearLEDs(void) {
-	//pretty self explanatory
 
+void clearLEDs(void) {
+	// pretty self explanatory
 	LEDA_OFF;
 	LEDB_OFF;
 	LEDC_OFF;
 	LEDD_OFF;
-
-	//blank the LEDs
+	// blank the LEDs
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
-
 }
 
 void restoreDisplay() {
 	if (__HAL_TIM_GET_COUNTER(&htim4) > 10000) {
 		clearLEDs(); // get rid of our last mode display
-		SET_RGB_ON; // turn on the runtime display
+		SET_RGB_ON;  // turn on the runtime display
 		displayNewMode = 0; // a bit of logic used to make sure that we show the mode during the main controlScheme
 	}
 }
 
-
 // this sets the flags to be used in the interrupt and also fills the holding array on the heap
-
 void switchFamily(void) {
-
 	position = 0;
-
 	holdState |= familyIndicator << 9;
-
 	currentFamily = familyArray[familyIndicator];
 	loadSampleArray(currentFamily);
-
 	span = (currentFamily.tableLength) << 16;
 	spanx2 = (currentFamily.tableLength) << 17;
+
 	switch (currentFamily.familySize) {
 	// these are values that properly allow us to select a family and interpolation fraction for our morph
 	case 3:
@@ -667,33 +586,25 @@ void switchFamily(void) {
 	case 4:
 		tableSizeCompensation = 5;
 		break;
-
 	case 8:
 		tableSizeCompensation = 4;
 		break;
-
 	case 16:
 		tableSizeCompensation = 3;
 		break;
-
 	case 32:
 		tableSizeCompensation = 2;
 		break;
-
 	case 64:
 		tableSizeCompensation = 1;
 		break;
-
 	case 128:
 		tableSizeCompensation = 0;
-
 	}
 }
 
 //this actually shuttles the data from flash to ram and fills our holding array
-
 void loadSampleArray(Family family) {
-
 	uint16_t **currentFamilyPointer;
 
 	for (int i = 0; i < family.familySize; i++) {
@@ -701,10 +612,8 @@ void loadSampleArray(Family family) {
 			// this just gets the appropriate samples and plops them into the global holding arrays
 			currentFamilyPointer = family.attackFamily + i;
 			attackHoldArray[i][j] = *(*(currentFamilyPointer) + j);
-
 			currentFamilyPointer = family.releaseFamily + i;
 			releaseHoldArray[i][j] = *(*(currentFamilyPointer) + j);
 		}
 	}
 }
-

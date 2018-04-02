@@ -40,7 +40,6 @@
 #include "main.h"
 #include "interrupt_functions.h"
 
-
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -231,7 +230,6 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
 void TIM2_IRQHandler(void) {
 
 	/* USER CODE BEGIN TIM2_IRQn 0 */
-
 	inputCapture();
 
 	__HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC1);
@@ -270,14 +268,11 @@ void TIM8_UP_IRQHandler(void) {
  */
 void TIM6_DAC_IRQHandler(void) {
 	/* USER CODE BEGIN TIM6_DAC_IRQn 0 */
-
 	dacISR();
 
 	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
 
-//	PROFILING_START("MAIN startup timing");
-
-
+	//	PROFILING_START("MAIN startup timing");
 
 	/* USER CODE END TIM6_DAC_IRQn 0 */
 	// HAL_TIM_IRQHandler(&htim6);

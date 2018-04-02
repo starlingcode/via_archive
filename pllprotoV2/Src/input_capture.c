@@ -8,24 +8,18 @@
 #include "tables.h"
 #include "main.h"
 
+int lookuptable[4096] = expotable10oct;
 
+// mode indicators, determined in the main loop
+enum pllTypes pll; // {none, true, hardSync, catch}
+enum controlSchemes controlScheme; // {gateLength, knobCV}
+enum scaleTypes scaleType; // {rhythms, pitches}
+enum sampleHoldModeTypes sampleHoldMode;
 
-	int lookuptable[4096] = expotable10oct;
-
-	// mode indicators, determined in the main loop
-	enum pllTypes pll; // {none, true, catch, setCatch}
-	enum controlSchemes controlScheme; // {gateLength, knobCV}
-	enum scaleTypes scaleType; // {rhythms, pitches}
-	enum sampleHoldModeTypes sampleHoldMode;
-
-	extern TIM_HandleTypeDef htim15;
-	extern TIM_HandleTypeDef htim2;
-
-
+extern TIM_HandleTypeDef htim15;
+extern TIM_HandleTypeDef htim2;
 
 void inputCapture(void) {
-
-
 	int pllNudge = 0;
 	static uint32_t pllCounter;
 	uint32_t fracMultiplier;
@@ -37,16 +31,11 @@ void inputCapture(void) {
 	static uint32_t lastMultiplier;
 	Scale currentScale;
 
-
-
 	if ((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET) {
-
-		//get the timer value that which was reset on last rising edge
+		// get the timer value that which was reset on last rising edge
 		periodCount = __HAL_TIM_GET_COUNTER(&htim2);
 
-
-
-		//reset the timer value
+		// reset the timer value
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
 
 		//PROFILING_START("ScaleGen");
@@ -70,7 +59,6 @@ void inputCapture(void) {
 			noteIndex = holdT1 >> 5;
 		}
 
-
 		if (controlScheme == root) {
 			if ((4095 - time2CV) >= 2048) {
 				rootIndex = (myfix16_lerp(time2Knob, 4095, ((4095 - time2CV) - 2048) << 5)) >> currentScale.t2Bitshift;
@@ -81,7 +69,6 @@ void inputCapture(void) {
 		} else {
 			rootIndex = time2Knob >> currentScale.t2Bitshift;
 		}
-
 
 		fracMultiplier = currentScale.grid[rootIndex][noteIndex]->fractionalPart;
 		intMultiplier = currentScale.grid[rootIndex][noteIndex]->integerPart;
@@ -108,21 +95,18 @@ void inputCapture(void) {
 				}
 			}
 		}
+
 		lastMultiplier = multKey;
 
-
 		if (controlScheme == dutyCycle) {
-
 			gateOnCount = periodCount >> 1;
-
 		}
 
-
 		pllCounter ++;
+
 		if (pllCounter >= gcd || (TRIGGER_BUTTON)) {
 
 			RESET_TRIGGER_BUTTON;
-
 			if (PLL_DIVA) {
 				EOR_JACK_HIGH;
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
@@ -162,57 +146,36 @@ void inputCapture(void) {
 			} else if (pll == true) {
 				// if we are behind the phase of the clock, go faster, otherwise, go slower
 				if (position > span) {
-
 					pllNudge = (spanx2 - position) << 4;
-
 				} else {
-
 					pllNudge = -(position) << 4;
-
 				}
-
 				RESET_TRIGGER_BUTTON;
 			}
-
-
 			pllCounter = 0;
 		}
 
-
 		//PROFILING_EVENT("SetupComplete");
-
-
 
 		attackInc = (((span << 7) + pllNudge) / gateOnCount) << 2;
 		releaseInc = (((span << 7) + pllNudge) / (periodCount - gateOnCount)) << 2;
-
-
-
-
 		attackInc = myfix48_mul(attackInc, fracMultiplier) + myfix16_mul(attackInc, intMultiplier);
 		releaseInc = myfix48_mul(releaseInc, fracMultiplier) + myfix16_mul(releaseInc, intMultiplier);
-
 
 		if (attackInc >= span - 1) {attackInc = span - 1;}
 		if (releaseInc >= span - 1) {releaseInc = span - 1;}
 
 		//PROFILING_EVENT("Inc Gen Complete");
 		//PROFILING_STOP();
-
 	}
-
 	else {
-
-
-		//get the timer value that which was reset on last rising edge
+		// get the timer value that which was reset on last rising edge
 		if (AUTODUTY) {
 			gateOnCount = __HAL_TIM_GET_COUNTER(&htim2);
 		} else {
 			gateOnCount = periodCount >> 1;
 		}
-
 	}
-
 }
 
 void inputCaptureSetup(void) {
@@ -222,4 +185,3 @@ void inputCaptureSetup(void) {
 	periodCount = 10000;
 	incSign = 1;
 }
-

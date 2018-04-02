@@ -49,30 +49,25 @@
 //#define _BUILD_REV_2
 
 enum pllTypes {none, true, hardSync, catch};
-
 enum controlSchemes {root, dutyCycle, FM, phaseMod};
-
 enum scaleTypes {rhythm, diatonic, primes};
-
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
-
 enum logicOutATypes {triggerA, gateA, deltaA, ratioDeltaA, pllClockA};
-
 enum logicOutBTypes {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
-
 enum autoDutyTypes {autoDutyOn, autoDutyOff};
-
-int familyIndicator;
 
 volatile int position;
 
+int flagHolder;
+int familyIndicator;
 int holdState;
 int holdLogicOut;
-
 int eepromStatus;
 
-void inputCaptureSetup(void);
+int (*attackTime) (void);
+int (*releaseTime) (void);
 
+void inputCaptureSetup(void);
 void readDetect(void) __attribute__((section("ccmram")));
 void readRelease(uint32_t) __attribute__((section("ccmram")));
 void restoreDisplay(void) __attribute__((section("ccmram")));
@@ -81,29 +76,22 @@ void fillFamilyArray(void);
 void restoreState(void);
 void initializeScales(void);
 
-
-int (*attackTime) (void);
-int (*releaseTime) (void);
-
 int calcTime1Env(void);
 int calcTime2Env(void);
 int calcTime1Seq(void);
 int calcTime2Seq(void);
 
+void write(buffer*,int);
+int readn(buffer*, int);
+
 uint32_t ADCReadings1[4];
 uint32_t ADCReadings2[2];
 uint32_t ADCReadings3[2];
-
-#define BUFF_SIZE 256
-#define BUFF_SIZE_MASK (BUFF_SIZE-1)
 
 typedef struct buffer{
     int buff[BUFF_SIZE];
     int writeIndex;
 }buffer;
-
-void write(buffer*,int);
-int readn(buffer*, int);
 
 uint32_t time1CVAverage;
 uint32_t time1KnobAverage;
@@ -188,16 +176,16 @@ uint32_t time1KnobAverage;
 #define SH_B_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_9;
 #define SH_B_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_9;
 
-
 #define ClearTimCount(n)           (n.TIMx->CNT = 0)
 
 #define DAC1_ADDR     0x40007408
 #define DAC2_ADDR     0x40007414
+
 #define WRITE_DAC1(data) ((*(volatile uint32_t *)DAC1_ADDR) = (val))
 #define WRITE_DAC2(data) ((*(volatile uint32_t *)DAC2_ADDR) = (val))
 
-
-int flagHolder;
+#define BUFF_SIZE 256
+#define BUFF_SIZE_MASK (BUFF_SIZE-1)
 
 
 #define PHASE_STATE 		flagHolder & 0b00000000000000000000000000000001
@@ -254,7 +242,6 @@ int flagHolder;
 #define SET_AUTODUTY	 		flagHolder |= 0b00000001000000000000000000000000
 
 
-
 #define RESET_PHASE_STATE 		flagHolder &= 0b11111111111111111111111111111110
 #define RESET_LAST_PHASE_STATE 	flagHolder &= 0b11111111111111111111111111111101
 #define RESET_GATE_ON 			flagHolder &= 0b11111111111111111111111111111011
@@ -285,11 +272,6 @@ int flagHolder;
 #define TOGGLE_GATE_ON 			flagHolder ^= 0b00000000000000000000000000000100
 
 #define REMEMBER_PHASE_STATE	flagHolder ^= (-((PHASE_STATE) ^ flagHolder) & (1UL << 1))
-
-
-
-
-
 
 /* USER CODE END Private defines */
 
