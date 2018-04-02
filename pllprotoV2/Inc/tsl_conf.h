@@ -439,7 +439,7 @@
 /** Timing tick frequency in Hz (range=125, 250, 500, 1000, 2000)
   - Result to a timing interrupt respectively every 8ms, 4ms, 2ms, 1ms, 0.5ms
 */
-#define TSLPRM_TICK_FREQ (250)
+#define TSLPRM_TICK_FREQ (125)
 
 /** Delay for discharging Cx and Cs capacitors (range=0..65535)
     - The value corresponds to the Softdelay function parameter.

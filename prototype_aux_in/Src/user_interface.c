@@ -282,7 +282,6 @@ void changeMode(uint32_t mode) {
 			//SET_CLEARBUFFER;
 			//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
 			SET_DRUM_MODE_ON;
-			TIM6->ARR = 750;
 			switch (trigMode) {
 			case 0:
 				SET_AMP_ON;
@@ -326,7 +325,7 @@ void changeMode(uint32_t mode) {
 				attackTime = calcTime1Env;
 				releaseTime = calcTime2Env;
 			} else if (speed == seq) {
-				TIM6->ARR = 2000;
+				TIM6->ARR = 1000;
 				attackTime = calcTime1Seq;
 				releaseTime = calcTime2Seq;
 			} else {
@@ -719,7 +718,7 @@ void loadSampleArray(Family family) {
 	uint16_t **currentFamilyPointer;
 
 	for (int i = 0; i < family.familySize; i++) {
-		for (int j = 0; j <= family.tableLength; j++) {
+		for (int j = 0; j <= (family.tableLength + 4); j++) {
 			// this just gets the appropriate samples and plops them into the global holding arrays
 			currentFamilyPointer = family.attackFamily + i;
 			attackHoldArray[i][j] = *(*(currentFamilyPointer) + j);

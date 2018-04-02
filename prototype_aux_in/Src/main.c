@@ -46,6 +46,7 @@
 #include "tsl_user.h"
 #include "eeprom.h"
 
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -71,6 +72,8 @@ TSC_HandleTypeDef htsc;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+
+
 
 // this is part of the user code needed to run the STM32 touch sense library
 tsl_user_status_t tsl_status;
@@ -197,6 +200,7 @@ int main(void) {
 
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
+
 
 
 
@@ -365,7 +369,7 @@ void SystemClock_Config(void) {
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1 | RCC_PERIPHCLK_TIM8
 			| RCC_PERIPHCLK_ADC12 | RCC_PERIPHCLK_ADC34;
-	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV16;
+	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV8;
 	PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV128;
 	PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
 	PeriphClkInit.Tim8ClockSelection = RCC_TIM8CLK_HCLK;
@@ -956,10 +960,14 @@ static void MX_GPIO_Init(void) {
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 	GPIO_InitStruct.Pin = GPIO_PIN_11;
+
+#ifndef _BUILD_REV_2
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; //rev2
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+#else
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
-//	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; //rev2
-//	GPIO_InitStruct.Pull = GPIO_NOPULL;
+#endif
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 

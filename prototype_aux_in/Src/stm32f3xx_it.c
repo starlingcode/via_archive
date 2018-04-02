@@ -273,6 +273,11 @@ void TIM2_IRQHandler(void) {
 				TIM3->EGR = TIM_EGR_UG; //immediately set an update event
 				TIM3->CNT = 3840; //reset the count for the down counter
 
+			} else {
+				if (trigMode == gated) {
+					SET_GATE_ON; //turn the gate flag on in gate mode
+					incSign = 1;
+				}
 			}
 			if (speed == env) {
 				attackTime = calcTime1Env; //set the function pointers for attack and release to the envelope time scale
@@ -282,10 +287,7 @@ void TIM2_IRQHandler(void) {
 				releaseTime = calcTime2Seq;
 			}
 
-			if (trigMode == gated) {
-				SET_GATE_ON; //turn the gate flag on in gate mode
-				incSign = 1;
-			}
+
 
 			sampHoldA();
 		} else {

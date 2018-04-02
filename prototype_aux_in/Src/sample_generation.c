@@ -7,6 +7,8 @@
 #include "int64.h"
 #include "interrupt_functions.h"
 
+
+
 //wavetable size - 1 in fix16 and that number doubled
 int span;
 int spanx2;
@@ -50,10 +52,11 @@ void getSample(uint32_t) __attribute__((section("ccmram")));
 void getSampleCubicSpline(uint32_t) __attribute__((section("ccmram")));
 void getSampleQuinticSpline(uint32_t) __attribute__((section("ccmram")));
 void getPhase(void) __attribute__((section("ccmram")));
-int myfix16_mul(int, int) __attribute__((section("ccmram")));
-int myfix24_mul(int, int) __attribute__((section("ccmram")));
+static inline int myfix16_mul(int, int) __attribute__((section("ccmram")));
+static inline int myfix24_mul(int, int) __attribute__((section("ccmram")));
+static inline int my_abs(int) __attribute__((section("ccmram")));
 
-int myfix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
+static inline myfix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
 void getAverages(void) __attribute__((section("ccmram")));
 void getAveragesAudio(void) __attribute__((section("ccmram")));
 //void implementButter10(void) __attribute__((section("ccmram")));
@@ -69,8 +72,11 @@ void dacISR(void) {
 
 	//PROFILING_START("MAIN startup timing");
 
+#ifndef _BUILD_REV_2
+#else
 	// remove for compatibility w/ rev2 (black back) boards
 	if ((GPIOA->IDR & GPIO_PIN_11) != (uint32_t) GPIO_PIN_RESET) {
+#endif
 	if ((OSCILLATOR_ACTIVE)) {
 
 
@@ -98,14 +104,14 @@ void dacISR(void) {
 		if (position < span) {
 			RESET_PHASE_STATE;
 			//getSample(0);
-			getSampleCubicSpline(0);
-			//getSampleQuinticSpline(0);
+			//getSampleCubicSpline(0);
+			getSampleQuinticSpline(0);
 		}
 		if (position >= span) {
 			SET_PHASE_STATE;
 			//getSample(1);
-			getSampleCubicSpline(1);
-			//getSampleQuinticSpline(1);
+			//getSampleCubicSpline(1);
+			getSampleQuinticSpline(1);
 		}
 
 		//PROFILING_EVENT("Sampling Complete");
@@ -194,7 +200,7 @@ void dacISR(void) {
 
 		} else {
 			if (BANDLIMIT) {
-				morphLimit = myfix16_mul(4095, 65536 - ((abs(inc)) >> 5));
+				morphLimit = myfix16_mul(4095, 65536 - ((my_abs(inc)) >> 5));
 				if (morphLimit < 0) {morphLimit = 0;}
 				if (fixMorph > morphLimit) {
 					fixMorph = morphLimit;
@@ -236,8 +242,10 @@ void dacISR(void) {
 
 
   }
+#ifndef _BUILD_REV_2
+#else
 } //remove for compativility with rev2 boards
-
+#endif
 }
 
 void getPhase(void) {
@@ -259,7 +267,9 @@ void getPhase(void) {
 
 	//calculate our increment value in high speed mode
 
-	if (speed == audio) {
+	switch (speed) {
+
+	case audio:
 
 		/*
 		 contour generator frequency is a function of phase increment, wavetable size, and sample rate
@@ -274,7 +284,7 @@ void getPhase(void) {
 			getAveragesDrum();
 
 			incFromADCs = myfix16_mul(
-					myfix16_mul(150000, lookuptable[4095 - t1CVAverage] >> 6), lookuptable[(t1KnobAverage >> 1) + 2047] >> 10) >> tableSizeCompensation;
+					myfix16_mul(300000, lookuptable[4095 - t1CVAverage] >> 6), lookuptable[(t1KnobAverage >> 1) + 2047] >> 10) >> tableSizeCompensation;
 
 			if (PITCH_ON) {incFromADCs = myfix16_mul(expoScale + 30000, incFromADCs);}
 
@@ -288,11 +298,11 @@ void getPhase(void) {
 
 		}
 
-	}
+	break;
 
 	//define increment for env and seq modes using function pointers to the appropriate knob/cv combo
 	//these can be swapped around by the retrigger interrupt
-	else if (speed == env) {
+	case env:
 
 		getAverages();
 
@@ -303,9 +313,9 @@ void getPhase(void) {
 			incFromADCs = (*releaseTime)();
 		}
 
-	}
+	break;
 
-	else if (speed == seq) {
+	case seq:
 
 		getAverages();
 
@@ -413,7 +423,7 @@ void getPhase(void) {
 
 		}
 
-		if ((GATE_ON) && ((abs(inc) > abs(span - position)) || (HOLD_AT_B))) {
+		if ((GATE_ON) && ((my_abs(inc) > my_abs(span - position)) || (HOLD_AT_B))) {
 
 			// if so, we set a logic flag that we have frozen the contour generator in this transition
 			SET_HOLD_AT_B;
@@ -427,6 +437,10 @@ void getPhase(void) {
 
 
 
+	break;
+
+	default: break;
+
 	}
 
 	// apply the approrpiate signage to our inc per the retrigger behavior
@@ -438,7 +452,7 @@ void getPhase(void) {
 
 		// we look to see if we are about to increment past the attack->release transition
 
-		if ((GATE_ON) && (abs(inc) > abs(span - position))) {
+		if ((GATE_ON) && (my_abs(inc) > my_abs(span - position))) {
 
 			// if so, we set a logic flag that we have frozen the contour generator in this transition
 			SET_HOLD_AT_B;
@@ -731,27 +745,27 @@ void getSample(uint32_t phase) {
 
 //helper functions to maintain and read from a circular buffer
 
-void write1024(buffer1024* buffer, int value) {
+static inline void write1024(buffer1024* buffer, int value) {
 	buffer->buff[(buffer->writeIndex++) & 1023] = value;
 }
 
-int readn1024(buffer1024* buffer, int Xn) {
+static inline int readn1024(buffer1024* buffer, int Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 1023];
 }
 
-void write256(buffer256* buffer, int value) {
+static inline void write256(buffer256* buffer, int value) {
 	buffer->buff[(buffer->writeIndex++) & 255] = value;
 }
 
-int readn256(buffer256* buffer, int Xn) {
+static inline int readn256(buffer256* buffer, int Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 255];
 }
 
-void write32(buffer32* buffer, int value) {
+static inline void write32(buffer32* buffer, int value) {
 	buffer->buff[(buffer->writeIndex++) & 31] = value;
 }
 
-int readn32(buffer32* buffer, int Xn) {
+static inline int readn32(buffer32* buffer, int Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
 }
 
@@ -805,33 +819,45 @@ void getAveragesAudio(void) {
 	static buffer32 t1CVBuffer;
 	static buffer32 t2CVBuffer;
 	static buffer1024 morphKnobBuffer;
-	static buffer32 morphCVBuffer;
+	static buffer256 morphCVBuffer;
 	static uint32_t t1KnobSum;
 	static uint32_t t2KnobSum;
 	static uint32_t morphKnobSum;
 	static uint32_t morphCVSum;
 	static uint32_t t1CVSum;
 	static uint32_t t2CVSum;
+	static int hysterisis;
+	static int morphCVholder;
 
 	t1KnobSum = (t1KnobSum + time1Knob- readn32(&t1KnobBuffer, 31));
 	t2KnobSum = (t2KnobSum + time2Knob- readn32(&t2KnobBuffer, 31));
 	morphKnobSum = (morphKnobSum + morphKnob- readn1024(&morphKnobBuffer, 1023));
-	morphCVSum = (morphCVSum + morphCV- readn32(&morphCVBuffer, 31));
+	morphCVSum = (morphCVSum + morphCV- readn256(&morphCVBuffer, 255));
 	t1CVSum = (t1CVSum + time1CV- readn32(&t1CVBuffer, 31));
-	t2CVSum = (t2CVSum + time2CV- readn32(&t2CVBuffer, 31));
+	t2CVSum = (t2CVSum + time2CV- readn32(&t2CVBuffer, 15));
 
 	t1KnobAverage = t1KnobSum >> 5;
 	t2KnobAverage = t2KnobSum >> 5;
 	morphKnobAverage = morphKnobSum >> 10;
 	t1CVAverage = t1CVSum >> 5;
-	t2CVAverage = t2CVSum >> 5;
-	morphCVAverage = morphCVSum;
+	t2CVAverage = t2CVSum >> 4;
+	morphCVAverage = morphCVSum >> 3;
 
-	write32(&morphCVBuffer, morphCV);
+	morphCVholder = morphCV + hysterisis;
+
+	if ((time2Average - (time2Average >> 6)) > 32) {hysterisis = -24;}
+	else if ((time2Average - (time2Average >> 6)) < 32) {hysterisis = 24;}
+	else {hysterisis = 0;}
+	morphCVholder = morphCVholder & 0b11111111111111111111111100000;
+
+	write256(&morphCVBuffer, morphCVholder);
 	write32(&t1CVBuffer, time1CV);
 	write32(&t2CVBuffer, time2CV);
 	write32(&t1KnobBuffer, time1Knob);
 	write32(&t2KnobBuffer, time2Knob);
+
+
+
 	write1024(&morphKnobBuffer, morphKnob);
 
 }
@@ -849,24 +875,28 @@ void getAveragesDrum(void) {
 
 //our 16 bit fixed point multiply and linear interpolate functions
 
-int myfix16_mul(int in0, int in1) {
+static inline int myfix16_mul(int in0, int in1) {
 	//taken from the fixmathlib library
 	int64_t result = (uint64_t) in0 * in1;
 	return result >> 16;
 }
 
-int myfix24_mul(int in0, int in1) {
+static inline int myfix24_mul(int in0, int in1) {
 	//taken from the fixmathlib library
 	int64_t result = (uint64_t) in0 * in1;
 	return result >> 24;
 }
 
-int myfix16_lerp(int in0, int in1, uint16_t inFract) {
+static inline int myfix16_lerp(int in0, int in1, uint16_t inFract) {
 	//taken from the fixmathlib library
 	int64_t tempOut = int64_mul_i32_i32(in0, (((int32_t) 1 << 16) - inFract));
 	tempOut = int64_add(tempOut, int64_mul_i32_i32(in1, inFract));
 	tempOut = int64_shift(tempOut, -16);
 	return (int) int64_lo(tempOut);
+}
+
+static inline int my_abs(int in) {
+	return abs(in);
 }
 
 void getSampleCubicSpline(uint32_t phase) {
@@ -882,14 +912,19 @@ void getSampleCubicSpline(uint32_t phase) {
 	uint32_t LnFamily; // indicates the nearest neighbor (wavetable) to our morph value in the family
 	uint32_t waveFrac; // indicates the factional distance between our nearest neighbors in the wavetable
 	uint32_t morphFrac; // indicates the factional distance between our nearest neighbors in the family
-	uint32_t lFvalue0; // sample values used by our two interpolations in
-	uint32_t rFvalue0;
-	uint32_t lFvalue1;
-	uint32_t rFvalue1;
-	uint32_t lFvalue2;
-	uint32_t rFvalue2;
-	uint32_t lFvalue3;
-	uint32_t rFvalue3;
+	uint32_t lFValue0; // sample values used by our two interpolations in
+	uint32_t rFValue0;
+	uint32_t lFValue1;
+	uint32_t rFValue1;
+	uint32_t lFValue2;
+	uint32_t rFValue2;
+	uint32_t lFValue3;
+	uint32_t rFValue3;
+	q15_t lFValues[4];
+	q15_t interpHelper1[4];
+	q15_t interpHelper2[4];
+	q15_t rFValues[4];
+	q15_t scaling[4] = {-5461, 16384, -16384, 5461};
 	uint32_t interp0;
 	uint32_t interp1;
 	uint32_t interp2;
@@ -910,7 +945,7 @@ void getSampleCubicSpline(uint32_t phase) {
 	if (phase == 0) {
 		// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
 		//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
-		LnSample = (position >> 16);
+		LnSample = (position >> 16) + 2; //+ 2 because we define lookup overflow in our tables
 
 		//bit shifting to divide by the correct power of two takes a 12 bit number (our fixMorph) and returns the a quotient in the range of our family size
 		LnFamily = fixMorph >> morphBitShiftRight;
@@ -923,37 +958,21 @@ void getSampleCubicSpline(uint32_t phase) {
 		//get values from the relevant wavetables
 
 
-		lFvalue1 = attackHoldArray[LnFamily][LnSample];
-		lFvalue2 = attackHoldArray[LnFamily][LnSample + 1];
-		rFvalue1 = attackHoldArray[LnFamily + 1][LnSample];
-		rFvalue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
-
-		if (LnSample == 0) {
-			lFvalue0 = attackHoldArray[LnFamily][LnSample];
-			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample];
-			lFvalue3 = attackHoldArray[LnFamily][LnSample + 2];
-			rFvalue3 = attackHoldArray[LnFamily + 1][LnSample + 2];
-		} else if (LnSample >= (span >> 16) - 1) {
-			lFvalue0 = attackHoldArray[LnFamily][LnSample - 1];
-			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample - 1];
-			lFvalue3 = attackHoldArray[LnFamily][LnSample + 1];
-			rFvalue3 = attackHoldArray[LnFamily + 1][LnSample + 1];
-		} else {
-			lFvalue0 = attackHoldArray[LnFamily][LnSample - 1];
-			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample - 1];
-			lFvalue3 = attackHoldArray[LnFamily][LnSample + 2];
-			rFvalue3 = attackHoldArray[LnFamily + 1][LnSample + 2];
-		}
+		lFValue0 = attackHoldArray[LnFamily][LnSample - 1];
+		lFValue1 = attackHoldArray[LnFamily][LnSample];
+		lFValue2 = attackHoldArray[LnFamily][LnSample + 1];
+		lFValue3 = attackHoldArray[LnFamily][LnSample + 2];
+		rFValue0 = attackHoldArray[LnFamily + 1][LnSample - 1];
+		rFValue1 = attackHoldArray[LnFamily + 1][LnSample];
+		rFValue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
+		rFValue3 = attackHoldArray[LnFamily + 1][LnSample + 2];
 
 
-
-
-
-		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-				interp0 = myfix16_lerp(lFvalue0, rFvalue0, morphFrac);
-				interp1 = myfix16_lerp(lFvalue1, rFvalue1, morphFrac);
-				interp2 = myfix16_lerp(lFvalue2, rFvalue2, morphFrac);
-				interp3 = myfix16_lerp(lFvalue3, rFvalue3, morphFrac);
+//		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
+				interp0 = myfix16_lerp(lFValue0, rFValue0, morphFrac);
+				interp1 = myfix16_lerp(lFValue1, rFValue1, morphFrac);
+				interp2 = myfix16_lerp(lFValue2, rFValue2, morphFrac);
+				interp3 = myfix16_lerp(lFValue3, rFValue3, morphFrac);
 
 
 				//interpolate between those based upon the fractional part of our phase pointer
@@ -989,7 +1008,7 @@ void getSampleCubicSpline(uint32_t phase) {
 							LEDC_OFF
 						}
 					}
-				} else if (interp2 < interp1) {
+				} else {
 					EXPAND_GATE_LOW
 					REV2_GATE_LOW
 					if (DELTAB) {
@@ -1016,7 +1035,7 @@ void getSampleCubicSpline(uint32_t phase) {
 
 		//this section is similar, but subtly different to implement our "release"
 		// notice, we reflect position back over span
-		LnSample = ((spanx2 - position) >> 16);
+		LnSample = ((spanx2 - position) >> 16) + 2;
 
 		LnFamily = fixMorph >> morphBitShiftRight;
 
@@ -1027,40 +1046,21 @@ void getSampleCubicSpline(uint32_t phase) {
 
 		//pull the values from our "release family"
 
-		lFvalue1 = releaseHoldArray[LnFamily][LnSample];
-		lFvalue2 = releaseHoldArray[LnFamily][LnSample + 1];
-		rFvalue1 = releaseHoldArray[LnFamily + 1][LnSample];
-		rFvalue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
-
-		if (LnSample == 0) {
-			lFvalue0 = releaseHoldArray[LnFamily][LnSample];
-			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample];
-			lFvalue3 = releaseHoldArray[LnFamily][LnSample + 2];
-			rFvalue3 = releaseHoldArray[LnFamily + 1][LnSample + 2];
-		} else if (LnSample >= ((span >> 16) - 1)) {
-			lFvalue0 = releaseHoldArray[LnFamily][LnSample - 1];
-			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample - 1];
-			lFvalue3 = releaseHoldArray[LnFamily][LnSample + 1];
-			rFvalue3 = releaseHoldArray[LnFamily + 1][LnSample + 1];
-		} else {
-			lFvalue0 = releaseHoldArray[LnFamily][LnSample - 1];
-			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample - 1];
-			lFvalue3 = releaseHoldArray[LnFamily][LnSample + 2];
-			rFvalue3 = releaseHoldArray[LnFamily + 1][LnSample + 2];
-		}
+		lFValue0 = releaseHoldArray[LnFamily][LnSample - 1];
+		lFValue1 = releaseHoldArray[LnFamily][LnSample];
+		lFValue2 = releaseHoldArray[LnFamily][LnSample + 1];
+		lFValue3 = releaseHoldArray[LnFamily][LnSample + 2];
+		rFValue0 = releaseHoldArray[LnFamily + 1][LnSample - 1];
+		rFValue1 = releaseHoldArray[LnFamily + 1][LnSample];
+		rFValue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
+		rFValue3 = releaseHoldArray[LnFamily + 1][LnSample + 2];
 
 
+		interp0 = myfix16_lerp(lFValue0, rFValue0, morphFrac);
+		interp1 = myfix16_lerp(lFValue1, rFValue1, morphFrac);
+		interp2 = myfix16_lerp(lFValue2, rFValue2, morphFrac);
+		interp3 = myfix16_lerp(lFValue3, rFValue3, morphFrac);
 
-
-
-		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-				interp0 = myfix16_lerp(lFvalue0, rFvalue0, morphFrac);
-				interp1 = myfix16_lerp(lFvalue1, rFvalue1, morphFrac);
-				interp2 = myfix16_lerp(lFvalue2, rFvalue2, morphFrac);
-				interp3 = myfix16_lerp(lFvalue3, rFvalue3, morphFrac);
-
-
-				//interpolate between those based upon the fractional part of our phase pointer
 
 				a0 = myfix16_mul(waveFrac, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
 				a1 = myfix16_mul(waveFrac + 65536, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
@@ -1068,9 +1068,10 @@ void getSampleCubicSpline(uint32_t phase) {
 				a3 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 65536));
 
 				out = (myfix16_mul(a0, myfix24_mul(interp0, -PRECALC1_6)) +
-						(myfix16_mul(a1, interp1) >> 1) +
-							(myfix16_mul(a2, -interp2) >> 1) +
-								myfix16_mul(a3, myfix24_mul(interp3, PRECALC1_6))) >> 3;
+							(myfix16_mul(a1, interp1) >> 1) +
+								(myfix16_mul(a2, -interp2) >> 1) +
+									myfix16_mul(a3, myfix24_mul(interp3, PRECALC1_6))) >> 3;
+
 
 				if (out > 4095){out = 4095;}
 				else if (out < 0){out = 0;}
@@ -1093,7 +1094,7 @@ void getSampleCubicSpline(uint32_t phase) {
 							LEDC_OFF
 						}
 					}
-				} else if (interp1 < interp2) {
+				} else {
 					EXPAND_GATE_LOW
 					REV2_GATE_LOW
 					if (DELTAB) {
@@ -1117,6 +1118,7 @@ void getSampleCubicSpline(uint32_t phase) {
 
 
 }
+
 
 void getSampleQuinticSpline(uint32_t phase) {
 
@@ -1163,7 +1165,7 @@ void getSampleQuinticSpline(uint32_t phase) {
 	if (phase == 0) {
 		// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
 		//truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
-		LnSample = (position >> 16);
+		LnSample = (position >> 16) + 2;
 
 		//bit shifting to divide by the correct power of two takes a 12 bit number (our fixMorph) and returns the a quotient in the range of our family size
 		LnFamily = fixMorph >> morphBitShiftRight;
@@ -1174,77 +1176,20 @@ void getSampleQuinticSpline(uint32_t phase) {
 		morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
 
 		//get values from the relevant wavetables
-		// this is a funny looking method of referencing elements in a two dimensional array
-		// we need to do it like this because our struct contains a pointer to the array being used
-		// i feel like this could be optimized if we are loading from flash
-//		family = currentFamily.attackFamily + LnFamily;
-//		Lnvalue1 = *(*(family) + LnSample);
-//		Rnvalue1 = *(*(family) + LnSample + 1);
-//		Lnvalue2 = *(*(family + 1) + LnSample);
-//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
 
-		//attempt at optimizing using fixed size array on the heap
-
-
+		lFvalue0 = attackHoldArray[LnFamily][LnSample - 2];
+		lFvalue1 = attackHoldArray[LnFamily][LnSample - 1];
 		lFvalue2 = attackHoldArray[LnFamily][LnSample];
 		lFvalue3 = attackHoldArray[LnFamily][LnSample + 1];
+		lFvalue4 = attackHoldArray[LnFamily][LnSample + 2];
+		lFvalue5 = attackHoldArray[LnFamily][LnSample + 3];
+		rFvalue0 = attackHoldArray[LnFamily + 1][LnSample- 2];
+		rFvalue1 = attackHoldArray[LnFamily + 1][LnSample - 1];
 		rFvalue2 = attackHoldArray[LnFamily + 1][LnSample];
 		rFvalue3 = attackHoldArray[LnFamily + 1][LnSample + 1];
+		rFvalue4 = attackHoldArray[LnFamily + 1][LnSample + 2];
+		rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 3];
 
-		switch (LnSample) {
-		case 0:
-			lFvalue0 = releaseHoldArray[LnFamily][1];
-			rFvalue0 = releaseHoldArray[LnFamily + 1][1];
-			lFvalue1 = releaseHoldArray[LnFamily][0];
-			rFvalue1 = releaseHoldArray[LnFamily + 1][0];
-			lFvalue4 = attackHoldArray[LnFamily][LnSample + 2];
-			rFvalue4 = attackHoldArray[LnFamily + 1][LnSample + 2];
-			lFvalue5 = attackHoldArray[LnFamily][LnSample + 3];
-			rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 3];
-			break;
-
-		case 1:
-			lFvalue0 = releaseHoldArray[LnFamily][0];
-			rFvalue0 = releaseHoldArray[LnFamily + 1][0];
-			lFvalue1 = attackHoldArray[LnFamily][0];
-			rFvalue1 = attackHoldArray[LnFamily + 1][0];
-			lFvalue4 = attackHoldArray[LnFamily][LnSample + 2];
-			rFvalue4 = attackHoldArray[LnFamily + 1][LnSample + 2];
-			lFvalue5 = attackHoldArray[LnFamily][LnSample + 3];
-			rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 3];
-			break;
-
-		default: break;
-		}
-
-		if (LnSample == ((span >> 16) - 1)) {
-			lFvalue0 = attackHoldArray[LnFamily][LnSample - 2];
-			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample - 2];
-			lFvalue1 = attackHoldArray[LnFamily][LnSample - 1];
-			rFvalue1 = attackHoldArray[LnFamily + 1][LnSample - 1];
-			lFvalue4 = attackHoldArray[LnFamily][LnSample + 2];
-			rFvalue4 = attackHoldArray[LnFamily + 1][LnSample + 2];
-			lFvalue5 = attackHoldArray[LnFamily][LnSample + 2];
-			rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 2];
-		} else if (LnSample == (span >> 16)) {
-			lFvalue0 = attackHoldArray[LnFamily][LnSample - 2];
-			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample - 2];
-			lFvalue1 = attackHoldArray[LnFamily][LnSample - 1];
-			rFvalue1 = attackHoldArray[LnFamily + 1][LnSample - 1];
-			lFvalue4 = attackHoldArray[LnFamily][LnSample + 1];
-			rFvalue4 = attackHoldArray[LnFamily + 1][LnSample + 1];
-			lFvalue5 = attackHoldArray[LnFamily][LnSample + 1];
-			rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 1];
-		} else {
-			lFvalue0 = attackHoldArray[LnFamily][LnSample - 2];
-			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample - 2];
-			lFvalue1 = attackHoldArray[LnFamily][LnSample - 1];
-			rFvalue1 = attackHoldArray[LnFamily + 1][LnSample - 1];
-			lFvalue4 = attackHoldArray[LnFamily][LnSample + 2];
-			rFvalue4 = attackHoldArray[LnFamily + 1][LnSample + 2];
-			lFvalue5 = attackHoldArray[LnFamily][LnSample + 3];
-			rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 3];
-		}
 
 
 		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
@@ -1318,7 +1263,7 @@ void getSampleQuinticSpline(uint32_t phase) {
 
 		//this section is similar, but subtly different to implement our "release"
 		// notice, we reflect position back over span
-		LnSample = ((spanx2 - position) >> 16);
+		LnSample = ((spanx2 - position) >> 16) + 2;
 
 		LnFamily = fixMorph >> morphBitShiftRight;
 
@@ -1334,66 +1279,18 @@ void getSampleQuinticSpline(uint32_t phase) {
 //		Lnvalue2 = *(*(family + 1) + LnSample);
 //		Rnvalue2 = *(*(family + 1) + LnSample + 1);
 
-
+		lFvalue0 = releaseHoldArray[LnFamily][LnSample - 2];
+		lFvalue1 = releaseHoldArray[LnFamily][LnSample - 1];
 		lFvalue2 = releaseHoldArray[LnFamily][LnSample];
 		lFvalue3 = releaseHoldArray[LnFamily][LnSample + 1];
+		lFvalue4 = releaseHoldArray[LnFamily][LnSample + 2];
+		lFvalue5 = releaseHoldArray[LnFamily][LnSample + 3];
+		rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample- 2];
+		rFvalue1 = releaseHoldArray[LnFamily + 1][LnSample - 1];
 		rFvalue2 = releaseHoldArray[LnFamily + 1][LnSample];
 		rFvalue3 = releaseHoldArray[LnFamily + 1][LnSample + 1];
-
-		switch (LnSample) {
-		case 0:
-			lFvalue0 = attackHoldArray[LnFamily][1];
-			rFvalue0 = attackHoldArray[LnFamily + 1][1];
-			lFvalue1 = attackHoldArray[LnFamily][0];
-			rFvalue1 = attackHoldArray[LnFamily + 1][0];
-			lFvalue4 = releaseHoldArray[LnFamily][LnSample + 2];
-			rFvalue4 = releaseHoldArray[LnFamily + 1][LnSample + 2];
-			lFvalue5 = releaseHoldArray[LnFamily][LnSample + 3];
-			rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 3];
-			break;
-
-		case 1:
-			lFvalue0 = attackHoldArray[LnFamily][0];
-			rFvalue0 = attackHoldArray[LnFamily + 1][0];
-			lFvalue1 = releaseHoldArray[LnFamily][0];
-			rFvalue1 = releaseHoldArray[LnFamily + 1][0];
-			lFvalue4 = releaseHoldArray[LnFamily][LnSample + 2];
-			rFvalue4 = releaseHoldArray[LnFamily + 1][LnSample + 2];
-			lFvalue5 = releaseHoldArray[LnFamily][LnSample + 3];
-			rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 3];
-			break;
-
-		default: break;
-		}
-
-		if (LnSample == ((span >> 16) - 1)) {
-			lFvalue0 = releaseHoldArray[LnFamily][LnSample - 2];
-			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample - 2];
-			lFvalue1 = releaseHoldArray[LnFamily][LnSample - 1];
-			rFvalue1 = releaseHoldArray[LnFamily + 1][LnSample - 1];
-			lFvalue4 = releaseHoldArray[LnFamily][LnSample + 2];
-			rFvalue4 = releaseHoldArray[LnFamily + 1][LnSample + 2];
-			lFvalue5 = releaseHoldArray[LnFamily][LnSample + 2];
-			rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 2];
-		} else if (LnSample == (span >> 16)) {
-			lFvalue0 = releaseHoldArray[LnFamily][LnSample - 2];
-			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample - 2];
-			lFvalue1 = releaseHoldArray[LnFamily][LnSample - 1];
-			rFvalue1 = releaseHoldArray[LnFamily + 1][LnSample - 1];
-			lFvalue4 = releaseHoldArray[LnFamily][LnSample + 1];
-			rFvalue4 = releaseHoldArray[LnFamily + 1][LnSample + 1];
-			lFvalue5 = releaseHoldArray[LnFamily][LnSample + 1];
-			rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 1];
-		} else {
-			lFvalue0 = releaseHoldArray[LnFamily][LnSample - 2];
-			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample - 2];
-			lFvalue1 = releaseHoldArray[LnFamily][LnSample - 1];
-			rFvalue1 = releaseHoldArray[LnFamily + 1][LnSample - 1];
-			lFvalue4 = releaseHoldArray[LnFamily][LnSample + 2];
-			rFvalue4 = releaseHoldArray[LnFamily + 1][LnSample + 2];
-			lFvalue5 = releaseHoldArray[LnFamily][LnSample + 3];
-			rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 3];
-		}
+		rFvalue4 = releaseHoldArray[LnFamily + 1][LnSample + 2];
+		rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 3];
 
 
 		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
@@ -1465,4 +1362,3 @@ void getSampleQuinticSpline(uint32_t phase) {
 
 
 }
-

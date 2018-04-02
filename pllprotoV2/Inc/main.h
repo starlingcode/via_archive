@@ -45,6 +45,9 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 
+// uncommment to define a version compatible with rev2 (black PCB) boards
+//#define _BUILD_REV_2
+
 enum pllTypes {none, true, hardSync, catch};
 
 enum controlSchemes {root, dutyCycle, FM, phaseMod};
