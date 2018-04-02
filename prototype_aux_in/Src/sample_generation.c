@@ -1078,33 +1078,33 @@ void getSampleCubicSpline(uint32_t phase) {
 				//aka, are we moving towrds a, or towards b
 				//we use this to generate our gate output
 				if (interp1 < interp2) {
-					EXPAND_GATE_HIGH
-					REV2_GATE_HIGH
+					EXPAND_GATE_HIGH;
+					REV2_GATE_HIGH;
 					if (DELTAB) {
-						BLOGIC_HIGH
+						BLOGIC_HIGH;
 						if (RGB_ON) {
-							LEDD_ON
+							LEDD_ON;
 						}
 					}
 					if (DELTAA) {
-						ALOGIC_LOW
+						ALOGIC_LOW;
 						if (RGB_ON) {
-							LEDC_OFF
+							LEDC_OFF;
 						}
 					}
 				} else {
-					EXPAND_GATE_LOW
-					REV2_GATE_LOW
+					EXPAND_GATE_LOW;
+					REV2_GATE_LOW;
 					if (DELTAB) {
-						BLOGIC_LOW
+						BLOGIC_LOW;
 						if (RGB_ON) {
-							LEDD_OFF
+							LEDD_OFF;
 						}
 					}
 					if (DELTAA) {
-						ALOGIC_HIGH
+						ALOGIC_HIGH;
 						if (RGB_ON) {
-							LEDC_ON
+							LEDC_ON;
 						}
 					}
 				}

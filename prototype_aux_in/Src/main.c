@@ -247,8 +247,8 @@ int main(void) {
 
 	//initialize our sample and holds to track
 	//we must do this after the resampling interrupts have been enabled
-	SH_A_TRACK
-	SH_B_TRACK
+	SH_A_TRACK;
+	SH_B_TRACK;
 
 	incSign = 1;
 
@@ -990,8 +990,8 @@ void restoreState(){
 
 	incSign = 1;
 
-	SH_A_TRACK
-	SH_B_TRACK
+	SH_A_TRACK;
+	SH_B_TRACK;
 
 	switchFamily();
 
