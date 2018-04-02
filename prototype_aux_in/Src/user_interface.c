@@ -444,8 +444,8 @@ void changeMode(uint32_t mode) {
 
 		holdState = (holdState & 0b1111111000111111) | (sampleHoldMode << 6);
 
-		SH_A_TRACK
-		SH_B_TRACK
+		SH_A_TRACK;
+		SH_B_TRACK;
 
 	}
 	else if (mode == 5) {
@@ -530,24 +530,24 @@ void showMode(uint32_t currentmode) {
 		// represent a 4 bit number with our LEDs
 		// NEEDS WORK
 		case 0:
-			LEDA_ON
+			LEDA_ON;
 			break;
 		case 1:
-			LEDC_ON
+			LEDC_ON;
 			break;
 		case 2:
-			LEDB_ON
+			LEDB_ON;
 			break;
 		case 3:
-			LEDD_ON
+			LEDD_ON;
 			break;
 		case 4:
-			LEDA_ON
-			LEDC_ON
+			LEDA_ON;
+			LEDC_ON;
 			break;
 		case 5:
-			LEDB_ON
-			LEDD_ON
+			LEDB_ON;
+			LEDD_ON;
 			break;
 		}
 	}
@@ -578,25 +578,24 @@ void familyRGB(void) {
 
 	switch (familyIndicator) {
 	case 0:
-		LEDA_ON
+		LEDA_ON;
 		break;
 	case 1:
-		LEDC_ON
+		LEDC_ON;
 		break;
 	case 2:
-		LEDB_ON
+		LEDB_ON;
 		break;
-
 	case 3:
-		LEDD_ON
+		LEDD_ON;
 		break;
 	case 4:
-		LEDA_ON
-		LEDC_ON
+		LEDA_ON;
+		LEDC_ON;
 		break;
 	case 5:
-		LEDB_ON
-		LEDD_ON
+		LEDB_ON;
+		LEDD_ON;
 		break;
 	case 6:
 		LEDA_ON;
@@ -614,11 +613,10 @@ void familyRGB(void) {
 }
 void clearLEDs(void) {
 	//pretty self explanatory
-
-	LEDA_OFF
-	LEDB_OFF
-	LEDC_OFF
-	LEDD_OFF
+	LEDA_OFF;
+	LEDB_OFF;
+	LEDC_OFF;
+	LEDD_OFF;
 
 	//blank the LEDs
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);

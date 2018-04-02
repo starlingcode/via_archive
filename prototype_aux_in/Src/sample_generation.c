@@ -329,13 +329,13 @@ void getPhase(void) {
 				}
 				out = 0;
 				SET_PHASE_STATE;
-				SH_A_TRACK
-				SH_B_TRACK
+				SH_A_TRACK;
+				SH_B_TRACK;
 				if (RGB_ON) {
-					LEDA_OFF
-					LEDB_OFF
-					LEDC_OFF
-					LEDD_OFF
+					LEDA_OFF;
+					LEDB_OFF;
+					LEDC_OFF;
+					LEDD_OFF;
 				}
 			}
 			}
@@ -356,13 +356,13 @@ void getPhase(void) {
 					holdPosition = 0;
 					out = 0;
 					RESET_PHASE_STATE;
-					SH_A_TRACK
-					SH_B_TRACK
+					SH_A_TRACK;
+					SH_B_TRACK;
 					if (RGB_ON) {
-						LEDA_OFF
-						LEDB_OFF
-						LEDC_OFF
-						LEDD_OFF
+						LEDA_OFF;
+						LEDB_OFF;
+						LEDC_OFF;
+						LEDD_OFF;
 					}
 
 			}
@@ -467,13 +467,13 @@ void getPhase(void) {
 				holdPosition = position;
 			}
 			SET_PHASE_STATE;
-			SH_A_TRACK
-			SH_B_TRACK
+			SH_A_TRACK;
+			SH_B_TRACK;
 			if (RGB_ON) {
-				LEDA_OFF
-				LEDB_OFF
-				LEDC_OFF
-				LEDD_OFF
+				LEDA_OFF;
+				LEDB_OFF;
+				LEDC_OFF;
+				LEDD_OFF;
 			}
 			//HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
 
@@ -495,13 +495,13 @@ void getPhase(void) {
 			position = 0;
 			holdPosition = 0;
 			RESET_PHASE_STATE;
-			SH_A_TRACK
-			SH_B_TRACK
+			SH_A_TRACK;
+			SH_B_TRACK;
 			if (RGB_ON) {
-				LEDA_OFF
-				LEDB_OFF
-				LEDC_OFF
-				LEDD_OFF
+				LEDA_OFF;
+				LEDB_OFF;
+				LEDC_OFF;
+				LEDD_OFF;
 			}
 			//HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
 
@@ -596,33 +596,33 @@ void getSample(uint32_t phase) {
 		//aka, are we moving towrds a, or towards b
 		//we use this to generate our gate output
 		if (interp1 < interp2) {
-			EXPAND_GATE_HIGH
-			REV2_GATE_HIGH
+			EXPAND_GATE_HIGH;
+			REV2_GATE_HIGH;
 			if (DELTAB) {
-				BLOGIC_HIGH
+				BLOGIC_HIGH;
 				if (RGB_ON) {
 					LEDD_ON
 				}
 			}
 			if (DELTAA) {
-				ALOGIC_LOW
+				ALOGIC_LOW;
 				if (RGB_ON) {
-					LEDC_OFF
+					LEDC_OFF;
 				}
 			}
 		} else if (interp2 < interp1) {
-			EXPAND_GATE_LOW
-			REV2_GATE_LOW
+			EXPAND_GATE_LOW;
+			REV2_GATE_LOW;
 			if (DELTAB) {
-				BLOGIC_LOW
+				BLOGIC_LOW;
 				if (RGB_ON) {
-					LEDD_OFF
+					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
-				ALOGIC_HIGH
+				ALOGIC_HIGH;
 				if (RGB_ON) {
-					LEDC_ON
+					LEDC_ON;
 				}
 			}
 		}
@@ -661,33 +661,33 @@ void getSample(uint32_t phase) {
 		out = myfix16_lerp(interp1, interp2, phaseFrac) >> 3;
 
 		if (interp2 < interp1) {
-			EXPAND_GATE_HIGH
-			REV2_GATE_HIGH
+			EXPAND_GATE_HIGH;
+			REV2_GATE_HIGH;
 			if (DELTAB) {
-				BLOGIC_HIGH
+				BLOGIC_HIGH;
 				if (RGB_ON) {
-					LEDD_ON
+					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
-				ALOGIC_LOW
+				ALOGIC_LOW;
 				if (RGB_ON) {
-					LEDC_OFF
+					LEDC_OFF;
 				}
 			}
 		} else if (interp1 < interp2) {
-			EXPAND_GATE_LOW
-			REV2_GATE_LOW
+			EXPAND_GATE_LOW;
+			REV2_GATE_LOW;
 			if (DELTAB) {
-				BLOGIC_LOW
+				BLOGIC_LOW;
 				if (RGB_ON) {
-					LEDD_OFF
+					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
-				ALOGIC_HIGH
+				ALOGIC_HIGH;
 				if (RGB_ON) {
-					LEDC_ON
+					LEDC_ON;
 				}
 			}
 		}
@@ -1088,33 +1088,33 @@ void getSampleCubicSpline(uint32_t phase) {
 				//aka, are we moving towrds a, or towards b
 				//we use this to generate our gate output
 				if (interp1 < interp2) {
-					EXPAND_GATE_HIGH
-					REV2_GATE_HIGH
+					EXPAND_GATE_HIGH;
+					REV2_GATE_HIGH;
 					if (DELTAB) {
-						BLOGIC_HIGH
+						BLOGIC_HIGH;
 						if (RGB_ON) {
-							LEDD_ON
+							LEDD_ON;
 						}
 					}
 					if (DELTAA) {
-						ALOGIC_LOW
+						ALOGIC_LOW;
 						if (RGB_ON) {
-							LEDC_OFF
+							LEDC_OFF;
 						}
 					}
 				} else if (interp2 < interp1) {
-					EXPAND_GATE_LOW
-					REV2_GATE_LOW
+					EXPAND_GATE_LOW;
+					REV2_GATE_LOW;
 					if (DELTAB) {
-						BLOGIC_LOW
+						BLOGIC_LOW;
 						if (RGB_ON) {
-							LEDD_OFF
+							LEDD_OFF;
 						}
 					}
 					if (DELTAA) {
-						ALOGIC_HIGH
+						ALOGIC_HIGH;
 						if (RGB_ON) {
-							LEDC_ON
+							LEDC_ON;
 						}
 					}
 				}
@@ -1199,33 +1199,33 @@ void getSampleCubicSpline(uint32_t phase) {
 				//aka, are we moving towrds a, or towards b
 				//we use this to generate our gate output
 				if (interp1 < interp2) {
-					EXPAND_GATE_HIGH
-					REV2_GATE_HIGH
+					EXPAND_GATE_HIGH;
+					REV2_GATE_HIGH;
 					if (DELTAB) {
-						BLOGIC_HIGH
+						BLOGIC_HIGH;
 						if (RGB_ON) {
-							LEDD_ON
+							LEDD_ON;
 						}
 					}
 					if (DELTAA) {
-						ALOGIC_LOW
+						ALOGIC_LOW;
 						if (RGB_ON) {
-							LEDC_OFF
+							LEDC_OFF;
 						}
 					}
 				} else if (interp1 < interp2) {
-					EXPAND_GATE_LOW
-					REV2_GATE_LOW
+					EXPAND_GATE_LOW;
+					REV2_GATE_LOW;
 					if (DELTAB) {
-						BLOGIC_LOW
+						BLOGIC_LOW;
 						if (RGB_ON) {
-							LEDD_OFF
+							LEDD_OFF;
 						}
 					}
 					if (DELTAA) {
-						ALOGIC_HIGH
+						ALOGIC_HIGH;
 						if (RGB_ON) {
-							LEDC_ON
+							LEDC_ON;
 						}
 					}
 				}

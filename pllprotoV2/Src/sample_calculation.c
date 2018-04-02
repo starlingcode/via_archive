@@ -236,15 +236,15 @@ void getSample(uint32_t phase) {
 		// aka, are we moving towards a, or towards b
 		// used to generate the "direction" gate output
 		if (interp1 < interp2) {
-			EOA_GATE_HIGH
+			EOA_GATE_HIGH;
 			if (DELTAB) {
-				EOA_JACK_HIGH
+				EOA_JACK_HIGH;
 				if (RGB_ON) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_LOW
+				EOR_JACK_LOW;
 				if (RGB_ON) {
 					LEDC_OFF;
 				}
@@ -252,13 +252,13 @@ void getSample(uint32_t phase) {
 		} else if (interp2 < interp1) {
 			EOA_GATE_LOW
 			if (DELTAB) {
-				EOA_JACK_LOW
+				EOA_JACK_LOW;
 				if (RGB_ON) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_HIGH
+				EOR_JACK_HIGH;
 				if (RGB_ON) {
 					LEDC_ON;
 				}
@@ -386,29 +386,29 @@ void getSampleLaGrange(uint32_t phase) {
 				//aka, are we moving towrds a, or towards b
 				//we use this to generate our gate output
 				if (interp1 < interp2) {
-					EOA_GATE_HIGH
+					EOA_GATE_HIGH;
 					if (DELTAB) {
-						EOA_JACK_HIGH
+						EOA_JACK_HIGH;
 						if (RGB_ON) {
 							LEDD_ON;
 						}
 					}
 					if (DELTAA) {
-						EOR_JACK_LOW
+						EOR_JACK_LOW;
 						if (RGB_ON) {
 							LEDC_OFF;
 						}
 					}
 				} else if (interp2 < interp1) {
-					EOA_GATE_LOW
+					EOA_GATE_LOW;
 					if (DELTAB) {
-						EOA_JACK_LOW
+						EOA_JACK_LOW;
 						if (RGB_ON) {
 							LEDD_OFF;
 						}
 					}
 					if (DELTAA) {
-						EOR_JACK_HIGH
+						EOR_JACK_HIGH;
 						if (RGB_ON) {
 							LEDC_ON;
 						}
@@ -491,29 +491,29 @@ void getSampleLaGrange(uint32_t phase) {
 				//aka, are we moving towrds a, or towards b
 				//we use this to generate our gate output
 				if (interp1 < interp2) {
-					EOA_GATE_HIGH
+					EOA_GATE_HIGH;
 					if (DELTAB) {
-						EOA_JACK_HIGH
+						EOA_JACK_HIGH;
 						if (RGB_ON) {
 							LEDD_ON;
 						}
 					}
 					if (DELTAA) {
-						EOR_JACK_LOW
+						EOR_JACK_LOW;
 						if (RGB_ON) {
 							LEDC_OFF;
 						}
 					}
 				} else if (interp2 < interp1) {
-					EOA_GATE_LOW
+					EOA_GATE_LOW;
 					if (DELTAB) {
-						EOA_JACK_LOW
+						EOA_JACK_LOW;
 						if (RGB_ON) {
 							LEDD_OFF;
 						}
 					}
 					if (DELTAA) {
-						EOR_JACK_HIGH
+						EOR_JACK_HIGH;
 						if (RGB_ON) {
 							LEDC_ON;
 						}
@@ -657,24 +657,24 @@ void EXTI15_10_IRQHandler(void) {
 
 
 
-		EOR_GATE_HIGH
-		EOA_GATE_LOW
+		EOR_GATE_HIGH;
+		EOA_GATE_LOW;
 
 		if (TRIGA) {
-					EOR_JACK_HIGH
+					EOR_JACK_HIGH;
 					if (RGB_ON) {
 						LEDC_ON;
 					}
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
 				} else if (GATEA) {
-					EOR_JACK_HIGH
+					EOR_JACK_HIGH;
 					if (RGB_ON) {
 						LEDC_ON;
 					}
 				}
 				if (GATEB) {
-					EOA_JACK_LOW
+					EOA_JACK_LOW;
 					if (RGB_ON) {
 						LEDD_OFF;
 					}
@@ -692,24 +692,24 @@ void EXTI15_10_IRQHandler(void) {
 
 	} else {
 
-		EOA_GATE_HIGH
-		EOR_GATE_LOW
+		EOA_GATE_HIGH;
+		EOR_GATE_LOW;
 
 		if (TRIGB) {
-					EOA_JACK_HIGH
+					EOA_JACK_HIGH;
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
 					if (RGB_ON) {
 						LEDD_ON;
 					}
 				} else if (GATEB) {
-					EOA_JACK_HIGH
+					EOA_JACK_HIGH;
 					if (RGB_ON) {
 						LEDD_ON;
 					}
 				}
 				if (GATEA) {
-					EOR_JACK_LOW
+					EOR_JACK_LOW;
 					if (RGB_ON) {
 						LEDC_OFF;
 					}
@@ -735,36 +735,36 @@ void sampHoldB(void) {
 	switch (sampleHoldMode) {
 
 	case a:
-		SH_A_TRACK
+		SH_A_TRACK;
 		if (RGB_ON) {
-			LEDA_ON
+			LEDA_ON;
 		}
 		break;
 
 		// case b: b remains sampled
 
 	case ab:
-		SH_A_TRACK
+		SH_A_TRACK;
 		if (RGB_ON) {
-			LEDA_OFF
+			LEDA_OFF;
 		}
 		// b remains sampled
 		break;
 
 	case antidecimate:
-		SH_B_SAMPLE
-		SH_A_TRACK
+		SH_B_SAMPLE;
+		SH_A_TRACK;
 		if (RGB_ON) {
-			LEDB_OFF
-			LEDA_ON
+			LEDB_OFF;
+			LEDA_ON;
 		}
 		break;
 
 	case decimate:
-		SH_A_TRACK
+		SH_A_TRACK;
 		if (RGB_ON) {
-			LEDA_OFF
-			LEDB_OFF
+			LEDA_OFF;
+			LEDB_OFF;
 		}
 
 		__HAL_TIM_SET_COUNTER(&htim7, 0);
@@ -783,38 +783,38 @@ void sampHoldA(void) {
 	switch (sampleHoldMode) {
 
 	case a:
-		SH_A_SAMPLE
+		SH_A_SAMPLE;
 		if (RGB_ON) {
-			LEDA_OFF
+			LEDA_OFF;
 		}
 		break;
 
 	case b:
-		SH_B_TRACK
+		SH_B_TRACK;
 		__HAL_TIM_SET_COUNTER(&htim8, 0);
 		__HAL_TIM_ENABLE(&htim8);
 		if (RGB_ON) {
-			LEDB_OFF
+			LEDB_OFF;
 		}
 		break;
 
 	case ab:
-		SH_A_SAMPLE
-		SH_B_TRACK
+		SH_A_SAMPLE;
+		SH_B_TRACK;
 		if (RGB_ON) {
-			LEDB_OFF
-			LEDA_ON
+			LEDB_OFF;
+			LEDA_ON;
 		}
 		__HAL_TIM_SET_COUNTER(&htim8, 0);
 		__HAL_TIM_ENABLE(&htim8);
 		break;
 
 	case antidecimate:
-		SH_A_SAMPLE
-		SH_B_TRACK
+		SH_A_SAMPLE;
+		SH_B_TRACK;
 		if (RGB_ON) {
-			LEDA_OFF
-			LEDB_ON
+			LEDA_OFF;
+			LEDB_ON;
 		}
 		break;
 
@@ -822,10 +822,8 @@ void sampHoldA(void) {
 		SH_B_TRACK
 		;
 		if (RGB_ON) {
-			LEDA_OFF
-			;
-			LEDB_OFF
-			;
+			LEDA_OFF;
+			LEDB_OFF;
 		}
 
 		__HAL_TIM_SET_COUNTER(&htim7, 0);

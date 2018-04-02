@@ -230,14 +230,14 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
 	if (TRIGB) {
 		BLOGIC_LOW;
 		if (RGB_ON) {
-			LEDD_OFF
+			LEDD_OFF;
 		}
 
 	}
 	if (TRIGA) {
 		ALOGIC_LOW;
 		if (RGB_ON) {
-			LEDC_OFF
+			LEDC_OFF;
 		}
 	}
 	__HAL_TIM_DISABLE(&htim15);
@@ -468,10 +468,10 @@ void TIM3_IRQHandler(void) {
  */
 void TIM8_UP_IRQHandler(void) {
 	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
-	SH_B_SAMPLE
+	SH_B_SAMPLE;
 	//this handles the logic where we resample b at a
 	if (RGB_ON) {
-		LEDB_ON
+		LEDB_ON;
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
@@ -510,12 +510,12 @@ void TIM6_DAC_IRQHandler(void) {
  */
 void TIM7_IRQHandler(void) {
 	/* USER CODE BEGIN TIM7_IRQn 0 */
-	SH_A_SAMPLE
+	SH_A_SAMPLE;
 	// this handles our decimate resampling
-	SH_B_SAMPLE
+	SH_B_SAMPLE;
 	if (RGB_ON) {
-		LEDA_ON
-		LEDB_ON
+		LEDA_ON;
+		LEDB_ON;
 	}
 	__HAL_TIM_CLEAR_FLAG(&htim7, TIM_FLAG_UPDATE);
 	/* USER CODE END TIM7_IRQn 0 */
@@ -566,15 +566,15 @@ void EXTI15_10_IRQHandler(void) {
 
 		}
 
-		EXPAND_GATE_HIGH
-		REV2_GATE_HIGH
-		ALOGIC_HIGH
-		BLOGIC_LOW
+		EXPAND_GATE_HIGH;
+		REV2_GATE_HIGH;
+		ALOGIC_HIGH;
+		BLOGIC_LOW;
 		if (RGB_ON) {
-			LEDD_OFF
+			LEDD_OFF;
 		}
 		if (RGB_ON) {
-			LEDC_ON
+			LEDC_ON;
 		}
 
 		if (TRIGA) {
@@ -597,18 +597,18 @@ void EXTI15_10_IRQHandler(void) {
 
 	} else {
 
-		EXPAND_GATE_LOW
-		REV2_GATE_LOW
+		EXPAND_GATE_LOW;
+		REV2_GATE_LOW;
 
-		ALOGIC_LOW
+		ALOGIC_LOW;
 		if (RGB_ON) {
-			LEDC_OFF
+			LEDC_OFF;
 		}
 
 
-		BLOGIC_HIGH
+		BLOGIC_HIGH;
 		if (RGB_ON) {
-			LEDD_ON
+			LEDD_ON;
 		}
 
 
@@ -639,36 +639,36 @@ void sampHoldB(void) {
 	switch (sampleHoldMode) {
 
 	case a:
-		SH_A_TRACK
+		SH_A_TRACK;
 		if (RGB_ON) {
-			LEDA_ON
+			LEDA_ON;
 		}
 		break;
 
 		// case b: b remains sampled
 
 	case ab:
-		SH_A_TRACK
+		SH_A_TRACK;
 		if (RGB_ON) {
-			LEDA_OFF
+			LEDA_OFF;
 		}
 		// b remains sampled
 		break;
 
 	case antidecimate:
-		SH_B_SAMPLE
-		SH_A_TRACK
+		SH_B_SAMPLE;
+		SH_A_TRACK;
 		if (RGB_ON) {
-			LEDB_OFF
-			LEDA_ON
+			LEDB_OFF;
+			LEDA_ON;
 		}
 		break;
 
 	case decimate:
-		SH_A_TRACK
+		SH_A_TRACK;
 		if (RGB_ON) {
-			LEDA_OFF
-			LEDB_OFF
+			LEDA_OFF;
+			LEDB_OFF;
 		}
 
 		__HAL_TIM_SET_COUNTER(&htim7, 0);
@@ -687,49 +687,46 @@ void sampHoldA(void) {
 	switch (sampleHoldMode) {
 
 	case a:
-		SH_A_SAMPLE
+		SH_A_SAMPLE;
 		if (RGB_ON) {
-			LEDA_OFF
+			LEDA_OFF;
 		}
 		break;
 
 	case b:
-		SH_B_TRACK
+		SH_B_TRACK;
 		__HAL_TIM_SET_COUNTER(&htim8, 0);
 		__HAL_TIM_ENABLE(&htim8);
 		if (RGB_ON) {
-			LEDB_OFF
+			LEDB_OFF;
 		}
 		break;
 
 	case ab:
-		SH_A_SAMPLE
-		SH_B_TRACK
+		SH_A_SAMPLE;
+		SH_B_TRACK;
 		if (RGB_ON) {
-			LEDB_OFF
-			LEDA_ON
+			LEDB_OFF;
+			LEDA_ON;
 		}
 		__HAL_TIM_SET_COUNTER(&htim8, 0);
 		__HAL_TIM_ENABLE(&htim8);
 		break;
 
 	case antidecimate:
-		SH_A_SAMPLE
-		SH_B_TRACK
+		SH_A_SAMPLE;
+		SH_B_TRACK;
 		if (RGB_ON) {
-			LEDA_OFF
-			LEDB_ON
+			LEDA_OFF;
+			LEDB_ON;
 		}
 		break;
 
 	case decimate:
-		SH_B_TRACK
-		;
+		SH_B_TRACK;
 		if (RGB_ON) {
-			LEDA_OFF
-			;
-			LEDB_OFF
-			;
+			LEDA_OFF;
+			LEDB_OFF;
 		}
 
 		__HAL_TIM_SET_COUNTER(&htim7, 0);
