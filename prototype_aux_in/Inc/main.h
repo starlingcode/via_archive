@@ -47,11 +47,14 @@
 #include "stm32f3xx_it.h"
 #include "eeprom.h"
 
+// uncommment to define a version compatible with rev2 (black PCB) boards
+//#define _BUILD_REV_2
+
 #define time2Knob ADCReadings2[0]
-#define morphKnob (ADCReadings2[1] & 0b11111111111111111111111111111000)
+#define morphKnob (ADCReadings2[1] & 0b11111111111111111111111111111111)
 #define time1CV ADCReadings1[0]
 #define time2CV ADCReadings1[1]
-#define morphCV (ADCReadings1[2] & 0b111111111111111111111111111100)
+#define morphCV (ADCReadings1[2] & 0b1111111111111111111111111100000)
 #define time1Knob ADCReadings3[0]
 
 //#define time2Knob 3000
@@ -63,17 +66,17 @@
 
 
 
-enum speedTypes {audio, env, seq} __attribute__((section("ccmram")));;
+enum speedTypes {audio, env, seq} __attribute__((section("ccmram")));
 
-enum loopTypes {noloop, looping};
+enum loopTypes {noloop, looping}__attribute__((section("ccmram")));
 
-enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum, pendulum2} __attribute__((section("ccmram")));;
+enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum, pendulum2} __attribute__((section("ccmram")));
 
-enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
+enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate}__attribute__((section("ccmram")));
 
-enum logicOutATypes {triggerA, gateA, deltaA} ;
+enum logicOutATypes {triggerA, gateA, deltaA};
 
-enum logicOutBTypes {triggerB, gateB, deltaB} ;
+enum logicOutBTypes {triggerB, gateB, deltaB};
 
 
 int familyIndicator;
@@ -102,8 +105,8 @@ typedef struct buffer1024 {
     int writeIndex;
 }buffer1024;
 
-void write1024(buffer1024*,int);
-int readn1024(buffer1024*, int);
+static inline void write1024(buffer1024*,int) __attribute__((section("ccmram")));
+static inline int readn1024(buffer1024*, int) __attribute__((section("ccmram")));
 
 
 typedef struct buffer256 {
@@ -111,16 +114,16 @@ typedef struct buffer256 {
     int writeIndex;
 }buffer256;
 
-void write256(buffer256*,int);
-int readn256(buffer256*, int);
+static inline void write256(buffer256*,int) __attribute__((section("ccmram")));
+static inline int readn256(buffer256*, int) __attribute__((section("ccmram")));
 
 typedef struct buffer32 {
     int buff[32];
     int writeIndex;
 }buffer32;
 
-void write32(buffer32*,int);
-int readn32(buffer32*, int);
+static inline void write32(buffer32*,int) __attribute__((section("ccmram")));
+static inline int readn32(buffer32*, int) __attribute__((section("ccmram")));
 
 
 

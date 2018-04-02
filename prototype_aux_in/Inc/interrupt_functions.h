@@ -3,7 +3,6 @@
 #include "stm32f3xx_it.h"
 
 
-
 int calcTime1Env(void) __attribute__((section("ccmram")));
 int calcTime2Env(void) __attribute__((section("ccmram")));
 int calcTime1Seq(void) __attribute__((section("ccmram")));

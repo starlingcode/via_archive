@@ -92,7 +92,7 @@ void inputCapture(void) {
 
 		if (lastMultiplier != multKey) {
 			if (RATIO_DELTAA) {
-				EOR_JACK_HIGH
+				EOR_JACK_HIGH;
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
 				__HAL_TIM_ENABLE(&htim15);
 				if (RGB_ON) {
@@ -100,7 +100,7 @@ void inputCapture(void) {
 				}
 			}
 			if (RATIO_DELTAB) {
-				EOA_JACK_HIGH
+				EOA_JACK_HIGH;
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
 				__HAL_TIM_ENABLE(&htim15);
 				if (RGB_ON) {
@@ -124,7 +124,7 @@ void inputCapture(void) {
 			RESET_TRIGGER_BUTTON;
 
 			if (PLL_DIVA) {
-				EOR_JACK_HIGH
+				EOR_JACK_HIGH;
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
 				__HAL_TIM_ENABLE(&htim15);
 				if (RGB_ON) {
@@ -132,7 +132,7 @@ void inputCapture(void) {
 				}
 			}
 			if (PLL_DIVB) {
-				EOA_JACK_HIGH
+				EOA_JACK_HIGH;
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
 				__HAL_TIM_ENABLE(&htim15);
 				if (RGB_ON) {

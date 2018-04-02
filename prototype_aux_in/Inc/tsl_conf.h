@@ -441,7 +441,7 @@
 /** Timing tick frequency in Hz (range=125, 250, 500, 1000, 2000)
   - Result to a timing interrupt respectively every 8ms, 4ms, 2ms, 1ms, 0.5ms
 */
-#define TSLPRM_TICK_FREQ (250)
+#define TSLPRM_TICK_FREQ (125)
 
 /** Delay for discharging Cx and Cs capacitors (range=0..65535)
     - The value corresponds to the Softdelay function parameter.
@@ -449,7 +449,7 @@
     - 1000 gives around 125 �s delay whatever HCLK
     - 2000 gives around 250 �s delay whatever HCLK
 */
-#define TSLPRM_DELAY_DISCHARGE_ALL (500)
+#define TSLPRM_DELAY_DISCHARGE_ALL (50)
 
 /** IOs default mode when no on-going acquisition (range=0..1)
     - 0: Output push-pull low

@@ -20,6 +20,9 @@ uint32_t morphBitShiftLeft;
 int fixMorph;
 int getMorph;
 
+uint32_t morphCVAverage;
+uint32_t morphCVLongAverage;
+
 uint32_t attackInc;
 uint32_t releaseInc;
 uint32_t catchupInc;
@@ -49,10 +52,13 @@ int myfix16_lerp(int, int, uint16_t)  __attribute__((section("ccmram")));
 
 #define time2Knob ADCReadings2[0]
 #define morphKnob (ADCReadings2[1] & 0b11111111111111111111111111100000)
-#define time1CV ADCReadings1[0]
-#define time2CV (ADCReadings1[1] & 0b11111111111111111111111111111110)
-#define morphCV (ADCReadings1[2] & 0b11111111111111111111111111000000)
+#define time1CV (ADCReadings1[0] & 0b111111111111111111111111111000)
+#define time2CV (ADCReadings1[1] & 0b11111111111111111111111111111111)
+#define morphCV (ADCReadings1[2] & 0b1111111111111111111111111100000)
 #define time1Knob ADCReadings3[0]
+
+//#define morphKnob 4000
+//#define morphCV 50
 
 
 
