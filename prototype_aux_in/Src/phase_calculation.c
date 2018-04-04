@@ -25,13 +25,10 @@ uint32_t ADCReadings1[4];
 uint32_t ADCReadings2[2];
 uint32_t ADCReadings3[2];
 
+enum trigModeTypes trigMode;
+
 
 // mode indicators, defined in functions found in user_interface.c
-enum speedTypes speed;
-enum loopTypes loop;
-enum trigModeTypes trigMode;
-enum sampleHoldModeTypes sampleHoldMode;
-
 int lookuptable[4095];
 
 void getAverages(int) __attribute__((section("ccmram")));
@@ -361,9 +358,7 @@ int getPhaseComplexEnv(int position) {
 			LEDC_OFF;
 			LEDD_OFF;
 		}
-
 	}
-
 
 	//combine the T2 CV and knob analogous to the morph knob
 

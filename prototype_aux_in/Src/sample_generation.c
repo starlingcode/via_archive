@@ -416,356 +416,356 @@ void getSampleQuinticSpline(uint32_t phase) {
 
 
 
-//
-//
-//void getSample(uint32_t phase) {
-//	// in this function, we use our phase position to get the sample to give to our dacs using biinterpolation
-//	// essentially, we need to get 4 sample values and two "fractional arguments" (where are we at in between those sample values)
-//	// think of locating a position on a rectangular surface based upon how far you are between the bottom and top and how far you are between the left and right sides
-//	// that is basically what we are doing here
-//	uint32_t LnSample; // indicates the nearest neighbor to our position in the wavetable
-//	uint32_t LnFamily; // indicates the nearest neighbor (wavetable) to our morph value in the family
-//	uint32_t phaseFrac; // indicates the factional distance between our nearest neighbors in the wavetable
-//	uint32_t morphFrac; // indicates the factional distance between our nearest neighbors in the family
-//	uint32_t Lnvalue1; // sample values used by our two interpolations in
-//	uint32_t Rnvalue1;
-//	uint32_t Lnvalue2;
-//	uint32_t Rnvalue2;
-//	uint32_t interp1; // results of those two interpolations
-//	uint32_t interp2; // results of those two interpolations
-//
-//	// 0 means we are attacking from A to B, aka we are reading from the slopetable from left to right
-//	// 1 means we are releasing from B to A, aka we are reading from the slopetable from right to left
-//	if (phase == 0) {
-//		// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
-//		// truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
-//		LnSample = (position >> 16);
-//
-//		//bit shifting to divide by the correct power of two takes a 12 bit number (our fixMorph) and returns the a quotient in the range of our family size
-//		LnFamily = fixMorph >> morphBitShiftRight;
-//
-//		// determine the fractional part of our phase position by masking off the integer
-//		phaseFrac = 0x0000FFFF & position;
-//		// we have to calculate the fractional portion and get it up to full scale
-//		morphFrac = (fixMorph - (LnFamily << morphBitShiftRight))
-//						<< morphBitShiftLeft;
-//
-//		// get values from the relevant wavetables
-//		Lnvalue1 = attackHoldArray[LnFamily][LnSample];
-//		Rnvalue1 = attackHoldArray[LnFamily][LnSample + 1];
-//		Lnvalue2 = attackHoldArray[LnFamily + 1][LnSample];
-//		Rnvalue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
-//
-//		// find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-//		interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
-//		interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
-//
-//		// interpolate between those based upon the fractional part of our phase pointer
-//		out = myfix16_lerp(interp1, interp2, phaseFrac) >> 3;
-//
-//		// we use the interpolated nearest neighbor samples to determine the sign of rate of change
-//		// aka, are we moving towards a, or towards b
-//		// we use this to generate our gate output
-//		if (interp1 < interp2) {
-//			EXPAND_GATE_HIGH;
-//			REV2_GATE_HIGH;
-//			if (DELTAB) {
-//				BLOGIC_HIGH;
-//				if (RGB_ON) {
-//					LEDD_ON;
-//				}
-//			}
-//			if (DELTAA) {
-//				ALOGIC_LOW;
-//				if (RGB_ON) {
-//					LEDC_OFF;
-//				}
-//			}
-//		} else if (interp2 < interp1) {
-//			EXPAND_GATE_LOW;
-//			REV2_GATE_LOW;
-//			if (DELTAB) {
-//				BLOGIC_LOW;
-//				if (RGB_ON) {
-//					LEDD_OFF;
-//				}
-//			}
-//			if (DELTAA) {
-//				ALOGIC_HIGH;
-//				if (RGB_ON) {
-//					LEDC_ON;
-//				}
-//			}
-//		}
-//
-//		if (RGB_ON) {
-//			// if the runtime display is on, show the current value of our contour generator in blue and morph in green
-//			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
-//			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
-//		}
-//	}
-//	else {
-//		// this section is mostly the same as the "attack" above
-//		// however, we reflect position back over span to move backwards through our wavetable slope
-//		LnSample = ((spanx2 - position) >> 16);
-//		LnFamily = fixMorph >> morphBitShiftRight;
-//
-//		// here, again, we use that reflected value
-//		phaseFrac = 0x0000FFFF & (spanx2 - position);
-//		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight))
-//				<< morphBitShiftLeft);
-//
-//		Lnvalue1 = releaseHoldArray[LnFamily][LnSample];
-//		Rnvalue1 = releaseHoldArray[LnFamily][LnSample + 1];
-//		Lnvalue2 = releaseHoldArray[LnFamily + 1][LnSample];
-//		Rnvalue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
-//
-//		interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
-//		interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
-//
-//		out = myfix16_lerp(interp1, interp2, phaseFrac) >> 3;
-//
-//		if (interp2 < interp1) {
-//			EXPAND_GATE_HIGH;
-//			REV2_GATE_HIGH;
-//			if (DELTAB) {
-//				BLOGIC_HIGH;
-//				if (RGB_ON) {
-//					LEDD_ON;
-//				}
-//			}
-//			if (DELTAA) {
-//				ALOGIC_LOW;
-//				if (RGB_ON) {
-//					LEDC_OFF;
-//				}
-//			}
-//		} else if (interp1 < interp2) {
-//			EXPAND_GATE_LOW;
-//			REV2_GATE_LOW;
-//			if (DELTAB) {
-//				BLOGIC_LOW;
-//				if (RGB_ON) {
-//					LEDD_OFF;
-//				}
-//			}
-//			if (DELTAA) {
-//				ALOGIC_HIGH;
-//				if (RGB_ON) {
-//					LEDC_ON;
-//				}
-//			}
-//		}
-//
-//		//if the runtime display is on, show the current value of our contour generator in blue and morph in green
-//		if (RGB_ON) {
-//			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
-//			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
-//		}
-//	}
-//}
-//
-//void getSampleCubicSpline(uint32_t phase) {
-//#define PRECALC1_6 2796203
-//
-//
-//	// in this function, we use our phase position to get the sample to give to our DACs using "biinterpolation"
-//	// essentially, we need to get 4 sample values and two "fractional arguments" (where are we at in between those sample values)
-//	// think of locating a position on a rectangular surface based upon how far you are between the bottom and top and how far you are between the left and right sides
-//	// that is basically what we are doing here
-//
-//	uint32_t LnSample;  // indicates the nearest neighbor to our position in the wavetable
-//	uint32_t LnFamily;  // indicates the nearest neighbor (wavetable) to our morph value in the family
-//	uint32_t waveFrac;  // indicates the fractional distance between our nearest neighbors in the wavetable
-//	uint32_t morphFrac; // indicates the fractional distance between our nearest neighbors in the family
-//	uint32_t lFValue0;  // sample values used by our two interpolations in
-//	uint32_t rFValue0;
-//	uint32_t lFValue1;
-//	uint32_t rFValue1;
-//	uint32_t lFValue2;
-//	uint32_t rFValue2;
-//	uint32_t lFValue3;
-//	uint32_t rFValue3;
-//	q15_t lFValues[4];
-//	q15_t interpHelper1[4];
-//	q15_t interpHelper2[4];
-//	q15_t rFValues[4];
-//	q15_t scaling[4] = {-5461, 16384, -16384, 5461};
-//	uint32_t interp0;
-//	uint32_t interp1;
-//	uint32_t interp2;
-//	uint32_t interp3;
-//	uint32_t a0;
-//	uint32_t a1;
-//	uint32_t a2;
-//	uint32_t a3;
-//
-//	// the above is used to perform our bi-interpolation
-//	// essentially, interp 1 and interp 2 are the interpolated values in the two adjacent wavetables per the playback position
-//	// out is the "crossfade" between those according to morphFrac
-//
-//	if (phase == 0) {
-//		// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
-//		// truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
-//		LnSample = (position >> 16) + 2; //+ 2 because we define lookup overflow in our tables
-//
-//		// bit shifting to divide by the correct power of two takes a 12 bit number (our fixMorph) and returns the a quotient in the range of our family size
-//		LnFamily = fixMorph >> morphBitShiftRight;
-//
-//		// determine the fractional part of our phase position by masking off the integer
-//		waveFrac = 0x0000FFFF & position;
-//		//  we have to calculate the fractional portion and get it up to full scale
-//		morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
-//
-//		// get values from the relevant wavetables
-//
-//		lFValue0 = attackHoldArray[LnFamily][LnSample - 1];
-//		lFValue1 = attackHoldArray[LnFamily][LnSample];
-//		lFValue2 = attackHoldArray[LnFamily][LnSample + 1];
-//		lFValue3 = attackHoldArray[LnFamily][LnSample + 2];
-//		rFValue0 = attackHoldArray[LnFamily + 1][LnSample - 1];
-//		rFValue1 = attackHoldArray[LnFamily + 1][LnSample];
-//		rFValue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
-//		rFValue3 = attackHoldArray[LnFamily + 1][LnSample + 2];
-//
-//		// find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-//		interp0 = myfix16_lerp(lFValue0, rFValue0, morphFrac);
-//		interp1 = myfix16_lerp(lFValue1, rFValue1, morphFrac);
-//		interp2 = myfix16_lerp(lFValue2, rFValue2, morphFrac);
-//		interp3 = myfix16_lerp(lFValue3, rFValue3, morphFrac);
-//
-//		// interpolate between those based upon the fractional part of our phase pointer
-//		a0 = myfix16_mul(waveFrac, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
-//		a1 = myfix16_mul(waveFrac + 65536, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
-//		a2 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 131072));
-//		a3 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 65536));
-//
-//		out = (myfix16_mul(a0, myfix24_mul(interp0, -PRECALC1_6)) +
-//				(myfix16_mul(a1, interp1) >> 1) +
-//				(myfix16_mul(a2, -interp2) >> 1) +
-//				myfix16_mul(a3, myfix24_mul(interp3, PRECALC1_6))) >> 3;
-//
-//		if (out > 4095){out = 4095;}
-//		else if (out < 0){out = 0;}
-//
-//		// we use the interpolated nearest neighbor samples to determine the sign of rate of change
-//		// aka, are we moving towards a, or towards b
-//		// we use this to generate our gate output
-//		if (interp1 < interp2) {
-//			EXPAND_GATE_HIGH;
-//			REV2_GATE_HIGH;
-//			if (DELTAB) {
-//				BLOGIC_HIGH;
-//				if (RGB_ON) {
-//					LEDD_ON;
-//				}
-//			}
-//			if (DELTAA) {
-//				ALOGIC_LOW;
-//				if (RGB_ON) {
-//					LEDC_OFF;
-//				}
-//			}
-//		}
-//		else {
-//			EXPAND_GATE_LOW;
-//			REV2_GATE_LOW;
-//			if (DELTAB) {
-//				BLOGIC_LOW;
-//				if (RGB_ON) {
-//					LEDD_OFF;
-//				}
-//			}
-//			if (DELTAA) {
-//				ALOGIC_HIGH;
-//				if (RGB_ON) {
-//					LEDC_ON;
-//				}
-//			}
-//		}
-//
-//		if (RGB_ON) { // if the runtime display is on, show our mode
-//			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
-//			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
-//		}
-//	}
-//	else {
-//
-//		// this section is similar, but subtly different to implement our "release"
-//		// notice, we reflect position back over span
-//		LnSample = ((spanx2 - position) >> 16) + 2;
-//		LnFamily = fixMorph >> morphBitShiftRight;
-//
-//		// here, again, we use that reflected value
-//		waveFrac = 0x0000FFFF & (spanx2 - position);
-//		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
-//
-//		// pull the values from our "release family"
-//		lFValue0 = releaseHoldArray[LnFamily][LnSample - 1];
-//		lFValue1 = releaseHoldArray[LnFamily][LnSample];
-//		lFValue2 = releaseHoldArray[LnFamily][LnSample + 1];
-//		lFValue3 = releaseHoldArray[LnFamily][LnSample + 2];
-//		rFValue0 = releaseHoldArray[LnFamily + 1][LnSample - 1];
-//		rFValue1 = releaseHoldArray[LnFamily + 1][LnSample];
-//		rFValue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
-//		rFValue3 = releaseHoldArray[LnFamily + 1][LnSample + 2];
-//
-//		interp0 = myfix16_lerp(lFValue0, rFValue0, morphFrac);
-//		interp1 = myfix16_lerp(lFValue1, rFValue1, morphFrac);
-//		interp2 = myfix16_lerp(lFValue2, rFValue2, morphFrac);
-//		interp3 = myfix16_lerp(lFValue3, rFValue3, morphFrac);
-//
-//		a0 = myfix16_mul(waveFrac, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
-//		a1 = myfix16_mul(waveFrac + 65536, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
-//		a2 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 131072));
-//		a3 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 65536));
-//
-//		out = (myfix16_mul(a0, myfix24_mul(interp0, -PRECALC1_6)) +
-//				(myfix16_mul(a1, interp1) >> 1) +
-//				(myfix16_mul(a2, -interp2) >> 1) +
-//				myfix16_mul(a3, myfix24_mul(interp3, PRECALC1_6))) >> 3;
-//
-//		if (out > 4095){out = 4095;}
-//		else if (out < 0){out = 0;}
-//
-//		// we use the interpolated nearest neighbor samples to determine the sign of rate of change
-//		// aka, are we moving towards a, or towards b
-//		// we use this to generate our gate output
-//		if (interp1 < interp2) {
-//			EXPAND_GATE_HIGH;
-//			REV2_GATE_HIGH;
-//			if (DELTAB) {
-//				BLOGIC_HIGH;
-//				if (RGB_ON) {
-//					LEDD_ON;
-//				}
-//			}
-//			if (DELTAA) {
-//				ALOGIC_LOW;
-//				if (RGB_ON) {
-//					LEDC_OFF;
-//				}
-//			}
-//		} else {
-//			EXPAND_GATE_LOW;
-//			REV2_GATE_LOW;
-//			if (DELTAB) {
-//				BLOGIC_LOW;
-//				if (RGB_ON) {
-//					LEDD_OFF;
-//				}
-//			}
-//			if (DELTAA) {
-//				ALOGIC_HIGH;
-//				if (RGB_ON) {
-//					LEDC_ON;
-//				}
-//			}
-//		}
-//		if (RGB_ON) {
-//			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
-//			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
-//		}
-//	}
-//}
+
+
+void getSample(uint32_t phase) {
+	// in this function, we use our phase position to get the sample to give to our dacs using biinterpolation
+	// essentially, we need to get 4 sample values and two "fractional arguments" (where are we at in between those sample values)
+	// think of locating a position on a rectangular surface based upon how far you are between the bottom and top and how far you are between the left and right sides
+	// that is basically what we are doing here
+	uint32_t LnSample; // indicates the nearest neighbor to our position in the wavetable
+	uint32_t LnFamily; // indicates the nearest neighbor (wavetable) to our morph value in the family
+	uint32_t phaseFrac; // indicates the factional distance between our nearest neighbors in the wavetable
+	uint32_t morphFrac; // indicates the factional distance between our nearest neighbors in the family
+	uint32_t Lnvalue1; // sample values used by our two interpolations in
+	uint32_t Rnvalue1;
+	uint32_t Lnvalue2;
+	uint32_t Rnvalue2;
+	uint32_t interp1; // results of those two interpolations
+	uint32_t interp2; // results of those two interpolations
+
+	// 0 means we are attacking from A to B, aka we are reading from the slopetable from left to right
+	// 1 means we are releasing from B to A, aka we are reading from the slopetable from right to left
+	if (phase == 0) {
+		// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
+		// truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
+		LnSample = (position >> 16);
+
+		//bit shifting to divide by the correct power of two takes a 12 bit number (our fixMorph) and returns the a quotient in the range of our family size
+		LnFamily = fixMorph >> morphBitShiftRight;
+
+		// determine the fractional part of our phase position by masking off the integer
+		phaseFrac = 0x0000FFFF & position;
+		// we have to calculate the fractional portion and get it up to full scale
+		morphFrac = (fixMorph - (LnFamily << morphBitShiftRight))
+						<< morphBitShiftLeft;
+
+		// get values from the relevant wavetables
+		Lnvalue1 = attackHoldArray[LnFamily][LnSample];
+		Rnvalue1 = attackHoldArray[LnFamily][LnSample + 1];
+		Lnvalue2 = attackHoldArray[LnFamily + 1][LnSample];
+		Rnvalue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
+
+		// find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
+		interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
+		interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
+
+		// interpolate between those based upon the fractional part of our phase pointer
+		out = myfix16_lerp(interp1, interp2, phaseFrac) >> 3;
+
+		// we use the interpolated nearest neighbor samples to determine the sign of rate of change
+		// aka, are we moving towards a, or towards b
+		// we use this to generate our gate output
+		if (interp1 < interp2) {
+			EXPAND_GATE_HIGH;
+			REV2_GATE_HIGH;
+			if (DELTAB) {
+				BLOGIC_HIGH;
+				if (RGB_ON) {
+					LEDD_ON;
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_LOW;
+				if (RGB_ON) {
+					LEDC_OFF;
+				}
+			}
+		} else if (interp2 < interp1) {
+			EXPAND_GATE_LOW;
+			REV2_GATE_LOW;
+			if (DELTAB) {
+				BLOGIC_LOW;
+				if (RGB_ON) {
+					LEDD_OFF;
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_HIGH;
+				if (RGB_ON) {
+					LEDC_ON;
+				}
+			}
+		}
+
+		if (RGB_ON) {
+			// if the runtime display is on, show the current value of our contour generator in blue and morph in green
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
+		}
+	}
+	else {
+		// this section is mostly the same as the "attack" above
+		// however, we reflect position back over span to move backwards through our wavetable slope
+		LnSample = ((spanx2 - position) >> 16);
+		LnFamily = fixMorph >> morphBitShiftRight;
+
+		// here, again, we use that reflected value
+		phaseFrac = 0x0000FFFF & (spanx2 - position);
+		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight))
+				<< morphBitShiftLeft);
+
+		Lnvalue1 = releaseHoldArray[LnFamily][LnSample];
+		Rnvalue1 = releaseHoldArray[LnFamily][LnSample + 1];
+		Lnvalue2 = releaseHoldArray[LnFamily + 1][LnSample];
+		Rnvalue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
+
+		interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
+		interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
+
+		out = myfix16_lerp(interp1, interp2, phaseFrac) >> 3;
+
+		if (interp2 < interp1) {
+			EXPAND_GATE_HIGH;
+			REV2_GATE_HIGH;
+			if (DELTAB) {
+				BLOGIC_HIGH;
+				if (RGB_ON) {
+					LEDD_ON;
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_LOW;
+				if (RGB_ON) {
+					LEDC_OFF;
+				}
+			}
+		} else if (interp1 < interp2) {
+			EXPAND_GATE_LOW;
+			REV2_GATE_LOW;
+			if (DELTAB) {
+				BLOGIC_LOW;
+				if (RGB_ON) {
+					LEDD_OFF;
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_HIGH;
+				if (RGB_ON) {
+					LEDC_ON;
+				}
+			}
+		}
+
+		//if the runtime display is on, show the current value of our contour generator in blue and morph in green
+		if (RGB_ON) {
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
+		}
+	}
+}
+
+void getSampleCubicSpline(uint32_t phase) {
+#define PRECALC1_6 2796203
+
+
+	// in this function, we use our phase position to get the sample to give to our DACs using "biinterpolation"
+	// essentially, we need to get 4 sample values and two "fractional arguments" (where are we at in between those sample values)
+	// think of locating a position on a rectangular surface based upon how far you are between the bottom and top and how far you are between the left and right sides
+	// that is basically what we are doing here
+
+	uint32_t LnSample;  // indicates the nearest neighbor to our position in the wavetable
+	uint32_t LnFamily;  // indicates the nearest neighbor (wavetable) to our morph value in the family
+	uint32_t waveFrac;  // indicates the fractional distance between our nearest neighbors in the wavetable
+	uint32_t morphFrac; // indicates the fractional distance between our nearest neighbors in the family
+	uint32_t lFValue0;  // sample values used by our two interpolations in
+	uint32_t rFValue0;
+	uint32_t lFValue1;
+	uint32_t rFValue1;
+	uint32_t lFValue2;
+	uint32_t rFValue2;
+	uint32_t lFValue3;
+	uint32_t rFValue3;
+	q15_t lFValues[4];
+	q15_t interpHelper1[4];
+	q15_t interpHelper2[4];
+	q15_t rFValues[4];
+	q15_t scaling[4] = {-5461, 16384, -16384, 5461};
+	uint32_t interp0;
+	uint32_t interp1;
+	uint32_t interp2;
+	uint32_t interp3;
+	uint32_t a0;
+	uint32_t a1;
+	uint32_t a2;
+	uint32_t a3;
+
+	// the above is used to perform our bi-interpolation
+	// essentially, interp 1 and interp 2 are the interpolated values in the two adjacent wavetables per the playback position
+	// out is the "crossfade" between those according to morphFrac
+
+	if (phase == 0) {
+		// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
+		// truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
+		LnSample = (position >> 16) + 2; //+ 2 because we define lookup overflow in our tables
+
+		// bit shifting to divide by the correct power of two takes a 12 bit number (our fixMorph) and returns the a quotient in the range of our family size
+		LnFamily = fixMorph >> morphBitShiftRight;
+
+		// determine the fractional part of our phase position by masking off the integer
+		waveFrac = 0x0000FFFF & position;
+		//  we have to calculate the fractional portion and get it up to full scale
+		morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
+
+		// get values from the relevant wavetables
+
+		lFValue0 = attackHoldArray[LnFamily][LnSample - 1];
+		lFValue1 = attackHoldArray[LnFamily][LnSample];
+		lFValue2 = attackHoldArray[LnFamily][LnSample + 1];
+		lFValue3 = attackHoldArray[LnFamily][LnSample + 2];
+		rFValue0 = attackHoldArray[LnFamily + 1][LnSample - 1];
+		rFValue1 = attackHoldArray[LnFamily + 1][LnSample];
+		rFValue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
+		rFValue3 = attackHoldArray[LnFamily + 1][LnSample + 2];
+
+		// find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
+		interp0 = myfix16_lerp(lFValue0, rFValue0, morphFrac);
+		interp1 = myfix16_lerp(lFValue1, rFValue1, morphFrac);
+		interp2 = myfix16_lerp(lFValue2, rFValue2, morphFrac);
+		interp3 = myfix16_lerp(lFValue3, rFValue3, morphFrac);
+
+		// interpolate between those based upon the fractional part of our phase pointer
+		a0 = myfix16_mul(waveFrac, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
+		a1 = myfix16_mul(waveFrac + 65536, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
+		a2 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 131072));
+		a3 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 65536));
+
+		out = (myfix16_mul(a0, myfix24_mul(interp0, -PRECALC1_6)) +
+				(myfix16_mul(a1, interp1) >> 1) +
+				(myfix16_mul(a2, -interp2) >> 1) +
+				myfix16_mul(a3, myfix24_mul(interp3, PRECALC1_6))) >> 3;
+
+		if (out > 4095){out = 4095;}
+		else if (out < 0){out = 0;}
+
+		// we use the interpolated nearest neighbor samples to determine the sign of rate of change
+		// aka, are we moving towards a, or towards b
+		// we use this to generate our gate output
+		if (interp1 < interp2) {
+			EXPAND_GATE_HIGH;
+			REV2_GATE_HIGH;
+			if (DELTAB) {
+				BLOGIC_HIGH;
+				if (RGB_ON) {
+					LEDD_ON;
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_LOW;
+				if (RGB_ON) {
+					LEDC_OFF;
+				}
+			}
+		}
+		else {
+			EXPAND_GATE_LOW;
+			REV2_GATE_LOW;
+			if (DELTAB) {
+				BLOGIC_LOW;
+				if (RGB_ON) {
+					LEDD_OFF;
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_HIGH;
+				if (RGB_ON) {
+					LEDC_ON;
+				}
+			}
+		}
+
+		if (RGB_ON) { // if the runtime display is on, show our mode
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
+		}
+	}
+	else {
+
+		// this section is similar, but subtly different to implement our "release"
+		// notice, we reflect position back over span
+		LnSample = ((spanx2 - position) >> 16) + 2;
+		LnFamily = fixMorph >> morphBitShiftRight;
+
+		// here, again, we use that reflected value
+		waveFrac = 0x0000FFFF & (spanx2 - position);
+		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
+
+		// pull the values from our "release family"
+		lFValue0 = releaseHoldArray[LnFamily][LnSample - 1];
+		lFValue1 = releaseHoldArray[LnFamily][LnSample];
+		lFValue2 = releaseHoldArray[LnFamily][LnSample + 1];
+		lFValue3 = releaseHoldArray[LnFamily][LnSample + 2];
+		rFValue0 = releaseHoldArray[LnFamily + 1][LnSample - 1];
+		rFValue1 = releaseHoldArray[LnFamily + 1][LnSample];
+		rFValue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
+		rFValue3 = releaseHoldArray[LnFamily + 1][LnSample + 2];
+
+		interp0 = myfix16_lerp(lFValue0, rFValue0, morphFrac);
+		interp1 = myfix16_lerp(lFValue1, rFValue1, morphFrac);
+		interp2 = myfix16_lerp(lFValue2, rFValue2, morphFrac);
+		interp3 = myfix16_lerp(lFValue3, rFValue3, morphFrac);
+
+		a0 = myfix16_mul(waveFrac, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
+		a1 = myfix16_mul(waveFrac + 65536, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
+		a2 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 131072));
+		a3 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 65536));
+
+		out = (myfix16_mul(a0, myfix24_mul(interp0, -PRECALC1_6)) +
+				(myfix16_mul(a1, interp1) >> 1) +
+				(myfix16_mul(a2, -interp2) >> 1) +
+				myfix16_mul(a3, myfix24_mul(interp3, PRECALC1_6))) >> 3;
+
+		if (out > 4095){out = 4095;}
+		else if (out < 0){out = 0;}
+
+		// we use the interpolated nearest neighbor samples to determine the sign of rate of change
+		// aka, are we moving towards a, or towards b
+		// we use this to generate our gate output
+		if (interp1 < interp2) {
+			EXPAND_GATE_HIGH;
+			REV2_GATE_HIGH;
+			if (DELTAB) {
+				BLOGIC_HIGH;
+				if (RGB_ON) {
+					LEDD_ON;
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_LOW;
+				if (RGB_ON) {
+					LEDC_OFF;
+				}
+			}
+		} else {
+			EXPAND_GATE_LOW;
+			REV2_GATE_LOW;
+			if (DELTAB) {
+				BLOGIC_LOW;
+				if (RGB_ON) {
+					LEDD_OFF;
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_HIGH;
+				if (RGB_ON) {
+					LEDC_ON;
+				}
+			}
+		}
+		if (RGB_ON) {
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
+		}
+	}
+}
 
