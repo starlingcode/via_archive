@@ -14,13 +14,13 @@ extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 
 // these enums contain our mode information
-enum pllTypes pll; // {none, true, catch, setCatch}
+enum pllTypes pll; // {none, true, hardSync, catch}
 enum controlSchemes controlScheme; // {gateLength, knobCV}
 enum scaleTypes scaleType; // {rhythms, pitches}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
 enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA, ratioDeltaA, pllClock};
 enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
-enum autoDutyTypes autoDuty;
+enum autoDutyTypes autoDuty; // {autoDutyOn, autoDutyOff};
 
 extern uint16_t VirtAddVarTab[NB_OF_VAR];
 extern uint16_t VarDataTab[NB_OF_VAR];
@@ -45,18 +45,18 @@ uint32_t lastDetect;
 int holdState;
 
 void readDetect(void) {
-	// check to see if any of our touch sensors have gone into detect state
+	// check to see if any touch sensors have gone into detect state
 	if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
 		RESET_RGB_ON;  // turn off the runtime display
 		modeflag = 10; // indicate to the other mode change functions that we have pressed the scaleType button
-		detectOn = 1;  // indicate that a touch sensor was in detect state during this aquisition cycle
-		clearLEDs();   // wipe the vestiges of our runtimme display
+		detectOn = 1;  // indicate that a touch sensor was in detect state during this acquisition cycle
+		clearLEDs();   // wipe the vestiges of our runtime display
 		__HAL_TIM_SET_COUNTER(&htim4, 0); //reset the timer that we use for mode change timeout
-		showMode(scaleType); //show our currentm mode
+		showMode(scaleType); //show our current mode
 	}
 	if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
 		RESET_RGB_ON;
-		modeflag = 2;  //indicate to the other mode change functions that we have pressed the trigger mode button
+		modeflag = 2;  // indicate to the other mode change functions that we have pressed the trigger mode button
 		detectOn = 1;
 		clearLEDs();
 		__HAL_TIM_SET_COUNTER(&htim4, 0);
@@ -149,7 +149,7 @@ void readRelease(uint32_t modeFlagHolder) {
 			SET_AUX_MENU;
 			modeflag = 7; // indicate to the other mode change functions that we have pressed the logic a button
 			detectOn = 1; // indicate that a touch sensor was in detect state during this acquisition cycle
-			clearLEDs();  // wipe the vestiges of our runtimme display
+			clearLEDs();  // wipe the vestiges of our runtime display
 			__HAL_TIM_SET_COUNTER(&htim4, 0); // reset the timer that we use for mode change timeout
 			showMode(logicOutA); // show our current mode
 		}
@@ -164,7 +164,7 @@ void readRelease(uint32_t modeFlagHolder) {
 		if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
 			SET_AUX_MENU;
 			modeflag = 9; // indicate to the other mode change functions that we have pressed the logic b button
-			detectOn = 1; // indicate that a touch sensor was in detect state during this aquisition cycle
+			detectOn = 1; // indicate that a touch sensor was in detect state during this acquisition cycle
 			clearLEDs();  // wipe the vestiges of our runtime display
 			__HAL_TIM_SET_COUNTER(&htim4, 0); // reset the timer that we use for mode change timeout
 			showMode(autoDuty); // show our current mode
@@ -245,7 +245,7 @@ void readRelease(uint32_t modeFlagHolder) {
 
 void handleRelease(uint32_t pinMode) {
 	if (__HAL_TIM_GET_COUNTER(&htim4) < 3000) {
-		// if we havent exceeded the mode change timeout, change the appropriate mode and then display the new mode
+		// if we haven't exceeded the mode change timeout, change the appropriate mode and then display the new mode
 		// current value is probably too short
 		changeMode(pinMode);
 		switch (pinMode) {
@@ -538,7 +538,7 @@ void clearLEDs(void) {
 
 void restoreDisplay() {
 	if (__HAL_TIM_GET_COUNTER(&htim4) > 10000) {
-		clearLEDs(); // get rid of our last mode display
+		clearLEDs(); // get rid of last mode display
 		SET_RGB_ON;  // turn on the runtime display
 		displayNewMode = 0; // a bit of logic used to make sure that we show the mode during the main controlScheme
 	}
@@ -603,7 +603,7 @@ void switchFamily(void) {
 	}
 }
 
-//this actually shuttles the data from flash to ram and fills our holding array
+// shuttles the data from flash to ram and fills the holding array
 void loadSampleArray(Family family) {
 	uint16_t **currentFamilyPointer;
 

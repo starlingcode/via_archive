@@ -911,9 +911,9 @@ static void MX_GPIO_Init(void) {
 
 // reads back last values stored in flash virtual EEPROM and updates current state
 void restoreState(){
-	eepromStatus = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
+	ee_status = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
 	holdState = VarDataTab[0];
-	eepromStatus = EE_ReadVariable(VirtAddVarTab[1], &VarDataTab[1]);
+	ee_status = EE_ReadVariable(VirtAddVarTab[1], &VarDataTab[1]);
 	holdLogicOut = VarDataTab[1];
 	controlScheme = holdState & 0b0000000000000111;
 	scaleType = (holdState & 0b0000000011000000) >> 6;
