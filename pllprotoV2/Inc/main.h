@@ -62,7 +62,7 @@ int flagHolder;
 int familyIndicator;
 int holdState;
 int holdLogicOut;
-int eepromStatus;
+int ee_status;
 
 int (*attackTime) (void);
 int (*releaseTime) (void);
