@@ -41,7 +41,7 @@ int getPhaseOsc(int position) {
 
 	// calculate the product of the linar FM CV with a product of exponential lookup functions
 	// the lookup functions are scaled with the CV input circuit to yield 1vOct at the T1 CV
-	inc = myfix16_mul(myfix16_mul(myfix16_mul((2050 - t2CVAverage) << 9, lookuptable[4095 - t1CVAverage] >> 5), lookuptable[t1KnobAverage] >> 4), lookuptable[t2KnobAverage >> 4]) >> tableSizeCompensation;
+	inc = myfix16_mul(myfix16_mul(myfix16_mul((2100 - t2CVAverage) << 9, lookuptable[4095 - t1CVAverage] >> 5), lookuptable[t1KnobAverage] >> 4), lookuptable[t2KnobAverage >> 4]) >> tableSizeCompensation;
 
 
 	// apply the approrpiate signage to our inc per the retrigger behavior
