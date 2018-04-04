@@ -93,6 +93,8 @@ uint16_t VarDataTab[NB_OF_VAR] = {0};
 
 int holdCalibration;
 
+int debounce;
+
 // initialize the arrays that will be used by DMA to store our Knob and CV values
 extern uint32_t ADCReadings1[4];
 extern uint32_t ADCReadings2[2];
@@ -244,14 +246,22 @@ int main(void) {
 		if (((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET)){
 			//if we havent raised the trigger button flag, do so and set a pending interrupt
 			if (!(TRIGGER_BUTTON)) {
-				SET_TRIGGER_BUTTON;
-				HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
+				debounce++;
+				if (debounce == 10) {
+					SET_TRIGGER_BUTTON;
+					HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
+					debounce = 0;
+				}
 			}
 		}
 		//if the trigger button has been released but the trigger button flag is still high, lower it and set an IRQ
 		else if (TRIGGER_BUTTON){
-			RESET_TRIGGER_BUTTON;
-			HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
+			debounce++;
+			if (debounce == 10) {
+				RESET_TRIGGER_BUTTON;
+				HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
+				debounce = 0;
+			}
 		}
 		// run the state machine that gets us a reading on our touch sensors
 		tsl_status = tsl_user_Exec();
@@ -314,7 +324,7 @@ void SystemClock_Config(void) {
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1 | RCC_PERIPHCLK_TIM8
 			| RCC_PERIPHCLK_ADC12 | RCC_PERIPHCLK_ADC34;
-	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV16;
+	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV8;
 	PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV128;
 	PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
 	PeriphClkInit.Tim8ClockSelection = RCC_TIM8CLK_HCLK;
@@ -435,7 +445,7 @@ static void MX_ADC2_Init(void) {
 	sConfig.Channel = ADC_CHANNEL_3;
 	sConfig.Rank = 1;
 	sConfig.SingleDiff = ADC_SINGLE_ENDED;
-	sConfig.SamplingTime = ADC_SAMPLETIME_61CYCLES_5;
+	sConfig.SamplingTime = ADC_SAMPLETIME_181CYCLES_5;
 	sConfig.OffsetNumber = ADC_OFFSET_NONE;
 	sConfig.Offset = 0;
 	if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK) {
@@ -491,7 +501,7 @@ static void MX_ADC3_Init(void) {
 	sConfig.Channel = ADC_CHANNEL_12;
 	sConfig.Rank = 1;
 	sConfig.SingleDiff = ADC_SINGLE_ENDED;
-	sConfig.SamplingTime = ADC_SAMPLETIME_61CYCLES_5;
+	sConfig.SamplingTime = ADC_SAMPLETIME_181CYCLES_5;
 	sConfig.OffsetNumber = ADC_OFFSET_NONE;
 	sConfig.Offset = 0;
 	if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK) {
@@ -943,8 +953,33 @@ void restoreState(){
 	switchFamily();
 
 	if (loop == looping) {
+
+		switch (speed) {
+		case audio:
+			getPhase = getPhaseOsc;
+			break;
+		case env:
+			getPhase = getPhaseSimpleLFO;
+			break;
+		case seq:
+			getPhase = getPhaseComplexLFO;
+			break;
+		}
+
 		SET_OSCILLATOR_ACTIVE;
 		RESET_LAST_CYCLE;
+	} else {
+		switch (speed) {
+		case audio:
+			getPhase = getPhaseDrum;
+			break;
+		case env:
+			getPhase = getPhaseSimpleEnv;
+			break;
+		case seq:
+			getPhase = getPhaseComplexEnv;
+			break;
+		}
 	}
 
 	switch (logicOutA) {

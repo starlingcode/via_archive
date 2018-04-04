@@ -2,6 +2,7 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 
+#include "int64.h"
 
 int calcTime1Env(void) __attribute__((section("ccmram")));
 int calcTime2Env(void) __attribute__((section("ccmram")));
@@ -11,8 +12,20 @@ int calcTime2Seq(void) __attribute__((section("ccmram")));
 void sampHoldB(void) __attribute__((section("ccmram")));
 void sampHoldA(void) __attribute__((section("ccmram")));
 
+static inline int myfix16_mul(int, int) __attribute__((section("ccmram")));
+static inline int myfix24_mul(int, int) __attribute__((section("ccmram")));
+static inline int my_abs(int) __attribute__((section("ccmram")));
+static inline myfix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
 
 void dacISR(void)  __attribute__((section("ccmram")));
+int getPhaseOsc(int position) __attribute__((section("ccmram")));
+int getPhaseDrum(int position) __attribute__((section("ccmram")));
+int getPhaseSimpleEnv(int position) __attribute__((section("ccmram")));
+int getPhaseSimpleLFO(int position) __attribute__((section("ccmram")));
+int getPhaseComplexEnv(int position) __attribute__((section("ccmram")));
+int getPhaseComplexLFO(int position) __attribute__((section("ccmram")));
+
+int (*getPhase) (int);
 
 int (*attackTime) (void);
 int (*releaseTime) (void);
@@ -21,9 +34,6 @@ int (*releaseTime) (void);
 int fixMorph;
 uint32_t skewMod;
 
-int time1;
-int time2;
-
 //most recent value from our expo decay
 int expoScale;
 
@@ -31,11 +41,61 @@ int position;
 int inc;
 int incSign;
 
-volatile int attackCount;
+int attackCount;
 
 int out;
 
 int holdPosition;
 
+//our 16 bit fixed point multiply and linear interpolate functions
+static inline int myfix16_mul(int in0, int in1) {
+	// taken from the fixmathlib library
+	int64_t result = (uint64_t) in0 * in1;
+	return result >> 16;
+}
+
+static inline int myfix24_mul(int in0, int in1) {
+	// taken from the fixmathlib library
+	int64_t result = (uint64_t) in0 * in1;
+	return result >> 24;
+}
+
+static inline int myfix16_lerp(int in0, int in1, uint16_t inFract) {
+	// taken from the fixmathlib library
+	int64_t tempOut = int64_mul_i32_i32(in0, (((int32_t) 1 << 16) - inFract));
+	tempOut = int64_add(tempOut, int64_mul_i32_i32(in1, inFract));
+	tempOut = int64_shift(tempOut, -16);
+	return (int) int64_lo(tempOut);
+}
+
+static inline int my_abs(int in) {
+	int sign= (in>>31);
+	return (in^sign) - sign;
+}
+
+// helper functions to maintain and read from a circular buffer
+static inline void write1024(buffer1024* buffer, int value) {
+	buffer->buff[(buffer->writeIndex++) & 1023] = value;
+}
+
+static inline int readn1024(buffer1024* buffer, int Xn) {
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 1023];
+}
+
+static inline void write256(buffer256* buffer, int value) {
+	buffer->buff[(buffer->writeIndex++) & 255] = value;
+}
+
+static inline int readn256(buffer256* buffer, int Xn) {
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 255];
+}
+
+static inline void write32(buffer32* buffer, int value) {
+	buffer->buff[(buffer->writeIndex++) & 31] = value;
+}
+
+static inline int readn32(buffer32* buffer, int Xn) {
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
+}
 
 

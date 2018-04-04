@@ -501,15 +501,16 @@ void EXTI15_10_IRQHandler(void) {
 			incSign = 1;
 			releaseTime = calcTime2Env;
 		}
+
 		EXPAND_GATE_HIGH;
 		REV2_GATE_HIGH;
 		ALOGIC_HIGH;
 		BLOGIC_LOW;
+
 		if (RGB_ON) {
 			LEDD_OFF;
-		}
-		if (RGB_ON) {
 			LEDC_ON;
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 		}
 		if (TRIGA) {
 			__HAL_TIM_SET_COUNTER(&htim15, 0);
@@ -521,23 +522,19 @@ void EXTI15_10_IRQHandler(void) {
 		else if (OSCILLATOR_ACTIVE) {
 			sampHoldA();
 		}
-		if (RGB_ON) {
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-		}
 	}
 	else {
 		EXPAND_GATE_LOW;
 		REV2_GATE_LOW;
 		ALOGIC_LOW;
-
-		if (RGB_ON) {
-			LEDC_OFF;
-		}
 		BLOGIC_HIGH;
 
 		if (RGB_ON) {
+			LEDC_OFF;
 			LEDD_ON;
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 		}
+
 		if (TRIGB) {
 			__HAL_TIM_SET_COUNTER(&htim15, 0);
 			__HAL_TIM_ENABLE(&htim15);
@@ -547,9 +544,7 @@ void EXTI15_10_IRQHandler(void) {
 		} else {
 			sampHoldB();
 		}
-		if (RGB_ON) {
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
-		}
+
 	}
 }
 

@@ -251,6 +251,7 @@ void changeMode(uint32_t mode) {
 			//SET_CLEARBUFFER;
 			// since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
 			SET_DRUM_MODE_ON;
+			getPhase = getPhaseDrum;
 			switch (trigMode) {
 			case 0:
 				SET_AMP_ON;
@@ -293,11 +294,23 @@ void changeMode(uint32_t mode) {
 				TIM6->ARR = 750;
 				attackTime = calcTime1Env;
 				releaseTime = calcTime2Env;
+				if (loop != 0) {
+					getPhase = getPhaseSimpleLFO;
+				} else {
+					getPhase = getPhaseSimpleEnv;
+				}
 			} else if (speed == seq) {
 				TIM6->ARR = 1000;
 				attackTime = calcTime1Seq;
 				releaseTime = calcTime2Seq;
+				if (loop != 0) {
+					getPhase = getPhaseComplexLFO;
+				} else {
+					getPhase = getPhaseComplexEnv;
+				}
+
 			} else {
+				getPhase = getPhaseOsc;
 				TIM6->ARR = 750;
 			}
 		}
@@ -351,6 +364,7 @@ void changeMode(uint32_t mode) {
 			// switching to no loop when speed is at audio activates drum mode
 			// this is about the same as what we do in the speed mode case above
 			if (speed == audio) {
+				getPhase = getPhaseDrum;
 				SET_DRUM_MODE_ON;
 				//TIM6->ARR = 750;
 				switch (trigMode) {
@@ -383,6 +397,11 @@ void changeMode(uint32_t mode) {
 				__HAL_TIM_ENABLE(&htim3);
 			}
 			else {
+				if (speed == env) {
+					getPhase = getPhaseSimpleEnv;
+				} else {
+					getPhase = getPhaseComplexEnv;
+				}
 				RESET_DRUM_MODE_ON;
 				//TIM6->ARR = 500;
 				RESET_AMP_ON;
@@ -391,6 +410,19 @@ void changeMode(uint32_t mode) {
 			}
 		}
 		else {
+
+			switch (speed) {
+			case audio:
+				getPhase = getPhaseOsc;
+				break;
+			case env:
+				getPhase = getPhaseSimpleLFO;
+				break;
+			case seq:
+				getPhase = getPhaseComplexLFO;
+				break;
+			}
+
 			RESET_LAST_CYCLE;
 			RESET_DRUM_MODE_ON;
 			//TIM6->ARR = 500;
@@ -578,7 +610,9 @@ void restoreDisplay() {
 
 // this sets the flags to be used in the interrupt and also fills the holding array on the heap
 void switchFamily(void) {
-	currentFamily = familyArray[speed][familyIndicator];
+	static int lastSpan;
+
+	currentFamily = *familyArray[speed][familyIndicator];
 	loadSampleArray(currentFamily);
 	if (currentFamily.bandlimitOff) {
 		RESET_BANDLIMIT;
@@ -589,6 +623,13 @@ void switchFamily(void) {
 
 	span = (currentFamily.tableLength) << 16;
 	spanx2 = (currentFamily.tableLength) << 17;
+
+	//protect from crashing with a phase pointer outside of the new span
+	if (lastSpan != span) {
+		position = 0;
+	}
+	lastSpan = span;
+
 	switch (currentFamily.familySize) {
 	// these are values that properly allow us to select a family and interpolation fraction for our morph
 	case 3:

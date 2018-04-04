@@ -14,7 +14,7 @@ typedef struct {
 
 
 
-Family familyArray[3][8];
+Family *familyArray[3][8];
 Family currentFamily;
 
 
