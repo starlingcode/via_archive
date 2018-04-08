@@ -2,6 +2,8 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 
+
+
 // wavetable size - 1 in fix16 and that number doubled
 uint32_t span;
 uint32_t spanx2;
@@ -67,4 +69,6 @@ int myfix16_lerp(int, int, uint16_t)  __attribute__((section("ccmram")));
 
 
 void inputCapture(void)  __attribute__((section("ccmram")));
+void tapTempo(void) __attribute__((section("ccmram")));
+void generateFrequency(void) __attribute__((section("ccmram")));
 void dacISR(void)  __attribute__((section("ccmram")));

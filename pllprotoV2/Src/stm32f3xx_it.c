@@ -205,13 +205,13 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
 	// times logic A and logic B triggers (turns LED off / logic low at appropriate time)
 	if ((TRIGB) || (RATIO_DELTAB) || (PLL_DIVB)){
-		EOA_JACK_LOW;
+		BLOGIC_LOW;
 		if (RGB_ON) {
 			LEDD_OFF;
 		}
 	}
 	if ((TRIGA) || (RATIO_DELTAA) || (PLL_DIVA)){
-		EOR_JACK_LOW;
+		ALOGIC_LOW;
 		if (RGB_ON) {
 			LEDC_OFF;
 		}

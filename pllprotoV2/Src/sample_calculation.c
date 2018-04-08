@@ -23,6 +23,7 @@ uint32_t morphKnobAverage;
 uint32_t morphCVAverage;
 
 void getSample(uint32_t) __attribute__((section("ccmram")));
+void getSampleQuinticSpline(uint32_t) __attribute__((section("ccmram")));
 void getSampleLaGrange(uint32_t);
 void getPhase(void)  __attribute__((section("ccmram")));
 void sampHoldB(void)  __attribute__((section("ccmram")));
@@ -61,12 +62,14 @@ void dacISR(void) {
 	if (position < span) {
 		RESET_PHASE_STATE;
 		//getSampleLaGrange(0);
-		getSample(0);
+		//getSample(0);
+		getSampleQuinticSpline(0);
 	}
 	if (position >= span) {
 		SET_PHASE_STATE;
-//			getSampleLaGrange(1);
-		getSample(1);
+		//getSampleLaGrange(1);
+		//getSample(1);
+		getSampleQuinticSpline(1);
 	}
 //		PROFILING_EVENT("Sampling Complete");
 
@@ -137,29 +140,29 @@ void getSample(uint32_t phase) {
 		// compare the interpolated nearest neighbor samples to determine the sign of rate of change
 		// used to generate the "delta" gate output (are we moving towards a, or towards b)
 		if (interp1 < interp2) {
-			EOA_GATE_HIGH;
+			REV2_GATE_HIGH;
 			if (DELTAB) {
-				EOA_JACK_HIGH;
+				BLOGIC_HIGH;
 				if (RGB_ON) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_LOW;
+				ALOGIC_LOW;
 				if (RGB_ON) {
 					LEDC_OFF;
 				}
 			}
 		} else if (interp2 < interp1) {
-			EOA_GATE_LOW;
+			REV2_GATE_LOW;
 			if (DELTAB) {
-				EOA_JACK_LOW
+				BLOGIC_LOW
 				if (RGB_ON) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_HIGH;
+				ALOGIC_HIGH;
 				if (RGB_ON) {
 					LEDC_ON;
 				}
@@ -206,29 +209,29 @@ void getSample(uint32_t phase) {
 		// compare the interpolated nearest neighbor samples to determine the sign of rate of change
 		// used to generate the "delta" gate output (are we moving towards a, or towards b)
 		if (interp1 < interp2) {
-			EOA_GATE_HIGH;
+			REV2_GATE_HIGH;
 			if (DELTAB) {
-				EOA_JACK_HIGH;
+				BLOGIC_HIGH;
 				if (RGB_ON) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_LOW;
+				ALOGIC_LOW;
 				if (RGB_ON) {
 					LEDC_OFF;
 				}
 			}
 		} else if (interp2 < interp1) {
-			EOA_GATE_LOW;
+			REV2_GATE_LOW;
 			if (DELTAB) {
-				EOA_JACK_LOW;
+				BLOGIC_LOW;
 				if (RGB_ON) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_HIGH;
+				ALOGIC_HIGH;
 				if (RGB_ON) {
 					LEDC_ON;
 				}
@@ -241,6 +244,236 @@ void getSample(uint32_t phase) {
 		}
 	}
 }
+
+void getSampleQuinticSpline(uint32_t phase) {
+
+	// adapted from code shared by Josh Scholar on musicDSP.org
+	// https://web.archive.org/web/20170705065209/http://www.musicdsp.org/showArchiveComment.php?ArchiveID=60
+
+#define PRECALC1_6 2796202
+
+	// get the 3 adjacent values on either side of the phase pointer and plug them into the quintic spline equation
+	// each value must be interpolated between the two families adjacent to the morph pointer
+
+	uint32_t LnSample;  // indicates the nearest neighbor to our position in the wavetable
+	uint32_t LnFamily;  // indicates the nearest neighbor (wavetable) to our morph value in the family
+	uint32_t waveFrac;  // indicates the fractional distance between our nearest neighbors in the wavetable
+	uint32_t morphFrac; // indicates the fractional distance between our nearest neighbors in the family
+	uint32_t lFvalue0;  // sample values used by our two interpolations in
+	uint32_t rFvalue0;
+	uint32_t lFvalue1;
+	uint32_t rFvalue1;
+	uint32_t lFvalue2;
+	uint32_t rFvalue2;
+	uint32_t lFvalue3;
+	uint32_t rFvalue3;
+	uint32_t lFvalue4;
+	uint32_t rFvalue4;
+	uint32_t lFvalue5;
+	uint32_t rFvalue5;
+	uint32_t interp0;  // results of those two interpolations
+	uint32_t interp1;
+	uint32_t interp2;  // results of those two interpolations
+	uint32_t interp3;
+	uint32_t interp4;
+	uint32_t interp5;
+	int calc;
+
+	// the above is used to perform our bi-interpolation
+	// essentially, interp 1 and interp 2 are the interpolated values in the two adjacent wavetables per the playback position
+	// out is the "crossfade" between those according to morphFrac
+
+	if (phase == 0) {
+		// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
+		// truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
+		LnSample = (position >> 16) + 2;
+
+		// bit shifting to divide by the correct power of two takes a 12 bit number (our fixMorph) and returns the a quotient in the range of our family size
+		LnFamily = fixMorph >> morphBitShiftRight;
+
+		// determine the fractional part of our phase position by masking off the integer
+		waveFrac = 0x0000FFFF & position;
+
+		// we have to calculate the fractional portion and get it up to full scale
+		morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
+
+		// get values from the relevant wavetables
+		lFvalue0 = attackHoldArray[LnFamily][LnSample - 2];
+		lFvalue1 = attackHoldArray[LnFamily][LnSample - 1];
+		lFvalue2 = attackHoldArray[LnFamily][LnSample];
+		lFvalue3 = attackHoldArray[LnFamily][LnSample + 1];
+		lFvalue4 = attackHoldArray[LnFamily][LnSample + 2];
+		lFvalue5 = attackHoldArray[LnFamily][LnSample + 3];
+		rFvalue0 = attackHoldArray[LnFamily + 1][LnSample- 2];
+		rFvalue1 = attackHoldArray[LnFamily + 1][LnSample - 1];
+		rFvalue2 = attackHoldArray[LnFamily + 1][LnSample];
+		rFvalue3 = attackHoldArray[LnFamily + 1][LnSample + 1];
+		rFvalue4 = attackHoldArray[LnFamily + 1][LnSample + 2];
+		rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 3];
+
+		// find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
+		interp0 = myfix16_lerp(lFvalue0, rFvalue0, morphFrac);
+		interp1 = myfix16_lerp(lFvalue1, rFvalue1, morphFrac);
+		interp2 = myfix16_lerp(lFvalue2, rFvalue2, morphFrac);
+		interp3 = myfix16_lerp(lFvalue3, rFvalue3, morphFrac);
+		interp4 = myfix16_lerp(lFvalue4, rFvalue4, morphFrac);
+		interp5 = myfix16_lerp(lFvalue5, rFvalue5, morphFrac);
+
+		out = interp2
+				+ myfix24_mul(699051, myfix16_mul(waveFrac, ((interp3-interp1)*16 + (interp0-interp4)*2
+						+ myfix16_mul(waveFrac, ((interp3+interp1)*16 - interp0 - interp2*30 - interp4
+								+ myfix16_mul(waveFrac, (interp3*66 - interp2*70 - interp4*33 + interp1*39 + interp5*7 - interp0*9
+										+ myfix16_mul(waveFrac, ( interp2*126 - interp3*124 + interp4*61 - interp1*64 - interp5*12 + interp0*13
+												+ myfix16_mul(waveFrac, ((interp3-interp2)*50 + (interp1-interp4)*25 + (interp5-interp0) * 5))
+										))
+								))
+						))
+				))
+				);
+
+		out = out >> 3;
+
+		if (out > 4095){out = 4095;}
+		else if (out < 0){out = 0;}
+
+		// we use the interpolated nearest neighbor samples to determine the sign of rate of change
+		// aka, are we moving towrds a, or towards b
+		// we use this to generate our gate output
+		if (interp2 < interp3) {
+			EXPAND_GATE_HIGH;
+			REV2_GATE_HIGH;
+			if (DELTAB) {
+				BLOGIC_HIGH;
+				if (RGB_ON) {
+					LEDD_ON;
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_LOW;
+				if (RGB_ON) {
+					LEDC_OFF;
+				}
+			}
+		} else if (interp1 < interp2) {
+			EXPAND_GATE_LOW;
+			REV2_GATE_LOW;
+			if (DELTAB) {
+				BLOGIC_LOW;
+				if (RGB_ON) {
+					LEDD_OFF;
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_HIGH;
+				if (RGB_ON) {
+					LEDC_ON;
+				}
+			}
+		}
+
+		if (RGB_ON) { // if the runtime display is on, show our mode
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
+		}
+	}
+
+	else {
+
+		// this section is similar, but subtly different to implement our "release"
+		// notice, we reflect position back over span
+		LnSample = ((spanx2 - position) >> 16) + 2;
+		LnFamily = fixMorph >> morphBitShiftRight;
+
+		// here, again, we use that reflected value
+		waveFrac = 0x0000FFFF & (spanx2 - position);
+		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
+
+		// pull the values from our "release family"
+		//		family = currentFamily.releaseFamily + LnFamily;
+		//		Lnvalue1 = *(*(family) + LnSample);
+		//		Rnvalue1 = *(*(family) + LnSample + 1);
+		//		Lnvalue2 = *(*(family + 1) + LnSample);
+		//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
+
+		lFvalue0 = releaseHoldArray[LnFamily][LnSample - 2];
+		lFvalue1 = releaseHoldArray[LnFamily][LnSample - 1];
+		lFvalue2 = releaseHoldArray[LnFamily][LnSample];
+		lFvalue3 = releaseHoldArray[LnFamily][LnSample + 1];
+		lFvalue4 = releaseHoldArray[LnFamily][LnSample + 2];
+		lFvalue5 = releaseHoldArray[LnFamily][LnSample + 3];
+		rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample- 2];
+		rFvalue1 = releaseHoldArray[LnFamily + 1][LnSample - 1];
+		rFvalue2 = releaseHoldArray[LnFamily + 1][LnSample];
+		rFvalue3 = releaseHoldArray[LnFamily + 1][LnSample + 1];
+		rFvalue4 = releaseHoldArray[LnFamily + 1][LnSample + 2];
+		rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 3];
+
+		// find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
+		interp0 = myfix16_lerp(lFvalue0, rFvalue0, morphFrac);
+		interp1 = myfix16_lerp(lFvalue1, rFvalue1, morphFrac);
+		interp2 = myfix16_lerp(lFvalue2, rFvalue2, morphFrac);
+		interp3 = myfix16_lerp(lFvalue3, rFvalue3, morphFrac);
+		interp4 = myfix16_lerp(lFvalue4, rFvalue4, morphFrac);
+		interp5 = myfix16_lerp(lFvalue5, rFvalue5, morphFrac);
+
+		out = interp2
+				+ myfix24_mul(699051, myfix16_mul(waveFrac, ((interp3-interp1)*16 + (interp0-interp4)*2
+						+ myfix16_mul(waveFrac, ((interp3+interp1)*16 - interp0 - interp2*30 - interp4
+								+ myfix16_mul(waveFrac, (interp3*66 - interp2*70 - interp4*33 + interp1*39 + interp5*7 - interp0*9
+										+ myfix16_mul(waveFrac, ( interp2*126 - interp3*124 + interp4*61 - interp1*64 - interp5*12 + interp0*13
+												+ myfix16_mul(waveFrac, ((interp3-interp2)*50 + (interp1-interp4)*25 + (interp5-interp0) * 5))
+										))
+								))
+						))
+				))
+				);
+
+		out = out >> 3;
+
+		if (out > 4095){out = 4095;}
+		if (out < 0){out = 0;}
+
+		// we use the interpolated nearest neighbor samples to determine the sign of rate of change
+		// aka, are we moving towrds a, or towards b
+		// we use this to generate our gate output
+		if (interp1 < interp2) {
+			EXPAND_GATE_HIGH;
+			REV2_GATE_HIGH;
+			if (DELTAB) {
+				BLOGIC_HIGH;
+				if (RGB_ON) {
+					LEDD_ON;
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_LOW;
+				if (RGB_ON) {
+					LEDC_OFF;
+				}
+			}
+		} else if (interp1 < interp2) {
+			EXPAND_GATE_LOW;
+			REV2_GATE_LOW;
+			if (DELTAB) {
+				BLOGIC_LOW;
+				if (RGB_ON) {
+					LEDD_OFF;
+				}
+			}
+			if (DELTAA) {
+				ALOGIC_HIGH;
+				if (RGB_ON) {
+					LEDC_ON;
+				}
+			}
+		}
+		if (RGB_ON) {
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
+		}
+	}
+}
+
 
 void getSampleLaGrange(uint32_t phase) {
 #define PRECALC1_6 2796202
@@ -341,29 +574,29 @@ void getSampleLaGrange(uint32_t phase) {
 		// aka, are we moving towrds a, or towards b
 		// we use this to generate our gate output
 		if (interp1 < interp2) {
-			EOA_GATE_HIGH;
+			REV2_GATE_HIGH;
 			if (DELTAB) {
-				EOA_JACK_HIGH;
+				BLOGIC_HIGH;
 				if (RGB_ON) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_LOW;
+				ALOGIC_LOW;
 				if (RGB_ON) {
 					LEDC_OFF;
 				}
 			}
 		} else if (interp2 < interp1) {
-			EOA_GATE_LOW;
+			REV2_GATE_LOW;
 			if (DELTAB) {
-				EOA_JACK_LOW;
+				BLOGIC_LOW;
 				if (RGB_ON) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_HIGH;
+				ALOGIC_HIGH;
 				if (RGB_ON) {
 					LEDC_ON;
 				}
@@ -435,29 +668,29 @@ void getSampleLaGrange(uint32_t phase) {
 		//aka, are we moving towrds a, or towards b
 		//we use this to generate our gate output
 		if (interp1 < interp2) {
-			EOA_GATE_HIGH;
+			REV2_GATE_HIGH;
 			if (DELTAB) {
-				EOA_JACK_HIGH;
+				BLOGIC_HIGH;
 				if (RGB_ON) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_LOW;
+				ALOGIC_LOW;
 				if (RGB_ON) {
 					LEDC_OFF;
 				}
 			}
 		} else if (interp2 < interp1) {
-			EOA_GATE_LOW;
+			REV2_GATE_LOW;
 			if (DELTAB) {
-				EOA_JACK_LOW;
+				BLOGIC_LOW;
 				if (RGB_ON) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
-				EOR_JACK_HIGH;
+				ALOGIC_HIGH;
 				if (RGB_ON) {
 					LEDC_ON;
 				}
@@ -569,66 +802,76 @@ int myfix16_lerp(int in0, int in1, uint16_t inFract) {
 }
 
 void EXTI15_10_IRQHandler(void) {
-
-	if (!(PHASE_STATE)) {
-		EOR_GATE_HIGH;
-		EOA_GATE_LOW;
-
-		if (TRIGA) {
-			EOR_JACK_HIGH;
-			if (RGB_ON) {
-				LEDC_ON;
-			}
-			__HAL_TIM_SET_COUNTER(&htim15, 0);
-			__HAL_TIM_ENABLE(&htim15);
-		} else if (GATEA) {
-			EOR_JACK_HIGH;
-			if (RGB_ON) {
-				LEDC_ON;
-			}
-		}
-		if (GATEB) {
-			EOA_JACK_LOW;
-			if (RGB_ON) {
-				LEDD_OFF;
-			}
-		}
-		sampHoldA();
-
-		if (RGB_ON) {
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-		}
-
+	// Handler for the rising edge at our expander aux logic input
+	if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_11)) {
+		generateFrequency();
+		__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_11);
 	} else {
 
-		EOA_GATE_HIGH;
-		EOR_GATE_LOW;
+		if (!(PHASE_STATE)) {
+			EXPAND_GATE_HIGH;
+			REV2_GATE_LOW;
 
-		if (TRIGB) {
-			EOA_JACK_HIGH;
-			__HAL_TIM_SET_COUNTER(&htim15, 0);
-			__HAL_TIM_ENABLE(&htim15);
-			if (RGB_ON) {
-				LEDD_ON;
+			if (TRIGA) {
+				ALOGIC_HIGH;
+				if (RGB_ON) {
+					LEDC_ON;
+				}
+				__HAL_TIM_SET_COUNTER(&htim15, 0);
+				__HAL_TIM_ENABLE(&htim15);
+			} else if (GATEA) {
+				ALOGIC_HIGH;
+				if (RGB_ON) {
+					LEDC_ON;
+				}
 			}
-		} else if (GATEB) {
-			EOA_JACK_HIGH;
-			if (RGB_ON) {
-				LEDD_ON;
+			if (GATEB) {
+				BLOGIC_LOW;
+				if (RGB_ON) {
+					LEDD_OFF;
+				}
 			}
-		}
-		if (GATEA) {
-			EOR_JACK_LOW;
-			if (RGB_ON) {
-				LEDC_OFF;
-			}
-		}
-		sampHoldB();
+			sampHoldA();
 
-		if (RGB_ON) {
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+			if (RGB_ON) {
+				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+			}
+
+			if ((NOCLOCK) && periodCount > 0) {
+				generateFrequency();
+			}
+		} else {
+
+			REV2_GATE_HIGH;
+			EXPAND_GATE_LOW;
+
+			if (TRIGB) {
+				BLOGIC_HIGH;
+				__HAL_TIM_SET_COUNTER(&htim15, 0);
+				__HAL_TIM_ENABLE(&htim15);
+				if (RGB_ON) {
+					LEDD_ON;
+				}
+			} else if (GATEB) {
+				BLOGIC_HIGH;
+				if (RGB_ON) {
+					LEDD_ON;
+				}
+			}
+			if (GATEA) {
+				ALOGIC_LOW;
+				if (RGB_ON) {
+					LEDC_OFF;
+				}
+			}
+			sampHoldB();
+
+			if (RGB_ON) {
+				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+			}
 		}
 	}
+
 }
 
 void sampHoldB(void) {

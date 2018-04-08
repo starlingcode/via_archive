@@ -48,6 +48,14 @@
 // uncommment to define a version compatible with rev2 (black PCB) boards
 //#define _BUILD_REV_2
 
+#define BUFF_SIZE 256
+#define BUFF_SIZE_MASK (BUFF_SIZE - 1)
+
+typedef struct buffer{
+    int buff[BUFF_SIZE];
+    int writeIndex;
+}buffer;
+
 enum pllTypes {none, true, hardSync, catch};
 enum controlSchemes {root, dutyCycle, FM, phaseMod};
 enum scaleTypes {rhythm, diatonic, primes};
@@ -62,7 +70,7 @@ int flagHolder;
 int familyIndicator;
 int holdState;
 int holdLogicOut;
-int ee_status;
+int eepromStatus;
 
 int (*attackTime) (void);
 int (*releaseTime) (void);
@@ -87,11 +95,6 @@ int readn(buffer*, int);
 uint32_t ADCReadings1[4];
 uint32_t ADCReadings2[2];
 uint32_t ADCReadings3[2];
-
-typedef struct buffer{
-    int buff[BUFF_SIZE];
-    int writeIndex;
-}buffer;
 
 uint32_t time1CVAverage;
 uint32_t time1KnobAverage;
@@ -145,18 +148,48 @@ uint32_t time1KnobAverage;
 #define S_H_B_Pin GPIO_PIN_9
 #define S_H_B_GPIO_Port GPIOB
 
-/* USER CODE BEGIN Private defines */
-#define EOA_JACK_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
-#define EOA_JACK_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
+///* USER CODE BEGIN Private defines */
+//#define EOA_JACK_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+//#define EOA_JACK_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
+//
+//#define EOA_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_11;
+//#define EOA_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_11;
+//
+//#define EOR_JACK_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_15;
+//#define EOR_JACK_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
+//
+//#define EOR_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
+//#define EOR_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
+//
+//#define LEDB_ON GPIOC->BSRR = (uint32_t)GPIO_PIN_14;
+//#define LEDB_OFF GPIOC->BRR = (uint32_t)GPIO_PIN_14;
+//
+//#define LEDA_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_5;
+//#define LEDA_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_5;
+//
+//#define LEDC_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_10;
+//#define LEDC_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_10;
+//
+//#define LEDD_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_15;
+//#define LEDD_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_15;
+//
+//#define SH_A_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_8;
+//#define SH_A_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_8;
+//
+//#define SH_B_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_9;
+//#define SH_B_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_9;
 
-#define EOA_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_11;
-#define EOA_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_11;
+#define BLOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+#define BLOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
 
-#define EOR_JACK_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_15;
-#define EOR_JACK_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
+#define REV2_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_11;
+#define REV2_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_11;
 
-#define EOR_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
-#define EOR_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
+#define ALOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_15;
+#define ALOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
+
+#define EXPAND_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
+#define EXPAND_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
 
 #define LEDB_ON GPIOC->BSRR = (uint32_t)GPIO_PIN_14;
 #define LEDB_OFF GPIOC->BRR = (uint32_t)GPIO_PIN_14;
@@ -213,6 +246,7 @@ uint32_t time1KnobAverage;
 #define TRIGB		 		flagHolder & 0b00000000010000000000000000000000
 #define DELTAB		 		flagHolder & 0b00000000100000000000000000000000
 #define AUTODUTY		 	flagHolder & 0b00000001000000000000000000000000
+#define NOCLOCK			 	flagHolder & 0b00000010000000000000000000000000
 
 
 #define SET_PHASE_STATE 		flagHolder |= 0b00000000000000000000000000000001
@@ -240,6 +274,7 @@ uint32_t time1KnobAverage;
 #define SET_TRIGB		 		flagHolder |= 0b00000000010000000000000000000000
 #define SET_DELTAB		 		flagHolder |= 0b00000000100000000000000000000000
 #define SET_AUTODUTY	 		flagHolder |= 0b00000001000000000000000000000000
+#define SET_NOCLOCK		 		flagHolder |= 0b00000010000000000000000000000000
 
 
 #define RESET_PHASE_STATE 		flagHolder &= 0b11111111111111111111111111111110
@@ -267,6 +302,7 @@ uint32_t time1KnobAverage;
 #define RESET_TRIGB				flagHolder &= 0b11111111101111111111111111111111
 #define RESET_DELTAB			flagHolder &= 0b11111111011111111111111111111111
 #define RESET_AUTODUTY			flagHolder &= 0b11111110111111111111111111111111
+#define RESET_NOCLOCK			flagHolder &= 0b11111101111111111111111111111111
 
 
 #define TOGGLE_GATE_ON 			flagHolder ^= 0b00000000000000000000000000000100

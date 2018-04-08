@@ -349,8 +349,8 @@ void changeMode(uint32_t mode) {
 	else if (mode == 7) {
 		logicOutA = (logicOutA + 1) % 5;
 		holdLogicOut = (holdLogicOut & 0b1111111111111000) | logicOutA;
-		ee_status = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
-	    ee_status|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
+		eepromStatus = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
+	    eepromStatus|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
 
 		switch (logicOutA) {
 		case 0:
@@ -393,8 +393,8 @@ void changeMode(uint32_t mode) {
 	else if (mode == 8) {
 		logicOutB = (logicOutB + 1) % 5;
 		holdLogicOut = (holdLogicOut & 0b1111111111000111) | (logicOutB << 3);
-		ee_status = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
-	    ee_status|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
+		eepromStatus = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
+	    eepromStatus|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
 		switch (logicOutB) {
 		case 0:
 			SET_GATEB;
@@ -441,11 +441,11 @@ void changeMode(uint32_t mode) {
 		} else {
 			SET_AUTODUTY;
 		}
-		ee_status = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
-	    ee_status|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
+		eepromStatus = EE_WriteVariable(VirtAddVarTab[1], holdLogicOut);
+	    eepromStatus|= EE_ReadVariable(VirtAddVarTab[1],  &VarDataTab[1]);
 	}
-	ee_status = EE_WriteVariable(VirtAddVarTab[0], holdState);
-    ee_status|= EE_ReadVariable(VirtAddVarTab[0],  &VarDataTab[0]);
+	eepromStatus = EE_WriteVariable(VirtAddVarTab[0], holdState);
+    eepromStatus|= EE_ReadVariable(VirtAddVarTab[0],  &VarDataTab[0]);
 }
 
 void showMode(uint32_t currentmode) {
@@ -608,7 +608,7 @@ void loadSampleArray(Family family) {
 	uint16_t **currentFamilyPointer;
 
 	for (int i = 0; i < family.familySize; i++) {
-		for (int j = 0; j <= family.tableLength; j++) {
+		for (int j = 0; j <= family.tableLength + 4; j++) {
 			// this just gets the appropriate samples and plops them into the global holding arrays
 			currentFamilyPointer = family.attackFamily + i;
 			attackHoldArray[i][j] = *(*(currentFamilyPointer) + j);

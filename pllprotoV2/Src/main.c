@@ -67,6 +67,7 @@ TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim7;
 TIM_HandleTypeDef htim8;
 TIM_HandleTypeDef htim15;
+TIM_HandleTypeDef htim16;
 
 TSC_HandleTypeDef htsc;
 
@@ -79,6 +80,8 @@ tsl_user_status_t tsl_status;
 uint32_t modeflag;
 uint32_t detectOn;
 uint32_t displayNewMode;
+
+uint32_t debounce;
 
 // addresses, data for flash EEPROM emulation (state store and recall after power cycling)
 uint16_t VirtAddVarTab[NB_OF_VAR] = {0x5555, 0x6666};
@@ -114,6 +117,7 @@ static void MX_TIM8_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM15_Init(void);
+static void MX_TIM16_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
@@ -165,6 +169,7 @@ int main(void) {
 	MX_TIM4_Init();
 	MX_TIM3_Init();
 	MX_TIM15_Init();
+	MX_TIM16_Init();
 
 	/* USER CODE BEGIN 2 */
 
@@ -182,6 +187,7 @@ int main(void) {
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
+
 	// calibrate ADCs
 	HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
 	HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
@@ -197,6 +203,9 @@ int main(void) {
 
 	// initialize touch sensor press timeout timer
 	HAL_TIM_Base_Start(&htim4);
+
+	// initialize tap tempo timer
+	HAL_TIM_Base_Start(&htim16);
 
 	// initialize the RGB LED PWM timer
 	HAL_TIM_Base_Start(&htim1);
@@ -246,11 +255,21 @@ int main(void) {
 
 		if ((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET){
 			if (!(TRIGGER_BUTTON)) {
-				SET_TRIGGER_BUTTON;
+				debounce++;
+				if (debounce == 10) {
+					SET_TRIGGER_BUTTON;
+					tapTempo();
+					debounce = 0;
+				}
 			}
 		}
 		else if (TRIGGER_BUTTON){
-			RESET_TRIGGER_BUTTON;
+			debounce++;
+			if (debounce == 10) {
+				RESET_TRIGGER_BUTTON;
+				tapTempo();
+				debounce = 0;
+			}
 		}
 		// run the state machine that gets us touch sensor readings
 		tsl_status = tsl_user_Exec();
@@ -373,7 +392,7 @@ static void MX_ADC1_Init(void) {
 	sConfig.Channel = ADC_CHANNEL_1;
 	sConfig.Rank = 1;
 	sConfig.SingleDiff = ADC_SINGLE_ENDED;
-	sConfig.SamplingTime = ADC_SAMPLETIME_181CYCLES_5;
+	sConfig.SamplingTime = ADC_SAMPLETIME_601CYCLES_5;
 	sConfig.OffsetNumber = ADC_OFFSET_NONE;
 	sConfig.Offset = 0;
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
@@ -436,7 +455,7 @@ static void MX_ADC2_Init(void) {
 	sConfig.Channel = ADC_CHANNEL_3;
 	sConfig.Rank = 1;
 	sConfig.SingleDiff = ADC_SINGLE_ENDED;
-	sConfig.SamplingTime = ADC_SAMPLETIME_61CYCLES_5;
+	sConfig.SamplingTime = ADC_SAMPLETIME_601CYCLES_5;
 	sConfig.OffsetNumber = ADC_OFFSET_NONE;
 	sConfig.Offset = 0;
 	if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK) {
@@ -492,7 +511,7 @@ static void MX_ADC3_Init(void) {
 	sConfig.Channel = ADC_CHANNEL_12;
 	sConfig.Rank = 1;
 	sConfig.SingleDiff = ADC_SINGLE_ENDED;
-	sConfig.SamplingTime = ADC_SAMPLETIME_61CYCLES_5;
+	sConfig.SamplingTime = ADC_SAMPLETIME_601CYCLES_5;
 	sConfig.OffsetNumber = ADC_OFFSET_NONE;
 	sConfig.Offset = 0;
 	if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK) {
@@ -799,6 +818,24 @@ static void MX_TIM15_Init(void) {
 
 }
 
+/* TIM16 init function */
+static void MX_TIM16_Init(void) {
+
+	TIM_ClockConfigTypeDef sClockSourceConfig;
+	TIM_MasterConfigTypeDef sMasterConfig;
+
+	htim16.Instance = TIM16;
+	htim16.Init.Prescaler = 4096;
+	htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
+	htim16.Init.Period = 65535;
+	htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	htim16.Init.RepetitionCounter = 0;
+	htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+	if (HAL_TIM_Base_Init(&htim16) != HAL_OK) {
+		_Error_Handler(__FILE__, __LINE__);
+	}
+}
+
 /* TSC init function */
 static void MX_TSC_Init(void) {
 
@@ -899,11 +936,17 @@ static void MX_GPIO_Init(void) {
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	/*Configure GPIO pins : PA11 PA12 */
-	GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
+	GPIO_InitStruct.Pin = GPIO_PIN_12;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	GPIO_InitStruct.Pin = GPIO_PIN_11;
+	GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+	GPIO_InitStruct.Pull = GPIO_PULLUP;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
 
 }
 
@@ -911,9 +954,9 @@ static void MX_GPIO_Init(void) {
 
 // reads back last values stored in flash virtual EEPROM and updates current state
 void restoreState(){
-	ee_status = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
+	eepromStatus = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
 	holdState = VarDataTab[0];
-	ee_status = EE_ReadVariable(VirtAddVarTab[1], &VarDataTab[1]);
+	eepromStatus = EE_ReadVariable(VirtAddVarTab[1], &VarDataTab[1]);
 	holdLogicOut = VarDataTab[1];
 	controlScheme = holdState & 0b0000000000000111;
 	scaleType = (holdState & 0b0000000011000000) >> 6;
