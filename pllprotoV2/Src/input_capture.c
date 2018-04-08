@@ -154,7 +154,7 @@ void generateFrequency(void) {
 
 			pllCounter ++;
 
-			if (pllCounter >= gcd) {
+			if (pllCounter >= gcd || (EXTPLL)) {
 
 				if (PLL_DIVA) {
 					ALOGIC_HIGH;
@@ -200,6 +200,7 @@ void generateFrequency(void) {
 					}
 				}
 				pllCounter = 0;
+				RESET_EXTPLL;
 			}
 
 			//PROFILING_EVENT("SetupComplete");

@@ -805,6 +805,7 @@ void EXTI15_10_IRQHandler(void) {
 	// Handler for the rising edge at our expander aux logic input
 	if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_11)) {
 		generateFrequency();
+		SET_EXTPLL;
 		__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_11);
 	} else {
 
