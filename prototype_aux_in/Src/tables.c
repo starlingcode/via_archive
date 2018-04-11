@@ -4,8 +4,6 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 
-
-
 const Family moogSquare = {
 	.attackFamily = moogSquareShiftAttackFamily,
 	.releaseFamily = moogSquareShiftReleaseFamily,

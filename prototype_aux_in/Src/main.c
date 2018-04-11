@@ -45,6 +45,7 @@
 #include "tables.h"
 #include "tsl_user.h"
 #include "eeprom.h"
+#include "fsm.h"
 
 /* USER CODE END Includes */
 
@@ -173,7 +174,7 @@ int main(void) {
 	fillFamilyArray();
 
 	// declare the initialization state
-	SET_RGB_ON;
+	SET_DISPLAY_RUNTIME;
 
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
@@ -233,6 +234,8 @@ int main(void) {
 	HAL_Delay(500);
 	restoreState();
 
+	uiInitialize();
+
 	//initialise_monitor_handles();
 
 	//start our DAC time base
@@ -264,23 +267,13 @@ int main(void) {
 			}
 		}
 		// run the state machine that gets us a reading on our touch sensors
-		tsl_status = tsl_user_Exec();
+		tsl_status = tsl_user_Exec();  // retrieve TSL state machine status
 
-		// if we have completed our touch sensor aquisitions
+		// Either send signal to check for new touch events or check timer (currently just for newmode display)
 		if (tsl_status != TSL_USER_STATUS_BUSY) {
-
-			// if no sensors were touched the last time we ran the state machine
-			if (detectOn == 0) {
-				// check to see if any are in detect state
-				readDetect();
-			} else {
-				// check to see if we have released the sensor
-				readRelease(modeflag);
-			}
-		}
-		if (displayNewMode == 1) {
-			//this turns our runtime display back on if we were just showing a mode change
-			restoreDisplay();
+			uiDispatch(SENSOR_EVENT_SIG);
+		} else {
+			uiDispatch(TIMEOUT_SIG);
 		}
 		/* USER CODE END WHILE */
 		/* USER CODE BEGIN 3 */
@@ -917,8 +910,8 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Pin = GPIO_PIN_11;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
-	//	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; //rev2
-	//	GPIO_InitStruct.Pull = GPIO_NOPULL;
+//	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; //rev2
+//	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 

@@ -12,10 +12,10 @@ int calcTime2Seq(void) __attribute__((section("ccmram")));
 void sampHoldB(void) __attribute__((section("ccmram")));
 void sampHoldA(void) __attribute__((section("ccmram")));
 
-static inline int myfix16_mul(int, int) __attribute__((section("ccmram")));
-static inline int myfix24_mul(int, int) __attribute__((section("ccmram")));
+static inline int fix16_mul(int, int) __attribute__((section("ccmram")));
+static inline int fix24_mul(int, int) __attribute__((section("ccmram")));
 static inline int my_abs(int) __attribute__((section("ccmram")));
-static inline myfix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
+static inline fix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
 
 void dacISR(void)  __attribute__((section("ccmram")));
 int getPhaseOsc(int position) __attribute__((section("ccmram")));
@@ -35,7 +35,7 @@ int fixMorph;
 uint32_t skewMod;
 
 //most recent value from our expo decay
-int expoScale;
+int drumModValue;
 
 int position;
 int inc;
@@ -48,19 +48,19 @@ int out;
 int holdPosition;
 
 //our 16 bit fixed point multiply and linear interpolate functions
-static inline int myfix16_mul(int in0, int in1) {
+static inline int fix16_mul(int in0, int in1) {
 	// taken from the fixmathlib library
 	int64_t result = (uint64_t) in0 * in1;
 	return result >> 16;
 }
 
-static inline int myfix24_mul(int in0, int in1) {
+static inline int fix24_mul(int in0, int in1) {
 	// taken from the fixmathlib library
 	int64_t result = (uint64_t) in0 * in1;
 	return result >> 24;
 }
 
-static inline int myfix16_lerp(int in0, int in1, uint16_t inFract) {
+static inline int fix16_lerp(int in0, int in1, uint16_t inFract) {
 	// taken from the fixmathlib library
 	int64_t tempOut = int64_mul_i32_i32(in0, (((int32_t) 1 << 16) - inFract));
 	tempOut = int64_add(tempOut, int64_mul_i32_i32(in1, inFract));

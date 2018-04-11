@@ -7,8 +7,9 @@
 #include "interrupt_functions.h"
 #include "eeprom.h"
 #include "int64.h"
+#include "fsm.h"
 
-//uint32_t ee_status;
+uint32_t eepromStatus;
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim3;
@@ -21,685 +22,713 @@ enum trigModeTypes trigMode; // {noretrigger, hardsync, nongatedretrigger, gated
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
 enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA}
 enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB}
+enum drumModeTypes drumMode; // {APM, AM, A, M, PM, P}
 
 extern uint16_t VirtAddVarTab[NB_OF_VAR];
 extern uint16_t VarDataTab[NB_OF_VAR];
 
-// these variables are passed between our functions that read the touch sensors and change modes
-extern uint32_t modeflag;
-extern uint32_t detectOn;
-uint32_t lastDetect;
-extern uint32_t displayNewMode;
+// these variables are passed between globally to public functions
+extern uint32_t modeFlag;
 
-void handleRelease(uint32_t);
 void changeMode(uint32_t);
 void showMode(uint32_t);
-void familyRGB(void);
 void clearLEDs(void);
 void switchFamily(void);
 void loadSampleArray(Family);
 
-// these variables are used to represent the number of entries in a given wavetable stored in the currently selected family
-// they are shared by tim6IRQ
-extern uint32_t span;
-extern int spanx2;
-extern int tableSizeCompensation;
+uint32_t modeStateBuffer;  // replaces global modeStateBuffer
 
-// these variables are used to represent the number of wavetables in the currently selected family when performing our morph function
-extern uint32_t morphBitShiftRight;
-extern uint32_t morphBitShiftLeft;
+int sig;
 
-void readDetect(void) {
-	// check to see if any of our touch sensors have gone into detect state
-	if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON; // turn off the runtime display
-		modeflag = 1; // indicate to the other mode change functions that we have pressed the speed button
-		detectOn = 1; // indicate that a touch sensor was in detect state during this aquisition cycle
-		clearLEDs();  // wipe the vestiges of our runtimme display
-		__HAL_TIM_SET_COUNTER(&htim4, 0); // reset the timer that we use for mode change timeout
-		showMode(speed); // show our current mode
-	}
-	if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON;
-		modeflag = 2; // indicate to the other mode change functions that we have pressed the trigger mode button
-		detectOn = 1;
-		clearLEDs();
-		__HAL_TIM_SET_COUNTER(&htim4, 0);
-		showMode(trigMode);
-	}
-	if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON;
-		modeflag = 3; // indicate to the other mode change functions that we have pressed the loop button
-		detectOn = 1;
-		clearLEDs();
-		__HAL_TIM_SET_COUNTER(&htim4, 0);
-		showMode(loop);
-	}
-	if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON;
-		modeflag = 4; // indicate to the other mode change functions that we have pressed the sample and hold mode button
-		detectOn = 1;
-		clearLEDs();
-		__HAL_TIM_SET_COUNTER(&htim4, 0);
-		showMode(sampleHoldMode);
-	}
-	if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON;
-		modeflag = 5; // indicate to the other mode change functions that we have pressed the family up button
-		detectOn = 1;
-		clearLEDs();
-		__HAL_TIM_SET_COUNTER(&htim4, 0);
-		showMode(familyIndicator);
-	}
-	if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON;
-		modeflag = 6; // indicate to the other mode change functions that we have pressed the family down button
-		detectOn = 1;
-		clearLEDs();
-		__HAL_TIM_SET_COUNTER(&htim4, 0);
-		showMode(familyIndicator);
-	}
+struct rgb uiColor;
+
+struct rgb red = {4095, 0, 0};
+struct rgb green = {0, 4095, 0};
+struct rgb blue = {0, 0, 4095};
+
+void (*State)(int);
+void uiInitialize(void);
+
+// a pointer to these functions is the current state
+void uidefault(int sig);
+
+void uinewMode(int sig);
+void uitrigMenu(int sig);
+void uilogicAMenu(int sig);
+void uilogicBMenu(int sig);
+void uiSampleHoldMenu(int sig);
+void uifamilyUpMenu(int sig);
+void uifamilyDownMenu(int sig);
+void uifreqMenu(int sig);
+void uiloopMenu(int sig);
+void uidrumTrigMenu(int sig);
+void uinewLogicMode(int sig);
+
+void uiSetFreq(void);
+void uiSetPhaseFunctions(void);
+
+void uiSetDrumMode(void);
+void uiClearDrumMode(void);
+
+
+void uiClearLEDs();
+void uiSetLEDs(int digit);
+void uiClearRGB();
+void uiSetRGB(struct rgb);
+
+
+//might change these to make them more targeted to specific needs.
+static inline void uiTimerReset() { __HAL_TIM_SET_COUNTER(&htim4, 0); }
+static inline void uiTimerDisable() { __HAL_TIM_DISABLE(&htim4); }
+static inline void uiTimerEnable() { __HAL_TIM_ENABLE(&htim4); }
+static inline int uiTimerRead() { return __HAL_TIM_GET_COUNTER(&htim4); }  // return needed?
+static inline void uiTimerSet(int val) { __HAL_TIM_SET_COUNTER(&htim4, val); }
+
+void uiDispatch(int sig) {(*State)(sig);}  // dispatch signal to state
+
+// transition to new state
+void uiTransition(void (*func)(int)) {
+	uiDispatch(EXIT_SIG);
+	State = func;
+	uiDispatch(ENTRY_SIG);
 }
 
-void readRelease(uint32_t modeFlagHolder) {
-	// look for a change to release state on the button that was pressed (passed in with the function argument)
-	switch (modeFlagHolder) {
 
-	case 1:
-		if (MyTKeys[3].p_Data->StateId == TSL_STATEID_RELEASE) {
-			detectOn = 0; // indicate that we no longer have a touch sensor in detect state
-			clearLEDs(); // clear the display that showed the current mode
-			handleRelease(modeFlagHolder); // take the appropriate action per the button that had been pressed
+// default runtime state,  handles launching menus on detect, and turning runtime  display back on upon entry.
+void uidefault(int sig)
+{
+	switch (sig){
+
+	case ENTRY_SIG:
+		uiClearLEDs();
+		uiClearRGB();
+		uiTimerDisable();
+		SET_DISPLAY_RUNTIME;
+		break;
+
+	case SENSOR_EVENT_SIG:
+
+		if (FREQSENSOR == PRESSED){
+			uiTransition(&uifreqMenu);
+
+		} else if (SHSENSOR == PRESSED){
+			uiTransition(&uiSampleHoldMenu);
+
+		} else if (TRIGSENSOR == PRESSED){
+			uiTransition(&uitrigMenu);
+
+		} else if (LOOPSENSOR == PRESSED){
+			uiTransition(&uiloopMenu);
+
+		} else if (UPSENSOR == PRESSED){
+			uiTransition(&uifamilyUpMenu);
+
+		} else if (DOWNSENSOR == PRESSED){
+			uiTransition(&uifamilyDownMenu);
 		}
 		break;
 
-	case 2:
-		if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
-			SET_AUX_MENU;
-			modeflag = 7; // indicate to the other mode change functions that we have pressed the logic a button
-			detectOn = 1; // indicate that a touch sensor was in detect state during this aquisition cycle
-			clearLEDs();  // wipe the vestiges of our runtimme display
-			__HAL_TIM_SET_COUNTER(&htim4, 0); // reset the timer that we use for mode change timeout
-			showMode(logicOutA); // show our current mode
-		}
-
-		if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
-			SET_AUX_MENU;
-			modeflag = 8; // indicate to the other mode change functions that we have pressed the logic b button
-			detectOn = 1; // indicate that a touch sensor was in detect state during this aquisition cycle
-			clearLEDs();  // wipe the vestiges of our runtime display
-			__HAL_TIM_SET_COUNTER(&htim4, 0); // reset the timer that we use for mode change timeout
-			showMode(logicOutB); // show our current mode
-		}
-
-		if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
-			detectOn = 0;
-			clearLEDs();
-			handleRelease(modeFlagHolder);
-		}
-		break;
-
-	case 3:
-		if (MyTKeys[1].p_Data->StateId == TSL_STATEID_RELEASE) {
-			detectOn = 0;
-			clearLEDs();
-			handleRelease(modeFlagHolder);
-		}
-		break;
-
-	case 4:
-		if (MyTKeys[4].p_Data->StateId == TSL_STATEID_RELEASE) {
-			detectOn = 0;
-			clearLEDs();
-			handleRelease(modeFlagHolder);
-		}
-		break;
-
-	case 5:
-		if (MyTKeys[5].p_Data->StateId == TSL_STATEID_RELEASE) {
-			detectOn = 0;
-			clearLEDs();
-			handleRelease(modeFlagHolder);
-		}
-		break;
-
-	case 6:
-		if (MyTKeys[0].p_Data->StateId == TSL_STATEID_RELEASE) {
-			detectOn = 0;
-			clearLEDs();
-			handleRelease(modeFlagHolder);
-		}
-		break;
-
-	case 7:
-		if (MyTKeys[3].p_Data->StateId == TSL_STATEID_RELEASE) {
-			if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
-				detectOn = 0;
-			}
-			clearLEDs();
-			RESET_AUX_MENU;
-			handleRelease(modeFlagHolder);
-		}
-		break;
-
-	case 8:
-		if (MyTKeys[1].p_Data->StateId == TSL_STATEID_RELEASE) {
-			if (MyTKeys[2].p_Data->StateId == TSL_STATEID_RELEASE) {
-				detectOn = 0;
-			}
-			clearLEDs();
-			RESET_AUX_MENU;
-			handleRelease(modeFlagHolder);
-		}
+	case EXIT_SIG:
+		RESET_DISPLAY_RUNTIME;
+		uiClearLEDs();
+		uiClearRGB();
+		uiTimerReset();
+		uiTimerEnable();
 		break;
 	}
 }
 
-void handleRelease(uint32_t pinMode) {
-	if (__HAL_TIM_GET_COUNTER(&htim4) < 3000) {
-		// if we haven't exceeded the mode change timeout, change the appropriate mode and then display the new mode
-		// current value is probably too short
-		changeMode(pinMode);
-		switch (pinMode) {
-		case 1:
-			showMode(speed);
-			break;
-		case 2:
-			showMode(trigMode);
-			break;
-		case 3:
-			showMode(loop);
-			break;
-		case 4:
-			showMode(sampleHoldMode);
-			break;
-		case 5:
-			showMode(familyIndicator);
-			break;
-		case 6:
-			showMode(familyIndicator);
-			break;
-		case 7:
-			modeflag = 2;
-			showMode(logicOutA);
-			break;
-		case 8:
-			modeflag = 2;
-			showMode(logicOutB);
-			break;
-		}
-		displayNewMode = 1;
-		__HAL_TIM_SET_COUNTER(&htim4, 0);
-	}
-	else {
-		if (AUX_MENU) {
-			modeflag = 2;
-		}
-		clearLEDs();
-		SET_RGB_ON;
-	}
+// catches error states and gives display feedback
+void uierror(int sig){
 }
 
-void changeMode(uint32_t mode) {
-	if (mode == 1) {
-		// toggle through our 3 speed modes
-		speed = (speed + 1) % 3;
-		holdState = (holdState & 0b1111111111111001) | (speed << 1);
-		switchFamily();
 
-		if (speed == audio && loop == noloop) {
-			//SET_CLEARBUFFER;
-			// since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
-			SET_DRUM_MODE_ON;
-			getPhase = getPhaseDrum;
-			switch (trigMode) {
-			case 0:
-				SET_AMP_ON;
-				SET_PITCH_ON;
-				SET_MORPH_ON;
-				break;
-			case 1:
-				SET_AMP_ON;
-				RESET_PITCH_ON;
-				SET_MORPH_ON;
-				break;
-			case 2:
-				SET_AMP_ON;
-				RESET_PITCH_ON;
-				RESET_MORPH_ON;
-				break;
-			case 3:
-				RESET_AMP_ON;
-				RESET_PITCH_ON;
-				SET_MORPH_ON;
-				break;
-			case 4:
-				RESET_AMP_ON;
-				SET_PITCH_ON;
-				SET_MORPH_ON;
-				break;
-			}
-			// i believe this is a holdover from old code
-			__HAL_TIM_ENABLE(&htim3);
+
+
+// newMode state is transitioned into after a mode change, writes to EEPROM and maintains mode display until timeout.
+void uinewMode(int sig)
+{
+	switch (sig)
+	{
+	case ENTRY_SIG:
+		uiTimerReset();  // start count over
+		eepromStatus = EE_WriteVariable(VirtAddVarTab[0], modeStateBuffer);
+		eepromStatus |= EE_ReadVariable(VirtAddVarTab[0],  &VarDataTab[0]);
+		break;
+
+	// once uiTimerRead() times out, clear display and return to default state
+	case TIMEOUT_SIG:
+		if (uiTimerRead() > 10000)
+		uiTransition(&uidefault);
+		break;
+
+	// in case of new events immediately jump to relevant menu
+	case SENSOR_EVENT_SIG:
+
+		if (FREQSENSOR == PRESSED){
+			uiTransition( &uifreqMenu);
+
+		} else if (SHSENSOR == PRESSED){
+			uiTransition( &uiSampleHoldMenu);
+
+		} else if (TRIGSENSOR == PRESSED){
+			uiTransition( &uitrigMenu);
+
+		} else if (LOOPSENSOR == PRESSED){
+			uiTransition( &uiloopMenu);
+
+		} else if (UPSENSOR == PRESSED){
+			uiTransition( &uifamilyUpMenu);
+
+		} else if (DOWNSENSOR == PRESSED){
+			uiTransition( &uifamilyDownMenu);
+		}
+		break;
+	case EXIT_SIG:
+		RESET_DISPLAY_RUNTIME;
+		uiClearLEDs();
+		uiClearRGB();
+		uiTimerReset();
+		uiTimerEnable();
+		break;
+	}
+
+}
+
+void uitrigMenu(int sig)
+{
+	switch (sig)
+	{
+	case ENTRY_SIG:
+		if (DRUM_MODE_ON){
+			uiTransition(&uidrumTrigMenu);
 		} else {
-			// if we didn't just go into drum mode, make sure drum mode is off
-			RESET_DRUM_MODE_ON;
-			RESET_AMP_ON;
-			RESET_PITCH_ON;
-			RESET_MORPH_ON;
-
-
-			// set the appropriate time calculation functions
-			if (speed == env) {
-				TIM6->ARR = 750;
-				attackTime = calcTime1Env;
-				releaseTime = calcTime2Env;
-				if (loop != 0) {
-					getPhase = getPhaseSimpleLFO;
-				} else {
-					getPhase = getPhaseSimpleEnv;
-				}
-			} else if (speed == seq) {
-				TIM6->ARR = 1000;
-				attackTime = calcTime1Seq;
-				releaseTime = calcTime2Seq;
-				if (loop != 0) {
-					getPhase = getPhaseComplexLFO;
-				} else {
-					getPhase = getPhaseComplexEnv;
-				}
-
-			} else {
-				getPhase = getPhaseOsc;
-				TIM6->ARR = 750;
-			}
+			uiSetLEDs(trigMode);
 		}
-	}
-	else if (mode == 2) {
-		trigMode = (trigMode + 1) % 6;
+		break;
+
+	case SENSOR_EVENT_SIG:
+
+		if (TRIGSENSOR == RELEASED){
+			if(uiTimerRead() < 3000){
+				trigMode = (trigMode + 1) % 6;
+				// initialize some essential retrigger variables
+				modeStateBuffer = (modeStateBuffer & 0b1111111111000111) | (trigMode << 3);
+				incSign = 1;
+				RESET_GATE_ON;
+				// if drum mode is on, toggle through sets of modulation destinations
+				uiClearLEDs();
+				uiSetLEDs(trigMode);
+				uiTransition(&uinewMode);
+			} else {
+				//no mode change
+				uiTransition(&uidefault);
+			}
+
+		} else if (FREQSENSOR == PRESSED){
+			// descend into submenu
+			uiTransition(&uilogicAMenu);
+
+		} else if (LOOPSENSOR == PRESSED){
+			// descend into submenu
+			uiTransition(&uilogicBMenu);
+		}
+		break;
+
+	case INIT_SIG:
 		// initialize some essential retrigger variables
-		holdState = (holdState & 0b1111111111000111) | (trigMode << 3);
 		incSign = 1;
 		RESET_GATE_ON;
-		// if drum mode is on, toggle through sets of modulation destinations
-		switch (trigMode) {
-		case 0:
-			SET_AMP_ON;
-			SET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case 1:
-			SET_AMP_ON;
-			RESET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case 2:
-			SET_AMP_ON;
-			RESET_PITCH_ON;
-			RESET_MORPH_ON;
-			break;
-		case 3:
-			RESET_AMP_ON;
-			RESET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case 4:
-			RESET_AMP_ON;
-			SET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case 5:
-			RESET_AMP_ON;
-			SET_PITCH_ON;
-			RESET_MORPH_ON;
-			break;
-		}
-	}
-	else if (mode == 3) {
-		loop = (loop + 1) % 2;
-		holdState = (holdState & 0b1111111111111110) | loop;
-		if (loop == noloop) {
-			// signal to our oscillator that it should put itself to sleep
-			SET_LAST_CYCLE;
-			// switching to no loop when speed is at audio activates drum mode
-			// this is about the same as what we do in the speed mode case above
-			if (speed == audio) {
-				getPhase = getPhaseDrum;
-				SET_DRUM_MODE_ON;
-				//TIM6->ARR = 750;
-				switch (trigMode) {
-				case 0:
-					SET_AMP_ON;
-					SET_PITCH_ON;
-					SET_MORPH_ON;
-					break;
-				case 1:
-					SET_AMP_ON;
-					RESET_PITCH_ON;
-					SET_MORPH_ON;
-					break;
-				case 2:
-					SET_AMP_ON;
-					RESET_PITCH_ON;
-					RESET_MORPH_ON;
-					break;
-				case 3:
-					RESET_AMP_ON;
-					RESET_PITCH_ON;
-					SET_MORPH_ON;
-					break;
-				case 4:
-					RESET_AMP_ON;
-					SET_PITCH_ON;
-					SET_MORPH_ON;
-					break;
-				}
-				__HAL_TIM_ENABLE(&htim3);
-			}
-			else {
-				if (speed == env) {
-					getPhase = getPhaseSimpleEnv;
-				} else {
-					getPhase = getPhaseComplexEnv;
-				}
-				RESET_DRUM_MODE_ON;
-				//TIM6->ARR = 500;
-				RESET_AMP_ON;
-				RESET_PITCH_ON;
-				RESET_MORPH_ON;
-			}
-		}
-		else {
 
-			switch (speed) {
-			case audio:
-				getPhase = getPhaseOsc;
-				break;
-			case env:
-				getPhase = getPhaseSimpleLFO;
-				break;
-			case seq:
-				getPhase = getPhaseComplexLFO;
-				break;
+	}
+}
+
+
+
+void uidrumTrigMenu(int sig) {
+	switch (sig) {
+
+	case ENTRY_SIG:
+		uiSetLEDs(drumMode);
+		break;
+
+	case SENSOR_EVENT_SIG:
+
+		if (TRIGSENSOR == RELEASED){
+			if (uiTimerRead() < 3000) {
+				drumMode = (drumMode + 1) % 6;
+				uiClearLEDs();
+				uiSetLEDs(drumMode);
+				uiTransition(&uinewMode);
+			} else {
+				uiTransition(&uidefault);
 			}
 
-			RESET_LAST_CYCLE;
-			RESET_DRUM_MODE_ON;
-			//TIM6->ARR = 500;
-			RESET_AMP_ON;
+		} else if (FREQSENSOR == PRESSED){
+			uiTransition(&uilogicAMenu);
+
+		} else if (LOOPSENSOR == PRESSED){
+			uiTransition(&uilogicBMenu);
+		}
+		break;
+
+	// on exit we always set drum flags since it doesn't affect any other mode
+	case EXIT_SIG:
+		switch (drumMode) {
+		case APM:
+			SET_AMP_ON;
+			SET_PITCH_ON;
+			SET_MORPH_ON;
+			break;
+		case AM:
+			SET_AMP_ON;
+			RESET_PITCH_ON;
+			SET_MORPH_ON;
+			break;
+		case A:
+			SET_AMP_ON;
 			RESET_PITCH_ON;
 			RESET_MORPH_ON;
-			// set our oscillator active flag so enabling loop starts playback (not for ken!)
-			SET_OSCILLATOR_ACTIVE;
+			break;
+		case M:
+			RESET_AMP_ON;
+			RESET_PITCH_ON;
+			SET_MORPH_ON;
+			break;
+		case PM:
+			RESET_AMP_ON;
+			SET_PITCH_ON;
+			SET_MORPH_ON;
+			break;
+		case P:
+			RESET_AMP_ON;
+			SET_PITCH_ON;
+			RESET_MORPH_ON;
+			break;
+		default:
+			break;
+		}
+
+	}
+
+}
+
+
+void uilogicAMenu(int sig)
+{
+	switch (sig)
+	{
+	case ENTRY_SIG:
+		uiTimerReset();  // start count over for submenus
+		uiSetLEDs(logicOutA);
+		break;
+
+	case SENSOR_EVENT_SIG:
+
+		if (TRIGSENSOR == RELEASED){
+			uiTransition(&uidefault);
+
+		} else if (FREQSENSOR == RELEASED){
+			if(uiTimerRead() < 3000){
+				logicOutA = (logicOutA + 1) % 3;
+				uiClearLEDs();
+				uiSetLEDs(logicOutA);
+				uiTransition(&uinewLogicMode);
+
+			} else {
+				uiTransition(&uidefault);  // fall all the way back to default instead of allowing a trig modechange
+			}
+
+		} else if (LOOPSENSOR == PRESSED){
+			uiTransition(&uilogicBMenu);  // should we even allow this case?  more chances of bumped buttons?
 		}
 	}
-	else if (mode == 4) {
-		sampleHoldMode = (sampleHoldMode + 1) % 6;
-		holdState = (holdState & 0b1111111000111111) | (sampleHoldMode << 6);
+}
+
+void uilogicBMenu(int sig)
+{
+	switch (sig)
+	{
+	case ENTRY_SIG:
+		uiTimerReset();  // start count over for submenus
+		uiSetLEDs(logicOutB);
+		break;
+
+	case SENSOR_EVENT_SIG:
+
+		if (TRIGSENSOR == RELEASED){
+			uiTransition(&uidefault);
+
+		} else if (LOOPSENSOR == RELEASED){
+			if(uiTimerRead() < 3000){
+				logicOutB = (logicOutB + 1) % 3;
+				uiClearLEDs();
+				uiSetLEDs(logicOutB);
+				uiTransition(&uinewLogicMode);
+
+			} else {
+				uiTransition(&uidefault);
+			}
+
+		} else if (FREQSENSOR == PRESSED){
+			uiTransition(&uilogicAMenu);
+		}
+	}
+}
+
+// special newMode which only accepts additional presses on FREQ or LOOP, and returns to newMode on TRIG release.
+// for cycling through logicOut modes.  Does not time out.
+void uinewLogicMode(int sig)
+{
+	switch (sig)
+	{
+	case ENTRY_SIG:
+		uiTimerReset();  // start count over
+		eepromStatus = EE_WriteVariable(VirtAddVarTab[0], modeStateBuffer);
+		eepromStatus |= EE_ReadVariable(VirtAddVarTab[0],  &VarDataTab[0]);
+		break;
+
+	// once uiTimerRead() times out, clear display and return to default state
+
+	case SENSOR_EVENT_SIG:
+
+		if (FREQSENSOR == PRESSED){
+			uiTransition( &uilogicAMenu);
+
+		} else if (LOOPSENSOR == PRESSED){
+			uiTransition( &uilogicBMenu);
+
+		} else if (TRIGSENSOR == RELEASED){
+			uiTransition( &uinewMode);
+		}
+
+		break;
+	}
+}
+
+void uiSampleHoldMenu(int sig)
+{
+	switch (sig)
+	{
+	case ENTRY_SIG:
+		uiSetLEDs(sampleHoldMode);
+		break;
+
+	case SENSOR_EVENT_SIG:
+		if (SHSENSOR == RELEASED){
+			if(uiTimerRead() < 3000){
+				sampleHoldMode = (sampleHoldMode + 1) % 6;
+				modeStateBuffer = (modeStateBuffer & 0b1111111000111111) | (sampleHoldMode << 6);
+				SH_A_TRACK;  // ensure that there's no carryover holding by forcing tracking
+				SH_B_TRACK;
+				uiClearLEDs();
+				uiSetLEDs(sampleHoldMode);
+				uiTransition(&uinewMode);
+			} else {
+				uiTransition(&uidefault);
+			}
+		}
+		break;
+
+	case INIT_SIG:
 		SH_A_TRACK;
 		SH_B_TRACK;
+		break;
 	}
-	else if (mode == 5) {
-		// increment our family pointer and swap in the correct family
-		familyIndicator = (familyIndicator + 1) % 8;
-		switchFamily();
-		holdState = (holdState & 0b1111000111111111) | (familyIndicator << 9);
+}
+
+
+void uifamilyUpMenu(int sig)
+{
+	switch (sig)
+	{
+	case ENTRY_SIG:
+		uiSetLEDs(familyIndicator);
+		uiSetRGB(currentFamily.color);
+		break;
+
+	case SENSOR_EVENT_SIG:
+		if (UPSENSOR == RELEASED){
+			if(uiTimerRead() < 3000){
+				familyIndicator = (familyIndicator + 1) % 8;
+				switchFamily();
+				modeStateBuffer = (modeStateBuffer & 0b1111000111111111) | (familyIndicator << 9);
+				uiClearLEDs();
+				uiSetLEDs(familyIndicator);
+				uiSetRGB(currentFamily.color);
+				uiTransition( &uinewMode);
+			} else {
+				uiTransition( &uidefault);
+			}
+		}
+		break;
 	}
-	else if (mode == 6) {
-		// wrap back to the end of the array of families if we go back from the first entry
-		// otherwise same as above
-		if (familyIndicator == 0) {
-			familyIndicator = 7;
+}
+
+void uifamilyDownMenu(int sig)
+{
+	switch (sig)
+	{
+	case ENTRY_SIG:
+		uiSetLEDs(familyIndicator);
+		uiSetRGB(currentFamily.color);
+		break;
+
+	case SENSOR_EVENT_SIG:
+		if (DOWNSENSOR == RELEASED){
+			if(uiTimerRead() < 3000){
+				if (familyIndicator == 0) {
+					familyIndicator = 7;  // wrap around
+				} else {
+					familyIndicator--;
+				}
+				switchFamily();
+				modeStateBuffer = (modeStateBuffer & 0b1111000111111111) | (familyIndicator << 9);
+				uiClearLEDs();
+				uiSetLEDs(familyIndicator);
+				uiSetRGB(currentFamily.color);
+				uiTransition( &uinewMode);
+			} else {
+				uiTransition( &uidefault);
+			}
+		}
+		break;
+	}
+}
+
+void uifreqMenu(int sig) {
+	switch (sig) {
+
+	case ENTRY_SIG:
+		uiSetLEDs(speed);
+		switch (speed){
+		case audio:
+			uiSetRGB(red);
+			break;
+		case env:
+			uiSetRGB(green);
+			break;
+		case seq:
+			uiSetRGB(blue);
+			break;
+		}
+		break;
+
+	case SENSOR_EVENT_SIG:
+		if(FREQSENSOR == RELEASED){
+			if (uiTimerRead() < 3000) {
+				speed = (speed + 1) % 3;
+				modeStateBuffer = (modeStateBuffer & 0b1111111111111001) | (speed << 1);
+				switchFamily();
+				uiSetPhaseFunctions();
+			}
+			uiClearLEDs();
+			uiSetLEDs(speed);
+			uiTransition(&uinewMode);
+		}
+		break;
+
+	case INIT_SIG:
+		//uiSetFreq();
+		break;
+	}
+}
+
+
+void uiloopMenu(int sig)
+{
+	switch (sig) {
+
+	case SENSOR_EVENT_SIG:
+		if (LOOPSENSOR == RELEASED){
+
+			if(uiTimerRead() < 3000){
+
+				// make sure to clear drum mode if we're transitioning out of it
+				if (loop == looping && speed == audio){
+					//uiClearDrumMode();
+				}
+
+				loop = (loop + 1) % 2;
+				modeStateBuffer = (modeStateBuffer & 0b1111111111111110) | loop;
+				if (loop == noloop) {
+					SET_LAST_CYCLE;}
+				else {
+					RESET_LAST_CYCLE;
+					SET_OSCILLATOR_ACTIVE;
+				}
+			}
+			uiClearLEDs();
+			uiSetLEDs(loop);
+			uiSetPhaseFunctions();
+			uiTransition( &uinewMode);
+		}
+		break;
+	}
+}
+
+
+
+// drumMenu just sets drum mode and passes through to newMode
+void uiSetDrumMode(void)
+{
+	SET_DRUM_MODE_ON;
+	getPhase = getPhaseDrum;
+	switch (drumMode) {
+	case APM:
+		SET_AMP_ON;
+		SET_PITCH_ON;
+		SET_MORPH_ON;
+		break;
+	case AM:
+		SET_AMP_ON;
+		RESET_PITCH_ON;
+		SET_MORPH_ON;
+		break;
+	case A:
+		SET_AMP_ON;
+		RESET_PITCH_ON;
+		RESET_MORPH_ON;
+		break;
+	case M:
+		RESET_AMP_ON;
+		RESET_PITCH_ON;
+		SET_MORPH_ON;
+		break;
+	case PM:
+		RESET_AMP_ON;
+		SET_PITCH_ON;
+		SET_MORPH_ON;
+		break;
+	case P:
+		RESET_AMP_ON;
+		SET_PITCH_ON;
+		RESET_MORPH_ON;
+		break;
+	default:
+		break;
+	}
+}
+
+void uiSetPhaseFunctions(void) {
+	if (speed == audio && loop == noloop) {
+		uiSetDrumMode();
+	}
+	// set the appropriate time calculation functions
+	if (speed == env) {
+		TIM6->ARR = 750;
+		attackTime = calcTime1Env;
+		releaseTime = calcTime2Env;
+		if (loop) {
+			getPhase = getPhaseSimpleLFO;
 		} else {
-			familyIndicator = (familyIndicator - 1);
+			getPhase = getPhaseSimpleEnv;
 		}
-		switchFamily();
-		holdState = (holdState & 0b1111000111111111) | (familyIndicator << 9);
-	}
-	else if (mode == 7) {
-		logicOutA = (logicOutA + 1) % 3;
-		holdState = (holdState & 0b1100111111111111) | (logicOutA << 13);;
-		switch (logicOutA) {
-		case 0:
-			SET_GATEA;
-			RESET_TRIGA;
-			RESET_DELTAA;
-			break;
-		case 1:
-			RESET_GATEA;
-			SET_TRIGA;
-			RESET_DELTAA;
-			break;
-		case 2:
-			RESET_GATEA;
-			RESET_TRIGA;
-			SET_DELTAA;
-			break;
+	} else if (speed == seq) {
+		TIM6->ARR = 1000;
+		attackTime = calcTime1Seq;
+		releaseTime = calcTime2Seq;
+		if (loop) {
+			getPhase = getPhaseComplexLFO;
+		} else {
+			getPhase = getPhaseComplexEnv;
 		}
-	}
-	else if (mode == 8) {
-		logicOutB = (logicOutB + 1) % 3;
-		holdState = (holdState & 0b0011111111111111) | (logicOutB << 15);
-		switch (logicOutB) {
-		case 0:
-			SET_GATEB;
-			RESET_TRIGB;
-			RESET_DELTAB;
-			break;
-		case 1:
-			RESET_GATEB;
-			SET_TRIGB;
-			RESET_DELTAB;
-			break;
-		case 2:
-			RESET_GATEB;
-			RESET_TRIGB;
-			SET_DELTAB;
-			break;
-		}
-	}
-	ee_status = EE_WriteVariable(VirtAddVarTab[0], holdState);
-    ee_status|= EE_ReadVariable(VirtAddVarTab[0],  &VarDataTab[0]);
-}
 
-void showMode(uint32_t currentmode) {
-
-	// if we are switching families, show a color corresponding to that family
-	if (modeflag == 5 || modeflag == 6) {
-		familyRGB();
-	}
-
-	else {
-		switch (currentmode) {
-		// represent a 4 bit number with our LEDs
-		// NEEDS WORK
-		case 0:
-			LEDA_ON;
-			break;
-		case 1:
-			LEDC_ON;
-			break;
-		case 2:
-			LEDB_ON;
-			break;
-		case 3:
-			LEDD_ON;
-			break;
-		case 4:
-			LEDA_ON;
-			LEDC_ON;
-			break;
-		case 5:
-			LEDB_ON;
-			LEDD_ON;
-			break;
-		}
+	} else {
+		getPhase = getPhaseOsc;
+		TIM6->ARR = 750;
 	}
 }
 
-void familyRGB(void) {
-	switch (speed) {
-	case 0:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 4095);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
-		break;
 
-	case 1:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
-		break;
 
-	case 2:
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4095);
-	}
-	switch (familyIndicator) {
-	case 0:
-		LEDA_ON;
-		break;
-	case 1:
-		LEDC_ON;
-		break;
-	case 2:
-		LEDB_ON;
-		break;
-	case 3:
-		LEDD_ON;
-		break;
-	case 4:
-		LEDA_ON;
-		LEDC_ON;
-		break;
-	case 5:
-		LEDB_ON;
-		LEDD_ON;
-		break;
-	case 6:
-		LEDA_ON;
-		LEDB_ON;
-		break;
-	case 7:
-		LEDC_ON;
-		LEDD_ON;
-		break;
-	}
+void uiSetRGB(struct rgb color){
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, color.r);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, color.g);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, color.b);
 }
 
-void clearLEDs(void) {
-	// pretty self explanatory
-	LEDA_OFF;
-	LEDB_OFF;
-	LEDC_OFF;
-	LEDD_OFF;
-	// blank the LEDs
+void uiClearRGB(struct rgb color){
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 }
 
-void restoreDisplay() {
-	if (__HAL_TIM_GET_COUNTER(&htim4) > 10000) {
-		clearLEDs(); // get rid of our last mode display
-		SET_RGB_ON;  // turn on the runtime display
-		displayNewMode = 0; // a bit of logic used to make sure that we show the mode during the main loop
-	}
-}
-
-// this sets the flags to be used in the interrupt and also fills the holding array on the heap
-void switchFamily(void) {
-	static int lastSpan;
-
-	currentFamily = *familyArray[speed][familyIndicator];
-	loadSampleArray(currentFamily);
-	if (currentFamily.bandlimitOff) {
-		RESET_BANDLIMIT;
-	}
-	else {
-		SET_BANDLIMIT;
-	}
-
-	span = (currentFamily.tableLength) << 16;
-	spanx2 = (currentFamily.tableLength) << 17;
-
-	//protect from crashing with a phase pointer outside of the new span
-	if (lastSpan != span) {
-		position = 0;
-	}
-	lastSpan = span;
-
-	switch (currentFamily.familySize) {
-	// these are values that properly allow us to select a family and interpolation fraction for our morph
+// show a pattern corresponding to a mode 1-8
+void uiSetLEDs(int digit){
+	RESET_DISPLAY_RUNTIME;
+	switch (digit){
+	case 0:
+		LEDA_ON;
+		break;
+	case 1:
+		LEDC_ON;
+		break;
+	case 2:
+		LEDB_ON;
+		break;
 	case 3:
-		morphBitShiftRight = 11;
-		morphBitShiftLeft = 5;
+		LEDD_ON;
 		break;
-
-	case 5:
-		morphBitShiftRight = 10;
-		morphBitShiftLeft = 6;
-		break;
-
-	case 9:
-		morphBitShiftRight = 9;
-		morphBitShiftLeft = 7;
-		break;
-
-	case 17:
-		morphBitShiftRight = 8;
-		morphBitShiftLeft = 8;
-		break;
-
-	case 33:
-		morphBitShiftRight = 7;
-		morphBitShiftLeft = 9;
-		break;
-	}
-	switch (currentFamily.tableLength) {
-	// these are values that properly allow us to select a family and interpolation fraction for our morph
 	case 4:
-		tableSizeCompensation = 6;
+		LEDA_ON;
+		LEDC_ON;
 		break;
-
-	case 8:
-		tableSizeCompensation = 5;
+	case 5:
+		LEDB_ON;
+		LEDD_ON;
 		break;
-
-	case 16:
-		tableSizeCompensation = 4;
+	case 6:
+		LEDA_ON;
+		LEDB_ON;
 		break;
-
-	case 32:
-		tableSizeCompensation = 3;
-		break;
-
-	case 64:
-		tableSizeCompensation = 2;
-		break;
-
-	case 128:
-		tableSizeCompensation = 1;
-		break;
-
-	case 256:
-		tableSizeCompensation = 0;
+	case 7:
+		LEDC_ON;
+		LEDD_ON;
 		break;
 	}
 }
 
-// this actually shuttles the data from flash to ram and fills our holding array
-void loadSampleArray(Family family) {
-	uint16_t **currentFamilyPointer;
-
-	for (int i = 0; i < family.familySize; i++) {
-		for (int j = 0; j <= (family.tableLength + 4); j++) {
-			// this just gets the appropriate samples and plops them into the global holding arrays
-			currentFamilyPointer = family.attackFamily + i;
-			attackHoldArray[i][j] = *(*(currentFamilyPointer) + j);
-			currentFamilyPointer = family.releaseFamily + i;
-			releaseHoldArray[i][j] = *(*(currentFamilyPointer) + j);
-		}
-	}
+void uiClearLEDs(){
+	LEDA_OFF;
+	LEDB_OFF;
+	LEDC_OFF;
+	LEDD_OFF;
 }
+
+// initialization routine for the UI state machine
+void uiInitialize()
+{
+	HAL_FLASH_Unlock();
+	eepromStatus = EE_Init();
+	//if(eepromStatus != EE_OK) {LEDC_ON;}  // error handling, switch to UI error handling?
+	HAL_Delay(500);  // init time
+	eepromStatus = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
+	RESET_DRUM_MODE_ON;
+	modeStateBuffer = VarDataTab[0];
+	loop = modeStateBuffer & 0x01;
+	speed = (modeStateBuffer & 0x06) >> 1;
+	trigMode = (modeStateBuffer & 0x38) >> 3;
+	sampleHoldMode = (modeStateBuffer & 0x1C0) >> 6;
+	familyIndicator = (modeStateBuffer & 0xE00) >> 9;
+	logicOutA = (modeStateBuffer & 0x3000) >> 12;
+	logicOutB = (modeStateBuffer & 0xC000) >> 14;
+	//drumTrigMode = NOTIMPLEMENTEDYET;
+
+	fillFamilyArray();
+
+	/* ... initialization of ui attributes */
+	// call each menu to initialize, to make UI process the stored modes
+	 // processs trig first so it skips possibility of DRUM_MODE_ON_ON
+	uitrigMenu(INIT_SIG);
+	uiloopMenu(INIT_SIG);
+	uifreqMenu(INIT_SIG);
+	uiSampleHoldMenu(INIT_SIG);
+	uifamilyUpMenu(INIT_SIG);
+	uifamilyDownMenu(INIT_SIG);
+	uidrumTrigMenu(EXIT_SIG);
+	// logic A and B don't need additional initialization beyond setting mode
+	State = &uidefault;
+	uiTransition( &uidefault);
+}
+

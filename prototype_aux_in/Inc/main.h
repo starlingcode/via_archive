@@ -48,7 +48,7 @@
 #include "eeprom.h"
 
 // uncommment to define a version compatible with rev2 (black PCB) boards
-//#define _BUILD_REV_2
+#define _BUILD_REV_2
 
 #define time2Knob (ADCReadings2[0] & 0b11111111111111111111111111111111)
 #define morphKnob (ADCReadings2[1] & 0b11111111111111111111111111110000)
@@ -64,12 +64,23 @@
 //#define morphCV 2000
 //#define time1Knob 3000
 
+#define DOWNSENSOR MyTKeys[0].p_Data->StateId
+#define LOOPSENSOR MyTKeys[1].p_Data->StateId
+#define TRIGSENSOR MyTKeys[2].p_Data->StateId
+#define FREQSENSOR MyTKeys[3].p_Data->StateId
+#define SHSENSOR MyTKeys[4].p_Data->StateId
+#define UPSENSOR MyTKeys[5].p_Data->StateId
+
+#define PRESSED TSL_STATEID_DETECT
+#define RELEASED TSL_STATEID_RELEASE
+
 enum speedTypes {audio, env, seq};
 enum loopTypes {noloop, looping};
 enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum, pendulum2};
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 enum logicOutATypes {triggerA, gateA, deltaA};
 enum logicOutBTypes {triggerB, gateB, deltaB};
+enum drumModeTypes {APM, AM, A, M, PM, P};
 
 int familyIndicator;
 int flagHolder;
@@ -199,7 +210,7 @@ static inline int readn32(buffer32*, int) __attribute__((section("ccmram")));
 #define PHASE_STATE 		flagHolder & 0b00000000000000000000000000000001
 #define LAST_PHASE_STATE 	flagHolder & 0b00000000000000000000000000000010
 #define GATE_ON 			flagHolder & 0b00000000000000000000000000000100
-#define RGB_ON 				flagHolder & 0b00000000000000000000000000001000
+#define DISPLAY_RUNTIME 	flagHolder & 0b00000000000000000000000000001000
 #define UPDATE_PRESCALER 	flagHolder & 0b00000000000000000000000000010000
 #define DRUM_MODE_ON 		flagHolder & 0b00000000000000000000000000100000
 #define DRUM_ATTACK_ON 		flagHolder & 0b00000000000000000000000001000000
@@ -227,7 +238,7 @@ static inline int readn32(buffer32*, int) __attribute__((section("ccmram")));
 #define SET_PHASE_STATE 		flagHolder |= 0b00000000000000000000000000000001
 #define SET_LAST_PHASE_STATE 	flagHolder |= 0b00000000000000000000000000000010
 #define SET_GATE_ON 			flagHolder |= 0b00000000000000000000000000000100
-#define SET_RGB_ON 				flagHolder |= 0b00000000000000000000000000001000
+#define SET_DISPLAY_RUNTIME 	flagHolder |= 0b00000000000000000000000000001000
 #define SET_UPDATE_PRESCALER 	flagHolder |= 0b00000000000000000000000000010000
 #define SET_DRUM_MODE_ON 		flagHolder |= 0b00000000000000000000000000100000
 #define SET_DRUM_ATTACK_ON 		flagHolder |= 0b00000000000000000000000001000000
@@ -255,7 +266,7 @@ static inline int readn32(buffer32*, int) __attribute__((section("ccmram")));
 #define RESET_PHASE_STATE 		flagHolder &= 0b11111111111111111111111111111110
 #define RESET_LAST_PHASE_STATE 	flagHolder &= 0b11111111111111111111111111111101
 #define RESET_GATE_ON 			flagHolder &= 0b11111111111111111111111111111011
-#define RESET_RGB_ON 			flagHolder &= 0b11111111111111111111111111110111
+#define RESET_DISPLAY_RUNTIME 	flagHolder &= 0b11111111111111111111111111110111
 #define RESET_UPDATE_PRESCALER 	flagHolder &= 0b11111111111111111111111111101111
 #define RESET_DRUM_MODE_ON 		flagHolder &= 0b11111111111111111111111111011111
 #define RESET_DRUM_ATTACK_ON 	flagHolder &= 0b11111111111111111111111110111111

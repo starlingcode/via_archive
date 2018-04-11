@@ -57,7 +57,7 @@ enum sampleHoldModeTypes sampleHoldMode;
 
 extern TIM_HandleTypeDef htim1;
 
-extern int lookuptable[4096];
+extern int expoTable[4096];
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -224,13 +224,13 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
 	if (TRIGB) {
 		BLOGIC_LOW;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDD_OFF;
 		}
 	}
 	if (TRIGA) {
 		ALOGIC_LOW;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDC_OFF;
 		}
 	}
@@ -261,7 +261,7 @@ void TIM2_IRQHandler(void) {
 			if (DRUM_MODE_ON) {         // perform the operations needed to initiate a drum sound
 				SET_DRUM_ATTACK_ON;     //set global flag indicating we are using the timer to generate "attack"
 				SET_UPDATE_PRESCALER;   // logic to be used in the timer interrupt so we pass through and just load prescaler to shadow register
-				TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[4095 - time2CV] >> 11); // release time prescaler loaded to holding register
+				TIM3->PSC = (expoTable[time2Knob] >> 11) + (expoTable[4095 - time2CV] >> 11); // release time prescaler loaded to holding register
 				TIM3->EGR = TIM_EGR_UG; // immediately set an update event
 				TIM3->CNT = 3840;       // reset the count for the down counter
 			}
@@ -286,7 +286,7 @@ void TIM2_IRQHandler(void) {
 				RESET_LAST_CYCLE;
 				attackCount = TIM3->CNT;
 				__HAL_TIM_DISABLE(&htim3);
-				TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[4095 - time2CV] >> 11);
+				TIM3->PSC = (expoTable[time2Knob] >> 11) + (expoTable[4095 - time2CV] >> 11);
 				TIM3->EGR = TIM_EGR_UG; // immediately set an update event to load the prescaler register
 			}
 			else {
@@ -395,7 +395,7 @@ void TIM3_IRQHandler(void) {
 	else { // raise the flag to put the drum mode to rest after overflowing the release portion
 		if (trigMode < 3) {
 			RESET_DRUM_RELEASE_ON;
-			expoScale = 0;
+			drumModValue = 0;
 			out = 0;
 		}
 		else {
@@ -419,7 +419,7 @@ void TIM8_UP_IRQHandler(void) {
 	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
 	SH_B_SAMPLE;
 	// this handles the logic where we resample b at a
-	if (RGB_ON) {
+	if (DISPLAY_RUNTIME) {
 		LEDB_ON;
 	}
 	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
@@ -455,7 +455,7 @@ void TIM7_IRQHandler(void) {
 	SH_A_SAMPLE;
 	// this handles our decimate resampling
 	SH_B_SAMPLE;
-	if (RGB_ON) {
+	if (DISPLAY_RUNTIME) {
 		LEDA_ON;
 		LEDB_ON;
 	}
@@ -507,7 +507,7 @@ void EXTI15_10_IRQHandler(void) {
 		ALOGIC_HIGH;
 		BLOGIC_LOW;
 
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDD_OFF;
 			LEDC_ON;
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
@@ -529,7 +529,7 @@ void EXTI15_10_IRQHandler(void) {
 		ALOGIC_LOW;
 		BLOGIC_HIGH;
 
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDC_OFF;
 			LEDD_ON;
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
@@ -553,7 +553,7 @@ void sampHoldB(void) {
 
 	case a:
 		SH_A_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_ON;
 		}
 		break;
@@ -562,7 +562,7 @@ void sampHoldB(void) {
 
 	case ab:
 		SH_A_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 		}
 		// b remains sampled
@@ -571,7 +571,7 @@ void sampHoldB(void) {
 	case antidecimate:
 		SH_B_SAMPLE;
 		SH_A_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDB_OFF;
 			LEDA_ON;
 		}
@@ -579,7 +579,7 @@ void sampHoldB(void) {
 
 	case decimate:
 		SH_A_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 			LEDB_OFF;
 		}
@@ -597,7 +597,7 @@ void sampHoldA(void) {
 
 	case a:
 		SH_A_SAMPLE;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 		}
 		break;
@@ -606,7 +606,7 @@ void sampHoldA(void) {
 		SH_B_TRACK;
 		__HAL_TIM_SET_COUNTER(&htim8, 0);
 		__HAL_TIM_ENABLE(&htim8);
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDB_OFF;
 		}
 		break;
@@ -614,7 +614,7 @@ void sampHoldA(void) {
 	case ab:
 		SH_A_SAMPLE;
 		SH_B_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDB_OFF;
 			LEDA_ON;
 		}
@@ -625,7 +625,7 @@ void sampHoldA(void) {
 	case antidecimate:
 		SH_A_SAMPLE;
 		SH_B_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 			LEDB_ON;
 		}
@@ -633,7 +633,7 @@ void sampHoldA(void) {
 
 	case decimate:
 		SH_B_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 			LEDB_OFF;
 		}

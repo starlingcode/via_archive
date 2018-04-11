@@ -29,7 +29,7 @@ enum trigModeTypes trigMode;
 
 
 // mode indicators, defined in functions found in user_interface.c
-int lookuptable[4095];
+int expoTable[4095];
 
 void getAverages(int) __attribute__((section("ccmram")));
 
@@ -41,8 +41,14 @@ int getPhaseOsc(int position) {
 
 	// calculate the product of the linar FM CV with a product of exponential lookup functions
 	// the lookup functions are scaled with the CV input circuit to yield 1vOct at the T1 CV
-	inc = myfix16_mul(myfix16_mul(myfix16_mul((2100 - t2CVAverage) << 9, lookuptable[4095 - t1CVAverage] >> 5), lookuptable[t1KnobAverage] >> 4), lookuptable[t2KnobAverage >> 4]) >> tableSizeCompensation;
+	inc = fix16_mul(fix16_mul(fix16_mul((2100 - t2CVAverage) << 9, expoTable[4095 - t1CVAverage] >> 5), expoTable[t1KnobAverage] >> 4), expoTable[t2KnobAverage >> 4]) >> tableSizeCompensation;
 
+	//this keeps us from asking the contour generator to jump all the way through the wavetable
+	if (inc >= span) {
+		inc = span;
+	} else if (inc <= -span) {
+		inc = -span;
+	}
 
 	// apply the approrpiate signage to our inc per the retrigger behavior
 	// this is how we get the contour generator to run backwards
@@ -60,12 +66,6 @@ int getPhaseOsc(int position) {
 		else {
 			RESET_HOLD_AT_B;
 		}
-	}
-	//this keeps us from asking the contour generator to jump all the way through the wavetable
-	if (inc >= span) {
-		inc = span;
-	} else if (inc <= -span) {
-		inc = -span;
 	}
 
 	// increment our phase pointer by the newly calculated increment value
@@ -90,11 +90,11 @@ int getPhaseDrum(int position) {
 	// calculate the product of exponential lookup functions
 	// the lookup functions are scaled with the CV input circuit to yield 1vOct at the T1 CV
 	// T2 is omitted from this calculation and determines drum decay time
-	inc = myfix16_mul(
-			myfix16_mul(300000, lookuptable[4095 - t1CVAverage] >> 6), lookuptable[(t1KnobAverage >> 1) + 2047] >> 10) >> tableSizeCompensation;
+	inc = fix16_mul(
+			fix16_mul(300000, expoTable[4095 - t1CVAverage] >> 6), expoTable[(t1KnobAverage >> 1) + 2047] >> 10) >> tableSizeCompensation;
 
 	// scale with the drum envelope when specified by the trig control
-	if (PITCH_ON) {inc = myfix16_mul(expoScale + 30000, inc);}
+	if (PITCH_ON) {inc = fix16_mul(drumModValue + 30000, inc);}
 
 	inc = inc * incSign;
 
@@ -122,7 +122,7 @@ int getPhaseDrum(int position) {
 			SET_PHASE_STATE;
 			SH_A_TRACK;
 			SH_B_TRACK;
-			if (RGB_ON) {
+			if (DISPLAY_RUNTIME) {
 				LEDA_OFF;
 				LEDB_OFF;
 				LEDC_OFF;
@@ -146,7 +146,7 @@ int getPhaseDrum(int position) {
 			RESET_PHASE_STATE;
 			SH_A_TRACK;
 			SH_B_TRACK;
-			if (RGB_ON) {
+			if (DISPLAY_RUNTIME) {
 				LEDA_OFF;
 				LEDB_OFF;
 				LEDC_OFF;
@@ -217,7 +217,7 @@ int getPhaseSimpleEnv(int position) {
 		SET_PHASE_STATE;
 		SH_A_TRACK;
 		SH_B_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 			LEDB_OFF;
 			LEDC_OFF;
@@ -237,7 +237,7 @@ int getPhaseSimpleEnv(int position) {
 		RESET_PHASE_STATE;
 		SH_A_TRACK;
 		SH_B_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 			LEDB_OFF;
 			LEDC_OFF;
@@ -333,7 +333,7 @@ int getPhaseComplexEnv(int position) {
 		SET_PHASE_STATE;
 		SH_A_TRACK;
 		SH_B_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 			LEDB_OFF;
 			LEDC_OFF;
@@ -352,7 +352,7 @@ int getPhaseComplexEnv(int position) {
 		RESET_PHASE_STATE;
 		SH_A_TRACK;
 		SH_B_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 			LEDB_OFF;
 			LEDC_OFF;
@@ -364,11 +364,11 @@ int getPhaseComplexEnv(int position) {
 
 	if ((4095 - t2CVAverage) >= 2047) {
 		// this first does the aforementioned interpolation between the knob value and full scale then scales back the value according to frequency
-		skewMod = myfix16_lerp(t2KnobAverage, 4095, ((4095 - t2CVAverage) - 2048) << 4) + hysteresis;
+		skewMod = fix16_lerp(t2KnobAverage, 4095, ((4095 - t2CVAverage) - 2048) << 4) + hysteresis;
 	}
 	else {
 		// analogous to above except in this case, morphCV is less than halfway
-		skewMod = myfix16_lerp(0, t2KnobAverage, (4095 - t2CVAverage) << 4) + hysteresis;
+		skewMod = fix16_lerp(0, t2KnobAverage, (4095 - t2CVAverage) << 4) + hysteresis;
 	}
 
 	//reduce the bit depth with hysteresis and then apply an extra average to
@@ -382,14 +382,14 @@ int getPhaseComplexEnv(int position) {
 	skewAverage = skewSum >> 8;
 	write256(&skewBuffer, skewMod);
 
-	if (holdPosition < (myfix16_mul(spanx2, (4095 - skewAverage) << 4))) {
+	if (holdPosition < (fix16_mul(spanx2, (4095 - skewAverage) << 4))) {
 		attackTransferHolder = (65535 << 11)/(4095 - skewAverage); // 1/(T2*2)
-		position = myfix16_mul(holdPosition, attackTransferHolder);
+		position = fix16_mul(holdPosition, attackTransferHolder);
 
 	}
 	else if (!(HOLD_AT_B)) {
 		releaseTransferHolder = (65535 << 11)/(skewAverage); // 1/((1-T2)*2)
-		position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
+		position = fix16_mul(holdPosition, releaseTransferHolder) + spanx2 - fix16_mul(spanx2, releaseTransferHolder);
 
 	}
 
@@ -421,7 +421,7 @@ int getPhaseComplexEnv(int position) {
 		SET_PHASE_STATE;
 		SH_A_TRACK;
 		SH_B_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 			LEDB_OFF;
 			LEDC_OFF;
@@ -440,7 +440,7 @@ int getPhaseComplexEnv(int position) {
 		RESET_PHASE_STATE;
 		SH_A_TRACK;
 		SH_B_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 			LEDB_OFF;
 			LEDC_OFF;
@@ -477,11 +477,11 @@ int getPhaseComplexLFO(int position) {
 
 		if ((4095 - t2CVAverage) >= 2047) {
 			// this first does the aforementioned interpolation between the knob value and full scale then scales back the value according to frequency
-			skewMod = myfix16_lerp(t2KnobAverage, 4095, ((4095 - t2CVAverage) - 2048) << 4) + hysteresis;
+			skewMod = fix16_lerp(t2KnobAverage, 4095, ((4095 - t2CVAverage) - 2048) << 4) + hysteresis;
 		}
 		else {
 			// analogous to above except in this case, morphCV is less than halfway
-			skewMod = myfix16_lerp(0, t2KnobAverage, (4095 - t2CVAverage) << 4) + hysteresis;
+			skewMod = fix16_lerp(0, t2KnobAverage, (4095 - t2CVAverage) << 4) + hysteresis;
 		}
 
 		if ((skewMod - (skewMod >> 6)) > 32) {hysteresis = -24;}
@@ -493,14 +493,14 @@ int getPhaseComplexLFO(int position) {
 		skewAverage = skewSum >> 8;
 		write256(&skewBuffer, skewMod);
 
-		if (holdPosition < (myfix16_mul(spanx2, (4095 - skewAverage) << 4))) {
+		if (holdPosition < (fix16_mul(spanx2, (4095 - skewAverage) << 4))) {
 			attackTransferHolder = (65535 << 11)/(4095 - skewAverage); // 1/(T2*2)
-			position = myfix16_mul(holdPosition, attackTransferHolder);
+			position = fix16_mul(holdPosition, attackTransferHolder);
 
 		}
 		else if (!(HOLD_AT_B)) {
 			releaseTransferHolder = (65535 << 11)/(skewAverage); // 1/((1-T2)*2)
-			position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
+			position = fix16_mul(holdPosition, releaseTransferHolder) + spanx2 - fix16_mul(spanx2, releaseTransferHolder);
 
 		}
 
@@ -527,22 +527,22 @@ int getPhaseComplexLFO(int position) {
 // multiply our knobs with our CVs with the appropriate scaling per the current frequency mode
 
 int calcTime1Env(void) {
-	int time1 = ((lookuptable[t1CVAverage] >> 13) * (lookuptable[(4095 - t1KnobAverage)] >> 13)) >> (6 + tableSizeCompensation);
+	int time1 = ((expoTable[t1CVAverage] >> 13) * (expoTable[(4095 - t1KnobAverage)] >> 13)) >> (6 + tableSizeCompensation);
 	return time1;
 }
 
 int calcTime2Env(void) {
-	int time2 = ((lookuptable[t2CVAverage] >> 13) * (lookuptable[(4095 - t2KnobAverage)] >> 11)) >> (8 + tableSizeCompensation);
+	int time2 = ((expoTable[t2CVAverage] >> 13) * (expoTable[(4095 - t2KnobAverage)] >> 11)) >> (8 + tableSizeCompensation);
 	return time2;
 }
 
 int calcTime1Seq(void) {
-	int time1 = ((lookuptable[t1CVAverage] >> 13) * (lookuptable[(4095 - t1KnobAverage)] >> 13)) >> (8 + tableSizeCompensation);
+	int time1 = ((expoTable[t1CVAverage] >> 13) * (expoTable[(4095 - t1KnobAverage)] >> 13)) >> (8 + tableSizeCompensation);
 	return time1;
 }
 
 int calcTime2Seq(void) {
-	int time2 = ((lookuptable[t2CVAverage] >> 13) * (lookuptable[(4095 - t2KnobAverage)] >> 13)) >> (8 + tableSizeCompensation);
+	int time2 = ((expoTable[t2CVAverage] >> 13) * (expoTable[(4095 - t2KnobAverage)] >> 13)) >> (8 + tableSizeCompensation);
 	return time2;
 }
 
@@ -618,4 +618,3 @@ void getAverages(int speedFlag) {
 	write256(&morphKnobBuffer, morphKnob);
 }
 
-//
