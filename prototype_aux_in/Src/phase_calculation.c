@@ -94,7 +94,7 @@ int getPhaseDrum(int position) {
 			fix16_mul(300000, expoTable[4095 - t1CVAverage] >> 6), expoTable[(t1KnobAverage >> 1) + 2047] >> 10) >> tableSizeCompensation;
 
 	// scale with the drum envelope when specified by the trig control
-	if (PITCH_ON) {inc = fix16_mul(drumModValue + 30000, inc);}
+	if (PITCH_ON) {inc = fix16_mul(drumModValue + 80000, inc);}
 
 	inc = inc * incSign;
 

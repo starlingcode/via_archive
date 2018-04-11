@@ -274,42 +274,7 @@ void uidrumTrigMenu(int sig) {
 
 	// on exit we always set drum flags since it doesn't affect any other mode
 	case EXIT_SIG:
-		switch (drumMode) {
-		case APM:
-			SET_AMP_ON;
-			SET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case AM:
-			SET_AMP_ON;
-			RESET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case A:
-			SET_AMP_ON;
-			RESET_PITCH_ON;
-			RESET_MORPH_ON;
-			break;
-		case M:
-			RESET_AMP_ON;
-			RESET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case PM:
-			RESET_AMP_ON;
-			SET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case P:
-			RESET_AMP_ON;
-			SET_PITCH_ON;
-			RESET_MORPH_ON;
-			break;
-		default:
-			break;
-		}
-		SET_DRUM_MODE_ON;
-
+		uiSetDrumMode();
 	}
 
 }
@@ -490,7 +455,7 @@ void uifamilyDownMenu(int sig)
 				uiSetRGB(currentFamily.color);
 				uiTransition( &uinewMode);
 			} else {
-				uiTransition( &uidefault);
+				uiTransition(&uidefault);
 			}
 		}
 		break;
@@ -526,6 +491,8 @@ void uifreqMenu(int sig) {
 			uiClearLEDs();
 			uiSetLEDs(speed);
 			uiTransition(&uinewMode);
+		} else {
+			uiTransition(&uidefault);
 		}
 		break;
 
@@ -540,29 +507,32 @@ void uiloopMenu(int sig)
 {
 	switch (sig) {
 
+	case ENTRY_SIG:
+		uiSetLEDs(sampleHoldMode);
+		break;
+
 	case SENSOR_EVENT_SIG:
 		if (LOOPSENSOR == RELEASED){
 
 			if(uiTimerRead() < 3000){
 
-				// make sure to clear drum mode if we're transitioning out of it
-				if (loop == looping && speed == audio){
-					//uiClearDrumMode();
-				}
-
 				loop = (loop + 1) % 2;
 				modeStateBuffer = (modeStateBuffer & 0b1111111111111110) | loop;
 				if (loop == noloop) {
-					SET_LAST_CYCLE;}
+					SET_LAST_CYCLE;
+				}
 				else {
+					RESET_DRUM_MODE_ON;
 					RESET_LAST_CYCLE;
 					SET_OSCILLATOR_ACTIVE;
 				}
+				uiClearLEDs();
+				uiSetLEDs(loop);
+				uiSetPhaseFunctions();
+				uiTransition( &uinewMode);
+			} else {
+				uiTransition(&uidefault);
 			}
-			uiClearLEDs();
-			uiSetLEDs(loop);
-			uiSetPhaseFunctions();
-			uiTransition( &uinewMode);
 		}
 		break;
 	}
@@ -574,6 +544,9 @@ void uiloopMenu(int sig)
 void uiSetDrumMode(void)
 {
 	SET_DRUM_MODE_ON;
+	SET_LAST_CYCLE;
+	getPhase = getPhaseDrum;
+	__HAL_TIM_ENABLE(&htim3);
 	switch (drumMode) {
 	case APM:
 		SET_AMP_ON;
@@ -608,16 +581,13 @@ void uiSetDrumMode(void)
 	default:
 		break;
 	}
-	getPhase = getPhaseDrum;
-	__HAL_TIM_ENABLE(&htim3);
 }
 
 void uiSetPhaseFunctions(void) {
-	if (speed == audio && loop == noloop) {
-		uiSetDrumMode();
-	}
+	switch (speed) {
 	// set the appropriate time calculation functions
-	if (speed == env) {
+	case env:
+		RESET_DRUM_MODE_ON;
 		TIM6->ARR = 750;
 		attackTime = calcTime1Env;
 		releaseTime = calcTime2Env;
@@ -626,7 +596,9 @@ void uiSetPhaseFunctions(void) {
 		} else {
 			getPhase = getPhaseSimpleEnv;
 		}
-	} else if (speed == seq) {
+		break;
+
+	case seq:
 		TIM6->ARR = 1000;
 		attackTime = calcTime1Seq;
 		releaseTime = calcTime2Seq;
@@ -635,10 +607,17 @@ void uiSetPhaseFunctions(void) {
 		} else {
 			getPhase = getPhaseComplexEnv;
 		}
-
-	} else {
-		getPhase = getPhaseOsc;
-		TIM6->ARR = 750;
+		break;
+	case audio:
+		if (loop == noloop) {
+			TIM6->ARR = 750;
+			uiSetDrumMode();
+		} else {
+			getPhase = getPhaseOsc;
+			RESET_DRUM_MODE_ON;
+			TIM6->ARR = 750;
+		}
+		break;
 	}
 }
 
@@ -730,6 +709,8 @@ void uiInitialize()
 	uifamilyDownMenu(INIT_SIG);
 	uidrumTrigMenu(EXIT_SIG);
 	// logic A and B don't need additional initialization beyond setting mode
+	uiSetPhaseFunctions();
+
 	State = &uidefault;
 	uiTransition( &uidefault);
 }
