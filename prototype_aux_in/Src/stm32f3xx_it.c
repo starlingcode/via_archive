@@ -54,6 +54,8 @@ enum speedTypes speed;
 enum loopTypes loop;
 enum trigModeTypes trigMode;
 enum sampleHoldModeTypes sampleHoldMode;
+enum drumModeTypes drumMode;
+
 
 extern TIM_HandleTypeDef htim1;
 
@@ -393,7 +395,7 @@ void TIM3_IRQHandler(void) {
 		RESET_UPDATE_PRESCALER;
 	}
 	else { // raise the flag to put the drum mode to rest after overflowing the release portion
-		if (trigMode < 3) {
+		if (drumMode < 3) {
 			RESET_DRUM_RELEASE_ON;
 			drumModValue = 0;
 			out = 0;

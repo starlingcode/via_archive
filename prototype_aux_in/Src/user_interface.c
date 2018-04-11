@@ -308,6 +308,7 @@ void uidrumTrigMenu(int sig) {
 		default:
 			break;
 		}
+		SET_DRUM_MODE_ON;
 
 	}
 
@@ -573,7 +574,6 @@ void uiloopMenu(int sig)
 void uiSetDrumMode(void)
 {
 	SET_DRUM_MODE_ON;
-	getPhase = getPhaseDrum;
 	switch (drumMode) {
 	case APM:
 		SET_AMP_ON;
@@ -608,6 +608,8 @@ void uiSetDrumMode(void)
 	default:
 		break;
 	}
+	getPhase = getPhaseDrum;
+	__HAL_TIM_ENABLE(&htim3);
 }
 
 void uiSetPhaseFunctions(void) {

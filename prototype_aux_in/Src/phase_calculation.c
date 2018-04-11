@@ -115,6 +115,7 @@ int getPhaseDrum(int position) {
 
 			// this is the logic maintenance needed to properly put the contour generator to rest
 			// this keeps behavior on the next trigger predictable
+			out = 0;
 			RESET_LAST_CYCLE;
 			RESET_OSCILLATOR_ACTIVE;
 			incSign = 1;
@@ -138,7 +139,7 @@ int getPhaseDrum(int position) {
 		if (LAST_CYCLE) {
 
 			// same as above, we are putting our contour generator to rest
-
+			out = 0;
 			RESET_LAST_CYCLE;
 			RESET_OSCILLATOR_ACTIVE;
 			incSign = 1;
