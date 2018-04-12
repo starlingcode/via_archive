@@ -88,10 +88,10 @@ int flagHolder;
 uint32_t holdState;
 uint32_t ee_status;
 
-typedef struct buffer1024 {
-    int buff[1024];
+typedef struct buffer512 {
+    int buff[512];
     int writeIndex;
-}buffer1024;
+}buffer512;
 
 typedef struct buffer256 {
     int buff[256];
@@ -109,8 +109,8 @@ void restoreDisplay(void) __attribute__((section("ccmram")));
 void switchFamily(void) __attribute__((section("ccmram")));
 void fillFamilyArray(void) __attribute__((section("ccmram")));
 void restoreState(void) __attribute__((section("ccmram")));
-static inline void write1024(buffer1024*,int) __attribute__((section("ccmram")));
-static inline int readn1024(buffer1024*, int) __attribute__((section("ccmram")));
+static inline void write512(buffer512*,int) __attribute__((section("ccmram")));
+static inline int readn512(buffer512*, int) __attribute__((section("ccmram")));
 static inline void write256(buffer256*,int) __attribute__((section("ccmram")));
 static inline int readn256(buffer256*, int) __attribute__((section("ccmram")));
 static inline void write32(buffer32*,int) __attribute__((section("ccmram")));

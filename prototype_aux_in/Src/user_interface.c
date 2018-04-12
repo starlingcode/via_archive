@@ -275,7 +275,13 @@ void uidrumTrigMenu(int sig) {
 	// on exit we always set drum flags since it doesn't affect any other mode
 	case EXIT_SIG:
 		uiSetDrumMode();
+		break;
+
+	case INIT_SIG:
+		break;
 	}
+
+
 
 }
 
@@ -487,12 +493,12 @@ void uifreqMenu(int sig) {
 				modeStateBuffer = (modeStateBuffer & 0b1111111111111001) | (speed << 1);
 				switchFamily();
 				uiSetPhaseFunctions();
+				uiClearLEDs();
+				uiSetLEDs(speed);
+				uiTransition(&uinewMode);
+			} else {
+				uiTransition(&uidefault);
 			}
-			uiClearLEDs();
-			uiSetLEDs(speed);
-			uiTransition(&uinewMode);
-		} else {
-			uiTransition(&uidefault);
 		}
 		break;
 
@@ -708,6 +714,13 @@ void uiInitialize()
 	uifamilyUpMenu(INIT_SIG);
 	uifamilyDownMenu(INIT_SIG);
 	uidrumTrigMenu(EXIT_SIG);
+
+	if (loop != noloop || speed != audio) {
+		RESET_AMP_ON;
+		RESET_PITCH_ON;
+		RESET_MORPH_ON;
+	}
+
 	// logic A and B don't need additional initialization beyond setting mode
 	uiSetPhaseFunctions();
 

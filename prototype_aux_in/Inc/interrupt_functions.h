@@ -74,12 +74,12 @@ static inline int my_abs(int in) {
 }
 
 // helper functions to maintain and read from a circular buffer
-static inline void write1024(buffer1024* buffer, int value) {
-	buffer->buff[(buffer->writeIndex++) & 1023] = value;
+static inline void write512(buffer512* buffer, int value) {
+	buffer->buff[(buffer->writeIndex++) & 511] = value;
 }
 
-static inline int readn1024(buffer1024* buffer, int Xn) {
-	return buffer->buff[(buffer->writeIndex + (~Xn)) & 1023];
+static inline int readn512(buffer512* buffer, int Xn) {
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 511];
 }
 
 static inline void write256(buffer256* buffer, int value) {

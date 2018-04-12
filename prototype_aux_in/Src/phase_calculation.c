@@ -363,13 +363,13 @@ int getPhaseComplexEnv(int position) {
 
 	//combine the T2 CV and knob analogous to the morph knob
 
-	if ((4095 - t2CVAverage) >= 2047) {
+	if (t2CVAverage >= 2047) {
 		// this first does the aforementioned interpolation between the knob value and full scale then scales back the value according to frequency
-		skewMod = fix16_lerp(t2KnobAverage, 4095, ((4095 - t2CVAverage) - 2048) << 4) + hysteresis;
+		skewMod = fix16_lerp(4095 -t2KnobAverage, 4095, (t2CVAverage - 2048) << 5) + hysteresis;
 	}
 	else {
 		// analogous to above except in this case, morphCV is less than halfway
-		skewMod = fix16_lerp(0, t2KnobAverage, (4095 - t2CVAverage) << 4) + hysteresis;
+		skewMod = fix16_lerp(0, 4095 - t2KnobAverage, t2CVAverage << 5) + hysteresis;
 	}
 
 	//reduce the bit depth with hysteresis and then apply an extra average to
@@ -476,13 +476,13 @@ int getPhaseComplexLFO(int position) {
 			holdPosition = holdPosition + spanx2;
 		}
 
-		if ((4095 - t2CVAverage) >= 2047) {
+		if (t2CVAverage >= 2047) {
 			// this first does the aforementioned interpolation between the knob value and full scale then scales back the value according to frequency
-			skewMod = fix16_lerp(t2KnobAverage, 4095, ((4095 - t2CVAverage) - 2048) << 4) + hysteresis;
+			skewMod = fix16_lerp(4095 - t2KnobAverage, 4095, (t2CVAverage - 2048) << 5) + hysteresis;
 		}
 		else {
 			// analogous to above except in this case, morphCV is less than halfway
-			skewMod = fix16_lerp(0, t2KnobAverage, (4095 - t2CVAverage) << 4) + hysteresis;
+			skewMod = fix16_lerp(0, 4095 - t2KnobAverage, t2CVAverage << 5) + hysteresis;
 		}
 
 		if ((skewMod - (skewMod >> 6)) > 32) {hysteresis = -24;}
@@ -493,6 +493,12 @@ int getPhaseComplexLFO(int position) {
 		skewSum = (skewSum + skewMod- readn256(&skewBuffer, 255));
 		skewAverage = skewSum >> 8;
 		write256(&skewBuffer, skewMod);
+
+		if (skewAverage < 10) {
+			skewAverage = 10;
+		} else if (skewAverage > 4085) {
+			skewAverage = 4085;
+		}
 
 		if (holdPosition < (fix16_mul(spanx2, (4095 - skewAverage) << 4))) {
 			attackTransferHolder = (65535 << 11)/(4095 - skewAverage); // 1/(T2*2)
@@ -555,8 +561,8 @@ void getAverages(int speedFlag) {
 	static buffer256 t2KnobBuffer;
 	static buffer256 t1CVBuffer;
 	static buffer256 t2CVBuffer;
-	static buffer256 morphKnobBuffer;
-	static buffer256 morphCVBuffer;
+	static buffer512 morphKnobBuffer;
+	static buffer512 morphCVBuffer;
 	static uint32_t t1KnobSum;
 	static uint32_t t2KnobSum;
 	static uint32_t morphKnobSum;
@@ -572,8 +578,8 @@ void getAverages(int speedFlag) {
 
 	t1KnobSum = (t1KnobSum + time1Knob- readn256(&t1KnobBuffer, 255));
 	t2KnobSum = (t2KnobSum + time2Knob- readn256(&t2KnobBuffer, 255));
-	morphKnobSum = (morphKnobSum + morphKnob- readn256(&morphKnobBuffer, 255));
-	morphCVSum = (morphCVSum + morphCV- readn256(&morphCVBuffer, 255));
+	morphKnobSum = (morphKnobSum + morphKnob- readn512(&morphKnobBuffer, 511));
+	morphCVSum = (morphCVSum + morphCV- readn512(&morphCVBuffer, 511));
 	t1CVSum = (t1CVSum + time1CV- readn256(&t1CVBuffer, 255));
 	t2CVSum = (t2CVSum + time2CV- readn256(&t2CVBuffer, 255));
 	t1KnobSumAudio = (t1KnobSumAudio + time1Knob- readn256(&t1KnobBuffer, 255));
@@ -603,19 +609,19 @@ void getAverages(int speedFlag) {
 	case 2:
 		t1KnobAverage = t1KnobSum >> 8;
 		t2KnobAverage = t2KnobSum >> 8;
-		morphKnobAverage = morphKnobSum >> 8;
+		morphKnobAverage = morphKnobSum >> 9;
 		t1CVAverage = t1CVSum >> 8;
 		t2CVAverage = t2CVSum >> 8;
-		morphCVAverage = morphCVSum >> 3;
+		morphCVAverage = morphCVSum >> 4;
 	break;
 	default: break;
 	}
 
-	write256(&morphCVBuffer, morphCV);
+	write512(&morphCVBuffer, morphCV);
 	write256(&t1CVBuffer, time1CV);
 	write256(&t2CVBuffer, time2CV);
 	write256(&t1KnobBuffer, time1Knob);
 	write256(&t2KnobBuffer, time2Knob);
-	write256(&morphKnobBuffer, morphKnob);
+	write512(&morphKnobBuffer, morphKnob);
 }
 

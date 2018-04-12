@@ -232,7 +232,6 @@ int main(void) {
 	ee_status = EE_Init();
 	if( ee_status != EE_OK) {LEDC_ON}
 	HAL_Delay(500);
-	restoreState();
 
 	uiInitialize();
 
@@ -918,138 +917,7 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
-void restoreState(){
-	ee_status = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
-	holdState = VarDataTab[0];
-	//holdState = 0;
-	loop = holdState & 0x01;
-	speed = (holdState & 0x06) >> 1;
-	trigMode = (holdState & 0x38) >> 3;
-	sampleHoldMode = (holdState & 0x1C0) >> 6;
-	familyIndicator = (holdState & 0xE00) >> 9;
-	logicOutA = (holdState & 0x3000) >> 12;
-	logicOutB = (holdState & 0xC000) >> 14;
 
-	if (speed < 2) {
-		attackTime = calcTime1Env;
-		releaseTime = calcTime2Env;
-	}
-	if (speed == seq) {
-		TIM6->ARR = 1000;
-		attackTime = calcTime1Seq;
-		releaseTime = calcTime2Seq;
-	}
-
-	incSign = 1;
-	SH_A_TRACK;
-	SH_B_TRACK;
-	switchFamily();
-
-	if (loop == looping) {
-
-		switch (speed) {
-		case audio:
-			getPhase = getPhaseOsc;
-			break;
-		case env:
-			getPhase = getPhaseSimpleLFO;
-			break;
-		case seq:
-			getPhase = getPhaseComplexLFO;
-			break;
-		}
-
-		SET_OSCILLATOR_ACTIVE;
-		RESET_LAST_CYCLE;
-	} else {
-		switch (speed) {
-		case audio:
-			getPhase = getPhaseDrum;
-			break;
-		case env:
-			getPhase = getPhaseSimpleEnv;
-			break;
-		case seq:
-			getPhase = getPhaseComplexEnv;
-			break;
-		}
-	}
-
-	switch (logicOutA) {
-	case 0:
-		SET_GATEA;
-		RESET_TRIGA;
-		RESET_DELTAA;
-		break;
-	case 1:
-		RESET_GATEA;
-		SET_TRIGA;
-		RESET_DELTAA;
-		break;
-	case 2:
-		RESET_GATEA;
-		RESET_TRIGA;
-		SET_DELTAA;
-		break;
-	}
-
-	switch (logicOutB) {
-	case 0:
-		SET_GATEB;
-		RESET_TRIGB;
-		RESET_DELTAB;
-		break;
-	case 1:
-		RESET_GATEB;
-		SET_TRIGB;
-		RESET_DELTAB;
-		break;
-	case 2:
-		RESET_GATEB;
-		RESET_TRIGB;
-		SET_DELTAB;
-		break;
-	}
-
-	if (speed == audio && loop == noloop) {
-		//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
-		SET_DRUM_MODE_ON;
-		//TIM6->ARR = 750;
-		switch (trigMode) {
-		case 0:
-			SET_AMP_ON;
-			SET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case 1:
-			SET_AMP_ON;
-			RESET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case 2:
-			SET_AMP_ON;
-			RESET_PITCH_ON;
-			RESET_MORPH_ON;
-			break;
-		case 3:
-			RESET_AMP_ON;
-			RESET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case 4:
-			RESET_AMP_ON;
-			SET_PITCH_ON;
-			SET_MORPH_ON;
-			break;
-		case 5:
-			RESET_AMP_ON;
-			SET_PITCH_ON;
-			RESET_MORPH_ON;
-			break;
-		}
-	}
-	// set the appropriate time calculation functions
-}
 /* USER CODE END 4 */
 
 /**
