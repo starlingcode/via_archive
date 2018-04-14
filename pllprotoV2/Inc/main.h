@@ -56,7 +56,7 @@ typedef struct buffer{
     int writeIndex;
 }buffer;
 
-enum pllTypes {none, true, hardSync, catch};
+enum syncTypes {none, true, hardSync};
 enum controlSchemes {root, dutyCycle, FM, phaseMod};
 enum scaleTypes {rhythm, diatonic, primes};
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
@@ -95,6 +95,8 @@ int readn(buffer*, int);
 uint32_t ADCReadings1[4];
 uint32_t ADCReadings2[2];
 uint32_t ADCReadings3[2];
+
+int adcRef;
 
 uint32_t time1CVAverage;
 uint32_t time1KnobAverage;
@@ -224,7 +226,7 @@ uint32_t time1KnobAverage;
 #define PHASE_STATE 		flagHolder & 0b00000000000000000000000000000001
 #define LAST_PHASE_STATE 	flagHolder & 0b00000000000000000000000000000010
 #define GATE_ON 			flagHolder & 0b00000000000000000000000000000100
-#define RGB_ON 				flagHolder & 0b00000000000000000000000000001000
+#define DISPLAY_RUNTIME 	flagHolder & 0b00000000000000000000000000001000
 #define RATIO_DELTAA		flagHolder & 0b00000000000000000000000000010000
 #define RATIO_DELTAB		flagHolder & 0b00000000000000000000000000100000
 #define PLL_DIVA	 		flagHolder & 0b00000000000000000000000001000000
@@ -253,7 +255,7 @@ uint32_t time1KnobAverage;
 #define SET_PHASE_STATE 		flagHolder |= 0b00000000000000000000000000000001
 #define SET_LAST_PHASE_STATE 	flagHolder |= 0b00000000000000000000000000000010
 #define SET_GATE_ON 			flagHolder |= 0b00000000000000000000000000000100
-#define SET_RGB_ON 				flagHolder |= 0b00000000000000000000000000001000
+#define SET_DISPLAY_RUNTIME 	flagHolder |= 0b00000000000000000000000000001000
 #define SET_RATIO_DELTAA	 	flagHolder |= 0b00000000000000000000000000010000
 #define SET_RATIO_DELTAB 		flagHolder |= 0b00000000000000000000000000100000
 #define SET_PLL_DIVA			flagHolder |= 0b00000000000000000000000001000000
@@ -282,7 +284,7 @@ uint32_t time1KnobAverage;
 #define RESET_PHASE_STATE 		flagHolder &= 0b11111111111111111111111111111110
 #define RESET_LAST_PHASE_STATE 	flagHolder &= 0b11111111111111111111111111111101
 #define RESET_GATE_ON 			flagHolder &= 0b11111111111111111111111111111011
-#define RESET_RGB_ON 			flagHolder &= 0b11111111111111111111111111110111
+#define RESET_DISPLAY_RUNTIME 	flagHolder &= 0b11111111111111111111111111110111
 #define RESET_RATIO_DELTAA	 	flagHolder &= 0b11111111111111111111111111101111
 #define RESET_RATIO_DELTAB 		flagHolder &= 0b11111111111111111111111111011111
 #define RESET_PLL_DIVA			flagHolder &= 0b11111111111111111111111110111111

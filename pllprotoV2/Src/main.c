@@ -89,12 +89,12 @@ uint16_t VarDataTab[NB_OF_VAR] = {0, 0};
 uint16_t VarValue,VarDataTmp;
 
 // these enums contain our mode information
-enum pllTypes pll; // {none, true, hardSync, catch}
+enum syncTypes syncMode; // {none, true, hardSync, catch}
 enum controlSchemes controlScheme; // {gateLength, knobCV}
 enum scaleTypes scaleType; // {rhythms, pitches}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
-enum scaleTypes logicOutA;
-enum sampleHoldModeTypes logicOutB;
+enum logicOutATypes logicOutA;
+enum logicOutBTypes logicOutB;
 
 //extern void initialise_monitor_handles(void);
 
@@ -178,7 +178,7 @@ int main(void) {
 	inputCaptureSetup();
 
 	// declare the initialization state
-	SET_RGB_ON;
+	SET_DISPLAY_RUNTIME;
 
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
@@ -187,16 +187,17 @@ int main(void) {
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
-
 	// calibrate ADCs
-	HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-	HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
-	HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
+	while(HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED) != HAL_OK);
+	while(HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED) != HAL_OK);
+	while(HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED) != HAL_OK);
 
 	// initialize ADCs and their respective DMA arrays
 	HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
 	HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
 	HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
+
+	adcRef = ADCReadings1[1];
 
 	// initialize trigger detection timer
 	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
@@ -334,7 +335,7 @@ void SystemClock_Config(void) {
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1 | RCC_PERIPHCLK_TIM8
 			| RCC_PERIPHCLK_ADC12 | RCC_PERIPHCLK_ADC34;
-	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV8;
+	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV2;
 	PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV128;
 	PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
 	PeriphClkInit.Tim8ClockSelection = RCC_TIM8CLK_HCLK;
@@ -717,7 +718,7 @@ static void MX_TIM6_Init(void) {
 	htim6.Instance = TIM6;
 	htim6.Init.Prescaler = 1 - 1;
 	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim6.Init.Period = 512;
+	htim6.Init.Period = 767;
 	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim6) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -960,7 +961,7 @@ void restoreState(){
 	holdLogicOut = VarDataTab[1];
 	controlScheme = holdState & 0b0000000000000111;
 	scaleType = (holdState & 0b0000000011000000) >> 6;
-	pll = (holdState & 0b0000000000111000) >> 3;
+	syncMode = (holdState & 0b0000000000111000) >> 3;
 	sampleHoldMode = (holdState & 0b0000011100000000) >> 8;
 	familyIndicator = (holdState & 0b0111100000000000) >> 11;
 	logicOutA = holdLogicOut & 0b0000000000000111;

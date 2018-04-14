@@ -14,7 +14,7 @@ extern TIM_HandleTypeDef htim8;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim1;
 
-enum pllTypes pll; // {none, true, hardSync, catch}
+enum syncTypes syncMode; // {none, true, hardSync, catch}
 enum controlSchemes controlScheme; // {root, dutyCycle, FM, phaseMod}
 enum sampleHoldModeTypes sampleHoldMode;
 
@@ -52,9 +52,9 @@ void dacISR(void) {
 
 	// calculate morph amount per sample as a function of the morph knob and CV (move to the interrupt?)
 	if ((32767 - morphCVAverage) >= 16384) {
-		fixMorph = myfix16_lerp(morphKnobAverage, 4095, ((32767 - morphCVAverage) - 16384) << 2);
+		fixMorph = fix16_lerp(morphKnobAverage, 4095, ((32767 - morphCVAverage) - 16384) << 2);
 	} else {
-		fixMorph = myfix16_lerp(0, morphKnobAverage, (32767 - morphCVAverage) << 2);
+		fixMorph = fix16_lerp(0, morphKnobAverage, (32767 - morphCVAverage) << 2);
 	}
 //		fixMorph = 1000;
 
@@ -131,11 +131,11 @@ void getSample(uint32_t phase) {
 		Rnvalue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
 
 		// find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-		interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
-		interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
+		interp1 = fix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
+		interp2 = fix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
 
 		// interpolate between those based upon the fractional part of our phase position
-		out = myfix16_lerp(interp1, interp2, waveFrac) >> 3;
+		out = fix16_lerp(interp1, interp2, waveFrac) >> 3;
 
 		// compare the interpolated nearest neighbor samples to determine the sign of rate of change
 		// used to generate the "delta" gate output (are we moving towards a, or towards b)
@@ -143,13 +143,13 @@ void getSample(uint32_t phase) {
 			REV2_GATE_HIGH;
 			if (DELTAB) {
 				BLOGIC_HIGH;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_LOW;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDC_OFF;
 				}
 			}
@@ -157,20 +157,20 @@ void getSample(uint32_t phase) {
 			REV2_GATE_LOW;
 			if (DELTAB) {
 				BLOGIC_LOW
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_HIGH;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDC_ON;
 				}
 			}
 		}
 
 		// if the runtime display is on, show our mode - timer compare thresholds are RGB LED PWM values
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
@@ -200,11 +200,11 @@ void getSample(uint32_t phase) {
 		Rnvalue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
 
 		// find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-		interp1 = myfix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
-		interp2 = myfix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
+		interp1 = fix16_lerp(Lnvalue1, Lnvalue2, morphFrac);
+		interp2 = fix16_lerp(Rnvalue1, Rnvalue2, morphFrac);
 
 		// interpolate between those based upon the fractional part of our phase position
-		out = myfix16_lerp(interp1, interp2, waveFrac) >> 3;
+		out = fix16_lerp(interp1, interp2, waveFrac) >> 3;
 
 		// compare the interpolated nearest neighbor samples to determine the sign of rate of change
 		// used to generate the "delta" gate output (are we moving towards a, or towards b)
@@ -212,13 +212,13 @@ void getSample(uint32_t phase) {
 			REV2_GATE_HIGH;
 			if (DELTAB) {
 				BLOGIC_HIGH;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_LOW;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDC_OFF;
 				}
 			}
@@ -226,19 +226,19 @@ void getSample(uint32_t phase) {
 			REV2_GATE_LOW;
 			if (DELTAB) {
 				BLOGIC_LOW;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_HIGH;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDC_ON;
 				}
 			}
 		}
 		// if the runtime display is on, show our mode - timer compare thresholds are RGB LED PWM values
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
@@ -312,19 +312,19 @@ void getSampleQuinticSpline(uint32_t phase) {
 		rFvalue5 = attackHoldArray[LnFamily + 1][LnSample + 3];
 
 		// find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-		interp0 = myfix16_lerp(lFvalue0, rFvalue0, morphFrac);
-		interp1 = myfix16_lerp(lFvalue1, rFvalue1, morphFrac);
-		interp2 = myfix16_lerp(lFvalue2, rFvalue2, morphFrac);
-		interp3 = myfix16_lerp(lFvalue3, rFvalue3, morphFrac);
-		interp4 = myfix16_lerp(lFvalue4, rFvalue4, morphFrac);
-		interp5 = myfix16_lerp(lFvalue5, rFvalue5, morphFrac);
+		interp0 = fix16_lerp(lFvalue0, rFvalue0, morphFrac);
+		interp1 = fix16_lerp(lFvalue1, rFvalue1, morphFrac);
+		interp2 = fix16_lerp(lFvalue2, rFvalue2, morphFrac);
+		interp3 = fix16_lerp(lFvalue3, rFvalue3, morphFrac);
+		interp4 = fix16_lerp(lFvalue4, rFvalue4, morphFrac);
+		interp5 = fix16_lerp(lFvalue5, rFvalue5, morphFrac);
 
 		out = interp2
-				+ myfix24_mul(699051, myfix16_mul(waveFrac, ((interp3-interp1)*16 + (interp0-interp4)*2
-						+ myfix16_mul(waveFrac, ((interp3+interp1)*16 - interp0 - interp2*30 - interp4
-								+ myfix16_mul(waveFrac, (interp3*66 - interp2*70 - interp4*33 + interp1*39 + interp5*7 - interp0*9
-										+ myfix16_mul(waveFrac, ( interp2*126 - interp3*124 + interp4*61 - interp1*64 - interp5*12 + interp0*13
-												+ myfix16_mul(waveFrac, ((interp3-interp2)*50 + (interp1-interp4)*25 + (interp5-interp0) * 5))
+				+ fix24_mul(699051, fix16_mul(waveFrac, ((interp3-interp1)*16 + (interp0-interp4)*2
+						+ fix16_mul(waveFrac, ((interp3+interp1)*16 - interp0 - interp2*30 - interp4
+								+ fix16_mul(waveFrac, (interp3*66 - interp2*70 - interp4*33 + interp1*39 + interp5*7 - interp0*9
+										+ fix16_mul(waveFrac, ( interp2*126 - interp3*124 + interp4*61 - interp1*64 - interp5*12 + interp0*13
+												+ fix16_mul(waveFrac, ((interp3-interp2)*50 + (interp1-interp4)*25 + (interp5-interp0) * 5))
 										))
 								))
 						))
@@ -344,13 +344,13 @@ void getSampleQuinticSpline(uint32_t phase) {
 			REV2_GATE_HIGH;
 			if (DELTAB) {
 				BLOGIC_HIGH;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_LOW;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDC_OFF;
 				}
 			}
@@ -359,19 +359,19 @@ void getSampleQuinticSpline(uint32_t phase) {
 			REV2_GATE_LOW;
 			if (DELTAB) {
 				BLOGIC_LOW;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_HIGH;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDC_ON;
 				}
 			}
 		}
 
-		if (RGB_ON) { // if the runtime display is on, show our mode
+		if (DISPLAY_RUNTIME) { // if the runtime display is on, show our mode
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
@@ -409,19 +409,19 @@ void getSampleQuinticSpline(uint32_t phase) {
 		rFvalue5 = releaseHoldArray[LnFamily + 1][LnSample + 3];
 
 		// find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-		interp0 = myfix16_lerp(lFvalue0, rFvalue0, morphFrac);
-		interp1 = myfix16_lerp(lFvalue1, rFvalue1, morphFrac);
-		interp2 = myfix16_lerp(lFvalue2, rFvalue2, morphFrac);
-		interp3 = myfix16_lerp(lFvalue3, rFvalue3, morphFrac);
-		interp4 = myfix16_lerp(lFvalue4, rFvalue4, morphFrac);
-		interp5 = myfix16_lerp(lFvalue5, rFvalue5, morphFrac);
+		interp0 = fix16_lerp(lFvalue0, rFvalue0, morphFrac);
+		interp1 = fix16_lerp(lFvalue1, rFvalue1, morphFrac);
+		interp2 = fix16_lerp(lFvalue2, rFvalue2, morphFrac);
+		interp3 = fix16_lerp(lFvalue3, rFvalue3, morphFrac);
+		interp4 = fix16_lerp(lFvalue4, rFvalue4, morphFrac);
+		interp5 = fix16_lerp(lFvalue5, rFvalue5, morphFrac);
 
 		out = interp2
-				+ myfix24_mul(699051, myfix16_mul(waveFrac, ((interp3-interp1)*16 + (interp0-interp4)*2
-						+ myfix16_mul(waveFrac, ((interp3+interp1)*16 - interp0 - interp2*30 - interp4
-								+ myfix16_mul(waveFrac, (interp3*66 - interp2*70 - interp4*33 + interp1*39 + interp5*7 - interp0*9
-										+ myfix16_mul(waveFrac, ( interp2*126 - interp3*124 + interp4*61 - interp1*64 - interp5*12 + interp0*13
-												+ myfix16_mul(waveFrac, ((interp3-interp2)*50 + (interp1-interp4)*25 + (interp5-interp0) * 5))
+				+ fix24_mul(699051, fix16_mul(waveFrac, ((interp3-interp1)*16 + (interp0-interp4)*2
+						+ fix16_mul(waveFrac, ((interp3+interp1)*16 - interp0 - interp2*30 - interp4
+								+ fix16_mul(waveFrac, (interp3*66 - interp2*70 - interp4*33 + interp1*39 + interp5*7 - interp0*9
+										+ fix16_mul(waveFrac, ( interp2*126 - interp3*124 + interp4*61 - interp1*64 - interp5*12 + interp0*13
+												+ fix16_mul(waveFrac, ((interp3-interp2)*50 + (interp1-interp4)*25 + (interp5-interp0) * 5))
 										))
 								))
 						))
@@ -441,13 +441,13 @@ void getSampleQuinticSpline(uint32_t phase) {
 			REV2_GATE_HIGH;
 			if (DELTAB) {
 				BLOGIC_HIGH;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_LOW;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDC_OFF;
 				}
 			}
@@ -456,253 +456,23 @@ void getSampleQuinticSpline(uint32_t phase) {
 			REV2_GATE_LOW;
 			if (DELTAB) {
 				BLOGIC_LOW;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_HIGH;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDC_ON;
 				}
 			}
 		}
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
 	}
 }
-
-
-void getSampleLaGrange(uint32_t phase) {
-#define PRECALC1_6 2796202
-
-	// in this function, we use our phase position to get the sample to give to our dacs using "biinterpolation"
-	// essentially, we need to get 4 sample values and two "fractional arguments" (where are we at in between those sample values)
-	// think of locating a position on a rectangular surface based upon how far you are between the bottom and top and how far you are between the left and right sides
-	// that is basically what we are doing here
-
-	uint32_t LnSample;  // indicates the nearest neighbor to our position in the wavetable
-	uint32_t LnFamily;  // indicates the nearest neighbor (wavetable) to our morph value in the family
-	uint32_t waveFrac;  // indicates the factional distance between our nearest neighbors in the wavetable
-	uint32_t morphFrac; // indicates the factional distance between our nearest neighbors in the family
-	uint32_t lFvalue0;  // sample values used by our two interpolations in
-	uint32_t rFvalue0;
-	uint32_t lFvalue1;
-	uint32_t rFvalue1;
-	uint32_t lFvalue2;
-	uint32_t rFvalue2;
-	uint32_t lFvalue3;
-	uint32_t rFvalue3;
-	uint32_t interp0;   // results of those two interpolations
-	uint32_t interp1;
-	uint32_t interp2;   // results of those two interpolations
-	uint32_t interp3;
-	uint32_t a0;        // results of those two interpolations
-	uint32_t a1;
-	uint32_t a2;        // results of those two interpolations
-	uint32_t a3;
-
-	// the above is used to perform our bi-interpolation
-	// essentially, interp 1 and interp 2 are the interpolated values in the two adjacent wavetables per the playback position
-	// out is the "crossfade" between those according to morphFrac
-
-	if (phase == 0) {
-		// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
-		// truncate position then add one to find the relevant indices for our wavetables, first within the wavetable then the actual wavetables in the family
-		LnSample = (position >> 16);
-
-		// bit shifting to divide by the correct power of two takes a 12 bit number (our fixMorph) and returns the a quotient in the range of our family size
-		LnFamily = fixMorph >> morphBitShiftRight;
-
-		// determine the fractional part of our phase position by masking off the integer
-		waveFrac = 0x0000FFFF & position;
-		// we have to calculate the fractional portion and get it up to full scale
-		morphFrac = (fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft;
-
-		// get values from the relevant wavetables
-		// this is a funny looking method of referencing elements in a two dimensional array
-		// we need to do it like this because our struct contains a pointer to the array being used
-		// i feel like this could be optimized if we are loading from flash
-//		family = currentFamily.attackFamily + LnFamily;
-//		Lnvalue1 = *(*(family) + LnSample);
-//		Rnvalue1 = *(*(family) + LnSample + 1);
-//		Lnvalue2 = *(*(family + 1) + LnSample);
-//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
-
-		//attempt at optimizing using fixed size array on the heap
-		lFvalue1 = attackHoldArray[LnFamily][LnSample];
-		lFvalue2 = attackHoldArray[LnFamily][LnSample + 1];
-		rFvalue1 = attackHoldArray[LnFamily + 1][LnSample];
-		rFvalue2 = attackHoldArray[LnFamily + 1][LnSample + 1];
-
-		if (LnSample == 0) {
-			lFvalue0 = attackHoldArray[LnFamily][LnSample];
-			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample];
-		} else if (LnSample >= ((span >> 16) - 1)) {
-			lFvalue3 = attackHoldArray[LnFamily][LnSample + 1];
-			rFvalue3 = attackHoldArray[LnFamily + 1][LnSample + 1];
-		} else {
-			lFvalue0 = attackHoldArray[LnFamily][LnSample - 1];
-			rFvalue0 = attackHoldArray[LnFamily + 1][LnSample - 1];
-			lFvalue3 = attackHoldArray[LnFamily][LnSample + 2];
-			rFvalue3 = attackHoldArray[LnFamily + 1][LnSample + 2];
-		}
-
-		// find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-		interp0 = myfix16_lerp(lFvalue0, rFvalue0, morphFrac);
-		interp1 = myfix16_lerp(lFvalue1, rFvalue1, morphFrac);
-		interp2 = myfix16_lerp(lFvalue2, rFvalue2, morphFrac);
-		interp3 = myfix16_lerp(lFvalue3, rFvalue3, morphFrac);
-
-		// interpolate between those based upon the fractional part of our phase pointer
-		a0 = myfix16_mul(waveFrac, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
-		a1 = myfix16_mul(waveFrac + 65536, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
-		a2 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 131072));
-		a3 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 65536));
-
-		out = (myfix16_mul(a0, myfix24_mul(interp0, -PRECALC1_6)) +
-				(myfix16_mul(a1, interp1) >> 1) +
-					(myfix16_mul(a2, -interp2) >> 1) +
-						myfix16_mul(a3, myfix24_mul(interp3, PRECALC1_6))) >> 3;
-
-		if (out > 4095){out = 4095;}
-		if (out < 0){out = 0;}
-
-		// we use the interpolated nearest neighbor samples to determine the sign of rate of change
-		// aka, are we moving towrds a, or towards b
-		// we use this to generate our gate output
-		if (interp1 < interp2) {
-			REV2_GATE_HIGH;
-			if (DELTAB) {
-				BLOGIC_HIGH;
-				if (RGB_ON) {
-					LEDD_ON;
-				}
-			}
-			if (DELTAA) {
-				ALOGIC_LOW;
-				if (RGB_ON) {
-					LEDC_OFF;
-				}
-			}
-		} else if (interp2 < interp1) {
-			REV2_GATE_LOW;
-			if (DELTAB) {
-				BLOGIC_LOW;
-				if (RGB_ON) {
-					LEDD_OFF;
-				}
-			}
-			if (DELTAA) {
-				ALOGIC_HIGH;
-				if (RGB_ON) {
-					LEDC_ON;
-				}
-			}
-		}
-
-		if (RGB_ON) { //if the runtime display is on, show our mode
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
-		}
-	}
-	else {
-
-		// this section is similar, but subtly different to implement our "release"
-		// notice, we reflect position back over span
-		LnSample = ((spanx2 - position) >> 16);
-		LnFamily = fixMorph >> morphBitShiftRight;
-
-		// here, again, we use that reflected value
-		waveFrac = 0x0000FFFF & (spanx2 - position);
-		morphFrac = (uint16_t) ((fixMorph - (LnFamily << morphBitShiftRight)) << morphBitShiftLeft);
-
-		//pull the values from our "release family"
-//		family = currentFamily.releaseFamily + LnFamily;
-//		Lnvalue1 = *(*(family) + LnSample);
-//		Rnvalue1 = *(*(family) + LnSample + 1);
-//		Lnvalue2 = *(*(family + 1) + LnSample);
-//		Rnvalue2 = *(*(family + 1) + LnSample + 1);
-
-		lFvalue1 = releaseHoldArray[LnFamily][LnSample];
-		lFvalue2 = releaseHoldArray[LnFamily][LnSample + 1];
-		rFvalue1 = releaseHoldArray[LnFamily + 1][LnSample];
-		rFvalue2 = releaseHoldArray[LnFamily + 1][LnSample + 1];
-
-		if (LnSample == 0) {
-			lFvalue0 = releaseHoldArray[LnFamily][LnSample];
-			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample];
-		} else if (LnSample >= ((span >> 16) - 1)) {
-			lFvalue3 = releaseHoldArray[LnFamily][LnSample + 1];
-			rFvalue3 = releaseHoldArray[LnFamily + 1][LnSample + 1];
-		} else {
-			lFvalue0 = releaseHoldArray[LnFamily][LnSample - 1];
-			rFvalue0 = releaseHoldArray[LnFamily + 1][LnSample - 1];
-			lFvalue3 = releaseHoldArray[LnFamily][LnSample + 2];
-			rFvalue3 = releaseHoldArray[LnFamily + 1][LnSample + 2];
-		}
-
-		//find the interpolated values for the adjacent wavetables using an efficient fixed point linear interpolation
-		interp0 = myfix16_lerp(lFvalue0, rFvalue0, morphFrac);
-		interp1 = myfix16_lerp(lFvalue1, rFvalue1, morphFrac);
-		interp2 = myfix16_lerp(lFvalue2, rFvalue2, morphFrac);
-		interp3 = myfix16_lerp(lFvalue3, rFvalue3, morphFrac);
-
-		// interpolate between those based upon the fractional part of our phase pointer
-		a0 = myfix16_mul(waveFrac, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
-		a1 = myfix16_mul(waveFrac + 65536, myfix16_mul(waveFrac - 65536, waveFrac - 131072));
-		a2 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 131072));
-		a3 = myfix16_mul(waveFrac, myfix16_mul(waveFrac + 65536, waveFrac - 65536));
-
-		out = (myfix16_mul(a0, myfix24_mul(interp0, -PRECALC1_6)) +
-				(myfix16_mul(a1, interp1) >> 1) +
-					(myfix16_mul(a2, -interp2) >> 1) +
-						myfix16_mul(a3, myfix24_mul(interp3, PRECALC1_6))) >> 3;
-
-		if (out > 4095){out = 4095;}
-		if (out < 0){out = 0;}
-
-		//we use the interpolated nearest neighbor samples to determine the sign of rate of change
-		//aka, are we moving towrds a, or towards b
-		//we use this to generate our gate output
-		if (interp1 < interp2) {
-			REV2_GATE_HIGH;
-			if (DELTAB) {
-				BLOGIC_HIGH;
-				if (RGB_ON) {
-					LEDD_ON;
-				}
-			}
-			if (DELTAA) {
-				ALOGIC_LOW;
-				if (RGB_ON) {
-					LEDC_OFF;
-				}
-			}
-		} else if (interp2 < interp1) {
-			REV2_GATE_LOW;
-			if (DELTAB) {
-				BLOGIC_LOW;
-				if (RGB_ON) {
-					LEDD_OFF;
-				}
-			}
-			if (DELTAA) {
-				ALOGIC_HIGH;
-				if (RGB_ON) {
-					LEDC_ON;
-				}
-			}
-		}
-		if (RGB_ON) {
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
-		}
-	}
-}
-
 
 // calculates an increment then checks trigger mode, making the appropriate changes to playback when the contour generator is triggered
 void getPhase(void) {
@@ -712,7 +482,9 @@ void getPhase(void) {
 	int releaseTransferHolder;
 
 	if (controlScheme == phaseMod) {
-		position = position + ((time2CV - lastCV) << 8);
+		position = position + ((time2CV - lastCV) << 11);
+		if (position < 0) {position = 0;}
+		else if (position > spanx2) {position = spanx2;}
 		lastCV = time2CV;
 	}
 
@@ -733,22 +505,26 @@ void getPhase(void) {
 				time2Average = 1;
 			}
 
-			if (holdPosition < (myfix16_mul(spanx2, (4095 - time2Average) << 4))) {
+			if (holdPosition < (fix16_mul(spanx2, (4095 - time2Average) << 4))) {
 				attackTransferHolder = (65535 << 11)/(4095 - time2Average); // 1/(T2*2)
-				position = myfix16_mul(holdPosition, attackTransferHolder);
+				position = fix16_mul(holdPosition, attackTransferHolder);
 	//			position = 2 * holdPosition;
 			} else {
 				releaseTransferHolder = (65535 << 11)/(time2Average); // 1/((1-T2)*2)
-				position = myfix16_mul(holdPosition, releaseTransferHolder) + spanx2 - myfix16_mul(spanx2, releaseTransferHolder);
-	//			position = myfix16_mul(holdPosition, 43690) + spanx2 - myfix16_mul(spanx2, 43690);
+				position = fix16_mul(holdPosition, releaseTransferHolder) + spanx2 - fix16_mul(spanx2, releaseTransferHolder);
+	//			position = fix16_mul(holdPosition, 43690) + spanx2 - fix16_mul(spanx2, 43690);
 			}
 
 	} else {
 		if (controlScheme == FM) {
 			if (PHASE_STATE) {
 				position = position + ((attackInc * (4095 - time2Average)) >> 11);
+				if (position < 0) {position = 0;}
+				else if (position > spanx2) {position = spanx2;}
 			} else {
 				position = position + ((releaseInc * time2Average) >> 11);
+				if (position < 0) {position = 0;}
+				else if (position > spanx2) {position = spanx2;}
 			}
 		} else {
 			if (PHASE_STATE) {
@@ -775,25 +551,25 @@ void getPhase(void) {
 
 
 
-int myfix16_mul(int in0, int in1) {
+int fix16_mul(int in0, int in1) {
 	// taken from the fixmathlib library
 	int64_t result = (uint64_t) in0 * in1;
 	return result >> 16;
 }
 
-int myfix24_mul(int in0, int in1) {
+int fix24_mul(int in0, int in1) {
 	// taken from the fixmathlib library
 	int64_t result = (uint64_t) in0 * in1;
 	return result >> 24;
 }
 
-int myfix48_mul(uint32_t in0, uint32_t in1) {
+int fix48_mul(uint32_t in0, uint32_t in1) {
 	// taken from the fixmathlib library
 	int64_t result = (uint64_t) in0 * in1;
 	return result >> 48;
 }
 
-int myfix16_lerp(int in0, int in1, uint16_t inFract) {
+int fix16_lerp(int in0, int in1, uint16_t inFract) {
 	// taken from the fixmathlib library
 	int64_t tempOut = int64_mul_i32_i32(in0, (((int32_t) 1 << 16) - inFract));
 	tempOut = int64_add(tempOut, int64_mul_i32_i32(in1, inFract));
@@ -815,26 +591,26 @@ void EXTI15_10_IRQHandler(void) {
 
 			if (TRIGA) {
 				ALOGIC_HIGH;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDC_ON;
 				}
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
 				__HAL_TIM_ENABLE(&htim15);
 			} else if (GATEA) {
 				ALOGIC_HIGH;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDC_ON;
 				}
 			}
 			if (GATEB) {
 				BLOGIC_LOW;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDD_OFF;
 				}
 			}
 			sampHoldA();
 
-			if (RGB_ON) {
+			if (DISPLAY_RUNTIME) {
 				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 			}
 
@@ -850,24 +626,24 @@ void EXTI15_10_IRQHandler(void) {
 				BLOGIC_HIGH;
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
 				__HAL_TIM_ENABLE(&htim15);
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDD_ON;
 				}
 			} else if (GATEB) {
 				BLOGIC_HIGH;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDD_ON;
 				}
 			}
 			if (GATEA) {
 				ALOGIC_LOW;
-				if (RGB_ON) {
+				if (DISPLAY_RUNTIME) {
 					LEDC_OFF;
 				}
 			}
 			sampHoldB();
 
-			if (RGB_ON) {
+			if (DISPLAY_RUNTIME) {
 				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 			}
 		}
@@ -880,7 +656,7 @@ void sampHoldB(void) {
 
 	case a:
 		SH_A_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_ON;
 		}
 		break;
@@ -888,7 +664,7 @@ void sampHoldB(void) {
 		// case b: b remains sampled
 	case ab:
 		SH_A_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 		}
 		// b remains sampled
@@ -897,7 +673,7 @@ void sampHoldB(void) {
 	case antidecimate:
 		SH_B_SAMPLE;
 		SH_A_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDB_OFF;
 			LEDA_ON;
 		}
@@ -907,7 +683,7 @@ void sampHoldB(void) {
 		SH_A_TRACK;
 		__HAL_TIM_SET_COUNTER(&htim7, 0);
 		__HAL_TIM_ENABLE(&htim7);
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 					LEDA_OFF;
 					LEDB_OFF;
 				}
@@ -923,7 +699,7 @@ void sampHoldA(void) {
 
 	case a:
 		SH_A_SAMPLE;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 		}
 		break;
@@ -932,7 +708,7 @@ void sampHoldA(void) {
 		SH_B_TRACK;
 		__HAL_TIM_SET_COUNTER(&htim8, 0);
 		__HAL_TIM_ENABLE(&htim8);
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDB_OFF;
 		}
 		break;
@@ -940,7 +716,7 @@ void sampHoldA(void) {
 	case ab:
 		SH_A_SAMPLE;
 		SH_B_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDB_OFF;
 			LEDA_ON;
 		}
@@ -951,7 +727,7 @@ void sampHoldA(void) {
 	case antidecimate:
 		SH_A_SAMPLE;
 		SH_B_TRACK;
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 			LEDB_ON;
 		}
@@ -961,7 +737,7 @@ void sampHoldA(void) {
 		SH_B_TRACK;
 		__HAL_TIM_SET_COUNTER(&htim7, 0);
 		__HAL_TIM_ENABLE(&htim7);
-		if (RGB_ON) {
+		if (DISPLAY_RUNTIME) {
 			LEDA_OFF;
 			LEDB_OFF;
 		}

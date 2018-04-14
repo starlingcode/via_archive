@@ -36,18 +36,14 @@ int time2;
 
 int holdPosition;
 
-
-//most recent value from our expo decay
-int expoScale;
-
 //lastest result of the biinterpolation between interp1 and interp2 (scaled in drum mode)
 int out;
 
 
-int myfix16_mul(int, int)  __attribute__((section("ccmram")));
-int myfix24_mul(int, int)  __attribute__((section("ccmram")));
-int myfix48_mul(uint32_t, uint32_t)  __attribute__((section("ccmram")));
-int myfix16_lerp(int, int, uint16_t)  __attribute__((section("ccmram")));
+int fix16_mul(int, int)  __attribute__((section("ccmram")));
+int fix24_mul(int, int)  __attribute__((section("ccmram")));
+int fix48_mul(uint32_t, uint32_t)  __attribute__((section("ccmram")));
+int fix16_lerp(int, int, uint16_t)  __attribute__((section("ccmram")));
 
 
 // ADC variables and defines

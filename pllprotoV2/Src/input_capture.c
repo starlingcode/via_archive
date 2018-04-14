@@ -8,10 +8,10 @@
 #include "tables.h"
 #include "main.h"
 
-int lookuptable[4096] = expotable10oct;
+int expoTable[4096] = expotable10oct;
 
 // mode indicators, determined in the main loop
-enum pllTypes pll; // {none, true, hardSync, catch}
+enum syncTypes syncMode; // {none, true, hardSync, catch}
 enum controlSchemes controlScheme; // {gateLength, knobCV}
 enum scaleTypes scaleType; // {rhythms, pitches}
 enum sampleHoldModeTypes sampleHoldMode;
@@ -94,10 +94,10 @@ void generateFrequency(void) {
 
 			if (currentScale.oneVoltOct == 0) {
 				if ((4095 - time1CV) >= 2048) {
-					noteIndex = (myfix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) >> 5;
+					noteIndex = (fix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) >> 5;
 				}
 				else {
-					noteIndex = (myfix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 5;
+					noteIndex = (fix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 5;
 				}
 			} else {
 				int holdT1 = (4095 - time1CV) + (time1Knob >> 2) -1390;
@@ -111,10 +111,10 @@ void generateFrequency(void) {
 
 			if (controlScheme == root) {
 				if ((4095 - time2CV) >= 2048) {
-					rootIndex = (myfix16_lerp(time2Knob, 4095, ((4095 - time2CV) - 2048) << 5)) >> currentScale.t2Bitshift;
+					rootIndex = (fix16_lerp(time2Knob, 4095, ((4095 - time2CV) - 2048) << 5)) >> currentScale.t2Bitshift;
 				}
 				else {
-					rootIndex = (myfix16_lerp(0, time2Knob, (4095 - time2CV) << 5)) >> currentScale.t2Bitshift;
+					rootIndex = (fix16_lerp(0, time2Knob, (4095 - time2CV) << 5)) >> currentScale.t2Bitshift;
 				}
 			} else {
 				rootIndex = time2Knob >> currentScale.t2Bitshift;
@@ -132,7 +132,7 @@ void generateFrequency(void) {
 					ALOGIC_HIGH;
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
-					if (RGB_ON) {
+					if (DISPLAY_RUNTIME) {
 						LEDC_ON;
 					}
 				}
@@ -140,7 +140,7 @@ void generateFrequency(void) {
 					BLOGIC_HIGH;
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
-					if (RGB_ON) {
+					if (DISPLAY_RUNTIME) {
 						LEDD_ON;
 					}
 				}
@@ -160,7 +160,7 @@ void generateFrequency(void) {
 					ALOGIC_HIGH;
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
-					if (RGB_ON) {
+					if (DISPLAY_RUNTIME) {
 						LEDC_ON;
 					}
 				}
@@ -168,30 +168,30 @@ void generateFrequency(void) {
 					BLOGIC_HIGH;
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
-					if (RGB_ON) {
+					if (DISPLAY_RUNTIME) {
 						LEDD_ON;
 					}
 				}
 
-				if (pll == hardSync) {
+				if (syncMode == hardSync) {
 
 					position = 0;
 					holdPosition =0;
 					if (GATEA) {
 						ALOGIC_HIGH;
-						if (RGB_ON) {
+						if (DISPLAY_RUNTIME) {
 							LEDC_ON;
 						}
 					} else if (TRIGA) {
 						ALOGIC_HIGH;
-						if (RGB_ON) {
+						if (DISPLAY_RUNTIME) {
 							LEDC_ON;
 						}
 						__HAL_TIM_SET_COUNTER(&htim15, 0);
 						__HAL_TIM_ENABLE(&htim15);
 					}
 
-				} else if (pll == true) {
+				} else if (syncMode == true) {
 					// if we are behind the phase of the clock, go faster, otherwise, go slower
 					if (position > span) {
 						pllNudge = (spanx2 - position) << 4;
@@ -205,10 +205,12 @@ void generateFrequency(void) {
 
 			//PROFILING_EVENT("SetupComplete");
 
-			attackInc = (((span << 7) + pllNudge) / gateOnCount) << 2;
-			releaseInc = (((span << 7) + pllNudge) / (periodCount - gateOnCount)) << 2;
-			attackInc = myfix48_mul(attackInc, fracMultiplier) + myfix16_mul(attackInc, intMultiplier);
-			releaseInc = myfix48_mul(releaseInc, fracMultiplier) + myfix16_mul(releaseInc, intMultiplier);
+			attackInc = (((span << 7) + pllNudge) / gateOnCount) << 1;
+			releaseInc = (((span << 7) + pllNudge) / (periodCount - gateOnCount)) << 1;
+			attackInc = fix48_mul(attackInc, fracMultiplier) + fix16_mul(attackInc, intMultiplier);
+			releaseInc = fix48_mul(releaseInc, fracMultiplier) + fix16_mul(releaseInc, intMultiplier);
+			attackInc = attackInc*3;
+			releaseInc = releaseInc*3;
 
 			if (attackInc >= span - 1) {attackInc = span - 1;}
 			if (releaseInc >= span - 1) {releaseInc = span - 1;}

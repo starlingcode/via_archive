@@ -14,7 +14,7 @@ extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 
 // these enums contain our mode information
-enum pllTypes pll; // {none, true, hardSync, catch}
+enum syncTypes syncMode; // {none, true, hardSync, catch}
 enum controlSchemes controlScheme; // {gateLength, knobCV}
 enum scaleTypes scaleType; // {rhythms, pitches}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
@@ -47,7 +47,7 @@ int holdState;
 void readDetect(void) {
 	// check to see if any touch sensors have gone into detect state
 	if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON;  // turn off the runtime display
+		RESET_DISPLAY_RUNTIME;  // turn off the runtime display
 		modeflag = 10; // indicate to the other mode change functions that we have pressed the scaleType button
 		detectOn = 1;  // indicate that a touch sensor was in detect state during this acquisition cycle
 		clearLEDs();   // wipe the vestiges of our runtime display
@@ -55,15 +55,15 @@ void readDetect(void) {
 		showMode(scaleType); //show our current mode
 	}
 	if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON;
+		RESET_DISPLAY_RUNTIME;
 		modeflag = 2;  // indicate to the other mode change functions that we have pressed the trigger mode button
 		detectOn = 1;
 		clearLEDs();
 		__HAL_TIM_SET_COUNTER(&htim4, 0);
-		showMode(pll);
+		showMode(syncMode);
 	}
 	if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON;
+		RESET_DISPLAY_RUNTIME;
 		modeflag = 3; // indicate to the other mode change functions that we have pressed the controlScheme button
 		detectOn = 1;
 		clearLEDs();
@@ -71,7 +71,7 @@ void readDetect(void) {
 		showMode(controlScheme);
 	}
 	if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON;
+		RESET_DISPLAY_RUNTIME;
 		modeflag = 4; // indicate to the other mode change functions that we have pressed the sample and hold mode button
 		detectOn = 1;
 		clearLEDs();
@@ -79,7 +79,7 @@ void readDetect(void) {
 		showMode(sampleHoldMode);
 	}
 	if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON;
+		RESET_DISPLAY_RUNTIME;
 		modeflag = 5; // indicate to the other mode change functions that we have pressed the family up button
 		detectOn = 1;
 		clearLEDs();
@@ -87,7 +87,7 @@ void readDetect(void) {
 		showMode(familyIndicator);
 	}
 	if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_RGB_ON;
+		RESET_DISPLAY_RUNTIME;
 		modeflag = 6; // indicate to the other mode change functions that we have pressed the family down button
 		detectOn = 1;
 		clearLEDs();
@@ -258,7 +258,7 @@ void handleRelease(uint32_t pinMode) {
 			showMode(scaleType);
 			break;
 		case 2:
-			showMode(pll);
+			showMode(syncMode);
 			break;
 		case 3:
 			showMode(controlScheme);
@@ -296,7 +296,7 @@ void handleRelease(uint32_t pinMode) {
 			modeflag = 2;
 		}
 		clearLEDs();
-		SET_RGB_ON;
+		SET_DISPLAY_RUNTIME;
 	}
 }
 
@@ -315,8 +315,8 @@ void changeMode(uint32_t mode) {
 		holdState = (holdState & 0b1111111100111111) | (scaleType << 6);
 	}
 	else if (mode == 2) {
-		pll = (pll + 1) % 3;
-		holdState = (holdState & 0b1111111111000111) | (pll << 3);
+		syncMode = (syncMode + 1) % 3;
+		holdState = (holdState & 0b1111111111000111) | (syncMode << 3);
 
 	}
 	else if (mode == 3) {
@@ -539,7 +539,7 @@ void clearLEDs(void) {
 void restoreDisplay() {
 	if (__HAL_TIM_GET_COUNTER(&htim4) > 10000) {
 		clearLEDs(); // get rid of last mode display
-		SET_RGB_ON;  // turn on the runtime display
+		SET_DISPLAY_RUNTIME;  // turn on the runtime display
 		displayNewMode = 0; // a bit of logic used to make sure that we show the mode during the main controlScheme
 	}
 }
