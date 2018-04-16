@@ -178,7 +178,7 @@ int main(void) {
 	inputCaptureSetup();
 
 	// declare the initialization state
-	SET_DISPLAY_RUNTIME;
+	SET_RUNTIME_DISPLAY;
 
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
@@ -267,7 +267,7 @@ int main(void) {
 		else if (TRIGGER_BUTTON){
 			debounce++;
 			if (debounce == 10) {
-				RESET_TRIGGER_BUTTON;
+				CLEAR_TRIGGER_BUTTON;
 				tapTempo();
 				debounce = 0;
 			}
@@ -290,7 +290,7 @@ int main(void) {
 		if (displayNewMode == 1) {
 			// turn runtime display back on if currently displaying a mode change
 			restoreDisplay();
-			RESET_AUX_MENU;
+			CLEAR_AUX_MENU;
 		}
 		/* USER CODE END WHILE */
 
@@ -972,36 +972,36 @@ void restoreState(){
 	switch (logicOutA) {
 	case 0:
 		SET_GATEA;
-		RESET_DELTAB;
-		RESET_DELTAA;
+		CLEAR_DELTAB;
+		CLEAR_DELTAA;
 		RESET_RATIO_DELTAA;
 		RESET_PLL_DIVA;
 		break;
 	case 1:
-		RESET_GATEA;
+		CLEAR_GATEA;
 		SET_TRIGA;
-		RESET_DELTAA;
+		CLEAR_DELTAA;
 		RESET_RATIO_DELTAA;
 		RESET_PLL_DIVA;
 		break;
 	case 2:
-		RESET_GATEA;
-		RESET_TRIGA;
+		CLEAR_GATEA;
+		CLEAR_TRIGA;
 		SET_DELTAA;
 		RESET_RATIO_DELTAA;
 		RESET_PLL_DIVA;
 		break;
 	case 3:
-		RESET_GATEA;
-		RESET_TRIGA;
-		RESET_DELTAA;
+		CLEAR_GATEA;
+		CLEAR_TRIGA;
+		CLEAR_DELTAA;
 		SET_RATIO_DELTAA;
 		RESET_PLL_DIVA;
 		break;
 	case 4:
-		RESET_GATEA;
-		RESET_TRIGA;
-		RESET_DELTAA;
+		CLEAR_GATEA;
+		CLEAR_TRIGA;
+		CLEAR_DELTAA;
 		RESET_RATIO_DELTAA;
 		SET_PLL_DIVA;
 		break;
@@ -1010,36 +1010,36 @@ void restoreState(){
 	switch (logicOutB) {
 	case 0:
 		SET_GATEB;
-		RESET_TRIGB;
-		RESET_DELTAB;
+		CLEAR_TRIGB;
+		CLEAR_DELTAB;
 		RESET_RATIO_DELTAB;
 		RESET_PLL_DIVB;
 		break;
 	case 1:
-		RESET_GATEB;
+		CLEAR_GATEB;
 		SET_TRIGB;
-		RESET_DELTAA;
+		CLEAR_DELTAA;
 		RESET_RATIO_DELTAB;
 		RESET_PLL_DIVB;
 		break;
 	case 2:
-		RESET_GATEB;
-		RESET_TRIGB;
+		CLEAR_GATEB;
+		CLEAR_TRIGB;
 		SET_DELTAB;
 		RESET_RATIO_DELTAB;
 		RESET_PLL_DIVB;
 		break;
 	case 3:
-		RESET_GATEB;
-		RESET_TRIGB;
-		RESET_DELTAB;
+		CLEAR_GATEB;
+		CLEAR_TRIGB;
+		CLEAR_DELTAB;
 		SET_RATIO_DELTAB;
 		RESET_PLL_DIVB;
 		break;
 	case 4:
-		RESET_GATEB;
-		RESET_TRIGB;
-		RESET_DELTAB;
+		CLEAR_GATEB;
+		CLEAR_TRIGB;
+		CLEAR_DELTAB;
 		RESET_RATIO_DELTAB;
 		SET_PLL_DIVB;
 		break;

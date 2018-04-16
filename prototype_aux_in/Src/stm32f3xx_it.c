@@ -226,13 +226,13 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
 	if (TRIGB) {
 		BLOGIC_LOW;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDD_OFF;
 		}
 	}
 	if (TRIGA) {
 		ALOGIC_LOW;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDC_OFF;
 		}
 	}
@@ -260,8 +260,8 @@ void TIM2_IRQHandler(void) {
 		if (!(OSCILLATOR_ACTIVE)) {     // contour generator at rest
 			//this is how we properly wake up our contour generator
 			SET_OSCILLATOR_ACTIVE;      // set the flag that our contour generator is active
-			if (DRUM_MODE_ON) {         // perform the operations needed to initiate a drum sound
-				SET_DRUM_ATTACK_ON;     //set global flag indicating we are using the timer to generate "attack"
+			if (DRUM_MODE) {         // perform the operations needed to initiate a drum sound
+				SET_DRUM_ATTACK;     //set global flag indicating we are using the timer to generate "attack"
 				SET_UPDATE_PRESCALER;   // logic to be used in the timer interrupt so we pass through and just load prescaler to shadow register
 				TIM3->PSC = (expoTable[time2Knob] >> 11) + (expoTable[4095 - time2CV] >> 11); // release time prescaler loaded to holding register
 				TIM3->EGR = TIM_EGR_UG; // immediately set an update event
@@ -276,16 +276,16 @@ void TIM2_IRQHandler(void) {
 				releaseTime = calcTime2Seq;
 			}
 			if (trigMode == gated) {
-				SET_GATE_ON; // turn the gate flag on in gate mode
+				SET_GATE; // turn the gate flag on in gate mode
 				incSign = 1;
 			}
 			sampHoldA();
 		}
 		else {
-			if ((DRUM_MODE_ON) && !(DRUM_ATTACK_ON)) {
+			if ((DRUM_MODE) && !(DRUM_ATTACK)) {
 				SET_UPDATE_PRESCALER; // same logic flag as before
-				SET_DRUM_ATTACK_ON;
-				RESET_LAST_CYCLE;
+				SET_DRUM_ATTACK;
+				CLEAR_LAST_CYCLE;
 				attackCount = TIM3->CNT;
 				__HAL_TIM_DISABLE(&htim3);
 				TIM3->PSC = (expoTable[time2Knob] >> 11) + (expoTable[4095 - time2CV] >> 11);
@@ -308,7 +308,7 @@ void TIM2_IRQHandler(void) {
 							attackTime = &calcTime1Seq;
 						}
 						incSign = 1; // this reverts our direction
-						SET_GATE_ON; // signal that the gate is on
+						SET_GATE; // signal that the gate is on
 					}
 					else { //if we are releasing and we get a new gate on, run back up the release slope at attack timescale
 						if (speed == env) {
@@ -318,7 +318,7 @@ void TIM2_IRQHandler(void) {
 							releaseTime = calcTime1Seq;
 						}
 						incSign = -1; // this reverses the direction
-						SET_GATE_ON;
+						SET_GATE;
 					}
 					break;
 
@@ -344,12 +344,12 @@ void TIM2_IRQHandler(void) {
 				}
 			}
 		}
-		if (trigMode == pendulum2 && loop == noloop && !(DRUM_MODE_ON)) { // regardless of whether the contour generator is at rest or not, toggle the gateOn every trigger with pendulum
-			TOGGLE_GATE_ON;
+		if (trigMode == pendulum2 && loop == noloop && !(DRUM_MODE)) { // regardless of whether the contour generator is at rest or not, toggle the gateOn every trigger with pendulum
+			TOGGLE_GATE;
 		}
 	}
 	else {
-		if (trigMode == gated && !(DRUM_MODE_ON)) { // aka, gate off when we aren't in drum mode
+		if (trigMode == gated && !(DRUM_MODE)) { // aka, gate off when we aren't in drum mode
 			if (position < span) { // if we release the gate before making it through attack, run back through attack at release speed
 				if (speed == env) {
 					attackTime = calcTime2Env;
@@ -358,7 +358,7 @@ void TIM2_IRQHandler(void) {
 					attackTime = calcTime2Seq;
 				}
 				if (!(HOLD_AT_B)) {incSign = -1;} // -1 in int
-				RESET_GATE_ON;
+				CLEAR_GATE;
 
 			}
 			else { // if we get a release when we are at or after span, reset the contour generator behavior and let it finish release
@@ -370,7 +370,7 @@ void TIM2_IRQHandler(void) {
 					releaseTime = calcTime2Seq;
 				};
 				incSign = 1;
-				RESET_GATE_ON;
+				CLEAR_GATE;
 			}
 		}
 	}
@@ -392,11 +392,11 @@ void TIM3_IRQHandler(void) {
 	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
 
 	if (UPDATE_PRESCALER) { // handle the update event to load the prescaler initially
-		RESET_UPDATE_PRESCALER;
+		CLEAR_UPDATE_PRESCALER;
 	}
 	else { // raise the flag to put the drum mode to rest after overflowing the release portion
 		if (drumMode < 3) {
-			RESET_DRUM_RELEASE_ON;
+			CLEAR_DRUM_RELEASE;
 			drumModValue = 0;
 			out = 0;
 		}
@@ -421,7 +421,7 @@ void TIM8_UP_IRQHandler(void) {
 	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
 	SH_B_SAMPLE;
 	// this handles the logic where we resample b at a
-	if (DISPLAY_RUNTIME) {
+	if (RUNTIME_DISPLAY) {
 		LEDB_ON;
 	}
 	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
@@ -457,7 +457,7 @@ void TIM7_IRQHandler(void) {
 	SH_A_SAMPLE;
 	// this handles our decimate resampling
 	SH_B_SAMPLE;
-	if (DISPLAY_RUNTIME) {
+	if (RUNTIME_DISPLAY) {
 		LEDA_ON;
 		LEDB_ON;
 	}
@@ -509,7 +509,7 @@ void EXTI15_10_IRQHandler(void) {
 		ALOGIC_HIGH;
 		BLOGIC_LOW;
 
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDD_OFF;
 			LEDC_ON;
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
@@ -531,7 +531,7 @@ void EXTI15_10_IRQHandler(void) {
 		ALOGIC_LOW;
 		BLOGIC_HIGH;
 
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDC_OFF;
 			LEDD_ON;
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
@@ -555,7 +555,7 @@ void sampHoldB(void) {
 
 	case a:
 		SH_A_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_ON;
 		}
 		break;
@@ -564,7 +564,7 @@ void sampHoldB(void) {
 
 	case ab:
 		SH_A_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 		}
 		// b remains sampled
@@ -573,7 +573,7 @@ void sampHoldB(void) {
 	case antidecimate:
 		SH_B_SAMPLE;
 		SH_A_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDB_OFF;
 			LEDA_ON;
 		}
@@ -581,7 +581,7 @@ void sampHoldB(void) {
 
 	case decimate:
 		SH_A_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 			LEDB_OFF;
 		}
@@ -599,7 +599,7 @@ void sampHoldA(void) {
 
 	case a:
 		SH_A_SAMPLE;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 		}
 		break;
@@ -608,7 +608,7 @@ void sampHoldA(void) {
 		SH_B_TRACK;
 		__HAL_TIM_SET_COUNTER(&htim8, 0);
 		__HAL_TIM_ENABLE(&htim8);
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDB_OFF;
 		}
 		break;
@@ -616,7 +616,7 @@ void sampHoldA(void) {
 	case ab:
 		SH_A_SAMPLE;
 		SH_B_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDB_OFF;
 			LEDA_ON;
 		}
@@ -627,7 +627,7 @@ void sampHoldA(void) {
 	case antidecimate:
 		SH_A_SAMPLE;
 		SH_B_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 			LEDB_ON;
 		}
@@ -635,7 +635,7 @@ void sampHoldA(void) {
 
 	case decimate:
 		SH_B_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 			LEDB_OFF;
 		}

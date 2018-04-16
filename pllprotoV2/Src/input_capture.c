@@ -132,7 +132,7 @@ void generateFrequency(void) {
 					ALOGIC_HIGH;
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
-					if (DISPLAY_RUNTIME) {
+					if (RUNTIME_DISPLAY) {
 						LEDC_ON;
 					}
 				}
@@ -140,7 +140,7 @@ void generateFrequency(void) {
 					BLOGIC_HIGH;
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
-					if (DISPLAY_RUNTIME) {
+					if (RUNTIME_DISPLAY) {
 						LEDD_ON;
 					}
 				}
@@ -160,7 +160,7 @@ void generateFrequency(void) {
 					ALOGIC_HIGH;
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
-					if (DISPLAY_RUNTIME) {
+					if (RUNTIME_DISPLAY) {
 						LEDC_ON;
 					}
 				}
@@ -168,7 +168,7 @@ void generateFrequency(void) {
 					BLOGIC_HIGH;
 					__HAL_TIM_SET_COUNTER(&htim15, 0);
 					__HAL_TIM_ENABLE(&htim15);
-					if (DISPLAY_RUNTIME) {
+					if (RUNTIME_DISPLAY) {
 						LEDD_ON;
 					}
 				}
@@ -179,12 +179,12 @@ void generateFrequency(void) {
 					holdPosition =0;
 					if (GATEA) {
 						ALOGIC_HIGH;
-						if (DISPLAY_RUNTIME) {
+						if (RUNTIME_DISPLAY) {
 							LEDC_ON;
 						}
 					} else if (TRIGA) {
 						ALOGIC_HIGH;
-						if (DISPLAY_RUNTIME) {
+						if (RUNTIME_DISPLAY) {
 							LEDC_ON;
 						}
 						__HAL_TIM_SET_COUNTER(&htim15, 0);

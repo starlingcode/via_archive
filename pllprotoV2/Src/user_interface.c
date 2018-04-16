@@ -47,7 +47,7 @@ int holdState;
 void readDetect(void) {
 	// check to see if any touch sensors have gone into detect state
 	if (MyTKeys[3].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_DISPLAY_RUNTIME;  // turn off the runtime display
+		CLEAR_RUNTIME_DISPLAY;  // turn off the runtime display
 		modeflag = 10; // indicate to the other mode change functions that we have pressed the scaleType button
 		detectOn = 1;  // indicate that a touch sensor was in detect state during this acquisition cycle
 		clearLEDs();   // wipe the vestiges of our runtime display
@@ -55,7 +55,7 @@ void readDetect(void) {
 		showMode(scaleType); //show our current mode
 	}
 	if (MyTKeys[2].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_DISPLAY_RUNTIME;
+		CLEAR_RUNTIME_DISPLAY;
 		modeflag = 2;  // indicate to the other mode change functions that we have pressed the trigger mode button
 		detectOn = 1;
 		clearLEDs();
@@ -63,7 +63,7 @@ void readDetect(void) {
 		showMode(syncMode);
 	}
 	if (MyTKeys[1].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_DISPLAY_RUNTIME;
+		CLEAR_RUNTIME_DISPLAY;
 		modeflag = 3; // indicate to the other mode change functions that we have pressed the controlScheme button
 		detectOn = 1;
 		clearLEDs();
@@ -71,7 +71,7 @@ void readDetect(void) {
 		showMode(controlScheme);
 	}
 	if (MyTKeys[4].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_DISPLAY_RUNTIME;
+		CLEAR_RUNTIME_DISPLAY;
 		modeflag = 4; // indicate to the other mode change functions that we have pressed the sample and hold mode button
 		detectOn = 1;
 		clearLEDs();
@@ -79,7 +79,7 @@ void readDetect(void) {
 		showMode(sampleHoldMode);
 	}
 	if (MyTKeys[5].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_DISPLAY_RUNTIME;
+		CLEAR_RUNTIME_DISPLAY;
 		modeflag = 5; // indicate to the other mode change functions that we have pressed the family up button
 		detectOn = 1;
 		clearLEDs();
@@ -87,7 +87,7 @@ void readDetect(void) {
 		showMode(familyIndicator);
 	}
 	if (MyTKeys[0].p_Data->StateId == TSL_STATEID_DETECT) {
-		RESET_DISPLAY_RUNTIME;
+		CLEAR_RUNTIME_DISPLAY;
 		modeflag = 6; // indicate to the other mode change functions that we have pressed the family down button
 		detectOn = 1;
 		clearLEDs();
@@ -296,7 +296,7 @@ void handleRelease(uint32_t pinMode) {
 			modeflag = 2;
 		}
 		clearLEDs();
-		SET_DISPLAY_RUNTIME;
+		SET_RUNTIME_DISPLAY;
 	}
 }
 
@@ -355,36 +355,36 @@ void changeMode(uint32_t mode) {
 		switch (logicOutA) {
 		case 0:
 			SET_GATEA;
-			RESET_DELTAB;
-			RESET_DELTAA;
+			CLEAR_DELTAB;
+			CLEAR_DELTAA;
 			RESET_RATIO_DELTAA;
 			RESET_PLL_DIVA;
 			break;
 		case 1:
-			RESET_GATEA;
+			CLEAR_GATEA;
 			SET_TRIGA;
-			RESET_DELTAA;
+			CLEAR_DELTAA;
 			RESET_RATIO_DELTAA;
 			RESET_PLL_DIVA;
 			break;
 		case 2:
-			RESET_GATEA;
-			RESET_TRIGA;
+			CLEAR_GATEA;
+			CLEAR_TRIGA;
 			SET_DELTAA;
 			RESET_RATIO_DELTAA;
 			RESET_PLL_DIVA;
 			break;
 		case 3:
-			RESET_GATEA;
-			RESET_TRIGA;
-			RESET_DELTAA;
+			CLEAR_GATEA;
+			CLEAR_TRIGA;
+			CLEAR_DELTAA;
 			SET_RATIO_DELTAA;
 			RESET_PLL_DIVA;
 			break;
 		case 4:
-			RESET_GATEA;
-			RESET_TRIGA;
-			RESET_DELTAA;
+			CLEAR_GATEA;
+			CLEAR_TRIGA;
+			CLEAR_DELTAA;
 			RESET_RATIO_DELTAA;
 			SET_PLL_DIVA;
 			break;
@@ -398,36 +398,36 @@ void changeMode(uint32_t mode) {
 		switch (logicOutB) {
 		case 0:
 			SET_GATEB;
-			RESET_TRIGB;
-			RESET_DELTAB;
+			CLEAR_TRIGB;
+			CLEAR_DELTAB;
 			RESET_RATIO_DELTAB;
 			RESET_PLL_DIVB;
 			break;
 		case 1:
-			RESET_GATEB;
+			CLEAR_GATEB;
 			SET_TRIGB;
-			RESET_DELTAA;
+			CLEAR_DELTAA;
 			RESET_RATIO_DELTAB;
 			RESET_PLL_DIVB;
 			break;
 		case 2:
-			RESET_GATEB;
-			RESET_TRIGB;
+			CLEAR_GATEB;
+			CLEAR_TRIGB;
 			SET_DELTAB;
 			RESET_RATIO_DELTAB;
 			RESET_PLL_DIVB;
 			break;
 		case 3:
-			RESET_GATEB;
-			RESET_TRIGB;
-			RESET_DELTAB;
+			CLEAR_GATEB;
+			CLEAR_TRIGB;
+			CLEAR_DELTAB;
 			SET_RATIO_DELTAB;
 			RESET_PLL_DIVB;
 			break;
 		case 4:
-			RESET_GATEB;
-			RESET_TRIGB;
-			RESET_DELTAB;
+			CLEAR_GATEB;
+			CLEAR_TRIGB;
+			CLEAR_DELTAB;
 			RESET_RATIO_DELTAB;
 			SET_PLL_DIVB;
 			break;
@@ -539,7 +539,7 @@ void clearLEDs(void) {
 void restoreDisplay() {
 	if (__HAL_TIM_GET_COUNTER(&htim4) > 10000) {
 		clearLEDs(); // get rid of last mode display
-		SET_DISPLAY_RUNTIME;  // turn on the runtime display
+		SET_RUNTIME_DISPLAY;  // turn on the runtime display
 		displayNewMode = 0; // a bit of logic used to make sure that we show the mode during the main controlScheme
 	}
 }

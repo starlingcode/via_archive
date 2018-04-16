@@ -266,8 +266,8 @@ void TIM2_IRQHandler(void) {
 			//this is how we properly wake up our contour generator
 
 			SET_OSCILLATOR_ACTIVE; // set the flag that our contour generator is active
-			if (DRUM_MODE_ON) { // perform the operations needed to initiate a drum sound
-				SET_DRUM_ATTACK_ON; //set global flag indicating we are using the timer to generate "attack"
+			if (DRUM_MODE) { // perform the operations needed to initiate a drum sound
+				SET_DRUM_ATTACK; //set global flag indicating we are using the timer to generate "attack"
 				SET_UPDATE_PRESCALER; //logic to be used in the timer interrupt so we pass through and just load prescaler to shadow register
 				TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[4095 - time2CV] >> 11); // release time prescaler loaded to holding register
 				TIM3->EGR = TIM_EGR_UG; //immediately set an update event
@@ -283,16 +283,16 @@ void TIM2_IRQHandler(void) {
 			}
 
 			if (trigMode == gated) {
-				SET_GATE_ON; //turn the gate flag on in gate mode
+				SET_GATE; //turn the gate flag on in gate mode
 			}
 
 			sampHoldA();
 		} else {
 
-			if ((DRUM_MODE_ON) && !(DRUM_ATTACK_ON)) {
+			if ((DRUM_MODE) && !(DRUM_ATTACK)) {
 				SET_UPDATE_PRESCALER; //same logic flag as before
-				SET_DRUM_ATTACK_ON;
-				RESET_LAST_CYCLE;
+				SET_DRUM_ATTACK;
+				CLEAR_LAST_CYCLE;
 				attackCount = TIM3->CNT;
 				__HAL_TIM_DISABLE(&htim3);
 				TIM3->PSC = (lookuptable[time2Knob] >> 11) + (lookuptable[4095 - time2CV] >> 11);
@@ -321,7 +321,7 @@ void TIM2_IRQHandler(void) {
 							attackTime = &calcTime1Seq;
 						}
 						incSign = 1; // this reverts our direction
-						SET_GATE_ON; // signal that the gate is on
+						SET_GATE; // signal that the gate is on
 
 					}
 
@@ -333,7 +333,7 @@ void TIM2_IRQHandler(void) {
 							releaseTime = calcTime1Seq;
 						}
 						incSign = -1; // this reverses the direction
-						SET_GATE_ON;
+						SET_GATE;
 
 					}
 
@@ -375,9 +375,9 @@ void TIM2_IRQHandler(void) {
 
 			}
 		}
-		if (trigMode == pendulum2 && loop == noloop && !(DRUM_MODE_ON)) { // regardless of whether the contour generator is at rest or not, toggle the gateOn every trigger with pendulum
+		if (trigMode == pendulum2 && loop == noloop && !(DRUM_MODE)) { // regardless of whether the contour generator is at rest or not, toggle the gateOn every trigger with pendulum
 
-			TOGGLE_GATE_ON;
+			TOGGLE_GATE;
 
 		}
 
@@ -385,7 +385,7 @@ void TIM2_IRQHandler(void) {
 
 	else {
 
-		if (trigMode == gated && !(DRUM_MODE_ON)) { //aka, gate off when we aren't in drum mode
+		if (trigMode == gated && !(DRUM_MODE)) { //aka, gate off when we aren't in drum mode
 
 			if (position < span) { //if we release the gate before making it through attack, run back through attack at release speed
 
@@ -396,7 +396,7 @@ void TIM2_IRQHandler(void) {
 					attackTime = calcTime2Seq;
 				}
 				incSign = -1; // -1 in int
-				RESET_GATE_ON;
+				CLEAR_GATE;
 
 			} else { //if we get a release when we are at or after span, reset the contour generator behavior and let it finish release
 
@@ -407,7 +407,7 @@ void TIM2_IRQHandler(void) {
 					releaseTime = calcTime2Seq;
 				};
 				incSign = 1;
-				RESET_GATE_ON;
+				CLEAR_GATE;
 
 			}
 
@@ -432,13 +432,13 @@ void TIM3_IRQHandler(void) {
 	__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
 
 	if (UPDATE_PRESCALER) { // handle the update event to load the prescaler initially
-		RESET_UPDATE_PRESCALER;
+		CLEAR_UPDATE_PRESCALER;
 	}
 
 	else { // raise the flag to put the drum mode to rest after overflowing the release portion
 
 		if (trigMode < 3) {
-		RESET_DRUM_RELEASE_ON;
+		CLEAR_DRUM_RELEASE;
 		expoScale = 0;
 		out = 0;
 		} else {

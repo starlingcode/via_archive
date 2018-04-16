@@ -56,7 +56,7 @@ int getPhaseOsc(int position) {
 	// if trigmode is gated and we arent in Drum Mode
 	if (trigMode > 2) {
 		// we look to see if we are about to increment past the attack->release transition
-		if ((GATE_ON) && (my_abs(inc) > my_abs(span - position))) {
+		if ((GATE) && (my_abs(inc) > my_abs(span - position))) {
 			// if so, we set a logic flag that we have frozen the contour generator in this transition
 			SET_HOLD_AT_B;
 			//and we hold it in place
@@ -64,7 +64,7 @@ int getPhaseOsc(int position) {
 		}
 		//if any of the above changes, we indicate that we are no longer frozen
 		else {
-			RESET_HOLD_AT_B;
+			CLEAR_HOLD_AT_B;
 		}
 	}
 
@@ -94,7 +94,7 @@ int getPhaseDrum(int position) {
 			fix16_mul(300000, expoTable[4095 - t1CVAverage] >> 6), expoTable[(t1KnobAverage >> 1) + 2047] >> 10) >> tableSizeCompensation;
 
 	// scale with the drum envelope when specified by the trig control
-	if (PITCH_ON) {inc = fix16_mul(drumModValue + 80000, inc);}
+	if (PITCH_MOD) {inc = fix16_mul(drumModValue + 80000, inc);}
 
 	inc = inc * incSign;
 
@@ -116,14 +116,14 @@ int getPhaseDrum(int position) {
 			// this is the logic maintenance needed to properly put the contour generator to rest
 			// this keeps behavior on the next trigger predictable
 			out = 0;
-			RESET_LAST_CYCLE;
-			RESET_OSCILLATOR_ACTIVE;
+			CLEAR_LAST_CYCLE;
+			CLEAR_OSCILLATOR_ACTIVE;
 			incSign = 1;
 			position = 0;
 			SET_PHASE_STATE;
 			SH_A_TRACK;
 			SH_B_TRACK;
-			if (DISPLAY_RUNTIME) {
+			if (RUNTIME_DISPLAY) {
 				LEDA_OFF;
 				LEDB_OFF;
 				LEDC_OFF;
@@ -140,14 +140,14 @@ int getPhaseDrum(int position) {
 
 			// same as above, we are putting our contour generator to rest
 			out = 0;
-			RESET_LAST_CYCLE;
-			RESET_OSCILLATOR_ACTIVE;
+			CLEAR_LAST_CYCLE;
+			CLEAR_OSCILLATOR_ACTIVE;
 			incSign = 1;
 			position = 0;
-			RESET_PHASE_STATE;
+			CLEAR_PHASE_STATE;
 			SH_A_TRACK;
 			SH_B_TRACK;
-			if (DISPLAY_RUNTIME) {
+			if (RUNTIME_DISPLAY) {
 				LEDA_OFF;
 				LEDB_OFF;
 				LEDC_OFF;
@@ -178,7 +178,7 @@ int getPhaseSimpleEnv(int position) {
 	// if trigmode is gated
 	if (trigMode > 2) {
 		// we look to see if we are about to increment past the attack->release transition
-		if ((GATE_ON) && (my_abs(inc) > my_abs(span - position))) {
+		if ((GATE) && (my_abs(inc) > my_abs(span - position))) {
 			// if so, we set a logic flag that we have frozen the contour generator in this transition
 			SET_HOLD_AT_B;
 			//and we hold it in place
@@ -186,7 +186,7 @@ int getPhaseSimpleEnv(int position) {
 		}
 		//if any of the above changes, we indicate that we are no longer frozen
 		else {
-			RESET_HOLD_AT_B;
+			CLEAR_HOLD_AT_B;
 		}
 	}
 	//this keeps us from asking the contour generator to jump all the way through the wavetable
@@ -203,8 +203,8 @@ int getPhaseSimpleEnv(int position) {
 	if (position >= spanx2) {
 
 		position = position - spanx2;
-		RESET_LAST_CYCLE;
-		RESET_OSCILLATOR_ACTIVE;
+		CLEAR_LAST_CYCLE;
+		CLEAR_OSCILLATOR_ACTIVE;
 		if (trigMode == pendulum)  {
 			incSign = -1;
 			position = spanx2;
@@ -218,7 +218,7 @@ int getPhaseSimpleEnv(int position) {
 		SET_PHASE_STATE;
 		SH_A_TRACK;
 		SH_B_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 			LEDB_OFF;
 			LEDC_OFF;
@@ -230,15 +230,15 @@ int getPhaseSimpleEnv(int position) {
 
 		position = position + spanx2;
 
-		RESET_LAST_CYCLE;
-		RESET_OSCILLATOR_ACTIVE;
+		CLEAR_LAST_CYCLE;
+		CLEAR_OSCILLATOR_ACTIVE;
 		incSign = 1;
 		position = 0;
 		holdPosition = 0;
-		RESET_PHASE_STATE;
+		CLEAR_PHASE_STATE;
 		SH_A_TRACK;
 		SH_B_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 			LEDB_OFF;
 			LEDC_OFF;
@@ -265,7 +265,7 @@ int getPhaseSimpleLFO(int position) {
 	// if trigmode is gated and we arent in Drum Mode
 	if (trigMode > 2) {
 		// we look to see if we are about to increment past the attack->release transition
-		if ((GATE_ON) && (my_abs(inc) > my_abs(span - position))) {
+		if ((GATE) && (my_abs(inc) > my_abs(span - position))) {
 			// if so, we set a logic flag that we have frozen the contour generator in this transition
 			SET_HOLD_AT_B;
 			//and we hold it in place
@@ -273,7 +273,7 @@ int getPhaseSimpleLFO(int position) {
 		}
 		//if any of the above changes, we indicate that we are no longer frozen
 		else {
-			RESET_HOLD_AT_B;
+			CLEAR_HOLD_AT_B;
 		}
 	}
 	//this keeps us from asking the contour generator to jump all the way through the wavetable
@@ -319,8 +319,8 @@ int getPhaseComplexEnv(int position) {
 
 		holdPosition = holdPosition - spanx2;
 
-		RESET_OSCILLATOR_ACTIVE;
-		if (trigMode == pendulum && !(DRUM_MODE_ON))  {
+		CLEAR_OSCILLATOR_ACTIVE;
+		if (trigMode == pendulum && !(DRUM_MODE))  {
 			incSign = -1;
 			position = spanx2;
 			holdPosition = spanx2;
@@ -334,7 +334,7 @@ int getPhaseComplexEnv(int position) {
 		SET_PHASE_STATE;
 		SH_A_TRACK;
 		SH_B_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 			LEDB_OFF;
 			LEDC_OFF;
@@ -345,15 +345,15 @@ int getPhaseComplexEnv(int position) {
 	if (holdPosition < 0) {
 		holdPosition = holdPosition + spanx2;
 
-		RESET_OSCILLATOR_ACTIVE;
+		CLEAR_OSCILLATOR_ACTIVE;
 		incSign = 1;
 		position = 0;
 		holdPosition = 0;
 		out = 0;
-		RESET_PHASE_STATE;
+		CLEAR_PHASE_STATE;
 		SH_A_TRACK;
 		SH_B_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 			LEDB_OFF;
 			LEDC_OFF;
@@ -394,13 +394,13 @@ int getPhaseComplexEnv(int position) {
 
 	}
 
-	if ((GATE_ON) && ((my_abs(inc) > my_abs(span - position)) || (HOLD_AT_B))) {
+	if ((GATE) && ((my_abs(inc) > my_abs(span - position)) || (HOLD_AT_B))) {
 		// if so, we set a logic flag that we have frozen the contour generator in this transition
 		SET_HOLD_AT_B;
 	}
 	//if any of the above changes, we indicate that we are no longer frozen
 	else {
-		RESET_HOLD_AT_B;
+		CLEAR_HOLD_AT_B;
 	}
 
 
@@ -408,8 +408,8 @@ int getPhaseComplexEnv(int position) {
 	if (position >= spanx2) {
 		position = position - spanx2;
 
-		RESET_OSCILLATOR_ACTIVE;
-		if (trigMode == pendulum && !(DRUM_MODE_ON))  {
+		CLEAR_OSCILLATOR_ACTIVE;
+		if (trigMode == pendulum && !(DRUM_MODE))  {
 			incSign = -1;
 			position = spanx2;
 			holdPosition = position;
@@ -422,7 +422,7 @@ int getPhaseComplexEnv(int position) {
 		SET_PHASE_STATE;
 		SH_A_TRACK;
 		SH_B_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 			LEDB_OFF;
 			LEDC_OFF;
@@ -434,14 +434,14 @@ int getPhaseComplexEnv(int position) {
 
 		position = position + spanx2;
 
-		RESET_OSCILLATOR_ACTIVE;
+		CLEAR_OSCILLATOR_ACTIVE;
 		incSign = 1;
 		position = 0;
 		holdPosition = 0;
-		RESET_PHASE_STATE;
+		CLEAR_PHASE_STATE;
 		SH_A_TRACK;
 		SH_B_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 			LEDB_OFF;
 			LEDC_OFF;
@@ -511,13 +511,13 @@ int getPhaseComplexLFO(int position) {
 
 		}
 
-		if ((GATE_ON) && ((my_abs(inc) > my_abs(span - position)) || (HOLD_AT_B))) {
+		if ((GATE) && ((my_abs(inc) > my_abs(span - position)) || (HOLD_AT_B))) {
 			// if so, we set a logic flag that we have frozen the contour generator in this transition
 			SET_HOLD_AT_B;
 		}
 		//if any of the above changes, we indicate that we are no longer frozen
 		else {
-			RESET_HOLD_AT_B;
+			CLEAR_HOLD_AT_B;
 		}
 
 	// if we have incremented outside of our table, wrap back around to the other side and stop/reset if we are in LF 1 shot mode

@@ -60,7 +60,7 @@ void dacISR(void) {
 
 	// call the appropriate interpolation routine per phase in the two part table and declare phase state as such
 	if (position < span) {
-		RESET_PHASE_STATE;
+		CLEAR_PHASE_STATE;
 		//getSampleLaGrange(0);
 		//getSample(0);
 		getSampleQuinticSpline(0);
@@ -143,13 +143,13 @@ void getSample(uint32_t phase) {
 			REV2_GATE_HIGH;
 			if (DELTAB) {
 				BLOGIC_HIGH;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_LOW;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDC_OFF;
 				}
 			}
@@ -157,20 +157,20 @@ void getSample(uint32_t phase) {
 			REV2_GATE_LOW;
 			if (DELTAB) {
 				BLOGIC_LOW
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_HIGH;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDC_ON;
 				}
 			}
 		}
 
 		// if the runtime display is on, show our mode - timer compare thresholds are RGB LED PWM values
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
@@ -212,13 +212,13 @@ void getSample(uint32_t phase) {
 			REV2_GATE_HIGH;
 			if (DELTAB) {
 				BLOGIC_HIGH;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_LOW;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDC_OFF;
 				}
 			}
@@ -226,19 +226,19 @@ void getSample(uint32_t phase) {
 			REV2_GATE_LOW;
 			if (DELTAB) {
 				BLOGIC_LOW;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_HIGH;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDC_ON;
 				}
 			}
 		}
 		// if the runtime display is on, show our mode - timer compare thresholds are RGB LED PWM values
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
@@ -344,13 +344,13 @@ void getSampleQuinticSpline(uint32_t phase) {
 			REV2_GATE_HIGH;
 			if (DELTAB) {
 				BLOGIC_HIGH;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_LOW;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDC_OFF;
 				}
 			}
@@ -359,19 +359,19 @@ void getSampleQuinticSpline(uint32_t phase) {
 			REV2_GATE_LOW;
 			if (DELTAB) {
 				BLOGIC_LOW;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_HIGH;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDC_ON;
 				}
 			}
 		}
 
-		if (DISPLAY_RUNTIME) { // if the runtime display is on, show our mode
+		if (RUNTIME_DISPLAY) { // if the runtime display is on, show our mode
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
@@ -441,13 +441,13 @@ void getSampleQuinticSpline(uint32_t phase) {
 			REV2_GATE_HIGH;
 			if (DELTAB) {
 				BLOGIC_HIGH;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDD_ON;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_LOW;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDC_OFF;
 				}
 			}
@@ -456,18 +456,18 @@ void getSampleQuinticSpline(uint32_t phase) {
 			REV2_GATE_LOW;
 			if (DELTAB) {
 				BLOGIC_LOW;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDD_OFF;
 				}
 			}
 			if (DELTAA) {
 				ALOGIC_HIGH;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDC_ON;
 				}
 			}
 		}
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
 			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 		}
@@ -591,26 +591,26 @@ void EXTI15_10_IRQHandler(void) {
 
 			if (TRIGA) {
 				ALOGIC_HIGH;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDC_ON;
 				}
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
 				__HAL_TIM_ENABLE(&htim15);
 			} else if (GATEA) {
 				ALOGIC_HIGH;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDC_ON;
 				}
 			}
 			if (GATEB) {
 				BLOGIC_LOW;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDD_OFF;
 				}
 			}
 			sampHoldA();
 
-			if (DISPLAY_RUNTIME) {
+			if (RUNTIME_DISPLAY) {
 				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 			}
 
@@ -626,24 +626,24 @@ void EXTI15_10_IRQHandler(void) {
 				BLOGIC_HIGH;
 				__HAL_TIM_SET_COUNTER(&htim15, 0);
 				__HAL_TIM_ENABLE(&htim15);
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDD_ON;
 				}
 			} else if (GATEB) {
 				BLOGIC_HIGH;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDD_ON;
 				}
 			}
 			if (GATEA) {
 				ALOGIC_LOW;
-				if (DISPLAY_RUNTIME) {
+				if (RUNTIME_DISPLAY) {
 					LEDC_OFF;
 				}
 			}
 			sampHoldB();
 
-			if (DISPLAY_RUNTIME) {
+			if (RUNTIME_DISPLAY) {
 				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 			}
 		}
@@ -656,7 +656,7 @@ void sampHoldB(void) {
 
 	case a:
 		SH_A_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_ON;
 		}
 		break;
@@ -664,7 +664,7 @@ void sampHoldB(void) {
 		// case b: b remains sampled
 	case ab:
 		SH_A_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 		}
 		// b remains sampled
@@ -673,7 +673,7 @@ void sampHoldB(void) {
 	case antidecimate:
 		SH_B_SAMPLE;
 		SH_A_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDB_OFF;
 			LEDA_ON;
 		}
@@ -683,7 +683,7 @@ void sampHoldB(void) {
 		SH_A_TRACK;
 		__HAL_TIM_SET_COUNTER(&htim7, 0);
 		__HAL_TIM_ENABLE(&htim7);
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 					LEDA_OFF;
 					LEDB_OFF;
 				}
@@ -699,7 +699,7 @@ void sampHoldA(void) {
 
 	case a:
 		SH_A_SAMPLE;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 		}
 		break;
@@ -708,7 +708,7 @@ void sampHoldA(void) {
 		SH_B_TRACK;
 		__HAL_TIM_SET_COUNTER(&htim8, 0);
 		__HAL_TIM_ENABLE(&htim8);
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDB_OFF;
 		}
 		break;
@@ -716,7 +716,7 @@ void sampHoldA(void) {
 	case ab:
 		SH_A_SAMPLE;
 		SH_B_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDB_OFF;
 			LEDA_ON;
 		}
@@ -727,7 +727,7 @@ void sampHoldA(void) {
 	case antidecimate:
 		SH_A_SAMPLE;
 		SH_B_TRACK;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 			LEDB_ON;
 		}
@@ -737,7 +737,7 @@ void sampHoldA(void) {
 		SH_B_TRACK;
 		__HAL_TIM_SET_COUNTER(&htim7, 0);
 		__HAL_TIM_ENABLE(&htim7);
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDA_OFF;
 			LEDB_OFF;
 		}

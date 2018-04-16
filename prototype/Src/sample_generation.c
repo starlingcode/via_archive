@@ -83,7 +83,7 @@ void dacISR(void) {
 		//pass that function a 1 or a 0 to indicate whether we are in attack or release
 
 		if (position < span) {
-			RESET_PHASE_STATE;
+			CLEAR_PHASE_STATE;
 			getSample(0);
 		}
 		if (position >= span) {
@@ -125,12 +125,12 @@ void dacISR(void) {
 
 		//if we are in high speed and not looping, activate drum mode
 
-		if (DRUM_MODE_ON) {
+		if (DRUM_MODE) {
 
 			//this next bit generates our expo decay and scales amp
 			//it gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
 
-			if (DRUM_ATTACK_ON) {
+			if (DRUM_ATTACK) {
 
 				//maintain a software-based counter to increment through a linear "attack" slope sample per sample
 				attackCount = attackCount + (inc >> 11);
@@ -139,7 +139,7 @@ void dacISR(void) {
 				//this overflow value gives us a known range for our values from the lookup table
 				if (attackCount > 3840) {
 					//write to the flag word that we are done with our attack slope
-					RESET_DRUM_ATTACK_ON;
+					CLEAR_DRUM_ATTACK;
 					//since we use this to look up from the table, clamp it at our max value
 					attackCount = 3840;
 					//enable the timer that will generate our release slope
@@ -149,14 +149,14 @@ void dacISR(void) {
 					//reset our counter to 0
 					attackCount = 0;
 					//indicate that we are now in the "release" phase of our drum envelope
-					SET_DRUM_RELEASE_ON;
+					SET_DRUM_RELEASE;
 				} else {
 					//otherwise, use our counter to look up a value from the table
 					//that gets scaled to 0 - 2^16
 					expoScale = lookuptable[attackCount] >> 10;
 				}
 
-			} else if (DRUM_RELEASE_ON) {
+			} else if (DRUM_RELEASE) {
 				//if we are in release, use timer counter to look up a value from the table
 				//that gets scaled to 0 - 2^16
 				expoScale = lookuptable[TIM3->CNT] >> 10;
@@ -164,12 +164,12 @@ void dacISR(void) {
 			}
 
 			//scale the contour generator, an integer 0 - 2^16 is 0-1 in our 16 bit fixed point
-			if (AMP_ON) {
+			if (AMP_MOD) {
 				out = myfix16_mul(out, expoScale);
 			}
 
 			//apply the scaling value to the morph knob
-			if (MORPH_ON) {
+			if (MORPH_MOD) {
 				fixMorph = myfix16_mul(fixMorph, expoScale);
 			}
 
@@ -230,7 +230,7 @@ void getPhase(void) {
 			incFromADCs = myfix16_mul(
 					myfix16_mul(150000, lookuptable[4095 - time1CV] >> 6), lookuptable[(time1Knob >> 1) + 2047] >> 10) >> tableSizeCompensation;
 
-			if (PITCH_ON) {incFromADCs = myfix16_mul(expoScale + 30000, incFromADCs);}
+			if (PITCH_MOD) {incFromADCs = myfix16_mul(expoScale + 30000, incFromADCs);}
 
 		}
 
@@ -267,9 +267,9 @@ void getPhase(void) {
 				//this is the logic maintenance needed to properly put the contour generator to rest
 				//this keeps behavior on the next trigger predictable
 
-				RESET_LAST_CYCLE;
-				RESET_OSCILLATOR_ACTIVE;
-				if (trigMode == pendulum && !(DRUM_MODE_ON))  {
+				CLEAR_LAST_CYCLE;
+				CLEAR_OSCILLATOR_ACTIVE;
+				if (trigMode == pendulum && !(DRUM_MODE))  {
 					incSign = -1;
 					position = spanx2;
 					holdPosition = spanx2;
@@ -300,12 +300,12 @@ void getPhase(void) {
 
 					//same as above, we are putting our contour generator to rest
 
-					RESET_LAST_CYCLE;
-					RESET_OSCILLATOR_ACTIVE;
+					CLEAR_LAST_CYCLE;
+					CLEAR_OSCILLATOR_ACTIVE;
 					incSign = 1;
 					position = 0;
 					holdPosition = 0;
-					RESET_PHASE_STATE;
+					CLEAR_PHASE_STATE;
 					SH_A_TRACK
 					SH_B_TRACK
 					if (RGB_ON) {
@@ -347,11 +347,11 @@ void getPhase(void) {
 	inc = incFromADCs * incSign;
 
 	// if trigmode is gated and we arent in Drum Mode
-	if (trigMode > 2 && !(DRUM_MODE_ON)) {
+	if (trigMode > 2 && !(DRUM_MODE)) {
 
 		// we look to see if we are about to increment past the attack->release transition
 
-		if ((GATE_ON) && (abs(inc) > abs(span - position))) {
+		if ((GATE) && (abs(inc) > abs(span - position))) {
 
 			// if so, we set a logic flag that we have frozen the contour generator in this transition
 			SET_HOLD_AT_B;
@@ -363,7 +363,7 @@ void getPhase(void) {
 
 		//if any of the above changes, we indicate that we are no longer frozen
 		else {
-			RESET_HOLD_AT_B;
+			CLEAR_HOLD_AT_B;
 		}
 
 	}
@@ -391,9 +391,9 @@ void getPhase(void) {
 			//this is the logic maintenance needed to properly put the contour generator to rest
 			//this keeps behavior on the next trigger predictable
 
-			RESET_LAST_CYCLE;
-			RESET_OSCILLATOR_ACTIVE;
-			if (trigMode == pendulum && !(DRUM_MODE_ON))  {
+			CLEAR_LAST_CYCLE;
+			CLEAR_OSCILLATOR_ACTIVE;
+			if (trigMode == pendulum && !(DRUM_MODE))  {
 				incSign = -1;
 				position = spanx2;
 			}
@@ -424,11 +424,11 @@ void getPhase(void) {
 
 			//same as above, we are putting our contour generator to rest
 
-			RESET_LAST_CYCLE;
-			RESET_OSCILLATOR_ACTIVE;
+			CLEAR_LAST_CYCLE;
+			CLEAR_OSCILLATOR_ACTIVE;
 			incSign = 1;
 			position = 0;
-			RESET_PHASE_STATE;
+			CLEAR_PHASE_STATE;
 			SH_A_TRACK
 			SH_B_TRACK
 			if (RGB_ON) {

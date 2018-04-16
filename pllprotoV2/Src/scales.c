@@ -8,82 +8,82 @@
 
 Scale harmSubharm = {
    .grid = harmSubharmGrid,
-   .t2Bitshift = 8,
+   .t2Bitshift = 9,
    .oneVoltOct = 1};
 
 Scale harmSubharmfullspan = {
    .grid = harmSubharmfullspanGrid,
-   .t2Bitshift = 8,
+   .t2Bitshift = 9,
    .oneVoltOct = 0};
 
 Scale modal5primefullspan = {
    .grid = modal5primefullspanGrid,
-   .t2Bitshift = 8,
+   .t2Bitshift = 9,
    .oneVoltOct = 0};
 
 Scale harmFolded4 = {
    .grid = harmFolded4Grid,
-   .t2Bitshift = 9,
+   .t2Bitshift = 10,
    .oneVoltOct = 1};
 
 Scale polyResets = {
    .grid = polyResetsGrid,
-   .t2Bitshift = 7,
+   .t2Bitshift = 8,
    .oneVoltOct = 0};
 
 Scale pentamodal5prime = {
    .grid = pentamodal5primeGrid,
-   .t2Bitshift = 8,
+   .t2Bitshift = 9,
    .oneVoltOct = 1};
 
 Scale triads = {
    .grid = triadsGrid,
-   .t2Bitshift = 8,
+   .t2Bitshift = 9,
    .oneVoltOct = 1};
 
 Scale seventhTetradsMinimalProgression = {
    .grid = seventhTetradsMinimalProgressionGrid,
-   .t2Bitshift = 7,
+   .t2Bitshift = 8,
    .oneVoltOct = 1};
 
 Scale seventhTetrads = {
    .grid = seventhTetradsGrid,
-   .t2Bitshift = 7,
+   .t2Bitshift = 8,
    .oneVoltOct = 1};
 
 Scale rhythmDivisionsReset = {
    .grid = rhythmDivisionsResetGrid,
-   .t2Bitshift = 8,
+   .t2Bitshift = 9,
    .oneVoltOct = 0};
 
 Scale modesOfLimitedTransposition = {
    .grid = modesOfLimitedTranspositionGrid,
-   .t2Bitshift = 7,
+   .t2Bitshift = 8,
    .oneVoltOct = 1};
 
 Scale majMin9thPentStarling = {
    .grid = majMin9thPentStarlingGrid,
-   .t2Bitshift = 7,
+   .t2Bitshift = 8,
    .oneVoltOct = 1};
 
 Scale Harm73_75 = {
    .grid = Harm73_75Grid,
-   .t2Bitshift = 8,
+   .t2Bitshift = 9,
    .oneVoltOct = 1};
 
 Scale h73_75_BPwide = {
    .grid = h73_75_BPwideGrid,
-   .t2Bitshift = 7,
+   .t2Bitshift = 8,
    .oneVoltOct = 1};
 
 Scale bohlenPeirce = {
    .grid = bohlenPeirceGrid,
-   .t2Bitshift = 7,
+   .t2Bitshift = 8,
    .oneVoltOct = 0};
 
 Scale add9thSixthsusp4th = {
    .grid = add9thSixthsusp4thGrid,
-   .t2Bitshift = 7,
+   .t2Bitshift = 8,
    .oneVoltOct = 1};
 
 void initializeScales() {

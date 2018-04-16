@@ -174,7 +174,7 @@ int main(void) {
 	fillFamilyArray();
 
 	// declare the initialization state
-	SET_DISPLAY_RUNTIME;
+	SET_RUNTIME_DISPLAY;
 
 	((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 	((*(volatile uint32_t *) DAC2_ADDR) = (0));
@@ -260,7 +260,7 @@ int main(void) {
 		else if (TRIGGER_BUTTON){
 			debounce++;
 			if (debounce == 10) {
-				RESET_TRIGGER_BUTTON;
+				CLEAR_TRIGGER_BUTTON;
 				HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
 				debounce = 0;
 			}
