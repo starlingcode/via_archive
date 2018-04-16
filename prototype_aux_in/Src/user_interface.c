@@ -30,9 +30,6 @@ extern uint16_t VarDataTab[NB_OF_VAR];
 // these variables are passed between globally to public functions
 extern uint32_t modeFlag;
 
-void changeMode(uint32_t);
-void showMode(uint32_t);
-void clearLEDs(void);
 void switchFamily(void);
 void loadSampleArray(Family);
 
@@ -50,19 +47,19 @@ void (*State)(int);
 void uiInitialize(void);
 
 // a pointer to these functions is the current state
-void uidefault(int sig);
+void ui_default(int sig);
 
-void uinewMode(int sig);
-void uitrigMenu(int sig);
-void uilogicAMenu(int sig);
-void uilogicBMenu(int sig);
-void uiSampleHoldMenu(int sig);
-void uifamilyUpMenu(int sig);
-void uifamilyDownMenu(int sig);
-void uifreqMenu(int sig);
-void uiloopMenu(int sig);
-void uidrumTrigMenu(int sig);
-void uinewLogicMode(int sig);
+void ui_newMode(int sig);
+void ui_trigMenu(int sig);
+void ui_logicAMenu(int sig);
+void ui_logicBMenu(int sig);
+void ui_SampleHoldMenu(int sig);
+void ui_familyUpMenu(int sig);
+void ui_familyDownMenu(int sig);
+void ui_freqMenu(int sig);
+void ui_loopMenu(int sig);
+void ui_drumTrigMenu(int sig);
+void ui_newLogicMode(int sig);
 
 void uiSetFreq(void);
 void uiSetPhaseFunctions(void);
@@ -95,7 +92,7 @@ void uiTransition(void (*func)(int)) {
 
 
 // default runtime state,  handles launching menus on detect, and turning runtime  display back on upon entry.
-void uidefault(int sig)
+void ui_default(int sig)
 {
 	switch (sig){
 
@@ -109,22 +106,22 @@ void uidefault(int sig)
 	case SENSOR_EVENT_SIG:
 
 		if (FREQSENSOR == PRESSED){
-			uiTransition(&uifreqMenu);
+			uiTransition(&ui_freqMenu);
 
 		} else if (SHSENSOR == PRESSED){
-			uiTransition(&uiSampleHoldMenu);
+			uiTransition(&ui_SampleHoldMenu);
 
 		} else if (TRIGSENSOR == PRESSED){
-			uiTransition(&uitrigMenu);
+			uiTransition(&ui_trigMenu);
 
 		} else if (LOOPSENSOR == PRESSED){
-			uiTransition(&uiloopMenu);
+			uiTransition(&ui_loopMenu);
 
 		} else if (UPSENSOR == PRESSED){
-			uiTransition(&uifamilyUpMenu);
+			uiTransition(&ui_familyUpMenu);
 
 		} else if (DOWNSENSOR == PRESSED){
-			uiTransition(&uifamilyDownMenu);
+			uiTransition(&ui_familyDownMenu);
 		}
 		break;
 
@@ -146,7 +143,7 @@ void uierror(int sig){
 
 
 // newMode state is transitioned into after a mode change, writes to EEPROM and maintains mode display until timeout.
-void uinewMode(int sig)
+void ui_newMode(int sig)
 {
 	switch (sig)
 	{
@@ -159,29 +156,29 @@ void uinewMode(int sig)
 	// once uiTimerRead() times out, clear display and return to default state
 	case TIMEOUT_SIG:
 		if (uiTimerRead() > 10000)
-		uiTransition(&uidefault);
+		uiTransition(&ui_default);
 		break;
 
 	// in case of new events immediately jump to relevant menu
 	case SENSOR_EVENT_SIG:
 
 		if (FREQSENSOR == PRESSED){
-			uiTransition( &uifreqMenu);
+			uiTransition( &ui_freqMenu);
 
 		} else if (SHSENSOR == PRESSED){
-			uiTransition( &uiSampleHoldMenu);
+			uiTransition( &ui_SampleHoldMenu);
 
 		} else if (TRIGSENSOR == PRESSED){
-			uiTransition( &uitrigMenu);
+			uiTransition( &ui_trigMenu);
 
 		} else if (LOOPSENSOR == PRESSED){
-			uiTransition( &uiloopMenu);
+			uiTransition( &ui_loopMenu);
 
 		} else if (UPSENSOR == PRESSED){
-			uiTransition( &uifamilyUpMenu);
+			uiTransition( &ui_familyUpMenu);
 
 		} else if (DOWNSENSOR == PRESSED){
-			uiTransition( &uifamilyDownMenu);
+			uiTransition( &ui_familyDownMenu);
 		}
 		break;
 	case EXIT_SIG:
@@ -195,13 +192,13 @@ void uinewMode(int sig)
 
 }
 
-void uitrigMenu(int sig)
+void ui_trigMenu(int sig)
 {
 	switch (sig)
 	{
 	case ENTRY_SIG:
 		if (DRUM_MODE_ON){
-			uiTransition(&uidrumTrigMenu);
+			uiTransition(&ui_drumTrigMenu);
 		} else {
 			uiSetLEDs(trigMode);
 		}
@@ -217,12 +214,11 @@ void uitrigMenu(int sig)
 				incSign = 1;
 				RESET_GATE_ON;
 				// if drum mode is on, toggle through sets of modulation destinations
-				uiClearLEDs();
 				uiSetLEDs(trigMode);
-				uiTransition(&uinewMode);
+				uiTransition(&ui_newMode);
 			} else {
 				//no mode change
-				uiTransition(&uidefault);
+				uiTransition(&ui_default);
 			}
 
 		} else if (FREQSENSOR == PRESSED){
@@ -245,7 +241,7 @@ void uitrigMenu(int sig)
 
 
 
-void uidrumTrigMenu(int sig) {
+void ui_drumTrigMenu(int sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
@@ -257,18 +253,17 @@ void uidrumTrigMenu(int sig) {
 		if (TRIGSENSOR == RELEASED){
 			if (uiTimerRead() < 3000) {
 				drumMode = (drumMode + 1) % 6;
-				uiClearLEDs();
 				uiSetLEDs(drumMode);
-				uiTransition(&uinewMode);
+				uiTransition(&ui_newMode);
 			} else {
-				uiTransition(&uidefault);
+				uiTransition(&ui_default);
 			}
 
 		} else if (FREQSENSOR == PRESSED){
-			uiTransition(&uilogicAMenu);
+			uiTransition(&ui_logicAMenu);
 
 		} else if (LOOPSENSOR == PRESSED){
-			uiTransition(&uilogicBMenu);
+			uiTransition(&ui_logicBMenu);
 		}
 		break;
 
@@ -286,7 +281,7 @@ void uidrumTrigMenu(int sig) {
 }
 
 
-void uilogicAMenu(int sig)
+void ui_logicAMenu(int sig)
 {
 	switch (sig)
 	{
@@ -298,21 +293,20 @@ void uilogicAMenu(int sig)
 	case SENSOR_EVENT_SIG:
 
 		if (TRIGSENSOR == RELEASED){
-			uiTransition(&uidefault);
+			uiTransition(&ui_default);
 
 		} else if (FREQSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
 				logicOutA = (logicOutA + 1) % 3;
-				uiClearLEDs();
 				uiSetLEDs(logicOutA);
-				uiTransition(&uinewLogicMode);
+				uiTransition(&ui_newLogicMode);
 
 			} else {
-				uiTransition(&uidefault);  // fall all the way back to default instead of allowing a trig modechange
+				uiTransition(&ui_default);  // fall all the way back to default instead of allowing a trig modechange
 			}
 
 		} else if (LOOPSENSOR == PRESSED){
-			uiTransition(&uilogicBMenu);  // should we even allow this case?  more chances of bumped buttons?
+			uiTransition(&ui_logicBMenu);  // should we even allow this case?  more chances of bumped buttons?
 		}
 	}
 }
@@ -329,28 +323,27 @@ void uilogicBMenu(int sig)
 	case SENSOR_EVENT_SIG:
 
 		if (TRIGSENSOR == RELEASED){
-			uiTransition(&uidefault);
+			uiTransition(&ui_default);
 
 		} else if (LOOPSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
 				logicOutB = (logicOutB + 1) % 3;
-				uiClearLEDs();
 				uiSetLEDs(logicOutB);
-				uiTransition(&uinewLogicMode);
+				uiTransition(&ui_newLogicMode);
 
 			} else {
-				uiTransition(&uidefault);
+				uiTransition(&ui_default);
 			}
 
 		} else if (FREQSENSOR == PRESSED){
-			uiTransition(&uilogicAMenu);
+			uiTransition(&ui_logicAMenu);
 		}
 	}
 }
 
 // special newMode which only accepts additional presses on FREQ or LOOP, and returns to newMode on TRIG release.
 // for cycling through logicOut modes.  Does not time out.
-void uinewLogicMode(int sig)
+void ui_newLogicMode(int sig)
 {
 	switch (sig)
 	{
@@ -365,20 +358,20 @@ void uinewLogicMode(int sig)
 	case SENSOR_EVENT_SIG:
 
 		if (FREQSENSOR == PRESSED){
-			uiTransition( &uilogicAMenu);
+			uiTransition( &ui_logicAMenu);
 
 		} else if (LOOPSENSOR == PRESSED){
-			uiTransition( &uilogicBMenu);
+			uiTransition( &ui_logicBMenu);
 
 		} else if (TRIGSENSOR == RELEASED){
-			uiTransition( &uinewMode);
+			uiTransition( &ui_newMode);
 		}
 
 		break;
 	}
 }
 
-void uiSampleHoldMenu(int sig)
+void ui_SampleHoldMenu(int sig)
 {
 	switch (sig)
 	{
@@ -393,11 +386,10 @@ void uiSampleHoldMenu(int sig)
 				modeStateBuffer = (modeStateBuffer & 0b1111111000111111) | (sampleHoldMode << 6);
 				SH_A_TRACK;  // ensure that there's no carryover holding by forcing tracking
 				SH_B_TRACK;
-				uiClearLEDs();
-				uiSetLEDs(sampleHoldMode);
-				uiTransition(&uinewMode);
+\				uiSetLEDs(sampleHoldMode);
+				uiTransition(&ui_newMode);
 			} else {
-				uiTransition(&uidefault);
+				uiTransition(&ui_default);
 			}
 		}
 		break;
@@ -410,7 +402,7 @@ void uiSampleHoldMenu(int sig)
 }
 
 
-void uifamilyUpMenu(int sig)
+void ui_familyUpMenu(int sig)
 {
 	switch (sig)
 	{
@@ -425,19 +417,18 @@ void uifamilyUpMenu(int sig)
 				familyIndicator = (familyIndicator + 1) % 8;
 				switchFamily();
 				modeStateBuffer = (modeStateBuffer & 0b1111000111111111) | (familyIndicator << 9);
-				uiClearLEDs();
 				uiSetLEDs(familyIndicator);
 				uiSetRGB(currentFamily.color);
-				uiTransition( &uinewMode);
+				uiTransition( &ui_newMode);
 			} else {
-				uiTransition( &uidefault);
+				uiTransition( &ui_default);
 			}
 		}
 		break;
 	}
 }
 
-void uifamilyDownMenu(int sig)
+void ui_familyDownMenu(int sig)
 {
 	switch (sig)
 	{
@@ -456,19 +447,18 @@ void uifamilyDownMenu(int sig)
 				}
 				switchFamily();
 				modeStateBuffer = (modeStateBuffer & 0b1111000111111111) | (familyIndicator << 9);
-				uiClearLEDs();
 				uiSetLEDs(familyIndicator);
 				uiSetRGB(currentFamily.color);
-				uiTransition( &uinewMode);
+				uiTransition( &ui_newMode);
 			} else {
-				uiTransition(&uidefault);
+				uiTransition(&ui_default);
 			}
 		}
 		break;
 	}
 }
 
-void uifreqMenu(int sig) {
+void ui_freqMenu(int sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
@@ -493,11 +483,10 @@ void uifreqMenu(int sig) {
 				modeStateBuffer = (modeStateBuffer & 0b1111111111111001) | (speed << 1);
 				switchFamily();
 				uiSetPhaseFunctions();
-				uiClearLEDs();
 				uiSetLEDs(speed);
-				uiTransition(&uinewMode);
+				uiTransition(&ui_newMode);
 			} else {
-				uiTransition(&uidefault);
+				uiTransition(&ui_default);
 			}
 		}
 		break;
@@ -509,7 +498,7 @@ void uifreqMenu(int sig) {
 }
 
 
-void uiloopMenu(int sig)
+void ui_loopMenu(int sig)
 {
 	switch (sig) {
 
@@ -535,9 +524,9 @@ void uiloopMenu(int sig)
 				uiClearLEDs();
 				uiSetLEDs(loop);
 				uiSetPhaseFunctions();
-				uiTransition( &uinewMode);
+				uiTransition( &ui_newMode);
 			} else {
-				uiTransition(&uidefault);
+				uiTransition(&ui_default);
 			}
 		}
 		break;
@@ -647,29 +636,49 @@ void uiSetLEDs(int digit){
 	switch (digit){
 	case 0:
 		LEDA_ON;
+		LEDB_OFF;
+		LEDC_OFF;
+		LEDD_OFF;
 		break;
 	case 1:
+		LEDA_OFF;
+		LEDB_OFF;
 		LEDC_ON;
+		LEDD_OFF;
 		break;
 	case 2:
+		LEDA_OFF;
 		LEDB_ON;
+		LEDC_OFF;
+		LEDD_OFF;
 		break;
 	case 3:
+		LEDA_OFF;
+		LEDB_OFF;
+		LEDC_OFF;
 		LEDD_ON;
 		break;
 	case 4:
 		LEDA_ON;
+		LEDB_OFF;
 		LEDC_ON;
+		LEDD_OFF;
 		break;
 	case 5:
+		LEDA_OFF;
 		LEDB_ON;
+		LEDC_OFF;
 		LEDD_ON;
 		break;
 	case 6:
 		LEDA_ON;
 		LEDB_ON;
+		LEDC_OFF;
+		LEDD_OFF;
 		break;
 	case 7:
+		LEDA_OFF;
+		LEDB_OFF;
 		LEDC_ON;
 		LEDD_ON;
 		break;
@@ -707,13 +716,13 @@ void uiInitialize()
 	/* ... initialization of ui attributes */
 	// call each menu to initialize, to make UI process the stored modes
 	 // processs trig first so it skips possibility of DRUM_MODE_ON_ON
-	uitrigMenu(INIT_SIG);
-	uiloopMenu(INIT_SIG);
-	uifreqMenu(INIT_SIG);
-	uiSampleHoldMenu(INIT_SIG);
-	uifamilyUpMenu(INIT_SIG);
-	uifamilyDownMenu(INIT_SIG);
-	uidrumTrigMenu(EXIT_SIG);
+	ui_trigMenu(INIT_SIG);
+	ui_loopMenu(INIT_SIG);
+	ui_freqMenu(INIT_SIG);
+	ui_SampleHoldMenu(INIT_SIG);
+	ui_familyUpMenu(INIT_SIG);
+	ui_familyDownMenu(INIT_SIG);
+	ui_drumTrigMenu(EXIT_SIG);
 
 	if (loop != noloop || speed != audio) {
 		RESET_AMP_ON;
@@ -724,7 +733,7 @@ void uiInitialize()
 	// logic A and B don't need additional initialization beyond setting mode
 	uiSetPhaseFunctions();
 
-	State = &uidefault;
-	uiTransition( &uidefault);
+	State = &ui_default;
+	uiTransition( &ui_default);
 }
 
