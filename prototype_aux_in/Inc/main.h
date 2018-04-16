@@ -65,16 +65,6 @@
 //#define morphCV 2000
 //#define time1Knob 3000
 
-#define DOWNSENSOR MyTKeys[0].p_Data->StateId
-#define LOOPSENSOR MyTKeys[1].p_Data->StateId
-#define TRIGSENSOR MyTKeys[2].p_Data->StateId
-#define FREQSENSOR MyTKeys[3].p_Data->StateId
-#define SHSENSOR MyTKeys[4].p_Data->StateId
-#define UPSENSOR MyTKeys[5].p_Data->StateId
-
-#define PRESSED TSL_STATEID_DETECT
-#define RELEASED TSL_STATEID_RELEASE
-
 enum speedTypes {audio, env, seq};
 enum loopTypes {noloop, looping};
 enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum, pendulum2};

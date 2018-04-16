@@ -28,11 +28,10 @@ struct rgb red = {4095, 0, 0};
 struct rgb green = {0, 4095, 0};
 struct rgb blue = {0, 0, 4095};
 
-
 #define DOWNSENSOR MyTKeys[0].p_Data->StateId
-#define LOOPSENSOR MyTKeys[1].p_Data->StateId
-#define TRIGSENSOR MyTKeys[2].p_Data->StateId
-#define FREQSENSOR MyTKeys[3].p_Data->StateId
+#define XSENSOR MyTKeys[1].p_Data->StateId
+#define SYNCSENSOR MyTKeys[2].p_Data->StateId
+#define SCALESENSOR MyTKeys[3].p_Data->StateId
 #define SHSENSOR MyTKeys[4].p_Data->StateId
 #define UPSENSOR MyTKeys[5].p_Data->StateId
 

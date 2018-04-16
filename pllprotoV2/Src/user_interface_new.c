@@ -16,13 +16,13 @@ extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 
 // these enums contain our mode information
-enum speedTypes speed; // {audio, env, seq}
-enum loopTypes loop; // {noloop, looping}
-enum trigModeTypes trigMode; // {noretrigger, hardsync, nongatedretrigger, gated, pendulum}
+enum syncTypes syncMode; // {none, true, hardSync, catch}
+enum controlSchemes controlScheme; // {gateLength, knobCV}
+enum scaleTypes scaleType; // {rhythms, pitches}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
-enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA}
-enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB}
-enum drumModeTypes drumMode; // {APM, AM, A, M, PM, P}
+enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA, ratioDeltaA, pllClock};
+enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
+enum autoDutyTypes autoDuty; // {autoDutyOn, autoDutyOff};
 
 extern uint16_t VirtAddVarTab[NB_OF_VAR];
 extern uint16_t VarDataTab[NB_OF_VAR];
@@ -63,22 +63,24 @@ static inline void uiTimerSet(int val) { __HAL_TIM_SET_COUNTER(&htim4, val); }
 void uiStoreToEEPROM(int);
 void uiLoadFromEEPROM(int);
 
+
 // a pointer to these functions is the current state
 void ui_default(int sig);
 void ui_newMode(int sig);
-void ui_trigMenu(int sig);
+void ui_syncMenu(int sig);
 void ui_logicAMenu(int sig);
 void ui_logicBMenu(int sig);
 void ui_SampleHoldMenu(int sig);
 void ui_familyUpMenu(int sig);
 void ui_familyDownMenu(int sig);
-void ui_freqMenu(int sig);
-void ui_loopMenu(int sig);
+void ui_scaleMenu(int sig);
+void ui_xMenu(int sig);
 void ui_drumTrigMenu(int sig);
 void ui_newLogicMode(int sig);
 void ui_error(int sig);
 void ui_presetMenu(int sig);
 void ui_newPreset(int sig);
+
 
 // transition to new state
 void uiTransition(void (*func)(int)) {
@@ -102,17 +104,17 @@ void ui_default(int sig)
 
 	case SENSOR_EVENT_SIG:
 
-		if (FREQSENSOR == PRESSED){
-			uiTransition(&ui_freqMenu);
+		if (SCALESENSOR == PRESSED){
+			uiTransition(&ui_scaleMenu);
 
 		} else if (SHSENSOR == PRESSED){
 			uiTransition(&ui_SampleHoldMenu);
 
-		} else if (TRIGSENSOR == PRESSED){
-			uiTransition(&ui_trigMenu);
+		} else if (SYNCSENSOR == PRESSED){
+			uiTransition(&ui_syncMenu);
 
-		} else if (LOOPSENSOR == PRESSED){
-			uiTransition(&ui_loopMenu);
+		} else if (XSENSOR == PRESSED){
+			uiTransition(&ui_xMenu);
 
 		} else if (UPSENSOR == PRESSED){
 			uiTransition(&ui_familyUpMenu);
@@ -159,17 +161,17 @@ void ui_newMode(int sig)
 	// in case of new events immediately jump to relevant menu
 	case SENSOR_EVENT_SIG:
 
-		if (FREQSENSOR == PRESSED){
-			uiTransition( &ui_freqMenu);
+		if (SCALESENSOR == PRESSED){
+			uiTransition( &ui_scaleMenu);
 
 		} else if (SHSENSOR == PRESSED){
 			uiTransition( &ui_SampleHoldMenu);
 
-		} else if (TRIGSENSOR == PRESSED){
-			uiTransition( &ui_trigMenu);
+		} else if (SYNCSENSOR == PRESSED){
+			uiTransition( &ui_syncMenu);
 
-		} else if (LOOPSENSOR == PRESSED){
-			uiTransition( &ui_loopMenu);
+		} else if (XSENSOR == PRESSED){
+			uiTransition( &ui_xMenu);
 
 		} else if (UPSENSOR == PRESSED){
 			uiTransition( &ui_familyUpMenu);
@@ -190,7 +192,7 @@ void ui_newMode(int sig)
 
 }
 
-void ui_trigMenu(int sig)
+void ui_syncMenu(int sig)
 {
 	switch (sig)
 	{
@@ -201,82 +203,42 @@ void ui_trigMenu(int sig)
 			uiTransition(&ui_presetMenu);
 			break;
 		}
-		if (DRUM_MODE){
-			uiTransition(&ui_drumTrigMenu);
-		} else {
-			uiSetLEDs(trigMode);
+			uiSetLEDs(syncMode);
 		}
 		break;
 
 	case SENSOR_EVENT_SIG:
 
-		if (TRIGSENSOR == RELEASED){
+		if (SYNCSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
-				trigMode = (trigMode + 1) % 6;
-				// initialize some essential retrigger variables
-				modeStateBuffer = (modeStateBuffer & !(TRIGMASK)) | (trigMode << TRIGSHIFT);
-				incSign = 1;
-				CLEAR_GATE;
+				syncMode = (syncMode + 1) % 3;
+				//modeStateBuffer = (holdState & 0b1111111111000111) | (syncMode << 3);
+				modeStateBuffer = (holdState & !(SYNCFLAG)) | (syncMode << SYNCSHIFT);
 				// if drum mode is on, toggle through sets of modulation destinations
-				uiSetLEDs(trigMode);
+				uiSetLEDs(syncMode);
 				uiTransition(&ui_newMode);
 			} else {
 				//no mode change
 				uiTransition(&ui_default);
 			}
 
-		} else if (FREQSENSOR == PRESSED){
+		} else if (SCALESENSOR == PRESSED){
 			// descend into submenu
 			uiTransition(&ui_logicAMenu);
 
-		} else if (LOOPSENSOR == PRESSED){
+		} else if (XSENSOR == PRESSED){
 			// descend into submenu
 			uiTransition(&ui_logicBMenu);
-		}
-		break;
 
-	case INIT_SIG:
-		// initialize some essential retrigger variables
-		incSign = 1;
-		CLEAR_GATE;
-	}
+		} else if (SHSENSOR == PRESSED){
+			uiTransition(&ui_autoDutyMenu);
+
+		break;
+		}
 }
 
 
 
-void ui_drumTrigMenu(int sig) {
-	switch (sig) {
-
-	case ENTRY_SIG:
-		uiSetLEDs(drumMode);
-		break;
-
-	case SENSOR_EVENT_SIG:
-
-		if (TRIGSENSOR == RELEASED){
-			if (uiTimerRead() < 3000) {
-				drumMode = (drumMode + 1) % 6;
-				modeStateBuffer = (modeStateBuffer & !(DRUMMASK)) | (drumMode << DRUMSHIFT);
-				uiSetLEDs(drumMode);
-				uiTransition(&ui_newMode);
-			} else {
-				uiTransition(&ui_default);
-			}
-
-		} else if (FREQSENSOR == PRESSED){
-			uiTransition(&ui_logicAMenu);
-
-		} else if (LOOPSENSOR == PRESSED){
-			uiTransition(&ui_logicBMenu);
-		}
-		break;
-
-	// on exit we always set drum flags since it doesn't affect any other mode
-	case EXIT_SIG:
-		uiSetDrumMode();
-		break;
-	}
-}
 
 
 void ui_logicAMenu(int sig)
@@ -290,14 +252,39 @@ void ui_logicAMenu(int sig)
 
 	case SENSOR_EVENT_SIG:
 
-		if (TRIGSENSOR == RELEASED){
+		if (SYNCSENSOR == RELEASED){
 			uiTransition(&ui_default);
 
-		} else if (FREQSENSOR == RELEASED){
+		} else if (SCALESENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
-				logicOutA = (logicOutA + 1) % 3;
+				logicOutA = (logicOutA + 1) % 5;
+				//holdLogicOut = (holdLogicOut & 0b1111111111111000) | logicOutA;
+				modeStateBuffer = (modeStateBuffer & !(LOGICAMASK) | logicOutA << LOGICASHIFT);
 
-				modeStateBuffer = (modeStateBuffer & !(LOGICAMASK)) | (logicOutA << LOGICASHIFT);
+				CLEAR_GATEA;
+				CLEAR_TRIGA;
+				CLEAR_DELTAA;
+				CLEAR_RATIO_DELTAA;
+				CLEAR_PLL_DIVA;
+
+				switch (logicOutA) {
+				case 0:
+					SET_GATEA;
+					break;
+				case 1:
+					SET_TRIGA;
+					break;
+				case 2:
+					SET_DELTAA;
+					break;
+				case 3:
+					SET_RATIO_DELTAA;
+					break;
+				case 4:
+					CLEAR_RATIO_DELTAA;
+					break;
+				}
+
 				uiSetLEDs(logicOutA);
 				uiTransition(&ui_newLogicMode);
 
@@ -305,8 +292,33 @@ void ui_logicAMenu(int sig)
 				uiTransition(&ui_default);  // fall all the way back to default instead of allowing a trig modechange
 			}
 
-		} else if (LOOPSENSOR == PRESSED){
+		} else if (XSENSOR == PRESSED){
 			uiTransition(&ui_logicBMenu);  // should we even allow this case?  more chances of bumped buttons?
+		}
+		break;
+
+	case INIT_SIG:
+		CLEAR_GATEA;
+		CLEAR_TRIGA;
+		CLEAR_DELTAA;
+		CLEAR_RATIO_DELTAA;
+		CLEAR_PLL_DIVA;
+		switch (logicOutA) {
+		case 0:
+			SET_GATEA;
+			break;
+		case 1:
+			SET_TRIGA;
+			break;
+		case 2:
+			SET_DELTAA;
+			break;
+		case 3:
+			SET_RATIO_DELTAA;
+			break;
+		case 4:
+			CLEAR_RATIO_DELTAA;
+			break;
 		}
 	}
 }
@@ -322,22 +334,75 @@ void ui_logicBMenu(int sig)
 
 	case SENSOR_EVENT_SIG:
 
-		if (TRIGSENSOR == RELEASED){
+		if (SYNCSENSOR == RELEASED){
 			uiTransition(&ui_default);
+			break;
 
-		} else if (LOOPSENSOR == RELEASED){
+		} else if (XSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
-				logicOutB = (logicOutB + 1) % 3;
+				logicOutB = (logicOutB + 1) % 5;
 				modeStateBuffer = (modeStateBuffer & !(LOGICBMASK)) | (logicOutB << LOGICBSHIFT);
+				//holdLogicOut = (holdLogicOut & 0b1111111111000111) | (logicOutB << 3);
+				CLEAR_GATEB;
+				CLEAR_TRIGB;
+				CLEAR_DELTAB;
+				CLEAR_RATIO_DELTAB;
+				CLEAR_PLL_DIVB;
+
+				switch (logicOutB) {
+				case 0:
+					SET_GATEB;
+					break;
+				case 1:
+					SET_TRIGB;
+					break;
+				case 2:
+					SET_DELTAB;
+					break;
+				case 3:
+					SET_RATIO_DELTAB;
+					break;
+				case 4:
+					CLEAR_RATIO_DELTAB;
+					break;
+				}
+
 				uiSetLEDs(logicOutB);
 				uiTransition(&ui_newLogicMode);
 
 			} else {
 				uiTransition(&ui_default);
+				break;
 			}
 
-		} else if (FREQSENSOR == PRESSED){
+		} else if (SCALESENSOR == PRESSED){
 			uiTransition(&ui_logicAMenu);  // don't make this transition maybe??
+		}
+		break;
+
+	case INIT_SIG:
+		CLEAR_GATEB;
+		CLEAR_TRIGB;
+		CLEAR_DELTAB;
+		CLEAR_RATIO_DELTAB;
+		CLEAR_PLL_DIVB;
+
+		switch (logicOutB) {
+		case 0:
+			SET_GATEB;
+			break;
+		case 1:
+			SET_TRIGB;
+			break;
+		case 2:
+			SET_DELTAB;
+			break;
+		case 3:
+			SET_RATIO_DELTAB;
+			break;
+		case 4:
+			CLEAR_RATIO_DELTAB;
+			break;
 		}
 	}
 }
@@ -357,13 +422,13 @@ void ui_newLogicMode(int sig)
 
 	case SENSOR_EVENT_SIG:
 
-		if (FREQSENSOR == PRESSED){
+		if (SCALESENSOR == PRESSED){
 			uiTransition( &ui_logicAMenu);
 
-		} else if (LOOPSENSOR == PRESSED){
+		} else if (XSENSOR == PRESSED){
 			uiTransition( &ui_logicBMenu);
 
-		} else if (TRIGSENSOR == RELEASED){
+		} else if (SYNCSENSOR == RELEASED){
 			uiTransition( &ui_newMode);
 		}
 
@@ -426,7 +491,7 @@ void ui_familyUpMenu(int sig)
 			if(uiTimerRead() < 3000){
 				familyIndicator = (familyIndicator + 1) % 8;
 				switchFamily();
-				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
+				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << TRIGSHIFT);
 				uiSetLEDs(familyIndicator);
 				uiSetRGB(currentFamily.color);
 				uiTransition( &ui_newMode);
@@ -461,7 +526,7 @@ void ui_familyDownMenu(int sig)
 					familyIndicator--;
 				}
 				switchFamily();
-				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
+				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << TRIGSHIFT);
 				uiSetLEDs(familyIndicator);
 				uiSetRGB(currentFamily.color);
 				uiTransition( &ui_newMode);
@@ -473,7 +538,7 @@ void ui_familyDownMenu(int sig)
 	}
 }
 
-void ui_freqMenu(int sig) {
+void ui_scaleMenu(int sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
@@ -497,7 +562,7 @@ void ui_freqMenu(int sig) {
 		break;
 
 	case SENSOR_EVENT_SIG:
-		if(FREQSENSOR == RELEASED){
+		if(SCALESENSOR == RELEASED){
 			if (uiTimerRead() < 3000) {
 				speed = (speed + 1) % 3;
 				modeStateBuffer = (modeStateBuffer & 0b1111111111111001) | (speed << 1);
@@ -530,7 +595,7 @@ void ui_freqMenu(int sig) {
 }
 
 
-void ui_loopMenu(int sig)
+void ui_xMenu(int sig)
 {
 	switch (sig) {
 
@@ -544,7 +609,7 @@ void ui_loopMenu(int sig)
 		break;
 
 	case SENSOR_EVENT_SIG:
-		if (LOOPSENSOR == RELEASED){
+		if (XSENSOR == RELEASED){
 
 			if(uiTimerRead() < 3000){
 				loop = (loop + 1) % 2;
@@ -581,53 +646,26 @@ void ui_loopMenu(int sig)
 	}
 }
 
+void ui_autoDutyMenu(int sig){
+	switch (sig){
+	case ENTRY_SIG:
+		break;
 
-void uiClearDrumMode(void){
-	CLEAR_AMP_MOD;
-	CLEAR_PITCH_MOD;
-	CLEAR_MORPH_MOD;
-}
+	case SENSOR_EVENT_SIG:
+		if (SHSENSOR == RELEASED){
+			if (uiTimerRead() < 3000){
+		}
+	autoDuty = (autoDuty + 1) % 2;
 
-// drumMenu just sets drum mode and passes through to newMode
-void uiSetDrumMode(void)
-{
-	SET_DRUM_MODE;
-	SET_LAST_CYCLE;
-	getPhase = getPhaseDrum;
-	__HAL_TIM_ENABLE(&htim3);
-	switch (drumMode) {
-	case APM:
-		SET_AMP_MOD;
-		SET_PITCH_MOD;
-		SET_MORPH_MOD;
-		break;
-	case AM:
-		SET_AMP_MOD;
-		CLEAR_PITCH_MOD;
-		SET_MORPH_MOD;
-		break;
-	case A:
-		SET_AMP_MOD;
-		CLEAR_PITCH_MOD;
-		CLEAR_MORPH_MOD;
-		break;
-	case M:
-		CLEAR_AMP_MOD;
-		CLEAR_PITCH_MOD;
-		SET_MORPH_MOD;
-		break;
-	case PM:
-		CLEAR_AMP_MOD;
-		SET_PITCH_MOD;
-		SET_MORPH_MOD;
-		break;
-	case P:
-		CLEAR_AMP_MOD;
-		SET_PITCH_MOD;
-		CLEAR_MORPH_MOD;
-		break;
+	modeStateBuffer = (modeStateBuffer & !(AUTODUTYMASK) | (autoDuty << AUTODUTYSHIFT);
+//oldLogicOut = (holdLogicOut & 0b1111111111000111) | (autoDuty << 6);
+	if (autoDuty == autoDutyOn) {
+		CLEAR_AUTODUTY;
+	} else {
+		SET_AUTODUTY;
 	}
 }
+
 
 void uiSetPhaseFunctions(void) {
 	switch (speed) {
@@ -772,9 +810,9 @@ void uiInitialize()
 	// ... initialization of ui attributes
 	// call each menu to initialize, to make UI process the stored modes
 	 // processs trig first so it skips possibility of DRUM_MODE_ON_ON
-	ui_trigMenu(INIT_SIG);
-	ui_loopMenu(INIT_SIG);
-	ui_freqMenu(INIT_SIG);
+	ui_pllMenu(INIT_SIG);
+	ui_xMenu(INIT_SIG);
+	ui_scaleMenu(INIT_SIG);
 	ui_SampleHoldMenu(INIT_SIG);
 	ui_familyUpMenu(INIT_SIG);
 	ui_familyDownMenu(INIT_SIG);
@@ -814,9 +852,9 @@ void uiLoadFromEEPROM(int position) {
 	// call each menu to initialize, to make UI process the stored modes
 	// process trig first so it skips possibility of DRUM_MODE
 	// logic A and B don't need additional initialization beyond setting mode
-	ui_trigMenu(INIT_SIG);
-	ui_loopMenu(INIT_SIG);
-	ui_freqMenu(INIT_SIG);
+	ui_syncMenu(INIT_SIG);
+	ui_xMenu(INIT_SIG);
+	ui_scaleMenu(INIT_SIG);
 	ui_SampleHoldMenu(INIT_SIG);
 	ui_switchFamily();
 	if (loop = looping && speed == audio) {
@@ -852,7 +890,7 @@ void ui_presetMenu(int sig){
 			}
 			break;
 		case 2:
-			if (TRIGSENSOR == RELEASED){
+			if (SYNCSENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
 			}
 			break;
@@ -867,12 +905,12 @@ void ui_presetMenu(int sig){
 			}
 			break;
 		case 5:
-			if (FREQSENSOR == RELEASED){
+			if (SCALESENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
 			}
 			break;
 		case 6:
-			if (LOOPSENSOR == RELEASED){
+			if (XSENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
 			}
 			break;
