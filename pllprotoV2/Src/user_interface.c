@@ -357,35 +357,35 @@ void changeMode(uint32_t mode) {
 			SET_GATEA;
 			CLEAR_DELTAB;
 			CLEAR_DELTAA;
-			RESET_RATIO_DELTAA;
-			RESET_PLL_DIVA;
+			CLEAR_RATIO_DELTAA;
+			CLEAR_PLL_DIVA;
 			break;
 		case 1:
 			CLEAR_GATEA;
 			SET_TRIGA;
 			CLEAR_DELTAA;
-			RESET_RATIO_DELTAA;
-			RESET_PLL_DIVA;
+			CLEAR_RATIO_DELTAA;
+			CLEAR_PLL_DIVA;
 			break;
 		case 2:
 			CLEAR_GATEA;
 			CLEAR_TRIGA;
 			SET_DELTAA;
-			RESET_RATIO_DELTAA;
-			RESET_PLL_DIVA;
+			CLEAR_RATIO_DELTAA;
+			CLEAR_PLL_DIVA;
 			break;
 		case 3:
 			CLEAR_GATEA;
 			CLEAR_TRIGA;
 			CLEAR_DELTAA;
 			SET_RATIO_DELTAA;
-			RESET_PLL_DIVA;
+			CLEAR_PLL_DIVA;
 			break;
 		case 4:
 			CLEAR_GATEA;
 			CLEAR_TRIGA;
 			CLEAR_DELTAA;
-			RESET_RATIO_DELTAA;
+			CLEAR_RATIO_DELTAA;
 			SET_PLL_DIVA;
 			break;
 		}
@@ -400,35 +400,35 @@ void changeMode(uint32_t mode) {
 			SET_GATEB;
 			CLEAR_TRIGB;
 			CLEAR_DELTAB;
-			RESET_RATIO_DELTAB;
-			RESET_PLL_DIVB;
+			CLEAR_RATIO_DELTAB;
+			CLEAR_PLL_DIVB;
 			break;
 		case 1:
 			CLEAR_GATEB;
 			SET_TRIGB;
 			CLEAR_DELTAA;
-			RESET_RATIO_DELTAB;
-			RESET_PLL_DIVB;
+			CLEAR_RATIO_DELTAB;
+			CLEAR_PLL_DIVB;
 			break;
 		case 2:
 			CLEAR_GATEB;
 			CLEAR_TRIGB;
 			SET_DELTAB;
-			RESET_RATIO_DELTAB;
-			RESET_PLL_DIVB;
+			CLEAR_RATIO_DELTAB;
+			CLEAR_PLL_DIVB;
 			break;
 		case 3:
 			CLEAR_GATEB;
 			CLEAR_TRIGB;
 			CLEAR_DELTAB;
 			SET_RATIO_DELTAB;
-			RESET_PLL_DIVB;
+			CLEAR_PLL_DIVB;
 			break;
 		case 4:
 			CLEAR_GATEB;
 			CLEAR_TRIGB;
 			CLEAR_DELTAB;
-			RESET_RATIO_DELTAB;
+			CLEAR_RATIO_DELTAB;
 			SET_PLL_DIVB;
 			break;
 		}
@@ -437,7 +437,7 @@ void changeMode(uint32_t mode) {
 		autoDuty = (autoDuty + 1) % 2;
 		holdLogicOut = (holdLogicOut & 0b1111111111000111) | (autoDuty << 6);
 		if (autoDuty == autoDutyOn) {
-			RESET_AUTODUTY;
+			CLEAR_AUTODUTY;
 		} else {
 			SET_AUTODUTY;
 		}

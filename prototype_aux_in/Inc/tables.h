@@ -5,12 +5,6 @@
 #define ARM_MATH_CM4
 #include "arm_math.h"
 
-struct rgb
-{
-	int r;	   		// 12-bit red amount RGB LED
-	int g;	  		// 12-bit green amount RGB LED
-	int b;	   		// 12-bit blue amount RGB LED
-};
 
 typedef struct {
 	uint16_t **attackFamily;
@@ -22,9 +16,6 @@ typedef struct {
 
 } Family;
 
-struct rgb red;
-struct rgb blue;
-struct rgb green;
 
 Family *familyArray[3][8];
 Family currentFamily;

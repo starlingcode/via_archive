@@ -45,7 +45,7 @@
 #include "tables.h"
 #include "tsl_user.h"
 #include "eeprom.h"
-#include "fsm.h"
+#include "user_interface.h"
 
 /* USER CODE END Includes */
 
@@ -250,6 +250,7 @@ int main(void) {
 			if (!(TRIGGER_BUTTON)) {
 				debounce++;
 				if (debounce == 10) {
+					uiDispatch(EXPAND_SW_ON_SIG);
 					SET_TRIGGER_BUTTON;
 					HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
 					debounce = 0;
@@ -260,6 +261,7 @@ int main(void) {
 		else if (TRIGGER_BUTTON){
 			debounce++;
 			if (debounce == 10) {
+				uiDispatch(EXPAND_SW_OFF_SIG);
 				CLEAR_TRIGGER_BUTTON;
 				HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
 				debounce = 0;

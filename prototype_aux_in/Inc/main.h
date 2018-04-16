@@ -46,6 +46,7 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "eeprom.h"
+#include "user_interface.h"
 
 // uncommment to define a version compatible with rev2 (black PCB) boards
 #define _BUILD_REV_2
@@ -82,6 +83,17 @@ enum logicOutATypes {triggerA, gateA, deltaA};
 enum logicOutBTypes {triggerB, gateB, deltaB};
 enum drumModeTypes {APM, AM, A, M, PM, P};
 
+// UI signals
+enum
+{	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
+	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
+	EXIT_SIG,	  // Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
+	INIT_SIG,     // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
+	TIMEOUT_SIG,  // timer timeout
+	SENSOR_EVENT_SIG,  // Sensor state machine not busy, can be queried for events
+	TSL_ERROR_SIG
+};
+
 int familyIndicator;
 int flagHolder;
 
@@ -100,8 +112,6 @@ typedef struct buffer32 {
     int writeIndex;
 }buffer32;
 
-void readDetect(void) __attribute__((section("ccmram")));
-void readRelease(uint32_t) __attribute__((section("ccmram")));
 void switchFamily(void) __attribute__((section("ccmram")));
 void fillFamilyArray(void) __attribute__((section("ccmram")));
 void restoreState(void) __attribute__((section("ccmram")));

@@ -31,7 +31,7 @@ void inputCapture(void) {
 
 		generateFrequency();
 
-		RESET_NOCLOCK;
+		CLEAR_NOCLOCK;
 
 	}
 	else {
@@ -200,7 +200,7 @@ void generateFrequency(void) {
 					}
 				}
 				pllCounter = 0;
-				RESET_EXTPLL;
+				CLEAR_EXTPLL;
 			}
 
 			//PROFILING_EVENT("SetupComplete");
