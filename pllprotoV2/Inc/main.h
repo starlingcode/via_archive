@@ -60,15 +60,15 @@ typedef struct buffer{
 
 enum syncTypes {none, true, hardSync};
 enum controlSchemes {root, dutyCycle, FM, phaseMod};
-enum scaleTypes {rhythm, diatonic, primes};
+enum scaleTypes {rhythm, pitch, other};
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 enum logicOutATypes {triggerA, gateA, deltaA, ratioDeltaA, pllClockA};
 enum logicOutBTypes {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
 enum autoDutyTypes {autoDutyOn, autoDutyOff};
 
 volatile int position;
+int flagHolder;
 
-// int flagHolder;
 // int familyIndicator;
 // int holdState;
 // int holdLogicOut;
