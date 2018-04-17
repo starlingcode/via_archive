@@ -12,11 +12,10 @@
 uint32_t eepromStatus;
 
 extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 
 // these enums contain our mode information
-enum syncTypes syncMode; // {none, true, hardSync, catch}
+enum syncTypes syncMode; // {none, true, hardSync}
 enum controlSchemes controlScheme; // {gateLength, knobCV}
 enum scaleTypes scaleType; // {rhythm, pitch, other}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
@@ -52,8 +51,6 @@ void uiClearRGB();
 void uiSetRGB(struct rgb);
 
 void uiSetPhaseFunctions(void);
-void uiSetDrumMode(void);
-void uiClearDrumMode(void);
 
 static inline void uiTimerReset() { __HAL_TIM_SET_COUNTER(&htim4, 0); }
 static inline void uiTimerDisable() { __HAL_TIM_DISABLE(&htim4); }
@@ -256,7 +253,7 @@ void ui_logicAMenu(int sig)
 			if(uiTimerRead() < 3000){
 				logicOutA = (logicOutA + 1) % 5;
 				//holdLogicOut = (holdLogicOut & 0b1111111111111000) | logicOutA;
-				modeStateBuffer = (modeStateBuffer & !(LOGICAMASK) | logicOutA << LOGICASHIFT);
+				modeStateBuffer = (modeStateBuffer & !(LOGICAMASK)) | logicOutA << LOGICASHIFT;
 
 				CLEAR_GATEA;
 				CLEAR_TRIGA;
@@ -278,7 +275,7 @@ void ui_logicAMenu(int sig)
 					SET_RATIO_DELTAA;
 					break;
 				case 4:
-					CLEAR_RATIO_DELTAA;
+					SET_PLL_DIVA;
 					break;
 				}
 
@@ -315,7 +312,7 @@ void ui_logicAMenu(int sig)
 			SET_RATIO_DELTAA;
 			break;
 		case 4:
-			CLEAR_RATIO_DELTAA;
+			SET_PLL_DIVA;
 			break;
 		}
 	}
@@ -361,7 +358,7 @@ void ui_logicBMenu(int sig)
 					SET_RATIO_DELTAB;
 					break;
 				case 4:
-					CLEAR_RATIO_DELTAB;
+					SET_PLL_DIVB;
 					break;
 				}
 
@@ -399,7 +396,7 @@ void ui_logicBMenu(int sig)
 			SET_RATIO_DELTAB;
 			break;
 		case 4:
-			CLEAR_RATIO_DELTAB;
+			SET_PLL_DIVB;
 			break;
 		}
 	}
@@ -419,17 +416,16 @@ void ui_newLogicMode(int sig)
 	// once uiTimerRead() times out, clear display and return to default state
 
 	case SENSOR_EVENT_SIG:
-
+		// in case either logic mode sensors are pressed, jump to their menu
 		if (SCALESENSOR == PRESSED){
-			uiTransition( &ui_logicAMenu);
+			uiTransition(&ui_logicAMenu);
 
 		} else if (XSENSOR == PRESSED){
-			uiTransition( &ui_logicBMenu);
-
+			uiTransition(&ui_logicBMenu);
+			// if sync sensor is released, jump out of menu to default.
 		} else if (SYNCSENSOR == RELEASED){
-			uiTransition( &ui_newMode);
+			uiTransition(&ui_newMode);
 		}
-
 		break;
 	}
 }
@@ -440,7 +436,7 @@ void ui_SampleHoldMenu(int sig)
 	{
 	case ENTRY_SIG:
 		if (TRIGGER_BUTTON){
-			presetNumber = 1
+			presetNumber = 1;
 			uiTransition(&ui_presetMenu);
 			break;
 		}
@@ -454,7 +450,7 @@ void ui_SampleHoldMenu(int sig)
 				modeStateBuffer = (modeStateBuffer & !(SHMASK)) | (sampleHoldMode << SHSHIFT);
 				SH_A_TRACK;  // ensure that there's no carryover holding by forcing tracking
 				SH_B_TRACK;
-\				uiSetLEDs(sampleHoldMode);
+				uiSetLEDs(sampleHoldMode);
 				uiTransition(&ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -488,7 +484,7 @@ void ui_familyUpMenu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (UPSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
-				familyIndicator = (familyIndicator + 1) % 8;
+				familyIndicator = (familyIndicator + 1) % 16;
 				switchFamily();
 				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << TRIGSHIFT);
 				uiSetLEDs(familyIndicator);
@@ -520,12 +516,12 @@ void ui_familyDownMenu(int sig)
 		if (DOWNSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
 				if (familyIndicator == 0) {
-					familyIndicator = 7;  // wrap around
+					familyIndicator = 15;  // wrap around
 				} else {
 					familyIndicator--;
 				}
 				switchFamily();
-				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << TRIGSHIFT);
+				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
 				uiSetLEDs(familyIndicator);
 				uiSetRGB(currentFamily.color);
 				uiTransition( &ui_newMode);
@@ -564,7 +560,7 @@ void ui_scaleMenu(int sig) {
 		if(SCALESENSOR == RELEASED){
 			if (uiTimerRead() < 3000) {
 				speed = (speed + 1) % 3;
-				modeStateBuffer = (modeStateBuffer & 0b1111111111111001) | (speed << 1);
+				modeStateBuffer = (modeStateBuffer & !(SCALEMASK)) | (scale << SCALESHIFT);
 				switchFamily();
 				uiSetPhaseFunctions();
 				uiSetLEDs(scale);

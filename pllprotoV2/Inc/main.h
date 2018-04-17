@@ -68,8 +68,8 @@ enum autoDutyTypes {autoDutyOn, autoDutyOff};
 
 volatile int position;
 int flagHolder;
+int familyIndicator;
 
-// int familyIndicator;
 // int holdState;
 // int holdLogicOut;
 // int eepromStatus;
