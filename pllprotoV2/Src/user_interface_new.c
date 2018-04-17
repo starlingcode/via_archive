@@ -70,13 +70,12 @@ void ui_newMode(int sig);
 void ui_syncMenu(int sig);
 void ui_logicAMenu(int sig);
 void ui_logicBMenu(int sig);
+void ui_newLogicMode(int sig);
 void ui_SampleHoldMenu(int sig);
 void ui_familyUpMenu(int sig);
 void ui_familyDownMenu(int sig);
 void ui_scaleMenu(int sig);
 void ui_xMenu(int sig);
-void ui_drumTrigMenu(int sig);
-void ui_newLogicMode(int sig);
 void ui_error(int sig);
 void ui_presetMenu(int sig);
 void ui_newPreset(int sig);
@@ -238,9 +237,6 @@ void ui_syncMenu(int sig)
 }
 
 
-
-
-
 void ui_logicAMenu(int sig)
 {
 	switch (sig)
@@ -303,6 +299,7 @@ void ui_logicAMenu(int sig)
 		CLEAR_DELTAA;
 		CLEAR_RATIO_DELTAA;
 		CLEAR_PLL_DIVA;
+
 		switch (logicOutA) {
 		case 0:
 			SET_GATEA;
@@ -469,6 +466,7 @@ void ui_SampleHoldMenu(int sig)
 		SH_B_TRACK;
 		break;
 	}
+
 }
 
 
@@ -921,6 +919,11 @@ void ui_presetMenu(int sig){
 			break;
 		}
 		break;
+
+		// if trig button is released, exit menu
+		case EXPAND_SW_OFF_SIG:
+			uiTransition(&ui_default);
+			break;
 
 		case EXIT_SIG:
 			break;

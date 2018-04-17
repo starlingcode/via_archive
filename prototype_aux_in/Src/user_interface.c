@@ -884,6 +884,11 @@ void ui_presetMenu(int sig){
 		}
 		break;
 
+		// if trig button is released, exit menu
+		case EXPAND_SW_OFF_SIG:
+			uiTransition(&ui_default);
+			break;
+
 		case EXIT_SIG:
 			break;
 	}

@@ -231,16 +231,16 @@ int main(void) {
 	//switchScale(0);
 	// initialize our sample and holds to track
 	// we must do this after the resampling interrupts have been enabled
-	SH_A_TRACK;
-	SH_B_TRACK;
+//	SH_A_TRACK;
+//	SH_B_TRACK;
 
 	// read last state data in from virtual EEPROM
-	HAL_FLASH_Unlock();
+//	HAL_FLASH_Unlock();
 
-	eepromStatus = EE_Init();
-	if( eepromStatus != EE_OK) {LEDC_ON}
+//	eepromStatus = EE_Init();
+//	if( eepromStatus != EE_OK) {LEDC_ON}
 
-	restoreState();
+//	restoreState();
 
 	//initialise_monitor_handles();
 	//printf("testing123\n");
@@ -258,6 +258,7 @@ int main(void) {
 			if (!(TRIGGER_BUTTON)) {
 				debounce++;
 				if (debounce == 10) {
+					uiDispatch(EXPAND_SW_ON_SIG);
 					SET_TRIGGER_BUTTON;
 					tapTempo();
 					debounce = 0;
@@ -267,6 +268,7 @@ int main(void) {
 		else if (TRIGGER_BUTTON){
 			debounce++;
 			if (debounce == 10) {
+				uiDispatch(EXPAND_SW_OFF_SIG);
 				CLEAR_TRIGGER_BUTTON;
 				tapTempo();
 				debounce = 0;
@@ -277,20 +279,11 @@ int main(void) {
 
 		// if touch sensor acquisitions are complete
 		if (tsl_status != TSL_USER_STATUS_BUSY) {
-
-			// if no sensors were touched the last time we ran the state machine
-			if (detectOn == 0) {
-				// check if any are in detect state
-				readDetect();
-			} else {
-				// check to see if we have released the sensor
-				readRelease(modeflag);
-			}
+			uiDispatch(SENSOR_EVENT_SIG);
+		} else {
+			uiDispatch(TIMEOUT_SIG);
 		}
-		if (displayNewMode == 1) {
-			// turn runtime display back on if currently displaying a mode change
-			restoreDisplay();
-			CLEAR_AUX_MENU;
+	}
 		}
 		/* USER CODE END WHILE */
 

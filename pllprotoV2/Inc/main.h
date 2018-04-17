@@ -44,6 +44,8 @@
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
+#include "user_interface.h"
+
 
 // uncommment to define a version compatible with rev2 (black PCB) boards
 //#define _BUILD_REV_2
@@ -66,22 +68,22 @@ enum autoDutyTypes {autoDutyOn, autoDutyOff};
 
 volatile int position;
 
-int flagHolder;
-int familyIndicator;
-int holdState;
-int holdLogicOut;
-int eepromStatus;
+// int flagHolder;
+// int familyIndicator;
+// int holdState;
+// int holdLogicOut;
+// int eepromStatus;
 
 int (*attackTime) (void);
 int (*releaseTime) (void);
 
 void inputCaptureSetup(void);
-void readDetect(void) __attribute__((section("ccmram")));
-void readRelease(uint32_t) __attribute__((section("ccmram")));
-void restoreDisplay(void) __attribute__((section("ccmram")));
+// void readDetect(void) __attribute__((section("ccmram")));
+// void readRelease(uint32_t) __attribute__((section("ccmram")));
+// void restoreDisplay(void) __attribute__((section("ccmram")));
 void switchFamily(void);
 void fillFamilyArray(void);
-void restoreState(void);
+// void restoreState(void);
 void initializeScales(void);
 
 int calcTime1Env(void);

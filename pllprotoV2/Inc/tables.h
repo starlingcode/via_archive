@@ -10,6 +10,7 @@ typedef struct {
 	uint32_t tableLength;
 	uint32_t familySize;
 	uint32_t bandlimitOff;
+	struct rgb color;
 } Family;
 
 Family familyArray[16];
