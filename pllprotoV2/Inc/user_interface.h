@@ -27,6 +27,9 @@ struct rgb
 struct rgb red = {4095, 0, 0};
 struct rgb green = {0, 4095, 0};
 struct rgb blue = {0, 0, 4095};
+struct rgb orange = {4095, 4095, 0};
+struct rgb magenta = {4095, 0, 4095};
+struct rgb cyan = {0, 4095, 4095};
 
 #define DOWNSENSOR MyTKeys[0].p_Data->StateId
 #define XSENSOR MyTKeys[1].p_Data->StateId
@@ -38,37 +41,40 @@ struct rgb blue = {0, 0, 4095};
 #define PRESSED TSL_STATEID_DETECT
 #define RELEASED TSL_STATEID_RELEASE
 
-/*
-eepromStatus = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
-holdState = VarDataTab[0];
-eepromStatus = EE_ReadVariable(VirtAddVarTab[1], &VarDataTab[1]);
-holdLogicOut = VarDataTab[1];
-controlScheme = holdState & 0b0000000000000111;
-scaleType = (holdState & 0b0000000011000000) >> 6;
-syncMode = (holdState & 0b0000000000111000) >> 3;
-sampleHoldMode = (holdState & 0b0000011100000000) >> 8;
-familyIndicator = (holdState & 0b0111100000000000) >> 11;
-logicOutA = holdLogicOut & 0b0000000000000111;
-logicOutB = (holdLogicOut & 0b0000000000111000) >> 3;
-*/
 
 // how modes are arranged by size and location in modeStateBuffer (formatted for EEPROM storage).
-#define XMASK 	    0b0000000000000111
 
-#define SYNCMASK 	0b0000000000111000
-#define SYNCSHIFT 	3
+// up to 8 control types
+#define XMASK 	  	  	0b0000000000000111
 
-#define SCALEMASK 	0b0000000011000000
-#define SCALESHIFT	6
+// up to 8 sync types
+#define SYNCMASK 		0b0000000000111000
+#define SYNCSHIFT 		3
 
-#define SHMASK 		0x0b0000011100000000
-#define SHSHIFT 	8
+// up to 16 scales per scaleType
+#define SCALEMASK 		0b0000001111000000
+#define SCALESHIFT		6
 
-#define FAMILYMASK	0b0111100000000000
-#define FAMILYSHIFT	11
+// up to 4 scaleTypes
+#define SCALETYPEMASK	0b0000110000000000
+#define SCALETYPESHIFT	10
 
-#define LOGICAMASK	0b00000000000001110000000000000000
-#define LOGICASHIFT	16
+// up to 8 sample & hold modes
+#define SHMASK 			0x0b000000000000000111000000000000
+#define SHSHIFT 		12
 
-#define LOGICBMASK	0b00000000001110000000000000000000
-#define LOGICBSHIFT	19
+// up to 32 families
+#define FAMILYMASK		0x0b000000000011111000000000000000
+#define FAMILYSHIFT		15
+
+// up to 8 logic A types
+#define LOGICAMASK		0x0b000000011100000000000000000000
+#define LOGICASHIFT		20
+
+// up to 8 logic B types
+#define LOGICBMASK		0x0b000011100000000000000000000000
+#define LOGICBSHIFT		23
+
+// 2 auto duty types
+#define AUTODUTYMASK	0x0b000100000000000000000000000000
+#define AUTODUTYSHIFT	26
