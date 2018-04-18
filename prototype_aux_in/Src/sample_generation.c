@@ -130,7 +130,7 @@ void dacISR(void) {
 					// this overflow value gives us a known range for our values from the lookup table
 					if (attackCount > 3840) {
 						// write to the flag word that we are done with our attack slope
-						CLEAR_DRUM_ATTACK_ON;
+						CLEAR_DRUM_ATTACK;
 						// since we use this to look up from the table, clamp it at our max value
 						attackCount = 3840;
 						// enable the timer that will generate our release slope

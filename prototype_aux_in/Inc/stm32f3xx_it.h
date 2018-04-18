@@ -61,6 +61,7 @@ void TIM3_IRQHandler(void) __attribute__((section("ccmram")));
 void TIM8_UP_IRQHandler(void) __attribute__((section("ccmram")));
 void TIM6_DAC_IRQHandler(void) __attribute__((section("ccmram")));
 void TIM7_IRQHandler(void) __attribute__((section("ccmram")));
+void TIM4_IRQHandler(void) __attribute__((section("ccmram")));
 void DMA2_Channel1_IRQHandler(void);
 void DMA2_Channel5_IRQHandler(void);
 

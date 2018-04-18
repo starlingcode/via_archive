@@ -24,6 +24,19 @@ enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA}
 enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB}
 enum drumModeTypes drumMode; // {APM, AM, A, M, PM, P}
 
+/* signals used by the ui FSM */
+enum
+{	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
+	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
+	EXIT_SIG,	  // Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
+	INIT_SIG,     // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
+	TIMER_TIMEOUT,// timer timeout
+	SENSOR_EVENT_SIG,  // Sensor state machine not busy, can be queried for events
+	EXPAND_SW_ON_SIG,  // expander button depressed
+	EXPAND_SW_OFF_SIG, // expander button released
+	TSL_ERROR_SIG
+};
+
 extern uint16_t VirtAddVarTab[NB_OF_VAR];
 extern uint16_t VarDataTab[NB_OF_VAR];
 
@@ -32,12 +45,13 @@ uint32_t modeStateBuffer;
 
 void switchFamily(void);
 
-// variable that holds an address to current state function
-void (*State)(int);
-
 //used by state machine to signal preset to be stored or recalled.
 int presetNumber;
 
+// shortcuts for commonly used colors!
+struct rgb red = {4095, 0, 0};
+struct rgb green = {0, 4095, 0};
+struct rgb blue = {0, 0, 4095};
 
 // initial setup of UI
 void uiInitialize(void);
@@ -54,11 +68,12 @@ void uiSetPhaseFunctions(void);
 void uiSetDrumMode(void);
 void uiClearDrumMode(void);
 
-static inline void uiTimerReset() { __HAL_TIM_SET_COUNTER(&htim4, 0); }
+static inline void uiTimerReset() { __HAL_TIM_SET_COUNTER(&htim4, 1); }
 static inline void uiTimerDisable() { __HAL_TIM_DISABLE(&htim4); }
 static inline void uiTimerEnable() { __HAL_TIM_ENABLE(&htim4); }
 static inline int uiTimerRead() { return __HAL_TIM_GET_COUNTER(&htim4); }  // return needed?
 static inline void uiTimerSet(int val) { __HAL_TIM_SET_COUNTER(&htim4, val); }
+static inline void uiTimerSetOverflow(int val) { TIM4->ARR = val; }
 
 void uiStoreToEEPROM(int);
 void uiLoadFromEEPROM(int);
@@ -80,6 +95,8 @@ void ui_error(int sig);
 void ui_presetMenu(int sig);
 void ui_newPreset(int sig);
 
+void uiDispatch(int sig) {(*State)(sig);}
+
 // transition to new state
 void uiTransition(void (*func)(int)) {
 	uiDispatch(EXIT_SIG);
@@ -94,9 +111,10 @@ void ui_default(int sig)
 	switch (sig){
 
 	case ENTRY_SIG:
-		CLEAR_RUNTIME_DISPLAY;
+		SET_RUNTIME_DISPLAY;
 		uiClearLEDs();
 		uiClearRGB();
+		uiTimerReset();
 		uiTimerDisable();
 		break;
 
@@ -123,11 +141,12 @@ void ui_default(int sig)
 		break;
 
 	case EXIT_SIG:
+		CLEAR_RUNTIME_DISPLAY;
 		uiClearLEDs();
 		uiClearRGB();
-		SET_RUNTIME_DISPLAY;
-		uiTimerReset();
-		uiTimerEnable();
+		break;
+
+	default:
 		break;
 	}
 }
@@ -146,13 +165,14 @@ void ui_newMode(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
-		uiTimerReset();  // start count over
 		uiStoreToEEPROM(0);
+		uiTimerReset();
+		uiTimerSetOverflow(10000);
+		uiTimerEnable();
 		break;
 
 	// once uiTimerRead() times out, clear display and return to default state
-	case TIMEOUT_SIG:
-		if (uiTimerRead() > 10000)
+	case TIMER_TIMEOUT:
 		uiTransition(&ui_default);
 		break;
 
@@ -183,8 +203,6 @@ void ui_newMode(int sig)
 		CLEAR_RUNTIME_DISPLAY;
 		uiClearLEDs();
 		uiClearRGB();
-		uiTimerReset();
-		uiTimerEnable();
 		break;
 	}
 
@@ -196,15 +214,18 @@ void ui_trigMenu(int sig)
 	{
 	case ENTRY_SIG:
 
-		if (TRIGGER_BUTTON){
-			presetNumber = 2;
-			uiTransition(&ui_presetMenu);
-			break;
-		}
-		if (DRUM_MODE){
+//		if (TRIGGER_BUTTON){
+//			presetNumber = 2;
+//			uiTransition(&ui_presetMenu);
+//			break;
+//		}
+		if (loop == noloop && speed == audio){
 			uiTransition(&ui_drumTrigMenu);
 		} else {
 			uiSetLEDs(trigMode);
+			uiTimerReset();
+			uiTimerSetOverflow(65535);
+			uiTimerEnable();
 		}
 		break;
 
@@ -239,7 +260,12 @@ void ui_trigMenu(int sig)
 		// initialize some essential retrigger variables
 		incSign = 1;
 		CLEAR_GATE;
+		break;
+
+	default:
+		break;
 	}
+
 }
 
 
@@ -249,6 +275,9 @@ void ui_drumTrigMenu(int sig) {
 
 	case ENTRY_SIG:
 		uiSetLEDs(drumMode);
+		uiTimerReset();
+		uiTimerSetOverflow(65535);
+		uiTimerEnable();
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -285,7 +314,10 @@ void ui_logicAMenu(int sig)
 	{
 	case ENTRY_SIG:
 		uiTimerReset();  // start count over for submenus
+		uiTimerSetOverflow(65535);
+		uiTimerEnable();
 		uiSetLEDs(logicOutA);
+
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -317,6 +349,8 @@ void ui_logicBMenu(int sig)
 	{
 	case ENTRY_SIG:
 		uiTimerReset();  // start count over for submenus
+		uiTimerSetOverflow(65535);
+		uiTimerEnable();
 		uiSetLEDs(logicOutB);
 		break;
 
@@ -350,6 +384,7 @@ void ui_newLogicMode(int sig)
 	{
 	case ENTRY_SIG:
 		uiTimerReset();  // start count over
+		uiTimerDisable();
 		uiStoreToEEPROM(0);  // store in preset 0 (current state)
 		break;
 
@@ -376,11 +411,14 @@ void ui_SampleHoldMenu(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
-		if (TRIGGER_BUTTON){
-			presetNumber = 1
-			uiTransition(&ui_presetMenu);
-			break;
-		}
+//		if (TRIGGER_BUTTON){
+//			presetNumber = 1;
+//			uiTransition(&ui_presetMenu);
+//			break;
+//		}
+		uiTimerReset();
+		uiTimerSetOverflow(65535);
+		uiTimerEnable();
 		uiSetLEDs(sampleHoldMode);
 		break;
 
@@ -391,7 +429,7 @@ void ui_SampleHoldMenu(int sig)
 				modeStateBuffer = (modeStateBuffer & !(SHMASK)) | (sampleHoldMode << SHSHIFT);
 				SH_A_TRACK;  // ensure that there's no carryover holding by forcing tracking
 				SH_B_TRACK;
-\				uiSetLEDs(sampleHoldMode);
+				uiSetLEDs(sampleHoldMode);
 				uiTransition(&ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -412,11 +450,14 @@ void ui_familyUpMenu(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
-		if (TRIGGER_BUTTON){
-			presetNumber = 3;
-			uiTransition(&ui_presetMenu);
-			break;
-		}
+//		if (TRIGGER_BUTTON){
+//			presetNumber = 3;
+//			uiTransition(&ui_presetMenu);
+//			break;
+//		}
+		uiTimerReset();
+		uiTimerSetOverflow(65535);
+		uiTimerEnable();
 		uiSetLEDs(familyIndicator);
 		uiSetRGB(currentFamily.color);
 		break;
@@ -443,11 +484,14 @@ void ui_familyDownMenu(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
-		if (TRIGGER_BUTTON){
-			presetNumber = 4;
-			uiTransition(&ui_presetMenu);
-			break;
-		}
+//		if (TRIGGER_BUTTON){
+//			presetNumber = 4;
+//			uiTransition(&ui_presetMenu);
+//			break;
+//		}
+		uiTimerReset();
+		uiTimerSetOverflow(65535);
+		uiTimerEnable();
 		uiSetLEDs(familyIndicator);
 		uiSetRGB(currentFamily.color);
 		break;
@@ -477,11 +521,11 @@ void ui_freqMenu(int sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
-		if (TRIGGER_BUTTON){
-			presetNumber = 5;
-			uiTransition(&ui_presetMenu);
-			break;
-		}
+//		if (TRIGGER_BUTTON){
+//			presetNumber = 5;
+//			uiTransition(&ui_presetMenu);
+//			break;
+//		}
 		uiSetLEDs(speed);
 		switch (speed){
 		case audio:
@@ -494,6 +538,9 @@ void ui_freqMenu(int sig) {
 			uiSetRGB(blue);
 			break;
 		}
+		uiTimerReset();
+		uiTimerSetOverflow(65535);
+		uiTimerEnable();
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -535,11 +582,14 @@ void ui_loopMenu(int sig)
 	switch (sig) {
 
 	case ENTRY_SIG:
-		if (TRIGGER_BUTTON){
-			presetNumber = 6;
-			uiTransition(&ui_presetMenu);
-			break;
-		}
+//		if (TRIGGER_BUTTON){
+//			presetNumber = 6;
+//			uiTransition(&ui_presetMenu);
+//			break;
+//		}
+		uiTimerReset();
+		uiTimerSetOverflow(65535);
+		uiTimerEnable();
 		uiSetLEDs(sampleHoldMode);
 		break;
 
@@ -586,15 +636,12 @@ void uiClearDrumMode(void){
 	CLEAR_AMP_MOD;
 	CLEAR_PITCH_MOD;
 	CLEAR_MORPH_MOD;
+	CLEAR_DRUM_MODE;
 }
 
 // drumMenu just sets drum mode and passes through to newMode
 void uiSetDrumMode(void)
 {
-	SET_DRUM_MODE;
-	SET_LAST_CYCLE;
-	getPhase = getPhaseDrum;
-	__HAL_TIM_ENABLE(&htim3);
 	switch (drumMode) {
 	case APM:
 		SET_AMP_MOD;
@@ -627,13 +674,17 @@ void uiSetDrumMode(void)
 		CLEAR_MORPH_MOD;
 		break;
 	}
+	SET_DRUM_MODE;
+	SET_LAST_CYCLE;
+	getPhase = getPhaseDrum;
+	__HAL_TIM_ENABLE(&htim3);
 }
 
 void uiSetPhaseFunctions(void) {
 	switch (speed) {
 	// set the appropriate time calculation functions
 	case env:
-		CLEAR_DRUM_MODE;
+		uiClearDrumMode();
 		TIM6->ARR = 750;
 		attackTime = calcTime1Env;
 		releaseTime = calcTime2Env;
@@ -660,8 +711,8 @@ void uiSetPhaseFunctions(void) {
 			TIM6->ARR = 750;
 			uiSetDrumMode();
 		} else {
+			uiClearDrumMode();
 			getPhase = getPhaseOsc;
-			CLEAR_DRUM_MODE;
 			TIM6->ARR = 750;
 		}
 		break;
@@ -818,8 +869,8 @@ void uiLoadFromEEPROM(int position) {
 	ui_loopMenu(INIT_SIG);
 	ui_freqMenu(INIT_SIG);
 	ui_SampleHoldMenu(INIT_SIG);
-	ui_switchFamily();
-	if (loop = looping && speed == audio) {
+	switchFamily();
+	if (loop == looping && speed == audio) {
 		uiSetDrumMode();
 	} else {
 		uiClearDrumMode();
@@ -840,15 +891,16 @@ void uiStoreToEEPROM(int position){
 void ui_presetMenu(int sig){
 	switch (sig){
 	case ENTRY_SIG:
-		uiTimerSet(30000);
 		uiTimerReset();
+		uiTimerSetOverflow(20000);
+		uiTimerEnable();
 		break;
 
 	case SENSOR_EVENT_SIG:
 		switch(presetNumber){
 		case 1:
 			if (SHSENSOR == RELEASED){
-				loadFromEEPROM(presetNumber);
+				uiLoadFromEEPROM(presetNumber);
 			}
 			break;
 		case 2:
@@ -876,11 +928,6 @@ void ui_presetMenu(int sig){
 				uiLoadFromEEPROM(presetNumber);
 			}
 			break;
-
-		case TIMER_TIMEOUT:
-			uiStoreToEEPROM(presetNumber);
-			uiTransition(&ui_newPreset);
-			break;
 		}
 		break;
 
@@ -899,13 +946,16 @@ void ui_newPreset(int sig){
 	static int flashCounter = 0;
 	switch (sig){
 	case ENTRY_SIG:
-		uiTimerSet(500);
 		uiTimerReset();
+		uiTimerSetOverflow(500);
+		uiTimerEnable();
 		break;
 
 	case TIMER_TIMEOUT:
 		if (flashCounter < 16){
 			uiTimerReset();
+			uiTimerSetOverflow(500);
+			uiTimerEnable();
 			uiSetLEDs(flashCounter % 4);
 		} else {
 			flashCounter = 0;

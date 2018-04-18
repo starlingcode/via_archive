@@ -584,10 +584,17 @@ void getAverages(int speedFlag) {
 	t2CVSum = (t2CVSum + time2CV- readn256(&t2CVBuffer, 255));
 	t1KnobSumAudio = (t1KnobSumAudio + time1Knob- readn256(&t1KnobBuffer, 255));
 	t2KnobSumAudio = (t2KnobSumAudio + time2Knob- readn256(&t2KnobBuffer, 255));
-	morphKnobSumAudio = (morphKnobSumAudio + morphKnob- readn256(&morphKnobBuffer, 255));
-	morphCVSumAudio = (morphCVSumAudio + morphCV- readn256(&morphCVBuffer, 255));
+	morphKnobSumAudio = (morphKnobSumAudio + morphKnob- readn512(&morphKnobBuffer, 255));
+	morphCVSumAudio = (morphCVSumAudio + morphCV- readn512(&morphCVBuffer, 255));
 	t1CVSumAudio = (t1CVSumAudio + time1CV- readn256(&t1CVBuffer, 255));
 	t2CVSumAudio = (t2CVSumAudio + time2CV- readn256(&t2CVBuffer, 15));
+
+	write512(&morphCVBuffer, morphCV);
+	write256(&t1CVBuffer, time1CV);
+	write256(&t2CVBuffer, time2CV);
+	write256(&t1KnobBuffer, time1Knob);
+	write256(&t2KnobBuffer, time2Knob);
+	write512(&morphKnobBuffer, morphKnob);
 
 	switch (speedFlag) {
 	case 0:
@@ -613,15 +620,8 @@ void getAverages(int speedFlag) {
 		t1CVAverage = t1CVSum >> 8;
 		t2CVAverage = t2CVSum >> 8;
 		morphCVAverage = morphCVSum >> 4;
-	break;
+		break;
 	default: break;
 	}
-
-	write512(&morphCVBuffer, morphCV);
-	write256(&t1CVBuffer, time1CV);
-	write256(&t2CVBuffer, time2CV);
-	write256(&t1KnobBuffer, time1Knob);
-	write256(&t2KnobBuffer, time2Knob);
-	write512(&morphKnobBuffer, morphKnob);
 }
 
