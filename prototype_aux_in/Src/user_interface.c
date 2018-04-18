@@ -27,16 +27,7 @@ enum drumModeTypes drumMode; // {APM, AM, A, M, PM, P}
 extern uint16_t VirtAddVarTab[NB_OF_VAR];
 extern uint16_t VarDataTab[NB_OF_VAR];
 
-// these variables are passed between globally to public functions
-extern uint32_t modeFlag;
-
-void changeMode(uint32_t);
-void showMode(uint32_t);
-void clearLEDs(void);
 void switchFamily(void);
-void loadSampleArray(Family);
-
-uint32_t modeStateBuffer;  // replaces global modeStateBuffer
 
 int sig;
 
@@ -63,12 +54,8 @@ void uifreqMenu(int sig);
 void uiloopMenu(int sig);
 void uidrumTrigMenu(int sig);
 void uinewLogicMode(int sig);
-
-void uiSetFreq(void);
 void uiSetPhaseFunctions(void);
-
 void uiSetDrumMode(void);
-void uiClearDrumMode(void);
 
 
 void uiClearLEDs();
@@ -82,7 +69,6 @@ static inline void uiTimerReset() { __HAL_TIM_SET_COUNTER(&htim4, 0); }
 static inline void uiTimerDisable() { __HAL_TIM_DISABLE(&htim4); }
 static inline void uiTimerEnable() { __HAL_TIM_ENABLE(&htim4); }
 static inline int uiTimerRead() { return __HAL_TIM_GET_COUNTER(&htim4); }  // return needed?
-static inline void uiTimerSet(int val) { __HAL_TIM_SET_COUNTER(&htim4, val); }
 
 void uiDispatch(int sig) {(*State)(sig);}  // dispatch signal to state
 
