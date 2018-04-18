@@ -93,6 +93,7 @@ void ui_drumTrigMenu(int sig);
 void ui_newLogicMode(int sig);
 void ui_error(int sig);
 void ui_presetMenu(int sig);
+void ui_presetPressedMenu(int sig);
 void ui_newPreset(int sig);
 
 void uiDispatch(int sig) {(*State)(sig);}
@@ -140,11 +141,16 @@ void ui_default(int sig)
 		}
 		break;
 
+	case EXPAND_SW_ON_SIG:
+		uiTransition(&ui_presetMenu);
+		break;
+
 	case EXIT_SIG:
 		CLEAR_RUNTIME_DISPLAY;
 		uiClearLEDs();
 		uiClearRGB();
 		break;
+
 
 	default:
 		break;
@@ -888,11 +894,11 @@ void uiStoreToEEPROM(int position){
 }
 
 // watches for released sensor buttons while TRIG_BUTTON is down.  Loads or stores preset accordingly.
-void ui_presetMenu(int sig){
+void ui_presetPressedMenu(int sig){
 	switch (sig){
 	case ENTRY_SIG:
 		uiTimerReset();
-		uiTimerSetOverflow(20000);
+		uiTimerSetOverflow(10000);
 		uiTimerEnable();
 		break;
 
@@ -931,13 +937,19 @@ void ui_presetMenu(int sig){
 		}
 		break;
 
-		// if trig button is released, exit menu
-		case EXPAND_SW_OFF_SIG:
-			uiTransition(&ui_default);
-			break;
+	case TIMER_TIMEOUT:
+		uiStoreToEEPROM(presetNumber);
+		uiTransition(&ui_newPreset);
+		break;
 
-		case EXIT_SIG:
-			break;
+
+	// if trig button is released, exit menu
+	case EXPAND_SW_OFF_SIG:
+		uiTransition(&ui_default);
+		break;
+
+	case EXIT_SIG:
+		break;
 	}
 }
 
@@ -953,9 +965,8 @@ void ui_newPreset(int sig){
 
 	case TIMER_TIMEOUT:
 		if (flashCounter < 16){
-			uiTimerReset();
-			uiTimerSetOverflow(500);
 			uiTimerEnable();
+			flashCounter++;
 			uiSetLEDs(flashCounter % 4);
 		} else {
 			flashCounter = 0;
@@ -963,3 +974,56 @@ void ui_newPreset(int sig){
 		}
 	}
 }
+
+void ui_presetMenu(int sig)
+{
+	switch (sig){
+
+	case ENTRY_SIG:
+		SET_RUNTIME_DISPLAY;
+		uiClearLEDs();
+		uiClearRGB();
+		uiTimerReset();
+		uiTimerDisable();
+		break;
+
+	case SENSOR_EVENT_SIG:
+
+		if (FREQSENSOR == PRESSED){
+			uiTransition(&ui_presetPressedMenu);
+			presetNumber = 5;
+		} else if (SHSENSOR == PRESSED){
+			uiTransition(&ui_presetPressedMenu);
+			presetNumber = 1;
+		} else if (TRIGSENSOR == PRESSED){
+			uiTransition(&ui_presetPressedMenu);
+			presetNumber = 2;
+		} else if (LOOPSENSOR == PRESSED){
+			uiTransition(&ui_presetPressedMenu);
+			presetNumber = 6;
+		} else if (UPSENSOR == PRESSED){
+			uiTransition(&ui_presetPressedMenu);
+			presetNumber = 3;
+		} else if (DOWNSENSOR == PRESSED){
+			uiTransition(&ui_presetPressedMenu);
+			presetNumber = 4;
+		}
+		break;
+
+	case EXPAND_SW_OFF_SIG:
+		uiTransition(&ui_default);
+		break;
+
+	case EXIT_SIG:
+		CLEAR_RUNTIME_DISPLAY;
+		uiClearLEDs();
+		uiClearRGB();
+		break;
+
+
+	default:
+		break;
+	}
+}
+
+
