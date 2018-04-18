@@ -30,7 +30,7 @@ enum
 	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
 	EXIT_SIG,	  // Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
 	INIT_SIG,     // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
-	TIMER_TIMEOUT,// timer timeout
+	TIMEOUT_SIG,// timer timeout
 	SENSOR_EVENT_SIG,  // Sensor state machine not busy, can be queried for events
 	EXPAND_SW_ON_SIG,  // expander button depressed
 	EXPAND_SW_OFF_SIG, // expander button released
@@ -182,7 +182,7 @@ void ui_newMode(int sig)
 		break;
 
 	// once uiTimerRead() times out, clear display and return to default state
-	case TIMER_TIMEOUT:
+	case TIMEOUT_SIG:
 		uiTransition(&ui_default);
 		break;
 
@@ -625,6 +625,10 @@ void ui_loopMenu(int sig)
 			} else {
 				uiTransition(&ui_default);
 			}
+
+			if ((TRIGSENSOR == PRESSED) && (SHSENSOR == PRESSED) && (FREQSENSOR == PRESSED)){
+				uiTransition(&ui_factoryReset);
+			}
 		}
 		break;
 
@@ -963,7 +967,7 @@ void ui_presetPressedMenu(int sig){
 		}
 		break;
 
-	case TIMER_TIMEOUT:
+	case TIMEOUT_SIG:
 		uiStoreToEEPROM(presetNumber);
 		uiTransition(&ui_newPreset);
 		break;
@@ -989,7 +993,7 @@ void ui_newPreset(int sig){
 		uiTimerEnable();
 		break;
 
-	case TIMER_TIMEOUT:
+	case TIMEOUT_SIG:
 		if (flashCounter < 16){
 			uiTimerEnable();
 			flashCounter++;
@@ -1048,5 +1052,44 @@ void ui_presetMenu(int sig)
 
 	default:
 		break;
+	}
+}
+
+
+// calibration and default preset initialization
+void ui_factoryReset(int sig){
+	static uint16_t tempData;
+	switch (sig){
+	case ENTRY_SIG:
+		uiTimerReset();
+		uiTimerSetOverflow(1000);
+		uiTimerEnable();
+		// disable any DAC writes here?
+		// maximize length of averaging?
+		modeStateBuffer = DEFAULTPRESET1;
+		uiStoreToPreset(1);
+		modeStateBuffer = DEFAULTPRESET2;
+		uiStoreToPreset(2);
+		modeStateBuffer = DEFAULTPRESET3;
+		uiStoreToPreset(3);
+		modeStateBuffer = DEFAULTPRESET4;
+		uiStoreToPreset(4);
+		modeStateBuffer = DEFAULTPRESET5;
+		uiStoreToPreset(5);
+		modeStateBuffer = DEFAULTPRESET6;
+		uiStoreToPreset(6);
+		uiLoadFromPreset(1);
+		break;
+
+	case TIMEOUT_SIG:
+	    tempData = (morphCVAverage - 2048) << 8 | ((t2CVAverage - 2048) & 0xFFFFFF00)
+		eepromStatus = EE_WriteVariable(VirtAddVarTab[7], tempData);
+		eepromStatus |= EE_WriteVariable(VirtAddVarTab[15], (uint16_t)t1CVAverage);  // make sure i'm shifting in the right direction here!!
+		if (eepromStatus != EE_OK){
+			uiSetLEDs(4);
+			uiTransition(&ui_error);
+		} else {
+			uiTransition(&ui_default);
+		}
 	}
 }

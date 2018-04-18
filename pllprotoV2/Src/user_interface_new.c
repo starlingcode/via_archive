@@ -31,6 +31,9 @@ uint32_t modeStateBuffer;
 // this holds the read 16-bit EEPROM data while it gets shifted and reconstituted into modeStateBuffer.
 uint16_t EEPROMTemp;
 
+extern uint32_t morphCal;
+extern uint32_t t1Cal;
+extern uint32_t t2Cal;
 
 // variable that holds an address to current state function
 void (*State)(int);
@@ -700,9 +703,6 @@ void ui_xMenu(int sig)
 
 	case SENSOR_EVENT_SIG:
 		// x sensor + scale, sync, & S+H initiate a factory reset (calibration and default presets)
-		if ((SCALESENSOR == PRESSED) && (SYNCSENSOR == PRESSED) && (SHSENSOR == PRESSED))
-			uiTransition(&ui_factoryReset);
-		}
 		if (XSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
 				controlScheme = (controlScheme + 1) % 4;
@@ -711,9 +711,13 @@ void ui_xMenu(int sig)
 			} else {
 				uiTransition(&ui_default);
 			}
+
+			if ((SCALESENSOR == PRESSED) && (SYNCSENSOR == PRESSED) && (SHSENSOR == PRESSED)){
+				uiTransition(&ui_factoryReset);
+			}
 		}
 		break;
-}
+	}
 
 void ui_autoDutyMenu(int sig){
 	switch (sig){
@@ -931,7 +935,7 @@ void ui_presetMenu(int sig){
 			}
 			break;
 
-		case TIMER_TIMEOUT:
+		case TIMEOUT_SIG:
 			uiStoreToEEPROM(presetNumber);
 			uiTransition(&ui_newPreset);
 			break;
@@ -957,7 +961,7 @@ void ui_newPreset(int sig){
 		uiTimerReset();
 		break;
 
-	case TIMER_TIMEOUT:
+	case TIMEOUT_SIG:
 		if (flashCounter < 16){
 			uiTimerReset();
 			uiSetLEDs(flashCounter % 4);
@@ -970,5 +974,38 @@ void ui_newPreset(int sig){
 
 // calibration and default preset initialization
 void ui_factoryReset(int sig){
+	static int tempData;
+	switch (sig){
+	case ENTRY_SIG:
+		uiTimerReset();
+		uiTimerSetOverflow(1000);
+		uiTimerEnable();
+		// disable any DAC writes here?
+		// maximize length of averaging?
+		modeStateBuffer = DEFAULTPRESET1;
+		uiStoreToPreset(1);
+		modeStateBuffer = DEFAULTPRESET2;
+		uiStoreToPreset(2);
+		modeStateBuffer = DEFAULTPRESET3;
+		uiStoreToPreset(3);
+		modeStateBuffer = DEFAULTPRESET4;
+		uiStoreToPreset(4);
+		modeStateBuffer = DEFAULTPRESET5;
+		uiStoreToPreset(5);
+		modeStateBuffer = DEFAULTPRESET6;
+		uiStoreToPreset(6);
+		uiLoadFromPreset(1);
+		break;
 
+	case TIMEOUT_SIG:
+	    uint16_t tempData = (morphCVAverage - 2048) << 8 | ((t2CVAverage - 2048) & 0xFFFFFF00)
+		eepromStatus = EE_WriteVariable(VirtAddVarTab[7], tempData);
+		eepromStatus |= EE_WriteVariable(VirtAddVarTab[15], (uint16_t)t1CVAverage);  // make sure i'm shifting in the right direction here!!
+		if (eepromStatus != EE_OK){
+			uiSetLEDs(4);
+			uiTransition(&ui_error);
+		} else {
+			uiTransition(&ui_default);
+		}
+	}
 }
