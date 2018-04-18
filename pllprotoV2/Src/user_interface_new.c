@@ -29,7 +29,7 @@ static uint16_t VirtAddVarTab[NB_OF_VAR] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0
 // holds the mode state as a EEPROM-formatted value.
 uint32_t modeStateBuffer;
 // this holds the read 16-bit EEPROM data while it gets shifted and reconstituted into modeStateBuffer.
-extern uint16_t EEPROMTemp;
+uint16_t EEPROMTemp;
 
 
 // variable that holds an address to current state function
@@ -838,11 +838,14 @@ void uiInitialize()
 
 
 void uiLoadFromEEPROM(int position) {
-
-	eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &VarDataTab[position * 2]);
-	if (eepromStatus =
-	eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &VarDataTab[position * 2]);
-	modeStateBuffer = VarDataTab[position * 2] | (VarDataTab[(position * 2) + 1] >> 16);
+	eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &EEPROMTemp);
+	modeStateBuffer = EEPROMTemp;  // load bottom 16 bits
+	eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1], &EEPROMTemp);
+	modeStateBuffer |= EEPROMTemp << 16;  // load 16 upper bits
+	if (eepromStatus != HAL_OK){
+		uiSetLEDs(2);
+		uiTransition(&ui_error);
+	}
 	controlScheme = modeStateBuffer & !(XMASK);
 	currentScale = (modeStateBuffer & !(SCALEMASK)) >> SCALESHIFT;
 	scaleType = (modeStateBuffer & !(SCALETYPEMASK)) >> SCALETYPESHIFT;
@@ -869,10 +872,17 @@ void uiLoadFromEEPROM(int position) {
 	}
 }
 
+
 // writes 2 16-bit values representing modeState to EEPROM per position,  1 runtime + 6 presets + calibration word
 void uiStoreToEEPROM(int position){
+	// store lower 16 bits
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2], (uint16_t)modeStateBuffer);
-	eepromStatus = EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)modeStateBuffer >> 16);
+	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)modeStateBuffer >> 16);  // make sure i'm shifting in the right direction here!!
+	modeStateBuffer |= EEPROMTemp << 16;  //write upper 16 bits
+	if (eepromStatus != HAL_OK){
+		uiSetLEDs(1);
+		uiTransition(&ui_error);
+	}
 }
 
 // shouldn't need to read them back out.

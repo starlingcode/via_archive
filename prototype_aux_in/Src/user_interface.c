@@ -43,7 +43,7 @@ static uint16_t VirtAddVarTab[NB_OF_VAR] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0
 uint32_t modeStateBuffer;
 
 // this holds the read 16-bit EEPROM data while it gets shifted and recomposed into modeStateBuffer.
-extern uint16_t EEPROMTemp;
+uint16_t EEPROMTemp;
 
 // used by state machine to signal preset to be stored or recalled.
 int presetNumber;
@@ -807,12 +807,6 @@ void uiClearLEDs(){
 // initialization routine for the UI state machine
 void uiInitialize()
 {
-
-		HAL_FLASH_Unlock();
-		eepromStatus = EE_Init();
-		if( eepromStatus != EE_OK) {LEDC_ON}
-		HAL_Delay(500);
-
 	HAL_FLASH_Unlock();
 	eepromStatus = EE_Init();
 
@@ -875,15 +869,18 @@ void uiInitialize()
 // there may be a clever way to do this without EEPROMTemp but i think the different typing may make that unnecessarily difficult.
 void uiLoadFromEEPROM(int position) {
 
-	CLEAR_DRUM_MODE;
 	eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &EEPROMTemp);
 	modeStateBuffer = EEPROMTemp;  // load bottom 16 bits
 	eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1], &EEPROMTemp);
 	modeStateBuffer |= EEPROMTemp << 16;  // load 16 upper bits
+
 	if (eepromStatus != HAL_OK){
 		uiSetLEDs(2);
 		uiTransition(&ui_error);
 	}
+
+
+	CLEAR_DRUM_MODE;  // needed?
 	loop = modeStateBuffer & LOOPMASK;
 	speed = (modeStateBuffer & SPEEDMASK) >> SPEEDSHIFT;
 	trigMode = (modeStateBuffer & TRIGMASK) >> TRIGSHIFT;
@@ -892,9 +889,7 @@ void uiLoadFromEEPROM(int position) {
 	logicOutA = (modeStateBuffer & LOGICAMASK) >> LOGICASHIFT;
 	logicOutB = (modeStateBuffer & LOGICBMASK) >> LOGICBSHIFT;
 	drumMode = (modeStateBuffer & DRUMMASK) >> DRUMSHIFT;
-
 	fillFamilyArray();
-
 
 	/* ... initialization of ui attributes */
 	// call each menu to initialize, to make UI process the stored modes
@@ -917,7 +912,7 @@ void uiStoreToEEPROM(int position){
 	// store lower 16 bits
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2], (uint16_t)modeStateBuffer);
 	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)modeStateBuffer >> 16);  // make sure i'm shifting in the right direction here!!
-	modeStateBuffer |= EEPROMTemp << 16;  //write upper 16 bits
+
 	if (eepromStatus != HAL_OK){
 		uiSetLEDs(1);
 		uiTransition(&ui_error);
