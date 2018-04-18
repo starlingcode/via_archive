@@ -37,15 +37,15 @@ enum
 	TSL_ERROR_SIG
 };
 
-extern uint16_t VirtAddVarTab[NB_OF_VAR];
-extern uint16_t VarDataTab[NB_OF_VAR];
+static uint16_t VirtAddVarTab[NB_OF_VAR] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16};
 
 // holds the mode state as a EEPROM-formatted value.
 uint32_t modeStateBuffer;
 
-void switchFamily(void);
+// this holds the read 16-bit EEPROM data while it gets shifted and recomposed into modeStateBuffer.
+extern uint16_t EEPROMTemp;
 
-//used by state machine to signal preset to be stored or recalled.
+// used by state machine to signal preset to be stored or recalled.
 int presetNumber;
 
 // shortcuts for commonly used colors!
@@ -68,11 +68,15 @@ void uiSetPhaseFunctions(void);
 void uiSetDrumMode(void);
 void uiClearDrumMode(void);
 
+
+// these could be rolled into smarter functions instead that do what we most often need?
+// e.g. always reset then enable, or always set overflow then reset then enable?
+
 static inline void uiTimerReset() { __HAL_TIM_SET_COUNTER(&htim4, 1); }
 static inline void uiTimerDisable() { __HAL_TIM_DISABLE(&htim4); }
 static inline void uiTimerEnable() { __HAL_TIM_ENABLE(&htim4); }
 static inline int uiTimerRead() { return __HAL_TIM_GET_COUNTER(&htim4); }  // return needed?
-static inline void uiTimerSet(int val) { __HAL_TIM_SET_COUNTER(&htim4, val); }
+static inline void uiTimerSet(int val) { __HAL_TIM_SET_COUNTER(&htim4, val); }  // this is unused, will we ever need it?
 static inline void uiTimerSetOverflow(int val) { TIM4->ARR = val; }
 
 void uiStoreToEEPROM(int);
@@ -803,9 +807,21 @@ void uiClearLEDs(){
 // initialization routine for the UI state machine
 void uiInitialize()
 {
+
+		HAL_FLASH_Unlock();
+		eepromStatus = EE_Init();
+		if( eepromStatus != EE_OK) {LEDC_ON}
+		HAL_Delay(500);
+
 	HAL_FLASH_Unlock();
 	eepromStatus = EE_Init();
-	//if(eepromStatus != EE_OK) {LEDC_ON;}  // error handling, switch to UI error handling?
+
+	// error handling
+	if(eepromStatus != EE_OK) {
+		uiSetLEDs(3);
+		uiTransition(&ui_error);
+	}
+
 	HAL_Delay(500);  // init time
 	uiLoadFromEEPROM(0);  // load the most recently stored state from memory
 	/*
@@ -844,17 +860,30 @@ void uiInitialize()
 	// logic A and B don't need additional initialization beyond setting mode
 	uiSetPhaseFunctions();
 */
+	SH_A_TRACK;
+	SH_B_TRACK;
+
+	incSign = 1;
+
+	// PULLED FROM MAIN LOOP AND RELOCATED IN THE INIT BUT I BELIEVE IT TO BE REDUNDANT!!!
 
 	State = &ui_default;
 	uiTransition( &ui_default);
 }
 
 
-
+// there may be a clever way to do this without EEPROMTemp but i think the different typing may make that unnecessarily difficult.
 void uiLoadFromEEPROM(int position) {
+
 	CLEAR_DRUM_MODE;
-	eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &VarDataTab[position * 2]);
-	modeStateBuffer = VarDataTab[position * 2] | (VarDataTab[(position * 2) + 1] >> 16);
+	eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &EEPROMTemp);
+	modeStateBuffer = EEPROMTemp;  // load bottom 16 bits
+	eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1], &EEPROMTemp);
+	modeStateBuffer |= EEPROMTemp << 16;  // load 16 upper bits
+	if (eepromStatus != HAL_OK){
+		uiSetLEDs(2);
+		uiTransition(&ui_error);
+	}
 	loop = modeStateBuffer & LOOPMASK;
 	speed = (modeStateBuffer & SPEEDMASK) >> SPEEDSHIFT;
 	trigMode = (modeStateBuffer & TRIGMASK) >> TRIGSHIFT;
@@ -885,12 +914,14 @@ void uiLoadFromEEPROM(int position) {
 
 // writes 2 16-bit values representing modeState to EEPROM per position,  1 runtime + 6 presets + calibration word
 void uiStoreToEEPROM(int position){
-
+	// store lower 16 bits
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2], (uint16_t)modeStateBuffer);
-	eepromStatus |= EE_ReadVariable(VirtAddVarTab[position * 2],  &VarDataTab[position * 2]);
-
-	eepromStatus = EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)(modeStateBuffer >> 16));
-	eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1],  &VarDataTab[(position * 2) + 1]);
+	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)modeStateBuffer >> 16);  // make sure i'm shifting in the right direction here!!
+	modeStateBuffer |= EEPROMTemp << 16;  //write upper 16 bits
+	if (eepromStatus != HAL_OK){
+		uiSetLEDs(1);
+		uiTransition(&ui_error);
+	}
 }
 
 // watches for released sensor buttons while TRIG_BUTTON is down.  Loads or stores preset accordingly.
@@ -1020,10 +1051,7 @@ void ui_presetMenu(int sig)
 		uiClearRGB();
 		break;
 
-
 	default:
 		break;
 	}
 }
-
-

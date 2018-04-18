@@ -14,6 +14,7 @@ uint32_t eepromStatus;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim4;
 
+
 // these enums contain our mode information
 enum syncTypes syncMode; // {none, true, hardSync}
 enum controlSchemes controlScheme; // {gateLength, knobCV}
@@ -22,15 +23,14 @@ enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antideci
 enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA, ratioDeltaA, pllClock};
 enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
 enum autoDutyTypes autoDuty; // {autoDutyOn, autoDutyOff};
-
 // for eeprom storage
-extern uint16_t VirtAddVarTab[NB_OF_VAR];
-extern uint16_t VarDataTab[NB_OF_VAR];
-
+// virtual EEPROM addresses (store in flash, doesn't need to change)
+static uint16_t VirtAddVarTab[NB_OF_VAR] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16};
 // holds the mode state as a EEPROM-formatted value.
 uint32_t modeStateBuffer;
+// this holds the read 16-bit EEPROM data while it gets shifted and reconstituted into modeStateBuffer.
+extern uint16_t EEPROMTemp;
 
-void switchFamily(void);
 
 // variable that holds an address to current state function
 void (*State)(int);
@@ -58,6 +58,7 @@ static inline void uiTimerDisable() { __HAL_TIM_DISABLE(&htim4); }
 static inline void uiTimerEnable() { __HAL_TIM_ENABLE(&htim4); }
 static inline int uiTimerRead() { return __HAL_TIM_GET_COUNTER(&htim4); }  // return needed?
 static inline void uiTimerSet(int val) { __HAL_TIM_SET_COUNTER(&htim4, val); }
+static inline void uiTimerSetOverflow(int val) { TIM4->ARR = val; }
 
 void uiStoreToEEPROM(int);
 void uiLoadFromEEPROM(int);
@@ -99,6 +100,7 @@ void ui_default(int sig)
 		CLEAR_RUNTIME_DISPLAY;
 		uiClearLEDs();
 		uiClearRGB();
+		uiTimerReset();
 		uiTimerDisable();
 		break;
 
@@ -148,8 +150,10 @@ void ui_newMode(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
-		uiTimerReset();  // start count over
 		uiStoreToEEPROM(0);
+		uiTimerReset();
+		uiTimerSetOverflow(10000);
+		uiTimerEnable();
 		break;
 
 	// once uiTimerRead() times out, clear display and return to default state
@@ -836,6 +840,8 @@ void uiInitialize()
 void uiLoadFromEEPROM(int position) {
 
 	eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &VarDataTab[position * 2]);
+	if (eepromStatus =
+	eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &VarDataTab[position * 2]);
 	modeStateBuffer = VarDataTab[position * 2] | (VarDataTab[(position * 2) + 1] >> 16);
 	controlScheme = modeStateBuffer & !(XMASK);
 	currentScale = (modeStateBuffer & !(SCALEMASK)) >> SCALESHIFT;
@@ -865,13 +871,14 @@ void uiLoadFromEEPROM(int position) {
 
 // writes 2 16-bit values representing modeState to EEPROM per position,  1 runtime + 6 presets + calibration word
 void uiStoreToEEPROM(int position){
-
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2], (uint16_t)modeStateBuffer);
-	eepromStatus |= EE_ReadVariable(VirtAddVarTab[position * 2],  &VarDataTab[position * 2]);
-
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)modeStateBuffer >> 16);
-	eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1],  &VarDataTab[0]);
 }
+
+// shouldn't need to read them back out.
+// eepromStatus |= EE_ReadVariable(VirtAddVarTab[position * 2],  &VarDataTab[position * 2]);
+// eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1],  &VarDataTab[0]);
+
 
 // watches for released sensor buttons while TRIG_BUTTON is down.  Loads or stores preset accordingly.
 void ui_presetMenu(int sig){

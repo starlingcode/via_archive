@@ -101,9 +101,6 @@ uint32_t modeflag;
 uint32_t detectOn;
 uint32_t displayNewMode;
 
-uint16_t VirtAddVarTab[NB_OF_VAR] = {0x5555};
-uint16_t VarDataTab[NB_OF_VAR] = {0};
-
 int holdCalibration;
 
 int debounce;
@@ -232,15 +229,6 @@ int main(void) {
 
 	//initialize our sample and holds to track
 	//we must do this after the resampling interrupts have been enabled
-	SH_A_TRACK;
-	SH_B_TRACK;
-
-	incSign = 1;
-
-	HAL_FLASH_Unlock();
-	eepromStatus = EE_Init();
-	if( eepromStatus != EE_OK) {LEDC_ON}
-	HAL_Delay(500);
 
 	uiInitialize();
 
