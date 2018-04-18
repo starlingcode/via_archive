@@ -883,8 +883,8 @@ void uiStoreToEEPROM(int position){
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2], (uint16_t)modeStateBuffer);
 	eepromStatus |= EE_ReadVariable(VirtAddVarTab[position * 2],  &VarDataTab[position * 2]);
 
-	eepromStatus = EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)modeStateBuffer >> 16);
-	eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1],  &VarDataTab[0]);
+	eepromStatus = EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)(modeStateBuffer >> 16));
+	eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1],  &VarDataTab[(position * 2) + 1]);
 }
 
 // watches for released sensor buttons while TRIG_BUTTON is down.  Loads or stores preset accordingly.
