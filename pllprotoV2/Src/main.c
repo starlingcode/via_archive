@@ -946,7 +946,7 @@ static void MX_GPIO_Init(void) {
 
 /* USER CODE BEGIN 4 */
 
-/* reads back last values stored in flash virtual EEPROM and updates current state
+// reads back last values stored in flash virtual EEPROM and updates current state
 void restoreState(){
 	eepromStatus = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
 	holdState = VarDataTab[0];
@@ -1038,8 +1038,6 @@ void restoreState(){
 		break;
 	}
 }
-
-*/
 /* USER CODE END 4 */
 
 /**

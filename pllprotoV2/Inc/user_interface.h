@@ -38,37 +38,26 @@ struct rgb blue = {0, 0, 4095};
 #define PRESSED TSL_STATEID_DETECT
 #define RELEASED TSL_STATEID_RELEASE
 
-/*
-eepromStatus = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
-holdState = VarDataTab[0];
-eepromStatus = EE_ReadVariable(VirtAddVarTab[1], &VarDataTab[1]);
-holdLogicOut = VarDataTab[1];
-controlScheme = holdState & 0b0000000000000111;
-scaleType = (holdState & 0b0000000011000000) >> 6;
-syncMode = (holdState & 0b0000000000111000) >> 3;
-sampleHoldMode = (holdState & 0b0000011100000000) >> 8;
-familyIndicator = (holdState & 0b0111100000000000) >> 11;
-logicOutA = holdLogicOut & 0b0000000000000111;
-logicOutB = (holdLogicOut & 0b0000000000111000) >> 3;
-*/
-
 // how modes are arranged by size and location in modeStateBuffer (formatted for EEPROM storage).
-#define XMASK 	    0b0000000000000111
+#define LOOPMASK 	0x01
 
-#define SYNCMASK 	0b0000000000111000
-#define SYNCSHIFT 	3
+#define SPEEDMASK 	0x06
+#define SPEEDSHIFT	1
 
-#define SCALEMASK 	0b0000000011000000
-#define SCALESHIFT	6
+#define TRIGMASK 	0x38
+#define TRIGSHIFT 	3
 
-#define SHMASK 		0x0b0000011100000000
-#define SHSHIFT 	8
+#define SHMASK 		0x1C0
+#define SHSHIFT 	6
 
-#define FAMILYMASK	0b0111100000000000
-#define FAMILYSHIFT	11
+#define FAMILYMASK	0xE00
+#define FAMILYSHIFT	9
 
-#define LOGICAMASK	0b00000000000001110000000000000000
-#define LOGICASHIFT	16
+#define LOGICAMASK	0x3000
+#define LOGICASHIFT	12
 
-#define LOGICBMASK	0b00000000001110000000000000000000
-#define LOGICBSHIFT	19
+#define LOGICBMASK	0xC000
+#define LOGICBSHIFT	14
+
+#define DRUMMASK	0x30000
+#define DRUMSHIFT	16
