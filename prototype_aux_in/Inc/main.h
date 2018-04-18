@@ -46,6 +46,7 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "eeprom.h"
+#include "user_interface.h"
 
 // uncommment to define a version compatible with rev2 (black PCB) boards
 #define _BUILD_REV_2
@@ -64,16 +65,6 @@
 //#define morphCV 2000
 //#define time1Knob 3000
 
-#define DOWNSENSOR MyTKeys[0].p_Data->StateId
-#define LOOPSENSOR MyTKeys[1].p_Data->StateId
-#define TRIGSENSOR MyTKeys[2].p_Data->StateId
-#define FREQSENSOR MyTKeys[3].p_Data->StateId
-#define SHSENSOR MyTKeys[4].p_Data->StateId
-#define UPSENSOR MyTKeys[5].p_Data->StateId
-
-#define PRESSED TSL_STATEID_DETECT
-#define RELEASED TSL_STATEID_RELEASE
-
 enum speedTypes {audio, env, seq};
 enum loopTypes {noloop, looping};
 enum trigModeTypes {noretrigger, hardsync, nongatedretrigger, gated, pendulum, pendulum2};
@@ -82,11 +73,19 @@ enum logicOutATypes {triggerA, gateA, deltaA};
 enum logicOutBTypes {triggerB, gateB, deltaB};
 enum drumModeTypes {APM, AM, A, M, PM, P};
 
+// UI signals
+enum
+{	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
+	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
+	EXIT_SIG,	  // Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
+	INIT_SIG,     // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
+	TIMEOUT_SIG,  // timer timeout
+	SENSOR_EVENT_SIG,  // Sensor state machine not busy, can be queried for events
+	TSL_ERROR_SIG
+};
+
 int familyIndicator;
 int flagHolder;
-
-uint32_t holdState;
-uint32_t ee_status;
 
 typedef struct buffer512 {
     int buff[512];
@@ -103,9 +102,6 @@ typedef struct buffer32 {
     int writeIndex;
 }buffer32;
 
-void readDetect(void) __attribute__((section("ccmram")));
-void readRelease(uint32_t) __attribute__((section("ccmram")));
-void restoreDisplay(void) __attribute__((section("ccmram")));
 void switchFamily(void) __attribute__((section("ccmram")));
 void fillFamilyArray(void) __attribute__((section("ccmram")));
 void restoreState(void) __attribute__((section("ccmram")));
@@ -209,15 +205,15 @@ static inline int readn32(buffer32*, int) __attribute__((section("ccmram")));
 
 #define PHASE_STATE 		flagHolder & 0b00000000000000000000000000000001
 #define LAST_PHASE_STATE 	flagHolder & 0b00000000000000000000000000000010
-#define GATE_ON 			flagHolder & 0b00000000000000000000000000000100
-#define DISPLAY_RUNTIME 	flagHolder & 0b00000000000000000000000000001000
+#define GATE	 			flagHolder & 0b00000000000000000000000000000100
+#define RUNTIME_DISPLAY 	flagHolder & 0b00000000000000000000000000001000
 #define UPDATE_PRESCALER 	flagHolder & 0b00000000000000000000000000010000
-#define DRUM_MODE_ON 		flagHolder & 0b00000000000000000000000000100000
-#define DRUM_ATTACK_ON 		flagHolder & 0b00000000000000000000000001000000
-#define DRUM_RELEASE_ON 	flagHolder & 0b00000000000000000000000010000000
-#define PITCH_ON 			flagHolder & 0b00000000000000000000000100000000
-#define MORPH_ON 			flagHolder & 0b00000000000000000000001000000000
-#define AMP_ON 				flagHolder & 0b00000000000000000000010000000000
+#define DRUM_MODE	 		flagHolder & 0b00000000000000000000000000100000
+#define DRUM_ATTACK 		flagHolder & 0b00000000000000000000000001000000
+#define DRUM_RELEASE	 	flagHolder & 0b00000000000000000000000010000000
+#define PITCH_MOD 			flagHolder & 0b00000000000000000000000100000000
+#define MORPH_MOD 			flagHolder & 0b00000000000000000000001000000000
+#define AMP_MOD 			flagHolder & 0b00000000000000000000010000000000
 #define DRUM_OFF 			flagHolder & 0b00000000000000000000100000000000
 #define LAST_CYCLE 			flagHolder & 0b00000000000000000001000000000000
 #define HOLD_AT_B 			flagHolder & 0b00000000000000000010000000000000
@@ -237,15 +233,15 @@ static inline int readn32(buffer32*, int) __attribute__((section("ccmram")));
 
 #define SET_PHASE_STATE 		flagHolder |= 0b00000000000000000000000000000001
 #define SET_LAST_PHASE_STATE 	flagHolder |= 0b00000000000000000000000000000010
-#define SET_GATE_ON 			flagHolder |= 0b00000000000000000000000000000100
-#define SET_DISPLAY_RUNTIME 	flagHolder |= 0b00000000000000000000000000001000
+#define SET_GATE	 			flagHolder |= 0b00000000000000000000000000000100
+#define SET_RUNTIME_DISPLAY 	flagHolder |= 0b00000000000000000000000000001000
 #define SET_UPDATE_PRESCALER 	flagHolder |= 0b00000000000000000000000000010000
-#define SET_DRUM_MODE_ON 		flagHolder |= 0b00000000000000000000000000100000
-#define SET_DRUM_ATTACK_ON 		flagHolder |= 0b00000000000000000000000001000000
-#define SET_DRUM_RELEASE_ON 	flagHolder |= 0b00000000000000000000000010000000
-#define SET_PITCH_ON 			flagHolder |= 0b00000000000000000000000100000000
-#define SET_MORPH_ON 			flagHolder |= 0b00000000000000000000001000000000
-#define SET_AMP_ON 				flagHolder |= 0b00000000000000000000010000000000
+#define SET_DRUM_MODE	 		flagHolder |= 0b00000000000000000000000000100000
+#define SET_DRUM_ATTACK 		flagHolder |= 0b00000000000000000000000001000000
+#define SET_DRUM_RELEASE	 	flagHolder |= 0b00000000000000000000000010000000
+#define SET_PITCH_MOD 			flagHolder |= 0b00000000000000000000000100000000
+#define SET_MORPH_MOD 			flagHolder |= 0b00000000000000000000001000000000
+#define SET_AMP_MOD 			flagHolder |= 0b00000000000000000000010000000000
 #define SET_DRUM_OFF 			flagHolder |= 0b00000000000000000000100000000000
 #define SET_LAST_CYCLE 			flagHolder |= 0b00000000000000000001000000000000
 #define SET_HOLD_AT_B 			flagHolder |= 0b00000000000000000010000000000000
@@ -263,35 +259,35 @@ static inline int readn32(buffer32*, int) __attribute__((section("ccmram")));
 #define SET_CLEARBUFFER		 	flagHolder |= 0b00000010000000000000000000000000
 
 
-#define RESET_PHASE_STATE 		flagHolder &= 0b11111111111111111111111111111110
-#define RESET_LAST_PHASE_STATE 	flagHolder &= 0b11111111111111111111111111111101
-#define RESET_GATE_ON 			flagHolder &= 0b11111111111111111111111111111011
-#define RESET_DISPLAY_RUNTIME 	flagHolder &= 0b11111111111111111111111111110111
-#define RESET_UPDATE_PRESCALER 	flagHolder &= 0b11111111111111111111111111101111
-#define RESET_DRUM_MODE_ON 		flagHolder &= 0b11111111111111111111111111011111
-#define RESET_DRUM_ATTACK_ON 	flagHolder &= 0b11111111111111111111111110111111
-#define RESET_DRUM_RELEASE_ON 	flagHolder &= 0b11111111111111111111111101111111
-#define RESET_PITCH_ON 			flagHolder &= 0b11111111111111111111111011111111
-#define RESET_MORPH_ON 			flagHolder &= 0b11111111111111111111110111111111
-#define RESET_AMP_ON 			flagHolder &= 0b11111111111111111111101111111111
+#define CLEAR_PHASE_STATE 		flagHolder &= 0b11111111111111111111111111111110
+#define CLEAR_LAST_PHASE_STATE 	flagHolder &= 0b11111111111111111111111111111101
+#define CLEAR_GATE	 			flagHolder &= 0b11111111111111111111111111111011
+#define CLEAR_RUNTIME_DISPLAY 	flagHolder &= 0b11111111111111111111111111110111
+#define CLEAR_UPDATE_PRESCALER 	flagHolder &= 0b11111111111111111111111111101111
+#define CLEAR_DRUM_MODE 		flagHolder &= 0b11111111111111111111111111011111
+#define CLEAR_DRUM_ATTACK	 	flagHolder &= 0b11111111111111111111111110111111
+#define CLEAR_DRUM_RELEASE 		flagHolder &= 0b11111111111111111111111101111111
+#define CLEAR_PITCH_MOD 		flagHolder &= 0b11111111111111111111111011111111
+#define CLEAR_MORPH_MOD 		flagHolder &= 0b11111111111111111111110111111111
+#define CLEAR_AMP_MOD 			flagHolder &= 0b11111111111111111111101111111111
 #define RESET_DRUM_OFF 			flagHolder &= 0b11111111111111111111011111111111
-#define RESET_LAST_CYCLE 		flagHolder &= 0b11111111111111111110111111111111
-#define RESET_HOLD_AT_B 		flagHolder &= 0b11111111111111111101111111111111
-#define RESET_OSCILLATOR_ACTIVE flagHolder &= 0b11111111111111111011111111111111
-#define RESET_TRIGGER_BUTTON	flagHolder &= 0b11111111111111110111111111111111
-#define RESET_DETECT_ON			flagHolder &= 0b11111111111111101111111111111111
-#define RESET_AUX_MENU			flagHolder &= 0b11111111111111011111111111111111
-#define RESET_GATEA				flagHolder &= 0b11111111111110111111111111111111
-#define RESET_TRIGA				flagHolder &= 0b11111111111101111111111111111111
-#define RESET_DELTAA			flagHolder &= 0b11111111111011111111111111111111
-#define RESET_GATEB				flagHolder &= 0b11111111110111111111111111111111
-#define RESET_TRIGB				flagHolder &= 0b11111111101111111111111111111111
-#define RESET_DELTAB			flagHolder &= 0b11111111011111111111111111111111
-#define RESET_BANDLIMIT			flagHolder &= 0b11111110111111111111111111111111
-#define RESET_CLEARBUFFER		flagHolder &= 0b11111101111111111111111111111111
+#define CLEAR_LAST_CYCLE 		flagHolder &= 0b11111111111111111110111111111111
+#define CLEAR_HOLD_AT_B 		flagHolder &= 0b11111111111111111101111111111111
+#define CLEAR_OSCILLATOR_ACTIVE flagHolder &= 0b11111111111111111011111111111111
+#define CLEAR_TRIGGER_BUTTON	flagHolder &= 0b11111111111111110111111111111111
+#define CLEAR_DETECT_ON			flagHolder &= 0b11111111111111101111111111111111
+#define CLEAR_AUX_MENU			flagHolder &= 0b11111111111111011111111111111111
+#define CLEAR_GATEA				flagHolder &= 0b11111111111110111111111111111111
+#define CLEAR_TRIGA				flagHolder &= 0b11111111111101111111111111111111
+#define CLEAR_DELTAA			flagHolder &= 0b11111111111011111111111111111111
+#define CLEAR_GATEB				flagHolder &= 0b11111111110111111111111111111111
+#define CLEAR_TRIGB				flagHolder &= 0b11111111101111111111111111111111
+#define CLEAR_DELTAB			flagHolder &= 0b11111111011111111111111111111111
+#define CLEAR_BANDLIMIT			flagHolder &= 0b11111110111111111111111111111111
+#define CLEAR_CLEARBUFFER		flagHolder &= 0b11111101111111111111111111111111
 
 
-#define TOGGLE_GATE_ON 			flagHolder ^= 0b00000000000000000000000000000100
+#define TOGGLE_GATE 			flagHolder ^= 0b00000000000000000000000000000100
 
 #define REMEMBER_PHASE_STATE	flagHolder ^= (-((PHASE_STATE) ^ flagHolder) & (1UL << 1))
 

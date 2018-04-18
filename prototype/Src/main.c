@@ -289,7 +289,7 @@ int main(void) {
 		}
 		//if the trigger button has been released but the trigger button flag is still high, lower it and set an IRQ
 		else if (TRIGGER_BUTTON){
-			RESET_TRIGGER_BUTTON;
+			CLEAR_TRIGGER_BUTTON;
 			HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
 		}
 
@@ -994,23 +994,23 @@ void restoreState(){
 
 	if (loop == looping) {
 		SET_OSCILLATOR_ACTIVE;
-		RESET_LAST_CYCLE;
+		CLEAR_LAST_CYCLE;
 	}
 
 	switch (logicOutA) {
 	case 0:
 		SET_GATEA;
-		RESET_TRIGA;
-		RESET_DELTAA;
+		CLEAR_TRIGA;
+		CLEAR_DELTAA;
 		break;
 	case 1:
-		RESET_GATEA;
+		CLEAR_GATEA;
 		SET_TRIGA;
-		RESET_DELTAA;
+		CLEAR_DELTAA;
 		break;
 	case 2:
-		RESET_GATEA;
-		RESET_TRIGA;
+		CLEAR_GATEA;
+		CLEAR_TRIGA;
 		SET_DELTAA;
 		break;
 	}
@@ -1018,56 +1018,56 @@ void restoreState(){
 	switch (logicOutB) {
 	case 0:
 		SET_GATEB;
-		RESET_TRIGB;
-		RESET_DELTAB;
+		CLEAR_TRIGB;
+		CLEAR_DELTAB;
 		break;
 	case 1:
-		RESET_GATEB;
+		CLEAR_GATEB;
 		SET_TRIGB;
-		RESET_DELTAB;
+		CLEAR_DELTAB;
 		break;
 	case 2:
-		RESET_GATEB;
-		RESET_TRIGB;
+		CLEAR_GATEB;
+		CLEAR_TRIGB;
 		SET_DELTAB;
 		break;
 	}
 
 	if (speed == audio && loop == noloop) {
 		//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
-		SET_DRUM_MODE_ON;
+		SET_DRUM_MODE;
 		TIM6->ARR = 750;
 		switch (trigMode) {
 		case 0:
-			SET_AMP_ON;
-			SET_PITCH_ON;
-			SET_MORPH_ON;
+			SET_AMP_MOD;
+			SET_PITCH_MOD;
+			SET_MORPH_MOD;
 			break;
 		case 1:
-			SET_AMP_ON;
-			RESET_PITCH_ON;
-			SET_MORPH_ON;
+			SET_AMP_MOD;
+			CLEAR_PITCH_MOD;
+			SET_MORPH_MOD;
 			break;
 		case 2:
-			SET_AMP_ON;
-			RESET_PITCH_ON;
-			RESET_MORPH_ON;
+			SET_AMP_MOD;
+			CLEAR_PITCH_MOD;
+			CLEAR_MORPH_MOD;
 			break;
 		case 3:
-			RESET_AMP_ON;
-			RESET_PITCH_ON;
-			SET_MORPH_ON;
+			CLEAR_AMP_MOD;
+			CLEAR_PITCH_MOD;
+			SET_MORPH_MOD;
 			break;
 		case 4:
-			RESET_AMP_ON;
-			SET_PITCH_ON;
-			SET_MORPH_ON;
+			CLEAR_AMP_MOD;
+			SET_PITCH_MOD;
+			SET_MORPH_MOD;
 			break;
 
 		case 5:
-			RESET_AMP_ON;
-			SET_PITCH_ON;
-			RESET_MORPH_ON;
+			CLEAR_AMP_MOD;
+			SET_PITCH_MOD;
+			CLEAR_MORPH_MOD;
 			break;
 		}
 }

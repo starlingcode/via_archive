@@ -77,10 +77,10 @@ void dacISR(void) {
 			getSampleQuinticSpline(position);
 
 			if (position < span) {
-				RESET_PHASE_STATE;
+				CLEAR_PHASE_STATE;
 				//getSample(0);
 				//getSampleCubicSpline(0);
-				if (DISPLAY_RUNTIME) { // if the runtime display is on, show our mode
+				if (RUNTIME_DISPLAY) { // if the runtime display is on, show our mode
 					__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
 					__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 				}
@@ -89,7 +89,7 @@ void dacISR(void) {
 				SET_PHASE_STATE;
 				//getSample(1);
 				//getSampleCubicSpline(1);
-				if (DISPLAY_RUNTIME) { // if the runtime display is on, show our mode
+				if (RUNTIME_DISPLAY) { // if the runtime display is on, show our mode
 					__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
 					__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
 				}
@@ -120,17 +120,17 @@ void dacISR(void) {
 			}
 
 			// if we are in high speed and not looping, activate drum mode
-			if (DRUM_MODE_ON) {
+			if (DRUM_MODE) {
 				// this next bit generates our expo decay and scales amp
 				// it gets the appropriate value for the expo table and scales into the range of the fix16 fractional component (16 bits)
-				if (DRUM_ATTACK_ON) {
+				if (DRUM_ATTACK) {
 					// maintain a software-based counter to increment through a linear "attack" slope sample per sample
 					attackCount = attackCount + (inc >> 11);
 					// if we get to our maximum value (this is the index where the value is 2^26)
 					// this overflow value gives us a known range for our values from the lookup table
 					if (attackCount > 3840) {
 						// write to the flag word that we are done with our attack slope
-						RESET_DRUM_ATTACK_ON;
+						CLEAR_DRUM_ATTACK_ON;
 						// since we use this to look up from the table, clamp it at our max value
 						attackCount = 3840;
 						// enable the timer that will generate our release slope
@@ -140,7 +140,7 @@ void dacISR(void) {
 						// reset our counter to 0
 						attackCount = 0;
 						// indicate that we are now in the "release" phase of our drum envelope
-						SET_DRUM_RELEASE_ON;
+						SET_DRUM_RELEASE;
 					}
 					else {
 						// otherwise, use our counter to look up a value from the table
@@ -148,17 +148,17 @@ void dacISR(void) {
 						drumModValue = expoTable[attackCount] >> 10;
 					}
 				}
-				else if (DRUM_RELEASE_ON) {
+				else if (DRUM_RELEASE) {
 					//if we are in release, use timer counter to look up a value from the table
 					//that gets scaled to 0 - 2^16
 					drumModValue = expoTable[TIM3->CNT] >> 10;
 				}
 				//scale the contour generator, an integer 0 - 2^16 is 0-1 in our 16 bit fixed point
-				if (AMP_ON) {
+				if (AMP_MOD) {
 					out = fix16_mul(out, drumModValue);
 				}
 				//apply the scaling value to the morph knob
-				if (MORPH_ON) {
+				if (MORPH_MOD) {
 					fixMorph = fix16_mul(fixMorph, drumModValue);
 				}
 			}
@@ -181,7 +181,7 @@ void dacISR(void) {
 		}
 		else {
 			//turn off the display if the contour generator is inactive and we are not switching modes
-			if (DISPLAY_RUNTIME) {
+			if (RUNTIME_DISPLAY) {
 				((*(volatile uint32_t *) DAC1_ADDR) = (4095));
 				((*(volatile uint32_t *) DAC2_ADDR) = (0));
 				LEDC_OFF
@@ -312,13 +312,13 @@ void getSampleQuinticSpline(int position) {
 		REV2_GATE_HIGH;
 		if (DELTAB) {
 			BLOGIC_HIGH;
-			if (DISPLAY_RUNTIME) {
+			if (RUNTIME_DISPLAY) {
 				LEDD_ON;
 			}
 		}
 		if (DELTAA) {
 			ALOGIC_LOW;
-			if (DISPLAY_RUNTIME) {
+			if (RUNTIME_DISPLAY) {
 				LEDC_OFF;
 			}
 		}
@@ -327,13 +327,13 @@ void getSampleQuinticSpline(int position) {
 		REV2_GATE_LOW;
 		if (DELTAB) {
 			BLOGIC_LOW;
-			if (DISPLAY_RUNTIME) {
+			if (RUNTIME_DISPLAY) {
 				LEDD_OFF;
 			}
 		}
 		if (DELTAA) {
 			ALOGIC_HIGH;
-			if (DISPLAY_RUNTIME) {
+			if (RUNTIME_DISPLAY) {
 				LEDC_ON;
 			}
 		}
@@ -348,7 +348,7 @@ void switchFamily(void) {
 	currentFamily = *familyArray[speed][familyIndicator];
 	loadSampleArray(currentFamily);
 	if (currentFamily.bandlimitOff) {
-		RESET_BANDLIMIT;
+		CLEAR_BANDLIMIT;
 	}
 	else {
 		SET_BANDLIMIT;

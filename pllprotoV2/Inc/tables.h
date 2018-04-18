@@ -1,6 +1,7 @@
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
+#include "user_interface.h"
 
 
 
@@ -10,6 +11,7 @@ typedef struct {
 	uint32_t tableLength;
 	uint32_t familySize;
 	uint32_t bandlimitOff;
+	struct rgb color;
 } Family;
 
 Family familyArray[16];

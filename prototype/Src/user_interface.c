@@ -193,7 +193,7 @@ void readRelease(uint32_t modeFlagHolder) {
 				detectOn = 0;
 			}
 			clearLEDs();
-			RESET_AUX_MENU;
+			CLEAR_AUX_MENU;
 			handleRelease(modeFlagHolder);
 		}
 		break;
@@ -205,7 +205,7 @@ void readRelease(uint32_t modeFlagHolder) {
 				detectOn = 0;
 			}
 			clearLEDs();
-			RESET_AUX_MENU;
+			CLEAR_AUX_MENU;
 			handleRelease(modeFlagHolder);
 		}
 		break;
@@ -269,44 +269,44 @@ void changeMode(uint32_t mode) {
 
 		if (speed == audio && loop == noloop) {
 			//since this parameter can throw us into drum mode, initialize the proper modulation flags per trigger mode
-			SET_DRUM_MODE_ON;
+			SET_DRUM_MODE;
 			TIM6->ARR = 750;
 			switch (trigMode) {
 			case 0:
-				SET_AMP_ON;
-				SET_PITCH_ON;
-				SET_MORPH_ON;
+				SET_AMP_MOD;
+				SET_PITCH_MOD;
+				SET_MORPH_MOD;
 				break;
 			case 1:
-				SET_AMP_ON;
-				RESET_PITCH_ON;
-				SET_MORPH_ON;
+				SET_AMP_MOD;
+				CLEAR_PITCH_MOD;
+				SET_MORPH_MOD;
 				break;
 			case 2:
-				SET_AMP_ON;
-				RESET_PITCH_ON;
-				RESET_MORPH_ON;
+				SET_AMP_MOD;
+				CLEAR_PITCH_MOD;
+				CLEAR_MORPH_MOD;
 				break;
 			case 3:
-				RESET_AMP_ON;
-				RESET_PITCH_ON;
-				SET_MORPH_ON;
+				CLEAR_AMP_MOD;
+				CLEAR_PITCH_MOD;
+				SET_MORPH_MOD;
 				break;
 			case 4:
-				RESET_AMP_ON;
-				SET_PITCH_ON;
-				SET_MORPH_ON;
+				CLEAR_AMP_MOD;
+				SET_PITCH_MOD;
+				SET_MORPH_MOD;
 				break;
 			}
 			// i believe this is a holdover from old code
 			__HAL_TIM_ENABLE(&htim3);
 		} else {
 			// if we didnt just go into drum mode, make sure drum mode is off
-			RESET_DRUM_MODE_ON;
+			CLEAR_DRUM_MODE;
 			TIM6->ARR = 500;
-			RESET_AMP_ON;
-			RESET_PITCH_ON;
-			RESET_MORPH_ON;
+			CLEAR_AMP_MOD;
+			CLEAR_PITCH_MOD;
+			CLEAR_MORPH_MOD;
 
 			// set the appropriate time calculation functions
 			if (speed == env) {
@@ -328,39 +328,39 @@ void changeMode(uint32_t mode) {
 		holdState = (holdState & 0b1111111111000111) | (trigMode << 3);
 
 		incSign = 1;
-		RESET_GATE_ON;
+		CLEAR_GATE;
 		//if drum mode is on, toggle through sets of modulation destinations
 		switch (trigMode) {
 		case 0:
-			SET_AMP_ON;
-			SET_PITCH_ON;
-			SET_MORPH_ON;
+			SET_AMP_MOD;
+			SET_PITCH_MOD;
+			SET_MORPH_MOD;
 			break;
 		case 1:
-			SET_AMP_ON;
-			RESET_PITCH_ON;
-			SET_MORPH_ON;
+			SET_AMP_MOD;
+			CLEAR_PITCH_MOD;
+			SET_MORPH_MOD;
 			break;
 		case 2:
-			SET_AMP_ON;
-			RESET_PITCH_ON;
-			RESET_MORPH_ON;
+			SET_AMP_MOD;
+			CLEAR_PITCH_MOD;
+			CLEAR_MORPH_MOD;
 			break;
 		case 3:
-			RESET_AMP_ON;
-			RESET_PITCH_ON;
-			SET_MORPH_ON;
+			CLEAR_AMP_MOD;
+			CLEAR_PITCH_MOD;
+			SET_MORPH_MOD;
 			break;
 		case 4:
-			RESET_AMP_ON;
-			SET_PITCH_ON;
-			SET_MORPH_ON;
+			CLEAR_AMP_MOD;
+			SET_PITCH_MOD;
+			SET_MORPH_MOD;
 			break;
 
 		case 5:
-			RESET_AMP_ON;
-			SET_PITCH_ON;
-			RESET_MORPH_ON;
+			CLEAR_AMP_MOD;
+			SET_PITCH_MOD;
+			CLEAR_MORPH_MOD;
 			break;
 
 		}
@@ -376,51 +376,51 @@ void changeMode(uint32_t mode) {
 			// switching to no loop when speed is at audio activates drum mode
 			// this is about the same as what we do in the speed mode case above
 			if (speed == audio) {
-				SET_DRUM_MODE_ON;
+				SET_DRUM_MODE;
 				TIM6->ARR = 750;
 				switch (trigMode) {
 				case 0:
-					SET_AMP_ON;
-					SET_PITCH_ON;
-					SET_MORPH_ON;
+					SET_AMP_MOD;
+					SET_PITCH_MOD;
+					SET_MORPH_MOD;
 					break;
 				case 1:
-					SET_AMP_ON;
-					RESET_PITCH_ON;
-					SET_MORPH_ON;
+					SET_AMP_MOD;
+					CLEAR_PITCH_MOD;
+					SET_MORPH_MOD;
 					break;
 				case 2:
-					SET_AMP_ON;
-					RESET_PITCH_ON;
-					RESET_MORPH_ON;
+					SET_AMP_MOD;
+					CLEAR_PITCH_MOD;
+					CLEAR_MORPH_MOD;
 					break;
 				case 3:
-					RESET_AMP_ON;
-					RESET_PITCH_ON;
-					SET_MORPH_ON;
+					CLEAR_AMP_MOD;
+					CLEAR_PITCH_MOD;
+					SET_MORPH_MOD;
 					break;
 				case 4:
-					RESET_AMP_ON;
-					SET_PITCH_ON;
-					SET_MORPH_ON;
+					CLEAR_AMP_MOD;
+					SET_PITCH_MOD;
+					SET_MORPH_MOD;
 					break;
 
 				}
 				__HAL_TIM_ENABLE(&htim3);
 			} else {
-				RESET_DRUM_MODE_ON;
+				CLEAR_DRUM_MODE;
 				TIM6->ARR = 500;
-				RESET_AMP_ON;
-				RESET_PITCH_ON;
-				RESET_MORPH_ON;
+				CLEAR_AMP_MOD;
+				CLEAR_PITCH_MOD;
+				CLEAR_MORPH_MOD;
 			}
 		} else {
-			RESET_LAST_CYCLE;
-			RESET_DRUM_MODE_ON;
+			CLEAR_LAST_CYCLE;
+			CLEAR_DRUM_MODE;
 			TIM6->ARR = 500;
-			RESET_AMP_ON;
-			RESET_PITCH_ON;
-			RESET_MORPH_ON;
+			CLEAR_AMP_MOD;
+			CLEAR_PITCH_MOD;
+			CLEAR_MORPH_MOD;
 			//set our oscillator active flag so enabling loop starts playback (not for ken!)
 			SET_OSCILLATOR_ACTIVE;
 		}
@@ -459,17 +459,17 @@ void changeMode(uint32_t mode) {
 		switch (logicOutA) {
 		case 0:
 			SET_GATEA;
-			RESET_TRIGA;
-			RESET_DELTAA;
+			CLEAR_TRIGA;
+			CLEAR_DELTAA;
 			break;
 		case 1:
-			RESET_GATEA;
+			CLEAR_GATEA;
 			SET_TRIGA;
-			RESET_DELTAA;
+			CLEAR_DELTAA;
 			break;
 		case 2:
-			RESET_GATEA;
-			RESET_TRIGA;
+			CLEAR_GATEA;
+			CLEAR_TRIGA;
 			SET_DELTAA;
 			break;
 		}
@@ -482,17 +482,17 @@ void changeMode(uint32_t mode) {
 		switch (logicOutB) {
 		case 0:
 			SET_GATEB;
-			RESET_TRIGB;
-			RESET_DELTAB;
+			CLEAR_TRIGB;
+			CLEAR_DELTAB;
 			break;
 		case 1:
-			RESET_GATEB;
+			CLEAR_GATEB;
 			SET_TRIGB;
-			RESET_DELTAB;
+			CLEAR_DELTAB;
 			break;
 		case 2:
-			RESET_GATEB;
-			RESET_TRIGB;
+			CLEAR_GATEB;
+			CLEAR_TRIGB;
 			SET_DELTAB;
 			break;
 		}

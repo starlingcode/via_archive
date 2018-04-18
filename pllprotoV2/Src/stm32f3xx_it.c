@@ -206,13 +206,13 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
 	// times logic A and logic B triggers (turns LED off / logic low at appropriate time)
 	if ((TRIGB) || (RATIO_DELTAB) || (PLL_DIVB)){
 		BLOGIC_LOW;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDD_OFF;
 		}
 	}
 	if ((TRIGA) || (RATIO_DELTAA) || (PLL_DIVA)){
 		ALOGIC_LOW;
-		if (DISPLAY_RUNTIME) {
+		if (RUNTIME_DISPLAY) {
 			LEDC_OFF;
 		}
 	}
@@ -251,7 +251,7 @@ void TIM8_UP_IRQHandler(void) {
 	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
 	SH_B_SAMPLE;
 	//this handles the logic where we resample b at a
-	if (DISPLAY_RUNTIME) {
+	if (RUNTIME_DISPLAY) {
 		LEDB_ON;
 	}
 
@@ -292,7 +292,7 @@ void TIM7_IRQHandler(void) {
 	SH_A_SAMPLE;
 	// this handles our decimate resampling
 	SH_B_SAMPLE;
-	if (DISPLAY_RUNTIME) {
+	if (RUNTIME_DISPLAY) {
 		LEDA_ON;
 		LEDB_ON;
 	}
