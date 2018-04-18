@@ -12,16 +12,18 @@
 uint32_t eepromStatus;
 
 extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 
 // these enums contain our mode information
-enum syncTypes syncMode; // {none, true, hardSync}
+enum syncTypes syncMode; // {none, true, hardSync, catch}
 enum controlSchemes controlScheme; // {gateLength, knobCV}
-enum scaleTypes scaleType; // {rhythms, pitches}
+enum scaleTypes scaleType; // {rhythm, pitch, other}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
 enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA, ratioDeltaA, pllClock};
 enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
 enum autoDutyTypes autoDuty; // {autoDutyOn, autoDutyOff};
+
 
 extern uint16_t VirtAddVarTab[NB_OF_VAR];
 extern uint16_t VarDataTab[NB_OF_VAR];
@@ -50,6 +52,8 @@ void uiClearRGB();
 void uiSetRGB(struct rgb);
 
 void uiSetPhaseFunctions(void);
+void uiSetDrumMode(void);
+void uiClearDrumMode(void);
 
 static inline void uiTimerReset() { __HAL_TIM_SET_COUNTER(&htim4, 0); }
 static inline void uiTimerDisable() { __HAL_TIM_DISABLE(&htim4); }
@@ -252,7 +256,7 @@ void ui_logicAMenu(int sig)
 			if(uiTimerRead() < 3000){
 				logicOutA = (logicOutA + 1) % 5;
 				//holdLogicOut = (holdLogicOut & 0b1111111111111000) | logicOutA;
-				modeStateBuffer = (modeStateBuffer & !(LOGICAMASK)) | logicOutA << LOGICASHIFT;
+				modeStateBuffer = (modeStateBuffer & !(LOGICAMASK) | logicOutA << LOGICASHIFT);
 
 				CLEAR_GATEA;
 				CLEAR_TRIGA;
@@ -274,7 +278,7 @@ void ui_logicAMenu(int sig)
 					SET_RATIO_DELTAA;
 					break;
 				case 4:
-					SET_PLL_DIVA;
+					CLEAR_RATIO_DELTAA;
 					break;
 				}
 
@@ -311,7 +315,7 @@ void ui_logicAMenu(int sig)
 			SET_RATIO_DELTAA;
 			break;
 		case 4:
-			SET_PLL_DIVA;
+			CLEAR_RATIO_DELTAA;
 			break;
 		}
 	}
@@ -357,7 +361,7 @@ void ui_logicBMenu(int sig)
 					SET_RATIO_DELTAB;
 					break;
 				case 4:
-					SET_PLL_DIVB;
+					CLEAR_RATIO_DELTAB;
 					break;
 				}
 
@@ -395,7 +399,7 @@ void ui_logicBMenu(int sig)
 			SET_RATIO_DELTAB;
 			break;
 		case 4:
-			SET_PLL_DIVB;
+			CLEAR_RATIO_DELTAB;
 			break;
 		}
 	}
@@ -415,16 +419,17 @@ void ui_newLogicMode(int sig)
 	// once uiTimerRead() times out, clear display and return to default state
 
 	case SENSOR_EVENT_SIG:
-		// in case either logic mode sensors are pressed, jump to their menu
+
 		if (SCALESENSOR == PRESSED){
-			uiTransition(&ui_logicAMenu);
+			uiTransition( &ui_logicAMenu);
 
 		} else if (XSENSOR == PRESSED){
-			uiTransition(&ui_logicBMenu);
-			// if sync sensor is released, jump out of menu to default.
+			uiTransition( &ui_logicBMenu);
+
 		} else if (SYNCSENSOR == RELEASED){
-			uiTransition(&ui_newMode);
+			uiTransition( &ui_newMode);
 		}
+
 		break;
 	}
 }
@@ -435,7 +440,7 @@ void ui_SampleHoldMenu(int sig)
 	{
 	case ENTRY_SIG:
 		if (TRIGGER_BUTTON){
-			presetNumber = 1;
+			presetNumber = 1
 			uiTransition(&ui_presetMenu);
 			break;
 		}
@@ -449,7 +454,7 @@ void ui_SampleHoldMenu(int sig)
 				modeStateBuffer = (modeStateBuffer & !(SHMASK)) | (sampleHoldMode << SHSHIFT);
 				SH_A_TRACK;  // ensure that there's no carryover holding by forcing tracking
 				SH_B_TRACK;
-				uiSetLEDs(sampleHoldMode);
+\				uiSetLEDs(sampleHoldMode);
 				uiTransition(&ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -483,7 +488,7 @@ void ui_familyUpMenu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (UPSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
-				familyIndicator = (familyIndicator + 1) % 16;
+				familyIndicator = (familyIndicator + 1) % 8;
 				switchFamily();
 				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << TRIGSHIFT);
 				uiSetLEDs(familyIndicator);
@@ -515,12 +520,12 @@ void ui_familyDownMenu(int sig)
 		if (DOWNSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
 				if (familyIndicator == 0) {
-					familyIndicator = 15;  // wrap around
+					familyIndicator = 7;  // wrap around
 				} else {
 					familyIndicator--;
 				}
 				switchFamily();
-				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
+				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << TRIGSHIFT);
 				uiSetLEDs(familyIndicator);
 				uiSetRGB(currentFamily.color);
 				uiTransition( &ui_newMode);
@@ -541,15 +546,15 @@ void ui_scaleMenu(int sig) {
 			uiTransition(&ui_presetMenu);
 			break;
 		}
-		uiSetLEDs(speed);
-		switch (speed){
-		case audio:
+		uiSetLEDs(scale);
+		switch (scale){
+		case rhythm:
 			uiSetRGB(red);
 			break;
-		case env:
+		case pitch:
 			uiSetRGB(green);
 			break;
-		case seq:
+		case other:
 			uiSetRGB(blue);
 			break;
 		}
@@ -559,10 +564,10 @@ void ui_scaleMenu(int sig) {
 		if(SCALESENSOR == RELEASED){
 			if (uiTimerRead() < 3000) {
 				speed = (speed + 1) % 3;
-				modeStateBuffer = (modeStateBuffer & !(SCALEMASK)) | (scale << SCALESHIFT);
+				modeStateBuffer = (modeStateBuffer & 0b1111111111111001) | (speed << 1);
 				switchFamily();
 				uiSetPhaseFunctions();
-				uiSetLEDs(speed);
+				uiSetLEDs(scale);
 				switch (speed){
 				case audio:
 					uiSetRGB(red);
@@ -643,20 +648,28 @@ void ui_xMenu(int sig)
 void ui_autoDutyMenu(int sig){
 	switch (sig){
 	case ENTRY_SIG:
+		uiSetLEDs(autoDuty);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (SHSENSOR == RELEASED){
 			if (uiTimerRead() < 3000){
+				autoDuty = (autoDuty + 1) % 2;
+				modeStateBuffer = (modeStateBuffer & !(AUTODUTYMASK) | (autoDuty << AUTODUTYSHIFT);
+				if (autoDuty == autoDutyOn) {
+						CLEAR_AUTODUTY;
+					} else {
+						SET_AUTODUTY;
+					}
+				uiSetLEDs(autoDuty);
+				uiTransition(&ui_newMode);
+			} else {
+				uiTransition(&ui_syncMenu);
+			}
 		}
-	autoDuty = (autoDuty + 1) % 2;
-
-	modeStateBuffer = (modeStateBuffer & !(AUTODUTYMASK) | (autoDuty << AUTODUTYSHIFT);
-//oldLogicOut = (holdLogicOut & 0b1111111111000111) | (autoDuty << 6);
-	if (autoDuty == autoDutyOn) {
-		CLEAR_AUTODUTY;
-	} else {
-		SET_AUTODUTY;
+		if (SYNCSENSOR == RELEASED){
+			uiTransition(&ui_default);
+		}
 	}
 }
 
@@ -774,6 +787,12 @@ void uiClearLEDs(){
 	LEDC_OFF;
 	LEDD_OFF;
 }
+eepromStatus = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
+holdState = VarDataTab[0];
+eepromStatus = EE_ReadVariable(VirtAddVarTab[1], &VarDataTab[1]);
+holdLogicOut = VarDataTab[1];
+
+
 
 // initialization routine for the UI state machine
 void uiInitialize()
@@ -783,42 +802,9 @@ void uiInitialize()
 	//if(eepromStatus != EE_OK) {LEDC_ON;}  // error handling, switch to UI error handling?
 	HAL_Delay(500);  // init time
 	uiLoadFromEEPROM(0);  // load the most recently stored state from memory
-	/*
 
-	shoudln't be needed but left for reference
 
-	eepromStatus = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
-	CLEAR_DRUM_MODE;
-	modeStateBuffer = VarDataTab[0];
-	loop = modeStateBuffer & 0x01;
-	speed = (modeStateBuffer & 0x06) >> 1;
-	trigMode = (modeStateBuffer & 0x38) >> 3;
-	sampleHoldMode = (modeStateBuffer & 0x1C0) >> 6;
-	familyIndicator = (modeStateBuffer & 0xE00) >> 9;
-	logicOutA = (modeStateBuffer & 0x3000) >> 12;
-	logicOutB = (modeStateBuffer & 0xC000) >> 14;
-	//drumTrigMode = NOTIMPLEMENTEDYET;
 
-	fillFamilyArray();
-
-	// ... initialization of ui attributes
-	// call each menu to initialize, to make UI process the stored modes
-	 // processs trig first so it skips possibility of DRUM_MODE_ON_ON
-	ui_pllMenu(INIT_SIG);
-	ui_xMenu(INIT_SIG);
-	ui_scaleMenu(INIT_SIG);
-	ui_SampleHoldMenu(INIT_SIG);
-	ui_familyUpMenu(INIT_SIG);
-	ui_familyDownMenu(INIT_SIG);
-	ui_drumTrigMenu(EXIT_SIG);
-
-	if (loop != noloop || speed != audio) {
-		uiClearDrumMode();
-	}
-
-	// logic A and B don't need additional initialization beyond setting mode
-	uiSetPhaseFunctions();
-*/
 
 	State = &ui_default;
 	uiTransition( &ui_default);
@@ -827,35 +813,33 @@ void uiInitialize()
 
 
 void uiLoadFromEEPROM(int position) {
-	CLEAR_DRUM_MODE;
+
 	eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &VarDataTab[position * 2]);
 	modeStateBuffer = VarDataTab[position * 2] | (VarDataTab[(position * 2) + 1] >> 16);
-	loop = modeStateBuffer & LOOPMASK;
-	speed = (modeStateBuffer & SPEEDMASK) >> SPEEDSHIFT;
-	trigMode = (modeStateBuffer & TRIGMASK) >> TRIGSHIFT;
-	sampleHoldMode = (modeStateBuffer & SHMASK) >> SHSHIFT;
-	familyIndicator = (modeStateBuffer & FAMILYMASK) >> FAMILYSHIFT;
-	logicOutA = (modeStateBuffer & LOGICAMASK) >> LOGICASHIFT;
-	logicOutB = (modeStateBuffer & LOGICBMASK) >> LOGICBSHIFT;
-	drumMode = (modeStateBuffer & DRUMMASK) >> DRUMSHIFT;
+	controlScheme = modeStateBuffer & !(XMASK);
+	scaleType = (modeStateBuffer & !(SCALEMASK)) >> SCALESHIFT;
+	syncMode = (modeStateBuffer & !(SYNCMASK)) >> SYNCSHIFT;
+	sampleHoldMode = (modeStateBuffer & !(SHMASK)) >> SHSHIFT;
+	familyIndicator = (modeStateBuffer & !(FAMILYMASK)) >> FAMILYSHIFT;
+	logicOutA = modeStateBuffer & !(LOGICAMASK) >> LOGICASHIFT;
+	logicOutB = (modeStateBuffer & !(LOGICAMASK)) >> LOGICASHIFT;
 
 	fillFamilyArray();
-
 
 	/* ... initialization of ui attributes */
 	// call each menu to initialize, to make UI process the stored modes
 	// process trig first so it skips possibility of DRUM_MODE
 	// logic A and B don't need additional initialization beyond setting mode
-	ui_syncMenu(INIT_SIG);
+	ui_pllMenu(INIT_SIG);
 	ui_xMenu(INIT_SIG);
 	ui_scaleMenu(INIT_SIG);
 	ui_SampleHoldMenu(INIT_SIG);
-	ui_switchFamily();
-	if (loop = looping && speed == audio) {
-		uiSetDrumMode();
-	} else {
-		uiClearDrumMode();
-	}
+	ui_autoDutyMenu(INIT_SIG);
+	switchFamily();
+	ui_logicAMenu(INIT_SIG);
+	ui_logicBMenu(INIT_SIG);
+	uiSetPhaseFunctions();
+
 }
 
 // writes 2 16-bit values representing modeState to EEPROM per position,  1 runtime + 6 presets + calibration word
