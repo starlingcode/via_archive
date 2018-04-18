@@ -819,12 +819,6 @@ void uiClearLEDs(){
 	LEDC_OFF;
 	LEDD_OFF;
 }
-eepromStatus = EE_ReadVariable(VirtAddVarTab[0], &VarDataTab[0]);
-holdState = VarDataTab[0];
-eepromStatus = EE_ReadVariable(VirtAddVarTab[1], &VarDataTab[1]);
-holdLogicOut = VarDataTab[1];
-
-
 
 // initialization routine for the UI state machine
 void uiInitialize()
@@ -834,6 +828,14 @@ void uiInitialize()
 	//if(eepromStatus != EE_OK) {LEDC_ON;}  // error handling, switch to UI error handling?
 	HAL_Delay(500);  // init time
 	uiLoadFromEEPROM(0);  // load the most recently stored state from memory
+
+	// load calibration values from virtual EEPROM
+	eepromStatus = EE_ReadVariable(VirtAddVarTab[7], &EEPROMTemp);
+	morphCal = EEPROMTemp >> 8;
+	t2Cal = EEPROMTemp & 0xFF00;
+	eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1], &EEPROMTemp);
+	t1Cal = EEPROMTemp;
+
 
 	State = &ui_default;
 	uiTransition( &ui_default);

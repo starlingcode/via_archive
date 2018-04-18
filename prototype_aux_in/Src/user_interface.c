@@ -53,6 +53,10 @@ struct rgb red = {4095, 0, 0};
 struct rgb green = {0, 4095, 0};
 struct rgb blue = {0, 0, 4095};
 
+extern uint32_t morphCal;
+extern uint32_t t1Cal;
+extern uint32_t t2Cal;
+
 // initial setup of UI
 void uiInitialize(void);
 void uiLoadFromEEPROM(int);
@@ -858,6 +862,14 @@ void uiInitialize()
 	// logic A and B don't need additional initialization beyond setting mode
 	uiSetPhaseFunctions();
 */
+
+	// load calibration values from virtual EEPROM
+	eepromStatus = EE_ReadVariable(VirtAddVarTab[7], &EEPROMTemp);
+	morphCal = EEPROMTemp >> 8;
+	t2Cal = EEPROMTemp & 0xFF00;
+	eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1], &EEPROMTemp);
+	t1Cal = EEPROMTemp;
+
 	SH_A_TRACK;
 	SH_B_TRACK;
 
@@ -1084,7 +1096,7 @@ void ui_factoryReset(int sig){
 	case TIMEOUT_SIG:
 	    tempData = (morphCVAverage - 2048) << 8 | ((t2CVAverage - 2048) & 0xFFFFFF00)
 		eepromStatus = EE_WriteVariable(VirtAddVarTab[7], tempData);
-		eepromStatus |= EE_WriteVariable(VirtAddVarTab[15], (uint16_t)t1CVAverage);  // make sure i'm shifting in the right direction here!!
+		eepromStatus |= EE_WriteVariable(VirtAddVarTab[15], (uint16_t)t1CVAverage - 2048);  // make sure i'm shifting in the right direction here!!
 		if (eepromStatus != EE_OK){
 			uiSetLEDs(4);
 			uiTransition(&ui_error);
