@@ -73,8 +73,6 @@ enum logicOutATypes {triggerA, gateA, deltaA};
 enum logicOutBTypes {triggerB, gateB, deltaB};
 enum drumModeTypes {APM, AM, A, M, PM, P};
 
-extern uint16_t eepromStatus;
-
 int familyIndicator;
 int flagHolder;
 

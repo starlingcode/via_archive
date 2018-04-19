@@ -89,7 +89,7 @@ enum
 	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
 	EXIT_SIG,	  // Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
 	INIT_SIG,     // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
-	TIMER_TIMEOUT,// timer timeout
+	TIMEOUT_SIG,// timer timeout
 	SENSOR_EVENT_SIG,  // Sensor state machine not busy, can be queried for events
 	EXPAND_SW_ON_SIG,  // expander button depressed
 	EXPAND_SW_OFF_SIG, // expander button released
@@ -104,6 +104,8 @@ uint32_t displayNewMode;
 int holdCalibration;
 
 int debounce;
+
+uint16_t VirtAddVarTab[NB_OF_VAR] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16};
 
 // initialize the arrays that will be used by DMA to store our Knob and CV values
 extern uint32_t ADCReadings1[4];

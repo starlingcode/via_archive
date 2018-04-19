@@ -17,8 +17,8 @@ extern uint32_t morphCVAverage;
 uint32_t t1KnobAverage;
 uint32_t t2KnobAverage;
 extern uint32_t morphKnobAverage;
-uint32_t t1CVAverage;
-uint32_t t2CVAverage;
+extern uint32_t t1CVAverage;
+extern uint32_t t2CVAverage;
 
 // these arrays are filled with our ADC values using DMA (set up in main.c)
 uint32_t ADCReadings1[4];

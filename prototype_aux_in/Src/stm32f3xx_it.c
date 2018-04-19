@@ -63,7 +63,7 @@ enum
 	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
 	EXIT_SIG,	  // Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
 	INIT_SIG,     // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
-	TIMER_TIMEOUT,// timer timeout
+	TIMEOUT_SIG,// timer timeout
 	SENSOR_EVENT_SIG,  // Sensor state machine not busy, can be queried for events
 	EXPAND_SW_ON_SIG,  // expander button depressed
 	EXPAND_SW_OFF_SIG, // expander button released
@@ -663,7 +663,7 @@ void sampHoldA(void) {
 
 void TIM4_IRQHandler(void) {
 	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
-	uiDispatch(TIMER_TIMEOUT);
+	uiDispatch(TIMEOUT_SIG);
 	// this handles the logic where we resample b at a
 //	LEDA_ON;
 //	LEDB_ON;

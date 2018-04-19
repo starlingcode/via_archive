@@ -9,8 +9,6 @@
 #include "int64.h"
 #include "user_interface.h"
 
-uint32_t eepromStatus;
-
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
@@ -24,7 +22,12 @@ enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA}
 enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB}
 enum drumModeTypes drumMode; // {APM, AM, A, M, PM, P}
 
-/* signals used by the ui FSM */
+uint32_t morphCVAverage;
+uint32_t t1CVAverage;
+uint32_t t2CVAverage;
+
+extern uint16_t VirtAddVarTab[NB_OF_VAR];
+
 enum
 {	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
 	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
@@ -36,8 +39,6 @@ enum
 	EXPAND_SW_OFF_SIG, // expander button released
 	TSL_ERROR_SIG
 };
-
-static uint16_t VirtAddVarTab[NB_OF_VAR] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16};
 
 // holds the mode state as a EEPROM-formatted value.
 uint32_t modeStateBuffer;
@@ -52,10 +53,13 @@ int presetNumber;
 struct rgb red = {4095, 0, 0};
 struct rgb green = {0, 4095, 0};
 struct rgb blue = {0, 0, 4095};
+struct rgb orange = {4095, 4095, 0};
+struct rgb magenta = {4095, 0, 4095};
+struct rgb cyan = {0, 4095, 4095};
 
-extern uint32_t morphCal;
-extern uint32_t t1Cal;
-extern uint32_t t2Cal;
+uint32_t morphCal;
+uint32_t t1Cal;
+uint32_t t2Cal;
 
 // initial setup of UI
 void uiInitialize(void);
@@ -103,6 +107,8 @@ void ui_error(int sig);
 void ui_presetMenu(int sig);
 void ui_presetPressedMenu(int sig);
 void ui_newPreset(int sig);
+void ui_switchPreset(int sig);
+void ui_factoryReset(int sig);
 
 void uiDispatch(int sig) {(*State)(sig);}
 
@@ -249,7 +255,7 @@ void ui_trigMenu(int sig)
 			if(uiTimerRead() < 3000){
 				trigMode = (trigMode + 1) % 6;
 				// initialize some essential retrigger variables
-				modeStateBuffer = (modeStateBuffer & !(TRIGMASK)) | (trigMode << TRIGSHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(TRIGMASK)) | (trigMode << TRIGSHIFT);
 				incSign = 1;
 				CLEAR_GATE;
 				// if drum mode is on, toggle through sets of modulation destinations
@@ -299,7 +305,7 @@ void ui_drumTrigMenu(int sig) {
 		if (TRIGSENSOR == RELEASED){
 			if (uiTimerRead() < 3000) {
 				drumMode = (drumMode + 1) % 6;
-				modeStateBuffer = (modeStateBuffer & !(DRUMMASK)) | (drumMode << DRUMSHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(DRUMMASK)) | (drumMode << DRUMSHIFT);
 				uiSetLEDs(drumMode);
 				uiTransition(&ui_newMode);
 			} else {
@@ -343,7 +349,7 @@ void ui_logicAMenu(int sig)
 			if(uiTimerRead() < 3000){
 				logicOutA = (logicOutA + 1) % 3;
 
-				modeStateBuffer = (modeStateBuffer & !(LOGICAMASK)) | (logicOutA << LOGICASHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(LOGICAMASK)) | (logicOutA << LOGICASHIFT);
 				uiSetLEDs(logicOutA);
 				uiTransition(&ui_newLogicMode);
 
@@ -376,7 +382,7 @@ void ui_logicBMenu(int sig)
 		} else if (LOOPSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
 				logicOutB = (logicOutB + 1) % 3;
-				modeStateBuffer = (modeStateBuffer & !(LOGICBMASK)) | (logicOutB << LOGICBSHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(LOGICBMASK)) | (logicOutB << LOGICBSHIFT);
 				uiSetLEDs(logicOutB);
 				uiTransition(&ui_newLogicMode);
 
@@ -440,7 +446,7 @@ void ui_SampleHoldMenu(int sig)
 		if (SHSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
 				sampleHoldMode = (sampleHoldMode + 1) % 6;
-				modeStateBuffer = (modeStateBuffer & !(SHMASK)) | (sampleHoldMode << SHSHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(SHMASK)) | (sampleHoldMode << SHSHIFT);
 				SH_A_TRACK;  // ensure that there's no carryover holding by forcing tracking
 				SH_B_TRACK;
 				uiSetLEDs(sampleHoldMode);
@@ -481,7 +487,7 @@ void ui_familyUpMenu(int sig)
 			if(uiTimerRead() < 3000){
 				familyIndicator = (familyIndicator + 1) % 8;
 				switchFamily();
-				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
 				uiSetLEDs(familyIndicator);
 				uiSetRGB(currentFamily.color);
 				uiTransition( &ui_newMode);
@@ -519,7 +525,7 @@ void ui_familyDownMenu(int sig)
 					familyIndicator--;
 				}
 				switchFamily();
-				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
 				uiSetLEDs(familyIndicator);
 				uiSetRGB(currentFamily.color);
 				uiTransition( &ui_newMode);
@@ -612,7 +618,7 @@ void ui_loopMenu(int sig)
 
 			if(uiTimerRead() < 3000){
 				loop = (loop + 1) % 2;
-				modeStateBuffer = (modeStateBuffer & !(LOOPMASK)) | loop;
+				modeStateBuffer = (modeStateBuffer & ~(LOOPMASK)) | loop;
 
 				if (loop == noloop) {
 					SET_LAST_CYCLE;
@@ -875,8 +881,6 @@ void uiInitialize()
 
 	incSign = 1;
 
-	// PULLED FROM MAIN LOOP AND RELOCATED IN THE INIT BUT I BELIEVE IT TO BE REDUNDANT!!!
-
 	State = &ui_default;
 	uiTransition( &ui_default);
 }
@@ -949,31 +953,37 @@ void ui_presetPressedMenu(int sig){
 		case 1:
 			if (SHSENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
+				uiTransition(&ui_switchPreset);
 			}
 			break;
 		case 2:
 			if (TRIGSENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
+				uiTransition(&ui_switchPreset);
 			}
 			break;
 		case 3:
 			if (UPSENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
+				uiTransition(&ui_switchPreset);
 			}
 			break;
 		case 4:
 			if (DOWNSENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
+				uiTransition(&ui_switchPreset);
 			}
 			break;
 		case 5:
 			if (FREQSENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
+				uiTransition(&ui_switchPreset);
 			}
 			break;
 		case 6:
 			if (LOOPSENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
+				uiTransition(&ui_switchPreset);
 			}
 			break;
 		}
@@ -1007,6 +1017,27 @@ void ui_newPreset(int sig){
 
 	case TIMEOUT_SIG:
 		if (flashCounter < 16){
+			uiTimerEnable();
+			flashCounter++;
+			uiSetLEDs(flashCounter % 4);
+		} else {
+			flashCounter = 0;
+			uiTransition(&ui_default);
+		}
+	}
+}
+
+void ui_switchPreset(int sig){
+	static int flashCounter = 0;
+	switch (sig){
+	case ENTRY_SIG:
+		uiTimerReset();
+		uiTimerSetOverflow(500);
+		uiTimerEnable();
+		break;
+
+	case TIMEOUT_SIG:
+		if (flashCounter < 4){
 			uiTimerEnable();
 			flashCounter++;
 			uiSetLEDs(flashCounter % 4);
@@ -1079,22 +1110,22 @@ void ui_factoryReset(int sig){
 		// disable any DAC writes here?
 		// maximize length of averaging?
 		modeStateBuffer = DEFAULTPRESET1;
-		uiStoreToPreset(1);
+		uiStoreToEEPROM(1);
 		modeStateBuffer = DEFAULTPRESET2;
-		uiStoreToPreset(2);
+		uiStoreToEEPROM(2);
 		modeStateBuffer = DEFAULTPRESET3;
-		uiStoreToPreset(3);
+		uiStoreToEEPROM(3);
 		modeStateBuffer = DEFAULTPRESET4;
-		uiStoreToPreset(4);
+		uiStoreToEEPROM(4);
 		modeStateBuffer = DEFAULTPRESET5;
-		uiStoreToPreset(5);
+		uiStoreToEEPROM(5);
 		modeStateBuffer = DEFAULTPRESET6;
-		uiStoreToPreset(6);
-		uiLoadFromPreset(1);
+		uiStoreToEEPROM(6);
+		uiLoadFromEEPROM(1);
 		break;
 
 	case TIMEOUT_SIG:
-	    tempData = (morphCVAverage - 2048) << 8 | ((t2CVAverage - 2048) & 0xFFFFFF00)
+	    tempData = (morphCVAverage - 2048) << 8 | ((t2CVAverage - 2048) & 0xFFFFFF00);
 		eepromStatus = EE_WriteVariable(VirtAddVarTab[7], tempData);
 		eepromStatus |= EE_WriteVariable(VirtAddVarTab[15], (uint16_t)t1CVAverage - 2048);  // make sure i'm shifting in the right direction here!!
 		if (eepromStatus != EE_OK){

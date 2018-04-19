@@ -1,7 +1,11 @@
+
 void (*State)(int);
 
 // dispatch a signal to current state
 void uiDispatch(int);  // dispatch signal to state
+
+uint32_t eepromStatus;
+
 
 #define DOWNSENSOR MyTKeys[0].p_Data->StateId
 #define LOOPSENSOR MyTKeys[1].p_Data->StateId
