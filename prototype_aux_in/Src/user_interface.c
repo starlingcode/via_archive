@@ -470,11 +470,7 @@ void ui_familyUpMenu(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
-//		if (TRIGGER_BUTTON){
-//			presetNumber = 3;
-//			uiTransition(&ui_presetMenu);
-//			break;
-//		}
+
 		uiTimerReset();
 		uiTimerSetOverflow(65535);
 		uiTimerEnable();
@@ -602,15 +598,10 @@ void ui_loopMenu(int sig)
 	switch (sig) {
 
 	case ENTRY_SIG:
-//		if (TRIGGER_BUTTON){
-//			presetNumber = 6;
-//			uiTransition(&ui_presetMenu);
-//			break;
-//		}
 		uiTimerReset();
 		uiTimerSetOverflow(65535);
 		uiTimerEnable();
-		uiSetLEDs(sampleHoldMode);
+		uiSetLEDs(loop);
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -666,6 +657,10 @@ void uiClearDrumMode(void){
 // drumMenu just sets drum mode and passes through to newMode
 void uiSetDrumMode(void)
 {
+	SET_DRUM_MODE;
+	getPhase = getPhaseDrum;
+	SET_LAST_CYCLE;
+	__HAL_TIM_ENABLE(&htim3);
 	switch (drumMode) {
 	case APM:
 		SET_AMP_MOD;
@@ -698,10 +693,6 @@ void uiSetDrumMode(void)
 		CLEAR_MORPH_MOD;
 		break;
 	}
-	SET_DRUM_MODE;
-	SET_LAST_CYCLE;
-	getPhase = getPhaseDrum;
-	__HAL_TIM_ENABLE(&htim3);
 }
 
 void uiSetPhaseFunctions(void) {
@@ -722,7 +713,7 @@ void uiSetPhaseFunctions(void) {
 	case seq:
 		TIM6->ARR = 1000;
 		attackTime = calcTime1Seq;
-		releaseTime = calcTime2Seq;
+		//releaseTime = calcTime2Seq;
 		if (loop) {
 			getPhase = getPhaseComplexLFO;
 		} else {
@@ -1043,7 +1034,7 @@ void ui_switchPreset(int sig){
 			uiSetLEDs(flashCounter % 4);
 		} else {
 			flashCounter = 0;
-			uiTransition(&ui_default);
+			uiTransition(&ui_presetMenu);
 		}
 	}
 }

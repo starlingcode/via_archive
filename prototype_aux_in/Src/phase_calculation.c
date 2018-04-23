@@ -412,12 +412,12 @@ int getPhaseComplexEnv(int position) {
 		if (trigMode == pendulum && !(DRUM_MODE))  {
 			incSign = -1;
 			position = spanx2;
-			holdPosition = position;
+			holdPosition = spanx2;
 		}
 		else {
 			incSign = 1;
 			position = 0;
-			holdPosition = position;
+			holdPosition = 0;
 		}
 		SET_PHASE_STATE;
 		SH_A_TRACK;

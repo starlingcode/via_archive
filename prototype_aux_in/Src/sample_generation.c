@@ -52,7 +52,7 @@ void dacISR(void) {
 #ifndef _BUILD_REV_2
 #else
 	// remove for compatibility w/ rev2 (black back) boards
-	if ((GPIOA->IDR & GPIO_PIN_11) != (uint32_t) GPIO_PIN_RESET) {
+//	if ((GPIOA->IDR & GPIO_PIN_11) != (uint32_t) GPIO_PIN_RESET) {
 #endif
 		if ((OSCILLATOR_ACTIVE)) {
 
@@ -75,26 +75,6 @@ void dacISR(void) {
 			// pass that function a 1 or a 0 to indicate whether we are in attack or release
 
 			getSampleQuinticSpline(position);
-
-			if (position < span) {
-				CLEAR_PHASE_STATE;
-				//getSample(0);
-				//getSampleCubicSpline(0);
-				if (RUNTIME_DISPLAY) { // if the runtime display is on, show our mode
-					__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
-					__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
-				}
-			}
-			if (position >= span) {
-				SET_PHASE_STATE;
-				//getSample(1);
-				//getSampleCubicSpline(1);
-				if (RUNTIME_DISPLAY) { // if the runtime display is on, show our mode
-					__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
-					__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
-				}
-
-			}
 
 			//PROFILING_EVENT("Sampling Complete");
 
@@ -172,6 +152,26 @@ void dacISR(void) {
 				}
 			}
 
+			if (position < span) {
+				CLEAR_PHASE_STATE;
+				//getSample(0);
+				//getSampleCubicSpline(0);
+				if (RUNTIME_DISPLAY) { // if the runtime display is on, show our mode
+					__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, out);
+					__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
+				}
+			}
+			if (position >= span) {
+				SET_PHASE_STATE;
+				//getSample(1);
+				//getSampleCubicSpline(1);
+				if (RUNTIME_DISPLAY) { // if the runtime display is on, show our mode
+					__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, out);
+					__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, fixMorph >> 2);
+				}
+
+			}
+
 			// if we transition from one phase state to another, enable the transition handler interrupt
 			if (((PHASE_STATE) != lastPhase)) {
 				HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
@@ -193,7 +193,7 @@ void dacISR(void) {
 		}
 #ifndef _BUILD_REV_2
 #else
-	} //remove for compativility with rev2 boards
+//	} //remove for compativility with rev2 boards
 #endif
 }
 
