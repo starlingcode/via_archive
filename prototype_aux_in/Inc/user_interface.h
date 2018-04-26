@@ -4,6 +4,7 @@ void (*State)(int);
 // dispatch a signal to current state
 void uiDispatch(int);  // dispatch signal to state
 
+
 uint32_t eepromStatus;
 
 

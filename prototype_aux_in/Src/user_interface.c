@@ -657,6 +657,7 @@ void uiClearDrumMode(void){
 // drumMenu just sets drum mode and passes through to newMode
 void uiSetDrumMode(void)
 {
+	SET_DRUM_SAFETY;
 	SET_DRUM_MODE;
 	getPhase = getPhaseDrum;
 	SET_LAST_CYCLE;
@@ -693,6 +694,7 @@ void uiSetDrumMode(void)
 		CLEAR_MORPH_MOD;
 		break;
 	}
+	CLEAR_DRUM_SAFETY;
 }
 
 void uiSetPhaseFunctions(void) {
@@ -723,11 +725,11 @@ void uiSetPhaseFunctions(void) {
 
 	case audio:
 		if (loop == noloop) {
-			TIM6->ARR = 750;
 			uiSetDrumMode();
+			TIM6->ARR = 750;
 		} else {
-			uiClearDrumMode();
 			getPhase = getPhaseOsc;
+			uiClearDrumMode();
 			TIM6->ARR = 750;
 		}
 		break;

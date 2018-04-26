@@ -42,7 +42,6 @@ GAT * @file    stm32f3xx_it.c
 #include "int64.h"
 #include "interrupt_functions.h"
 
-#include "user_interface.h"
 
 uint32_t span;
 
@@ -298,14 +297,16 @@ void TIM2_IRQHandler(void) {
 			sampHoldA();
 		}
 		else {
-			if ((DRUM_MODE) && !(DRUM_ATTACK)) {
-				SET_UPDATE_PRESCALER; // same logic flag as before
-				SET_DRUM_ATTACK;
-				CLEAR_LAST_CYCLE;
-				attackCount = TIM3->CNT;
-				__HAL_TIM_DISABLE(&htim3);
-				TIM3->PSC = (expoTable[time2Knob] >> 11) + (expoTable[4095 - time2CV] >> 11);
-				TIM3->EGR = TIM_EGR_UG; // immediately set an update event to load the prescaler register
+			if ((DRUM_MODE)) {
+				if  (!(DRUM_ATTACK) || !(DRUM_SAFETY)) {
+					SET_UPDATE_PRESCALER; // same logic flag as before
+					SET_DRUM_ATTACK;
+					CLEAR_LAST_CYCLE;
+					attackCount = TIM3->CNT;
+					__HAL_TIM_DISABLE(&htim3);
+					TIM3->PSC = (expoTable[time2Knob] >> 11) + (expoTable[4095 - time2CV] >> 11);
+					TIM3->EGR = TIM_EGR_UG; // immediately set an update event to load the prescaler register
+				}
 			}
 			else {
 				switch (trigMode) {
