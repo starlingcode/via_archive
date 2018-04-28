@@ -20,6 +20,8 @@ extern TIM_HandleTypeDef htim15;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim16;
 
+extern int currentScale;
+
 void inputCapture(void) {
 
 	if ((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET) {
@@ -86,13 +88,13 @@ void generateFrequency(void) {
 	uint32_t rootIndex;
 	uint32_t multKey;
 	static uint32_t lastMultiplier;
-	Scale currentScale;
+	Scale scale;
 
 	//PROFILING_START("ScaleGen");
 
-			currentScale = scaleGroup[scaleType];
+			scale = scaleGroup[currentScale];
 
-			if (currentScale.oneVoltOct == 0) {
+			if (scale.oneVoltOct == 0) {
 				if ((4095 - time1CV) >= 2048) {
 					noteIndex = (fix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) >> 5;
 				}
@@ -111,18 +113,18 @@ void generateFrequency(void) {
 
 			if (controlScheme == root) {
 				if ((4095 - time2CV) >= 2048) {
-					rootIndex = (fix16_lerp(time2Knob, 4095, ((4095 - time2CV) - 2048) << 5)) >> currentScale.t2Bitshift;
+					rootIndex = (fix16_lerp(time2Knob, 4095, ((4095 - time2CV) - 2048) << 5)) >> scale.t2Bitshift;
 				}
 				else {
-					rootIndex = (fix16_lerp(0, time2Knob, (4095 - time2CV) << 5)) >> currentScale.t2Bitshift;
+					rootIndex = (fix16_lerp(0, time2Knob, (4095 - time2CV) << 5)) >> scale.t2Bitshift;
 				}
 			} else {
-				rootIndex = time2Knob >> currentScale.t2Bitshift;
+				rootIndex = time2Knob >> scale.t2Bitshift;
 			}
 
-			fracMultiplier = currentScale.grid[rootIndex][noteIndex]->fractionalPart;
-			intMultiplier = currentScale.grid[rootIndex][noteIndex]->integerPart;
-			gcd = currentScale.grid[rootIndex][noteIndex]->fundamentalDivision;
+			fracMultiplier = scale.grid[rootIndex][noteIndex]->fractionalPart;
+			intMultiplier = scale.grid[rootIndex][noteIndex]->integerPart;
+			gcd = scale.grid[rootIndex][noteIndex]->fundamentalDivision;
 			multKey = fracMultiplier + intMultiplier;
 
 			//PROFILING_EVENT("Ratio Acquired");
