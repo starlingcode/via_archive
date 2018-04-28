@@ -18,7 +18,7 @@ enum syncTypes syncMode; // {none, true, hardSync, catch}
 enum controlSchemes controlScheme; // {root, dutyCycle, FM, phaseMod}
 enum sampleHoldModeTypes sampleHoldMode;
 
-uint32_t time2Average;
+uint32_t time2CVAverage;
 uint32_t morphKnobAverage;
 uint32_t morphCVAverage;
 
@@ -354,7 +354,7 @@ void getSampleQuinticSpline(uint32_t phase) {
 					LEDC_OFF;
 				}
 			}
-		} else if (interp1 < interp2) {
+		} else if (interp3 < interp2) {
 			EXPAND_GATE_LOW;
 			REV2_GATE_LOW;
 			if (DELTAB) {
@@ -436,7 +436,7 @@ void getSampleQuinticSpline(uint32_t phase) {
 		// we use the interpolated nearest neighbor samples to determine the sign of rate of change
 		// aka, are we moving towrds a, or towards b
 		// we use this to generate our gate output
-		if (interp1 < interp2) {
+		if (interp2 < interp3) {
 			EXPAND_GATE_HIGH;
 			REV2_GATE_HIGH;
 			if (DELTAB) {
@@ -451,7 +451,7 @@ void getSampleQuinticSpline(uint32_t phase) {
 					LEDC_OFF;
 				}
 			}
-		} else if (interp1 < interp2) {
+		} else if (interp3 < interp2) {
 			EXPAND_GATE_LOW;
 			REV2_GATE_LOW;
 			if (DELTAB) {
@@ -498,19 +498,19 @@ void getPhase(void) {
 				holdPosition = holdPosition + spanx2;
 			}
 
-			if (time2Average > 4094) {
-				time2Average = 4094;
+			if (time2CVAverage > 4094) {
+				time2CVAverage = 4094;
 
-			} else if (time2Average < 1) {
-				time2Average = 1;
+			} else if (time2CVAverage < 1) {
+				time2CVAverage = 1;
 			}
 
-			if (holdPosition < (fix16_mul(spanx2, (4095 - time2Average) << 4))) {
-				attackTransferHolder = (65535 << 11)/(4095 - time2Average); // 1/(T2*2)
+			if (holdPosition < (fix16_mul(spanx2, (4095 - time2CVAverage) << 4))) {
+				attackTransferHolder = (65535 << 11)/(4095 - time2CVAverage); // 1/(T2*2)
 				position = fix16_mul(holdPosition, attackTransferHolder);
 	//			position = 2 * holdPosition;
 			} else {
-				releaseTransferHolder = (65535 << 11)/(time2Average); // 1/((1-T2)*2)
+				releaseTransferHolder = (65535 << 11)/(time2CVAverage); // 1/((1-T2)*2)
 				position = fix16_mul(holdPosition, releaseTransferHolder) + spanx2 - fix16_mul(spanx2, releaseTransferHolder);
 	//			position = fix16_mul(holdPosition, 43690) + spanx2 - fix16_mul(spanx2, 43690);
 			}
@@ -518,11 +518,11 @@ void getPhase(void) {
 	} else {
 		if (controlScheme == FM) {
 			if (PHASE_STATE) {
-				position = position + ((attackInc * (4095 - time2Average)) >> 11);
+				position = position + ((attackInc * (4095 - time2CVAverage)) >> 11);
 				if (position < 0) {position = 0;}
 				else if (position > spanx2) {position = spanx2;}
 			} else {
-				position = position + ((releaseInc * time2Average) >> 11);
+				position = position + ((releaseInc * time2CVAverage) >> 11);
 				if (position < 0) {position = 0;}
 				else if (position > spanx2) {position = spanx2;}
 			}
@@ -759,21 +759,31 @@ int readn(buffer* buffer, int Xn) {
 void getAverages(void) {
 
 	static buffer time2CVBuffer;
+	static buffer time1CVBuffer;
 	static buffer morphCVBuffer;
 	static buffer morphKnobBuffer;
+	static buffer time2KnobBuffer;
 	static uint32_t morphKnobSum;
 	static uint32_t morphCVSum;
-	static uint32_t time2Sum;
+	static uint32_t time2CVSum;
+	static uint32_t time2KnobSum;
+	static uint32_t time1CVSum;
 
 	write(&time2CVBuffer, time2CV);
-	time2Sum = time2Sum + time2CV- readn(&time2CVBuffer, 31);
+	time2CVSum = time2CVSum + time2CV- readn(&time2CVBuffer, 31);
+	write(&time1CVBuffer, time1CV);
+	time1CVSum = time1CVSum + time1CV- readn(&time1CVBuffer, 255);
 	morphKnobSum = morphKnobSum + morphKnob - readn(&morphKnobBuffer, 255);
+	time2KnobSum = time2KnobSum + time2Knob - readn(&time2KnobBuffer, 255);
 	morphCVSum = (morphCVSum + morphCV - readn(&morphCVBuffer, 31));
 
+	time2KnobAverage = time2KnobSum >> 8;
 	morphKnobAverage = morphKnobSum >> 8;
 	morphCVAverage = morphCVSum >> 2;
-	time2Average = time2Sum >> 5;
+	time2CVAverage = time2CVSum >> 5;
+	time1CVAverage = time1CVSum >> 8;
 
 	write(&morphCVBuffer, morphCV);
 	write(&morphKnobBuffer, morphKnob);
+	write(&time2KnobBuffer, time2Knob);
 }

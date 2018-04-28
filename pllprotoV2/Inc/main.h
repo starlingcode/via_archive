@@ -102,6 +102,8 @@ int adcRef;
 
 uint32_t time1CVAverage;
 uint32_t time1KnobAverage;
+uint32_t time2CVAverage;
+uint32_t time2KnobAverage;
 
 /* USER CODE END Includes */
 

@@ -95,14 +95,14 @@ void generateFrequency(void) {
 			scale = scaleGroup[currentScale];
 
 			if (scale.oneVoltOct == 0) {
-				if ((4095 - time1CV) >= 2048) {
-					noteIndex = (fix16_lerp(time1Knob, 4095, ((4095 - time1CV) - 2048) << 5)) >> 5;
+				if ((4095 - time1CVAverage) >= 2048) {
+					noteIndex = (fix16_lerp(time1Knob, 4095, ((4095 - time1CVAverage) - 2048) << 5)) >> 5;
 				}
 				else {
-					noteIndex = (fix16_lerp(0, time1Knob, (4095 - time1CV) << 5)) >> 5;
+					noteIndex = (fix16_lerp(0, time1Knob, (4095 - time1CVAverage) << 5)) >> 5;
 				}
 			} else {
-				int holdT1 = (4095 - time1CV) + (time1Knob >> 2) -1390;
+				int holdT1 = (4095 - time1CVAverage) + (time1Knob >> 2) -1390;
 				if (holdT1 > 4095) {
 					holdT1 = 4095;
 				} else if (holdT1 < 0) {
@@ -113,13 +113,13 @@ void generateFrequency(void) {
 
 			if (controlScheme == root) {
 				if ((4095 - time2CV) >= 2048) {
-					rootIndex = (fix16_lerp(time2Knob, 4095, ((4095 - time2CV) - 2048) << 5)) >> scale.t2Bitshift;
+					rootIndex = (fix16_lerp(time2KnobAverage, 4095, ((4095 - time2CV) - 2048) << 5)) >> scale.t2Bitshift;
 				}
 				else {
-					rootIndex = (fix16_lerp(0, time2Knob, (4095 - time2CV) << 5)) >> scale.t2Bitshift;
+					rootIndex = (fix16_lerp(0, time2KnobAverage, (4095 - time2CV) << 5)) >> scale.t2Bitshift;
 				}
 			} else {
-				rootIndex = time2Knob >> scale.t2Bitshift;
+				rootIndex = time2KnobAverage >> scale.t2Bitshift;
 			}
 
 			fracMultiplier = scale.grid[rootIndex][noteIndex]->fractionalPart;

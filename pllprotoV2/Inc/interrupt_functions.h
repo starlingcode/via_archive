@@ -48,12 +48,12 @@ int fix16_lerp(int, int, uint16_t)  __attribute__((section("ccmram")));
 
 // ADC variables and defines
 
-#define time2Knob ADCReadings2[0]
+#define time2Knob (ADCReadings2[0] & 0b1111111111111111111111111000000)
 #define morphKnob (ADCReadings2[1] & 0b11111111111111111111111111100000)
-#define time1CV (ADCReadings1[0] & 0b111111111111111111111111111000)
+#define time1CV (ADCReadings1[0] & 0b111111111111111111111111100000)
 #define time2CV (ADCReadings1[1] & 0b11111111111111111111111111111111)
 #define morphCV (ADCReadings1[2] & 0b1111111111111111111111111100000)
-#define time1Knob ADCReadings3[0]
+#define time1Knob (ADCReadings3[0] & 0b1111111111111111111111111100000)
 
 //#define morphKnob 4000
 //#define morphCV 50
