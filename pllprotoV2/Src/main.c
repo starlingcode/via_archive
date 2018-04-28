@@ -46,6 +46,8 @@
 #include "eeprom.h"
 #include "scales.h"
 
+#include "user_interface.h"
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -72,6 +74,19 @@ TIM_HandleTypeDef htim16;
 TSC_HandleTypeDef htsc;
 
 /* USER CODE BEGIN PV */
+
+enum
+{	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
+	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
+	EXIT_SIG,	  // Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
+	INIT_SIG,     // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
+	TIMEOUT_SIG,  // timer timeout
+	SENSOR_EVENT_SIG,  // Sensor state machine not busy, can be queried for events
+	EXPAND_SW_ON_SIG,  // expander button depressed
+	EXPAND_SW_OFF_SIG, // expander button released
+	TSL_ERROR_SIG
+};
+
 
 // this is part of the user code needed to run the STM32 touch sense library
 tsl_user_status_t tsl_status;
@@ -202,9 +217,6 @@ int main(void) {
 	// initialize trigger detection timer
 	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
 
-	// initialize touch sensor press timeout timer
-	HAL_TIM_Base_Start(&htim4);
-
 	// initialize tap tempo timer
 	HAL_TIM_Base_Start(&htim16);
 
@@ -231,8 +243,8 @@ int main(void) {
 	//switchScale(0);
 	// initialize our sample and holds to track
 	// we must do this after the resampling interrupts have been enabled
-//	SH_A_TRACK;
-//	SH_B_TRACK;
+	SH_A_TRACK;
+	SH_B_TRACK;
 
 	// read last state data in from virtual EEPROM
 //	HAL_FLASH_Unlock();
@@ -244,6 +256,12 @@ int main(void) {
 
 	//initialise_monitor_handles();
 	//printf("testing123\n");
+
+	uiInitialize();
+	
+	// initialize the timer that is used for touch sensor press timeout
+	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);
+	
 
 	// start DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);
@@ -280,11 +298,9 @@ int main(void) {
 		// if touch sensor acquisitions are complete
 		if (tsl_status != TSL_USER_STATUS_BUSY) {
 			uiDispatch(SENSOR_EVENT_SIG);
-		} else {
-			uiDispatch(TIMEOUT_SIG);
 		}
-	}
-		}
+
+
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
@@ -682,7 +698,7 @@ static void MX_TIM4_Init(void) {
 	htim4.Instance = TIM4;
 	htim4.Init.Prescaler = 10000;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim4.Init.Period = 65535;
+	htim4.Init.Period = 1000;
 	htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim4) != HAL_OK) {
@@ -694,7 +710,7 @@ static void MX_TIM4_Init(void) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 
-	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+	sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
 	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
 	if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig)
 			!= HAL_OK) {

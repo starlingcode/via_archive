@@ -40,6 +40,18 @@
 #include "main.h"
 #include "interrupt_functions.h"
 
+enum
+{	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
+	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
+	EXIT_SIG,	  // Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
+	INIT_SIG,     // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
+	TIMEOUT_SIG,  // timer timeout
+	SENSOR_EVENT_SIG,  // Sensor state machine not busy, can be queried for events
+	EXPAND_SW_ON_SIG,  // expander button depressed
+	EXPAND_SW_OFF_SIG, // expander button released
+	TSL_ERROR_SIG
+};
+
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -51,6 +63,7 @@ extern DAC_HandleTypeDef hdac;
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim8;
@@ -329,6 +342,23 @@ void DMA2_Channel5_IRQHandler(void) {
 	/* USER CODE BEGIN DMA2_Channel5_IRQn 1 */
 
 	/* USER CODE END DMA2_Channel5_IRQn 1 */
+}
+
+void TIM4_IRQHandler(void) {
+	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
+	uiDispatch(TIMEOUT_SIG);
+	// this handles the logic where we resample b at a
+//	LEDA_ON;
+//	LEDB_ON;
+//	LEDC_ON;
+//	LEDD_ON;
+
+
+	/* USER CODE END TIM8_UP_IRQn 0 */
+	HAL_TIM_IRQHandler(&htim4);
+	/* USER CODE BEGIN TIM8_UP_IRQn 1 */
+
+	/* USER CODE END TIM8_UP_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

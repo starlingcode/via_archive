@@ -9,10 +9,24 @@
 #include "int64.h"
 #include "user_interface.h"
 
+
 uint32_t eepromStatus;
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim4;
+
+enum
+{	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
+	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
+	EXIT_SIG,	  // Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
+	INIT_SIG,     // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
+	TIMEOUT_SIG,  // timer timeout
+	SENSOR_EVENT_SIG,  // Sensor state machine not busy, can be queried for events
+	EXPAND_SW_ON_SIG,  // expander button depressed
+	EXPAND_SW_OFF_SIG, // expander button released
+	TSL_ERROR_SIG
+};
+
 
 
 // these enums contain our mode information
@@ -23,6 +37,7 @@ enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antideci
 enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA, ratioDeltaA, pllClock};
 enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
 enum autoDutyTypes autoDuty; // {autoDutyOn, autoDutyOff};
+int familyIndicator;
 // for eeprom storage
 // virtual EEPROM addresses (store in flash, doesn't need to change)
 static uint16_t VirtAddVarTab[NB_OF_VAR] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16};
@@ -35,8 +50,9 @@ extern uint32_t morphCal;
 extern uint32_t t1Cal;
 extern uint32_t t2Cal;
 
-// variable that holds an address to current state function
-void (*State)(int);
+uint32_t t1CVAverage;
+uint32_t t2CVAverage;
+uint32_t morphCVAverage;
 
 //used by state machine to signal preset to be stored or recalled.
 int presetNumber;
@@ -44,9 +60,11 @@ int presetNumber;
 // currentScale * scaleType = our index in scales
 int currentScale;
 
+struct rgb orange = {4095, 4095, 0};
+struct rgb magenta = {4095, 0, 4095};
+struct rgb cyan = {0, 4095, 4095};
 
 // initial setup of UI
-void uiInitialize(void);
 void uiLoadFromEEPROM(int);
 void uiStoreToEEPROM(int);
 
@@ -60,7 +78,6 @@ static inline void uiTimerReset() { __HAL_TIM_SET_COUNTER(&htim4, 0); }
 static inline void uiTimerDisable() { __HAL_TIM_DISABLE(&htim4); }
 static inline void uiTimerEnable() { __HAL_TIM_ENABLE(&htim4); }
 static inline int uiTimerRead() { return __HAL_TIM_GET_COUNTER(&htim4); }  // return needed?
-static inline void uiTimerSet(int val) { __HAL_TIM_SET_COUNTER(&htim4, val); }
 static inline void uiTimerSetOverflow(int val) { TIM4->ARR = val; }
 
 void uiStoreToEEPROM(int);
@@ -80,10 +97,16 @@ void ui_scaleMenu(int sig);
 void ui_scaleTypeUp(int sig);
 void ui_scaleTypeDown(int sig);
 void ui_xMenu(int sig);
+void ui_autoDutyMenu(int sig);
 void ui_error(int sig);
 void ui_presetMenu(int sig);
+void ui_switchPreset(int sig);
 void ui_newPreset(int sig);
 void ui_factoryReset(int sig);
+
+void uiInitialize(void);
+
+void uiDispatch(int sig) {(*State)(sig);}
 
 
 // transition to new state
@@ -100,7 +123,7 @@ void ui_default(int sig)
 	switch (sig){
 
 	case ENTRY_SIG:
-		CLEAR_RUNTIME_DISPLAY;
+		SET_RUNTIME_DISPLAY;
 		uiClearLEDs();
 		uiClearRGB();
 		uiTimerReset();
@@ -129,10 +152,14 @@ void ui_default(int sig)
 		}
 		break;
 
+	case EXPAND_SW_ON_SIG:
+		uiTransition(&ui_presetMenu);
+		break;
+
 	case EXIT_SIG:
 		uiClearLEDs();
 		uiClearRGB();
-		SET_RUNTIME_DISPLAY;
+		CLEAR_RUNTIME_DISPLAY;
 		uiTimerReset();
 		uiTimerEnable();
 		break;
@@ -154,6 +181,7 @@ void ui_newMode(int sig)
 	{
 	case ENTRY_SIG:
 		uiStoreToEEPROM(0);
+		CLEAR_RUNTIME_DISPLAY;
 		uiTimerReset();
 		uiTimerSetOverflow(10000);
 		uiTimerEnable();
@@ -161,7 +189,6 @@ void ui_newMode(int sig)
 
 	// once uiTimerRead() times out, clear display and return to default state
 	case TIMEOUT_SIG:
-		if (uiTimerRead() > 10000)
 		uiTransition(&ui_default);
 		break;
 
@@ -188,6 +215,10 @@ void ui_newMode(int sig)
 		}
 		break;
 
+	case EXPAND_SW_ON_SIG:
+		uiTransition(&ui_presetMenu);
+		break;
+
 	case EXIT_SIG:
 		CLEAR_RUNTIME_DISPLAY;
 		uiClearLEDs();
@@ -204,13 +235,10 @@ void ui_syncMenu(int sig)
 	{
 	case ENTRY_SIG:
 
-		if (TRIGGER_BUTTON){
-			presetNumber = 2;
-			uiTransition(&ui_presetMenu);
-			break;
-		}
-			uiSetLEDs(syncMode);
-		}
+		uiTimerSetOverflow(65535);
+		uiTimerReset();
+		uiTimerEnable();
+		uiSetLEDs(syncMode);
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -219,7 +247,7 @@ void ui_syncMenu(int sig)
 			if(uiTimerRead() < 3000){
 				syncMode = (syncMode + 1) % 3;
 				//modeStateBuffer = (holdState & 0b1111111111000111) | (syncMode << 3);
-				modeStateBuffer = (holdState & !(SYNCMASK)) | (syncMode << SYNCSHIFT);
+				modeStateBuffer = (modeStateBuffer & !(SYNCMASK)) | (syncMode << SYNCSHIFT);
 				// if drum mode is on, toggle through sets of modulation destinations
 				uiSetLEDs(syncMode);
 				uiTransition(&ui_newMode);
@@ -235,12 +263,11 @@ void ui_syncMenu(int sig)
 		} else if (XSENSOR == PRESSED){
 			// descend into submenu
 			uiTransition(&ui_logicBMenu);
-
 		} else if (SHSENSOR == PRESSED){
 			uiTransition(&ui_autoDutyMenu);
-
-		break;
 		}
+		break;
+	}
 }
 
 
@@ -251,6 +278,7 @@ void ui_logicAMenu(int sig)
 	case ENTRY_SIG:
 		uiTimerReset();  // start count over for submenus
 		uiSetLEDs(logicOutA);
+		uiTimerSetOverflow(65535);
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -334,6 +362,7 @@ void ui_logicBMenu(int sig)
 	case ENTRY_SIG:
 		uiTimerReset();  // start count over for submenus
 		uiSetLEDs(logicOutB);
+		uiTimerSetOverflow(65535);
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -432,7 +461,11 @@ void ui_newLogicMode(int sig)
 		} else if (XSENSOR == PRESSED){
 			uiTransition(&ui_logicBMenu);
 			// if sync sensor is released, jump out of menu to new mode display.
-		} else if (SYNCSENSOR == RELEASED){
+		}
+		if (SHSENSOR == PRESSED){
+			uiTransition(&ui_autoDutyMenu);
+		}
+		else if (SYNCSENSOR == RELEASED){
 			uiTransition(&ui_newMode);
 		}
 		break;
@@ -444,11 +477,7 @@ void ui_SampleHoldMenu(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
-		if (TRIGGER_BUTTON){
-			presetNumber = 1;
-			uiTransition(&ui_presetMenu);
-			break;
-		}
+		uiTimerSetOverflow(65535);
 		uiSetLEDs(sampleHoldMode);
 		break;
 
@@ -481,11 +510,7 @@ void ui_familyUpMenu(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
-		if (TRIGGER_BUTTON){
-			presetNumber = 3;
-			uiTransition(&ui_presetMenu);
-			break;
-		}
+		uiTimerSetOverflow(65535);
 		uiSetLEDs(familyIndicator);
 		uiSetRGB(currentFamily.color);
 		break;
@@ -495,7 +520,7 @@ void ui_familyUpMenu(int sig)
 			if(uiTimerRead() < 3000){
 				familyIndicator = (familyIndicator + 1) % 16;
 				switchFamily();
-				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << TRIGSHIFT);
+				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
 				uiSetLEDs(familyIndicator);
 				uiSetRGB(currentFamily.color);
 				uiTransition( &ui_newMode);
@@ -512,11 +537,7 @@ void ui_familyDownMenu(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
-		if (TRIGGER_BUTTON){
-			presetNumber = 4;
-			uiTransition(&ui_presetMenu);
-			break;
-		}
+		uiTimerSetOverflow(65535);
 		uiSetLEDs(familyIndicator);
 		uiSetRGB(currentFamily.color);
 		break;
@@ -546,13 +567,10 @@ void ui_scaleMenu(int sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
-		if (TRIGGER_BUTTON){
-			presetNumber = 5;
-			uiTransition(&ui_presetMenu);
-			break;
-		}
+		uiTimerSetOverflow(65535);
+		uiTimerReset();
+		uiTimerEnable();
 		uiSetLEDs(currentScale);
-		uiSetLEDs(scaleType);
 		switch (scaleType){
 		case rhythm:
 			uiSetRGB(orange);
@@ -579,9 +597,9 @@ void ui_scaleMenu(int sig) {
 			if(SCALESENSOR == RELEASED){
 				if (uiTimerRead() < 3000) {
 					currentScale = (currentScale + 1) % 8;
-					modeStateBuffer = (modeStateBuffer & !(SCALEMASK)) | (scale << SCALESHIFT);
+					modeStateBuffer = (modeStateBuffer & !(SCALEMASK)) | (currentScale << SCALESHIFT);
 					switchFamily();
-					uiSetLEDs(scaleType);
+					uiSetLEDs(currentScale);
 					switch (scaleType){
 					case rhythm:
 						uiSetRGB(orange);
@@ -611,6 +629,7 @@ void ui_scaleTypeUp(int sig) {
 	case ENTRY_SIG:
 		uiTimerReset();
 		uiClearLEDs();
+		uiTimerSetOverflow(65535);
 
 		break;
 
@@ -650,6 +669,7 @@ void ui_scaleTypeDown(int sig) {
 	case ENTRY_SIG:
 		uiTimerReset();
 		uiClearLEDs();
+		uiTimerSetOverflow(65535);
 
 		break;
 
@@ -693,11 +713,7 @@ void ui_xMenu(int sig)
 	switch (sig) {
 
 	case ENTRY_SIG:
-		if (TRIGGER_BUTTON){
-			presetNumber = 6;
-			uiTransition(&ui_presetMenu);
-			break;
-		}
+		uiTimerSetOverflow(65535);
 		uiSetLEDs(controlScheme);
 		break;
 
@@ -718,11 +734,15 @@ void ui_xMenu(int sig)
 		}
 		break;
 	}
+}
 
 void ui_autoDutyMenu(int sig){
 	switch (sig){
 	case ENTRY_SIG:
 		uiSetLEDs(autoDuty);
+		uiTimerSetOverflow(65535);
+		uiTimerReset();
+		uiTimerEnable();
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -736,9 +756,9 @@ void ui_autoDutyMenu(int sig){
 						SET_AUTODUTY;
 					}
 				uiSetLEDs(autoDuty);
-				uiTransition(&ui_newMode);
+				uiTransition(&ui_newLogicMode);
 			} else {
-				uiTransition(&ui_syncMenu);
+				uiTransition(&ui_default);
 			}
 		}
 		if (SYNCSENSOR == RELEASED){
@@ -821,20 +841,20 @@ void uiClearLEDs(){
 }
 
 // initialization routine for the UI state machine
-void uiInitialize()
+void uiInitialize(void)
 {
 	HAL_FLASH_Unlock();
 	eepromStatus = EE_Init();
 	//if(eepromStatus != EE_OK) {LEDC_ON;}  // error handling, switch to UI error handling?
 	HAL_Delay(500);  // init time
-	uiLoadFromEEPROM(0);  // load the most recently stored state from memory
+	//uiLoadFromEEPROM(0);  // load the most recently stored state from memory
 
 	// load calibration values from virtual EEPROM
-	eepromStatus = EE_ReadVariable(VirtAddVarTab[7], &EEPROMTemp);
-	morphCal = EEPROMTemp >> 8;
-	t2Cal = EEPROMTemp & 0xFF00;
-	eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1], &EEPROMTemp);
-	t1Cal = EEPROMTemp;
+	//eepromStatus = EE_ReadVariable(VirtAddVarTab[7], &EEPROMTemp);
+	//morphCal = EEPROMTemp >> 8;
+	//t2Cal = EEPROMTemp & 0xFF00;
+	//eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1], &EEPROMTemp);
+	//t1Cal = EEPROMTemp;
 
 
 	State = &ui_default;
@@ -895,62 +915,69 @@ void uiStoreToEEPROM(int position){
 // eepromStatus |= EE_ReadVariable(VirtAddVarTab[position * 2],  &VarDataTab[position * 2]);
 // eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1],  &VarDataTab[0]);
 
-
 // watches for released sensor buttons while TRIG_BUTTON is down.  Loads or stores preset accordingly.
-void ui_presetMenu(int sig){
+void ui_presetPressedMenu(int sig){
 	switch (sig){
 	case ENTRY_SIG:
-		uiTimerSet(30000);
 		uiTimerReset();
+		uiTimerSetOverflow(10000);
+		uiTimerEnable();
 		break;
 
 	case SENSOR_EVENT_SIG:
 		switch(presetNumber){
 		case 1:
 			if (SHSENSOR == RELEASED){
-				loadFromEEPROM(presetNumber);
+				uiLoadFromEEPROM(presetNumber);
+				uiTransition(&ui_switchPreset);
 			}
 			break;
 		case 2:
 			if (SYNCSENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
+				uiTransition(&ui_switchPreset);
 			}
 			break;
 		case 3:
 			if (UPSENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
+				uiTransition(&ui_switchPreset);
 			}
 			break;
 		case 4:
 			if (DOWNSENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
+				uiTransition(&ui_switchPreset);
 			}
 			break;
 		case 5:
 			if (SCALESENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
+				uiTransition(&ui_switchPreset);
 			}
 			break;
 		case 6:
 			if (XSENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
+				uiTransition(&ui_switchPreset);
 			}
-			break;
-
-		case TIMEOUT_SIG:
-			uiStoreToEEPROM(presetNumber);
-			uiTransition(&ui_newPreset);
 			break;
 		}
 		break;
 
-		// if trig button is released, exit menu
-		case EXPAND_SW_OFF_SIG:
-			uiTransition(&ui_default);
-			break;
+	case TIMEOUT_SIG:
+		uiStoreToEEPROM(presetNumber);
+		uiTransition(&ui_newPreset);
+		break;
 
-		case EXIT_SIG:
-			break;
+
+	// if trig button is released, exit menu
+	case EXPAND_SW_OFF_SIG:
+		uiTransition(&ui_default);
+		break;
+
+	case EXIT_SIG:
+		break;
 	}
 }
 
@@ -959,13 +986,15 @@ void ui_newPreset(int sig){
 	static int flashCounter = 0;
 	switch (sig){
 	case ENTRY_SIG:
-		uiTimerSet(500);
 		uiTimerReset();
+		uiTimerSetOverflow(500);
+		uiTimerEnable();
 		break;
 
 	case TIMEOUT_SIG:
 		if (flashCounter < 16){
-			uiTimerReset();
+			uiTimerEnable();
+			flashCounter++;
 			uiSetLEDs(flashCounter % 4);
 		} else {
 			flashCounter = 0;
@@ -974,9 +1003,81 @@ void ui_newPreset(int sig){
 	}
 }
 
+void ui_switchPreset(int sig){
+	static int flashCounter = 0;
+	switch (sig){
+	case ENTRY_SIG:
+		uiTimerReset();
+		uiTimerSetOverflow(500);
+		uiTimerEnable();
+		break;
+
+	case TIMEOUT_SIG:
+		if (flashCounter < 4){
+			uiTimerEnable();
+			flashCounter++;
+			uiSetLEDs(flashCounter % 4);
+		} else {
+			flashCounter = 0;
+			uiTransition(&ui_presetMenu);
+		}
+	}
+}
+
+void ui_presetMenu(int sig)
+{
+	switch (sig){
+
+	case ENTRY_SIG:
+		SET_RUNTIME_DISPLAY;
+		uiClearLEDs();
+		uiClearRGB();
+		uiTimerReset();
+		uiTimerDisable();
+		break;
+
+	case SENSOR_EVENT_SIG:
+
+		if (SCALESENSOR == PRESSED){
+			uiTransition(&ui_presetPressedMenu);
+			presetNumber = 5;
+		} else if (SHSENSOR == PRESSED){
+			uiTransition(&ui_presetPressedMenu);
+			presetNumber = 1;
+		} else if (SYNCSENSOR == PRESSED){
+			uiTransition(&ui_presetPressedMenu);
+			presetNumber = 2;
+		} else if (XSENSOR == PRESSED){
+			uiTransition(&ui_presetPressedMenu);
+			presetNumber = 6;
+		} else if (UPSENSOR == PRESSED){
+			uiTransition(&ui_presetPressedMenu);
+			presetNumber = 3;
+		} else if (DOWNSENSOR == PRESSED){
+			uiTransition(&ui_presetPressedMenu);
+			presetNumber = 4;
+		}
+		break;
+
+	case EXPAND_SW_OFF_SIG:
+		uiTransition(&ui_default);
+		break;
+
+	case EXIT_SIG:
+		CLEAR_RUNTIME_DISPLAY;
+		uiClearLEDs();
+		uiClearRGB();
+		break;
+
+	default:
+		break;
+	}
+}
+
+
 // calibration and default preset initialization
 void ui_factoryReset(int sig){
-	static int tempData;
+	static uint16_t tempData;
 	switch (sig){
 	case ENTRY_SIG:
 		uiTimerReset();
@@ -985,24 +1086,24 @@ void ui_factoryReset(int sig){
 		// disable any DAC writes here?
 		// maximize length of averaging?
 		modeStateBuffer = DEFAULTPRESET1;
-		uiStoreToPreset(1);
+		uiStoreToEEPROM(1);
 		modeStateBuffer = DEFAULTPRESET2;
-		uiStoreToPreset(2);
+		uiStoreToEEPROM(2);
 		modeStateBuffer = DEFAULTPRESET3;
-		uiStoreToPreset(3);
+		uiStoreToEEPROM(3);
 		modeStateBuffer = DEFAULTPRESET4;
-		uiStoreToPreset(4);
+		uiStoreToEEPROM(4);
 		modeStateBuffer = DEFAULTPRESET5;
-		uiStoreToPreset(5);
+		uiStoreToEEPROM(5);
 		modeStateBuffer = DEFAULTPRESET6;
-		uiStoreToPreset(6);
-		uiLoadFromPreset(1);
+		uiStoreToEEPROM(6);
+		uiLoadFromEEPROM(1);
 		break;
 
 	case TIMEOUT_SIG:
-	    uint16_t tempData = (morphCVAverage - 2048) << 8 | ((t2CVAverage - 2048) & 0xFFFFFF00)
+	    tempData = (morphCVAverage - 2048) << 8 | ((t2CVAverage - 2048) & 0xFFFFFF00);
 		eepromStatus = EE_WriteVariable(VirtAddVarTab[7], tempData);
-		eepromStatus |= EE_WriteVariable(VirtAddVarTab[15], (uint16_t)t1CVAverage);  // make sure i'm shifting in the right direction here!!
+		eepromStatus |= EE_WriteVariable(VirtAddVarTab[15], (uint16_t)t1CVAverage - 2048);  // make sure i'm shifting in the right direction here!!
 		if (eepromStatus != EE_OK){
 			uiSetLEDs(4);
 			uiTransition(&ui_error);
@@ -1011,3 +1112,77 @@ void ui_factoryReset(int sig){
 		}
 	}
 }
+
+// this sets the flags to be used in the interrupt and also fills the holding array on the heap
+void switchFamily(void) {
+	position = 0;
+	currentFamily = familyArray[familyIndicator];
+	loadSampleArray(currentFamily);
+	span = (currentFamily.tableLength) << 16;
+	spanx2 = (currentFamily.tableLength) << 17;
+
+	switch (currentFamily.familySize) {
+	// these are values that properly allow us to select a family and interpolation fraction for our morph
+	case 3:
+		morphBitShiftRight = 11;
+		morphBitShiftLeft = 5;
+		break;
+
+	case 5:
+		morphBitShiftRight = 10;
+		morphBitShiftLeft = 6;
+		break;
+
+	case 9:
+		morphBitShiftRight = 9;
+		morphBitShiftLeft = 7;
+		break;
+
+	case 17:
+		morphBitShiftRight = 8;
+		morphBitShiftLeft = 8;
+		break;
+
+	case 33:
+		morphBitShiftRight = 7;
+		morphBitShiftLeft = 9;
+		break;
+
+	}
+	switch (currentFamily.tableLength) {
+	// these are values that properly allow us to select a family and interpolation fraction for our morph
+	case 4:
+		tableSizeCompensation = 5;
+		break;
+	case 8:
+		tableSizeCompensation = 4;
+		break;
+	case 16:
+		tableSizeCompensation = 3;
+		break;
+	case 32:
+		tableSizeCompensation = 2;
+		break;
+	case 64:
+		tableSizeCompensation = 1;
+		break;
+	case 128:
+		tableSizeCompensation = 0;
+	}
+}
+
+// shuttles the data from flash to ram and fills the holding array
+void loadSampleArray(Family family) {
+	uint16_t **currentFamilyPointer;
+
+	for (int i = 0; i < family.familySize; i++) {
+		for (int j = 0; j <= family.tableLength + 4; j++) {
+			// this just gets the appropriate samples and plops them into the global holding arrays
+			currentFamilyPointer = family.attackFamily + i;
+			attackHoldArray[i][j] = *(*(currentFamilyPointer) + j);
+			currentFamilyPointer = family.releaseFamily + i;
+			releaseHoldArray[i][j] = *(*(currentFamilyPointer) + j);
+		}
+	}
+}
+
