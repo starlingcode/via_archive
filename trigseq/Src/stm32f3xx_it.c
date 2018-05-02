@@ -35,6 +35,8 @@ GAT * @file    stm32f3xx_it.c
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "patterns.h"
+#include "sequence_functions.h"
+#include "hardware_io.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -50,8 +52,11 @@ enum
 	TSL_ERROR_SIG
 };
 
-
-
+enum {
+	DAC_GATE_HIGH,
+	DAC_GATE_LOW,
+	DAC_EXECUTE,
+};
 
 /* USER CODE END 0 */
 
@@ -237,60 +242,10 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
 void TIM2_IRQHandler(void) {
 	/* USER CODE BEGIN TIM2_IRQn 0 */
 
-	static uint32_t aCounter;
-	static uint32_t bCounter;
-	uint32_t aLength;
-	uint32_t bLength;
-	uint32_t patternMorph;
-	uint32_t aPatternIndex;
-	uint32_t bPatternIndex;
-	uint32_t aPatternValue;
-	uint32_t bPatternValue;
-
-
 	if (RISING_EDGE) {
-
-		patternMorph = knob3 >> 9;
-
-		//TODO fix python pattern gen and create length array
-
-//		aLength = euclidean_simple.aPatternBank[patternMorph].length;
-//		bLength = euclidean_simple.bPatternBank[patternMorph].length;
-
-		aLength = 16;
-		bLength = 8;
-
-		aPatternIndex = (aCounter + (knob1 >> 8)) % aLength;
-		bPatternIndex = (bCounter + (knob2 >> 8)) % bLength;
-
-		aPatternValue = euclidean_simple.aPatternBank[patternMorph][aPatternIndex];
-		bPatternValue = euclidean_simple.bPatternBank[patternMorph][bPatternIndex];
-
-		aCounter = (aCounter + 1) % aLength;
-		bCounter = (bCounter + 1) % bLength;
-
-		if (aPatternValue == 0) {
-			REV2_GATE_LOW;
-			ALOGIC_LOW;
-			LEDC_OFF;
-		} else {
-			REV2_GATE_HIGH;
-			ALOGIC_HIGH;
-			LEDC_ON;
-		}
-
-		if (bPatternValue == 0) {
-			BLOGIC_LOW;
-			LEDD_OFF;
-		} else {
-			BLOGIC_HIGH;
-			LEDD_ON;
-		}
+		doLogic();
 	} else {
-		ALOGIC_LOW;
-		BLOGIC_LOW;
-		LEDC_OFF;
-		LEDD_OFF;
+		handleFallingEdge();
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC1);
@@ -314,27 +269,15 @@ void TIM3_IRQHandler(void) {
 
 	/* USER CODE END TIM3_IRQn 1 */
 }
-/**
- * @brief This function handles TIM8 update interrupt.
- */
-void TIM8_UP_IRQHandler(void) {
-	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
-
-	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
-	__HAL_TIM_DISABLE(&htim8);
-
-	/* USER CODE END TIM8_UP_IRQn 0 */
-	//HAL_TIM_IRQHandler(&htim8);
-	/* USER CODE BEGIN TIM8_UP_IRQn 1 */
-
-	/* USER CODE END TIM8_UP_IRQn 1 */
-}
 
 /**
  * @brief This function handles Timer 6 interrupt and DAC underrun interrupts.
  */
 void TIM6_DAC_IRQHandler(void) {
 	/* USER CODE BEGIN TIM6_DAC_IRQn 0 */
+
+	(*manageADac)(DAC_EXECUTE);
+	(*manageBDac)(DAC_EXECUTE);
 
 	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
 	/* USER CODE END TIM6_DAC_IRQn 0 */
@@ -351,12 +294,39 @@ void TIM6_DAC_IRQHandler(void) {
 void TIM7_IRQHandler(void) {
 	/* USER CODE BEGIN TIM7_IRQn 0 */
 
+	SH_A_SAMPLE;
+	if (RUNTIME_DISPLAY) {
+		LEDA_ON;
+	}
+
 	__HAL_TIM_CLEAR_FLAG(&htim7, TIM_FLAG_UPDATE);
+	__HAL_TIM_DISABLE(&htim7);
 	/* USER CODE END TIM7_IRQn 0 */
 	//HAL_TIM_IRQHandler(&htim7);
 	/* USER CODE BEGIN TIM7_IRQn 1 */
-	__HAL_TIM_DISABLE(&htim7);
+
 	/* USER CODE END TIM7_IRQn 1 */
+}
+
+/**
+ * @brief This function handles TIM8 update interrupt.
+ */
+void TIM8_UP_IRQHandler(void) {
+	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
+
+	SH_B_SAMPLE;
+	if (RUNTIME_DISPLAY) {
+		LEDB_ON;
+	}
+
+	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
+	__HAL_TIM_DISABLE(&htim8);
+
+	/* USER CODE END TIM8_UP_IRQn 0 */
+	//HAL_TIM_IRQHandler(&htim8);
+	/* USER CODE BEGIN TIM8_UP_IRQn 1 */
+
+	/* USER CODE END TIM8_UP_IRQn 1 */
 }
 
 /**
@@ -396,6 +366,16 @@ void TIM4_IRQHandler(void) {
 	/* USER CODE BEGIN TIM8_UP_IRQn 1 */
 
 	/* USER CODE END TIM8_UP_IRQn 1 */
+}
+
+void EXTI15_10_IRQHandler(void) {
+
+	// reset counters on rising edge at aux trigger in or press of trigger button
+
+	aCounter = 0;
+	bCounter = 0;
+
+	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_11);
 }
 
 /* USER CODE END 1 */

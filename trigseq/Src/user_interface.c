@@ -5,6 +5,7 @@
 #include "stm32f3xx_it.h"
 #include "eeprom.h"
 #include "user_interface.h"
+#include "hardware_io.h"
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim4;
@@ -22,6 +23,17 @@ enum
 	EXPAND_SW_OFF_SIG, // expander button released
 	TSL_ERROR_SIG
 };
+
+enum {
+	DAC_GATE_HIGH,
+	DAC_GATE_LOW,
+	DAC_EXECUTE,
+};
+
+enum shAModes shAMode;
+enum shBModes shBMode;
+enum andAModes andAMode;
+enum andBModes andBMode;
 
 // holds the mode state as a EEPROM-formatted value.
 uint32_t modeStateBuffer;
@@ -169,6 +181,7 @@ void ui_newMode(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
+		CLEAR_RUNTIME_DISPLAY;
 		uiStoreToEEPROM(0);
 		uiTimerReset();
 		uiTimerSetOverflow(10000);
@@ -208,7 +221,6 @@ void ui_newMode(int sig)
 		break;
 
 	case EXIT_SIG:
-		SET_RUNTIME_DISPLAY;
 		uiClearLEDs();
 		uiClearRGB();
 		break;
@@ -216,172 +228,41 @@ void ui_newMode(int sig)
 
 }
 
-void ui_button4Menu(int sig)
-{
-	switch (sig)
-	{
-	case ENTRY_SIG:
-
-		//uiSetLEDs(parameter4);
-		uiTimerReset();
-		uiTimerSetOverflow(65535);
-		uiTimerEnable();
-
-		break;
-
-	case SENSOR_EVENT_SIG:
-
-		if (BUTTON4SENSOR == RELEASED){
-			if(uiTimerRead() < 3000){
-				parameter4 = (parameter4 + 1) % 4;
-				// initialize some essential retrigger variables
-				modeStateBuffer = (modeStateBuffer & ~(PARAMETER4MASK)) | (parameter4 << PARAMETER4SHIFT);
-				uiSetLEDs(parameter4);
-				uiTransition(&ui_newMode);
-			} else {
-				//no mode change
-				uiTransition(&ui_default);
-			}
-
-		} else if (BUTTON3SENSOR == PRESSED){
-			// descend into submenu
-			uiTransition(&ui_button4_3Menu);
-
-		} else if (BUTTON6SENSOR == PRESSED){
-			// descend into submenu
-			uiTransition(&ui_button4_6Menu);
-		}
-		break;
-
-	case INIT_SIG:
-		break;
-
-	default:
-		break;
-	}
-
-}
-
-void ui_button4_3Menu(int sig)
-{
-	switch (sig)
-	{
-	case ENTRY_SIG:
-		uiTimerReset();  // start count over for submenus
-		uiTimerSetOverflow(65535);
-		uiTimerEnable();
-		//uiSetLEDs(logicOutA);
-
-		break;
-
-	case SENSOR_EVENT_SIG:
-
-		if (BUTTON4SENSOR == RELEASED){
-			uiTransition(&ui_default);
-
-		} else if (BUTTON3SENSOR == RELEASED){
-			if(uiTimerRead() < 3000){
-//				logicOutA = (logicOutA + 1) % 3;
-//
-//				modeStateBuffer = (modeStateBuffer & ~(LOGICAMASK)) | (logicOutA << LOGICASHIFT);
-//				uiSetLEDs(logicOutA);
-//				uiTransition(&ui_button4SubMenu);
-
-			} else {
-				uiTransition(&ui_default);  // fall all the way back to default instead of allowing a trig modechange
-			}
-
-		} else if (BUTTON6SENSOR == PRESSED){
-			uiTransition(&ui_button4_6Menu);  // should we even allow this case?  more chances of bumped buttons?
-		}
-	}
-}
-
-void ui_button4_6Menu(int sig)
-{
-	switch (sig)
-	{
-	case ENTRY_SIG:
-		uiTimerReset();  // start count over for submenus
-		uiTimerSetOverflow(65535);
-		uiTimerEnable();
-		//uiSetLEDs(logicOutB);
-		break;
-
-	case SENSOR_EVENT_SIG:
-
-		if (BUTTON4SENSOR == RELEASED){
-			uiTransition(&ui_default);
-
-		} else if (BUTTON6SENSOR == RELEASED){
-			if(uiTimerRead() < 3000){
-//				logicOutB = (logicOutB + 1) % 3;
-//				modeStateBuffer = (modeStateBuffer & ~(LOGICBMASK)) | (logicOutB << LOGICBSHIFT);
-//				uiSetLEDs(logicOutB);
-//				uiTransition(&ui_button4SubMenu);
-
-			} else {
-				uiTransition(&ui_default);
-			}
-
-		} else if (BUTTON3SENSOR == PRESSED){
-			uiTransition(&ui_button4_3Menu);  // don't make this transition maybe??
-		}
-	}
-}
-
-// special newMode which only accepts additional presses on FREQ or parameter6, and returns to newMode on TRIG release.
-// for cycling through logicOut modes.  Does not time out.
-void ui_button4SubMenu(int sig)
-{
-	switch (sig)
-	{
-	case ENTRY_SIG:
-		uiTimerReset();  // start count over
-		uiTimerDisable();
-		uiStoreToEEPROM(0);  // store in preset 0 (current state)
-		break;
-
-	// once uiTimerRead() times out, clear display and return to default state
-
-	case SENSOR_EVENT_SIG:
-
-		if (BUTTON3SENSOR == PRESSED){
-			uiTransition( &ui_button4_3Menu);
-
-		} else if (BUTTON6SENSOR == PRESSED){
-			uiTransition( &ui_button4_6Menu);
-
-		} else if (BUTTON4SENSOR == RELEASED){
-			uiTransition( &ui_newMode);
-		}
-
-		break;
-	}
-}
 
 void ui_button1Menu(int sig)
 {
 	switch (sig)
 	{
 	case ENTRY_SIG:
-//		if (TRIGGER_BUTTON){
-//			presetNumber = 1;
-//			uiTransition(&ui_presetMenu);
-//			break;
-//		}
 		uiTimerReset();
 		uiTimerSetOverflow(65535);
 		uiTimerEnable();
-		uiSetLEDs(parameter1);
+		uiSetLEDs(shAMode);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON1SENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
-				parameter1 = (parameter1 + 1) % 4;
-				modeStateBuffer = (modeStateBuffer & ~(PARAMETER1MASK)) | parameter1;
-				uiSetLEDs(parameter1);
+				shAMode = (shAMode + 1) % 3;
+				modeStateBuffer = (modeStateBuffer & ~(SH_A_MASK)) | shAMode;
+				switch (shAMode) {
+					case aSHOff:
+						CLEAR_SAMPLE_A;
+						CLEAR_TRACK_A;
+						SH_A_TRACK;
+						break;
+					case aResample:
+						SET_SAMPLE_A;
+						CLEAR_TRACK_A;
+						break;
+					case aSampleTrack:
+						SET_SAMPLE_A;
+						SET_TRACK_A;
+						break;
+					default:
+						break;
+				}
+				uiSetLEDs(shAMode);
 				uiTransition(&ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -396,6 +277,61 @@ void ui_button1Menu(int sig)
 	}
 }
 
+void ui_button4Menu(int sig)
+{
+	switch (sig)
+	{
+	case ENTRY_SIG:
+		uiTimerReset();
+		uiTimerSetOverflow(65535);
+		uiTimerEnable();
+		uiSetLEDs(shBMode);
+
+		break;
+
+	case SENSOR_EVENT_SIG:
+
+		if (BUTTON4SENSOR == RELEASED){
+			if(uiTimerRead() < 3000){
+				shBMode = (shBMode + 1) % 3;
+				// initialize some essential retrigger variables
+				modeStateBuffer = (modeStateBuffer & ~(SH_B_MASK)) | (andAMode << SH_B_SHIFT);
+				switch (shBMode) {
+					case bSHOff:
+						CLEAR_SAMPLE_B;
+						CLEAR_TRACK_B;
+						SH_B_TRACK;
+						break;
+					case bResample:
+						SET_SAMPLE_B;
+						CLEAR_TRACK_B;
+						break;
+					case bSampleTrack:
+						SET_SAMPLE_B;
+						SET_TRACK_B;
+						break;
+					default:
+						break;
+				}
+				uiSetLEDs(shBMode);
+				uiTransition(&ui_newMode);
+			} else {
+				//no mode change
+				uiTransition(&ui_default);
+			}
+
+		}
+		break;
+
+	case INIT_SIG:
+		break;
+
+	default:
+		break;
+	}
+
+}
+
 
 void ui_button2Menu(int sig)
 {
@@ -406,15 +342,15 @@ void ui_button2Menu(int sig)
 		uiTimerReset();
 		uiTimerSetOverflow(65535);
 		uiTimerEnable();
-		uiSetLEDs(upDownParameter);
+		uiSetLEDs(patternGridIndex);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON2SENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
-				upDownParameter = (upDownParameter + 1) % 8;
-				modeStateBuffer = (modeStateBuffer & ~(UPDOWNMASK)) | (upDownParameter << UPDOWNSHIFT);
-				uiSetLEDs(upDownParameter);
+				patternGridIndex = (patternGridIndex + 1) % 8;
+				modeStateBuffer = (modeStateBuffer & ~(GRIDMASK)) | (patternGridIndex << GRIDSHIFT);
+				uiSetLEDs(patternGridIndex);
 				uiTransition( &ui_newMode);
 			} else {
 				uiTransition( &ui_default);
@@ -432,19 +368,19 @@ void ui_button5Menu(int sig)
 		uiTimerReset();
 		uiTimerSetOverflow(65535);
 		uiTimerEnable();
-		uiSetLEDs(upDownParameter);
+		uiSetLEDs(patternGridIndex);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON5SENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
-				if (upDownParameter == 0) {
-					upDownParameter = 7;  // wrap around
+				if (patternGridIndex == 0) {
+					patternGridIndex = 7;  // wrap around
 				} else {
-					upDownParameter--;
+					patternGridIndex--;
 				}
-				modeStateBuffer = (modeStateBuffer & ~(UPDOWNMASK)) | (upDownParameter << UPDOWNSHIFT);
-				uiSetLEDs(upDownParameter);
+				modeStateBuffer = (modeStateBuffer & ~(GRIDMASK)) | (patternGridIndex << GRIDSHIFT);
+				uiSetLEDs(patternGridIndex);
 				uiTransition( &ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -458,23 +394,7 @@ void ui_button3Menu(int sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
-//		if (TRIGGER_BUTTON){
-//			presetNumber = 5;
-//			uiTransition(&ui_presetMenu);
-//			break;
-//		}
-		uiSetLEDs(parameter3);
-		switch (parameter3){
-		case 1:
-			uiSetRGB(red);
-			break;
-		case 2:
-			uiSetRGB(green);
-			break;
-		case 3:
-			uiSetRGB(blue);
-			break;
-		}
+		uiSetLEDs(andAMode);
 		uiTimerReset();
 		uiTimerSetOverflow(65535);
 		uiTimerEnable();
@@ -483,20 +403,15 @@ void ui_button3Menu(int sig) {
 	case SENSOR_EVENT_SIG:
 		if(BUTTON3SENSOR == RELEASED){
 			if (uiTimerRead() < 3000) {
-				parameter3 = (parameter3 + 1) % 4;
-				modeStateBuffer = (modeStateBuffer & 0b1111111111111001) | (parameter3 << 1);
-				uiSetLEDs(parameter3);
-				switch (parameter3){
-				case 1:
-					uiSetRGB(red);
-					break;
-				case 2:
-					uiSetRGB(green);
-					break;
-				case 3:
-					uiSetRGB(blue);
-					break;
+				andAMode = (andAMode + 1) % 2;
+				modeStateBuffer = AND_A_MASK | (andAMode << AND_A_MASK);
+				if (andAMode != 0) {
+					SET_AND_A;
+				} else {
+					CLEAR_AND_A;
+					manageADac(DAC_GATE_HIGH);
 				}
+				uiSetLEDs(andAMode);
 				uiTransition(&ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -518,17 +433,23 @@ void ui_button6Menu(int sig)
 		uiTimerReset();
 		uiTimerSetOverflow(65535);
 		uiTimerEnable();
-		uiSetLEDs(parameter6);
+		uiSetLEDs(andBMode);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON6SENSOR == RELEASED){
 
 			if(uiTimerRead() < 3000){
-				parameter6 = (parameter6 + 1) % 4;
-				modeStateBuffer = (modeStateBuffer & ~(PARAMETER6MASK)) | parameter6;
+				andBMode = (andBMode + 1) % 2;
+				modeStateBuffer = (modeStateBuffer & ~(AND_B_MASK)) | (andBMode << AND_B_SHIFT);
+				if (andBMode != 0) {
+					SET_AND_B;
+				} else {
+					CLEAR_AND_B;
+					manageBDac(DAC_GATE_HIGH);
+				}
 				uiClearLEDs();
-				uiSetLEDs(parameter6);
+				uiSetLEDs(andBMode);
 				uiTransition( &ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -661,9 +582,10 @@ void uiLoadFromEEPROM(int position) {
 		uiTransition(&ui_error);
 	}
 
-	parameter6 = modeStateBuffer & PARAMETER6MASK;
-	parameter3 = (modeStateBuffer & PARAMETER3MASK) >> PARAMETER3SHIFT;
-	parameter4 = (modeStateBuffer & PARAMETER4MASK) >> PARAMETER4SHIFT;
+	shAMode = modeStateBuffer & SH_A_MASK;
+	shBMode = (modeStateBuffer & SH_B_MASK) >> SH_B_SHIFT;
+	andAMode = (modeStateBuffer & AND_A_MASK) >> AND_A_SHIFT;
+	andBMode = (modeStateBuffer & AND_A_MASK) >> AND_B_SHIFT;
 
 
 	/* ... initialization of ui attributes */

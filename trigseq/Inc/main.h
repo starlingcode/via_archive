@@ -48,11 +48,11 @@
 #include "eeprom.h"
 #include "user_interface.h"
 
-int parameter1;
-int parameter3;
-int parameter4;
-int parameter6;
-int upDownParameter;
+enum shAModes {aSHOff, aResample, aSampleTrack};
+enum shBModes {bSHOff, bResample, bSampleTrack};
+enum andAModes {andAOff, andAOn};
+enum andBModes {andBOff, andBOn};
+int patternGridIndex;
 
 #define knob2 ADCReadings2[0]
 #define knob3 ADCReadings2[1]
@@ -171,19 +171,34 @@ static inline int readBuffer(buffer* buffer, int Xn) {
 
 #define TRIGGER_BUTTON 				flagHolder & 0b00000000000000000000000000000001
 #define RUNTIME_DISPLAY 			flagHolder & 0b00000000000000000000000000000010
-#define BAR 						flagHolder & 0b00000000000000000000000000000100
+#define AND_A 						flagHolder & 0b00000000000000000000000000000100
+#define AND_B 						flagHolder & 0b00000000000000000000000000001000
+#define SAMPLE_A 					flagHolder & 0b00000000000000000000000000010000
+#define SAMPLE_B 					flagHolder & 0b00000000000000000000000000100000
+#define TRACK_A 					flagHolder & 0b00000000000000000000000001000000
+#define TRACK_B 					flagHolder & 0b00000000000000000000000010000000
 
 uint32_t flagHolder;
 
 #define SET_TRIGGER_BUTTON	 		flagHolder |= 0b00000000000000000000000000000001
 #define SET_RUNTIME_DISPLAY 		flagHolder |= 0b00000000000000000000000000000010
-#define SET_BAR	 					flagHolder |= 0b00000000000000000000000000000100
+#define SET_AND_A	 				flagHolder |= 0b00000000000000000000000000000100
+#define SET_AND_B	 				flagHolder |= 0b00000000000000000000000000001000
+#define SET_SAMPLE_A	 			flagHolder |= 0b00000000000000000000000000010000
+#define SET_SAMPLE_B	 			flagHolder |= 0b00000000000000000000000000100000
+#define SET_TRACK_A	 				flagHolder |= 0b00000000000000000000000001000000
+#define SET_TRACK_B	 				flagHolder |= 0b00000000000000000000000010000000
 
 
 
 #define CLEAR_TRIGGER_BUTTON 		flagHolder &= 0b11111111111111111111111111111110
 #define CLEAR_RUNTIME_DISPLAY 		flagHolder &= 0b11111111111111111111111111111101
-#define CLEAR_BAR	 				flagHolder &= 0b11111111111111111111111111111011
+#define CLEAR_AND_A	 				flagHolder &= 0b11111111111111111111111111111011
+#define CLEAR_AND_B	 				flagHolder &= 0b11111111111111111111111111110111
+#define CLEAR_SAMPLE_A	 			flagHolder &= 0b11111111111111111111111111101111
+#define CLEAR_SAMPLE_B	 			flagHolder &= 0b11111111111111111111111111011111
+#define CLEAR_TRACK_A	 			flagHolder &= 0b11111111111111111111111110111111
+#define CLEAR_TRACK_B	 			flagHolder &= 0b11111111111111111111111101111111
 
 
 

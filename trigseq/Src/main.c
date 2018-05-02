@@ -44,6 +44,7 @@
 #include "tsl_user.h"
 #include "eeprom.h"
 #include "user_interface.h"
+#include "hardware_io.h"
 
 /* USER CODE END Includes */
 
@@ -163,6 +164,10 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 
+	// set the priority and enable an interrupt line to be used by the retrigger input
+	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
+	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
 	// declare the initialization state
 	SET_RUNTIME_DISPLAY;
 
@@ -175,8 +180,9 @@ int main(void) {
 	HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
 	HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
 
-	// initialize the timer that is used to detect our triggers
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
+	// enable S&H resampling interrupts
+	__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
+	__HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
 
 	// initialize the timer that runs the PWM for our RGB led
 	HAL_TIM_Base_Start(&htim1);
@@ -188,12 +194,16 @@ int main(void) {
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
 
-	// initialize the timer that is used to detect our triggers
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-
 	// initialize our touch sensors
 	tsl_user_Init();
 	uiInitialize();
+
+	manageADac = dacAHigh;
+	manageBDac = dacBHigh;
+
+
+	// initialize the timer that is used to detect rising and falling edges at the clock input
+	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
 
 	// initialize the timer that is used for touch sensor press timeout
 	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);
@@ -219,6 +229,8 @@ int main(void) {
 				debounce++;
 				if (debounce == 10) {
 					uiDispatch(EXPAND_SW_ON_SIG);
+					//reset the counters on button press
+					HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
 				}
 			}
 		}
@@ -869,11 +881,8 @@ static void MX_GPIO_Init(void) {
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 	GPIO_InitStruct.Pin = GPIO_PIN_11;
-//	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-//	GPIO_InitStruct.Pull = GPIO_PULLUP;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; //rev2
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+	GPIO_InitStruct.Pull = GPIO_PULLUP;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
