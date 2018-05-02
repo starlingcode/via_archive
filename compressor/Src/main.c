@@ -44,6 +44,7 @@
 #include "tsl_user.h"
 #include "eeprom.h"
 #include "user_interface.h"
+#include "signal_processing.h"
 
 /* USER CODE END Includes */
 
@@ -145,6 +146,7 @@ int main(void) {
 	/* USER CODE END SysInit */
 
 	/* Initialize all configured peripherals */
+
 	MX_GPIO_Init();
 	MX_DMA_Init();
 	MX_ADC1_Init();
@@ -195,7 +197,8 @@ int main(void) {
 	// initialize the timer that is used for touch sensor press timeout
 	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);
 
-	//initialise_monitor_handles();
+	// this timer is used to recalculate filter coefficients 10 times a second
+	HAL_TIM_Base_Start_IT(&htim8);
 
 	//start our DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);
@@ -232,6 +235,9 @@ int main(void) {
 		if (tsl_status != TSL_USER_STATUS_BUSY) {
 			uiDispatch(SENSOR_EVENT_SIG);
 		}
+
+		(*dspTaskManager)();
+
 		/* USER CODE END WHILE */
 		/* USER CODE BEGIN 3 */
 	}
@@ -702,7 +708,7 @@ static void MX_TIM8_Init(void) {
 	TIM_MasterConfigTypeDef sMasterConfig;
 
 	htim8.Instance = TIM8;
-	htim8.Init.Prescaler = 1 - 1;
+	htim8.Init.Prescaler = 7200 - 1;
 	htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
 	htim8.Init.Period = 1000;
 	htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

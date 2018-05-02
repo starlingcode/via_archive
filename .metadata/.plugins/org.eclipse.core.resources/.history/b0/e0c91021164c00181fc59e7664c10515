@@ -1,0 +1,47 @@
+#include "int64.h"
+#include "stm32f3xx_hal.h"
+#include "stm32f3xx.h"
+#include "stm32f3xx_it.h"
+
+
+#define ARM_MATH_CM4
+
+#include "arm_math.h"
+
+static q63_t biquadStateAttack[4 * 2];
+static q63_t biquadStateRelease[4 * 2];
+
+arm_biquad_cas_df1_32x64_ins_q31 attackFilterInstance;
+arm_biquad_cas_df1_32x64_ins_q31 releaseFilterInstance;
+
+q31_t coefficientArray[5];
+
+typedef struct {
+    int buff[4096];
+    int writeIndex;
+}buffer;
+
+static inline void writeBuffer(buffer* buffer, int value) {
+	buffer->buff[(buffer->writeIndex++) & 4095] = value;
+}
+
+static inline int readBuffer(buffer* buffer, int Xn) {
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 4095];
+}
+
+static inline int fix16_lerp(int in0, int in1, uint16_t inFract) {
+	// taken from the fixmathlib library
+	int64_t tempOut = int64_mul_i32_i32(in0, (((int32_t) 1 << 16) - inFract));
+	tempOut = int64_add(tempOut, int64_mul_i32_i32(in1, inFract));
+	tempOut = int64_shift(tempOut, -16);
+	return (int) int64_lo(tempOut);
+}
+
+static inline q31_t q31Negate(q31_t in) {
+	return in ^ 0x80000000; //toggle the uppermost bit
+}
+
+int peakDetect(void);
+
+void calculateBiquadCoeffs(void);
+

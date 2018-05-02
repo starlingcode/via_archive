@@ -1,0 +1,144 @@
+02:03:22 **** Incremental Build of configuration Release for project trigseq ****
+make all 
+Building file: ../Src/hardware_io.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/trigseq/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F303xC -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Include" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Inc"  -O3 -mtune=cortex-m4 -g -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/hardware_io.d" -MT"Src/hardware_io.o" -o "Src/hardware_io.o" "../Src/hardware_io.c"
+Finished building: ../Src/hardware_io.c
+ 
+Building file: ../Src/sequence_functions.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/trigseq/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F303xC -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Include" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Inc"  -O3 -mtune=cortex-m4 -g -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/sequence_functions.d" -MT"Src/sequence_functions.o" -o "Src/sequence_functions.o" "../Src/sequence_functions.c"
+../Src/sequence_functions.c: In function 'processClock':
+../Src/sequence_functions.c:18:11: warning: variable 'offset' set but not used [-Wunused-but-set-variable]
+  uint32_t offset;
+           ^
+Finished building: ../Src/sequence_functions.c
+ 
+Building file: ../Src/stm32f3xx_it.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/trigseq/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F303xC -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Include" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Inc"  -O3 -mtune=cortex-m4 -g -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/stm32f3xx_it.d" -MT"Src/stm32f3xx_it.o" -o "Src/stm32f3xx_it.o" "../Src/stm32f3xx_it.c"
+../Src/stm32f3xx_it.c: In function 'TIM2_IRQHandler':
+../Src/stm32f3xx_it.c:248:3: warning: implicit declaration of function 'processClock' [-Wimplicit-function-declaration]
+   processClock();
+   ^
+Finished building: ../Src/stm32f3xx_it.c
+ 
+Building target: trigseq.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -L/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Lib -specs=nosys.specs -specs=nano.specs -T"../STM32F303CCTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "trigseq.elf" @"objects.list"   -lm
+Finished building target: trigseq.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "trigseq.elf" "trigseq.bin"
+arm-none-eabi-size "trigseq.elf"
+   text	   data	    bss	    dec	    hex	filename
+  32608	    152	   2956	  35716	   8b84	trigseq.elf
+ 
+02:03:27 **** Incremental Build of configuration Debug for project trigseq ****
+make all 
+Building file: ../Src/sequence_functions.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/trigseq/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F303xC -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/sequence_functions.d" -MT"Src/sequence_functions.o" -o "Src/sequence_functions.o" "../Src/sequence_functions.c"
+../Src/sequence_functions.c: In function 'processClock':
+../Src/sequence_functions.c:18:11: warning: variable 'offset' set but not used [-Wunused-but-set-variable]
+  uint32_t offset;
+           ^
+Finished building: ../Src/sequence_functions.c
+ 
+Building file: ../Src/stm32f3xx_it.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/trigseq/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F303xC -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/stm32f3xx_it.d" -MT"Src/stm32f3xx_it.o" -o "Src/stm32f3xx_it.o" "../Src/stm32f3xx_it.c"
+../Src/stm32f3xx_it.c: In function 'TIM2_IRQHandler':
+../Src/stm32f3xx_it.c:248:3: warning: implicit declaration of function 'processClock' [-Wimplicit-function-declaration]
+   processClock();
+   ^
+Finished building: ../Src/stm32f3xx_it.c
+ 
+Building target: trigseq.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -L"/Users/willmitchell/Documents/stm32 workspace/prototype/Release/Src" -L"/Users/willmitchell/Documents/stm32 workspace/prototype/Debug/Src" -specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -lc -lrdimon -T"../STM32F303CCTx_FLASH.ld" -Wl,-Map=output.map -o "trigseq.elf" @"objects.list"   -lm
+Finished building target: trigseq.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "trigseq.elf" "trigseq.bin"
+arm-none-eabi-size "trigseq.elf"
+   text	   data	    bss	    dec	    hex	filename
+  81132	    608	   3152	  84892	  14b9c	trigseq.elf
+ 
+02:06:04 **** Incremental Build of configuration Debug for project trigseq ****
+make all 
+Building file: ../Src/sequence_functions.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/trigseq/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F303xC -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/sequence_functions.d" -MT"Src/sequence_functions.o" -o "Src/sequence_functions.o" "../Src/sequence_functions.c"
+Finished building: ../Src/sequence_functions.c
+ 
+Building file: ../Src/stm32f3xx_it.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/trigseq/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F303xC -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/stm32f3xx_it.d" -MT"Src/stm32f3xx_it.o" -o "Src/stm32f3xx_it.o" "../Src/stm32f3xx_it.c"
+../Src/stm32f3xx_it.c: In function 'TIM2_IRQHandler':
+../Src/stm32f3xx_it.c:248:3: warning: implicit declaration of function 'processClock' [-Wimplicit-function-declaration]
+   processClock();
+   ^
+Finished building: ../Src/stm32f3xx_it.c
+ 
+Building target: trigseq.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -L"/Users/willmitchell/Documents/stm32 workspace/prototype/Release/Src" -L"/Users/willmitchell/Documents/stm32 workspace/prototype/Debug/Src" -specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -lc -lrdimon -T"../STM32F303CCTx_FLASH.ld" -Wl,-Map=output.map -o "trigseq.elf" @"objects.list"   -lm
+Finished building target: trigseq.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "trigseq.elf" "trigseq.bin"
+arm-none-eabi-size "trigseq.elf"
+   text	   data	    bss	    dec	    hex	filename
+  81192	    608	   3152	  84952	  14bd8	trigseq.elf
+ 
+02:11:54 **** Incremental Build of configuration Debug for project trigseq ****
+make all 
+Building file: ../Src/sequence_functions.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/trigseq/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F303xC -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/sequence_functions.d" -MT"Src/sequence_functions.o" -o "Src/sequence_functions.o" "../Src/sequence_functions.c"
+Finished building: ../Src/sequence_functions.c
+ 
+Building target: trigseq.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -L"/Users/willmitchell/Documents/stm32 workspace/prototype/Release/Src" -L"/Users/willmitchell/Documents/stm32 workspace/prototype/Debug/Src" -specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -lc -lrdimon -T"../STM32F303CCTx_FLASH.ld" -Wl,-Map=output.map -o "trigseq.elf" @"objects.list"   -lm
+Finished building target: trigseq.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "trigseq.elf" "trigseq.bin"
+arm-none-eabi-size "trigseq.elf"
+   text	   data	    bss	    dec	    hex	filename
+  81188	    608	   3152	  84948	  14bd4	trigseq.elf
+ 
+02:23:32 **** Incremental Build of configuration Debug for project trigseq ****
+make all 
+Building file: ../Src/sequence_functions.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/trigseq/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F303xC -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/trigseq/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/sequence_functions.d" -MT"Src/sequence_functions.o" -o "Src/sequence_functions.o" "../Src/sequence_functions.c"
+Finished building: ../Src/sequence_functions.c
+ 
+Building target: trigseq.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -L"/Users/willmitchell/Documents/stm32 workspace/prototype/Release/Src" -L"/Users/willmitchell/Documents/stm32 workspace/prototype/Debug/Src" -specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -lc -lrdimon -T"../STM32F303CCTx_FLASH.ld" -Wl,-Map=output.map -o "trigseq.elf" @"objects.list"   -lm
+Finished building target: trigseq.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "trigseq.elf" "trigseq.bin"
+arm-none-eabi-size "trigseq.elf"
+   text	   data	    bss	    dec	    hex	filename
+  81192	    608	   3152	  84952	  14bd8	trigseq.elf
+ 

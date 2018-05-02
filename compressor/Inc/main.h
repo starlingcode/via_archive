@@ -47,6 +47,7 @@
 #include "stm32f3xx_it.h"
 #include "eeprom.h"
 #include "user_interface.h"
+#include "int64.h"
 
 int parameter1;
 int parameter3;
@@ -66,20 +67,6 @@ int upDownParameter;
 uint32_t ADCReadings1[4];
 uint32_t ADCReadings2[2];
 uint32_t ADCReadings3[1];
-
-typedef struct {
-    int buff[4096];
-    int writeIndex;
-}buffer;
-
-static inline void writeBuffer(buffer* buffer, int value) {
-	buffer->buff[(buffer->writeIndex++) & 4095] = value;
-}
-
-static inline int readBuffer(buffer* buffer, int Xn) {
-	return buffer->buff[(buffer->writeIndex + (~Xn)) & 4095];
-}
-
 
 /* USER CODE END Includes */
 

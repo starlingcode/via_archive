@@ -1,0 +1,68 @@
+
+#include "stm32f3xx_hal.h"
+#include "stm32f3xx.h"
+#include "stm32f3xx_it.h"
+#include "signal_processing.h"
+
+	uint32_t output;
+	int average;
+	uint32_t testDummy;
+	int testCoeffs[5] = {2175, 4350, 2175. -2143156620, 1069423497};
+
+int peakDetect(void) {
+
+	static buffer delayLine;
+	static buffer knobBuffer;
+	static int runningSum;
+	static int knobSum;
+	int average;
+	int knobAverage;
+	int gainReduction;
+
+
+
+	knobSum = knob3 + knobSum - readBuffer(&knobBuffer, 4095);
+	knobAverage = knobSum >> 12;
+	writeBuffer(&knobBuffer, knob3);
+
+
+	if (cv2 > 2048) {
+		writeBuffer(&delayLine, cv2);
+		runningSum = cv2 + runningSum - readBuffer(&delayLine, 512);
+	} else {
+		writeBuffer(&delayLine, 4095 - cv2);
+		runningSum = (4095 - cv2) + runningSum - readBuffer(&delayLine, 512);
+	}
+
+	average = runningSum >> 9;
+
+	writeShortBuffer(&inputs, cv2 << 19);
+
+//	if (average > readShortBuffer(&outputs, 0)) {
+//		output = biquadFilter(attackCoeffArray);
+//		writeShortBuffer(&outputs, output);
+//	} else {
+		output = biquadFilter(testCoeffs);
+		testDummy = output >> 20;
+		if (testDummy > 4095) {
+			writeShortBuffer(&outputs, 4095 << 19);
+		} else if (testDummy < 0) {
+			writeShortBuffer(&outputs, 0);
+		} else {
+			writeShortBuffer(&outputs, output);
+		}
+
+//	}
+
+//	if (output > (2048 + (knobAverage >> 1))) {
+//		gainReduction = (output - (2048 + (knobAverage >> 1))) << 2;
+//		if (gainReduction > 4095) {
+//			gainReduction = 4095;
+//		}
+//		output = 4095 - gainReduction;
+//	} else {
+//		output = 4095;
+//	}
+
+	return average;
+}

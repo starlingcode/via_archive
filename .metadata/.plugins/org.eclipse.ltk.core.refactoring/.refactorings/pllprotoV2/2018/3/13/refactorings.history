@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;pllprotoV2/Src/input_capture_function&apos; to &apos;input_capture_function.c&apos;" description="Rename resource &apos;input_capture_function&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Src/input_capture_function" name="input_capture_function.c" stamp="1522292413063" updateReferences="true"/>
+</session>

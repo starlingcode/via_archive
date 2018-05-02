@@ -177,9 +177,7 @@
 							</tool>
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.671359536" name="MCU GCC Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker">
 								<option id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.script.1197996610" name="Linker Script (-T)" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker.script" useByScannerDiscovery="false" value="../STM32F303CCTx_FLASH.ld" valueType="string"/>
-								<option id="gnu.c.link.option.libs.1268395028" name="Libraries (-l)" superClass="gnu.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
-									<listOptionValue builtIn="false" value="arm_cortexM4lf_math"/>
-								</option>
+								<option id="gnu.c.link.option.libs.1268395028" name="Libraries (-l)" superClass="gnu.c.link.option.libs" useByScannerDiscovery="false" valueType="libs"/>
 								<option id="gnu.c.link.option.paths.1130814227" name="Library search path (-L)" superClass="gnu.c.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Lib"/>
 								</option>

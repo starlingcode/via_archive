@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;pllprotoV2/Lib&apos;" deleteContents="false" description="Delete resource &apos;pllprotoV2/Lib&apos;" element1="/pllprotoV2/Lib" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1522904959892"/>
+</session>

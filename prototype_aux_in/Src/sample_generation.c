@@ -56,7 +56,7 @@ void dacISR(void) {
 #endif
 		if ((OSCILLATOR_ACTIVE)) {
 
-			// write the current contour generator value to dac1, and its inverse to dac2 (this actually performs the interpolation)
+			// write the current contour generator value to DAC1, and its inverse to DAC2 (crossfading)
 			((*(volatile uint32_t *) DAC1_ADDR) = (4095 - out));
 			((*(volatile uint32_t *) DAC2_ADDR) = (out));
 

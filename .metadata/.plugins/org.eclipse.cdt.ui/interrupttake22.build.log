@@ -1,0 +1,6 @@
+23:02:22 **** Clean-only build of configuration Release for project interrupttake22 ****
+make clean 
+make: *** No rule to make target `clean'.  Stop.
+
+23:02:22 Build Finished (took 80ms)
+

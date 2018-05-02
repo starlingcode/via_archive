@@ -1,0 +1,755 @@
+20:11:54 **** Build of configuration Debug for project pllprotoV2 ****
+make all 
+Building file: ../Src/main.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F303xC -I"/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
+In file included from ../Src/main.c:39:0:
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/main.h:227:0: warning: "BUFF_SIZE_MASK" redefined
+ #define BUFF_SIZE_MASK (BUFF_SIZE-1)
+ ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/main.h:54:0: note: this is the location of the previous definition
+ #define BUFF_SIZE_MASK (BUFF_SIZE - 1)
+ ^
+In file included from ../Src/main.c:47:0:
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2778:48: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmGrid[8] = {harmSubharm1, harmSubharm2, harmSubharm3, harmSubharm4, harmSubharm5, harmSubharm6, harmSubharm7, harmSubharm8}; 
+                                                ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2778:62: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmGrid[8] = {harmSubharm1, harmSubharm2, harmSubharm3, harmSubharm4, harmSubharm5, harmSubharm6, harmSubharm7, harmSubharm8}; 
+                                                              ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2778:76: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmGrid[8] = {harmSubharm1, harmSubharm2, harmSubharm3, harmSubharm4, harmSubharm5, harmSubharm6, harmSubharm7, harmSubharm8}; 
+                                                                            ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2778:90: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmGrid[8] = {harmSubharm1, harmSubharm2, harmSubharm3, harmSubharm4, harmSubharm5, harmSubharm6, harmSubharm7, harmSubharm8}; 
+                                                                                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2778:104: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmGrid[8] = {harmSubharm1, harmSubharm2, harmSubharm3, harmSubharm4, harmSubharm5, harmSubharm6, harmSubharm7, harmSubharm8}; 
+                                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2778:118: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmGrid[8] = {harmSubharm1, harmSubharm2, harmSubharm3, harmSubharm4, harmSubharm5, harmSubharm6, harmSubharm7, harmSubharm8}; 
+                                                                                                                      ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2778:132: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmGrid[8] = {harmSubharm1, harmSubharm2, harmSubharm3, harmSubharm4, harmSubharm5, harmSubharm6, harmSubharm7, harmSubharm8}; 
+                                                                                                                                    ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2778:146: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmGrid[8] = {harmSubharm1, harmSubharm2, harmSubharm3, harmSubharm4, harmSubharm5, harmSubharm6, harmSubharm7, harmSubharm8}; 
+                                                                                                                                                  ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2780:56: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmfullspanGrid[8] = {harmSubharmfullspan1, harmSubharmfullspan2, harmSubharmfullspan3, harmSubharmfullspan4, harmSubharmfullspan5, harmSubharmfullspan6, harmSubharmfullspan7, harmSubharmfullspan8}; 
+                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2780:78: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmfullspanGrid[8] = {harmSubharmfullspan1, harmSubharmfullspan2, harmSubharmfullspan3, harmSubharmfullspan4, harmSubharmfullspan5, harmSubharmfullspan6, harmSubharmfullspan7, harmSubharmfullspan8}; 
+                                                                              ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2780:100: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmfullspanGrid[8] = {harmSubharmfullspan1, harmSubharmfullspan2, harmSubharmfullspan3, harmSubharmfullspan4, harmSubharmfullspan5, harmSubharmfullspan6, harmSubharmfullspan7, harmSubharmfullspan8}; 
+                                                                                                    ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2780:122: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmfullspanGrid[8] = {harmSubharmfullspan1, harmSubharmfullspan2, harmSubharmfullspan3, harmSubharmfullspan4, harmSubharmfullspan5, harmSubharmfullspan6, harmSubharmfullspan7, harmSubharmfullspan8}; 
+                                                                                                                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2780:144: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmfullspanGrid[8] = {harmSubharmfullspan1, harmSubharmfullspan2, harmSubharmfullspan3, harmSubharmfullspan4, harmSubharmfullspan5, harmSubharmfullspan6, harmSubharmfullspan7, harmSubharmfullspan8}; 
+                                                                                                                                                ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2780:166: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmfullspanGrid[8] = {harmSubharmfullspan1, harmSubharmfullspan2, harmSubharmfullspan3, harmSubharmfullspan4, harmSubharmfullspan5, harmSubharmfullspan6, harmSubharmfullspan7, harmSubharmfullspan8}; 
+                                                                                                                                                                      ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2780:188: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmfullspanGrid[8] = {harmSubharmfullspan1, harmSubharmfullspan2, harmSubharmfullspan3, harmSubharmfullspan4, harmSubharmfullspan5, harmSubharmfullspan6, harmSubharmfullspan7, harmSubharmfullspan8}; 
+                                                                                                                                                                                            ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2780:210: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmSubharmfullspanGrid[8] = {harmSubharmfullspan1, harmSubharmfullspan2, harmSubharmfullspan3, harmSubharmfullspan4, harmSubharmfullspan5, harmSubharmfullspan6, harmSubharmfullspan7, harmSubharmfullspan8}; 
+                                                                                                                                                                                                                  ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2782:56: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modal5primefullspanGrid[8] = {dominant5primefullspan, major5primefullspan, dorian5primefullspan, phrygian5primefullspan, lydian5primefullspan, mixolydian5primefullspan, aeolian5primefullspan, locrian5primefullspan}; 
+                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2782:80: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modal5primefullspanGrid[8] = {dominant5primefullspan, major5primefullspan, dorian5primefullspan, phrygian5primefullspan, lydian5primefullspan, mixolydian5primefullspan, aeolian5primefullspan, locrian5primefullspan}; 
+                                                                                ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2782:101: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modal5primefullspanGrid[8] = {dominant5primefullspan, major5primefullspan, dorian5primefullspan, phrygian5primefullspan, lydian5primefullspan, mixolydian5primefullspan, aeolian5primefullspan, locrian5primefullspan}; 
+                                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2782:123: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modal5primefullspanGrid[8] = {dominant5primefullspan, major5primefullspan, dorian5primefullspan, phrygian5primefullspan, lydian5primefullspan, mixolydian5primefullspan, aeolian5primefullspan, locrian5primefullspan}; 
+                                                                                                                           ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2782:147: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modal5primefullspanGrid[8] = {dominant5primefullspan, major5primefullspan, dorian5primefullspan, phrygian5primefullspan, lydian5primefullspan, mixolydian5primefullspan, aeolian5primefullspan, locrian5primefullspan}; 
+                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2782:169: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modal5primefullspanGrid[8] = {dominant5primefullspan, major5primefullspan, dorian5primefullspan, phrygian5primefullspan, lydian5primefullspan, mixolydian5primefullspan, aeolian5primefullspan, locrian5primefullspan}; 
+                                                                                                                                                                         ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2782:195: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modal5primefullspanGrid[8] = {dominant5primefullspan, major5primefullspan, dorian5primefullspan, phrygian5primefullspan, lydian5primefullspan, mixolydian5primefullspan, aeolian5primefullspan, locrian5primefullspan}; 
+                                                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2782:218: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modal5primefullspanGrid[8] = {dominant5primefullspan, major5primefullspan, dorian5primefullspan, phrygian5primefullspan, lydian5primefullspan, mixolydian5primefullspan, aeolian5primefullspan, locrian5primefullspan}; 
+                                                                                                                                                                                                                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2784:48: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmFolded4Grid[4] = {harmFolded8_2oct, harmFolded12_2oct, HarmFolded12_3oct, HarmFolded16_4oct}; 
+                                                ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2784:66: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmFolded4Grid[4] = {harmFolded8_2oct, harmFolded12_2oct, HarmFolded12_3oct, HarmFolded16_4oct}; 
+                                                                  ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2784:85: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmFolded4Grid[4] = {harmFolded8_2oct, harmFolded12_2oct, HarmFolded12_3oct, HarmFolded16_4oct}; 
+                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2784:104: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **harmFolded4Grid[4] = {harmFolded8_2oct, harmFolded12_2oct, HarmFolded12_3oct, HarmFolded16_4oct}; 
+                                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:48: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:61: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                             ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:74: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:87: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                       ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:100: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                                    ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:113: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                                                 ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:126: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                                                              ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:139: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                                                                           ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:152: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:165: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:179: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:193: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                                                                                                                                 ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:207: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                                                                                                                                               ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:221: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                                                                                                                                                             ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:235: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                                                                                                                                                                           ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:249: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                                                                                                                                                                                                                                                         ^
+In file included from ../Src/main.c:47:0:
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2788:53: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **pentamodal5primeGrid[8] = {majpenta5prime, maj2min75prime, maj3dom75prime, subdompenta5prime, dompenta5prime, relmin75prime, dim75prime, majmaj75prime}; 
+                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2788:69: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **pentamodal5primeGrid[8] = {majpenta5prime, maj2min75prime, maj3dom75prime, subdompenta5prime, dompenta5prime, relmin75prime, dim75prime, majmaj75prime}; 
+                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2788:85: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **pentamodal5primeGrid[8] = {majpenta5prime, maj2min75prime, maj3dom75prime, subdompenta5prime, dompenta5prime, relmin75prime, dim75prime, majmaj75prime}; 
+                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2788:101: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **pentamodal5primeGrid[8] = {majpenta5prime, maj2min75prime, maj3dom75prime, subdompenta5prime, dompenta5prime, relmin75prime, dim75prime, majmaj75prime}; 
+                                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2788:120: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **pentamodal5primeGrid[8] = {majpenta5prime, maj2min75prime, maj3dom75prime, subdompenta5prime, dompenta5prime, relmin75prime, dim75prime, majmaj75prime}; 
+                                                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2788:136: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **pentamodal5primeGrid[8] = {majpenta5prime, maj2min75prime, maj3dom75prime, subdompenta5prime, dompenta5prime, relmin75prime, dim75prime, majmaj75prime}; 
+                                                                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2788:151: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **pentamodal5primeGrid[8] = {majpenta5prime, maj2min75prime, maj3dom75prime, subdompenta5prime, dompenta5prime, relmin75prime, dim75prime, majmaj75prime}; 
+                                                                                                                                                       ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2788:163: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **pentamodal5primeGrid[8] = {majpenta5prime, maj2min75prime, maj3dom75prime, subdompenta5prime, dompenta5prime, relmin75prime, dim75prime, majmaj75prime}; 
+                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2790:43: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **triadsGrid[8] = {majTriad, majTriad1stInv, majTriad2ndInv, minTriad, minTriad2ndInv, MinTriad1stInv, quartalTriad, quartalTriad1stInv}; 
+                                           ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2790:53: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **triadsGrid[8] = {majTriad, majTriad1stInv, majTriad2ndInv, minTriad, minTriad2ndInv, MinTriad1stInv, quartalTriad, quartalTriad1stInv}; 
+                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2790:69: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **triadsGrid[8] = {majTriad, majTriad1stInv, majTriad2ndInv, minTriad, minTriad2ndInv, MinTriad1stInv, quartalTriad, quartalTriad1stInv}; 
+                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2790:85: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **triadsGrid[8] = {majTriad, majTriad1stInv, majTriad2ndInv, minTriad, minTriad2ndInv, MinTriad1stInv, quartalTriad, quartalTriad1stInv}; 
+                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2790:95: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **triadsGrid[8] = {majTriad, majTriad1stInv, majTriad2ndInv, minTriad, minTriad2ndInv, MinTriad1stInv, quartalTriad, quartalTriad1stInv}; 
+                                                                                               ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2790:111: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **triadsGrid[8] = {majTriad, majTriad1stInv, majTriad2ndInv, minTriad, minTriad2ndInv, MinTriad1stInv, quartalTriad, quartalTriad1stInv}; 
+                                                                                                               ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2790:127: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **triadsGrid[8] = {majTriad, majTriad1stInv, majTriad2ndInv, minTriad, minTriad2ndInv, MinTriad1stInv, quartalTriad, quartalTriad1stInv}; 
+                                                                                                                               ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2790:141: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **triadsGrid[8] = {majTriad, majTriad1stInv, majTriad2ndInv, minTriad, minTriad2ndInv, MinTriad1stInv, quartalTriad, quartalTriad1stInv}; 
+                                                                                                                                             ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:70: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                      ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:87: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                       ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:95: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                               ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:109: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                             ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:123: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                                           ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:137: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                                                         ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:145: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                                                                 ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:153: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                                                                         ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:165: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:179: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:193: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                                                                                                                 ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:211: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:225: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                                                                                                                                                 ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:239: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                                                                                                                                                               ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:257: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                                                                                                                                                                                 ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:268: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                                                                                                                                                                                                                                                                            ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:52: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                    ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:60: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                            ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:74: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:88: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:102: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                                      ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:110: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                                              ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:124: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                                                            ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:138: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                                                                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:152: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:164: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                                                                                                    ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:182: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                                                                                                                      ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:200: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                                                                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:218: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                                                                                                                                                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:226: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                                                                                                                                                                  ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:237: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                                                                                                                                                                             ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:251: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                                                                                                                                                                                                                                                           ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2796:57: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **rhythmDivisionsResetGrid[8] = {rhythmDivisionsReset1, rhythmDivisionsReset2, rhythmDivisionsReset3, rhythmDivisionsReset4, rhythmDivisionsReset5, rhythmDivisionsReset6, rhythmDivisionsReset7, rhythmDivisionsReset8}; 
+                                                         ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2796:80: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **rhythmDivisionsResetGrid[8] = {rhythmDivisionsReset1, rhythmDivisionsReset2, rhythmDivisionsReset3, rhythmDivisionsReset4, rhythmDivisionsReset5, rhythmDivisionsReset6, rhythmDivisionsReset7, rhythmDivisionsReset8}; 
+                                                                                ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2796:103: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **rhythmDivisionsResetGrid[8] = {rhythmDivisionsReset1, rhythmDivisionsReset2, rhythmDivisionsReset3, rhythmDivisionsReset4, rhythmDivisionsReset5, rhythmDivisionsReset6, rhythmDivisionsReset7, rhythmDivisionsReset8}; 
+                                                                                                       ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2796:126: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **rhythmDivisionsResetGrid[8] = {rhythmDivisionsReset1, rhythmDivisionsReset2, rhythmDivisionsReset3, rhythmDivisionsReset4, rhythmDivisionsReset5, rhythmDivisionsReset6, rhythmDivisionsReset7, rhythmDivisionsReset8}; 
+                                                                                                                              ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2796:149: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **rhythmDivisionsResetGrid[8] = {rhythmDivisionsReset1, rhythmDivisionsReset2, rhythmDivisionsReset3, rhythmDivisionsReset4, rhythmDivisionsReset5, rhythmDivisionsReset6, rhythmDivisionsReset7, rhythmDivisionsReset8}; 
+                                                                                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2796:172: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **rhythmDivisionsResetGrid[8] = {rhythmDivisionsReset1, rhythmDivisionsReset2, rhythmDivisionsReset3, rhythmDivisionsReset4, rhythmDivisionsReset5, rhythmDivisionsReset6, rhythmDivisionsReset7, rhythmDivisionsReset8}; 
+                                                                                                                                                                            ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2796:195: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **rhythmDivisionsResetGrid[8] = {rhythmDivisionsReset1, rhythmDivisionsReset2, rhythmDivisionsReset3, rhythmDivisionsReset4, rhythmDivisionsReset5, rhythmDivisionsReset6, rhythmDivisionsReset7, rhythmDivisionsReset8}; 
+                                                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2796:218: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **rhythmDivisionsResetGrid[8] = {rhythmDivisionsReset1, rhythmDivisionsReset2, rhythmDivisionsReset3, rhythmDivisionsReset4, rhythmDivisionsReset5, rhythmDivisionsReset6, rhythmDivisionsReset7, rhythmDivisionsReset8}; 
+                                                                                                                                                                                                                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:65: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                 ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:85: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:105: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                         ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:123: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                           ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:141: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                                             ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:159: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                                                               ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:176: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                                                                                ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:193: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                                                                                                 ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:210: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                                                                                                                  ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:227: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:243: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:259: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:275: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:292: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                                                                                                                                                                                                    ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:309: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                                                                                                                                                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:326: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                                                                                                                                                                                                                                                                                                                                      ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:59: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                           ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:71: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                       ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:83: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:101: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:119: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                                       ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:137: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                                                         ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:155: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                                                                           ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:173: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                                                                                             ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:191: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                                                                                                               ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:209: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                                                                                                                                 ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:227: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:237: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                                                                                                                                                             ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:253: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                                                                                                                                                                             ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:269: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                                                                                                                                                                                             ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:285: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                                                                                                                                                                                                             ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:301: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                                                                                                                                                                                                                                                                                                             ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2802:46: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **Harm73_75Grid[8] = {Harm73_75_1, Harm73_75_2, Harm73_75_3, Harm73_75_4, Harm73_75_5, Harm73_75_6, Harm73_75_7, Harm73_75_8}; 
+                                              ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2802:59: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **Harm73_75Grid[8] = {Harm73_75_1, Harm73_75_2, Harm73_75_3, Harm73_75_4, Harm73_75_5, Harm73_75_6, Harm73_75_7, Harm73_75_8}; 
+                                                           ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2802:72: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **Harm73_75Grid[8] = {Harm73_75_1, Harm73_75_2, Harm73_75_3, Harm73_75_4, Harm73_75_5, Harm73_75_6, Harm73_75_7, Harm73_75_8}; 
+                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2802:85: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **Harm73_75Grid[8] = {Harm73_75_1, Harm73_75_2, Harm73_75_3, Harm73_75_4, Harm73_75_5, Harm73_75_6, Harm73_75_7, Harm73_75_8}; 
+                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2802:98: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **Harm73_75Grid[8] = {Harm73_75_1, Harm73_75_2, Harm73_75_3, Harm73_75_4, Harm73_75_5, Harm73_75_6, Harm73_75_7, Harm73_75_8}; 
+                                                                                                  ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2802:111: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **Harm73_75Grid[8] = {Harm73_75_1, Harm73_75_2, Harm73_75_3, Harm73_75_4, Harm73_75_5, Harm73_75_6, Harm73_75_7, Harm73_75_8}; 
+                                                                                                               ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2802:124: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **Harm73_75Grid[8] = {Harm73_75_1, Harm73_75_2, Harm73_75_3, Harm73_75_4, Harm73_75_5, Harm73_75_6, Harm73_75_7, Harm73_75_8}; 
+                                                                                                                            ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2802:137: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **Harm73_75Grid[8] = {Harm73_75_1, Harm73_75_2, Harm73_75_3, Harm73_75_4, Harm73_75_5, Harm73_75_6, Harm73_75_7, Harm73_75_8}; 
+                                                                                                                                         ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:51: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:67: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:83: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:99: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:115: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:131: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:147: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:163: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:179: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:195: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                                                                                                                   ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:212: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                                                                                                                                    ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:229: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                                                                                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:246: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                                                                                                                                                                      ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:263: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                                                                                                                                                                                       ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:280: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                                                                                                                                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:297: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                                                                                                                                                                                                                                                                                                         ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:50: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                  ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:73: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                         ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:91: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                           ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:110: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                              ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:129: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                                                 ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:149: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:168: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:190: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                                                                                                              ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:210: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                                                                                                                                  ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:234: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                                                                                                                                                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:255: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                                                                                                                                                                               ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:276: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                                                                                                                                                                                                    ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:297: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                                                                                                                                                                                                                         ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:319: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                                                                                                                                                                                                                                               ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:344: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                                                                                                                                                                                                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:369: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                                                                                                                                                                                                                                                                                                                                                                                 ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:56: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:64: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:75: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                           ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:89: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                         ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:106: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:120: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:137: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                                                                         ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:151: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                                                                                       ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:168: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                                                                                                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:182: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                                                                                                                      ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:199: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                                                                                                                                       ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:207: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                                                                                                                                               ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:218: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                                                                                                                                                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:238: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                                                                                                                                                                              ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:261: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                                                                                                                                                                                                     ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:281: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                                                                                                                                                                                                                                                                                         ^
+../Src/main.c: In function 'main':
+../Src/main.c:260:2: warning: implicit declaration of function 'uiInitialize' [-Wimplicit-function-declaration]
+  uiInitialize();
+  ^
+../Src/main.c:282:6: warning: implicit declaration of function 'tapTempo' [-Wimplicit-function-declaration]
+      tapTempo();
+      ^
+../Src/main.c: In function 'MX_TIM16_Init':
+../Src/main.c:836:26: warning: unused variable 'sMasterConfig' [-Wunused-variable]
+  TIM_MasterConfigTypeDef sMasterConfig;
+                          ^
+../Src/main.c:835:25: warning: unused variable 'sClockSourceConfig' [-Wunused-variable]
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+                         ^
+In file included from ../Src/main.c:44:0:
+../Src/main.c: At top level:
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2706:24: warning: 'lump2ndDeg' defined but not used [-Wunused-variable]
+ static const uint16_t *lump2ndDeg[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2710:24: warning: 'allLinear5_5' defined but not used [-Wunused-variable]
+ static const uint16_t *allLinear5_5[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2714:24: warning: 'allLinear65_3' defined but not used [-Wunused-variable]
+ static const uint16_t *allLinear65_3[3] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2718:24: warning: 'allLinear129_5' defined but not used [-Wunused-variable]
+ static const uint16_t *allLinear129_5[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2722:24: warning: 'skipsaw' defined but not used [-Wunused-variable]
+ static const uint16_t *skipsaw[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2726:24: warning: 'impshort' defined but not used [-Wunused-variable]
+ static const uint16_t *impshort[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2731:24: warning: 'threeBounce' defined but not used [-Wunused-variable]
+ static const uint16_t *threeBounce[3] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2735:24: warning: 'trioddAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2740:24: warning: 'trioddReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2745:24: warning: 'sawBendAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2749:24: warning: 'sawBendReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2753:24: warning: 'exciteBikeAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2758:24: warning: 'exciteBikeReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2763:24: warning: 'algerianAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2767:24: warning: 'algerianReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2771:24: warning: 'superEllipse1SymAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *superEllipse1SymAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2775:24: warning: 'superEllipse1SymReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *superEllipse1SymReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2779:24: warning: 'superEllipse1AsymAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *superEllipse1AsymAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2783:24: warning: 'superEllipse1AsymReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *superEllipse1AsymReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2787:24: warning: 'moogSquareShiftAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2792:24: warning: 'moogSquareShiftReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2797:24: warning: 'stepsAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *stepsAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2802:24: warning: 'stepsReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *stepsReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2807:24: warning: 'sawPWMAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawPWMAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2812:24: warning: 'sawPWMReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawPWMReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2817:24: warning: 'linwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *linwavefold_257_Family[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2821:24: warning: 'sinwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *sinwavefold_257_Family[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2826:24: warning: 'additive_tri_to_pulseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *additive_tri_to_pulseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2830:24: warning: 'newBounceFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *newBounceFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2834:24: warning: 'tenor257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/tables.h:2838:24: warning: 'tenor257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Rls[5] = {
+                        ^
+In file included from ../Src/main.c:47:0:
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2778:26: warning: 'harmSubharmGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **harmSubharmGrid[8] = {harmSubharm1, harmSubharm2, harmSubharm3, harmSubharm4, harmSubharm5, harmSubharm6, harmSubharm7, harmSubharm8}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2780:26: warning: 'harmSubharmfullspanGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **harmSubharmfullspanGrid[8] = {harmSubharmfullspan1, harmSubharmfullspan2, harmSubharmfullspan3, harmSubharmfullspan4, harmSubharmfullspan5, harmSubharmfullspan6, harmSubharmfullspan7, harmSubharmfullspan8}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2782:26: warning: 'modal5primefullspanGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **modal5primefullspanGrid[8] = {dominant5primefullspan, major5primefullspan, dorian5primefullspan, phrygian5primefullspan, lydian5primefullspan, mixolydian5primefullspan, aeolian5primefullspan, locrian5primefullspan}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2784:26: warning: 'harmFolded4Grid' defined but not used [-Wunused-variable]
+ static const ScaleNote **harmFolded4Grid[4] = {harmFolded8_2oct, harmFolded12_2oct, HarmFolded12_3oct, HarmFolded16_4oct}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2786:26: warning: 'polyResetsGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16}; 
+                          ^
+In file included from ../Src/main.c:47:0:
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2788:26: warning: 'pentamodal5primeGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **pentamodal5primeGrid[8] = {majpenta5prime, maj2min75prime, maj3dom75prime, subdompenta5prime, dompenta5prime, relmin75prime, dim75prime, majmaj75prime}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2790:26: warning: 'triadsGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **triadsGrid[8] = {majTriad, majTriad1stInv, majTriad2ndInv, minTriad, minTriad2ndInv, MinTriad1stInv, quartalTriad, quartalTriad1stInv}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2792:26: warning: 'seventhTetradsMinimalProgressionGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2794:26: warning: 'seventhTetradsGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2796:26: warning: 'rhythmDivisionsResetGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **rhythmDivisionsResetGrid[8] = {rhythmDivisionsReset1, rhythmDivisionsReset2, rhythmDivisionsReset3, rhythmDivisionsReset4, rhythmDivisionsReset5, rhythmDivisionsReset6, rhythmDivisionsReset7, rhythmDivisionsReset8}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2798:26: warning: 'modesOfLimitedTranspositionGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2800:26: warning: 'majMin9thPentStarlingGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2802:26: warning: 'Harm73_75Grid' defined but not used [-Wunused-variable]
+ static const ScaleNote **Harm73_75Grid[8] = {Harm73_75_1, Harm73_75_2, Harm73_75_3, Harm73_75_4, Harm73_75_5, Harm73_75_6, Harm73_75_7, Harm73_75_8}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2804:26: warning: 'h73_75_BPwideGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **h73_75_BPwideGrid[16] = {h73_75_BPwide1, h73_75_BPwide2, h73_75_BPwide3, h73_75_BPwide4, h73_75_BPwide5, h73_75_BPwide6, h73_75_BPwide7, h73_75_BPwide8, h73_75_BPwide9, h73_75_BPwide10, h73_75_BPwide11, h73_75_BPwide12, h73_75_BPwide13, h73_75_BPwide14, h73_75_BPwide15, h73_75_BPwide16}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2806:26: warning: 'bohlenPeirceGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **bohlenPeirceGrid[16] = {bohlenPeirceChromatic, bohlenPeirceDurI, bohlenPeirceDurII, bohlenPeirceMollI, bohlenPeirceMollII, bohlenPeirceGamma, bohlenPeirceHarmonic, bohlenPeirceLambda, bohlenPeirceBlueLambda, bohlenPeirceWalkerA, bohlenPeirceWalkerB, bohlenPeirceWalkerI, bohlenPeirceWalkerII, bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin, bohlenPeircePentatonic}; 
+                          ^
+/Users/willmitchell/Documents/stm32_workspace/pllprotoV2/Inc/scales.h:2808:26: warning: 'add9thSixthsusp4thGrid' defined but not used [-Wunused-variable]
+ static const ScaleNote **add9thSixthsusp4thGrid[16] = {add9th, subAdd9th, add9th1stInv, subAdd9th1stInv, add9th2ndInv, subAdd9th2ndInv, add9th3rdInv, subAdd9th3rdInv, sixthSusp4th, subSixthSusp4th, add2nd, subAdd2nd, sixthSusp4th2ndInv, subSixthSusp4th2ndInv, sixthSusp4th3rdInv, subSixthSusp4th3rdInv}; 
+                          ^
+Finished building: ../Src/main.c
+ 
+Building target: pllprotoV2.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -lc -lrdimon -T"../STM32F303CCTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "pllprotoV2.elf" @"objects.list"   -lm
+Finished building target: pllprotoV2.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "pllprotoV2.elf" "pllprotoV2.bin"
+arm-none-eabi-size "pllprotoV2.elf"
+   text	   data	    bss	    dec	    hex	filename
+ 173812	   2028	  18464	 194304	  2f700	pllprotoV2.elf
+ 
+
+20:11:55 Build Finished (took 875ms)
+

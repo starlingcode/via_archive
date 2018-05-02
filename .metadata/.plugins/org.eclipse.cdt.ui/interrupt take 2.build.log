@@ -1,0 +1,6 @@
+01:38:31 **** Incremental Build of configuration Release for project interrupt take 2 ****
+make all 
+make: Nothing to be done for `all'.
+
+01:38:31 Build Finished (took 75ms)
+

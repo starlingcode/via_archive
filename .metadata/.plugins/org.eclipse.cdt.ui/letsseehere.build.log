@@ -1,0 +1,24 @@
+00:58:09 **** Build of configuration Debug for project letsseehere ****
+make all 
+Building file: ../startup/startup_stm32.s
+Invoking: MCU GCC Assembler
+/Users/willmitchell/Documents/stm32 workspace/letsseehere/Debug
+arm-none-eabi-as -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -I"/Users/willmitchell/Documents/stm32 workspace/letsseehere/inc" -g -o "startup/startup_stm32.o" "../startup/startup_stm32.s"
+Finished building: ../startup/startup_stm32.s
+ 
+Building file: ../startup/sysmem.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32 workspace/letsseehere/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -DSTM32F407VGTx -DSTM32F4 -DSTM32F4DISCOVERY -DSTM32 -DDEBUG -I"/Users/willmitchell/Documents/stm32 workspace/letsseehere/inc" -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"startup/sysmem.d" -MT"startup/sysmem.o" -o "startup/sysmem.o" "../startup/sysmem.c"
+Finished building: ../startup/sysmem.c
+ 
+Building target: letsseehere.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -T"/Users/willmitchell/Documents/stm32 workspace/letsseehere/LinkerScript.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "letsseehere.elf" @"objects.list"   -lm
+startup/startup_stm32.o: In function `LoopFillZerobss':
+/Users/willmitchell/Documents/stm32 workspace/letsseehere/Debug/../startup/startup_stm32.s:78: undefined reference to `main'
+collect2: error: ld returned 1 exit status
+make: *** [letsseehere.elf] Error 1
+
+00:58:09 Build Finished (took 115ms)
+

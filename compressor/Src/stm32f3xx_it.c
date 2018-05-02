@@ -34,6 +34,9 @@ GAT * @file    stm32f3xx_it.c
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
+#include "signal_processing.h"
+
+
 
 /* USER CODE BEGIN 0 */
 
@@ -263,8 +266,10 @@ void TIM3_IRQHandler(void) {
 void TIM8_UP_IRQHandler(void) {
 	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
 
+	dspTaskManager = calculateBiquadCoeffs;
+
 	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
-	__HAL_TIM_DISABLE(&htim8);
+	//__HAL_TIM_DISABLE(&htim8);
 
 	/* USER CODE END TIM8_UP_IRQn 0 */
 	//HAL_TIM_IRQHandler(&htim8);
@@ -279,45 +284,7 @@ void TIM8_UP_IRQHandler(void) {
 void TIM6_DAC_IRQHandler(void) {
 	/* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 
-	static buffer delayLine;
-	static buffer knobBuffer;
-	static int runningSum;
-	static int knobSum;
-	int average;
-	long int knobAverage;
-	int gainReduction;
-	int output;
-
-
-	knobSum = knob1 + knobSum - readBuffer(&knobBuffer, 4095);
-	knobAverage = knobSum >> 12;
-	writeBuffer(&knobBuffer, knob1);
-
-
-	if (cv2 > 2048) {
-		writeBuffer(&delayLine, cv2);
-		runningSum = cv2 + runningSum - readBuffer(&delayLine, 512);
-	} else {
-		writeBuffer(&delayLine, 4095 - cv2);
-		runningSum = (4095 - cv2) + runningSum - readBuffer(&delayLine, 512);
-	}
-
-	average = runningSum >> 9;
-	if (cv2 > average) {
-		//average = cv2;
-	}
-
-
-
-	if (average > (2048 + (knobAverage >> 1))) {
-		gainReduction = (average - (2048 + (knobAverage >> 1))) << 2;
-		if (gainReduction > 4095) {
-			gainReduction = 4095;
-		}
-		output = 4095 - gainReduction;
-	} else {
-		output = 4095;
-	}
+	int output = peakDetect();
 
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 4095 - output);
 	//__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, cv2);

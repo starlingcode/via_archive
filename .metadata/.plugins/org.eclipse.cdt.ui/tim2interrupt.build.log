@@ -1,0 +1,57 @@
+22:59:03 **** Incremental Build of configuration Debug for project tim2interrupt ****
+make all 
+Building file: ../startup/startup_stm32f407xx.s
+Invoking: MCU GCC Assembler
+/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Debug
+arm-none-eabi-as -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -g -o "startup/startup_stm32f407xx.o" "../startup/startup_stm32f407xx.s"
+Finished building: ../startup/startup_stm32f407xx.s
+ 
+Building file: ../Src/main.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Inc" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/CMSIS/Include" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Inc"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
+Finished building: ../Src/main.c
+ 
+Building file: ../Src/stm32f4xx_hal_msp.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Inc" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/CMSIS/Include" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Inc"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/stm32f4xx_hal_msp.d" -MT"Src/stm32f4xx_hal_msp.o" -o "Src/stm32f4xx_hal_msp.o" "../Src/stm32f4xx_hal_msp.c"
+Finished building: ../Src/stm32f4xx_hal_msp.c
+ 
+Building file: ../Src/stm32f4xx_it.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Inc" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/CMSIS/Include" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Inc"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/stm32f4xx_it.d" -MT"Src/stm32f4xx_it.o" -o "Src/stm32f4xx_it.o" "../Src/stm32f4xx_it.c"
+Finished building: ../Src/stm32f4xx_it.c
+ 
+Building file: ../Src/system_stm32f4xx.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Inc" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Drivers/CMSIS/Include" -I"/Users/willmitchell/Documents/stm32 workspace/tim2interrupt/Inc"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/system_stm32f4xx.d" -MT"Src/system_stm32f4xx.o" -o "Src/system_stm32f4xx.o" "../Src/system_stm32f4xx.c"
+Finished building: ../Src/system_stm32f4xx.c
+ 
+Building target: tim2interrupt.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F407VGTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "tim2interrupt.elf" @"objects.list"   -lm
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dac.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dac_ex.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc_ex.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o: No such file or directory
+arm-none-eabi-gcc: error: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o: No such file or directory
+make: *** [tim2interrupt.elf] Error 1
+
+22:59:04 Build Finished (took 981ms)
+

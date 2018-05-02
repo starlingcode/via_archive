@@ -1,0 +1,67 @@
+#include <sequence_functions.h>
+#include "stm32f3xx_hal.h"
+#include "stm32f3xx.h"
+#include "stm32f3xx_it.h"
+#include "patterns.h"
+
+void doLogic(void) {
+
+	uint32_t aLength;
+	uint32_t bLength;
+	uint32_t aPatternMorph;
+	uint32_t bPatternMorph;
+	uint32_t aPatternIndex;
+	uint32_t bPatternIndex;
+	uint32_t aPatternValue;
+	uint32_t bPatternValue;
+
+	//determine a pattern index for the a and b grids
+	//TODO
+	//scale pattern lookup to number of patterns
+	aPatternMorph = knob1 >> 9;
+	bPatternMorph = knob2 >> 9;
+
+	//get the lengths of the currently indexed patterns
+	aLength = euclidean_simple.aLengths[aPatternMorph];
+	bLength = euclidean_simple.bLengths[bPatternMorph];
+
+	//inverse offset, phase aligned at knob all the way to the left
+	aPatternIndex = (aCounter + (knob3 >> 8)) % aLength;
+	bPatternIndex = (bCounter + ((4200 - knob3) >> 8)) % bLength;
+
+	//lookup the logic values
+	aPatternValue = euclidean_simple.aPatternBank[aPatternMorph][aPatternIndex];
+	bPatternValue = euclidean_simple.bPatternBank[bPatternMorph][bPatternIndex];
+
+	//increment the sequence counter
+	aCounter = (aCounter + 1) % aLength;
+	bCounter = (bCounter + 1) % bLength;
+
+	//call the appropriate handler functions
+	//TODO
+	//point to handler functions
+	if (aPatternValue == 0) {
+		REV2_GATE_LOW;
+		ALOGIC_LOW;
+		LEDC_OFF;
+	} else {
+		REV2_GATE_HIGH;
+		ALOGIC_HIGH;
+		LEDC_ON;
+	}
+
+	if (bPatternValue == 0) {
+		BLOGIC_LOW;
+		LEDD_OFF;
+	} else {
+		BLOGIC_HIGH;
+		LEDD_ON;
+	}
+}
+
+void handleFallingEdge(void) {
+	ALOGIC_LOW;
+	BLOGIC_LOW;
+	LEDC_OFF;
+	LEDD_OFF;
+}

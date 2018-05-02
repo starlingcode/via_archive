@@ -1,0 +1,6 @@
+01:54:46 **** Clean-only build of configuration Debug for project adc only ****
+make clean 
+make: *** No rule to make target `clean'.  Stop.
+
+01:54:46 Build Finished (took 73ms)
+

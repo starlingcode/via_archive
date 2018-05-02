@@ -1,0 +1,11 @@
+#include "stm32f3xx_hal.h"
+#include "stm32f3xx.h"
+#include "stm32f3xx_it.h"
+
+void (*manageDacs)(void);
+
+void dacHigh(void);
+void dacLow(void);
+
+void dacRise(void);
+void dacFall(void);

@@ -1,0 +1,6 @@
+18:20:09 **** Clean-only build of configuration Release for project pllprototype ****
+make clean 
+make: *** No rule to make target `clean'.  Stop.
+
+18:20:09 Build Finished (took 72ms)
+

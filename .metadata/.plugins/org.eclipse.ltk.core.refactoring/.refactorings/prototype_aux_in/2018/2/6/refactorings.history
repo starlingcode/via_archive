@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;prototype_aux_in/prototype.xml&apos; to &apos;prototype_aux_in.xml&apos;" description="Rename resource &apos;prototype.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="prototype.xml" name="prototype_aux_in.xml" stamp="1517713624345" updateReferences="true"/>
+</session>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="ConfigureProjectWizard">
+		<item value="org.eclipse.egit.ui.internal.sharing.SharingWizard" key="selectedWizardId"/>
+	</section>
+	<section name="SynchronizeViewSettings">
+		<item value="1502686624233" key="lastactiveparticipant_sec_id"/>
+		<item value="org.eclipse.egit.ui.modelCompareParticipant" key="lastactiveparticipant_id"/>
+		<item value="false" key="linkWithEditor"/>
+		<section name="org.eclipse.egit.ui.modelCompareParticipant.1502686624233">
+		</section>
+	</section>
+	<section name="SynchronizeWizard">
+		<item value="org.eclipse.egit.ui.wizard1" key="org.eclipse.team.uiGlobalRefreshWizardSelectionPage.default_selection"/>
+	</section>
+</section>

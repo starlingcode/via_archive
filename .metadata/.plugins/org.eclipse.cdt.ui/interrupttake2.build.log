@@ -1,0 +1,6 @@
+02:03:35 **** Incremental Build of configuration Release for project interrupttake2 ****
+make all 
+make: Nothing to be done for `all'.
+
+02:03:35 Build Finished (took 80ms)
+

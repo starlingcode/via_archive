@@ -1,0 +1,7 @@
+00:53:29 **** Clean-only build of configuration Debug for project f4interpolatortest ****
+make clean 
+rm -rf *
+ 
+
+00:53:29 Build Finished (took 116ms)
+

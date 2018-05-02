@@ -1,0 +1,53 @@
+#include "stm32f3xx_hal.h"
+#include "stm32f3xx.h"
+#include "stm32f3xx_it.h"
+#include "signal_processing.h"
+
+void calculateBiquadCoeffs(void) {
+
+	//adapted from the musicDSP EQ cookbook
+
+	#define Q31_UNITY 2147483647
+	#define ALPHA_CONSTANT 1518729595 //1/(2*Q) in q31_t, Q of .707 (maximally flat butterworth response)
+
+	q31_t alpha;
+	q31_t freq;
+	q31_t cosCoefficient;
+	q31_t gain;
+
+	freq = (knob1 + 50) << 7;
+
+	cosCoefficient = arm_cos_q31(freq);
+
+	alpha = ((int64_t) (arm_sin_q31(freq) * 1518729595)) >> 31;
+
+    gain = Q31_UNITY + alpha;
+
+    //calculate and normalize the coefficients, dividing by 2 to keep the coefficients below 1
+    attackCoeffArray[0] =  (((Q31_UNITY - cosCoefficient) >> 1)/gain) >> 1;
+    attackCoeffArray[1] =   ((Q31_UNITY - cosCoefficient)/gain) >> 1;
+    attackCoeffArray[2] =  (((Q31_UNITY - cosCoefficient) >> 1)/gain) >> 1;
+    attackCoeffArray[3] =  q31Negate(((cosCoefficient << 1)/gain) >> 1);
+    attackCoeffArray[4] =   (Q31_UNITY - alpha) >> 1;
+
+	freq = (knob2 + 50) << 7;
+
+	cosCoefficient = arm_cos_q31(freq);
+
+	alpha = ((int64_t) (arm_sin_q31(freq) * 1518729595)) >> 31;
+
+    gain = Q31_UNITY + alpha;
+
+    //calculate and normalize the coefficients, dividing by 2 to keep the coefficients below 1
+    releaseCoeffArray[0] =  (((Q31_UNITY - cosCoefficient) >> 1)/gain) >> 1;
+    releaseCoeffArray[1] =   ((Q31_UNITY - cosCoefficient)/gain) >> 1;
+    releaseCoeffArray[2] =  (((Q31_UNITY - cosCoefficient) >> 1)/gain) >> 1;
+    releaseCoeffArray[3] =  q31Negate(((cosCoefficient << 1)/gain) >> 1);
+    releaseCoeffArray[4] =   ((Q31_UNITY - alpha)/gain) >> 1;
+
+    dspTaskManager = dspIdle;
+
+}
+
+
+

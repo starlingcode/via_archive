@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;pllprotoV2/prototype.xml&apos; to &apos;pllprotoV2.xml&apos;" description="Rename resource &apos;prototype.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="prototype.xml" name="pllprotoV2.xml" stamp="1510819597836" updateReferences="true"/>
+</session>

@@ -7,6 +7,9 @@
 
 void processClock(void) {
 
+	//TODO aux logic
+	//TODO move heavy lifting out of interrupt and only update hardware?
+
 	uint32_t aLength;
 	uint32_t bLength;
 	uint32_t aPatternMorph;

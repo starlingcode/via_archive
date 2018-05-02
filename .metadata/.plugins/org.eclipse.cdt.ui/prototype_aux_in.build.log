@@ -1,0 +1,121 @@
+22:33:05 **** Incremental Build of configuration Release for project prototype_aux_in ****
+make all 
+Building file: ../Src/user_interface.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F303xC -I"/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Drivers/CMSIS/Include" -I"/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc"  -O3 -mtune=cortex-m4 -g -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/user_interface.d" -MT"Src/user_interface.o" -o "Src/user_interface.o" "../Src/user_interface.c"
+In file included from ../Src/user_interface.c:7:0:
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/interrupt_functions.h:18:15: warning: type defaults to 'int' in declaration of 'fix16_lerp' [-Wimplicit-int]
+ static inline fix16_lerp(int, int, uint16_t) __attribute__((section("ccmram")));
+               ^
+In file included from ../Src/user_interface.c:1:0:
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2706:24: warning: 'lump2ndDeg' defined but not used [-Wunused-variable]
+ static const uint16_t *lump2ndDeg[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2710:24: warning: 'allLinear5_5' defined but not used [-Wunused-variable]
+ static const uint16_t *allLinear5_5[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2714:24: warning: 'allLinear65_3' defined but not used [-Wunused-variable]
+ static const uint16_t *allLinear65_3[3] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2718:24: warning: 'allLinear129_5' defined but not used [-Wunused-variable]
+ static const uint16_t *allLinear129_5[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2722:24: warning: 'skipsaw' defined but not used [-Wunused-variable]
+ static const uint16_t *skipsaw[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2726:24: warning: 'impshort' defined but not used [-Wunused-variable]
+ static const uint16_t *impshort[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2731:24: warning: 'threeBounce' defined but not used [-Wunused-variable]
+ static const uint16_t *threeBounce[3] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2735:24: warning: 'trioddAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2740:24: warning: 'trioddReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2745:24: warning: 'sawBendAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2749:24: warning: 'sawBendReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2753:24: warning: 'exciteBikeAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2758:24: warning: 'exciteBikeReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2763:24: warning: 'algerianAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2767:24: warning: 'algerianReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2771:24: warning: 'superEllipse1SymAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *superEllipse1SymAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2775:24: warning: 'superEllipse1SymReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *superEllipse1SymReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2779:24: warning: 'superEllipse1AsymAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *superEllipse1AsymAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2783:24: warning: 'superEllipse1AsymReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *superEllipse1AsymReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2787:24: warning: 'moogSquareShiftAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2792:24: warning: 'moogSquareShiftReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2797:24: warning: 'stepsAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *stepsAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2802:24: warning: 'stepsReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *stepsReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2807:24: warning: 'sawPWMAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawPWMAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2812:24: warning: 'sawPWMReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawPWMReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2817:24: warning: 'linwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *linwavefold_257_Family[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2821:24: warning: 'sinwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *sinwavefold_257_Family[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2826:24: warning: 'additive_tri_to_pulseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *additive_tri_to_pulseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2830:24: warning: 'newBounceFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *newBounceFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2834:24: warning: 'tenor257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Inc/tables.h:2838:24: warning: 'tenor257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Rls[5] = {
+                        ^
+Finished building: ../Src/user_interface.c
+ 
+Building target: prototype_aux_in.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -L/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in/Lib -specs=nosys.specs -specs=nano.specs -T"../STM32F303CCTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "prototype_aux_in.elf" @"objects.list"   -lm
+Finished building target: prototype_aux_in.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "prototype_aux_in.elf" "prototype_aux_in.bin"
+arm-none-eabi-size "prototype_aux_in.elf"
+   text	   data	    bss	    dec	    hex	filename
+  82916	  17300	  22832	 123048	  1e0a8	prototype_aux_in.elf
+ 
+
+22:33:06 Build Finished (took 910ms)
+
