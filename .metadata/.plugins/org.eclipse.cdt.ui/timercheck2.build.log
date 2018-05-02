@@ -1,6 +1,0 @@
-01:09:02 **** Clean-only build of configuration Debug for project timercheck2 ****
-make clean 
-make: *** No rule to make target `clean'.  Stop.
-
-01:09:02 Build Finished (took 66ms)
-

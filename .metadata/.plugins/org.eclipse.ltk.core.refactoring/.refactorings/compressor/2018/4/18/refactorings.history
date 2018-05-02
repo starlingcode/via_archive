@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;compressor/template.xml&apos; to &apos;compressor.xml&apos;" description="Rename resource &apos;template.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="template.xml" name="compressor.xml" stamp="1524972776403" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;compressor/Src/peak_detection.c&apos; to &apos;amplitude_following.c&apos;" description="Rename resource &apos;peak_detection.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Src/peak_detection.c" name="amplitude_following.c" stamp="1525044507397" updateReferences="true"/>
-</session>

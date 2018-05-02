@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Delete resource &apos;delayattempt&apos;" deleteContents="false" description="Delete resource &apos;delayattempt&apos;" element1="/delayattempt" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1521424339467"/>&#x0A;<refactoring comment="Delete resource &apos;shortdelayproto&apos;" deleteContents="false" description="Delete resource &apos;shortdelayproto&apos;" element1="/shortdelayproto" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1521424347118"/>
-</session>
