@@ -242,8 +242,10 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
 void TIM2_IRQHandler(void) {
 	/* USER CODE BEGIN TIM2_IRQn 0 */
 
+	//TODO trigger recording
+
 	if (RISING_EDGE) {
-		doLogic();
+		processClock();
 	} else {
 		handleFallingEdge();
 	}

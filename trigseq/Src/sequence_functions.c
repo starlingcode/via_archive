@@ -5,7 +5,7 @@
 #include "sequence_functions.h"
 #include "hardware_io.h"
 
-void processSequence(void) {
+void processClock(void) {
 
 	uint32_t aLength;
 	uint32_t bLength;
@@ -15,22 +15,45 @@ void processSequence(void) {
 	uint32_t bPatternIndex;
 	uint32_t aPatternValue;
 	uint32_t bPatternValue;
+	uint32_t offset;
 
-	//determine a pattern index for the a and b grids
-	//TODO add cv
+	//determine a pattern index for the a and b grids and the offset
+	//the positve going excursion of the cv scales all the way to the maximum value
+	//the negative does the same to the maximum value
+	//TODO add cv (this is ugly, there should be a slick inline for this process)
 	//TODO scale pattern lookup to number of patterns
-	aPatternMorph = knob1 >> 9;
-	bPatternMorph = knob2 >> 9;
+
+	if ((4095 - cv1) >= 2048) {
+		aPatternMorph = (fix16_lerp(knob1, 4095, ((4095 - cv1) - 2048) << 5)) >> 9;
+			}
+	else {
+		aPatternMorph = (fix16_lerp(0, knob1, (4095 - cv1) << 5)) >> 9;
+	}
+	if ((4095 - cv2) >= 2048) {
+		bPatternMorph = (fix16_lerp(knob2, 4095, ((4095 - cv2) - 2048) << 5)) >> 9;
+			}
+	else {
+		bPatternMorph = (fix16_lerp(0, knob2, (4095 - cv2) << 5)) >> 9;
+	}
+	if ((4095 - cv3) >= 2048) {
+		offset = (fix16_lerp(knob3, 4095, ((4095 - cv3) - 2048) << 5)) >> 8;
+			}
+	else {
+		offset = (fix16_lerp(0, knob3, (4095 - cv3) << 5)) >> 8;
+	}
 
 	//get the lengths of the currently indexed patterns
+	//this was cool when locked to one of the two by accident
+	//button menu?
 	aLength = euclidean_simple.aLengths[aPatternMorph];
 	bLength = euclidean_simple.bLengths[bPatternMorph];
 
-	//inverse offset, phase aligned at knob all the way to the left
 	//TODO relate offset to scale lengths
-	//TODO add cv
-	aPatternIndex = (aCounter + (knob3 >> 8)) % aLength;
-	bPatternIndex = (bCounter + ((4200 - knob3) >> 8)) % bLength;
+	aPatternIndex = (aCounter + offset) % aLength;
+	//inverse offset, phase aligned at knob all the way to the left
+	//bPatternIndex = (aCounter (4200 - offset)) % bLength;
+	// b is locked (I like both, button menu?)
+	bPatternIndex = (bCounter) % bLength;
 
 	//lookup the logic values
 	aPatternValue = euclidean_simple.aPatternBank[aPatternMorph][aPatternIndex];
