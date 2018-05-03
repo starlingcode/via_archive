@@ -171,6 +171,9 @@ int main(void) {
 	// declare the initialization state
 	SET_RUNTIME_DISPLAY;
 
+	//
+	CLEAR_TRIGGER_BUTTON;
+
 	HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
 	HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
 	HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
@@ -223,14 +226,17 @@ int main(void) {
 	/* USER CODE BEGIN WHILE */
 	while (1) {
 		//check if the trigger button has been pressed
-		if (((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET)){
+		if (EXPANDER_BUTTON_PRESSED){
 			//if we havent raised the trigger button flag, do so and set a pending interrupt
 			if (!(TRIGGER_BUTTON)) {
 				debounce++;
 				if (debounce == 10) {
+					SET_TRIGGER_BUTTON;
+					LEDA_ON;
 					uiDispatch(EXPAND_SW_ON_SIG);
 					//reset the counters on button press
 					HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
+					debounce = 0;
 				}
 			}
 		}
@@ -238,7 +244,10 @@ int main(void) {
 		else if (TRIGGER_BUTTON){
 			debounce++;
 			if (debounce == 10) {
+				LEDA_OFF
+				CLEAR_TRIGGER_BUTTON;
 				uiDispatch(EXPAND_SW_OFF_SIG);
+				debounce = 0;
 			}
 		}
 		// run the state machine that gets us a reading on our touch sensors

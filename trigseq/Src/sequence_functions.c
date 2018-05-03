@@ -7,7 +7,6 @@
 
 void processClock(void) {
 
-	//TODO write grid loader and swap out the euclidean_simple hardcoded example
 	//TODO aux logic
 	//TODO move heavy lifting out of interrupt and only update hardware?
 
