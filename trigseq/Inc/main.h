@@ -52,7 +52,6 @@ enum shAModes {aSHOff, aResample, aSampleTrack};
 enum shBModes {bSHOff, bResample, bSampleTrack};
 enum andAModes {andAOff, andAOn};
 enum andBModes {andBOff, andBOn};
-int patternGridIndex;
 
 #define knob2 ADCReadings2[0]
 #define knob3 ADCReadings2[1]

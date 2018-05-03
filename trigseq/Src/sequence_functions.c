@@ -7,6 +7,7 @@
 
 void processClock(void) {
 
+	//TODO write grid loader and swap out the euclidean_simple hardcoded example
 	//TODO aux logic
 	//TODO move heavy lifting out of interrupt and only update hardware?
 
@@ -48,8 +49,8 @@ void processClock(void) {
 	//get the lengths of the currently indexed patterns
 	//this was cool when locked to one of the two by accident
 	//button menu?
-	aLength = euclidean_simple.aLengths[aPatternMorph];
-	bLength = euclidean_simple.bLengths[bPatternMorph];
+	aLength = currentBank->aLengths[aPatternMorph];
+	bLength = currentBank->bLengths[bPatternMorph];
 
 	//TODO relate offset to scale lengths
 	aPatternIndex = (aCounter + offset) % aLength;
@@ -59,14 +60,15 @@ void processClock(void) {
 	bPatternIndex = (bCounter) % bLength;
 
 	//lookup the logic values
-	aPatternValue = euclidean_simple.aPatternBank[aPatternMorph][aPatternIndex];
-	bPatternValue = euclidean_simple.bPatternBank[bPatternMorph][bPatternIndex];
+	aPatternValue = currentBank->aPatternBank[aPatternMorph][aPatternIndex];
+	bPatternValue = currentBank->bPatternBank[bPatternMorph][bPatternIndex];
 
 	//increment the sequence counter
 	aCounter = (aCounter + 1) % aLength;
 	bCounter = (bCounter + 1) % bLength;
 
 	//call the appropriate handler functions
+	//maybe turn these into function pointers that are called in the nvic handler
 	if (aPatternValue == 0) {
 		handleALow();
 	} else {

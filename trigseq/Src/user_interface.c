@@ -6,6 +6,7 @@
 #include "eeprom.h"
 #include "user_interface.h"
 #include "hardware_io.h"
+#include "patterns.h"
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim4;
@@ -34,6 +35,7 @@ enum shAModes shAMode;
 enum shBModes shBMode;
 enum andAModes andAMode;
 enum andBModes andBMode;
+int patternBankIndex;
 
 // holds the mode state as a EEPROM-formatted value.
 uint32_t modeStateBuffer;
@@ -342,15 +344,16 @@ void ui_button2Menu(int sig)
 		uiTimerReset();
 		uiTimerSetOverflow(65535);
 		uiTimerEnable();
-		uiSetLEDs(patternGridIndex);
+		uiSetLEDs(patternBankIndex);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON2SENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
-				patternGridIndex = (patternGridIndex + 1) % 8;
-				modeStateBuffer = (modeStateBuffer & ~(GRIDMASK)) | (patternGridIndex << GRIDSHIFT);
-				uiSetLEDs(patternGridIndex);
+				patternBankIndex = (patternBankIndex + 1) % 8;
+				modeStateBuffer = (modeStateBuffer & ~(BANK_MASK)) | (patternBankIndex << BANK_SHIFT);
+				currentBank = patternBanks[patternBankIndex];
+				uiSetLEDs(patternBankIndex);
 				uiTransition( &ui_newMode);
 			} else {
 				uiTransition( &ui_default);
@@ -368,19 +371,20 @@ void ui_button5Menu(int sig)
 		uiTimerReset();
 		uiTimerSetOverflow(65535);
 		uiTimerEnable();
-		uiSetLEDs(patternGridIndex);
+		uiSetLEDs(patternBankIndex);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON5SENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
-				if (patternGridIndex == 0) {
-					patternGridIndex = 7;  // wrap around
+				if (patternBankIndex == 0) {
+					patternBankIndex = 7;  // wrap around
 				} else {
-					patternGridIndex--;
+					patternBankIndex--;
 				}
-				modeStateBuffer = (modeStateBuffer & ~(GRIDMASK)) | (patternGridIndex << GRIDSHIFT);
-				uiSetLEDs(patternGridIndex);
+				modeStateBuffer = (modeStateBuffer & ~(BANK_MASK)) | (patternBankIndex << BANK_SHIFT);
+				currentBank = patternBanks[patternBankIndex];
+				uiSetLEDs(patternBankIndex);
 				uiTransition( &ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -543,6 +547,8 @@ void uiClearLEDs(){
 // initialization routine for the UI state machine
 void uiInitialize()
 {
+	initializePatterns();
+
 	HAL_FLASH_Unlock();
 	eepromStatus = EE_Init();
 
@@ -553,7 +559,7 @@ void uiInitialize()
 	}
 
 	HAL_Delay(500);  // init time
-	//uiLoadFromEEPROM(0);  // load the most recently stored state from memory
+	uiLoadFromEEPROM(0);  // load the most recently stored state from memory
 
 
 
@@ -586,12 +592,14 @@ void uiLoadFromEEPROM(int position) {
 	shBMode = (modeStateBuffer & SH_B_MASK) >> SH_B_SHIFT;
 	andAMode = (modeStateBuffer & AND_A_MASK) >> AND_A_SHIFT;
 	andBMode = (modeStateBuffer & AND_A_MASK) >> AND_B_SHIFT;
+	patternBankIndex = (modeStateBuffer & BANK_MASK) >> BANK_SHIFT;
+
 
 
 	/* ... initialization of ui attributes */
 	// call each menu to initialize, to make UI process the stored modes
 
-	ui_button1Menu(INIT_SIG);
+	currentBank = patternBanks[patternBankIndex];
 
 
 }
@@ -805,4 +813,6 @@ void ui_factoryReset(int sig){
 		}
 	}
 }
+
+
 
