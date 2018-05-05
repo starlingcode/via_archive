@@ -3,6 +3,7 @@
 #include "stm32f3xx_it.h"
 #include "patterns.h"
 
+
 void initializePatterns() {
    patternBanks[0] = &euclidean_simple;
    patternBanks[1] = &euclidean_2vs3;

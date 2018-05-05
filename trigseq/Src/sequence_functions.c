@@ -79,6 +79,7 @@ void processClock(void) {
 	} else {
 		handleBHigh();
 	}
+
 }
 
 void handleFallingEdge(void) {
