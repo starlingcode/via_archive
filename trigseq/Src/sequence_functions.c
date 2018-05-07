@@ -5,6 +5,9 @@
 #include "sequence_functions.h"
 #include "hardware_io.h"
 
+// RGB led timer
+TIM_HandleTypeDef htim1;
+
 void processClock(void) {
 
 	//TODO aux logic
@@ -78,6 +81,44 @@ void processClock(void) {
 		handleBLow();
 	} else {
 		handleBHigh();
+	}
+	switch (auxLogicMode) {
+		case or:
+			if (aPatternValue) {
+				EXPAND_GATE_HIGH;
+				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
+			} else {
+				EXPAND_GATE_LOW;
+				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+			}
+			break;
+		case and:
+			if (aPatternValue && bPatternValue) {
+				EXPAND_GATE_HIGH;
+				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
+			} else {
+				EXPAND_GATE_LOW;
+				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+			}
+			break;
+		case xor:
+			if (aPatternValue ^ bPatternValue) {
+				EXPAND_GATE_HIGH;
+				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
+			} else {
+				EXPAND_GATE_LOW;
+				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+			}
+			break;
+		case nand:
+			if (!(aPatternValue && bPatternValue)) {
+				EXPAND_GATE_HIGH;
+				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
+			} else {
+				EXPAND_GATE_LOW;
+				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+			}
+			break;
 	}
 
 }

@@ -48,11 +48,6 @@
 #include "eeprom.h"
 #include "user_interface.h"
 
-enum shAModes {aSHOff, aResample, aSampleTrack};
-enum shBModes {bSHOff, bResample, bSampleTrack};
-enum andAModes {andAOff, andAOn};
-enum andBModes {andBOff, andBOn};
-
 #define knob2 ADCReadings2[0]
 #define knob3 ADCReadings2[1]
 #define cv1 ADCReadings1[0]
@@ -79,6 +74,18 @@ static inline int readBuffer(buffer* buffer, int Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 8191];
 }
 
+enum shAModes {aSHOff, aResample, aSampleTrack};
+enum shBModes {bSHOff, bResample, bSampleTrack};
+enum andAModes {andAOff, andAOn};
+enum andBModes {andBOff, andBOn};
+enum auxLogicModes {and, or, xor, nand};
+
+enum shAModes shAMode;
+enum shBModes shBMode;
+enum andAModes andAMode;
+enum andBModes andBMode;
+enum auxLogicModes auxLogicMode;
+int patternBankIndex;
 
 /* USER CODE END Includes */
 
@@ -142,6 +149,10 @@ static inline int readBuffer(buffer* buffer, int Xn) {
 #define EXPAND_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
 #define EXPAND_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
 
+#define SET_RED_LED(X) __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, X);
+#define SET_GREEN_LED(X) __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, X);
+#define SET_BLUE_LED(X) __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, X);
+
 #define LEDB_ON GPIOC->BSRR = (uint32_t)GPIO_PIN_14;
 #define LEDB_OFF GPIOC->BRR = (uint32_t)GPIO_PIN_14;
 
@@ -159,7 +170,6 @@ static inline int readBuffer(buffer* buffer, int Xn) {
 
 #define SH_B_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_9;
 #define SH_B_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_9;
-
 
 #define ClearTimCount(n)           (n.TIMx->CNT = 0)
 
