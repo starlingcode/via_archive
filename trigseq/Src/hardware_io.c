@@ -240,3 +240,17 @@ void handleBLow(void){
 		}
 	}
 }
+
+void handleAuxHigh(void) {
+	EXPAND_GATE_HIGH;
+	if (RUNTIME_DISPLAY) {
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 1000);
+	}
+}
+
+void handleAuxLow(void) {
+	EXPAND_GATE_LOW;
+	if (RUNTIME_DISPLAY) {
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+	}
+}

@@ -26,4 +26,7 @@ void handleALow(void);
 void handleBHigh(void);
 void handleBLow(void);
 
+void handleAuxHigh(void);
+void handleAuxLow(void);
+
 

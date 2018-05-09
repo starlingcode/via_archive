@@ -82,41 +82,36 @@ void processClock(void) {
 	} else {
 		handleBHigh();
 	}
+
+	//jump to the conditional check appropriate for the currently selected logic operation
+	//handle the result on the expander board
 	switch (auxLogicMode) {
 		case or:
-			if (aPatternValue) {
-				EXPAND_GATE_HIGH;
-				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
+			if (aPatternValue || bPatternValue) {
+				handleAuxHigh();
 			} else {
-				EXPAND_GATE_LOW;
-				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+				handleAuxLow();
 			}
 			break;
 		case and:
 			if (aPatternValue && bPatternValue) {
-				EXPAND_GATE_HIGH;
-				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
+				handleAuxHigh();
 			} else {
-				EXPAND_GATE_LOW;
-				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+				handleAuxLow();
 			}
 			break;
 		case xor:
 			if (aPatternValue ^ bPatternValue) {
-				EXPAND_GATE_HIGH;
-				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
+				handleAuxHigh();
 			} else {
-				EXPAND_GATE_LOW;
-				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+				handleAuxLow();
 			}
 			break;
 		case nand:
-			if (!(aPatternValue && bPatternValue)) {
-				EXPAND_GATE_HIGH;
-				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 4095);
+			if ((!aPatternValue) && (!bPatternValue)) {
+				handleAuxHigh();
 			} else {
-				EXPAND_GATE_LOW;
-				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+				handleAuxLow();
 			}
 			break;
 	}
@@ -126,4 +121,11 @@ void processClock(void) {
 void handleFallingEdge(void) {
 	handleALow();
 	handleBLow();
+	//0 and 0 = 0, 0 or 0 = 0, 0 xor 0 = 0, 0 nand 0 = 1.
+	if (auxLogicMode == nand) {
+		handleAuxHigh();
+	} else {
+		handleAuxLow();
+	}
+
 }

@@ -54,7 +54,7 @@ void uiInitialize()
 	}
 
 	HAL_Delay(500);  // init time
-	//uiLoadFromEEPROM(0);  // load the most recently stored state from memory
+	uiLoadFromEEPROM(0);  // load the most recently stored state from memory
 
 
 
