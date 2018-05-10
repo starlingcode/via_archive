@@ -170,24 +170,32 @@ Family newBounce = {
 
 void fillFamilyArray(void) {
 
-	familyArray[0] = tenor257;
-	familyArray[1] = sawPWM;
-	familyArray[2] = impevens;
-	familyArray[3] = linwavefold_257;
-	familyArray[4] = skipSaw;
-	familyArray[5] = sinwavefold_257;
-	familyArray[6] = additive_tri_to_pulse;
-	familyArray[7] = newBounce;
-	familyArray[8] = superEllipse1Sym;
-	familyArray[9] = superEllipse1Asym;
-	familyArray[10] = doubleLump2ndDegLinAtk;
-	familyArray[11] = lump2ndDegLinAtk;
-	familyArray[12] = steps;
-	familyArray[13] = sawBendLinAtk;
-	familyArray[14] = newBounce;
-	familyArray[15] = threeBounceLinAtk;
+	familyArray[rhythm][0] = superEllipse1Sym;
+	familyArray[rhythm][1] = superEllipse1Asym;
+	familyArray[rhythm][2] = doubleLump2ndDegLinAtk;
+	familyArray[rhythm][3] = lump2ndDegLinAtk;
+	familyArray[rhythm][4] = steps;
+	familyArray[rhythm][5] = sawBendLinAtk;
+	familyArray[rhythm][6] = newBounce;
+	familyArray[rhythm][7] = threeBounceLinAtk;
+	familyArray[arp][0] = tenor257;
+	familyArray[arp][1] = sawPWM;
+	familyArray[arp][2] = impevens;
+	familyArray[arp][3] = linwavefold_257;
+	familyArray[arp][4] = skipSaw;
+	familyArray[arp][5] = sinwavefold_257;
+	familyArray[arp][6] = additive_tri_to_pulse;
+	familyArray[arp][7] = newBounce;
+	familyArray[voltOct][0] = tenor257;
+	familyArray[voltOct][1] = sawPWM;
+	familyArray[voltOct][2] = impevens;
+	familyArray[voltOct][3] = linwavefold_257;
+	familyArray[voltOct][4] = skipSaw;
+	familyArray[voltOct][5] = sinwavefold_257;
+	familyArray[voltOct][6] = additive_tri_to_pulse;
+	familyArray[voltOct][7] = newBounce;
 
-	currentFamily = familyArray[0];
+	currentFamily = familyArray[scaleType][familyIndicator];
 	switchFamily();
 
 }

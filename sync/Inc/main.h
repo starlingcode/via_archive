@@ -50,21 +50,26 @@
 // uncommment to define a version compatible with rev2 (black PCB) boards
 //#define _BUILD_REV_2
 
-#define BUFF_SIZE 256
-#define BUFF_SIZE_MASK (BUFF_SIZE - 1)
-
-typedef struct buffer{
-    int buff[BUFF_SIZE];
-    int writeIndex;
-}buffer;
+// these enums contain our mode information
 
 enum syncTypes {none, true, hardSync};
 enum controlSchemes {root, dutyCycle, FM, phaseMod};
-enum scaleTypes {rhythm, pitch, other};
+enum scaleTypes {rhythm, arp, voltOct};
 enum sampleHoldModeTypes {nosampleandhold, a, b, ab, antidecimate, decimate};
 enum logicOutATypes {triggerA, gateA, deltaA, ratioDeltaA, pllClockA};
-enum logicOutBTypes {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
+enum logicOutBTypes {triggerB, gateB, deltaB, ratioDeltaB, pllClockB};
 enum autoDutyTypes {autoDutyOn, autoDutyOff};
+uint32_t familyIndicator;
+
+// the enum variables to be used are declared here
+
+enum syncTypes syncMode; // {none, true, hardSync}
+enum controlSchemes controlScheme; // {gateLength, knobCV}
+enum scaleTypes scaleType; // {rhythm, arp, voltOct};
+enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
+enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA, ratioDeltaA, pllClock};
+enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
+enum autoDutyTypes autoDuty; // {autoDutyOn, autoDutyOff};
 
 volatile int position;
 int flagHolder;
@@ -78,21 +83,8 @@ int (*attackTime) (void);
 int (*releaseTime) (void);
 
 void inputCaptureSetup(void);
-// void readDetect(void) __attribute__((section("ccmram")));
-// void readRelease(uint32_t) __attribute__((section("ccmram")));
-// void restoreDisplay(void) __attribute__((section("ccmram")));
 void switchFamily(void);
-void fillFamilyArray(void);
-// void restoreState(void);
 void initializeScales(void);
-
-int calcTime1Env(void);
-int calcTime2Env(void);
-int calcTime1Seq(void);
-int calcTime2Seq(void);
-
-void write(buffer*,int);
-int readn(buffer*, int);
 
 uint32_t ADCReadings1[4];
 uint32_t ADCReadings2[2];

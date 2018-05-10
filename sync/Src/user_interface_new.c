@@ -27,17 +27,6 @@ enum
 	TSL_ERROR_SIG
 };
 
-
-
-// these enums contain our mode information
-enum syncTypes syncMode; // {none, true, hardSync}
-enum controlSchemes controlScheme; // {gateLength, knobCV}
-enum scaleTypes scaleType; // {rhythm, pitch, other}
-enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
-enum logicOutATypes logicOutA; // {triggerA, gateA, deltaA, ratioDeltaA, pllClock};
-enum logicOutBTypes logicOutB; // {triggerB, gateB, deltaB, ratioDeltaB, pllClock};
-enum autoDutyTypes autoDuty; // {autoDutyOn, autoDutyOff};
-int familyIndicator;
 // for eeprom storage
 // virtual EEPROM addresses (store in flash, doesn't need to change)
 static uint16_t VirtAddVarTab[NB_OF_VAR] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16};
@@ -63,6 +52,9 @@ int currentScale;
 struct rgb orange = {4095, 4095, 0};
 struct rgb magenta = {4095, 0, 4095};
 struct rgb cyan = {0, 4095, 4095};
+struct rgb red = {4095, 0, 0};
+struct rgb green = {0, 4095, 0};
+struct rgb blue = {0, 0, 4095};
 
 // initial setup of UI
 void uiLoadFromEEPROM(int);
@@ -246,9 +238,7 @@ void ui_syncMenu(int sig)
 		if (SYNCSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
 				syncMode = (syncMode + 1) % 3;
-				//modeStateBuffer = (holdState & 0b1111111111000111) | (syncMode << 3);
-				modeStateBuffer = (modeStateBuffer & !(SYNCMASK)) | (syncMode << SYNCSHIFT);
-				// if drum mode is on, toggle through sets of modulation destinations
+				modeStateBuffer = (modeStateBuffer & ~(SYNCMASK)) | (syncMode << SYNCSHIFT);
 				uiSetLEDs(syncMode);
 				uiTransition(&ui_newMode);
 			} else {
@@ -289,8 +279,7 @@ void ui_logicAMenu(int sig)
 		} else if (SCALESENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
 				logicOutA = (logicOutA + 1) % 5;
-				//holdLogicOut = (holdLogicOut & 0b1111111111111000) | logicOutA;
-				modeStateBuffer = (modeStateBuffer & !(LOGICAMASK)) | logicOutA << LOGICASHIFT;
+				modeStateBuffer = (modeStateBuffer & ~(LOGICAMASK)) | logicOutA << LOGICASHIFT;
 
 				CLEAR_GATEA;
 				CLEAR_TRIGA;
@@ -374,8 +363,7 @@ void ui_logicBMenu(int sig)
 		} else if (XSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
 				logicOutB = (logicOutB + 1) % 5;
-				modeStateBuffer = (modeStateBuffer & !(LOGICBMASK)) | (logicOutB << LOGICBSHIFT);
-				//holdLogicOut = (holdLogicOut & 0b1111111111000111) | (logicOutB << 3);
+				modeStateBuffer = (modeStateBuffer & ~(LOGICBMASK)) | (logicOutB << LOGICBSHIFT);
 				CLEAR_GATEB;
 				CLEAR_TRIGB;
 				CLEAR_DELTAB;
@@ -485,7 +473,7 @@ void ui_SampleHoldMenu(int sig)
 		if (SHSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
 				sampleHoldMode = (sampleHoldMode + 1) % 6;
-				modeStateBuffer = (modeStateBuffer & !(SHMASK)) | (sampleHoldMode << SHSHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(SHMASK)) | (sampleHoldMode << SHSHIFT);
 				SH_A_TRACK;  // ensure that there's no carryover holding by forcing tracking
 				SH_B_TRACK;
 				uiSetLEDs(sampleHoldMode);
@@ -518,10 +506,10 @@ void ui_familyUpMenu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (UPSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
-				familyIndicator = (familyIndicator + 1) % 16;
+				familyIndicator = (familyIndicator + 1) % 8;
 				switchFamily();
-				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
-				uiSetLEDs(familyIndicator);
+				modeStateBuffer = (modeStateBuffer & ~(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
+				uiSetLEDs(familyIndicator % 8);
 				uiSetRGB(currentFamily.color);
 				uiTransition( &ui_newMode);
 			} else {
@@ -546,13 +534,13 @@ void ui_familyDownMenu(int sig)
 		if (DOWNSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
 				if (familyIndicator == 0) {
-					familyIndicator = 15;  // wrap around
+					familyIndicator = 8;  // wrap around
 				} else {
 					familyIndicator--;
 				}
 				switchFamily();
-				modeStateBuffer = (modeStateBuffer & !(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
-				uiSetLEDs(familyIndicator);
+				modeStateBuffer = (modeStateBuffer & ~(FAMILYMASK)) | (familyIndicator << FAMILYSHIFT);
+				uiSetLEDs(familyIndicator % 8);
 				uiSetRGB(currentFamily.color);
 				uiTransition( &ui_newMode);
 			} else {
@@ -575,10 +563,10 @@ void ui_scaleMenu(int sig) {
 		case rhythm:
 			uiSetRGB(orange);
 			break;
-		case pitch:
+		case arp:
 			uiSetRGB(magenta);
 			break;
-		case other:
+		case voltOct:
 			uiSetRGB(cyan);
 			break;
 		}
@@ -597,17 +585,17 @@ void ui_scaleMenu(int sig) {
 			if(SCALESENSOR == RELEASED){
 				if (uiTimerRead() < 3000) {
 					currentScale = (currentScale + 1) % 8;
-					modeStateBuffer = (modeStateBuffer & !(SCALEMASK)) | (currentScale << SCALESHIFT);
+					modeStateBuffer = (modeStateBuffer & ~(SCALEMASK)) | (currentScale << SCALESHIFT);
 					switchFamily();
 					uiSetLEDs(currentScale);
 					switch (scaleType){
 					case rhythm:
 						uiSetRGB(orange);
 						break;
-					case pitch:
+					case arp:
 						uiSetRGB(magenta);
 						break;
-					case other:
+					case voltOct:
 						uiSetRGB(cyan);
 						break;
 					}
@@ -638,16 +626,16 @@ void ui_scaleTypeUp(int sig) {
 			if (uiTimerRead() < 3000) {
 				scaleType = (scaleType + 1) % 3;
 				currentScale = 0;
-				modeStateBuffer = (modeStateBuffer & !(SCALETYPEMASK)) | (scaleType << SCALETYPESHIFT);
-				modeStateBuffer = (modeStateBuffer & !(SCALEMASK)) | (scaleType << SCALESHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(SCALETYPEMASK)) | (scaleType << SCALETYPESHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(SCALEMASK)) | (scaleType << SCALESHIFT);
 				switch (scaleType){
 				case rhythm:
 					uiSetRGB(orange);
 					break;
-				case pitch:
+				case arp:
 					uiSetRGB(magenta);
 					break;
-				case other:
+				case voltOct:
 					uiSetRGB(cyan);
 					break;
 				}
@@ -682,16 +670,16 @@ void ui_scaleTypeDown(int sig) {
 					scaleType--;
 				}
 				currentScale = 0;
-				modeStateBuffer = (modeStateBuffer & !(SCALETYPEMASK)) | (scaleType << SCALETYPESHIFT);
-				modeStateBuffer = (modeStateBuffer & !(SCALEMASK)) | (scaleType << SCALESHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(SCALETYPEMASK)) | (scaleType << SCALETYPESHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(SCALEMASK)) | (scaleType << SCALESHIFT);
 				switch (scaleType){
 				case rhythm:
 					uiSetRGB(orange);
 					break;
-				case pitch:
+				case arp:
 					uiSetRGB(magenta);
 					break;
-				case other:
+				case voltOct:
 					uiSetRGB(cyan);
 					break;
 				}
@@ -749,7 +737,7 @@ void ui_autoDutyMenu(int sig){
 		if (SHSENSOR == RELEASED){
 			if (uiTimerRead() < 3000){
 				autoDuty = (autoDuty + 1) % 2;
-				modeStateBuffer = (modeStateBuffer & !(AUTODUTYMASK)) | (autoDuty << AUTODUTYSHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(AUTODUTYMASK)) | (autoDuty << AUTODUTYSHIFT);
 				if (autoDuty == autoDutyOn) {
 						CLEAR_AUTODUTY;
 					} else {
@@ -845,9 +833,9 @@ void uiInitialize(void)
 {
 	HAL_FLASH_Unlock();
 	eepromStatus = EE_Init();
-	//if(eepromStatus != EE_OK) {LEDC_ON;}  // error handling, switch to UI error handling?
 	HAL_Delay(500);  // init time
-	//uiLoadFromEEPROM(0);  // load the most recently stored state from memory
+	if(eepromStatus != EE_OK) {LEDC_ON;}  // error handling, switch to UI error handling?
+	uiLoadFromEEPROM(0);  // load the most recently stored state from memory
 
 	// load calibration values from virtual EEPROM
 	//eepromStatus = EE_ReadVariable(VirtAddVarTab[7], &EEPROMTemp);
@@ -872,18 +860,18 @@ void uiLoadFromEEPROM(int position) {
 		uiSetLEDs(2);
 		uiTransition(&ui_error);
 	}
-	controlScheme = modeStateBuffer & !(XMASK);
-	currentScale = (modeStateBuffer & !(SCALEMASK)) >> SCALESHIFT;
-	scaleType = (modeStateBuffer & !(SCALETYPEMASK)) >> SCALETYPESHIFT;
-	syncMode = (modeStateBuffer & !(SYNCMASK)) >> SYNCSHIFT;
-	sampleHoldMode = (modeStateBuffer & !(SHMASK)) >> SHSHIFT;
-	familyIndicator = (modeStateBuffer & !(FAMILYMASK)) >> FAMILYSHIFT;
-	logicOutA = modeStateBuffer & !(LOGICAMASK) >> LOGICASHIFT;
-	logicOutB = (modeStateBuffer & !(LOGICAMASK)) >> LOGICASHIFT;
-	autoDuty = (modeStateBuffer & !(AUTODUTYMASK)) >> AUTODUTYSHIFT;
+	controlScheme = modeStateBuffer & (XMASK);
+	currentScale = (modeStateBuffer & (SCALEMASK)) >> SCALESHIFT;
+	scaleType = (modeStateBuffer & (SCALETYPEMASK)) >> SCALETYPESHIFT;
+	syncMode = (modeStateBuffer & (SYNCMASK)) >> SYNCSHIFT;
+	sampleHoldMode = (modeStateBuffer & (SHMASK)) >> SHSHIFT;
+	familyIndicator = (modeStateBuffer & (FAMILYMASK)) >> FAMILYSHIFT;
+	logicOutA = modeStateBuffer & (LOGICAMASK) >> LOGICASHIFT;
+	logicOutB = (modeStateBuffer & (LOGICBMASK)) >> LOGICBSHIFT;
+	autoDuty = (modeStateBuffer & (AUTODUTYMASK)) >> AUTODUTYSHIFT;
 
 
-	fillFamilyArray();
+	loadSampleArray();
 
 	/* ... initialization of ui attributes */
 	// process the stored modes
@@ -903,17 +891,13 @@ void uiLoadFromEEPROM(int position) {
 void uiStoreToEEPROM(int position){
 	// store lower 16 bits
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2], (uint16_t)modeStateBuffer);
-	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)modeStateBuffer >> 16);  // make sure i'm shifting in the right direction here!!
+	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)(modeStateBuffer >> 16));  // make sure i'm shifting in the right direction here!!
 	modeStateBuffer |= EEPROMTemp << 16;  //write upper 16 bits
 	if (eepromStatus != HAL_OK){
 		uiSetLEDs(1);
 		uiTransition(&ui_error);
 	}
 }
-
-// shouldn't need to read them back out.
-// eepromStatus |= EE_ReadVariable(VirtAddVarTab[position * 2],  &VarDataTab[position * 2]);
-// eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1],  &VarDataTab[0]);
 
 // watches for released sensor buttons while TRIG_BUTTON is down.  Loads or stores preset accordingly.
 void ui_presetPressedMenu(int sig){
@@ -1113,76 +1097,4 @@ void ui_factoryReset(int sig){
 	}
 }
 
-// this sets the flags to be used in the interrupt and also fills the holding array on the heap
-void switchFamily(void) {
-	position = 0;
-	currentFamily = familyArray[familyIndicator];
-	loadSampleArray(currentFamily);
-	span = (currentFamily.tableLength) << 16;
-	spanx2 = (currentFamily.tableLength) << 17;
-
-	switch (currentFamily.familySize) {
-	// these are values that properly allow us to select a family and interpolation fraction for our morph
-	case 3:
-		morphBitShiftRight = 11;
-		morphBitShiftLeft = 5;
-		break;
-
-	case 5:
-		morphBitShiftRight = 10;
-		morphBitShiftLeft = 6;
-		break;
-
-	case 9:
-		morphBitShiftRight = 9;
-		morphBitShiftLeft = 7;
-		break;
-
-	case 17:
-		morphBitShiftRight = 8;
-		morphBitShiftLeft = 8;
-		break;
-
-	case 33:
-		morphBitShiftRight = 7;
-		morphBitShiftLeft = 9;
-		break;
-
-	}
-	switch (currentFamily.tableLength) {
-	// these are values that properly allow us to select a family and interpolation fraction for our morph
-	case 4:
-		tableSizeCompensation = 5;
-		break;
-	case 8:
-		tableSizeCompensation = 4;
-		break;
-	case 16:
-		tableSizeCompensation = 3;
-		break;
-	case 32:
-		tableSizeCompensation = 2;
-		break;
-	case 64:
-		tableSizeCompensation = 1;
-		break;
-	case 128:
-		tableSizeCompensation = 0;
-	}
-}
-
-// shuttles the data from flash to ram and fills the holding array
-void loadSampleArray(Family family) {
-	uint16_t **currentFamilyPointer;
-
-	for (int i = 0; i < family.familySize; i++) {
-		for (int j = 0; j <= family.tableLength + 4; j++) {
-			// this just gets the appropriate samples and plops them into the global holding arrays
-			currentFamilyPointer = family.attackFamily + i;
-			attackHoldArray[i][j] = *(*(currentFamilyPointer) + j);
-			currentFamilyPointer = family.releaseFamily + i;
-			releaseHoldArray[i][j] = *(*(currentFamilyPointer) + j);
-		}
-	}
-}
 

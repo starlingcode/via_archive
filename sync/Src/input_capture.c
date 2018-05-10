@@ -3,18 +3,8 @@
 #include "stm32f3xx_it.h"
 #include "scales.h"
 #include "interrupt_functions.h"
-
-
 #include "tables.h"
 #include "main.h"
-
-int expoTable[4096] = expotable10oct;
-
-// mode indicators, determined in the main loop
-enum syncTypes syncMode; // {none, true, hardSync, catch}
-enum controlSchemes controlScheme; // {gateLength, knobCV}
-enum scaleTypes scaleType; // {rhythms, pitches}
-enum sampleHoldModeTypes sampleHoldMode;
 
 extern TIM_HandleTypeDef htim15;
 extern TIM_HandleTypeDef htim2;
@@ -113,10 +103,10 @@ void generateFrequency(void) {
 
 			if (controlScheme == root) {
 				if ((4095 - time2CV) >= 2048) {
-					rootIndex = (fix16_lerp(time2KnobAverage, 4095, ((4095 - time2CV) - 2048) << 5)) >> scale.t2Bitshift;
+					rootIndex = (fix16_lerp(time2KnobAverage, 4095, ((4095 - time2CVAverage) - 2048) << 5)) >> scale.t2Bitshift;
 				}
 				else {
-					rootIndex = (fix16_lerp(0, time2KnobAverage, (4095 - time2CV) << 5)) >> scale.t2Bitshift;
+					rootIndex = (fix16_lerp(0, time2KnobAverage, (4095 - time2CVAverage) << 5)) >> scale.t2Bitshift;
 				}
 			} else {
 				rootIndex = time2KnobAverage >> scale.t2Bitshift;
