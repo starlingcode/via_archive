@@ -90,12 +90,11 @@ void uiSetLEDs(int);
 void uiClearRGB();
 void uiSetRGB(rgb);
 
-void uiChangeSHAMode(int mode);
-void uiChangeSHBMode(int mode);
-void uiChangeGrid(int mode);
-void uiChangeAndAMode(int mode);
-void uiChangeAndBMode(int mode);
-void uiChangeAuxLogicMode(int mode);
+void handleSHAModeChange(int);
+void handleSHBModeChange(int);
+void handleXModeChange(int);
+void handleSyncModeChange(int);
+void handleAuxSyncModeChange(int);
 
 // UI States
 void (*ui_State)(int);

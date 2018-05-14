@@ -51,23 +51,8 @@ void ui_button1Menu(int sig)
 			if(UI_TIMER_READ < 3000){
 				shAMode = (shAMode + 1) % 3;
 				modeStateBuffer = (modeStateBuffer & ~(SH_A_MASK)) | shAMode;
-				switch (shAMode) {
-					case aSHOff:
-						CLEAR_SAMPLE_A;
-						CLEAR_TRACK_A;
-						SH_A_TRACK;
-						break;
-					case aResample:
-						SET_SAMPLE_A;
-						CLEAR_TRACK_A;
-						break;
-					case aSampleTrack:
-						SET_SAMPLE_A;
-						SET_TRACK_A;
-						break;
-					default:
-						break;
-				}
+				handleSHAModeChange(shAMode);
+				uiClearLEDs();
 				uiSetLEDs(shAMode);
 				uiTransition(&ui_newMode);
 			} else {
@@ -107,24 +92,9 @@ void ui_button4Menu(int sig)
 			if(UI_TIMER_READ < 3000){
 				shBMode = (shBMode + 1) % 3;
 				// initialize some essential retrigger variables
-				modeStateBuffer = (modeStateBuffer & ~(SH_B_MASK)) | (andAMode << SH_B_SHIFT);
-				switch (shBMode) {
-					case bSHOff:
-						CLEAR_SAMPLE_B;
-						CLEAR_TRACK_B;
-						SH_B_TRACK;
-						break;
-					case bResample:
-						SET_SAMPLE_B;
-						CLEAR_TRACK_B;
-						break;
-					case bSampleTrack:
-						SET_SAMPLE_B;
-						SET_TRACK_B;
-						break;
-					default:
-						break;
-				}
+				modeStateBuffer = (modeStateBuffer & ~(SH_B_MASK)) | (shBMode << SH_B_SHIFT);
+				handleSHBModeChange(shBMode);
+				uiClearLEDs();
 				uiSetLEDs(shBMode);
 				uiTransition(&ui_newMode);
 			} else {
@@ -160,16 +130,17 @@ void ui_button2Menu(int sig)
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
-		uiSetLEDs(patternBankIndex);
+		uiSetLEDs(familyIndicator);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON2SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				patternBankIndex = (patternBankIndex + 1) % 8;
-				modeStateBuffer = (modeStateBuffer & ~(BANK_MASK)) | (patternBankIndex << BANK_SHIFT);
-				currentBank = patternBanks[patternBankIndex];
-				uiSetLEDs(patternBankIndex);
+				familyIndicator = (familyIndicator + 1) % 8;
+				modeStateBuffer = (modeStateBuffer & ~(BANK_MASK)) | (familyIndicator << BANK_SHIFT);
+				switchFamily();
+				uiClearLEDs();
+				uiSetLEDs(familyIndicator);
 				uiTransition( &ui_newMode);
 			} else {
 				uiTransition( &ui_default);
@@ -193,20 +164,21 @@ void ui_button5Menu(int sig)
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
-		uiSetLEDs(patternBankIndex);
+		uiSetLEDs(familyIndicator);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON5SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				if (patternBankIndex == 0) {
-					patternBankIndex = 7;  // wrap around
+				if (familyIndicator == 0) {
+					familyIndicator = 7;  // wrap around
 				} else {
-					patternBankIndex--;
+					familyIndicator--;
 				}
-				modeStateBuffer = (modeStateBuffer & ~(BANK_MASK)) | (patternBankIndex << BANK_SHIFT);
-				currentBank = patternBanks[patternBankIndex];
-				uiSetLEDs(patternBankIndex);
+				modeStateBuffer = (modeStateBuffer & ~(BANK_MASK)) | (familyIndicator << BANK_SHIFT);
+				switchFamily();
+				uiClearLEDs();
+				uiSetLEDs(familyIndicator);
 				uiTransition( &ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -226,7 +198,7 @@ void ui_button3Menu(int sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
-		uiSetLEDs(andAMode);
+		uiSetLEDs(xMode);
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
@@ -235,15 +207,11 @@ void ui_button3Menu(int sig) {
 	case SENSOR_EVENT_SIG:
 		if(BUTTON3SENSOR == RELEASED){
 			if (UI_TIMER_READ < 3000) {
-				andAMode = (andAMode + 1) % 2;
-				modeStateBuffer = AND_A_MASK | (andAMode << AND_A_MASK);
-				if (andAMode != 0) {
-					SET_AND_A;
-				} else {
-					CLEAR_AND_A;
-					manageADac(DAC_GATE_HIGH);
-				}
-				uiSetLEDs(andAMode);
+				xMode = (xMode + 1) % 2;
+				modeStateBuffer = AND_A_MASK | (xMode << AND_A_MASK);
+				handleXModeChange(xMode);
+				uiClearLEDs();
+				uiSetLEDs(xMode);
 				uiTransition(&ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -270,26 +238,21 @@ void ui_button6Menu(int sig)
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
-		uiSetLEDs(andBMode);
+		uiSetLEDs(syncMode);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON6SENSOR == RELEASED){
 
 			if(UI_TIMER_READ < 3000){
-				andBMode = (andBMode + 1) % 2;
-				modeStateBuffer = (modeStateBuffer & ~(AND_B_MASK)) | (andBMode << AND_B_SHIFT);
-				if (andBMode != 0) {
-					SET_AND_B;
-				} else {
-					CLEAR_AND_B;
-					manageBDac(DAC_GATE_HIGH);
-				}
+				syncMode = (syncMode + 1) % 3;
+				modeStateBuffer = (modeStateBuffer & ~(AND_B_MASK)) | (syncMode << AND_B_SHIFT);
+				//handleSyncModeChange(syncMode)
 				uiClearLEDs();
-				uiSetLEDs(andBMode);
+				uiSetLEDs(syncMode);
 				uiTransition( &ui_newMode);
 			} else {
-				uiTransition(&ui_default);
+				uiTransition(&syncMode);
 			}
 		} else if (BUTTON3SENSOR == PRESSED) {
 			uiTransition(&ui_button6_3Menu);
@@ -319,17 +282,17 @@ void ui_button6_3Menu(int sig)
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
-		uiSetLEDs(auxLogicMode);
+		uiSetLEDs(auxSyncMode);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON3SENSOR == RELEASED){
 
 			if(UI_TIMER_READ < 3000){
-				auxLogicMode = (auxLogicMode + 1) % 4;
-				modeStateBuffer = (modeStateBuffer & ~(AND_B_MASK)) | (auxLogicMode << AUX_LOGIC_SHIFT);
+				auxSyncMode = (auxSyncMode + 1) % 3;
+				modeStateBuffer = (modeStateBuffer & ~(AUX_LOGIC_MASK)) | (auxSyncMode << AUX_LOGIC_SHIFT);
 				uiClearLEDs();
-				uiSetLEDs(auxLogicMode);
+				uiSetLEDs(auxSyncMode);
 				uiTransition( &ui_button6SubMenu);
 			} else {
 				uiTransition(&ui_default);

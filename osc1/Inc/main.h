@@ -48,51 +48,62 @@
 #include "eeprom.h"
 #include "user_interface.h"
 
+// initialize the arrays that will be used by DMA to store our Knob and CV values
+
+uint32_t ADCReadings1[4]; //4 * 512 samples in holding buffer
+uint32_t ADCReadings2[2]; //2 * 512 samples in holding buffer
+uint32_t ADCReadings3[1]; //1 * 512 samples in holding buffer
+
 // macros for DMA array (change to array name?)
 
 #define knob2 ADCReadings2[0]
+#define knob2Last ADCReadings2[1022]
 #define knob3 ADCReadings2[1]
+#define knob3Last ADCReadings2[1023]
 #define cv1 ADCReadings1[0]
+#define cv1Last ADCReadings1[2044]
 #define cv2 ADCReadings1[1]
+#define cv2Last ADCReadings1[2045]
 #define cv3 ADCReadings1[2]
+#define cv3Last ADCReadings1[2046]
 #define resampling ADCReadings1[3]
+#define resamplingLast ADCReadings1[2055]
 #define knob1 ADCReadings3[0]
+#define knob1Last ADCReadings3[511]
 
-// initialize the arrays that will be used by DMA to store our Knob and CV values
-
-uint32_t ADCReadings1[4];
-uint32_t ADCReadings2[2];
-uint32_t ADCReadings3[1];
 
 // circular buffer
 
 typedef struct {
-    int buff[8192];
+    int buff[512];
     int writeIndex;
 }buffer;
 
 static inline void writeBuffer(buffer* buffer, int value) {
-	buffer->buff[(buffer->writeIndex++) & 8191] = value;
+	buffer->buff[(buffer->writeIndex++) & 511] = value;
 }
 
 static inline int readBuffer(buffer* buffer, int Xn) {
-	return buffer->buff[(buffer->writeIndex + (~Xn)) & 8191];
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 511];
 }
 
 // mode enums and mode variables
 
-enum shAModes {aSHOff, aResample, aSampleTrack};
-enum shBModes {bSHOff, bResample, bSampleTrack};
-enum andAModes {andAOff, andAOn};
-enum andBModes {andBOff, andBOn};
-enum auxLogicModes {and, or, xor, nand};
+enum shAModes {aNone, aDecimate, aHalfDecimate};
+enum shBModes {bNone, bDecimate, bHalfDecimate};
+enum xModes {FM, PM, PWM};
+enum syncModes {pendulum, hard, meta};
+enum auxSyncModes {auxPendulum, auxHard, auxMeta};
 
+
+enum syncModes syncMode;
+enum auxSyncModes auxSyncMode;
+enum xModes xMode;
 enum shAModes shAMode;
 enum shBModes shBMode;
-enum andAModes andAMode;
-enum andBModes andBMode;
-enum auxLogicModes auxLogicMode;
-int patternBankIndex;
+int familyIndicator;
+
+
 
 /* USER CODE END Includes */
 
@@ -194,17 +205,20 @@ int patternBankIndex;
 #define DAC1_ADDR     0x40007408
 #define DAC2_ADDR     0x40007414
 
+#define WRITE_DAC1(X) ((*(volatile uint32_t *) DAC1_ADDR) = X);
+#define WRITE_DAC2(X) ((*(volatile uint32_t *) DAC2_ADDR) = X);
+
 // Trigger input and button "high" (inverted in hardware)
 
-#define RISING_EDGE (GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET
+#define TRIGGER_RISING_EDGE ((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET)
 #define EXPANDER_BUTTON_PRESSED ((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET)
 
 // Flag word bit packing macros
 
 #define TRIGGER_BUTTON 				flagHolder & 0b00000000000000000000000000000001
 #define RUNTIME_DISPLAY 			flagHolder & 0b00000000000000000000000000000010
-#define AND_A 						flagHolder & 0b00000000000000000000000000000100
-#define AND_B 						flagHolder & 0b00000000000000000000000000001000
+#define LOGIC_A 					flagHolder & 0b00000000000000000000000000000100
+#define LOGIC_B 					flagHolder & 0b00000000000000000000000000001000
 #define SAMPLE_A 					flagHolder & 0b00000000000000000000000000010000
 #define SAMPLE_B 					flagHolder & 0b00000000000000000000000000100000
 #define TRACK_A 					flagHolder & 0b00000000000000000000000001000000
@@ -214,8 +228,8 @@ uint32_t flagHolder;
 
 #define SET_TRIGGER_BUTTON	 		flagHolder |= 0b00000000000000000000000000000001
 #define SET_RUNTIME_DISPLAY 		flagHolder |= 0b00000000000000000000000000000010
-#define SET_AND_A	 				flagHolder |= 0b00000000000000000000000000000100
-#define SET_AND_B	 				flagHolder |= 0b00000000000000000000000000001000
+#define SET_LOGIC_A	 				flagHolder |= 0b00000000000000000000000000000100
+#define SET_LOGIC_B	 				flagHolder |= 0b00000000000000000000000000001000
 #define SET_SAMPLE_A	 			flagHolder |= 0b00000000000000000000000000010000
 #define SET_SAMPLE_B	 			flagHolder |= 0b00000000000000000000000000100000
 #define SET_TRACK_A	 				flagHolder |= 0b00000000000000000000000001000000
@@ -225,8 +239,8 @@ uint32_t flagHolder;
 
 #define CLEAR_TRIGGER_BUTTON 		flagHolder &= 0b11111111111111111111111111111110
 #define CLEAR_RUNTIME_DISPLAY 		flagHolder &= 0b11111111111111111111111111111101
-#define CLEAR_AND_A	 				flagHolder &= 0b11111111111111111111111111111011
-#define CLEAR_AND_B	 				flagHolder &= 0b11111111111111111111111111110111
+#define CLEAR_LOGIC_A	 			flagHolder &= 0b11111111111111111111111111111011
+#define CLEAR_LOGIC_B	 			flagHolder &= 0b11111111111111111111111111110111
 #define CLEAR_SAMPLE_A	 			flagHolder &= 0b11111111111111111111111111101111
 #define CLEAR_SAMPLE_B	 			flagHolder &= 0b11111111111111111111111111011111
 #define CLEAR_TRACK_A	 			flagHolder &= 0b11111111111111111111111110111111

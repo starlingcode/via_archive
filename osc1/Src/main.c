@@ -44,7 +44,47 @@
 #include "tsl_user.h"
 #include "eeprom.h"
 #include "user_interface.h"
-#include "hardware_io.h"
+#include "main_state_machine.h"
+#include "dsp.h"
+
+extern struct parameters viaParams;
+
+// declare filter coefficients
+
+q31_t firCoefficients[NUM_TAPS] = {
+		  1499280,
+		  3097718,
+		  -6929872,
+		  -34955643,
+		  -49795015,
+		  -9487274,
+		  49070362,
+		  22354339,
+		  -80649134,
+		  -68021400,
+		  179184179,
+		  459216960,
+		  459216960,
+		  179184179,
+		  -68021400,
+		  -80649134,
+		  22354339,
+		  49070362,
+		  -9487274,
+		  -49795015,
+		  -34955643,
+		  -6929872,
+		  3097718,
+		  1499280
+};
+
+// Declare State buffer of size (numTaps + blockSize - 1)
+
+q31_t firState[DAC_BUFFER_SIZE + NUM_TAPS - 1];
+
+// Declare instance of fir filter
+
+extern arm_fir_instance_q31 S;
 
 /* USER CODE END Includes */
 
@@ -72,10 +112,6 @@ TSC_HandleTypeDef htsc;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
-// this is part of the user code needed to run the STM32 touch sense library
-tsl_user_status_t tsl_status;
-
-
 enum
 {	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
 	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
@@ -88,9 +124,10 @@ enum
 	TSL_ERROR_SIG
 };
 
-int holdCalibration;
+// this is part of the user code needed to run the STM32 touch sense library
+tsl_user_status_t tsl_status;
 
-int debounce;
+int holdCalibration;
 
 uint16_t VirtAddVarTab[NB_OF_VAR] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16};
 
@@ -163,6 +200,22 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 
+	// initialize our touch sensors
+	tsl_user_Init();
+	uiInitialize();
+
+	nullTask.signal = 0;
+	nullTask.next = &nullTask;
+
+	lastTask = mainCreateTask(0, &nullTask);
+	firstTask = mainCreateTask(0, lastTask);
+
+	preloadBuffer = &dacBuffer1;
+	playbackBuffer = &dacBuffer2;
+
+	arm_fir_init_q31(&S, NUM_TAPS, &firCoefficients[0], &firState[0], DAC_BUFFER_SIZE);
+
+
 	// set the priority and enable an interrupt line to be used by the retrigger input
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
@@ -186,6 +239,7 @@ int main(void) {
 	__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
 	__HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
 
+
 	// initialize the timer that runs the PWM for our RGB led
 	HAL_TIM_Base_Start(&htim1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
@@ -195,10 +249,6 @@ int main(void) {
 	// initialize our dac
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
-
-	// initialize our touch sensors
-	tsl_user_Init();
-	uiInitialize();
 
 
 	// initialize the timer that is used to detect rising and falling edges at the clock input
@@ -214,43 +264,34 @@ int main(void) {
 	SH_A_TRACK;
 	SH_B_TRACK;
 
+	viaParams.direction = 1;
+
+	// initialize the main state machine to handle the UI first
+
+	main_State = &main_handleUI;
+
+	SET_RUNTIME_DISPLAY;
+
+	// enable display update timer
+	__HAL_TIM_ENABLE_IT(&htim15, TIM_IT_UPDATE);
+
+	HAL_TIM_Base_Start(&htim15);
+
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		//check if the trigger button has been pressed
-		if (EXPANDER_BUTTON_PRESSED){
-			//if we havent raised the trigger button flag, do so and set a pending interrupt
-			if (!(TRIGGER_BUTTON)) {
-				debounce++;
-				if (debounce == 10) {
-					SET_TRIGGER_BUTTON;
-					LEDA_ON;
-					uiDispatch(EXPAND_SW_ON_SIG);
-					//reset the counters on button press
-					HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
-					debounce = 0;
-				}
-			}
-		}
-		//if the trigger button has been released but the trigger button flag is still high, lower it and set an IRQ
-		else if (TRIGGER_BUTTON){
-			debounce++;
-			if (debounce == 10) {
-				LEDA_OFF
-				CLEAR_TRIGGER_BUTTON;
-				uiDispatch(EXPAND_SW_OFF_SIG);
-				debounce = 0;
-			}
-		}
-		// run the state machine that gets us a reading on our touch sensors
-		tsl_status = tsl_user_Exec();  // retrieve TSL state machine status
 
-		// Either send signal to check for new touch events or check timer (currently just for newmode display)
-		if (tsl_status != TSL_USER_STATUS_BUSY) {
-			uiDispatch(SENSOR_EVENT_SIG);
+		// check to see if the first task is the last task
+		if (firstTask->next == &nullTask) {
+			// if so, add the execute signal to the queue
+			mainPush(MAIN_EXECUTE);
 		}
+
+		// implement the main state machine
+		mainDispatch();
+
 		/* USER CODE END WHILE */
 		/* USER CODE BEGIN 3 */
 	}
@@ -293,7 +334,7 @@ void SystemClock_Config(void) {
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_TIM1 | RCC_PERIPHCLK_TIM8
 			| RCC_PERIPHCLK_ADC12 | RCC_PERIPHCLK_ADC34;
-	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
+	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV8;
 	PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV128;
 	PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
 	PeriphClkInit.Tim8ClockSelection = RCC_TIM8CLK_HCLK;
@@ -414,7 +455,7 @@ static void MX_ADC2_Init(void) {
 	sConfig.Channel = ADC_CHANNEL_3;
 	sConfig.Rank = 1;
 	sConfig.SingleDiff = ADC_SINGLE_ENDED;
-	sConfig.SamplingTime = ADC_SAMPLETIME_601CYCLES_5;
+	sConfig.SamplingTime = ADC_SAMPLETIME_181CYCLES_5;
 	sConfig.OffsetNumber = ADC_OFFSET_NONE;
 	sConfig.Offset = 0;
 	if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK) {
@@ -470,7 +511,7 @@ static void MX_ADC3_Init(void) {
 	sConfig.Channel = ADC_CHANNEL_12;
 	sConfig.Rank = 1;
 	sConfig.SingleDiff = ADC_SINGLE_ENDED;
-	sConfig.SamplingTime = ADC_SAMPLETIME_601CYCLES_5;
+	sConfig.SamplingTime = ADC_SAMPLETIME_181CYCLES_5;
 	sConfig.OffsetNumber = ADC_OFFSET_NONE;
 	sConfig.Offset = 0;
 	if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK) {
@@ -676,7 +717,7 @@ static void MX_TIM6_Init(void) {
 	htim6.Instance = TIM6;
 	htim6.Init.Prescaler = 1;
 	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim6.Init.Period = 1000;
+	htim6.Init.Period = 375;
 	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim6) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -755,7 +796,7 @@ static void MX_TIM15_Init(void) {
 	htim15.Instance = TIM15;
 	htim15.Init.Prescaler = 1 - 1;
 	htim15.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim15.Init.Period = 6000;
+	htim15.Init.Period = 5000;
 	htim15.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim15.Init.RepetitionCounter = 0;
 	htim15.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -891,6 +932,49 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
+
+// wrapper for implementing the UI
+void implementUI(void) {
+
+	static uint32_t debounce;
+
+//check if the trigger button has been pressed
+		if (EXPANDER_BUTTON_PRESSED){
+
+			//if we havent raised the trigger button flag, do so and set a pending interrupt
+			if (!(TRIGGER_BUTTON)) {
+				debounce++;
+
+				if (debounce == 10) {
+					SET_TRIGGER_BUTTON;
+					uiDispatch(EXPAND_SW_ON_SIG);
+					//trigger an interrupt
+					HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
+					debounce = 0;
+				}
+
+			}
+		}
+		//if the trigger button has been released but the trigger button flag is still high, lower it and set an IRQ
+		else if (TRIGGER_BUTTON){
+			debounce++;
+			if (debounce == 10) {
+				CLEAR_TRIGGER_BUTTON;
+				uiDispatch(EXPAND_SW_OFF_SIG);
+				debounce = 0;
+			}
+		}
+
+		// run the state machine from the STM Touch Library
+		tsl_status = tsl_user_Exec();
+
+		// when acquisition is complete, send a signal to the UI state machine to parse the sensor readings
+		if (tsl_status != TSL_USER_STATUS_BUSY) {
+			uiDispatch(SENSOR_EVENT_SIG);
+		}
+}
+
+
 
 /* USER CODE END 4 */
 

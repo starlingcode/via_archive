@@ -14,28 +14,24 @@ TIM_HandleTypeDef htim1;
  *
  */
 
-void uiChangeSHAMode(int mode) {
-
+void handleSHAModeChange(int mode) {
+	SH_A_TRACK;
 }
 
-void uiChangeSHBMode(int mode) {
-
+void handleSHBModeChange(int mode) {
+	SH_B_TRACK;
 }
 
-void uiChangeGrid(int mode) {
-
+void handleXModeChange(int mode) {
+	// switch function pointer for get phase
 }
 
-void uiChangeAndAMode(int mode) {
-
+void handleSyncModeChange(int mode) {
+	// no need for this, sync modes handled from mode enum
 }
 
-void uiChangeAndBMode(int mode) {
-
-}
-
-void uiChangeAuxLogicMode(int mode) {
-
+void handleAuxSyncModeChange(int mode) {
+	// no need for this, sync modes handled from mode enum
 }
 
 /**

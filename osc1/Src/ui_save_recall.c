@@ -42,7 +42,11 @@ enum {
 
 void uiInitialize()
 {
-	initializePatterns();
+	fillFamilyArray();
+
+	familyIndicator = 2;
+
+	switchFamily();
 
 	HAL_FLASH_Unlock();
 	eepromStatus = EE_Init();
@@ -54,7 +58,7 @@ void uiInitialize()
 	}
 
 	HAL_Delay(500);  // init time
-	uiLoadFromEEPROM(0);  // load the most recently stored state from memory
+	//uiLoadFromEEPROM(0);  // load the most recently stored state from memory
 
 
 
@@ -85,16 +89,14 @@ void uiLoadFromEEPROM(int position) {
 
 	shAMode = modeStateBuffer & SH_A_MASK;
 	shBMode = (modeStateBuffer & SH_B_MASK) >> SH_B_SHIFT;
-	andAMode = (modeStateBuffer & AND_A_MASK) >> AND_A_SHIFT;
-	andBMode = (modeStateBuffer & AND_A_MASK) >> AND_B_SHIFT;
-	patternBankIndex = (modeStateBuffer & BANK_MASK) >> BANK_SHIFT;
+	xMode = (modeStateBuffer & AND_A_MASK) >> AND_A_SHIFT;
+	syncMode = (modeStateBuffer & AND_A_MASK) >> AND_B_SHIFT;
+//	familyIndicator = (modeStateBuffer & BANK_MASK) >> BANK_SHIFT;
 
 	/* ... initialization of ui attributes */
 	// call each menu to initialize, to make UI process the stored modes
 
-	currentBank = patternBanks[patternBankIndex];
-	handleALow();
-	handleBLow();
+	switchFamily();
 
 }
 

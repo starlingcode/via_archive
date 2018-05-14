@@ -34,9 +34,9 @@ GAT * @file    stm32f3xx_it.c
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
-#include "patterns.h"
-#include "sequence_functions.h"
+#include "main_state_machine.h"
 #include "hardware_io.h"
+#include "dsp.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -207,26 +207,13 @@ void SysTick_Handler(void) {
 /* please refer to the startup file (startup_stm32f3xx.s).                    */
 /******************************************************************************/
 
-/**
- * @brief This function handles DMA1 channel1 global interrupt.
- */
-void DMA1_Channel1_IRQHandler(void) {
-	/* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
-
-	/* USER CODE END DMA1_Channel1_IRQn 0 */
-	HAL_DMA_IRQHandler(&hdma_adc1);
-	/* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-
-	/* USER CODE END DMA1_Channel1_IRQn 1 */
-}
-
-/**
- * @brief This function handles TIM1 break and TIM15 interrupts.
- */
 void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
 
-	__HAL_TIM_DISABLE(&htim15);
+//	if (RUNTIME_DISPLAY) {
+//		mainRequest(MAIN_UPDATE_DISPLAY);
+//	}
+
 	__HAL_TIM_CLEAR_FLAG(&htim15, TIM_FLAG_UPDATE);
 	/* USER CODE END TIM1_BRK_TIM15_IRQn 0 */
 	//HAL_TIM_IRQHandler(&htim1);
@@ -236,18 +223,32 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE END TIM1_BRK_TIM15_IRQn 1 */
 }
 
+
+/**
+ * @brief This function handles DMA1 channel1 global interrupt.
+ */
+void DMA1_Channel1_IRQHandler(void) {
+	/* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+
+	//mainRequest(MAIN_ADC1_CONV_COMPLETE);
+
+	/* USER CODE END DMA1_Channel1_IRQn 0 */
+	HAL_DMA_IRQHandler(&hdma_adc1);
+	/* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
+
+	/* USER CODE END DMA1_Channel1_IRQn 1 */
+}
+
 /**
  * @brief This function handles TIM2 global interrupt.
  */
 void TIM2_IRQHandler(void) {
 	/* USER CODE BEGIN TIM2_IRQn 0 */
 
-	//TODO trigger recording
-
-	if (RISING_EDGE) {
-		processClock();
+	if (TRIGGER_RISING_EDGE) {
+		mainPush(MAIN_RISING_EDGE);
 	} else {
-		handleFallingEdge();
+		mainPush(MAIN_FALLING_EDGE);
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC1);
@@ -278,8 +279,21 @@ void TIM3_IRQHandler(void) {
 void TIM6_DAC_IRQHandler(void) {
 	/* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 
-	(*manageADac)(DAC_EXECUTE);
-	(*manageBDac)(DAC_EXECUTE);
+	static uint32_t readCounter;
+
+	WRITE_DAC1(4095 - playbackBuffer[readCounter]);
+	WRITE_DAC2(playbackBuffer[readCounter]);
+
+	if (readCounter == DAC_BUFFER_SIZE - 1) {
+		readCounter = 0;
+		q31_t *temp = playbackBuffer;
+		playbackBuffer = preloadBuffer;
+		preloadBuffer = temp;
+		main_State = main_fillBuffer;
+	} else {
+		readCounter++;
+	}
+
 
 	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
 	/* USER CODE END TIM6_DAC_IRQn 0 */
@@ -297,9 +311,7 @@ void TIM7_IRQHandler(void) {
 	/* USER CODE BEGIN TIM7_IRQn 0 */
 
 	SH_A_SAMPLE;
-	if (RUNTIME_DISPLAY) {
-		LEDA_ON;
-	}
+	SET_SAMPLE_A;
 
 	__HAL_TIM_CLEAR_FLAG(&htim7, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim7);
@@ -317,9 +329,7 @@ void TIM8_UP_IRQHandler(void) {
 	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
 
 	SH_B_SAMPLE;
-	if (RUNTIME_DISPLAY) {
-		LEDB_ON;
-	}
+	SET_SAMPLE_B;
 
 	__HAL_TIM_CLEAR_FLAG(&htim8, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim8);
@@ -337,6 +347,8 @@ void TIM8_UP_IRQHandler(void) {
 void DMA2_Channel1_IRQHandler(void) {
 	/* USER CODE BEGIN DMA2_Channel1_IRQn 0 */
 
+	mainPush(MAIN_ADC2_CONV_COMPLETE);
+
 	/* USER CODE END DMA2_Channel1_IRQn 0 */
 	HAL_DMA_IRQHandler(&hdma_adc2);
 	/* USER CODE BEGIN DMA2_Channel1_IRQn 1 */
@@ -350,6 +362,8 @@ void DMA2_Channel1_IRQHandler(void) {
 void DMA2_Channel5_IRQHandler(void) {
 	/* USER CODE BEGIN DMA2_Channel5_IRQn 0 */
 
+	mainRequest(MAIN_ADC3_CONV_COMPLETE);
+
 	/* USER CODE END DMA2_Channel5_IRQn 0 */
 	HAL_DMA_IRQHandler(&hdma_adc3);
 	/* USER CODE BEGIN DMA2_Channel5_IRQn 1 */
@@ -361,6 +375,7 @@ void DMA2_Channel5_IRQHandler(void) {
 
 void TIM4_IRQHandler(void) {
 	/* USER CODE BEGIN TIM8_UP_IRQn 0 */
+
 	uiDispatch(TIMEOUT_SIG);
 
 	/* USER CODE END TIM8_UP_IRQn 0 */
@@ -372,10 +387,9 @@ void TIM4_IRQHandler(void) {
 
 void EXTI15_10_IRQHandler(void) {
 
-	// reset counters on rising edge at aux trigger in or press of trigger button
+	// falling edge interrupt not yet implemented
+	//mainPush(MAIN_AUX_RISING_EDGE);
 
-	aCounter = 0;
-	bCounter = 0;
 
 	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_11);
 }
