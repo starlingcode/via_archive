@@ -203,9 +203,6 @@ int main(void) {
 	HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
 	HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
 
-	// initialize the timer that is used to detect our triggers
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-
 	// initialize the timer that runs the PWM for our RGB led
 	HAL_TIM_Base_Start(&htim1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
@@ -241,34 +238,38 @@ int main(void) {
 
 	//start our DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);
+
+	// initialize the timer that is used to detect our triggers
+	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
+
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-//		//check if the trigger button has been pressed
-//		if (((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET)){
-//			//if we havent raised the trigger button flag, do so and set a pending interrupt
-//			if (!(TRIGGER_BUTTON)) {
-//				debounce++;
-//				if (debounce == 10) {
-//					uiDispatch(EXPAND_SW_ON_SIG);
-//					SET_TRIGGER_BUTTON;
-//					HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
-//					debounce = 0;
-//				}
-//			}
-//		}
-//		//if the trigger button has been released but the trigger button flag is still high, lower it and set an IRQ
-//		else if (TRIGGER_BUTTON){
-//			debounce++;
-//			if (debounce == 10) {
-//				uiDispatch(EXPAND_SW_OFF_SIG);
-//				CLEAR_TRIGGER_BUTTON;
-//				HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
-//				debounce = 0;
-//			}
-//		}
+		//check if the trigger button has been pressed
+		if (((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET)){
+			//if we havent raised the trigger button flag, do so and set a pending interrupt
+			if (!(TRIGGER_BUTTON)) {
+				debounce++;
+				if (debounce == 10) {
+					uiDispatch(EXPAND_SW_ON_SIG);
+					SET_TRIGGER_BUTTON;
+					HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
+					debounce = 0;
+				}
+			}
+		}
+		//if the trigger button has been released but the trigger button flag is still high, lower it and set an IRQ
+		else if (TRIGGER_BUTTON){
+			debounce++;
+			if (debounce == 10) {
+				uiDispatch(EXPAND_SW_OFF_SIG);
+				CLEAR_TRIGGER_BUTTON;
+				HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
+				debounce = 0;
+			}
+		}
 		// run the state machine that gets us a reading on our touch sensors
 		tsl_status = tsl_user_Exec();  // retrieve TSL state machine status
 

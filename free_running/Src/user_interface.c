@@ -238,6 +238,11 @@ void ui_trigMenu(int sig)
 	{
 	case ENTRY_SIG:
 
+//		if (TRIGGER_BUTTON){
+//			presetNumber = 2;
+//			uiTransition(&ui_presetMenu);
+//			break;
+//		}
 		if (loop == noloop && speed == audio){
 			uiTransition(&ui_drumTrigMenu);
 		} else {
@@ -305,7 +310,6 @@ void ui_drumTrigMenu(int sig) {
 			if (uiTimerRead() < 3000) {
 				drumMode = (drumMode + 1) % 6;
 				modeStateBuffer = (modeStateBuffer & ~(DRUMMASK)) | (drumMode << DRUMSHIFT);
-
 				uiSetLEDs(drumMode);
 				uiTransition(&ui_newMode);
 			} else {
@@ -350,23 +354,6 @@ void ui_logicAMenu(int sig)
 				logicOutA = (logicOutA + 1) % 3;
 
 				modeStateBuffer = (modeStateBuffer & ~(LOGICAMASK)) | (logicOutA << LOGICASHIFT);
-
-				CLEAR_GATEA;
-				CLEAR_TRIGA;
-				CLEAR_DELTAA;
-
-				switch (logicOutA) {
-				case 0:
-					SET_GATEA;
-					break;
-				case 1:
-					SET_TRIGA;
-					break;
-				case 2:
-					SET_DELTAA;
-					break;
-				}
-
 				uiSetLEDs(logicOutA);
 				uiTransition(&ui_newLogicMode);
 
@@ -401,23 +388,6 @@ void ui_logicBMenu(int sig)
 				logicOutB = (logicOutB + 1) % 3;
 				modeStateBuffer = (modeStateBuffer & ~(LOGICBMASK)) | (logicOutB << LOGICBSHIFT);
 				uiSetLEDs(logicOutB);
-
-				CLEAR_GATEB;
-				CLEAR_TRIGB;
-				CLEAR_DELTAB;
-
-				switch (logicOutB) {
-				case 0:
-					SET_GATEB;
-					break;
-				case 1:
-					SET_TRIGB;
-					break;
-				case 2:
-					SET_DELTAB;
-					break;
-				}
-
 				uiTransition(&ui_newLogicMode);
 
 			} else {
@@ -847,15 +817,14 @@ void uiInitialize()
 	HAL_FLASH_Unlock();
 	eepromStatus = EE_Init();
 
-	HAL_Delay(500);  // init time
-
 	// error handling
 	if(eepromStatus != EE_OK) {
 		uiSetLEDs(3);
 		uiTransition(&ui_error);
 	}
 
-	//uiLoadFromEEPROM(0); // load the most recently stored state from memory
+	HAL_Delay(500);  // init time
+	uiLoadFromEEPROM(0);  // load the most recently stored state from memory
 
 	eepromStatus = EE_ReadVariable(VirtAddVarTab[7], &EEPROMTemp);
 	morphCal = EEPROMTemp >> 8;
@@ -896,6 +865,7 @@ void uiLoadFromEEPROM(int position) {
 	logicOutB = (modeStateBuffer & LOGICBMASK) >> LOGICBSHIFT;
 	drumMode = (modeStateBuffer & DRUMMASK) >> DRUMSHIFT;
 	fillFamilyArray();
+	switchFamily();
 
 	/* ... initialization of ui attributes */
 	// call each menu to initialize, to make UI process the stored modes
@@ -911,7 +881,7 @@ void uiLoadFromEEPROM(int position) {
 void uiStoreToEEPROM(int position){
 	// store lower 16 bits
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2], (uint16_t)modeStateBuffer);
-	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)(modeStateBuffer >> 16));  // make sure i'm shifting in the right direction here!!
+	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)modeStateBuffer >> 16);  // make sure i'm shifting in the right direction here!!
 
 	if (eepromStatus != HAL_OK){
 		uiSetLEDs(1);
