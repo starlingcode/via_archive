@@ -49,42 +49,25 @@
 
 extern struct parameters viaParams;
 
+// Declare instance of fir filter
+
+extern arm_fir_instance_q31 fir;
+extern arm_fir_decimate_instance_q31  firDecimate;
+
 // declare filter coefficients
 
-q31_t firCoefficients[NUM_TAPS] = {
-		  1499280,
-		  3097718,
-		  -6929872,
-		  -34955643,
-		  -49795015,
-		  -9487274,
-		  49070362,
-		  22354339,
-		  -80649134,
-		  -68021400,
-		  179184179,
-		  459216960,
-		  459216960,
-		  179184179,
-		  -68021400,
-		  -80649134,
-		  22354339,
-		  49070362,
-		  -9487274,
-		  -49795015,
-		  -34955643,
-		  -6929872,
-		  3097718,
-		  1499280
-};
+q31_t firCoefficients[NUM_TAPS] = FIR24TAPS6_24;
 
 // Declare State buffer of size (numTaps + blockSize - 1)
 
 q31_t firState[DAC_BUFFER_SIZE + NUM_TAPS - 1];
 
-// Declare instance of fir filter
+extern arm_biquad_casd_df1_inst_q31 biquad1;
 
-extern arm_fir_instance_q31 S;
+q31_t biquad1Coeffs[8][5] = {BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET};
+
+q31_t biquad1States[32];
+
 
 /* USER CODE END Includes */
 
@@ -213,8 +196,11 @@ int main(void) {
 	preloadBuffer = &dacBuffer1;
 	playbackBuffer = &dacBuffer2;
 
-	arm_fir_init_q31(&S, NUM_TAPS, &firCoefficients[0], &firState[0], DAC_BUFFER_SIZE);
+	arm_fir_init_q31(&fir, NUM_TAPS, &firCoefficients[0], &firState[0], DAC_BUFFER_SIZE);
 
+	//arm_fir_decimate_init_q31(&firDecimate, NUM_TAPS, OVERSAMPLING_FACTOR, &firCoefficients[0], &firState[0], DAC_BUFFER_SIZE);
+
+	arm_biquad_cascade_df1_init_q31(&biquad1, BIQUAD1_STAGES, &biquad1Coeffs, &biquad1States, 0);
 
 	// set the priority and enable an interrupt line to be used by the retrigger input
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
@@ -717,8 +703,8 @@ static void MX_TIM6_Init(void) {
 	htim6.Instance = TIM6;
 	htim6.Init.Prescaler = 1;
 	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim6.Init.Period = 375;
-	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+	htim6.Init.Period = 750;
+	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
 	if (HAL_TIM_Base_Init(&htim6) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}

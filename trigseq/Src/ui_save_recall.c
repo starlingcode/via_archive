@@ -93,6 +93,8 @@ void uiLoadFromEEPROM(int position) {
 	// call each menu to initialize, to make UI process the stored modes
 
 	currentBank = patternBanks[patternBankIndex];
+	handleALow();
+	handleBLow();
 
 }
 
@@ -100,7 +102,7 @@ void uiLoadFromEEPROM(int position) {
 void uiStoreToEEPROM(int position){
 	// store lower 16 bits
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2], (uint16_t)modeStateBuffer);
-	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)modeStateBuffer >> 16);  // make sure i'm shifting in the right direction here!!
+	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1], (uint16_t)(modeStateBuffer >> 16));  // make sure i'm shifting in the right direction here!!
 
 	if (eepromStatus != HAL_OK){
 		uiSetLEDs(1);

@@ -127,5 +127,4 @@ void handleFallingEdge(void) {
 	} else {
 		handleAuxLow();
 	}
-
 }

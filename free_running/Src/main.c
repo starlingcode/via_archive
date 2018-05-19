@@ -246,29 +246,29 @@ int main(void) {
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		//check if the trigger button has been pressed
-		if (((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET)){
-			//if we havent raised the trigger button flag, do so and set a pending interrupt
-			if (!(TRIGGER_BUTTON)) {
-				debounce++;
-				if (debounce == 10) {
-					uiDispatch(EXPAND_SW_ON_SIG);
-					SET_TRIGGER_BUTTON;
-					HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
-					debounce = 0;
-				}
-			}
-		}
-		//if the trigger button has been released but the trigger button flag is still high, lower it and set an IRQ
-		else if (TRIGGER_BUTTON){
-			debounce++;
-			if (debounce == 10) {
-				uiDispatch(EXPAND_SW_OFF_SIG);
-				CLEAR_TRIGGER_BUTTON;
-				HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
-				debounce = 0;
-			}
-		}
+//		//check if the trigger button has been pressed
+//		if (((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET)){
+//			//if we havent raised the trigger button flag, do so and set a pending interrupt
+//			if (!(TRIGGER_BUTTON)) {
+//				debounce++;
+//				if (debounce == 10) {
+//					uiDispatch(EXPAND_SW_ON_SIG);
+//					SET_TRIGGER_BUTTON;
+//					HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
+//					debounce = 0;
+//				}
+//			}
+//		}
+//		//if the trigger button has been released but the trigger button flag is still high, lower it and set an IRQ
+//		else if (TRIGGER_BUTTON){
+//			debounce++;
+//			if (debounce == 10) {
+//				uiDispatch(EXPAND_SW_OFF_SIG);
+//				CLEAR_TRIGGER_BUTTON;
+//				HAL_NVIC_SetPendingIRQ(TIM2_IRQn);
+//				debounce = 0;
+//			}
+//		}
 		// run the state machine that gets us a reading on our touch sensors
 		tsl_status = tsl_user_Exec();  // retrieve TSL state machine status
 
@@ -701,7 +701,7 @@ static void MX_TIM6_Init(void) {
 	htim6.Instance = TIM6;
 	htim6.Init.Prescaler = 1;
 	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim6.Init.Period = 750;
+	htim6.Init.Period = 2000;
 	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim6) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);

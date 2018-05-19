@@ -27,9 +27,6 @@ struct oscillator {
 
 };
 
-//declare output separately to be passed to the interrupt
-int output;
-
 /**
  *
  * Main oscillator state machine

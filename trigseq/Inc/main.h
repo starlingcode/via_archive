@@ -48,6 +48,8 @@
 #include "eeprom.h"
 #include "user_interface.h"
 
+// macros for DMA array (change to array name?)
+
 #define knob2 ADCReadings2[0]
 #define knob3 ADCReadings2[1]
 #define cv1 ADCReadings1[0]
@@ -57,9 +59,12 @@
 #define knob1 ADCReadings3[0]
 
 // initialize the arrays that will be used by DMA to store our Knob and CV values
+
 uint32_t ADCReadings1[4];
 uint32_t ADCReadings2[2];
 uint32_t ADCReadings3[1];
+
+// circular buffer
 
 typedef struct {
     int buff[8192];
@@ -73,6 +78,8 @@ static inline void writeBuffer(buffer* buffer, int value) {
 static inline int readBuffer(buffer* buffer, int Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 8191];
 }
+
+// mode enums and mode variables
 
 enum shAModes {aSHOff, aResample, aSampleTrack};
 enum shBModes {bSHOff, bResample, bSampleTrack};
@@ -136,7 +143,14 @@ int patternBankIndex;
 #define S_H_B_Pin GPIO_PIN_9
 #define S_H_B_GPIO_Port GPIOB
 
-/* USER CODE BEGIN Private defines */
+/**
+ *
+ * Hardware IO Macros
+ *
+ */
+
+// Logic outs
+
 #define BLOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 #define BLOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
 
@@ -148,6 +162,8 @@ int patternBankIndex;
 
 #define EXPAND_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
 #define EXPAND_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
+
+// LEDs
 
 #define SET_RED_LED(X) __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, X);
 #define SET_GREEN_LED(X) __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, X);
@@ -165,20 +181,25 @@ int patternBankIndex;
 #define LEDD_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_15;
 #define LEDD_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_15;
 
+// Sample and holds
+
 #define SH_A_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_8;
 #define SH_A_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_8;
 
 #define SH_B_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_9;
 #define SH_B_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_9;
 
-#define ClearTimCount(n)           (n.TIMx->CNT = 0)
+// DAC register address
 
 #define DAC1_ADDR     0x40007408
 #define DAC2_ADDR     0x40007414
 
-#define RISING_EDGE (GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET
+// Trigger input and button "high" (inverted in hardware)
 
+#define RISING_EDGE (GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET
 #define EXPANDER_BUTTON_PRESSED ((GPIOA->IDR & GPIO_PIN_13) == (uint32_t) GPIO_PIN_RESET)
+
+// Flag word bit packing macros
 
 #define TRIGGER_BUTTON 				flagHolder & 0b00000000000000000000000000000001
 #define RUNTIME_DISPLAY 			flagHolder & 0b00000000000000000000000000000010
@@ -211,11 +232,7 @@ uint32_t flagHolder;
 #define CLEAR_TRACK_A	 			flagHolder &= 0b11111111111111111111111110111111
 #define CLEAR_TRACK_B	 			flagHolder &= 0b11111111111111111111111101111111
 
-
-
-
-#define TOGGLE_GATE 			flagHolder ^= 0b00000000000000000000000000000100
-
+#define TOGGLE_AND_A 			flagHolder ^= 0b00000000000000000000000000000100
 #define REMEMBER_PHASE_STATE	flagHolder ^= (-((PHASE_STATE) ^ flagHolder) & (1UL << 1))
 
 /* USER CODE END Private defines */

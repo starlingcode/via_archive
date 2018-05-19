@@ -310,14 +310,14 @@ void getSampleQuinticSpline(int position) {
 	if (interp2 < interp3) {
 		EXPAND_GATE_HIGH;
 		REV2_GATE_HIGH;
-		if (DELTAB) {
-			BLOGIC_HIGH;
+		if (DELTAA) {
+			ALOGIC_HIGH;
 			if (RUNTIME_DISPLAY) {
-				LEDD_ON;
+				LEDC_ON;
 			}
 		}
-		if (DELTAA) {
-			ALOGIC_LOW;
+		if (DELTAB) {
+			BLOGIC_LOW;
 			if (RUNTIME_DISPLAY) {
 				LEDC_OFF;
 			}
@@ -325,16 +325,16 @@ void getSampleQuinticSpline(int position) {
 	} else if (interp3 < interp2) {
 		EXPAND_GATE_LOW;
 		REV2_GATE_LOW;
-		if (DELTAB) {
-			BLOGIC_LOW;
+		if (DELTAA) {
+			ALOGIC_LOW;
 			if (RUNTIME_DISPLAY) {
-				LEDD_OFF;
+				LEDC_OFF;
 			}
 		}
-		if (DELTAA) {
-			ALOGIC_HIGH;
+		if (DELTAB) {
+			BLOGIC_HIGH;
 			if (RUNTIME_DISPLAY) {
-				LEDC_ON;
+				LEDD_ON;
 			}
 		}
 	}

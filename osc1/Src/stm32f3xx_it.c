@@ -281,8 +281,8 @@ void TIM6_DAC_IRQHandler(void) {
 
 	static uint32_t readCounter;
 
-	WRITE_DAC1(4095 - playbackBuffer[readCounter]);
-	WRITE_DAC2(playbackBuffer[readCounter]);
+	WRITE_DAC1(6143 - playbackBuffer[readCounter]);
+	WRITE_DAC2(playbackBuffer[readCounter] + 2048);
 
 	if (readCounter == DAC_BUFFER_SIZE - 1) {
 		readCounter = 0;
