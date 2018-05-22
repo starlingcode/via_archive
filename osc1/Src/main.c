@@ -47,27 +47,16 @@
 #include "main_state_machine.h"
 #include "dsp.h"
 
-extern struct parameters viaParams;
-
 // Declare instance of fir filter
-
 extern arm_fir_instance_q31 fir;
-extern arm_fir_decimate_instance_q31  firDecimate;
+
+//extern arm_fir_decimate_instance_q31  firDecimate;
 
 // declare filter coefficients
-
-q31_t firCoefficients[NUM_TAPS] = FIR24TAPS6_24;
+q31_t firCoefficients[NUM_TAPS] = FIR24TAPS5_12;
 
 // Declare State buffer of size (numTaps + blockSize - 1)
-
-q31_t firState[DAC_BUFFER_SIZE + NUM_TAPS - 1];
-
-extern arm_biquad_casd_df1_inst_q31 biquad1;
-
-q31_t biquad1Coeffs[8][5] = {BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET, BIQUAD1_COEFF_SET};
-
-q31_t biquad1States[32];
-
+q31_t firState[BUFFER_SIZE + NUM_TAPS - 1];
 
 /* USER CODE END Includes */
 
@@ -187,20 +176,41 @@ int main(void) {
 	tsl_user_Init();
 	uiInitialize();
 
+	// initialize signal queue (currently unused)
 	nullTask.signal = 0;
 	nullTask.next = &nullTask;
 
 	lastTask = mainCreateTask(0, &nullTask);
 	firstTask = mainCreateTask(0, lastTask);
 
-	preloadBuffer = &dacBuffer1;
-	playbackBuffer = &dacBuffer2;
+	// initialize logic state buffers to point to a valid address
+	logicInit();
 
-	arm_fir_init_q31(&fir, NUM_TAPS, &firCoefficients[0], &firState[0], DAC_BUFFER_SIZE);
+	// initialize double buffers used for DSP
+	output1.samples = sampleBuffer1;
+	output1.logicStates = logicStateBuffer1;
 
-	//arm_fir_decimate_init_q31(&firDecimate, NUM_TAPS, OVERSAMPLING_FACTOR, &firCoefficients[0], &firState[0], DAC_BUFFER_SIZE);
+	output2.samples = sampleBuffer2;
+	output2.logicStates = logicStateBuffer2;
 
-	arm_biquad_cascade_df1_init_q31(&biquad1, BIQUAD1_STAGES, &biquad1Coeffs, &biquad1States, 0);
+	input1.xCV = xCVBuffer1;
+	input1.morphCV = morphCVBuffer1;
+	input1.trigInput = trigBuffer1;
+	input1.auxTrigInput = auxTrigBuffer1;
+
+	input2.xCV = xCVBuffer2;
+	input2.morphCV = morphCVBuffer2;
+	input2.trigInput = trigBuffer2;
+	input2.auxTrigInput = auxTrigBuffer2;
+
+	outputRead = &output1;
+	outputWrite = &output2;
+
+	inputRead = &input1;
+	inputWrite = &input2;
+
+	// initialize the FIR filter
+	arm_fir_init_q31(&fir, NUM_TAPS, &firCoefficients[0], &firState[0], BUFFER_SIZE);
 
 	// set the priority and enable an interrupt line to be used by the retrigger input
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
@@ -208,15 +218,14 @@ int main(void) {
 
 	// declare the initialization state
 	SET_RUNTIME_DISPLAY;
-
-	//
 	CLEAR_TRIGGER_BUTTON;
 
+	// Calibrate the ADCs
 	HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
 	HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
 	HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
 
-	// initialize our ADCs and their respective DMA arrays
+	// initialize the ADCs and their respective DMA arrays
 	HAL_ADC_Start_DMA(&hadc1, ADCReadings1, 4);
 	HAL_ADC_Start_DMA(&hadc2, ADCReadings2, 2);
 	HAL_ADC_Start_DMA(&hadc3, ADCReadings3, 1);
@@ -225,19 +234,17 @@ int main(void) {
 	__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
 	__HAL_TIM_ENABLE_IT(&htim8, TIM_IT_UPDATE);
 
-
-	// initialize the timer that runs the PWM for our RGB led
+	// initialize the timer that runs the PWM for the RGB led
 	HAL_TIM_Base_Start(&htim1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 
-	// initialize our dac
+	// initialize the DAC
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
 
-
-	// initialize the timer that is used to detect rising and falling edges at the clock input
+	// initialize the timer that is used to detect rising and falling edges at the trigger input
 	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
 
 	// initialize the timer that is used for touch sensor press timeout
@@ -246,17 +253,12 @@ int main(void) {
 	//start our DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);
 
-
+	// clean up resampling from tim7 and tim8 init
 	SH_A_TRACK;
 	SH_B_TRACK;
 
-	viaParams.direction = 1;
-
 	// initialize the main state machine to handle the UI first
-
 	main_State = &main_handleUI;
-
-	SET_RUNTIME_DISPLAY;
 
 	// enable display update timer
 	__HAL_TIM_ENABLE_IT(&htim15, TIM_IT_UPDATE);
@@ -726,7 +728,7 @@ static void MX_TIM7_Init(void) {
 	htim7.Instance = TIM7;
 	htim7.Init.Prescaler = 1;
 	htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim7.Init.Period = 1000;
+	htim7.Init.Period = 500;
 	htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim7) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -750,7 +752,7 @@ static void MX_TIM8_Init(void) {
 	htim8.Instance = TIM8;
 	htim8.Init.Prescaler = 1 - 1;
 	htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim8.Init.Period = 1000;
+	htim8.Init.Period = 500;
 	htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim8.Init.RepetitionCounter = 0;
 	htim8.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -951,13 +953,13 @@ void implementUI(void) {
 			}
 		}
 
-		// run the state machine from the STM Touch Library
-		tsl_status = tsl_user_Exec();
-
-		// when acquisition is complete, send a signal to the UI state machine to parse the sensor readings
-		if (tsl_status != TSL_USER_STATUS_BUSY) {
-			uiDispatch(SENSOR_EVENT_SIG);
-		}
+//		// run the state machine from the STM Touch Library
+//		tsl_status = tsl_user_Exec();
+//
+//		// when acquisition is complete, send a signal to the UI state machine to parse the sensor readings
+//		if (tsl_status != TSL_USER_STATUS_BUSY) {
+//			uiDispatch(SENSOR_EVENT_SIG);
+//		}
 }
 
 

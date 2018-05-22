@@ -58,6 +58,8 @@ enum {
 	DAC_EXECUTE,
 };
 
+uint32_t trigMultiplier;
+
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -246,9 +248,7 @@ void TIM2_IRQHandler(void) {
 	/* USER CODE BEGIN TIM2_IRQn 0 */
 
 	if (TRIGGER_RISING_EDGE) {
-		mainPush(MAIN_RISING_EDGE);
-	} else {
-		mainPush(MAIN_FALLING_EDGE);
+		trigMultiplier = 0;
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC1);
@@ -279,29 +279,56 @@ void TIM3_IRQHandler(void) {
 void TIM6_DAC_IRQHandler(void) {
 	/* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 
-	static uint32_t readCounter;
+	static uint32_t readIndex;
 
-	WRITE_DAC1(6143 - playbackBuffer[readCounter]);
-	WRITE_DAC2(playbackBuffer[readCounter] + 2048);
+//	// write the sample to the dac
+	WRITE_DAC1(__USAT(4095 - (outputRead->samples[readIndex] + 2048), 12));
+	WRITE_DAC2(__USAT(outputRead->samples[readIndex] + 2048, 12));
 
-	if (readCounter == DAC_BUFFER_SIZE - 1) {
-		readCounter = 0;
-		q31_t *temp = playbackBuffer;
-		playbackBuffer = preloadBuffer;
-		preloadBuffer = temp;
+
+	// execute the GPIO handlers
+	(*outputRead->logicStates[readIndex].shAHandler)();
+	(*outputRead->logicStates[readIndex].shBHandler)();
+	(*outputRead->logicStates[readIndex].logicAHandler)();
+	(*outputRead->logicStates[readIndex].logicBHandler)();
+	(*outputRead->logicStates[readIndex].auxLogicHandler)();
+
+	// store the x and morph CVs at sample rate
+	inputWrite->xCV[readIndex] = cv2;
+	inputWrite->morphCV[readIndex] = cv3;
+
+	// write the current trig multiplier (used for sync) to the buffer
+	// reset it to 1
+	inputWrite->trigInput[readIndex] = trigMultiplier;
+	trigMultiplier = 1;
+
+	// TODO replace with linked list implementation that makes this prettier
+
+	// check the buffer read counter to see if we just read the last sample in the current buffer
+	if (readIndex == BUFFER_SIZE - 1) {
+
+		// if so, reset the buffer index counter
+		readIndex = 0;
+
+		// switch out the read/write struct pointers for inputs and outputs
+		audioRateInputs *temp1 = inputWrite;
+		inputWrite = inputRead;
+		inputRead = temp1;
+
+		audioRateOutputs *temp2 = outputWrite;
+		outputWrite = outputRead;
+		outputRead = temp2;
+
+		// tell the main loop to fill the next buffer
 		main_State = main_fillBuffer;
+
 	} else {
-		readCounter++;
+		// otherwise, increment the buffer read counter
+		readIndex++;
 	}
 
-
+	// clear timer update flag
 	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
-	/* USER CODE END TIM6_DAC_IRQn 0 */
-	// HAL_TIM_IRQHandler(&htim6);
-	//HAL_DAC_IRQHandler(&hdac);
-	/* USER CODE BEGIN TIM6_DAC_IRQn 1 */
-
-	/* USER CODE END TIM6_DAC_IRQn 1 */
 }
 
 /**

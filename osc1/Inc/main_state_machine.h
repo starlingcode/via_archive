@@ -131,9 +131,6 @@ void setLogicOutputs(void);
 // wrapper for updating LED display
 void updateRuntimeDisplay(void);
 
-// wrappers for functions to fill sample buffer (separated to be later rolled into DSP loop)
-uint32_t incrementOscillator(void);
-
 // wrapper for implementing the UI
 void implementUI(void);
 
