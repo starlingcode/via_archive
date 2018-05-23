@@ -6,7 +6,6 @@
 #include "eeprom.h"
 #include "user_interface.h"
 #include "hardware_io.h"
-#include "patterns.h"
 
 // UI timer
 TIM_HandleTypeDef htim4;
@@ -87,16 +86,17 @@ void uiLoadFromEEPROM(int position) {
 		uiTransition(&ui_error);
 	}
 
-	shAMode = modeStateBuffer & SH_A_MASK;
-	shBMode = (modeStateBuffer & SH_B_MASK) >> SH_B_SHIFT;
-	xMode = (modeStateBuffer & AND_A_MASK) >> AND_A_SHIFT;
-	syncMode = (modeStateBuffer & AND_A_MASK) >> AND_B_SHIFT;
-//	familyIndicator = (modeStateBuffer & BANK_MASK) >> BANK_SHIFT;
+	shMode = modeStateBuffer & SH_MASK;
+	xMode = (modeStateBuffer & XCV_MASK) >> XCV_SHIFT;
+	syncMode = (modeStateBuffer & SYNC_MASK) >> SYNC_SHIFT;
+	familyIndicator = (modeStateBuffer & TABLE_MASK) >> TABLE_SHIFT;
 
 	/* ... initialization of ui attributes */
 	// call each menu to initialize, to make UI process the stored modes
 
 	switchFamily();
+	handleSHModeChange(shMode);
+
 
 }
 

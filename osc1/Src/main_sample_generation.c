@@ -35,11 +35,11 @@ static inline int fix24_mul(int in0, int in1) {
 // TODO oscillator function per sync mode wrapped in the for loop. mode change points to dsp loop.
 
 
-void incrementOscillator(audioRateInputs * input, audioRateOutputs * output, uint32_t * phaseArray, uint32_t index) {
+void incrementOscillator(audioRateInputs * input, controlRateInputs * controls, audioRateOutputs * output, uint32_t * phaseArray, uint32_t index) {
 
 	// TODO average low frequency CV inputs
 
-	static int increment;
+	q31_t increment;
 	static q31_t phase;
 	static q31_t lastPhase;
 
@@ -55,16 +55,18 @@ void incrementOscillator(audioRateInputs * input, audioRateOutputs * output, uin
 
 	// calculate increment as a function of pitch control inputs
 	// sample by sample linear FM using array store during last processing block
-	increment = fix16_mul(fix16_mul(fix16_mul(expoTable[knob1] >> 4, expoTable[knob2] >> 4), expoTable[4095 - cv1] >> 4), (2048
-			- input->xCV[index]) << 4);
+	//increment = fix16_mul(fix16_mul(fix16_mul(expoTable[controls->knob1Value] >> 4, expoTable[controls->knob2Value] >> 8), expoTable[4095 - controls->cv1Value] >> 4), (2048
+	//		- input->xCV[index])*64);
+
+	increment = fix16_mul(fix16_mul(expoTable[controls->knob1Value] >> 4, expoTable[controls->knob2Value] >> 8), expoTable[4095 - controls->cv1Value] >> 4);
 
 	// saturate increment at half of span to prevent crash
-	increment = __SSAT(increment, 23) ;
+	increment = __SSAT(increment, 25);
 
 	// increment the phase pointer
 	// this has a hacked in hard sync using a value of 0 in the buffer to resync phase
 	// it avoids a conditional which seemed to slow the loop down tremendously
-	phase = (phase + increment) * input->trigInput[index];
+	phase = (phase + increment * input->reverseInput[index]) * input->hardSyncInput[index];
 
 	// check for overflow of wavetable index, if so, write a 1 to the phase event buffer
 	// then check for traversal of "b" point (hard coded here as index 256)
@@ -94,7 +96,7 @@ void incrementOscillator(audioRateInputs * input, audioRateOutputs * output, uin
 	// this along with phase is scaled to q12.20
 	// that is plugged into the CMSIS arm optimized bilinear interpolation
 	// this is scaled to 12 bits and dropped to bipolar for better FIR filtering overflow protection (maybe dont need that?)
-	output->samples[index] = (arm_bilinear_interp_q31(&wavetable, phase*16, __USAT(knob3 + input->morphCV[index] - 2048, 12)*1024) >> 3) - 2048;
+	output->samples[index] = (arm_bilinear_interp_q31(&wavetable, phase*16, __USAT(controls->knob3Value + 2048 - input->morphCV[index], 12)*1024) >> 3) - 2048;
 
 }
 

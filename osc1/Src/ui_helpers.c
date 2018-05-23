@@ -4,6 +4,7 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "user_interface.h"
+#include "dsp.h"
 
 // RGB led timer
 TIM_HandleTypeDef htim1;
@@ -14,24 +15,31 @@ TIM_HandleTypeDef htim1;
  *
  */
 
-void handleSHAModeChange(int mode) {
+void handleSHModeChange(int mode) {
 	SH_A_TRACK;
-}
-
-void handleSHBModeChange(int mode) {
 	SH_B_TRACK;
+
+	switch (mode) {
+	case none:
+		fillBuffer = &fillBufferSHOff;
+		break;
+	case decimate:
+		fillBuffer = &fillBufferSHOn;
+		break;
+	}
+
 }
 
 void handleXModeChange(int mode) {
-	// switch function pointer for get phase
+	// TODO switch function pointer for get phase
 }
 
 void handleSyncModeChange(int mode) {
-	// no need for this, sync modes handled from mode enum
+	// no need for this, sync modes handled in IRQ handler
 }
 
 void handleAuxSyncModeChange(int mode) {
-	// no need for this, sync modes handled from mode enum
+	// no need for this, sync modes handled in IRQ handler
 }
 
 /**

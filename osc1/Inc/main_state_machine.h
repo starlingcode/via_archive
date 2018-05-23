@@ -109,24 +109,6 @@ void main_handleUI(int);
  *
  */
 
-// parse the incoming signal to the correct handler function
-void parseSignal(int);
-
-// helper functions to parse hardware inputs and generate oscillator parameters
-
-
-void handleADC1Conversion(void);
-void handleADC2Conversion(void);
-void handleADC3Conversion(void);
-void handleDACTimerOverrun(void);
-
-void handleRisingEdge(void);
-void handleFallingEdge(void);
-void handleAuxRisingEdge(void);
-void handleAuxFallingEdge(void);
-
-// wrapper for logic handling
-void setLogicOutputs(void);
 
 // wrapper for updating LED display
 void updateRuntimeDisplay(void);

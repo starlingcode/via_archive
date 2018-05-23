@@ -47,16 +47,7 @@
 #include "main_state_machine.h"
 #include "dsp.h"
 
-// Declare instance of fir filter
-extern arm_fir_instance_q31 fir;
-
-//extern arm_fir_decimate_instance_q31  firDecimate;
-
-// declare filter coefficients
-q31_t firCoefficients[NUM_TAPS] = FIR24TAPS5_12;
-
-// Declare State buffer of size (numTaps + blockSize - 1)
-q31_t firState[BUFFER_SIZE + NUM_TAPS - 1];
+int reverseMultiplier;
 
 /* USER CODE END Includes */
 
@@ -84,20 +75,8 @@ TSC_HandleTypeDef htsc;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
-enum
-{	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
-	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
-	EXIT_SIG,	  // Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
-	INIT_SIG,     // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
-	TIMEOUT_SIG,// timer timeout
-	SENSOR_EVENT_SIG,  // Sensor state machine not busy, can be queried for events
-	EXPAND_SW_ON_SIG,  // expander button depressed
-	EXPAND_SW_OFF_SIG, // expander button released
-	TSL_ERROR_SIG
-};
-
 // this is part of the user code needed to run the STM32 touch sense library
-tsl_user_status_t tsl_status;
+extern tsl_user_status_t tsl_status;
 
 int holdCalibration;
 
@@ -172,10 +151,6 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 
-	// initialize our touch sensors
-	tsl_user_Init();
-	uiInitialize();
-
 	// initialize signal queue (currently unused)
 	nullTask.signal = 0;
 	nullTask.next = &nullTask;
@@ -183,34 +158,19 @@ int main(void) {
 	lastTask = mainCreateTask(0, &nullTask);
 	firstTask = mainCreateTask(0, lastTask);
 
-	// initialize logic state buffers to point to a valid address
-	logicInit();
+	// initialize our touch sensors
+	tsl_user_Init();
+	uiInitialize();
 
-	// initialize double buffers used for DSP
-	output1.samples = sampleBuffer1;
-	output1.logicStates = logicStateBuffer1;
+	reverseMultiplier = 1;
 
-	output2.samples = sampleBuffer2;
-	output2.logicStates = logicStateBuffer2;
+	// initialize signal queue (currently unused)
 
-	input1.xCV = xCVBuffer1;
-	input1.morphCV = morphCVBuffer1;
-	input1.trigInput = trigBuffer1;
-	input1.auxTrigInput = auxTrigBuffer1;
+	initializeDoubleBuffer();
 
-	input2.xCV = xCVBuffer2;
-	input2.morphCV = morphCVBuffer2;
-	input2.trigInput = trigBuffer2;
-	input2.auxTrigInput = auxTrigBuffer2;
+	initializeFilter();
 
-	outputRead = &output1;
-	outputWrite = &output2;
-
-	inputRead = &input1;
-	inputWrite = &input2;
-
-	// initialize the FIR filter
-	arm_fir_init_q31(&fir, NUM_TAPS, &firCoefficients[0], &firState[0], BUFFER_SIZE);
+	fillBuffer = &fillBufferSHOff;
 
 	// set the priority and enable an interrupt line to be used by the retrigger input
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
@@ -920,47 +880,6 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
-
-// wrapper for implementing the UI
-void implementUI(void) {
-
-	static uint32_t debounce;
-
-//check if the trigger button has been pressed
-		if (EXPANDER_BUTTON_PRESSED){
-
-			//if we havent raised the trigger button flag, do so and set a pending interrupt
-			if (!(TRIGGER_BUTTON)) {
-				debounce++;
-
-				if (debounce == 10) {
-					SET_TRIGGER_BUTTON;
-					uiDispatch(EXPAND_SW_ON_SIG);
-					//trigger an interrupt
-					HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
-					debounce = 0;
-				}
-
-			}
-		}
-		//if the trigger button has been released but the trigger button flag is still high, lower it and set an IRQ
-		else if (TRIGGER_BUTTON){
-			debounce++;
-			if (debounce == 10) {
-				CLEAR_TRIGGER_BUTTON;
-				uiDispatch(EXPAND_SW_OFF_SIG);
-				debounce = 0;
-			}
-		}
-
-//		// run the state machine from the STM Touch Library
-//		tsl_status = tsl_user_Exec();
-//
-//		// when acquisition is complete, send a signal to the UI state machine to parse the sensor readings
-//		if (tsl_status != TSL_USER_STATUS_BUSY) {
-//			uiDispatch(SENSOR_EVENT_SIG);
-//		}
-}
 
 
 

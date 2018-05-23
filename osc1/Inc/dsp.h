@@ -8,7 +8,7 @@
 #include "arm_math.h"
 
 
-#define BUFFER_SIZE 32
+#define BUFFER_SIZE 8
 
 #define NUM_TAPS 24
 
@@ -38,12 +38,12 @@ typedef struct {
 	logicState *logicStates;
 } audioRateOutputs;
 
-
+// declare a struct to hold the current audio rate inputs
 typedef struct {
 	q31_t *xCV;
 	q31_t *morphCV;
-	uint32_t *trigInput;
-	uint32_t *auxTrigInput;
+	uint32_t *hardSyncInput;
+	int *reverseInput;
 } audioRateInputs;
 
 // allocate a pair of buffers for each member of the above structs
@@ -57,11 +57,11 @@ q31_t xCVBuffer2[BUFFER_SIZE];
 q31_t morphCVBuffer1[BUFFER_SIZE];
 q31_t morphCVBuffer2[BUFFER_SIZE];
 
-uint32_t trigBuffer1[BUFFER_SIZE];
-uint32_t trigBuffer2[BUFFER_SIZE];
+uint32_t hardSyncBuffer1[BUFFER_SIZE];
+uint32_t hardSyncBuffer2[BUFFER_SIZE];
 
-uint32_t auxTrigBuffer1[BUFFER_SIZE];
-uint32_t auxTrigBuffer2[BUFFER_SIZE];
+int reverseBuffer1[BUFFER_SIZE];
+int reverseBuffer2[BUFFER_SIZE];
 
 logicState logicStateBuffer1[BUFFER_SIZE];
 logicState logicStateBuffer2[BUFFER_SIZE];
@@ -80,11 +80,30 @@ audioRateInputs input2;
 audioRateInputs *inputRead;
 audioRateInputs *inputWrite;
 
+typedef struct {
+	q31_t knob1Value;
+	q31_t knob2Value;
+	q31_t knob3Value;
+	q31_t cv1Value;
+} controlRateInputs;
+
+controlRateInputs controlRateInput;
+
+void (*fillBuffer)(void);
+
+void fillBufferSHOn(void);
+void fillBufferSHOff(void);
+
+void handleCoversionSlow(controlRateInputs *);
+
 // calculate the oscillator samples and phase events
-void incrementOscillator(audioRateInputs *, audioRateOutputs *, uint32_t *, uint32_t);
+void incrementOscillator(audioRateInputs *, controlRateInputs *, audioRateOutputs *, uint32_t *, uint32_t);
 
 // parse the phase events into logic outputs
-void calculateLogic(uint32_t *, audioRateOutputs *, uint32_t);
+void calculateLogicSHOn(uint32_t *, audioRateOutputs *, uint32_t);
+
+// parse the phase events into logic outputs
+void calculateLogicSHOff(uint32_t *, audioRateOutputs *, uint32_t);
 
 // logic output helper functions
 void logicInit(void);
@@ -98,6 +117,10 @@ void shATrack(void);
 void shBSample(void);
 void shBTrack(void);
 void holdLogic(void);
+
+void initializeFilter();
+
+void initializeDoubleBuffer();
 
 #endif
 

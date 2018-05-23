@@ -35,8 +35,8 @@ GAT * @file    stm32f3xx_it.c
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "main_state_machine.h"
-#include "hardware_io.h"
 #include "dsp.h"
+#include "main.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -52,13 +52,9 @@ enum
 	TSL_ERROR_SIG
 };
 
-enum {
-	DAC_GATE_HIGH,
-	DAC_GATE_LOW,
-	DAC_EXECUTE,
-};
+uint32_t hardSyncMultiplier;
 
-uint32_t trigMultiplier;
+extern int reverseMultiplier;
 
 /* USER CODE END 0 */
 
@@ -212,9 +208,7 @@ void SysTick_Handler(void) {
 void TIM1_BRK_TIM15_IRQHandler(void) {
 	/* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 0 */
 
-//	if (RUNTIME_DISPLAY) {
-//		mainRequest(MAIN_UPDATE_DISPLAY);
-//	}
+	handleCoversionSlow(&controlRateInput);
 
 	__HAL_TIM_CLEAR_FLAG(&htim15, TIM_FLAG_UPDATE);
 	/* USER CODE END TIM1_BRK_TIM15_IRQn 0 */
@@ -248,7 +242,16 @@ void TIM2_IRQHandler(void) {
 	/* USER CODE BEGIN TIM2_IRQn 0 */
 
 	if (TRIGGER_RISING_EDGE) {
-		trigMultiplier = 0;
+		switch (syncMode) {
+		case hard:
+			hardSyncMultiplier = 0;
+			break;
+		case pendulum:
+			// TODO NOT WORKING
+			reverseMultiplier *= -1;
+
+			break;
+		}
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC1);
@@ -299,8 +302,10 @@ void TIM6_DAC_IRQHandler(void) {
 
 	// write the current trig multiplier (used for sync) to the buffer
 	// reset it to 1
-	inputWrite->trigInput[readIndex] = trigMultiplier;
-	trigMultiplier = 1;
+	inputWrite->hardSyncInput[readIndex] = hardSyncMultiplier;
+	hardSyncMultiplier = 1;
+
+	inputWrite->reverseInput[readIndex] = reverseMultiplier;
 
 	// TODO replace with linked list implementation that makes this prettier
 
@@ -374,7 +379,6 @@ void TIM8_UP_IRQHandler(void) {
 void DMA2_Channel1_IRQHandler(void) {
 	/* USER CODE BEGIN DMA2_Channel1_IRQn 0 */
 
-	mainPush(MAIN_ADC2_CONV_COMPLETE);
 
 	/* USER CODE END DMA2_Channel1_IRQn 0 */
 	HAL_DMA_IRQHandler(&hdma_adc2);
@@ -389,7 +393,6 @@ void DMA2_Channel1_IRQHandler(void) {
 void DMA2_Channel5_IRQHandler(void) {
 	/* USER CODE BEGIN DMA2_Channel5_IRQn 0 */
 
-	mainRequest(MAIN_ADC3_CONV_COMPLETE);
 
 	/* USER CODE END DMA2_Channel5_IRQn 0 */
 	HAL_DMA_IRQHandler(&hdma_adc3);

@@ -6,7 +6,7 @@
 #include "eeprom.h"
 #include "user_interface.h"
 #include "hardware_io.h"
-#include "patterns.h"
+
 
 // UI timer
 TIM_HandleTypeDef htim4;

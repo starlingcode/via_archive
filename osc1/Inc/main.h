@@ -89,18 +89,16 @@ static inline int readBuffer(buffer* buffer, int Xn) {
 
 // mode enums and mode variables
 
-enum shAModes {aNone, aDecimate, aHalfDecimate};
-enum shBModes {bNone, bDecimate, bHalfDecimate};
-enum xModes {FM, PM, PWM};
-enum syncModes {pendulum, hard, meta};
-enum auxSyncModes {auxPendulum, auxHard, auxMeta};
+enum shModes {none, decimate};
+enum xModes {FM, PM};
+enum syncModes {hard, pendulum};
+
 
 
 enum syncModes syncMode;
-enum auxSyncModes auxSyncMode;
+enum syncModes auxSyncMode;
 enum xModes xMode;
-enum shAModes shAMode;
-enum shBModes shBMode;
+enum shModes shMode;
 int familyIndicator;
 
 
