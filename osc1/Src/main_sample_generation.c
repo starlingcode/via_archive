@@ -66,7 +66,12 @@ void incrementOscillator(audioRateInputs * input, controlRateInputs * controls, 
 	// increment the phase pointer
 	// this has a hacked in hard sync using a value of 0 in the buffer to resync phase
 	// it avoids a conditional which seemed to slow the loop down tremendously
+
+	//experimental case statement to check pendulum
+
+
 	phase = (phase + increment * input->reverseInput[index]) * input->hardSyncInput[index];
+
 
 	// check for overflow of wavetable index, if so, write a 1 to the phase event buffer
 	// then check for traversal of "b" point (hard coded here as index 256)

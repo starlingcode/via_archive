@@ -47,7 +47,6 @@
 #include "main_state_machine.h"
 #include "dsp.h"
 
-int reverseMultiplier;
 
 /* USER CODE END Includes */
 
@@ -162,7 +161,6 @@ int main(void) {
 	tsl_user_Init();
 	uiInitialize();
 
-	reverseMultiplier = 1;
 
 	// initialize signal queue (currently unused)
 

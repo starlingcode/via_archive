@@ -42,8 +42,8 @@ typedef struct {
 typedef struct {
 	q31_t *xCV;
 	q31_t *morphCV;
-	uint32_t *hardSyncInput;
-	int *reverseInput;
+	q31_t *hardSyncInput;
+	q31_t *reverseInput;
 } audioRateInputs;
 
 // allocate a pair of buffers for each member of the above structs

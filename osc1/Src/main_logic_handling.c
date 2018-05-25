@@ -6,7 +6,7 @@
 #include "hardware_io.h"
 
 
-void calculateLogicSHOff(uint32_t * phase, audioRateOutputs * output, uint32_t index) {
+void calculateLogicSHOn(uint32_t * phase, audioRateOutputs * output, uint32_t index) {
 
 	switch (phase[index]) {
 		//no logic events
@@ -39,7 +39,7 @@ void calculateLogicSHOff(uint32_t * phase, audioRateOutputs * output, uint32_t i
 
 }
 
-void calculateLogicSHOn(uint32_t * phase, audioRateOutputs * output, uint32_t index) {
+void calculateLogicSHOff(uint32_t * phase, audioRateOutputs * output, uint32_t index) {
 
 	switch (phase[index]) {
 		//no logic events

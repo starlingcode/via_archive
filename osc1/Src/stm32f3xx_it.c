@@ -54,7 +54,7 @@ enum
 
 uint32_t hardSyncMultiplier;
 
-extern int reverseMultiplier;
+q31_t reverseMultiplier = 1;
 
 /* USER CODE END 0 */
 
@@ -242,16 +242,13 @@ void TIM2_IRQHandler(void) {
 	/* USER CODE BEGIN TIM2_IRQn 0 */
 
 	if (TRIGGER_RISING_EDGE) {
-		switch (syncMode) {
-		case hard:
+		if (syncMode == hard) {
 			hardSyncMultiplier = 0;
-			break;
-		case pendulum:
-			// TODO NOT WORKING
-			reverseMultiplier *= -1;
-
-			break;
+		} else {
+			reverseMultiplier = 1;
 		}
+	} else {
+		reverseMultiplier = -1;
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC1);
