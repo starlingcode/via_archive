@@ -2,51 +2,38 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "main_state_machine.h"
+#include "dsp.h"
 
 extern TIM_HandleTypeDef htim1;
-
-extern struct parameters viaParams;
-extern struct oscillator viaOsc;
 
 /**
  *
  * Helper function for display handling
+ * These should probably move to hardware_io
+ * This is a test mock up, the 4 leds could show the 4 modes if they were 2 options each
  *
  */
 
-// wrapper for updating LED display
-void updateRuntimeDisplay(void) {
+void displayXCV_FM(void) {
+	LEDC_ON;
+}
 
-	if (SAMPLE_A) {
-		LEDA_ON;
-	} else {
-		LEDA_OFF;
-	}
+void displayXCV_PM(void) {
+	LEDD_ON;
+}
 
-	if (SAMPLE_B) {
-		LEDB_ON;
-	} else {
-		LEDB_OFF;
-	}
+void displaySH_On(void) {
+	LEDA_ON;
+	LEDB_ON;
+}
 
-//	if (LOGIC_A) {
-//		LEDC_ON;
-//	} else {
-//		LEDC_OFF;
-//	}
+void displaySH_Off(void) {
+	LEDA_OFF;
+	LEDB_OFF;
+}
 
-	if (LOGIC_B) {
-		LEDD_ON;
-	} else {
-		LEDD_OFF;
-	}
-
-	if (viaOsc.phase < (256 << 16)) {
-		//SET_BLUE_LED(output);
-		SET_GREEN_LED(viaParams.morph);
-	} else {
-		//SET_RED_LED(output);
-		SET_GREEN_LED(viaParams.morph);
-	}
-
+void updateRGB(controlRateInputs * controlInputs, audioRateInputs * audioInputs) {
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, (4095 + controlInputs->knob1Value - controlInputs->cv1Value) >> 1);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, __USAT(2048 + controlInputs->knob3Value - audioInputs->morphCV[0], 12));
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 4095 - ((4095 + controlInputs->knob1Value - controlInputs->cv1Value) >> 1));
 }

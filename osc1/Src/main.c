@@ -150,25 +150,22 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 
-	// initialize signal queue (currently unused)
-	nullTask.signal = 0;
-	nullTask.next = &nullTask;
-
-	lastTask = mainCreateTask(0, &nullTask);
-	firstTask = mainCreateTask(0, lastTask);
-
 	// initialize our touch sensors
 	tsl_user_Init();
 	uiInitialize();
-
-
-	// initialize signal queue (currently unused)
 
 	initializeDoubleBuffer();
 
 	initializeFilter();
 
+	// mode initialization
+	// TODO should be handled in uiInitialize. hint, use mode change handling functions to init
+
 	fillBuffer = &fillBufferSHOff;
+	incrementOscillator = &incrementOscillatorFM_Morph;
+
+	displaySHMode = displaySH_Off;
+	displayXCVMode = displayXCV_FM;
 
 	// set the priority and enable an interrupt line to be used by the retrigger input
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
@@ -229,13 +226,15 @@ int main(void) {
 	/* USER CODE BEGIN WHILE */
 	while (1) {
 
-		// check to see if the first task is the last task
-		if (firstTask->next == &nullTask) {
-			// if so, add the execute signal to the queue
-			mainPush(MAIN_EXECUTE);
-		}
+//		// another old complex state machine relic
+//		// check to see if the first task is the last task
+//		if (firstTask->next == &nullTask) {
+//			// if so, add the execute signal to the queue
+//			mainPush(MAIN_EXECUTE);
+//		}
 
-		// implement the main state machine
+		// implement the main simplified state machine
+		// TODO inefficient and unnecessary to wrap this in a function
 		mainDispatch();
 
 		/* USER CODE END WHILE */

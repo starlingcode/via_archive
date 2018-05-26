@@ -6,6 +6,9 @@
 extern TIM_HandleTypeDef htim8;
 extern TIM_HandleTypeDef htim7;
 
+// TODO collect hardware/platform specific parts of the other code and condense them here
+// this version does not take the most care to separate the algorithm from hardware implementation
+
 
 //////////////////////////
 // s&h handling functions

@@ -5,6 +5,8 @@
 #include "dsp.h"
 #include "hardware_io.h"
 
+// minimal implementation of logic outputs with s&h on or off
+// TODO more s&h modes? pulse out on expander (easy), delta out on logic B (harder)
 
 void calculateLogicSHOn(uint32_t * phase, audioRateOutputs * output, uint32_t index) {
 
@@ -71,6 +73,8 @@ void calculateLogicSHOff(uint32_t * phase, audioRateOutputs * output, uint32_t i
 	}
 
 }
+
+// initialize the logic state buffers with valid function addresses
 
 void logicInit(void) {
 	for (int i = 0; i < BUFFER_SIZE; i++) {

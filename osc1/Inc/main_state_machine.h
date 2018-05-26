@@ -5,27 +5,8 @@
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
+#include "dsp.h"
 
-struct parameters {
-
-	int coarsePitch;
-	int finePitch;
-	int voltOct;
-	int xCV;
-	int morph;
-	int morphCV;
-	int direction;
-
-};
-
-
-
-struct oscillator {
-
-	int increment;
-	int phase;
-
-};
 
 /**
  *
@@ -33,69 +14,20 @@ struct oscillator {
  *
  */
 
-enum mainSignal {
-
-	MAIN_EXECUTE,
-	MAIN_RISING_EDGE,
-	MAIN_FALLING_EDGE,
-	MAIN_AUX_RISING_EDGE,
-	MAIN_AUX_FALLING_EDGE,
-	MAIN_ADC1_CONV_COMPLETE,
-	MAIN_ADC2_CONV_COMPLETE,
-	MAIN_ADC3_CONV_COMPLETE,
-	MAIN_AT_A,
-	MAIN_AT_B,
-	MAIN_TOWARDS_A,
-	MAIN_TOWARDS_B,
-	MAIN_DAC_TIMER_OVERRUN,
-	MAIN_UPDATE_DISPLAY,
-
-};
-
-// main state machine
 void (*main_State)(int);
-
-// the idea here is to figure out a way to queue up requests to send signals (tasks) to the state machine
-// requests are generated in the interrupt code
-// requesting a task links it to the end of the task queue
-// pushing a task adds it to the front of the queue
-
-struct task {
-	int signal;
-	struct task *next;
-};
-
-typedef struct task Task;
-
-Task *firstTask;
-Task *lastTask;
-
-Task nullTask;
-
-Task taskQueue[128];
-
-uint32_t queuePosition;
-
-// dispatch task at front of queue to state machine
-void mainDispatch(void);
-
-// create a new task to be placed in the queue
-Task* mainCreateTask(int, Task*);
-
-// add a task to the end of the queue
-void mainRequest(int);
-
-// push a task to front of the queue
-void mainPush(int);
 
 /**
  *
  * States
  *
+ *  the state machine is scarcely more than a function pointer
+ *  signals have not needed to be implemented, but the function calls in an int
+ *  a DSP buffer overrun switches the state to fillBuffer
+ *  the completion of the fillBuffer function initiates a transition to the handleUI state
+ *
+ *
  */
 
-// update logic outs then switch to led display state
-void main_handleLogic(int);
 
 // get next sample(s) then switch to ui handling state
 void main_fillBuffer(int);
@@ -109,12 +41,22 @@ void main_handleUI(int);
  *
  */
 
-
-// wrapper for updating LED display
-void updateRuntimeDisplay(void);
-
 // wrapper for implementing the UI
 void implementUI(void);
+
+// pointers and functions to show the mode
+// these are probably out of place here
+// TODO show sync mode
+// TODO show (and implement) morph mode
+void (*displaySHMode)(void);
+void (*displayXCVMode)(void);
+
+void displayXCV_FM(void);
+void displayXCV_PM(void);
+void displaySH_On(void);
+void displaySH_Off(void);
+
+void updateRGB(controlRateInputs *, audioRateInputs *);
 
 #endif
 

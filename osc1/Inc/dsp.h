@@ -96,8 +96,12 @@ void fillBufferSHOff(void);
 
 void handleCoversionSlow(controlRateInputs *);
 
-// calculate the oscillator samples and phase events
-void incrementOscillator(audioRateInputs *, controlRateInputs *, audioRateOutputs *, uint32_t *, uint32_t);
+// pointer to the function that calculates samples and phase events
+void (*incrementOscillator)(audioRateInputs *, controlRateInputs *, audioRateOutputs *, uint32_t *, uint32_t);
+
+void incrementOscillatorFM_Morph(audioRateInputs *, controlRateInputs *, audioRateOutputs *, uint32_t *, uint32_t);
+void incrementOscillatorPM_Morph(audioRateInputs *, controlRateInputs *, audioRateOutputs *, uint32_t *, uint32_t);
+
 
 // parse the phase events into logic outputs
 void calculateLogicSHOn(uint32_t *, audioRateOutputs *, uint32_t);

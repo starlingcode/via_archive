@@ -17,7 +17,7 @@ void fillBufferSHOff(void) {
 	int phaseArray[BUFFER_SIZE];
 
 	for (int i = 0; i < (BUFFER_SIZE); i++) {
-		incrementOscillator(inputRead, &controlRateInput, outputWrite, &phaseArray, i);
+		(*incrementOscillator)(inputRead, &controlRateInput, outputWrite, &phaseArray, i);
 	}
 
 	// always track a and b
@@ -35,7 +35,7 @@ void fillBufferSHOn(void) {
 	int phaseArray[BUFFER_SIZE];
 
 	for (int i = 0; i < (BUFFER_SIZE); i++) {
-		incrementOscillator(inputRead, &controlRateInput, outputWrite, &phaseArray, i);
+		(*incrementOscillator)(inputRead, &controlRateInput, outputWrite, &phaseArray, i);
 	}
 
 	// resample A when at B and B when at A for smooth decimation
@@ -46,6 +46,8 @@ void fillBufferSHOn(void) {
 }
 
 void initializeDoubleBuffer() {
+
+	// TODO needs more comments
 
 	// initialize logic state buffers to point to a valid address
 	logicInit();

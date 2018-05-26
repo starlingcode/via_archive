@@ -241,13 +241,20 @@ void DMA1_Channel1_IRQHandler(void) {
 void TIM2_IRQHandler(void) {
 	/* USER CODE BEGIN TIM2_IRQn 0 */
 
+	// Generate a sort of software signal that is read at sample rate into a buffer in the TIM6 IRQ Handler
+	// I don't love the nested if statement but it was easy
+	// Wrap this in a callback function for a cleaner implementation
+
 	if (TRIGGER_RISING_EDGE) {
 		if (syncMode == hard) {
+			// this is reset to 1 at every with every new sample aquisition
 			hardSyncMultiplier = 0;
 		} else {
+			// toggle increment direction on rising and falling edges
 			reverseMultiplier = 1;
 		}
 	} else {
+		// see last comment
 		reverseMultiplier = -1;
 	}
 
@@ -281,7 +288,7 @@ void TIM6_DAC_IRQHandler(void) {
 
 	static uint32_t readIndex;
 
-//	// write the sample to the dac
+	// write the sample to the dac
 	WRITE_DAC1(__USAT(4095 - (outputRead->samples[readIndex] + 2048), 12));
 	WRITE_DAC2(__USAT(outputRead->samples[readIndex] + 2048, 12));
 

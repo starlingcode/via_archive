@@ -7,7 +7,7 @@
 
 /**
  *
- * Signal handlers
+ * Signal handlers, should probably move to hardware_io
  *
  */
 
@@ -22,6 +22,7 @@ void handleCoversionSlow(controlRateInputs * inputs) {
 	static buffer knob3Buffer;
 	static buffer cv1Buffer;
 
+	// implement a running average on the control rate CV inputs
 	knob1Sum = knob1 + knob1Sum - readBuffer(&knob1Buffer, 511);
 	knob2Sum = knob2 + knob2Sum - readBuffer(&knob2Buffer, 511);
 	knob3Sum = knob3 + knob3Sum - readBuffer(&knob3Buffer, 511);
@@ -32,13 +33,22 @@ void handleCoversionSlow(controlRateInputs * inputs) {
 	writeBuffer(&knob3Buffer, knob3);
 	writeBuffer(&cv1Buffer, cv1);
 
+	// write the inputs to the holding struct
 	inputs->knob1Value = knob1Sum >> 9;
 	inputs->knob2Value = knob2Sum >> 9;
 	inputs->knob3Value = knob3Sum >> 9;
 	inputs->cv1Value = cv1Sum >> 4;
 
+	// shoehorned into this timer for convenience
+	if (RUNTIME_DISPLAY) {
+		updateRGB(inputs, inputRead);
+		(*displaySHMode)();
+		(*displayXCVMode)();
+	}
+
 }
 
+// wrap register address functions to be loaded into the logic struct (which is loaded into a playback buffer)
 void holdLogic(void) {
 
 }
