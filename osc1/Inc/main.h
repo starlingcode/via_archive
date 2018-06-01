@@ -75,17 +75,9 @@ uint32_t ADCReadings3[1]; //1 * 512 samples in holding buffer
 // circular buffer
 
 typedef struct {
-    int buff[512];
+    int buff[256];
     int writeIndex;
 }buffer;
-
-static inline void writeBuffer(buffer* buffer, int value) {
-	buffer->buff[(buffer->writeIndex++) & 511] = value;
-}
-
-static inline int readBuffer(buffer* buffer, int Xn) {
-	return buffer->buff[(buffer->writeIndex + (~Xn)) & 511];
-}
 
 // mode enums and mode variables
 
