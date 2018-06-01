@@ -37,11 +37,19 @@ void handleXModeChange(int mode) {
 
 	switch (mode) {
 	case FM:
-		incrementOscillator = &incrementOscillatorFM_Morph;
+		if (morphMode == morphCV) {
+			incrementOscillator = &incrementOscillatorFM_Morph;
+		} else {
+			incrementOscillator = &incrementOscillatorFM_PWM;
+		}
 		displayXCVMode = &displayXCV_FM;
 		break;
 	case PM:
-		incrementOscillator = &incrementOscillatorPM_Morph;
+		if (morphMode == morphCV) {
+			incrementOscillator = &incrementOscillatorPM_Morph;
+		} else {
+			incrementOscillator = &incrementOscillatorPM_PWM;
+		}
 		displayXCVMode = &displayXCV_PM;
 		break;
 	}
@@ -55,11 +63,34 @@ void handleXModeChange(int mode) {
 
 void handleSyncModeChange(int mode) {
 	// sync modes handled in IRQ handler
-	// show sync mode
+	if (syncMode == hard) {
+		displaySyncMode = &displaySync_Hard;
+	} else {
+		displaySyncMode = &displaySync_Soft;
+	}
 }
 
-void handleAuxSyncModeChange(int mode) {
-	// no need for this, sync modes handled in IRQ handler
+void handleMorphModeChange(int mode) {
+
+	switch (mode) {
+	case morphCV:
+		if (xMode == FM) {
+			incrementOscillator = &incrementOscillatorFM_Morph;
+		} else {
+			incrementOscillator = &incrementOscillatorPM_Morph;
+		}
+		displayMorphMode = &displayMorph_Morph;
+		break;
+	case pwmCV:
+		if (xMode == FM) {
+			incrementOscillator = &incrementOscillatorFM_PWM;
+		} else {
+			incrementOscillator = &incrementOscillatorPM_PWM;
+		}
+		displayMorphMode = &displayMorph_PMW;
+		break;
+	}
+
 }
 
 

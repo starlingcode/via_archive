@@ -33,8 +33,8 @@ uint32_t eepromStatus;
 #define XCV_MASK 		0b00000000000000000000111100000000
 #define XCV_SHIFT 		8
 
-#define AND_B_MASK 		0b00000000000000001111000000000000
-#define AND_B_SHIFT 	12
+#define MORPH_MASK 		0b00000000000000001111000000000000
+#define MORPH_SHIFT 	12
 
 #define TABLE_MASK	 	0b00000000000011110000000000000000
 #define TABLE_SHIFT	 	16
@@ -94,7 +94,7 @@ void handleSHModeChange(int);
 void handleSHBModeChange(int);
 void handleXModeChange(int);
 void handleSyncModeChange(int);
-void handleAuxSyncModeChange(int);
+void handleMorphModeChange(int);
 
 // UI States
 void (*ui_State)(int);

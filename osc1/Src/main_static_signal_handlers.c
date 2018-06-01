@@ -43,7 +43,9 @@ void handleCoversionSlow(controlRateInputs * inputs) {
 	if (RUNTIME_DISPLAY) {
 		updateRGB(inputs, inputRead);
 		(*displaySHMode)();
+		(*displaySyncMode)();
 		(*displayXCVMode)();
+		(*displayMorphMode)();
 	}
 
 }

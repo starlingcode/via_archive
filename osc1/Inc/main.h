@@ -90,15 +90,16 @@ static inline int readBuffer(buffer* buffer, int Xn) {
 // mode enums and mode variables
 
 enum shModes {none, decimate};
-enum xModes {FM, PM};
 enum syncModes {hard, pendulum};
+enum xModes {FM, PM};
+enum morphModes {morphCV, pwmCV};
 
 
-
-enum syncModes syncMode;
-enum syncModes auxSyncMode;
-enum xModes xMode;
 enum shModes shMode;
+enum syncModes syncMode;
+enum xModes xMode;
+enum morphModes morphMode;
+
 int familyIndicator;
 
 

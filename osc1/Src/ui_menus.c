@@ -237,18 +237,18 @@ void ui_button6Menu(int sig)
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
-		uiSetLEDs(syncMode);
+		uiSetLEDs(morphMode);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON6SENSOR == RELEASED){
 
 			if(UI_TIMER_READ < 3000){
-				syncMode = (syncMode + 1) % 2;
-				modeStateBuffer = (modeStateBuffer & ~(AND_B_MASK)) | (syncMode << AND_B_SHIFT);
-				handleSyncModeChange(syncMode);
+				morphMode = (morphMode + 1) % 2;
+				modeStateBuffer = (modeStateBuffer & ~(MORPH_MASK)) | (syncMode << MORPH_SHIFT);
+				handleMorphModeChange(morphMode);
 				uiClearLEDs();
-				uiSetLEDs(syncMode);
+				uiSetLEDs(morphMode);
 				uiTransition( &ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -275,34 +275,34 @@ void ui_button6Menu(int sig)
 
 void ui_button6_3Menu(int sig)
 {
-	switch (sig) {
-
-	case ENTRY_SIG:
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
-		uiSetLEDs(auxSyncMode);
-		break;
-
-	case SENSOR_EVENT_SIG:
-		if (BUTTON3SENSOR == RELEASED){
-
-			if(UI_TIMER_READ < 3000){
-				auxSyncMode = (auxSyncMode + 1) % 2;
-				modeStateBuffer = (modeStateBuffer & ~(AUX_LOGIC_MASK)) | (auxSyncMode << AUX_LOGIC_SHIFT);
-				uiClearLEDs();
-				uiSetLEDs(auxSyncMode);
-				uiTransition( &ui_button6SubMenu);
-			} else {
-				uiTransition(&ui_default);
-			}
-		}
-
-		break;
-
-	case INIT_SIG:
-		break;
-	}
+//	switch (sig) {
+//
+//	case ENTRY_SIG:
+//		UI_TIMER_RESET;
+//		UI_TIMER_SET_OVERFLOW(65535);
+//		UI_TIMER_ENABLE;
+//		uiSetLEDs(auxSyncMode);
+//		break;
+//
+//	case SENSOR_EVENT_SIG:
+//		if (BUTTON3SENSOR == RELEASED){
+//
+//			if(UI_TIMER_READ < 3000){
+//				auxSyncMode = (auxSyncMode + 1) % 2;
+//				modeStateBuffer = (modeStateBuffer & ~(AUX_LOGIC_MASK)) | (auxSyncMode << AUX_LOGIC_SHIFT);
+//				uiClearLEDs();
+//				uiSetLEDs(auxSyncMode);
+//				uiTransition( &ui_button6SubMenu);
+//			} else {
+//				uiTransition(&ui_default);
+//			}
+//		}
+//
+//		break;
+//
+//	case INIT_SIG:
+//		break;
+//	}
 }
 
 

@@ -8,7 +8,7 @@
 #include "arm_math.h"
 
 
-#define BUFFER_SIZE 8
+#define BUFFER_SIZE 12
 
 #define NUM_TAPS 24
 
@@ -101,6 +101,9 @@ void (*incrementOscillator)(audioRateInputs *, controlRateInputs *, audioRateOut
 
 void incrementOscillatorFM_Morph(audioRateInputs *, controlRateInputs *, audioRateOutputs *, uint32_t *, uint32_t);
 void incrementOscillatorPM_Morph(audioRateInputs *, controlRateInputs *, audioRateOutputs *, uint32_t *, uint32_t);
+
+void incrementOscillatorFM_PWM(audioRateInputs *, controlRateInputs *, audioRateOutputs *, uint32_t *, uint32_t);
+void incrementOscillatorPM_PWM(audioRateInputs *, controlRateInputs *, audioRateOutputs *, uint32_t *, uint32_t);
 
 
 // parse the phase events into logic outputs

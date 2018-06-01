@@ -15,22 +15,37 @@ extern TIM_HandleTypeDef htim1;
  */
 
 void displayXCV_FM(void) {
-	LEDC_ON;
+	LEDC_OFF;
 }
 
 void displayXCV_PM(void) {
+	LEDC_ON;
+}
+
+void displayMorph_Morph(void) {
+	LEDD_OFF;
+}
+
+void displayMorph_PMW(void) {
 	LEDD_ON;
 }
 
 void displaySH_On(void) {
 	LEDA_ON;
-	LEDB_ON;
 }
 
 void displaySH_Off(void) {
 	LEDA_OFF;
+}
+
+void displaySync_Hard(void) {
 	LEDB_OFF;
 }
+
+void displaySync_Soft(void) {
+	LEDB_ON;
+}
+
 
 void updateRGB(controlRateInputs * controlInputs, audioRateInputs * audioInputs) {
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, (4095 + controlInputs->knob1Value - controlInputs->cv1Value) >> 1);

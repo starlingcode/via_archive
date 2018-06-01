@@ -165,7 +165,9 @@ int main(void) {
 	incrementOscillator = &incrementOscillatorFM_Morph;
 
 	displaySHMode = displaySH_Off;
+	displaySyncMode = displaySync_Hard;
 	displayXCVMode = displayXCV_FM;
+	displayMorphMode = displayMorph_Morph;
 
 	// set the priority and enable an interrupt line to be used by the retrigger input
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
