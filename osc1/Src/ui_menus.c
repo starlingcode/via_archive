@@ -42,7 +42,7 @@ void ui_button1Menu(int sig)
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
-		uiSetLEDs(shMode);
+		//uiSetLEDs(shMode);
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -52,7 +52,7 @@ void ui_button1Menu(int sig)
 				modeStateBuffer = (modeStateBuffer & ~(SH_MASK)) | shMode;
 				handleSHModeChange(shMode);
 				uiClearLEDs();
-				uiSetLEDs(shMode);
+				//uiSetLEDs(shMode);
 				uiTransition(&ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -81,7 +81,7 @@ void ui_button4Menu(int sig)
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
-		uiSetLEDs(syncMode);
+		//uiSetLEDs(syncMode);
 
 		break;
 
@@ -94,7 +94,7 @@ void ui_button4Menu(int sig)
 				modeStateBuffer = (modeStateBuffer & ~(SYNC_MASK)) | (syncMode << SYNC_SHIFT);
 				handleSyncModeChange(syncMode);
 				uiClearLEDs();
-				uiSetLEDs(syncMode);
+				//uiSetLEDs(syncMode);
 				uiTransition(&ui_newMode);
 			} else {
 				//no mode change
@@ -197,7 +197,7 @@ void ui_button3Menu(int sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
-		uiSetLEDs(xMode);
+		//uiSetLEDs(xMode);
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
@@ -210,7 +210,7 @@ void ui_button3Menu(int sig) {
 				modeStateBuffer = XCV_MASK | (xMode << XCV_MASK);
 				handleXModeChange(xMode);
 				uiClearLEDs();
-				uiSetLEDs(xMode);
+				//uiSetLEDs(xMode);
 				uiTransition(&ui_newMode);
 			} else {
 				uiTransition(&ui_default);
@@ -237,7 +237,7 @@ void ui_button6Menu(int sig)
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
-		uiSetLEDs(morphMode);
+		//uiSetLEDs(morphMode);
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -248,7 +248,7 @@ void ui_button6Menu(int sig)
 				modeStateBuffer = (modeStateBuffer & ~(MORPH_MASK)) | (syncMode << MORPH_SHIFT);
 				handleMorphModeChange(morphMode);
 				uiClearLEDs();
-				uiSetLEDs(morphMode);
+				//uiSetLEDs(morphMode);
 				uiTransition( &ui_newMode);
 			} else {
 				uiTransition(&ui_default);
