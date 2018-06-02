@@ -53,7 +53,7 @@ void ui_button1Menu(int sig)
 				handleSHModeChange(shMode);
 				uiClearLEDs();
 				//uiSetLEDs(shMode);
-				uiTransition(&ui_newMode);
+				uiTransition(&ui_default);
 			} else {
 				uiTransition(&ui_default);
 			}
@@ -95,7 +95,7 @@ void ui_button4Menu(int sig)
 				handleSyncModeChange(syncMode);
 				uiClearLEDs();
 				//uiSetLEDs(syncMode);
-				uiTransition(&ui_newMode);
+				uiTransition(&ui_default);
 			} else {
 				//no mode change
 				uiTransition(&ui_default);
@@ -211,7 +211,7 @@ void ui_button3Menu(int sig) {
 				handleXModeChange(xMode);
 				uiClearLEDs();
 				//uiSetLEDs(xMode);
-				uiTransition(&ui_newMode);
+				uiTransition(&ui_default);
 			} else {
 				uiTransition(&ui_default);
 			}
@@ -249,7 +249,7 @@ void ui_button6Menu(int sig)
 				handleMorphModeChange(morphMode);
 				uiClearLEDs();
 				//uiSetLEDs(morphMode);
-				uiTransition( &ui_newMode);
+				uiTransition(&ui_default);
 			} else {
 				uiTransition(&ui_default);
 			}

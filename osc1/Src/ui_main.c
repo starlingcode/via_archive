@@ -96,7 +96,7 @@ void ui_default(int sig)
 
 	case EXIT_SIG:
 		CLEAR_RUNTIME_DISPLAY;
-		uiClearLEDs();
+		//uiClearLEDs();
 		uiClearRGB();
 		break;
 
