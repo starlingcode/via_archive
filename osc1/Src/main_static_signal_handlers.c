@@ -11,6 +11,14 @@
  *
  */
 
+void writeBuffer(buffer* buffer, int value) {
+	buffer->buff[(buffer->writeIndex++) & 255] = value;
+}
+
+int readBuffer(buffer* buffer, int Xn) {
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 255];
+}
+
 void handleCoversionSlow(controlRateInputs * inputs) {
 
 	static uint32_t knob1Sum;
@@ -23,9 +31,9 @@ void handleCoversionSlow(controlRateInputs * inputs) {
 	static buffer cv1Buffer;
 
 	// implement a running average on the control rate CV inputs
-	knob1Sum = knob1 + knob1Sum - readBuffer(&knob1Buffer, 511);
-	knob2Sum = knob2 + knob2Sum - readBuffer(&knob2Buffer, 511);
-	knob3Sum = knob3 + knob3Sum - readBuffer(&knob3Buffer, 511);
+	knob1Sum = knob1 + knob1Sum - readBuffer(&knob1Buffer, 255);
+	knob2Sum = knob2 + knob2Sum - readBuffer(&knob2Buffer, 255);
+	knob3Sum = knob3 + knob3Sum - readBuffer(&knob3Buffer, 255);
 	cv1Sum = cv1 + cv1Sum - readBuffer(&cv1Buffer, 15);
 
 	writeBuffer(&knob1Buffer, knob1);
@@ -34,9 +42,9 @@ void handleCoversionSlow(controlRateInputs * inputs) {
 	writeBuffer(&cv1Buffer, cv1);
 
 	// write the inputs to the holding struct
-	inputs->knob1Value = knob1Sum >> 9;
-	inputs->knob2Value = knob2Sum >> 9;
-	inputs->knob3Value = knob3Sum >> 9;
+	inputs->knob1Value = knob1Sum >> 8;
+	inputs->knob2Value = knob2Sum >> 8;
+	inputs->knob3Value = knob3Sum >> 8;
 	inputs->cv1Value = cv1Sum >> 4;
 
 	// shoehorned into this timer for convenience
@@ -78,4 +86,6 @@ void shBSample(void) {
 void shBTrack(void) {
 	SH_B_TRACK;
 }
+
+
 
