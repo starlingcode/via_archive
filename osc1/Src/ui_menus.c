@@ -47,16 +47,14 @@ void ui_button1Menu(int sig)
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON1SENSOR == RELEASED){
-			if(UI_TIMER_READ < 3000){
+
 				shMode = (shMode + 1) % 2;
 				modeStateBuffer = (modeStateBuffer & ~(SH_MASK)) | shMode;
 				handleSHModeChange(shMode);
 				uiClearLEDs();
 				//uiSetLEDs(shMode);
 				uiTransition(&ui_default);
-			} else {
-				uiTransition(&ui_default);
-			}
+
 		}
 		break;
 
@@ -88,7 +86,7 @@ void ui_button4Menu(int sig)
 	case SENSOR_EVENT_SIG:
 
 		if (BUTTON4SENSOR == RELEASED){
-			if(UI_TIMER_READ < 3000){
+
 				syncMode = (syncMode + 1) % 2;
 				// initialize some essential retrigger variables
 				modeStateBuffer = (modeStateBuffer & ~(SYNC_MASK)) | (syncMode << SYNC_SHIFT);
@@ -96,10 +94,6 @@ void ui_button4Menu(int sig)
 				uiClearLEDs();
 				//uiSetLEDs(syncMode);
 				uiTransition(&ui_default);
-			} else {
-				//no mode change
-				uiTransition(&ui_default);
-			}
 
 		}
 		break;

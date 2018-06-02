@@ -153,7 +153,7 @@ void incrementOscillatorFM_Morph(audioRateInputs * input, controlRateInputs * co
 
 	// calculate increment as a function of pitch control inputs
 	// sample by sample linear FM using array store during last processing block
-	increment = fix16_mul(fix16_mul(fix16_mul(expoTable[controls->knob1Value], expoTable[controls->knob2Value] >> 8), expoTable[4095 - controls->cv1Value] >> 4), (2048
+	increment = fix16_mul(fix16_mul(fix16_mul((expoTable[controls->knob2Value] >> 4) + 1000000, (expoTable[controls->knob1Value] >> 4) + 10000), (expoTable[4095 - controls->cv1Value] >> 4) + 10000), (2048
 			- input->xCV[index])*64);
 
 	// saturate increment at half of span to prevent crash
@@ -215,7 +215,7 @@ void incrementOscillatorPM_Morph(audioRateInputs * input, controlRateInputs * co
 	};
 
 	// no t2CV in this calculation
-	increment = fix16_mul(fix16_mul(expoTable[controls->knob1Value] >> 4, expoTable[controls->knob2Value] >> 8), expoTable[4095 - controls->cv1Value] >> 4);
+	increment = fix16_mul(fix16_mul((expoTable[controls->knob2Value] >> 4) + 360000, (expoTable[controls->knob1Value] >> 4) + 10000), (expoTable[4095 - controls->cv1Value] >> 11) + 10000);
 
 	// saturate increment at half of span to prevent crash
 	increment = __SSAT(increment, 25);
@@ -290,7 +290,7 @@ void incrementOscillatorFM_PWM(audioRateInputs * input, controlRateInputs * cont
 
 	// calculate increment as a function of pitch control inputs
 	// sample by sample linear FM using array store during last processing block
-	increment = fix16_mul(fix16_mul(fix16_mul(expoTable[controls->knob1Value], expoTable[controls->knob2Value] >> 8), expoTable[4095 - controls->cv1Value] >> 4), (2048
+	increment = fix16_mul(fix16_mul(fix16_mul((expoTable[controls->knob2Value] >> 4) + 1000000, (expoTable[controls->knob1Value] >> 4) + 10000), (expoTable[4095 - controls->cv1Value] >> 4) + 10000), (2048
 			- input->xCV[index])*64);
 
 	// saturate increment at half of span to prevent crash
@@ -363,7 +363,7 @@ void incrementOscillatorPM_PWM(audioRateInputs * input, controlRateInputs * cont
 	};
 
 	// no t2CV in this calculation
-	increment = fix16_mul(fix16_mul(expoTable[controls->knob1Value] >> 4, expoTable[controls->knob2Value] >> 8), expoTable[4095 - controls->cv1Value] >> 4);
+	increment = fix16_mul(fix16_mul((expoTable[controls->knob2Value] >> 4) + 360000, (expoTable[controls->knob1Value] >> 4) + 10000), (expoTable[4095 - controls->cv1Value] >> 11) + 10000);
 
 	// saturate increment at half of span to prevent crash
 	increment = __SSAT(increment, 25);
