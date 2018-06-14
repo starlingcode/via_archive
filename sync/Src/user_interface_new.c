@@ -835,7 +835,7 @@ void uiInitialize(void)
 	eepromStatus = EE_Init();
 	HAL_Delay(500);  // init time
 	if(eepromStatus != EE_OK) {LEDC_ON;}  // error handling, switch to UI error handling?
-	uiLoadFromEEPROM(0);  // load the most recently stored state from memory
+	//uiLoadFromEEPROM(0);  // load the most recently stored state from memory
 
 	// load calibration values from virtual EEPROM
 	//eepromStatus = EE_ReadVariable(VirtAddVarTab[7], &EEPROMTemp);

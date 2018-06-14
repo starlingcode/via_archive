@@ -824,7 +824,7 @@ void uiInitialize()
 	}
 
 	HAL_Delay(500);  // init time
-	uiLoadFromEEPROM(0);  // load the most recently stored state from memory
+	//uiLoadFromEEPROM(0);  // load the most recently stored state from memory
 
 	eepromStatus = EE_ReadVariable(VirtAddVarTab[7], &EEPROMTemp);
 	morphCal = EEPROMTemp >> 8;

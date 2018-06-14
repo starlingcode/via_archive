@@ -114,12 +114,12 @@ void getAverages(void) {
 	time2KnobSum = time2KnobSum + time2Knob - readn(&time2KnobBuffer, 1023);
 	morphCVSum = (morphCVSum + morphCV - readn(&morphCVBuffer, 1023));
 
-	time2KnobAverage = time2KnobSum >> 10;
-	morphKnobAverage = morphKnobSum >> 10;
-	morphCVAverage = morphCVSum >> 10;
+	time2KnobAverage = time2KnobSum >> 8;
+	morphKnobAverage = morphKnobSum >> 8;
+	morphCVAverage = morphCVSum >> 8;
 	time2CVAverage = time2CVSum >> 5;
-	time1CVAverage = time1CVSum >> 10;
-	time1KnobAverage = time1KnobSum >> 10;
+	time1CVAverage = time1CVSum >> 8;
+	time1KnobAverage = time1KnobSum >> 8;
 
 	write(&time2CVBuffer, time2CV);
 	write(&morphCVBuffer, morphCV);

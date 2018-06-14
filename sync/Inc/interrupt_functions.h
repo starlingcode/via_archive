@@ -39,7 +39,7 @@ int out;
 
 // ADC variables and defines
 
-#define time2Knob (ADCReadings2[0] & 0b1111111111111111111111111000000)
+#define time2Knob (ADCReadings2[0] & 0b11111111111111111111111111100000)
 #define morphKnob (ADCReadings2[1] & 0b11111111111111111111111111100000)
 #define time1CV (ADCReadings1[0] & 0b111111111111111111111111100000)
 #define time2CV (ADCReadings1[1] & 0b11111111111111111111111111111111)
