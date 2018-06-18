@@ -130,7 +130,7 @@ void logicAndFilterSHOn(uint32_t * phaseEvents, audioRateOutputs * output) {
 }
 void logicAndFilterSHOff(uint32_t * phaseEvents, audioRateOutputs * output) {
 	calculateLogicSHOff(phaseEvents, output);
-	//arm_fir_fast_q31(&fir, output->samples, output->samples, BUFFER_SIZE);
+	arm_fir_fast_q31(&fir, output->samples, output->samples, BUFFER_SIZE);
 
 }
 

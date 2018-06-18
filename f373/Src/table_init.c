@@ -197,7 +197,7 @@ void loadSampleArray(Family family) {
 	uint32_t numSamples = family.tableLength;
 
 	//for each table in the family
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 9; i++) {
 		//include the "last two" samples from release
 		fullTableHoldArray[i][0] = *(*(family.releaseFamily + i) + 0);
 		fullTableHoldArray[i][1] = *(*(family.releaseFamily + i) + 0);

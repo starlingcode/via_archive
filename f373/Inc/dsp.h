@@ -177,6 +177,8 @@ static inline int fix16_lerp(int in0, int in1, uint32_t inFract) {
 
 // no need to cast a 16bit by 16bit multiplication to 64 bit
 static inline int fast_16_16_lerp(int in0, int in1, uint32_t inFract) {
+	// TODO this could be a SIMD instruction
+	// dual 16 bit multiply with 32 bit accumulate
 	int tempOut = in0 * (((int32_t) 1 << 16) - inFract);
 	tempOut += in1 * inFract;
 	return tempOut >> 16;

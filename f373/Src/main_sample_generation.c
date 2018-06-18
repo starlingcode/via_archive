@@ -37,7 +37,7 @@ void prepareCV_FM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 	// shift the xCV up to the maximum allowed value
 	// scale that down with the frequency multiplier
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 4, expoTable[controlInputs->knob2Value >> 3]), expoTable[4095 - controlInputs->cv1Value] >> 4);
-	arm_shift_q31(audioInputs->xCV, 24, incrementValues, BUFFER_SIZE);
+	arm_shift_q31(audioInputs->xCV, 16, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
 	// generate phase modulation values with x cv as source
@@ -55,7 +55,7 @@ void prepareCV_PM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 
 	// generate increment array
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 4, expoTable[controlInputs->knob2Value >> 3]), expoTable[4095 - controlInputs->cv1Value] >> 4);
-	arm_shift_q31(virtualGround, 24, incrementValues, BUFFER_SIZE);
+	arm_shift_q31(virtualGround, 16, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
 	// assign phase modulation values
@@ -72,11 +72,11 @@ void prepareCV_FM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlI
 
 	// generate increment array
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 4, expoTable[controlInputs->knob2Value >> 3]), expoTable[4095 - controlInputs->cv1Value] >> 4);
-	arm_shift_q31(audioInputs->xCV, 24, incrementValues, BUFFER_SIZE);
+	arm_shift_q31(audioInputs->xCV, 16, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
 	// generate phase modulation values
-	arm_shift_q31(audioInputs->xCV, 12, phaseModValues, BUFFER_SIZE);
+	arm_shift_q31(virtualGround, 12, phaseModValues, BUFFER_SIZE);
 
 	// generate audio rate morph modulation values
 	arm_offset_q31(virtualGround, controlInputs->knob3Value - 2048, morphValues, BUFFER_SIZE);
@@ -89,7 +89,7 @@ void prepareCV_PM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlI
 
 	// generate increment array with virtual ground as source
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 4, expoTable[controlInputs->knob2Value >> 3]), expoTable[4095 - controlInputs->cv1Value] >> 4);
-	arm_shift_q31(virtualGround, 24, incrementValues, BUFFER_SIZE);
+	arm_shift_q31(virtualGround, 16, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
 	// generate phase modulation values with x cv as source
@@ -211,7 +211,7 @@ static inline int getSampleQuinticSpline(q31_t phase, q31_t morph) {
 
 	// bit shifting to divide by the correct power of two takes a 12 bit number (our morph) and returns the a quotient in the range of our family size
 
-	LnFamily = morph >> 10;
+	LnFamily = morph >> 9;
 
 	leftIndex = &fullTableHoldArray[LnFamily][LnSample];
 	rightIndex = &fullTableHoldArray[LnFamily + 1][LnSample];
@@ -222,7 +222,7 @@ static inline int getSampleQuinticSpline(q31_t phase, q31_t morph) {
 
 	// we have to calculate the fractional portion and get it up to full scale q16
 
-	morphFrac = (morph - (LnFamily << 10)) << 6;
+	morphFrac = (morph - (LnFamily << 9)) << 7;
 
 	// perform the 6 linear interpolations to get the sample values and apply morph
 	// TODO track delta change in the phase event array
