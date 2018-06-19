@@ -55,7 +55,7 @@ enum
 	TSL_ERROR_SIG
 };
 
-uint32_t hardSyncMultiplier;
+q31_t hardSyncMultiplier;
 
 q31_t reverseMultiplier = 1;
 
@@ -358,7 +358,7 @@ void TIM6_DAC1_IRQHandler(void)
 	// TODO replace with linked list implementation that makes this prettier
 
 	// check the buffer read counter to see if we just read the last sample in the current buffer
-	if (readIndex == BUFFER_SIZE - 1) {
+	if (readIndex - (BUFFER_SIZE - 1) == 0) {
 
 		// if so, reset the buffer index counter
 		readIndex = 0;

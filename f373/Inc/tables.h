@@ -25,7 +25,7 @@ typedef struct {
 Family *familyArray[8];
 Family currentFamily;
 
-q31_t fullTableHoldArray[9][517];
+q31_t fullTableHoldArray[5][517];
 
 void switchFamily(void);
 void loadSampleArray(Family family);

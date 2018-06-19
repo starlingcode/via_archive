@@ -13,8 +13,11 @@ void fillBuffer(void) {
 	q31_t pwmBuffer[BUFFER_SIZE];
 	uint32_t phaseEvents[BUFFER_SIZE];
 
+
+
 	// profiling pin a logic out high
 	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+
 
 	(*prepareCV)(inputRead, &controlRateInput, incrementBuffer, phaseModBuffer, morphBuffer, pwmBuffer);
 

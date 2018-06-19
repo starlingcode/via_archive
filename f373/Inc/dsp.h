@@ -8,7 +8,7 @@
 #include "arm_math.h"
 #include "int64.h"
 
-#define BUFFER_SIZE 16
+#define BUFFER_SIZE 32
 
 #define NUM_TAPS 24
 
@@ -146,26 +146,42 @@ void initializeDoubleBuffer(void);
 // 16.16 fixed point math taken from fixmathlib
 
 static inline int fix16_mul(int, int);
+int fix16_mul_test1(int, int);
+int fix16_mul_test2(int, int);
 static inline int fix16_lerp(int, int, uint32_t);
 static inline int fix24_mul(int, int);
 
-static inline int fix16_mul(int in0, int in1) {
-	int64_t result = (uint64_t) in0 * in1;
-	return result >> 16;
-}
-
-//// makes a funny noise
 //static inline int fix16_mul(int in0, int in1) {
-//	  int lsb = 0;
-//	  int msb = 0;
-//	  __asm ("SMULL %[result_1], %[result_2], %[input_1], %[input_2]"
-//	    : [result_1] "=r" (lsb), [result_2] "=r" (msb)
-//	    : [input_1] "r" (in0), [input_2] "r" (in1)
-//	  );
-//	  return (msb << 16) + (lsb >> 16);
+//	int64_t result = (uint64_t) in0 * in1;
+//	return result >> 16;
 //}
 
 
+static inline int fix16_mul(int in0, int in1) {
+	  int lsb;
+	  int msb;
+
+	  // multiply the inputs, store the top 32 bits in msb and bottom in lsb
+
+	  __asm ("SMULL %[result_1], %[result_2], %[input_1], %[input_2]"
+	    : [result_1] "=r" (lsb), [result_2] "=r" (msb)
+	    : [input_1] "r" (in0), [input_2] "r" (in1)
+	  );
+
+	  // reconstruct the result with a left shift by 16
+	  // pack the bottom halfword of msb into the top halfword of the result
+	  // top halfword of lsb goes into the bottom halfword of the result
+
+	  return __ROR(__PKHBT(msb, lsb, 0), 16);
+}
+
+// doubting such an optimization would work here
+// probaby not needed (called once per sample)
+
+static inline int fix24_mul(int in0, int in1) {
+	int64_t result = (uint64_t) in0 * in1;
+	return result >> 24;
+}
 
 
 static inline int fix16_lerp(int in0, int in1, uint32_t inFract) {
@@ -175,19 +191,13 @@ static inline int fix16_lerp(int in0, int in1, uint32_t inFract) {
 	return (int) int64_lo(tempOut);
 }
 
+// this is a decent improvement over the above for the case of 16 bit interpolation points
 // no need to cast a 16bit by 16bit multiplication to 64 bit
+
 static inline int fast_16_16_lerp(int in0, int in1, uint32_t inFract) {
-	// TODO this could be a SIMD instruction
-	// dual 16 bit multiply with 32 bit accumulate
-	int tempOut = in0 * (((int32_t) 1 << 16) - inFract);
-	tempOut += in1 * inFract;
-	return tempOut >> 16;
+	return (in1 * inFract + in0 * (65535 - inFract)) >> 16;
 }
 
-static inline int fix24_mul(int in0, int in1) {
-	int64_t result = (uint64_t) in0 * in1;
-	return result >> 24;
-}
 
 #endif
 
