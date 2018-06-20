@@ -12,7 +12,7 @@
 #define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
 #define WAVETABLE_MAX_VALUE_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
 
-#define BUFFER_SIZE 32
+#define BUFFER_SIZE 16
 
 #define NUM_TAPS 24
 
@@ -152,7 +152,7 @@ void initializeDoubleBuffer(void);
 static inline int fix16_mul(int, int);
 int fix16_mul_test1(int, int);
 int fix16_mul_test2(int, int);
-static inline int fix16_lerp(int, int, uint32_t);
+//static inline int fix16_lerp(int, int, int);
 static inline int fix24_mul(int, int);
 
 //static inline int fix16_mul(int in0, int in1) {
@@ -188,11 +188,16 @@ static inline int fix24_mul(int in0, int in1) {
 }
 
 
-static inline int fix16_lerp(int in0, int in1, uint32_t inFract) {
-	int64_t tempOut = int64_mul_i32_i32(in0, (((int32_t) 1 << 16) - inFract));
-	tempOut = int64_add(tempOut, int64_mul_i32_i32(in1, inFract));
-	tempOut = int64_shift(tempOut, -16);
-	return (int) int64_lo(tempOut);
+//static inline int fix16_lerp(int in0, int in1, uint32_t inFract) {
+//	int64_t tempOut = int64_mul_i32_i32(in0, (((int32_t) 1 << 16) - inFract));
+//	tempOut = int64_add(tempOut, int64_mul_i32_i32(in1, inFract));
+//	tempOut = int64_shift(tempOut, -16);
+//	return (int) int64_lo(tempOut);
+//}
+
+static inline int fix16_lerp(q31_t in0, q31_t in1, int frac) {
+	return in0 + fix16_mul(in1 - in0, frac);
+
 }
 
 // this is a decent improvement over the above for the case of 16 bit interpolation points

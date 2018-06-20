@@ -14,7 +14,8 @@ q31_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModPWM_2, 
 
 q31_t virtualGround[BUFFER_SIZE];
 
-static inline int getSampleQuinticSpline(q31_t, q31_t);
+static inline int getSampleQuinticSpline(int, uint32_t);
+static inline int calculatePWMPhase(int, uint32_t);
 
 /**
  *
@@ -53,7 +54,7 @@ void prepareCV_FM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 	arm_offset_q31(audioInputs->morphCV, controlInputs->knob3Value - 2048, morphValues, BUFFER_SIZE);
 
 	// assign pwm values
-	arm_shift_q31(virtualGround, 13, pwmValues, BUFFER_SIZE);
+	arm_shift_q31(virtualGround, 9, pwmValues, BUFFER_SIZE);
 
 
 }
@@ -71,8 +72,7 @@ void prepareCV_PM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 	arm_offset_q31(audioInputs->morphCV, controlInputs->knob3Value - 2048, morphValues, BUFFER_SIZE);
 
 	// assign pwm values
-	arm_shift_q31(virtualGround, 13, pwmValues, BUFFER_SIZE);
-
+	arm_shift_q31(virtualGround, 9, pwmValues, BUFFER_SIZE);
 
 
 }
@@ -89,8 +89,8 @@ void prepareCV_FM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlI
 	// generate audio rate morph modulation values
 	arm_offset_q31(virtualGround, controlInputs->knob3Value - 2048, morphValues, BUFFER_SIZE);
 
-	// generate pwm values
-	arm_shift_q31(audioInputs->morphCV, 13, pwmValues, BUFFER_SIZE);
+	// assign pwm values
+	arm_shift_q31(audioInputs->morphCV, 9, pwmValues, BUFFER_SIZE);
 
 }
 void prepareCV_PM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlInputs, q31_t *incrementValues, q31_t *phaseModValues, q31_t * morphValues, q31_t *pwmValues) {
@@ -107,8 +107,8 @@ void prepareCV_PM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlI
 	// generate audio rate morph modulation values
 	arm_offset_q31(virtualGround, controlInputs->knob3Value - 2048, morphValues, BUFFER_SIZE);
 
-	// generate pwm values (shift to plug into the bilinear interpolation function)
-	arm_shift_q31(audioInputs->morphCV, 13, pwmValues, BUFFER_SIZE);
+	// assign pwm values
+	arm_shift_q31(audioInputs->morphCV, 9, pwmValues, BUFFER_SIZE);
 
 }
 
@@ -186,7 +186,8 @@ void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * 
 		lastPhase = phase;
 
 		// calculate the phase waveshaping function for PWM
-		ghostPhase = arm_bilinear_interp_q31(&pwmTable, phase << 1, pwmArray[i]);
+		ghostPhase = calculatePWMPhase(phase, pwmArray[i]);
+		//ghostPhase = arm_bilinear_interp_q31(&pwmTable, phase << 1, pwmArray[i]);
 
 		// calculate the sample value
 		output[i] = getSampleQuinticSpline(ghostPhase, __USAT(morphArray[i], 12));
@@ -194,7 +195,7 @@ void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * 
 	}
 }
 
-static inline int getSampleQuinticSpline(q31_t phase, q31_t morph) {
+static inline int getSampleQuinticSpline(int phase, uint32_t morph) {
 
     /* in this function, we use our phase position to get the sample to give to our dacs using a quintic spline interpolation technique
     essentially, we need to get 6 pairs of sample values and two "fractional arguments" (where are we at in between those sample values)
@@ -259,3 +260,22 @@ static inline int getSampleQuinticSpline(q31_t phase, q31_t morph) {
 
 	return __USAT(out >> 3, 12);
 }
+
+static inline int calculatePWMPhase(int phaseIn, uint32_t pwm) {
+
+	#define phaseIndex (phaseIn >> 19)
+	#define phaseFrac (phaseIn & 0b0000000000001111111111111111111) >> 3
+	#define pwmIndex (pwm >> 16)
+	#define pwmFrac (pwm & 0b00000000000000001111111111111111)
+	uint32_t sampleA_0 = phaseModPWMTables[pwmIndex][phaseIndex];
+	uint32_t sampleA_1 = phaseModPWMTables[pwmIndex][phaseIndex + 1];
+	uint32_t sampleB_0 = phaseModPWMTables[pwmIndex + 1][phaseIndex];
+	uint32_t sampleB_1 = phaseModPWMTables[pwmIndex + 1][phaseIndex + 1];
+
+	int interp0 = fix16_lerp(sampleA_0, sampleA_1, phaseFrac);
+	int interp1 = fix16_lerp(sampleB_0, sampleB_1, phaseFrac);
+
+	return fix16_lerp(interp0, interp1, pwmFrac);
+
+}
+

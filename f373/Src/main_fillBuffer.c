@@ -15,25 +15,25 @@ void fillBuffer(void) {
 
 
 
-//	// profiling pin a logic out high
-//	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+	// profiling pin a logic out high
+	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 
 
 	(*prepareCV)(inputRead, &controlRateInput, incrementBuffer, phaseModBuffer, morphBuffer, pwmBuffer);
 
 	incrementOscillator(incrementBuffer, phaseModBuffer, morphBuffer, pwmBuffer, inputRead->hardSyncInput, inputRead->reverseInput, outputWrite->samples, phaseEvents);
 
-//	// profiling pin a logic out low
-//	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
-//
-//	// profiling pin b logic out high
-//	GPIOC->BRR = (uint32_t)GPIO_PIN_15;
+	// profiling pin a logic out low
+	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
+
+	// profiling pin b logic out high
+	GPIOC->BRR = (uint32_t)GPIO_PIN_15;
 
 
 	(*logicAndFilter)(phaseEvents, outputWrite);
 
-//	// profiling pin b logic out low
-//	GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
+	// profiling pin b logic out low
+	GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
 
 
 }
