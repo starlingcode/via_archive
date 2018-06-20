@@ -314,8 +314,6 @@ void TIM13_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM13_IRQn 0 */
 
-	handleCoversionSlow(&controlRateInput);
-
   /* USER CODE END TIM13_IRQn 0 */
   HAL_TIM_IRQHandler(&htim13);
   /* USER CODE BEGIN TIM13_IRQn 1 */
@@ -344,7 +342,7 @@ void TIM6_DAC1_IRQHandler(void)
 //	(*outputRead->logicBHandler[readIndex])();
 //	(*outputRead->auxLogicHandler[readIndex])();
 
-	// store the x and morph CVs at sample rate
+//	// store the x and morph CVs at sample rate
 	inputWrite->xCV[readIndex] = 4095 - cv2;
 	inputWrite->morphCV[readIndex] = 4095 - cv3;
 

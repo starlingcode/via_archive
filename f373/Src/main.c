@@ -229,9 +229,9 @@ int main(void)
 	// initialize the main state machine to handle the UI first
 	main_State = &main_handleUI;
 
-	// enable display update timer
-	__HAL_TIM_ENABLE_IT(&htim13, TIM_IT_UPDATE);
-	HAL_TIM_Base_Start(&htim13);
+//	// enable display update timer
+//	__HAL_TIM_ENABLE_IT(&htim13, TIM_IT_UPDATE);
+//	HAL_TIM_Base_Start(&htim13);
 
   /* USER CODE END 2 */
 

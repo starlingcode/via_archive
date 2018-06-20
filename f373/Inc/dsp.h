@@ -114,7 +114,7 @@ typedef struct {
 
 controlRateInputs controlRateInput;
 
-void handleCoversionSlow(controlRateInputs *);
+void handleCoversionSlow(controlRateInputs *, uint32_t);
 
 void fillBuffer(void);
 
@@ -147,22 +147,11 @@ void initializeFilter(void);
 void initialializeVirtualGround(void);
 void initializeDoubleBuffer(void);
 
-// 16.16 fixed point math taken from fixmathlib
-
-static inline int fix16_mul(int, int);
-int fix16_mul_test1(int, int);
-int fix16_mul_test2(int, int);
-//static inline int fix16_lerp(int, int, int);
-static inline int fix24_mul(int, int);
-
-//static inline int fix16_mul(int in0, int in1) {
-//	int64_t result = (uint64_t) in0 * in1;
-//	return result >> 16;
-//}
-
+// fixed point math functions
 
 static inline int fix16_mul(int in0, int in1) {
-	  int lsb;
+
+	int lsb;
 	  int msb;
 
 	  // multiply the inputs, store the top 32 bits in msb and bottom in lsb
@@ -177,6 +166,7 @@ static inline int fix16_mul(int in0, int in1) {
 	  // top halfword of lsb goes into the bottom halfword of the result
 
 	  return __ROR(__PKHBT(msb, lsb, 0), 16);
+
 }
 
 // doubting such an optimization would work here
@@ -188,24 +178,28 @@ static inline int fix24_mul(int in0, int in1) {
 }
 
 
-//static inline int fix16_lerp(int in0, int in1, uint32_t inFract) {
-//	int64_t tempOut = int64_mul_i32_i32(in0, (((int32_t) 1 << 16) - inFract));
-//	tempOut = int64_add(tempOut, int64_mul_i32_i32(in1, inFract));
-//	tempOut = int64_shift(tempOut, -16);
-//	return (int) int64_lo(tempOut);
-//}
-
 static inline int fix16_lerp(q31_t in0, q31_t in1, int frac) {
 	return in0 + fix16_mul(in1 - in0, frac);
 
 }
 
+// experimental approach condensing the two lienar interpolations into one function, no performance increase
+//static inline int fast_16_16_bilerp(int inA_0, int inA_1, int inB_0, int inB_1, int fracA, int fracB) {
+//	return inA_0 + fix16_mul(inA_1 - inA_0, fracA)
+//				+ fix16_mul(fracB, (inB_0 - inA_0) + fix16_mul(fracA, inB_1 + inA_0 - inB_0 - inA_1));
+//}
+
 // this is a decent improvement over the above for the case of 16 bit interpolation points
 // no need to cast a 16bit by 16bit multiplication to 64 bit
 
-static inline int fast_16_16_lerp(int in0, int in1, uint32_t inFract) {
-	return (in1 * inFract + in0 * (65535 - inFract)) >> 16;
+static inline int fast_16_16_mul(int in0, int in1) {
+	return (in0 * in1) >> 16;
 }
+
+static inline int fast_16_16_lerp(int in0, int in1, int frac) {
+	return in0 + fast_16_16_mul(in1 - in0, frac);
+}
+
 
 
 #endif

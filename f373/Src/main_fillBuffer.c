@@ -12,8 +12,7 @@ void fillBuffer(void) {
 	q31_t morphBuffer[BUFFER_SIZE];
 	q31_t pwmBuffer[BUFFER_SIZE];
 	int phaseEvents[BUFFER_SIZE];
-
-
+	static uint32_t slowConversionCounter;
 
 	// profiling pin a logic out high
 	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
@@ -32,9 +31,14 @@ void fillBuffer(void) {
 
 	(*logicAndFilter)(phaseEvents, outputWrite);
 
+	slowConversionCounter++;
+
+	handleCoversionSlow(&controlRateInput, slowConversionCounter);
+
+	main_State = main_handleUI;
+
 	// profiling pin b logic out low
 	GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
-
 
 }
 

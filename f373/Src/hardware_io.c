@@ -30,7 +30,7 @@ int readBuffer(buffer* buffer, int Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
 }
 
-void handleCoversionSlow(controlRateInputs * inputs) {
+void handleCoversionSlow(controlRateInputs * inputs, uint32_t sequencingSignal) {
 
 	// TODO apply SIMD instructions?
 
@@ -43,6 +43,53 @@ void handleCoversionSlow(controlRateInputs * inputs) {
 	static buffer knob3Buffer;
 	static buffer cv1Buffer;
 
+	switch (sequencingSignal) {
+	case 1:
+		// implement a running average on the control rate CV inputs
+		knob1Sum = knob1 + knob1Sum - readBuffer(&knob1Buffer, 31);
+		knob2Sum = knob2 + knob2Sum - readBuffer(&knob2Buffer, 31);
+
+		// store the newest value in a ring buffer
+		writeBuffer(&knob1Buffer, knob1);
+		writeBuffer(&knob2Buffer, knob2);
+
+		// write the averaged inputs to the holding struct
+		inputs->knob1Value = knob1Sum >> 5;
+		inputs->knob2Value = knob2Sum >> 5;
+
+		break;
+
+	case 2:
+		// implement a running average on the control rate CV inputs
+		knob3Sum = knob3 + knob3Sum - readBuffer(&knob3Buffer, 31);
+		cv1Sum = cv1 + cv1Sum - readBuffer(&cv1Buffer, 7);
+
+		// store the newest value in a ring buffer
+		writeBuffer(&knob3Buffer, knob3);
+		writeBuffer(&cv1Buffer, cv1);
+
+		// write the averaged inputs to the holding struct
+		inputs->knob3Value = knob3Sum >> 5;
+		inputs->cv1Value = cv1Sum >> 3;
+
+		break;
+
+	case 3:
+		// update the runtime display if the UI menu is not turned on
+		if (RUNTIME_DISPLAY) {
+			updateRGB(inputs, inputRead);
+			(*displaySHMode)();
+			(*displaySyncMode)();
+			(*displayXCVMode)();
+			(*displayMorphMode)();
+		}
+
+		sequencingSignal = 0;
+
+		break;
+
+	}
+
 	// implement a running average on the control rate CV inputs
 	knob1Sum = knob1 + knob1Sum - readBuffer(&knob1Buffer, 31);
 	knob2Sum = knob2 + knob2Sum - readBuffer(&knob2Buffer, 31);
@@ -54,7 +101,7 @@ void handleCoversionSlow(controlRateInputs * inputs) {
 	writeBuffer(&knob3Buffer, knob3);
 	writeBuffer(&cv1Buffer, cv1);
 
-	// write the inputs to the holding struct
+	// write the averaged inputs to the holding struct
 	inputs->knob1Value = knob1Sum >> 5;
 	inputs->knob2Value = knob2Sum >> 5;
 	inputs->knob3Value = knob3Sum >> 5;

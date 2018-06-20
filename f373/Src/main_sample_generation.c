@@ -41,10 +41,9 @@ void prepareCV_FM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 	// scale that down with the frequency multiplier
 
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 2]), expoTable[4095 - controlInputs->cv1Value] >> 2);
-
-	arm_shift_q31(audioInputs->xCV, 16, incrementValues, BUFFER_SIZE);
+	arm_offset_q31(audioInputs->xCV, -2048, incrementValues, BUFFER_SIZE);
+	arm_shift_q31(incrementValues, 20, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
-
 
 	// generate phase modulation values with x cv as source
 	// shift the values so that the maximum possible swing is half of the wavetable length in fix16
@@ -61,12 +60,13 @@ void prepareCV_FM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 void prepareCV_PM_Morph(audioRateInputs * audioInputs, controlRateInputs *controlInputs, q31_t *incrementValues, q31_t *phaseModValues, q31_t * morphValues, q31_t *pwmValues) {
 
 	// generate increment array
-	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 4, expoTable[controlInputs->knob2Value >> 3]), expoTable[4095 - controlInputs->cv1Value] >> 4);
-	arm_shift_q31(virtualGround, 16, incrementValues, BUFFER_SIZE);
+	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 2]), expoTable[4095 - controlInputs->cv1Value] >> 2);
+	arm_offset_q31(virtualGround, -2000, incrementValues, BUFFER_SIZE);
+	arm_shift_q31(incrementValues, 20, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
 	// assign phase modulation values
-	arm_shift_q31(audioInputs->xCV, 12, phaseModValues, BUFFER_SIZE);
+	arm_shift_q31(audioInputs->xCV, 16, phaseModValues, BUFFER_SIZE);
 
 	// assign audio rate morph modulation values
 	arm_offset_q31(audioInputs->morphCV, controlInputs->knob3Value - 2048, morphValues, BUFFER_SIZE);
@@ -79,8 +79,9 @@ void prepareCV_PM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 void prepareCV_FM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlInputs, q31_t *incrementValues, q31_t *phaseModValues, q31_t * morphValues, q31_t *pwmValues) {
 
 	// generate increment array
-	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 4, expoTable[controlInputs->knob2Value >> 3]), expoTable[4095 - controlInputs->cv1Value] >> 4);
-	arm_shift_q31(audioInputs->xCV, 16, incrementValues, BUFFER_SIZE);
+	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 2]), expoTable[4095 - controlInputs->cv1Value] >> 2);
+	arm_offset_q31(audioInputs->xCV, -2048, incrementValues, BUFFER_SIZE);
+	arm_shift_q31(incrementValues, 20, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
 	// generate phase modulation values
@@ -96,8 +97,9 @@ void prepareCV_FM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlI
 void prepareCV_PM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlInputs, q31_t *incrementValues, q31_t *phaseModValues, q31_t * morphValues, q31_t *pwmValues) {
 
 	// generate increment array with virtual ground as source
-	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 4, expoTable[controlInputs->knob2Value >> 3]), expoTable[4095 - controlInputs->cv1Value] >> 4);
-	arm_shift_q31(virtualGround, 16, incrementValues, BUFFER_SIZE);
+	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 2]), expoTable[4095 - controlInputs->cv1Value] >> 2);
+	arm_offset_q31(virtualGround, -2000, incrementValues, BUFFER_SIZE);
+	arm_shift_q31(incrementValues, 20, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
 	// generate phase modulation values with x cv as source
@@ -127,13 +129,6 @@ void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * 
 	int phaseEvent;
 	int ghostPhase;
 
-	// data structure for the interpolation that calculates the lookup
-	static arm_bilinear_interp_instance_q31 pwmTable = {
-			.numRows = 65,
-			.numCols = 65,
-			.pData = &phaseModPWMTables
-	};
-
 	for (int i = 0; i < (BUFFER_SIZE); i++) {
 
 		// increment the phase pointer
@@ -149,36 +144,32 @@ void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * 
 		lastPhaseMod = phaseModArray[i];
 
 		// wrap the phase pointer when it overflows either end of the wavetable
+		// perform a mathematical operation with the right conditional properties
+		// the most significant bit is 1 when a number is negative, 0 otherwise
+		// cast to unsigned to enforce a logical shift
+		// the two top bit checks should be mutually exclusive
 
-		if (phase < 0) {
-			wrapPhase = WAVETABLE_LENGTH; // the most significant bit is 1 when the number is negative, 0 otherwise
-		} else if (phase - WAVETABLE_LENGTH > 0) {
-			wrapPhase = NEGATIVE_WAVETABLE_LENGTH;
-		} else {
-			wrapPhase = 0;
-		}
+		wrapPhase = 0;
+
+		wrapPhase = ((uint32_t)(phase) >> 31) * WAVETABLE_LENGTH;
+		wrapPhase += ((uint32_t)(WAVETABLE_LENGTH - phase) >> 31) * NEGATIVE_WAVETABLE_LENGTH;
 
 		// apply the wrapping offset
 		// no effect if there is no overflow
 
 		phase += wrapPhase;
 
+		// log a -1 if the max value index of the wavetable is traversed from the left
+		// log a 1 if traversed from the right
+		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
+		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
+
+		wrapPhase += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(lastPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+
 		// log the phase event by accumulating the indicative variables
 		// log 0 if no event
 
-		phaseEvent = 0;
-
-		// log WAVETABLE_LENGTH if wrapping on either end
-
-		phaseEvent += wrapPhase;
-
-		// log a 1 if the max value index of the wavetable is traversed
-		// do this with an xor of the sign bit of the current and last phase less the max value phase
-		// this adds 1 when the phase is wrapped as well, but that can be parsed out
-
-		phaseEvent += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(lastPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
-
-		phaseEventArray[i] = phaseEvent;
+		phaseEventArray[i] = wrapPhase;
 
 		// TODO rewrite logic parsing function
 
