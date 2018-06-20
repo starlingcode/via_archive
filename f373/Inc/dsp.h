@@ -8,6 +8,10 @@
 #include "arm_math.h"
 #include "int64.h"
 
+#define WAVETABLE_LENGTH 33554432
+#define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
+#define WAVETABLE_MAX_VALUE_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
+
 #define BUFFER_SIZE 32
 
 #define NUM_TAPS 24
@@ -123,7 +127,7 @@ void prepareCV_PM_Morph(audioRateInputs *, controlRateInputs *, q31_t *, q31_t *
 void prepareCV_FM_PWM(audioRateInputs *, controlRateInputs *, q31_t *, q31_t *, q31_t *, q31_t *);
 void prepareCV_PM_PWM(audioRateInputs *, controlRateInputs *, q31_t *, q31_t *, q31_t *, q31_t *);
 
-void incrementOscillator(q31_t * , q31_t *, q31_t *, q31_t *, q31_t *, q31_t *, q31_t *, uint32_t *);
+void incrementOscillator(q31_t * , q31_t *, q31_t *, q31_t *, q31_t *, q31_t *, q31_t *, int *);
 
 void (*logicAndFilter)(uint32_t *, audioRateOutputs *);
 

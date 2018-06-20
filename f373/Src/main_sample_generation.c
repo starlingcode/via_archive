@@ -39,7 +39,7 @@ void prepareCV_FM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 	// shift the xCV up to the maximum allowed value
 	// scale that down with the frequency multiplier
 
-	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 4, expoTable[controlInputs->knob2Value >> 3]), expoTable[4095 - controlInputs->cv1Value] >> 4);
+	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 2]), expoTable[4095 - controlInputs->cv1Value] >> 2);
 
 	arm_shift_q31(audioInputs->xCV, 16, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
@@ -114,7 +114,7 @@ void prepareCV_PM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlI
 
 // generate the sample values and phase events for the buffer with the above modulation inputs
 
-void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * morphArray, q31_t * pwmArray, q31_t * hardSyncArray, q31_t * reverseArray, q31_t * output, uint32_t * phaseEventArray) {
+void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * morphArray, q31_t * pwmArray, q31_t * hardSyncArray, q31_t * reverseArray, q31_t * output, int * phaseEventArray) {
 
 	#define WAVETABLE_LENGTH 33554432
 	#define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
@@ -124,7 +124,7 @@ void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * 
 	static int lastPhase;
 	static int lastPhaseMod;
 	int wrapPhase;
-	q31_t phaseEvent;
+	int phaseEvent;
 	int ghostPhase;
 
 	// data structure for the interpolation that calculates the lookup
@@ -176,7 +176,7 @@ void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * 
 		// do this with an xor of the sign bit of the current and last phase less the max value phase
 		// this adds 1 when the phase is wrapped as well, but that can be parsed out
 
-		phaseEvent += ((phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) ^ ((lastPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+		phaseEvent += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(lastPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
 
 		phaseEventArray[i] = phaseEvent;
 

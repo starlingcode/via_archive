@@ -34,7 +34,7 @@ void initializeFilter() {
 
 // resampling management timers
 
-extern TIM_HandleTypeDef htim18;
+extern TIM_HandleTypeDef htim16;
 extern TIM_HandleTypeDef htim17;
 
 void logicAHigh(void);
@@ -65,7 +65,8 @@ static inline void calculateLogicSHOn(uint32_t * phaseEvents, audioRateOutputs *
 				output->auxLogicHandler[i]= &logicNoOp;
 				break;
 			//dummy at a handling
-			case 1:
+			case WAVETABLE_LENGTH + 1:
+			case NEGATIVE_WAVETABLE_LENGTH + 1:
 				output->shAHandler[i] = &logicNoOp;
 				output->shBHandler[i] = &resampleB;
 				output->logicAHandler[i] = &logicAHigh;
@@ -73,7 +74,7 @@ static inline void calculateLogicSHOn(uint32_t * phaseEvents, audioRateOutputs *
 				output->auxLogicHandler[i]= &logicNoOp;
 				break;
 			//dummy at b handling
-			case 2:
+			case -1:
 				output->shAHandler[i] = &resampleA;
 				output->shBHandler[i] = &logicNoOp;
 				output->logicAHandler[i] = &logicALow;
@@ -102,17 +103,18 @@ static inline void calculateLogicSHOff(uint32_t * phase, audioRateOutputs * outp
 				output->auxLogicHandler[i]= &logicNoOp;
 				break;
 			//dummy at a handling
-			case 1:
-				output->shAHandler[i] = &logicNoOp;
+			case WAVETABLE_LENGTH + 1:
+			case NEGATIVE_WAVETABLE_LENGTH + 1:
+				output->shAHandler[i] = &shATrack;
 				output->shBHandler[i] = &logicNoOp;
 				output->logicAHandler[i] = &logicAHigh;
 				output->logicBHandler[i] = &logicBLow;
 				output->auxLogicHandler[i]= &logicNoOp;
 				break;
 			//dummy at b handling
-			case 2:
+			case -1:
 				output->shAHandler[i] = &logicNoOp;
-				output->shBHandler[i] = &logicNoOp;
+				output->shBHandler[i] = &shBTrack;
 				output->logicAHandler[i] = &logicALow;
 				output->logicBHandler[i] = &logicBHigh;
 				output->auxLogicHandler[i]= &logicNoOp;
@@ -170,8 +172,8 @@ void resampleA(void){
 }
 void resampleB(void){
 	SH_B_TRACK;
-	__HAL_TIM_SET_COUNTER(&htim18, 0);
-	__HAL_TIM_ENABLE(&htim18);
+	__HAL_TIM_SET_COUNTER(&htim16, 0);
+	__HAL_TIM_ENABLE(&htim16);
 }
 
 

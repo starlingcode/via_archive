@@ -338,10 +338,10 @@ void TIM6_DAC1_IRQHandler(void)
 	//WRITE_DAC2(0)
 
 	// execute the GPIO handlers
-//	(*outputRead->shAHandler[readIndex])();
-//	(*outputRead->shBHandler[readIndex])();
-//	//(*outputRead->logicAHandler[readIndex])();
-//	//(*outputRead->logicBHandler[readIndex])();
+	(*outputRead->shAHandler[readIndex])();
+	(*outputRead->shBHandler[readIndex])();
+//	(*outputRead->logicAHandler[readIndex])();
+//	(*outputRead->logicBHandler[readIndex])();
 //	(*outputRead->auxLogicHandler[readIndex])();
 
 	// store the x and morph CVs at sample rate
