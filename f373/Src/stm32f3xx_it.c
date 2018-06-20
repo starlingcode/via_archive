@@ -298,7 +298,7 @@ void TIM12_IRQHandler(void)
 		reverseMultiplier = -1;
 	}
 
-	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC1);
+	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
 
   /* USER CODE END TIM12_IRQn 0 */
   //HAL_TIM_IRQHandler(&htim12);
@@ -338,11 +338,11 @@ void TIM6_DAC1_IRQHandler(void)
 	//WRITE_DAC2(0)
 
 	// execute the GPIO handlers
-	(*outputRead->shAHandler[readIndex])();
-	(*outputRead->shBHandler[readIndex])();
-	//(*outputRead->logicAHandler[readIndex])();
-	//(*outputRead->logicBHandler[readIndex])();
-	(*outputRead->auxLogicHandler[readIndex])();
+//	(*outputRead->shAHandler[readIndex])();
+//	(*outputRead->shBHandler[readIndex])();
+//	//(*outputRead->logicAHandler[readIndex])();
+//	//(*outputRead->logicBHandler[readIndex])();
+//	(*outputRead->auxLogicHandler[readIndex])();
 
 	// store the x and morph CVs at sample rate
 	inputWrite->xCV[readIndex] = 4095 - cv2;
