@@ -41,7 +41,7 @@ void prepareCV_FM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 	// scale that down with the frequency multiplier
 
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 2]), expoTable[4095 - controlInputs->cv1Value] >> 2);
-	arm_offset_q31(audioInputs->xCV, -2048, incrementValues, BUFFER_SIZE);
+	arm_offset_q31(audioInputs->xCV, -1024, incrementValues, BUFFER_SIZE);
 	arm_shift_q31(incrementValues, 19, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
@@ -61,7 +61,7 @@ void prepareCV_PM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 
 	// generate increment array
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 2]), expoTable[4095 - controlInputs->cv1Value] >> 2);
-	arm_offset_q31(virtualGround, -2000, incrementValues, BUFFER_SIZE);
+	arm_offset_q31(virtualGround, -1024, incrementValues, BUFFER_SIZE);
 	arm_shift_q31(incrementValues, 19, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
