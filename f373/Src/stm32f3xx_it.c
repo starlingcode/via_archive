@@ -343,8 +343,8 @@ void TIM6_DAC1_IRQHandler(void)
 //	(*outputRead->auxLogicHandler[readIndex])();
 
 //	// store the x and morph CVs at sample rate
-	inputWrite->xCV[readIndex] = 4095 - cv2;
-	inputWrite->morphCV[readIndex] = 4095 - cv3;
+	inputWrite->xCV[readIndex] = 4095 - __USAT(cv2, 12);
+	inputWrite->morphCV[readIndex] = 4095 - __USAT(cv3, 12);
 
 	// write the current trig multiplier (used for sync) to the buffer
 	// reset it to 1

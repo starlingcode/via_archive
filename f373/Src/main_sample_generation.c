@@ -42,7 +42,7 @@ void prepareCV_FM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 2]), expoTable[4095 - controlInputs->cv1Value] >> 2);
 	arm_offset_q31(audioInputs->xCV, -2048, incrementValues, BUFFER_SIZE);
-	arm_shift_q31(incrementValues, 20, incrementValues, BUFFER_SIZE);
+	arm_shift_q31(incrementValues, 19, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
 	// generate phase modulation values with x cv as source
@@ -62,7 +62,7 @@ void prepareCV_PM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 	// generate increment array
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 2]), expoTable[4095 - controlInputs->cv1Value] >> 2);
 	arm_offset_q31(virtualGround, -2000, incrementValues, BUFFER_SIZE);
-	arm_shift_q31(incrementValues, 20, incrementValues, BUFFER_SIZE);
+	arm_shift_q31(incrementValues, 19, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
 	// assign phase modulation values
@@ -81,7 +81,7 @@ void prepareCV_FM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlI
 	// generate increment array
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 2]), expoTable[4095 - controlInputs->cv1Value] >> 2);
 	arm_offset_q31(audioInputs->xCV, -2048, incrementValues, BUFFER_SIZE);
-	arm_shift_q31(incrementValues, 20, incrementValues, BUFFER_SIZE);
+	arm_shift_q31(incrementValues, 19, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
 	// generate phase modulation values
@@ -178,7 +178,6 @@ void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * 
 
 		// calculate the phase waveshaping function for PWM
 		ghostPhase = calculatePWMPhase(phase, pwmArray[i]);
-		//ghostPhase = arm_bilinear_interp_q31(&pwmTable, phase << 1, pwmArray[i]);
 
 		// calculate the sample value
 		output[i] = getSampleQuinticSpline(ghostPhase, __USAT(morphArray[i], 12));
