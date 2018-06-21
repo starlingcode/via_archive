@@ -66,7 +66,9 @@ static inline void calculateLogicSHOn(uint32_t * phaseEvents, audioRateOutputs *
 				break;
 			//dummy at a handling
 			case WAVETABLE_LENGTH + 1:
+			case WAVETABLE_LENGTH - 1:
 			case NEGATIVE_WAVETABLE_LENGTH + 1:
+			case NEGATIVE_WAVETABLE_LENGTH - 1:
 				output->shAHandler[i] = &logicNoOp;
 				output->shBHandler[i] = &resampleB;
 				output->logicAHandler[i] = &logicAHigh;
@@ -74,6 +76,7 @@ static inline void calculateLogicSHOn(uint32_t * phaseEvents, audioRateOutputs *
 				output->auxLogicHandler[i]= &logicNoOp;
 				break;
 			//dummy at b handling
+			case 1:
 			case -1:
 				output->shAHandler[i] = &resampleA;
 				output->shBHandler[i] = &logicNoOp;
@@ -104,7 +107,9 @@ static inline void calculateLogicSHOff(uint32_t * phase, audioRateOutputs * outp
 				break;
 			//dummy at a handling
 			case WAVETABLE_LENGTH + 1:
+			case WAVETABLE_LENGTH - 1:
 			case NEGATIVE_WAVETABLE_LENGTH + 1:
+			case NEGATIVE_WAVETABLE_LENGTH - 1:
 				output->shAHandler[i] = &shATrack;
 				output->shBHandler[i] = &logicNoOp;
 				output->logicAHandler[i] = &logicAHigh;
@@ -113,6 +118,7 @@ static inline void calculateLogicSHOff(uint32_t * phase, audioRateOutputs * outp
 				break;
 			//dummy at b handling
 			case -1:
+			case 1:
 				output->shAHandler[i] = &logicNoOp;
 				output->shBHandler[i] = &shBTrack;
 				output->logicAHandler[i] = &logicALow;
