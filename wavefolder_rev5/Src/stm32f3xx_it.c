@@ -280,11 +280,11 @@ void TIM12_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM12_IRQn 0 */
 
-	if (TRIGGER_RISING_EDGE) {
-		reverseMultiplier = 65536 ;
-	} else {
-		reverseMultiplier = 0;
-	}
+//	if (TRIGGER_RISING_EDGE) {
+//		reverseMultiplier = 65536 ;
+//	} else {
+//		reverseMultiplier = 0;
+//	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
 
