@@ -331,9 +331,9 @@ void TIM6_DAC1_IRQHandler(void)
 	// write the sample to the dac
 	WRITE_DAC1(__USAT(4095 - (outputRead->samples[readIndex]), 12));
 	WRITE_DAC2(__USAT(outputRead->samples[readIndex], 12));
-
-	//WRITE_DAC1(4095);
-	//WRITE_DAC2(0)
+//
+//	WRITE_DAC1(4095);
+//	WRITE_DAC2(0);
 
 	// execute the GPIO handlers
 	(*outputRead->shAHandler[readIndex])();

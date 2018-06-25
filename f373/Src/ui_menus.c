@@ -247,12 +247,6 @@ void ui_button6Menu(int sig)
 			} else {
 				uiTransition(&ui_default);
 			}
-		} else if (BUTTON3SENSOR == PRESSED) {
-			uiTransition(&ui_button6_3Menu);
-		}
-
-		if ((BUTTON4SENSOR == PRESSED) && (BUTTON1SENSOR == PRESSED) && (BUTTON3SENSOR == PRESSED)){
-			uiTransition(&ui_factoryReset);
 		}
 		break;
 
@@ -261,43 +255,6 @@ void ui_button6Menu(int sig)
 	}
 }
 
-/**
- *
- * Aux logic out menu
- *
- */
-
-void ui_button6_3Menu(int sig)
-{
-//	switch (sig) {
-//
-//	case ENTRY_SIG:
-//		UI_TIMER_RESET;
-//		UI_TIMER_SET_OVERFLOW(65535);
-//		UI_TIMER_ENABLE;
-//		uiSetLEDs(auxSyncMode);
-//		break;
-//
-//	case SENSOR_EVENT_SIG:
-//		if (BUTTON3SENSOR == RELEASED){
-//
-//			if(UI_TIMER_READ < 3000){
-//				auxSyncMode = (auxSyncMode + 1) % 2;
-//				modeStateBuffer = (modeStateBuffer & ~(AUX_LOGIC_MASK)) | (auxSyncMode << AUX_LOGIC_SHIFT);
-//				uiClearLEDs();
-//				uiSetLEDs(auxSyncMode);
-//				uiTransition( &ui_button6SubMenu);
-//			} else {
-//				uiTransition(&ui_default);
-//			}
-//		}
-//
-//		break;
-//
-//	case INIT_SIG:
-//		break;
-//	}
-}
 
 
 

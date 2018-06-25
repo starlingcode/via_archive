@@ -6,8 +6,6 @@
 #include "dsp.h"
 #include "main_state_machine.h"
 
-
-
 /**
  *
  * S&H handling functions

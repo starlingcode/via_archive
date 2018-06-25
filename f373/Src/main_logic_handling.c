@@ -17,13 +17,27 @@ arm_fir_instance_q31 fir;
 // declare filter coefficients
 q31_t firCoefficients[NUM_TAPS] = FIR24TAPS5_12;
 
-// Declare State buffer of size (numTaps + blockSize - 1)
+// declare state buffer of size (numTaps + blockSize - 1)
 q31_t firState[BUFFER_SIZE + NUM_TAPS - 1];
 
+// iir filter data structure
+arm_biquad_casd_df1_inst_q31 biquad;
+
+// declare filter coefficients (a set of 5 for each stage)
+q31_t biquadCoefficients[NUM_STAGES * 5] = BIQUAD20K_8STAGE;
+
+// Declare state buffer of size (numStages*4, 4 states per stage)
+q31_t biquadState[NUM_STAGES*4];
+
+
+//void initializeFilter() {
+//	// initialize the FIR filter
+//	arm_fir_init_q31(&fir, NUM_TAPS, &firCoefficients[0], &firState[0], BUFFER_SIZE);
+//}
 
 void initializeFilter() {
-	// initialize the FIR filter
-	arm_fir_init_q31(&fir, NUM_TAPS, &firCoefficients[0], &firState[0], BUFFER_SIZE);
+	// initialize the IIR filter (cascaded biquad filter)
+	arm_biquad_cascade_df1_init_q31(&biquad, NUM_STAGES, &biquadCoefficients[0], &biquadState[0], 0);
 }
 
 /*
@@ -138,7 +152,10 @@ void logicAndFilterSHOn(uint32_t * phaseEvents, audioRateOutputs * output) {
 }
 void logicAndFilterSHOff(uint32_t * phaseEvents, audioRateOutputs * output) {
 	calculateLogicSHOff(phaseEvents, output);
-	arm_fir_fast_q31(&fir, output->samples, output->samples, BUFFER_SIZE);
+//	arm_shift_q31(output->samples, 4, output->samples, BUFFER_SIZE);
+//	arm_biquad_cascade_df1_fast_q31(&biquad, output->samples, output->samples, BUFFER_SIZE);
+//	arm_shift_q31(output->samples, -20, output->samples, BUFFER_SIZE);
+	//arm_fir_fast_q31(&fir, output->samples, output->samples, BUFFER_SIZE);
 
 }
 
