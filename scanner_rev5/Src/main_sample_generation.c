@@ -21,11 +21,11 @@ void prepareCV(audioRateInputs * audioInputs, controlRateInputs *controlInputs, 
 	// scale the CVs by the knob value cast from 0 to full scale q31_t, then shift left by 3
 
 	arm_offset_q31(audioInputs->xCV, (controlInputs->knob1Value - 2048) << 3, xIndices, BUFFER_SIZE);
-	arm_scale_q31(xIndices, 1 << 31, 3, xIndices, BUFFER_SIZE);
+	arm_scale_q31(xIndices, 1 << 31, 1, xIndices, BUFFER_SIZE);
 
 
 	arm_offset_q31(audioInputs->yCV, (controlInputs->knob2Value - 2048) << 3, yIndices, BUFFER_SIZE);
-	arm_scale_q31(yIndices, 1 << 31, 3, yIndices, BUFFER_SIZE);
+	arm_scale_q31(yIndices, 1 << 31, 1, yIndices, BUFFER_SIZE);
 
 
 

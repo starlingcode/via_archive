@@ -19,12 +19,12 @@ TIM_HandleTypeDef htim5;
  *
  */
 
-void handleSHModeChange(int mode) {
+void handleButton1ModeChange(int mode) {
 
 
 }
 
-void handleXModeChange(int mode) {
+void handleButton4ModeChange(int mode) {
 
 }
 
