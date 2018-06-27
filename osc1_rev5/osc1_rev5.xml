@@ -10,8 +10,8 @@
 ]>
 
 <targetDefinitions>
-  <board id="f373">
-    <name>f373</name>
+  <board id="osc1_rev5">
+    <name>osc1_rev5</name>
     <dbgIF>SWD</dbgIF>
     <dbgDEV>ST-Link</dbgDEV>
     <mcuId>stm32f373cctx</mcuId>

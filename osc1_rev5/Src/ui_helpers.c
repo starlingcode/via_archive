@@ -19,7 +19,7 @@ TIM_HandleTypeDef htim5;
  *
  */
 
-void handleSHModeChange(int mode) {
+void handleButton1ModeChange(int mode) {
 
 
 	switch (mode) {
@@ -38,11 +38,11 @@ void handleSHModeChange(int mode) {
 
 }
 
-void handleXModeChange(int mode) {
+void handleButton4ModeChange(int mode) {
 
 	switch (mode) {
 	case FM:
-		if (morphMode == morphCV) {
+		if (button6Mode == morphCV) {
 			prepareCV = &prepareCV_FM_Morph;
 		} else {
 			prepareCV = &prepareCV_FM_PWM;
@@ -50,7 +50,7 @@ void handleXModeChange(int mode) {
 		displayXCVMode = &displayXCV_FM;
 		break;
 	case PM:
-		if (morphMode == morphCV) {
+		if (button6Mode == morphCV) {
 			prepareCV = &prepareCV_PM_Morph;
 		} else {
 			prepareCV = &prepareCV_PM_PWM;
@@ -68,7 +68,7 @@ void handleXModeChange(int mode) {
 
 void handleSyncModeChange(int mode) {
 	// sync modes handled in IRQ handler
-	if (syncMode == hard) {
+	if (button4Mode == hard) {
 		displaySyncMode = &displaySync_Hard;
 	} else {
 		displaySyncMode = &displaySync_Soft;
@@ -79,7 +79,7 @@ void handleMorphModeChange(int mode) {
 
 	switch (mode) {
 	case morphCV:
-		if (xMode == FM) {
+		if (button3Mode == FM) {
 			prepareCV = &prepareCV_FM_Morph;
 		} else {
 			prepareCV = &prepareCV_PM_Morph;
@@ -87,7 +87,7 @@ void handleMorphModeChange(int mode) {
 		displayMorphMode = &displayMorph_Morph;
 		break;
 	case pwmCV:
-		if (xMode == FM) {
+		if (button3Mode == FM) {
 			prepareCV = &prepareCV_FM_PWM;
 		} else {
 			prepareCV = &prepareCV_PM_PWM;

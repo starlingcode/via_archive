@@ -86,16 +86,16 @@ void uiLoadFromEEPROM(int position) {
 		uiTransition(&ui_error);
 	}
 
-	shMode = modeStateBuffer & SH_MASK;
-	xMode = (modeStateBuffer & XCV_MASK) >> XCV_SHIFT;
-	syncMode = (modeStateBuffer & SYNC_MASK) >> SYNC_SHIFT;
-	familyIndicator = (modeStateBuffer & TABLE_MASK) >> TABLE_SHIFT;
+	button1Mode = modeStateBuffer & BUTTON1_MASK;
+	button3Mode = (modeStateBuffer & BUTTON3_MASK) >> BUTTON3_SHIFT;
+	button4Mode = (modeStateBuffer & BUTTON4_MASK) >> BUTTON4_SHIFT;
+	familyIndicator = (modeStateBuffer & BUTTON5_MASK) >> BUTTON5_SHIFT;
 
 	/* ... initialization of ui attributes */
 	// call each menu to initialize, to make UI process the stored modes
 
 	switchFamily();
-	handleSHModeChange(shMode);
+	handleButton1ModeChange(button1Mode);
 
 
 }

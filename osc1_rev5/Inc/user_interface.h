@@ -15,21 +15,21 @@ uint32_t eepromStatus;
 #define UI_TIMER_READ __HAL_TIM_GET_COUNTER(&htim7)
 
 // how modes are arranged by size and location in modeStateBuffer (formatted for EEPROM storage).
-#define SH_MASK 		0b00000000000000000000000000000000
+#define BUTTON1_MASK 		0b00000000000000000000000000000000
 
-#define SYNC_MASK 		0b00000000000000000000000011110000
-#define SYNC_SHIFT		4
+#define BUTTON4_MASK 		0b00000000000000000000000011110000
+#define BUTTON4_SHIFT		4
 
-#define XCV_MASK 		0b00000000000000000000111100000000
-#define XCV_SHIFT 		8
+#define BUTTON3_MASK 		0b00000000000000000000111100000000
+#define BUTTON3_SHIFT 		8
 
-#define MORPH_MASK 		0b00000000000000001111000000000000
-#define MORPH_SHIFT 	12
+#define BUTTON6_MASK 		0b00000000000000001111000000000000
+#define BUTTON6_SHIFT 	12
 
-#define TABLE_MASK	 	0b00000000000011110000000000000000
+#define BUTTON5_MASK	 	0b00000000000011110000000000000000
 #define TABLE_SHIFT	 	16
 
-#define AUX_LOGIC_MASK	0b00000000111100000000000000000000
+#define AUX_MODE_1	0b00000000111100000000000000000000
 #define AUX_LOGIC_SHIFT	20
 
 
@@ -80,9 +80,9 @@ void uiSetLEDs(int);
 void uiClearRGB();
 void uiSetRGB(rgb);
 
-void handleSHModeChange(int);
+void handleButton1ModeChange(int);
 void handleSHBModeChange(int);
-void handleXModeChange(int);
+void handleButton4ModeChange(int);
 void handleSyncModeChange(int);
 void handleMorphModeChange(int);
 
@@ -118,16 +118,16 @@ void ui_factoryReset(int sig);
 
 // Mode enums and mode variables
 
-enum shModes {none, decimate};
-enum syncModes {hard, pendulum};
-enum xModes {FM, PM};
-enum morphModes {morphCV, pwmCV};
+enum button1Modes {none, decimate};
+enum button4Modes {hard, pendulum};
+enum button3Modes {FM, PM};
+enum button6Modes {morphCV, pwmCV};
 
 
-enum shModes shMode;
-enum syncModes syncMode;
-enum xModes xMode;
-enum morphModes morphMode;
+enum button1Modes button1Mode;
+enum button4Modes button4Mode;
+enum button3Modes button3Mode;
+enum button6Modes button6Mode;
 
 int familyIndicator;
 

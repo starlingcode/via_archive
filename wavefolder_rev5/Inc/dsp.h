@@ -32,7 +32,7 @@
 // Circular buffer
 
 typedef struct {
-    int buff[32];
+    int buff[1024];
     int writeIndex;
 }buffer;
 
@@ -127,7 +127,10 @@ void fillBuffer(void);
 
 void prepareCV(audioRateInputs *, controlRateInputs *, q31_t *);
 
-void incrementOscillator(q31_t *, int *, int, q31_t *);
+void (*foldBuffer)(q31_t *, int *, int, q31_t *);
+
+void foldBufferLinear(q31_t *, int *, int, q31_t *);
+void foldBufferSine(q31_t *, int *, int, q31_t *);
 
 void (*logicAndFilter)(uint32_t *, audioRateOutputs *);
 

@@ -3,6 +3,7 @@
 #include "stm32f3xx_it.h"
 #include "via_rev5_hardware_io.h"
 #include "user_interface.h"
+#include "led_display.h"
 #include "dsp.h"
 #include "main_state_machine.h"
 
@@ -21,11 +22,11 @@
  */
 
 void writeBuffer(buffer* buffer, int value) {
-	buffer->buff[(buffer->writeIndex++) & 31] = value;
+	buffer->buff[(buffer->writeIndex++) & 255] = value;
 }
 
 int readBuffer(buffer* buffer, int Xn) {
-	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 255];
 }
 
 int handleCoversionSlow(controlRateInputs * inputs, uint32_t sequencingSignal) {
@@ -44,31 +45,31 @@ int handleCoversionSlow(controlRateInputs * inputs, uint32_t sequencingSignal) {
 	switch (sequencingSignal) {
 	case 1:
 		// implement a running average on the control rate CV inputs
-		knob1Sum = knob1 + knob1Sum - readBuffer(&knob1Buffer, 31);
-		knob2Sum = knob2 + knob2Sum - readBuffer(&knob2Buffer, 31);
+		knob1Sum = knob1 + knob1Sum - readBuffer(&knob1Buffer, 1023);
+		knob2Sum = knob2 + knob2Sum - readBuffer(&knob2Buffer, 1023);
 
 		// store the newest value in a ring buffer
 		writeBuffer(&knob1Buffer, knob1);
 		writeBuffer(&knob2Buffer, knob2);
 
 		// write the averaged inputs to the holding struct
-		inputs->knob1Value = knob1Sum >> 5;
-		inputs->knob2Value = knob2Sum >> 5;
+		inputs->knob1Value = knob1Sum >> 8;
+		inputs->knob2Value = knob2Sum >> 8;
 
 		break;
 
 	case 2:
 		// implement a running average on the control rate CV inputs
-		knob3Sum = knob3 + knob3Sum - readBuffer(&knob3Buffer, 31);
-		cv1Sum = cv1 + cv1Sum - readBuffer(&cv1Buffer, 7);
+		knob3Sum = knob3 + knob3Sum - readBuffer(&knob3Buffer, 1023);
+		cv1Sum = cv1 + cv1Sum - readBuffer(&cv1Buffer, 1023);
 
 		// store the newest value in a ring buffer
 		writeBuffer(&knob3Buffer, knob3);
 		writeBuffer(&cv1Buffer, cv1);
 
 		// write the averaged inputs to the holding struct
-		inputs->knob3Value = knob3Sum >> 5;
-		inputs->cv1Value = cv1Sum >> 3;
+		inputs->knob3Value = knob3Sum >> 8;
+		inputs->cv1Value = cv1Sum >> 8;
 
 		break;
 
@@ -76,10 +77,10 @@ int handleCoversionSlow(controlRateInputs * inputs, uint32_t sequencingSignal) {
 		// update the runtime display if the UI menu is not turned on
 		if (RUNTIME_DISPLAY) {
 			updateRGB(inputs, inputRead);
-			(*displaySHMode)();
-			(*displaySyncMode)();
-			(*displayXCVMode)();
-			(*displayMorphMode)();
+			(*displayButton1Mode)();
+			(*displayButton4Mode)();
+			(*displayButton3Mode)();
+			(*displayButton1Mode)();
 		}
 
 		sequencingSignal = 0;

@@ -4,6 +4,7 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "user_interface.h"
+#include "led_display.h"
 #include "dsp.h"
 #include "main_state_machine.h"
 #include "via_rev5_hardware_io.h"
@@ -19,20 +20,31 @@ TIM_HandleTypeDef htim5;
  *
  */
 
-void handleSHModeChange(int mode) {
+void handleButton1ModeChange(int mode) {
 
 
 }
 
-void handleXModeChange(int mode) {
-
+void handleButton3ModeChange(int mode) {
+	switch (mode) {
+	case sineFolder:
+		foldBuffer = &foldBufferSine;
+		displayButton3Mode = &displayButton3ModeOff;
+		break;
+	case linearFolder:
+		foldBuffer = &foldBufferLinear;
+		displayButton3Mode = &displayButton3ModeOn;
+		break;
+	}
 }
 
-void handleSyncModeChange(int mode) {
-
+void handleButton4ModeChange(int mode) {
+	// refactoring fucked up all the other firmwares
 }
 
-void handleMorphModeChange(int mode) {
+void handleButton6ModeChange(int mode) {
+
+
 
 
 }

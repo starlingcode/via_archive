@@ -286,7 +286,7 @@ void TIM12_IRQHandler(void)
 	// Wrap this in a callback function for a cleaner implementation
 
 	if (TRIGGER_RISING_EDGE) {
-		if (syncMode == hard) {
+		if (button4Mode == hard) {
 			// this is reset to 1 at every with every new sample aquisition
 			hardSyncMultiplier = 0;
 		} else {

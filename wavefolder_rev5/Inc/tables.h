@@ -2,15 +2,7 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "user_interface.h"
-#include "dsp.h"
-
-
-struct rgb
-{
-	int r;	   		// 12-bit red amount RGB LED
-	int g;	  		// 12-bit green amount RGB LED
-	int b;	   		// 12-bit blue amount RGB LED
-};
+#include "led_display.h"
 
 typedef struct {
 	uint16_t **attackFamily;
@@ -18,7 +10,7 @@ typedef struct {
 	uint32_t tableLength;
 	uint32_t familySize;
 	uint32_t bandlimitOff;
-	struct rgb color;
+	rgb color;
 
 } Family;
 

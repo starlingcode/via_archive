@@ -15,12 +15,12 @@ uint32_t fastADC2Readings[1];
 
 // macros for DMA array (change to array name?)
 
-#define knob2 slowADCReadings[3]
-#define knob3 slowADCReadings[1]
-#define knob1 slowADCReadings[2]
+#define knob2 (slowADCReadings[3] & 0b111111111100)
+#define knob3 (slowADCReadings[1] & 0b111111111100)
+#define knob1 (slowADCReadings[2] & 0b111111111100)
 #define cv1 slowADCReadings[0]
-#define cv2 fastADC1Readings[0]
-#define cv3 fastADC2Readings[0]
+#define cv2 (fastADC1Readings[0] >> 1)
+#define cv3 (fastADC2Readings[0] >> 1)
 
 
 /**

@@ -2,6 +2,7 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "main_state_machine.h"
+#include "led_display.h"
 #include "dsp.h"
 #include "via_rev5_hardware_io.h"
 
@@ -17,35 +18,35 @@ extern TIM_HandleTypeDef htim5;
  *
  */
 
-void displayXCV_FM(void) {
+void displayButton3ModeOff(void) {
 	LEDC_OFF;
 }
 
-void displayXCV_PM(void) {
+void displayButton3ModeOn(void) {
 	LEDC_ON;
 }
 
-void displayMorph_Morph(void) {
+void displayButton6ModeOff(void) {
 	LEDD_OFF;
 }
 
-void displayMorph_PMW(void) {
+void displayButton6ModeOn(void) {
 	LEDD_ON;
 }
 
-void displaySH_On(void) {
+void displayButton1ModeOn(void) {
 	LEDA_ON;
 }
 
-void displaySH_Off(void) {
+void displayButton1ModeOff(void) {
 	LEDA_OFF;
 }
 
-void displaySync_Hard(void) {
+void displayButton4ModeOff(void) {
 	LEDB_OFF;
 }
 
-void displaySync_Soft(void) {
+void displayButton4ModeOn(void) {
 	LEDB_ON;
 }
 

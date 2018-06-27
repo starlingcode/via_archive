@@ -12,7 +12,7 @@
  */
 
 // fir filter data structure
-arm_fir_instance_q31 fir;
+extern arm_fir_instance_q31 fir;
 
 // declare filter coefficients
 q31_t firCoefficients[NUM_TAPS] = FIR24TAPS5_12;
@@ -30,15 +30,15 @@ q31_t biquadCoefficients[NUM_STAGES * 5] = BIQUAD20K_8STAGE;
 q31_t biquadState[NUM_STAGES*4];
 
 
-//void initializeFilter() {
-//	// initialize the FIR filter
-//	arm_fir_init_q31(&fir, NUM_TAPS, &firCoefficients[0], &firState[0], BUFFER_SIZE);
-//}
-
 void initializeFilter() {
-	// initialize the IIR filter (cascaded biquad filter)
-	arm_biquad_cascade_df1_init_q31(&biquad, NUM_STAGES, &biquadCoefficients[0], &biquadState[0], 0);
+	// initialize the FIR filter
+	arm_fir_init_q31(&fir, NUM_TAPS, &firCoefficients[0], &firState[0], BUFFER_SIZE);
 }
+
+//void initializeFilter() {
+//	// initialize the IIR filter (cascaded biquad filter)
+//	arm_biquad_cascade_df1_init_q31(&biquad, NUM_STAGES, &biquadCoefficients[0], &biquadState[0], 0);
+//}
 
 /*
  *

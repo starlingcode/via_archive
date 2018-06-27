@@ -5,6 +5,8 @@
 #include "dsp.h"
 #include "tables.h"
 
+arm_fir_instance_q31 fir;
+
 void fillBuffer(void) {
 
 	q31_t preFoldBuffer[BUFFER_SIZE];
@@ -18,7 +20,9 @@ void fillBuffer(void) {
 
 	zIndex = __USAT((int)controlRateInput.knob3Value + 2200 - (int)controlRateInput.cv1Value, 12);
 
-	incrementOscillator(preFoldBuffer, inputRead->reverseInput, zIndex, outputWrite->samples);
+	(*foldBuffer)(preFoldBuffer, inputRead->reverseInput, zIndex, outputWrite->samples);
+
+	arm_fir_fast_q31(&fir, outputWrite->samples, outputWrite->samples, BUFFER_SIZE);
 
 	// profiling pin a logic out low
 	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;

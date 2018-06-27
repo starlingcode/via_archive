@@ -66,6 +66,7 @@
 #include "user_interface.h"
 #include "main_state_machine.h"
 #include "dsp.h"
+#include "led_display.h"
 
 
 
@@ -161,10 +162,12 @@ int main(void)
 	// mode initialization
 	// TODO should be handled in uiInitialize. hint, use mode change handling functions to init
 
-	displaySHMode = displaySH_Off;
-	displaySyncMode = displaySync_Hard;
-	displayXCVMode = displayXCV_FM;
-	displayMorphMode = displayMorph_Morph;
+	displayButton1Mode = displayButton1ModeOff;
+	displayButton4Mode = displayButton4ModeOff;
+	displayButton3Mode = displayButton3ModeOff;
+	displayButton6Mode = displayButton6ModeOff;
+
+	foldBuffer = foldBufferSine;
 
 	// set the priority and enable an interrupt line to be used by the retrigger input
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);

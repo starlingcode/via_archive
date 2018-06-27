@@ -15,22 +15,22 @@ uint32_t eepromStatus;
 #define UI_TIMER_READ __HAL_TIM_GET_COUNTER(&htim7)
 
 // how modes are arranged by size and location in modeStateBuffer (formatted for EEPROM storage).
-#define SH_MASK 		0b00000000000000000000000000000000
+#define BUTTON1_MASK 		0b00000000000000000000000000000000
 
-#define SYNC_MASK 		0b00000000000000000000000011110000
-#define SYNC_SHIFT		4
+#define BUTTON2_MASK 		0b00000000000000000000000000111000
+#define BUTTON2_SHIFT		3
 
-#define XCV_MASK 		0b00000000000000000000111100000000
-#define XCV_SHIFT 		8
+#define BUTTON3_MASK 		0b00000000000000000000000111000000
+#define BUTTON3_SHIFT 		6
 
-#define MORPH_MASK 		0b00000000000000001111000000000000
-#define MORPH_SHIFT 	12
+#define BUTTON4_MASK 		0b00000000000000000000111000000000
+#define BUTTON4_SHIFT 		9
 
-#define TABLE_MASK	 	0b00000000000011110000000000000000
-#define TABLE_SHIFT	 	16
+#define BUTTON5_MASK	 	0b00000000000000000111000000000000
+#define BUTTON5_SHIFT	 	12
 
-#define AUX_LOGIC_MASK	0b00000000111100000000000000000000
-#define AUX_LOGIC_SHIFT	20
+#define BUTTON6_MASK		0b00000000000000111000000000000000
+#define BUTTON6_SHIFT		15
 
 
 
@@ -50,21 +50,6 @@ uint16_t EEPROMTemp;
 // used by state machine to signal preset to be stored or recalled.
 int presetNumber;
 
-
-typedef struct {
-	int r;
-	int b;
-	int g;
-} rgb;
-
-// shortcuts for commonly used colors as macro defines of rgb struct values
-#define red {4095, 0, 0};
-#define green {0, 4095, 0};
-#define blue {0, 0, 4095};
-#define orange {4095, 4095, 0};
-#define magenta {4095, 0, 4095};
-#define cyan {0, 4095, 4095};
-
 uint32_t morphCal;
 uint32_t t1Cal;
 uint32_t t2Cal;
@@ -80,9 +65,9 @@ void uiSetLEDs(int);
 void uiClearRGB();
 void uiSetRGB(rgb);
 
-void handleSHModeChange(int);
+void handleButton1ModeChange(int);
 void handleSHBModeChange(int);
-void handleXModeChange(int);
+void handleButton4ModeChange(int);
 void handleSyncModeChange(int);
 void handleMorphModeChange(int);
 
@@ -118,18 +103,24 @@ void ui_factoryReset(int sig);
 
 // Mode enums and mode variables
 
-enum shModes {none, decimate};
-enum syncModes {hard, pendulum};
-enum xModes {FM, PM};
-enum morphModes {morphCV, pwmCV};
+enum button1Modes {none, decimate};
+//enum button2Modes {};
+enum button3Modes {sineFolder, linearFolder};
+enum button4Modes {hard, pendulum};
+//enum button5Modes {};
+enum button6Modes {algo1, pwmCV};
 
 
-enum shModes shMode;
-enum syncModes syncMode;
-enum xModes xMode;
-enum morphModes morphMode;
+enum button1Modes button1Mode;
+//enum button2Modes button2Mode;
+enum button3Modes button3Mode;
+enum button4Modes button4Mode;
+//enum button5Modes button5Mode;
+enum button6Modes button6Mode;
 
 int familyIndicator;
+
+
 
 // Flag word bit packing macros (stale from a different fimware)
 

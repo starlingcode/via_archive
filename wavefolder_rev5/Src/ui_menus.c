@@ -48,9 +48,9 @@ void ui_button1Menu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (BUTTON1SENSOR == RELEASED){
 
-				shMode = (shMode + 1) % 2;
-				modeStateBuffer = (modeStateBuffer & ~(SH_MASK)) | shMode;
-				handleSHModeChange(shMode);
+				button1Mode = (button1Mode + 1) % 2;
+				modeStateBuffer = (modeStateBuffer & ~(BUTTON1_MASK)) | button1Mode;
+				handleButton1ModeChange(button1Mode);
 				uiClearLEDs();
 				//uiSetLEDs(shMode);
 				uiTransition(&ui_default);
@@ -87,10 +87,10 @@ void ui_button4Menu(int sig)
 
 		if (BUTTON4SENSOR == RELEASED){
 
-				syncMode = (syncMode + 1) % 2;
+				button4Mode = (button4Mode + 1) % 2;
 				// initialize some essential retrigger variables
-				modeStateBuffer = (modeStateBuffer & ~(SYNC_MASK)) | (syncMode << SYNC_SHIFT);
-				handleSyncModeChange(syncMode);
+				modeStateBuffer = (modeStateBuffer & ~(BUTTON4_MASK)) | (button4Mode << BUTTON4_SHIFT);
+				handleButton4ModeChange(button4Mode);
 				uiClearLEDs();
 				//uiSetLEDs(syncMode);
 				uiTransition(&ui_default);
@@ -130,7 +130,7 @@ void ui_button2Menu(int sig)
 		if (BUTTON2SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
 				familyIndicator = (familyIndicator + 1) % 8;
-				modeStateBuffer = (modeStateBuffer & ~(TABLE_MASK)) | (familyIndicator << TABLE_SHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(BUTTON5_MASK)) | (familyIndicator << BUTTON5_SHIFT);
 				switchFamily();
 				uiClearLEDs();
 				uiSetLEDs(familyIndicator);
@@ -168,11 +168,11 @@ void ui_button5Menu(int sig)
 				} else {
 					familyIndicator--;
 				}
-				modeStateBuffer = (modeStateBuffer & ~(TABLE_MASK)) | (familyIndicator << TABLE_SHIFT);
+				modeStateBuffer = (modeStateBuffer & ~(BUTTON5_MASK)) | (familyIndicator << BUTTON5_SHIFT);
 				switchFamily();
 				uiClearLEDs();
 				uiSetLEDs(familyIndicator);
-				uiTransition( &ui_newMode);
+				uiTransition(&ui_newMode);
 			} else {
 				uiTransition(&ui_default);
 			}
@@ -200,9 +200,9 @@ void ui_button3Menu(int sig) {
 	case SENSOR_EVENT_SIG:
 		if(BUTTON3SENSOR == RELEASED){
 			if (UI_TIMER_READ < 3000) {
-				xMode = (xMode + 1) % 2;
-				modeStateBuffer = XCV_MASK | (xMode << XCV_MASK);
-				handleXModeChange(xMode);
+				button3Mode = (button3Mode + 1) % 2;
+				modeStateBuffer = BUTTON3_MASK | (button3Mode << BUTTON3_MASK);
+				handleButton3ModeChange(button3Mode);
 				uiClearLEDs();
 				//uiSetLEDs(xMode);
 				uiTransition(&ui_default);
@@ -238,9 +238,9 @@ void ui_button6Menu(int sig)
 		if (BUTTON6SENSOR == RELEASED){
 
 			if(UI_TIMER_READ < 3000){
-				morphMode = (morphMode + 1) % 2;
-				modeStateBuffer = (modeStateBuffer & ~(MORPH_MASK)) | (syncMode << MORPH_SHIFT);
-				handleMorphModeChange(morphMode);
+				button6Mode = (button6Mode + 1) % 2;
+				modeStateBuffer = (modeStateBuffer & ~(BUTTON6_MASK)) | (button4Mode << BUTTON6_SHIFT);
+				handleButton6ModeChange(button6Mode);
 				uiClearLEDs();
 				//uiSetLEDs(morphMode);
 				uiTransition(&ui_default);
