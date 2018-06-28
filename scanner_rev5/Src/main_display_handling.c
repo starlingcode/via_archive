@@ -17,38 +17,6 @@ extern TIM_HandleTypeDef htim5;
  *
  */
 
-void displayXCV_FM(void) {
-	LEDC_OFF;
-}
-
-void displayXCV_PM(void) {
-	LEDC_ON;
-}
-
-void displayMorph_Morph(void) {
-	LEDD_OFF;
-}
-
-void displayMorph_PMW(void) {
-	LEDD_ON;
-}
-
-void displaySH_On(void) {
-	LEDA_ON;
-}
-
-void displaySH_Off(void) {
-	LEDA_OFF;
-}
-
-void displaySync_Hard(void) {
-	LEDB_OFF;
-}
-
-void displaySync_Soft(void) {
-	LEDB_ON;
-}
-
 
 void updateRGB(controlRateInputs * controlInputs, audioRateInputs * audioInputs) {
 	SET_RED_LED((4095 + controlInputs->knob1Value - controlInputs->cv1Value) >> 1);

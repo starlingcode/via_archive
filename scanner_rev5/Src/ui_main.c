@@ -64,7 +64,7 @@ void ui_default(int sig)
 
 	case ENTRY_SIG:
 		SET_RUNTIME_DISPLAY;
-		uiClearLEDs();
+		uiStaticLEDHandler();
 		uiClearRGB();
 		UI_TIMER_RESET;
 		UI_TIMER_DISABLE;

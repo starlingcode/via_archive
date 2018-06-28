@@ -66,7 +66,7 @@ void prepareCV_PM_Morph(audioRateInputs * audioInputs, controlRateInputs *contro
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
 	// assign phase modulation values
-	arm_shift_q31(audioInputs->xCV, 16, phaseModValues, BUFFER_SIZE);
+	arm_shift_q31(audioInputs->xCV, 13, phaseModValues, BUFFER_SIZE);
 
 	// assign audio rate morph modulation values
 	arm_offset_q31(audioInputs->morphCV, controlInputs->knob3Value - 2048, morphValues, BUFFER_SIZE);
@@ -80,7 +80,7 @@ void prepareCV_FM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlI
 
 	// generate increment array
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 3]), expoTable[4095 - controlInputs->cv1Value] >> 2);
-	arm_offset_q31(audioInputs->xCV, -2048, incrementValues, BUFFER_SIZE);
+	arm_offset_q31(audioInputs->xCV, -1024, incrementValues, BUFFER_SIZE);
 	arm_shift_q31(incrementValues, 19, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 
@@ -98,7 +98,7 @@ void prepareCV_PM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlI
 
 	// generate increment array with virtual ground as source
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 3]), expoTable[4095 - controlInputs->cv1Value] >> 2);
-	arm_offset_q31(virtualGround, -2000, incrementValues, BUFFER_SIZE);
+	arm_offset_q31(virtualGround, -1024, incrementValues, BUFFER_SIZE);
 	arm_shift_q31(incrementValues, 20, incrementValues, BUFFER_SIZE);
 	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
 

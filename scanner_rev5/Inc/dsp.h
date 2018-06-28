@@ -12,7 +12,7 @@
 #define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
 #define WAVETABLE_MAX_VALUE_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
 
-#define BUFFER_SIZE 12
+#define BUFFER_SIZE 64
 
 
 #define NUM_TAPS 24
@@ -127,7 +127,10 @@ void fillBuffer(void);
 
 void prepareCV(audioRateInputs *, controlRateInputs *, q31_t *, q31_t *);
 
-void incrementOscillator(q31_t *, q31_t *, int *, int, q31_t *);
+void (*scanTerrain)(q31_t *, q31_t *, int *, int, q31_t *);
+
+void scanTerrainProduct(q31_t *, q31_t *, int *, int, q31_t *);
+void scanTerrainSum(q31_t *, q31_t *, int *, int, q31_t *);
 
 void (*logicAndFilter)(uint32_t *, audioRateOutputs *);
 

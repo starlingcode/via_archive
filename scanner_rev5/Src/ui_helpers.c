@@ -24,7 +24,21 @@ void handleButton1ModeChange(int mode) {
 
 }
 
-void handleButton4ModeChange(int mode) {
+void handleButton3ModeChange(int mode) {
+
+	//TODO write a static led display callback for when entering default
+
+	switch (mode) {
+	case product:
+		scanTerrain = scanTerrainProduct;
+		uiSetLEDC = uiSetLEDCOff;
+		break;
+	case sum:
+		scanTerrain = scanTerrainSum;
+		uiSetLEDC = uiSetLEDCOn;
+		break;
+
+	}
 
 }
 
@@ -114,6 +128,39 @@ void uiClearLEDs(){
 	LEDA_OFF;
 	LEDB_OFF;
 	LEDC_OFF;
+	LEDD_OFF;
+}
+
+void uiStaticLEDHandler() {
+	(*uiSetLEDA)();
+	(*uiSetLEDB)();
+	(*uiSetLEDC)();
+	(*uiSetLEDD)();
+}
+
+void uiSetLEDAOn() {
+	LEDA_ON;
+}
+void uiSetLEDBOn() {
+	LEDB_ON;
+}
+void uiSetLEDCOn() {
+	LEDC_ON;
+}
+void uiSetLEDDOn() {
+	LEDD_ON;
+}
+
+void uiSetLEDAOff() {
+	LEDA_OFF;
+}
+void uiSetLEDBOff() {
+	LEDB_OFF;
+}
+void uiSetLEDCOff() {
+	LEDC_OFF;
+}
+void uiSetLEDDOff() {
 	LEDD_OFF;
 }
 

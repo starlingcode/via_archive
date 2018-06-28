@@ -24,13 +24,13 @@ uint32_t eepromStatus;
 #define BUTTON3_SHIFT 		8
 
 #define BUTTON6_MASK 		0b00000000000000001111000000000000
-#define BUTTON6_SHIFT 	12
+#define BUTTON6_SHIFT 		12
 
 #define BUTTON5_MASK	 	0b00000000000011110000000000000000
-#define TABLE_SHIFT	 	16
+#define TABLE_SHIFT	 		16
 
-#define AUX_MODE_1	0b00000000111100000000000000000000
-#define AUX_LOGIC_SHIFT	20
+#define AUX_MODE_1			0b00000000111100000000000000000000
+#define AUX_LOGIC_SHIFT		20
 
 
 
@@ -80,9 +80,24 @@ void uiSetLEDs(int);
 void uiClearRGB();
 void uiSetRGB(rgb);
 
+void uiStaticLEDHandler();
+void (*uiSetLEDA)();
+void (*uiSetLEDB)();
+void (*uiSetLEDC)();
+void (*uiSetLEDD)();
+
+void uiSetLEDAOn();
+void uiSetLEDAOff();
+void uiSetLEDBOn();
+void uiSetLEDBOff();
+void uiSetLEDCOn();
+void uiSetLEDCOff();
+void uiSetLEDDOn();
+void uiSetLEDDOff();
+
 void handleButton1ModeChange(int);
 void handleSHBModeChange(int);
-void handleButton4ModeChange(int);
+void handleButton3ModeChange(int);
 void handleSyncModeChange(int);
 void handleMorphModeChange(int);
 
@@ -120,8 +135,8 @@ void ui_factoryReset(int sig);
 
 enum button1Modes {none, decimate};
 enum button4Modes {hard, pendulum};
-enum button3Modes {FM, PM};
-enum button6Modes {morphCV, pwmCV};
+enum button3Modes {product, sum};
+enum button6Modes {fold, wrap};
 
 
 enum button1Modes button1Mode;

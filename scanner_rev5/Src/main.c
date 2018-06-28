@@ -151,6 +151,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
+	uiSetLEDA = uiSetLEDAOff;
+	uiSetLEDB = uiSetLEDBOff;
+	uiSetLEDC = uiSetLEDCOff;
+	uiSetLEDD = uiSetLEDDOff;
+
 	// initialize our touch sensors
 	tsl_user_Init();
 	uiInitialize();
@@ -158,13 +163,9 @@ int main(void)
 	initializeDoubleBuffer();
 	initializeFilter();
 
-	// mode initialization
-	// TODO should be handled in uiInitialize. hint, use mode change handling functions to init
+	scanTerrain = scanTerrainProduct;
 
-	displaySHMode = displaySH_Off;
-	displaySyncMode = displaySync_Hard;
-	displayXCVMode = displayXCV_FM;
-	displayMorphMode = displayMorph_Morph;
+
 
 	// set the priority and enable an interrupt line to be used by the retrigger input
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
@@ -181,11 +182,6 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
 	HAL_TIM_Base_Start(&htim5);
 	HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
-
-	LEDA_ON;
-	LEDB_ON;
-	LEDC_ON;
-	LEDD_ON;
 
 	SH_A_TRACK;
 	SH_B_TRACK;

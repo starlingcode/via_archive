@@ -42,7 +42,6 @@ void ui_button1Menu(int sig)
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
-		//uiSetLEDs(shMode);
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -51,8 +50,6 @@ void ui_button1Menu(int sig)
 				button1Mode = (button1Mode + 1) % 2;
 				modeStateBuffer = (modeStateBuffer & ~(BUTTON1_MASK)) | button1Mode;
 				handleButton1ModeChange(button1Mode);
-				uiClearLEDs();
-				//uiSetLEDs(shMode);
 				uiTransition(&ui_default);
 
 		}
@@ -79,7 +76,6 @@ void ui_button4Menu(int sig)
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
-		//uiSetLEDs(syncMode);
 
 		break;
 
@@ -88,11 +84,8 @@ void ui_button4Menu(int sig)
 		if (BUTTON4SENSOR == RELEASED){
 
 				button4Mode = (button4Mode + 1) % 2;
-				// initialize some essential retrigger variables
 				modeStateBuffer = (modeStateBuffer & ~(BUTTON4_MASK)) | (button4Mode << BUTTON4_SHIFT);
 				handleSyncModeChange(button4Mode);
-				uiClearLEDs();
-				//uiSetLEDs(syncMode);
 				uiTransition(&ui_default);
 
 		}
@@ -191,7 +184,6 @@ void ui_button3Menu(int sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
-		//uiSetLEDs(xMode);
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
@@ -202,9 +194,8 @@ void ui_button3Menu(int sig) {
 			if (UI_TIMER_READ < 3000) {
 				button3Mode = (button3Mode + 1) % 2;
 				modeStateBuffer = BUTTON3_MASK | (button3Mode << BUTTON3_MASK);
-				handleButton4ModeChange(button3Mode);
+				handleButton3ModeChange(button3Mode);
 				uiClearLEDs();
-				//uiSetLEDs(xMode);
 				uiTransition(&ui_default);
 			} else {
 				uiTransition(&ui_default);
