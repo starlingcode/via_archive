@@ -26,32 +26,32 @@ void implementUI(void) {
 
 	static uint32_t debounce;
 
-//check if the trigger button has been pressed
-		if (EXPANDER_BUTTON_PRESSED){
-
-			//if we havent raised the trigger button flag, do so and set a pending interrupt
-			if (!(TRIGGER_BUTTON)) {
-				debounce++;
-
-				if (debounce == 10) {
-					SET_TRIGGER_BUTTON;
-					uiDispatch(EXPAND_SW_ON_SIG);
-					//trigger an interrupt
-					HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
-					debounce = 0;
-				}
-
-			}
-		}
-		//if the trigger button has been released but the trigger button flag is still high, lower it and set an IRQ
-		else if (TRIGGER_BUTTON){
-			debounce++;
-			if (debounce == 10) {
-				CLEAR_TRIGGER_BUTTON;
-				uiDispatch(EXPAND_SW_OFF_SIG);
-				debounce = 0;
-			}
-		}
+////check if the trigger button has been pressed
+//		if (EXPANDER_BUTTON_PRESSED){
+//
+//			//if we havent raised the trigger button flag, do so and set a pending interrupt
+//			if (!(TRIGGER_BUTTON)) {
+//				debounce++;
+//
+//				if (debounce == 10) {
+//					SET_TRIGGER_BUTTON;
+//					uiDispatch(EXPAND_SW_ON_SIG);
+//					//trigger an interrupt
+//					HAL_NVIC_SetPendingIRQ(EXTI15_10_IRQn);
+//					debounce = 0;
+//				}
+//
+//			}
+//		}
+//		//if the trigger button has been released but the trigger button flag is still high, lower it and set an IRQ
+//		else if (TRIGGER_BUTTON){
+//			debounce++;
+//			if (debounce == 10) {
+//				CLEAR_TRIGGER_BUTTON;
+//				uiDispatch(EXPAND_SW_OFF_SIG);
+//				debounce = 0;
+//			}
+//		}
 
 		// run the state machine from the STM Touch Library
 		tsl_status = tsl_user_Exec();

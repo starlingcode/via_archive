@@ -331,18 +331,11 @@ void TIM6_DAC1_IRQHandler(void)
 	// write the sample to the dac
 	WRITE_DAC1(__USAT(4095 - (outputRead->samples[readIndex]), 12));
 	WRITE_DAC2(__USAT(outputRead->samples[readIndex], 12));
-//
-//	WRITE_DAC1(4095);
-//	WRITE_DAC2(0);
 
-	// execute the GPIO handlers
-	(*outputRead->shAHandler[readIndex])();
-	(*outputRead->shBHandler[readIndex])();
-//	(*outputRead->logicAHandler[readIndex])();
-//	(*outputRead->logicBHandler[readIndex])();
-//	(*outputRead->auxLogicHandler[readIndex])();
+	// handle the logic outputs
+	setLogicOutputs(outputRead->logicAHandler[readIndex], outputRead->logicBHandler[readIndex], outputRead->auxLogicHandler[readIndex], outputRead->shAHandler[readIndex], outputRead->shBHandler[readIndex]);
 
-//	// store the x and morph CVs at sample rate
+	// store the x and morph CVs at sample rate
 	inputWrite->xCV[readIndex] = 4095 - __USAT(cv2, 12);
 	inputWrite->morphCV[readIndex] = 4095 - __USAT(cv3, 12);
 

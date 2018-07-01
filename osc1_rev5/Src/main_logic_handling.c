@@ -30,15 +30,15 @@ q31_t biquadCoefficients[NUM_STAGES * 5] = BIQUAD20K_8STAGE;
 q31_t biquadState[NUM_STAGES*4];
 
 
-//void initializeFilter() {
-//	// initialize the FIR filter
-//	arm_fir_init_q31(&fir, NUM_TAPS, &firCoefficients[0], &firState[0], BUFFER_SIZE);
-//}
-
 void initializeFilter() {
-	// initialize the IIR filter (cascaded biquad filter)
-	arm_biquad_cascade_df1_init_q31(&biquad, NUM_STAGES, &biquadCoefficients[0], &biquadState[0], 0);
+	// initialize the FIR filter
+	arm_fir_init_q31(&fir, NUM_TAPS, &firCoefficients[0], &firState[0], BUFFER_SIZE);
 }
+
+//void initializeFilter() {
+//	// initialize the IIR filter (cascaded biquad filter)
+//	arm_biquad_cascade_df1_init_q31(&biquad, NUM_STAGES, &biquadCoefficients[0], &biquadState[0], 0);
+//}
 
 /*
  *
@@ -72,31 +72,31 @@ static inline void calculateLogicSHOn(uint32_t * phaseEvents, audioRateOutputs *
 		switch (phaseEvents[i]) {
 			//no logic events
 			case 0:
-				output->shAHandler[i] = &logicNoOp;
-				output->shBHandler[i] = &logicNoOp;
-				output->logicAHandler[i] = &logicNoOp;
-				output->logicBHandler[i] = &logicNoOp;
-				output->auxLogicHandler[i]= &logicNoOp;
+				output->shAHandler[i] = SH_A_SAMPLE_MASK;
+				output->shBHandler[i] = SH_B_SAMPLE_MASK;
+				output->logicAHandler[i] = GPIO_NOP;
+				output->logicBHandler[i] = GPIO_NOP;
+				output->auxLogicHandler[i] = GPIO_NOP;
 				break;
-			//dummy at a handling
+			// at a handling
 			case WAVETABLE_LENGTH + 1:
 			case WAVETABLE_LENGTH - 1:
 			case NEGATIVE_WAVETABLE_LENGTH + 1:
 			case NEGATIVE_WAVETABLE_LENGTH - 1:
-				output->shAHandler[i] = &logicNoOp;
-				output->shBHandler[i] = &resampleB;
-				output->logicAHandler[i] = &logicAHigh;
-				output->logicBHandler[i] = &logicBLow;
-				output->auxLogicHandler[i]= &logicNoOp;
+				output->shAHandler[i] = SH_A_SAMPLE_MASK;
+				output->shBHandler[i] = SH_B_TRACK_MASK;
+				output->logicAHandler[i] = GPIO_NOP;
+				output->logicBHandler[i] = BLOGIC_HIGH_MASK;
+				output->auxLogicHandler[i] = GPIO_NOP;
 				break;
-			//dummy at b handling
+			// at b handling
 			case 1:
 			case -1:
-				output->shAHandler[i] = &resampleA;
-				output->shBHandler[i] = &logicNoOp;
-				output->logicAHandler[i] = &logicALow;
-				output->logicBHandler[i] = &logicBHigh;
-				output->auxLogicHandler[i]= &logicNoOp;
+				output->shAHandler[i] = SH_A_TRACK_MASK;
+				output->shBHandler[i] = SH_B_SAMPLE_MASK;
+				output->logicAHandler[i] = GPIO_NOP;
+				output->logicBHandler[i] = BLOGIC_LOW_MASK;
+				output->auxLogicHandler[i] = GPIO_NOP;
 				break;
 			default:
 				break;
@@ -113,31 +113,31 @@ static inline void calculateLogicSHOff(uint32_t * phase, audioRateOutputs * outp
 		switch (phase[i]) {
 			//no logic events
 			case 0:
-				output->shAHandler[i] = &logicNoOp;
-				output->shBHandler[i] = &logicNoOp;
-				output->logicAHandler[i] = &logicNoOp;
-				output->logicBHandler[i] = &logicNoOp;
-				output->auxLogicHandler[i]= &logicNoOp;
+				output->shAHandler[i] = SH_A_TRACK_MASK;
+				output->shBHandler[i] = SH_A_TRACK_MASK;
+				output->logicAHandler[i] = GPIO_NOP;
+				output->logicBHandler[i] = GPIO_NOP;
+				output->auxLogicHandler[i] = GPIO_NOP;
 				break;
 			//dummy at a handling
 			case WAVETABLE_LENGTH + 1:
 			case WAVETABLE_LENGTH - 1:
 			case NEGATIVE_WAVETABLE_LENGTH + 1:
 			case NEGATIVE_WAVETABLE_LENGTH - 1:
-				output->shAHandler[i] = &shATrack;
-				output->shBHandler[i] = &logicNoOp;
-				output->logicAHandler[i] = &logicAHigh;
-				output->logicBHandler[i] = &logicBLow;
-				output->auxLogicHandler[i]= &logicNoOp;
+				output->shAHandler[i] = SH_A_TRACK_MASK;
+				output->shBHandler[i] = SH_A_TRACK_MASK;
+				output->logicAHandler[i] = GPIO_NOP;
+				output->logicBHandler[i] = GPIO_NOP;
+				output->auxLogicHandler[i] = GPIO_NOP;
 				break;
 			//dummy at b handling
 			case -1:
 			case 1:
-				output->shAHandler[i] = &logicNoOp;
-				output->shBHandler[i] = &shBTrack;
-				output->logicAHandler[i] = &logicALow;
-				output->logicBHandler[i] = &logicBHigh;
-				output->auxLogicHandler[i]= &logicNoOp;
+				output->shAHandler[i] = SH_A_TRACK_MASK;
+				output->shBHandler[i] = SH_A_TRACK_MASK;
+				output->logicAHandler[i] = GPIO_NOP;
+				output->logicBHandler[i] = GPIO_NOP;
+				output->auxLogicHandler[i]= GPIO_NOP;
 				break;
 			default:
 				break;
@@ -147,6 +147,7 @@ static inline void calculateLogicSHOff(uint32_t * phase, audioRateOutputs * outp
 
 }
 
+
 void logicAndFilterSHOn(uint32_t * phaseEvents, audioRateOutputs * output) {
 	calculateLogicSHOn(phaseEvents, output);
 }
@@ -155,48 +156,7 @@ void logicAndFilterSHOff(uint32_t * phaseEvents, audioRateOutputs * output) {
 //	arm_shift_q31(output->samples, 4, output->samples, BUFFER_SIZE);
 //	arm_biquad_cascade_df1_fast_q31(&biquad, output->samples, output->samples, BUFFER_SIZE);
 //	arm_shift_q31(output->samples, -20, output->samples, BUFFER_SIZE);
-	//arm_fir_fast_q31(&fir, output->samples, output->samples, BUFFER_SIZE);
+//  arm_fir_fast_q31(&fir, output->samples, output->samples, BUFFER_SIZE);
 
 }
-
-// wrap register address functions to be loaded into the logic struct (which is loaded into a playback buffer)
-void logicNoOp(void) {
-
-}
-void logicAHigh(void) {
-	ALOGIC_HIGH;
-}
-void logicALow(void) {
-	ALOGIC_LOW;
-}
-void logicBHigh(void) {
-	BLOGIC_HIGH;
-}
-void logicBLow(void) {
-	BLOGIC_LOW;
-}
-void shASample(void) {
-	SH_A_SAMPLE;
-}
-void shATrack(void) {
-	SH_A_TRACK;
-}
-void shBSample(void) {
-	SH_B_SAMPLE;
-}
-void shBTrack(void) {
-	SH_B_TRACK;
-}
-
-void resampleA(void){
-	SH_A_TRACK;
-	__HAL_TIM_SET_COUNTER(&htim17, 0);
-	__HAL_TIM_ENABLE(&htim17);
-}
-void resampleB(void){
-	SH_B_TRACK;
-	__HAL_TIM_SET_COUNTER(&htim16, 0);
-	__HAL_TIM_ENABLE(&htim16);
-}
-
 

@@ -22,24 +22,11 @@ uint32_t fastADC2Readings[1];
 #define cv2 (fastADC1Readings[0] >> 3)
 #define cv3 (fastADC2Readings[0] >> 3)
 
-
 /**
  * Hardware IO Macros
  */
 
-// Logic outs
-
-#define BLOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_15;
-#define BLOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
-
-#define REV2_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_11;
-#define REV2_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_11;
-
-#define ALOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
-#define ALOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
-
-#define EXPAND_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
-#define EXPAND_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
+// Static GPIO handling functions
 
 // LEDs
 
@@ -59,6 +46,21 @@ uint32_t fastADC2Readings[1];
 #define LEDD_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_2;
 #define LEDD_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_2;
 
+// Logic outs
+
+#define ALOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+#define ALOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
+
+#define BLOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_15;
+#define BLOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
+
+#define REV2_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_11;
+#define REV2_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_11;
+
+#define EXPAND_LOGIC_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
+#define EXPAND_LOGIC_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
+
+
 // Sample and holds
 
 #define SH_A_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_8;
@@ -66,6 +68,41 @@ uint32_t fastADC2Readings[1];
 
 #define SH_B_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_9;
 #define SH_B_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_9;
+
+// Variable GPIO handling functions
+
+#define SET_A_B_LOGIC(X) GPIOC->BSRR = X;
+
+#define ALOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_13 << 16)
+#define ALOGIC_LOW_MASK (uint32_t)GPIO_PIN_13
+#define BLOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_15 << 16)
+#define BLOGIC_LOW_MASK (uint32_t)GPIO_PIN_15
+
+#define SET_EXPAND_LOGIC(X) GPIOA->BSRR = X;
+
+#define EXPAND_LOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_12 << 16)
+#define EXPAND_LOGIC_LOW_MASK (uint32_t)GPIO_PIN_12
+
+#define SET_SH(X) GPIOB->BSRR = X;
+
+#define SH_B_SAMPLE_MASK ((uint32_t)GPIO_PIN_9 << 16)
+#define SH_B_TRACK_MASK (uint32_t)GPIO_PIN_9
+#define SH_A_SAMPLE_MASK ((uint32_t)GPIO_PIN_8 << 16)
+#define SH_A_TRACK_MASK (uint32_t)GPIO_PIN_8
+
+#define GPIO_NOP 0
+
+static inline void setLogicOutputs(uint32_t logicA, uint32_t logicB, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
+
+	//combine the mask variables for a shared GPIO group with a bitwise or
+	SET_A_B_LOGIC(logicA | logicB);
+
+	SET_EXPAND_LOGIC(logicExpander);
+
+	SET_SH(shA | shB);
+
+}
+
 
 // DAC register address
 

@@ -25,8 +25,8 @@ void fillBuffer(void) {
 	// profiling pin a logic out low
 	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
 
-	// profiling pin b logic out high
-	GPIOC->BRR = (uint32_t)GPIO_PIN_15;
+//	// profiling pin b logic out high
+//	GPIOC->BRR = (uint32_t)GPIO_PIN_15;
 
 
 	(*logicAndFilter)(phaseEvents, outputWrite);
@@ -38,26 +38,12 @@ void fillBuffer(void) {
 	main_State = main_handleUI;
 
 	// profiling pin b logic out low
-	GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
+//	GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
 
 }
 
 
 void initializeDoubleBuffer() {
-
-	// the logic handlers need to be initialized to a valid address
-	for (int i = 0; i < BUFFER_SIZE; i++) {
-		shABuffer1[i] = &logicNoOp;
-		shBBuffer1[i] = &logicNoOp;
-		logicABuffer1[i] = &logicNoOp;
-		logicBBuffer1[i] = &logicNoOp;
-		auxLogicBuffer1[i]= &logicNoOp;
-		shABuffer2[i] = &logicNoOp;
-		shBBuffer2[i] = &logicNoOp;
-		logicABuffer2[i] = &logicNoOp;
-		logicBBuffer2[i] = &logicNoOp;
-		auxLogicBuffer2[i]= &logicNoOp;
-	}
 
 
 	// initialize double buffers used for DSP

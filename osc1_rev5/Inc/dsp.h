@@ -12,7 +12,7 @@
 #define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
 #define WAVETABLE_MAX_VALUE_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
 
-#define BUFFER_SIZE 12
+#define BUFFER_SIZE 8
 
 
 #define NUM_TAPS 24
@@ -41,7 +41,8 @@ typedef struct {
 // function pointers to handle the logic outs
 // this type can be stored in a buffer cleanly
 
-typedef void(*logicHandler)(void);
+//typedef void (*logicHandler)(void);
+typedef uint32_t logicHandler;
 
 // store buffer pointers for the audio rate inputs and outputs
 
@@ -141,10 +142,6 @@ void (*logicAndFilter)(uint32_t *, audioRateOutputs *);
 void logicAndFilterSHOn(uint32_t *, audioRateOutputs *);
 void logicAndFilterSHOff(uint32_t *, audioRateOutputs *);
 
-// logic output helper functions
-
-void logicInit(void);
-void logicNoOp(void);
 
 // initialization functions
 
