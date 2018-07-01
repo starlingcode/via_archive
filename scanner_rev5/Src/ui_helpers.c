@@ -21,6 +21,18 @@ TIM_HandleTypeDef htim5;
 
 void handleButton1ModeChange(int mode) {
 
+	//TODO write a static led display callback for when entering default
+
+	switch (mode) {
+	case 0:
+		uiSetLEDA = uiSetLEDAOff;
+		break;
+	case 1:
+		uiSetLEDA = uiSetLEDAOn;
+		break;
+	default:
+		break;
+	}
 
 }
 
@@ -29,25 +41,40 @@ void handleButton3ModeChange(int mode) {
 	//TODO write a static led display callback for when entering default
 
 	switch (mode) {
-	case product:
-		scanTerrain = scanTerrainProduct;
+	case 0:
 		uiSetLEDC = uiSetLEDCOff;
 		break;
-	case sum:
-		scanTerrain = scanTerrainSum;
+	case 1:
 		uiSetLEDC = uiSetLEDCOn;
 		break;
+	}
 
+
+}
+
+void handleButton4ModeChange(int mode) {
+
+	switch (mode) {
+	case 0:
+		uiSetLEDB = uiSetLEDBOff;
+		break;
+	case 1:
+		uiSetLEDB = uiSetLEDBOn;
+		break;
 	}
 
 }
 
-void handleSyncModeChange(int mode) {
+void handleButton6ModeChange(int mode) {
 
-}
-
-void handleMorphModeChange(int mode) {
-
+	switch (mode) {
+	case 0:
+		uiSetLEDD = uiSetLEDDOff;
+		break;
+	case 1:
+		uiSetLEDD = uiSetLEDDOn;
+		break;
+	}
 
 }
 

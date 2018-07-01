@@ -63,7 +63,7 @@ uint32_t familyIndicator;
 
 // the enum variables to be used are declared here
 
-enum syncTypes syncMode; // {none, true, hardSync}
+enum syncTypes button4Mode; // {none, true, hardSync}
 enum controlSchemes controlScheme; // {gateLength, knobCV}
 enum scaleTypes scaleType; // {rhythm, arp, voltOct};
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}

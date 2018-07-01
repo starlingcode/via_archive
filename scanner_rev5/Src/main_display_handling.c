@@ -22,5 +22,5 @@ void updateRGB(controlRateInputs * controlInputs, audioRateInputs * audioInputs)
 	SET_RED_LED((4095 + controlInputs->knob1Value - controlInputs->cv1Value) >> 1);
 	SET_GREEN_LED(controlInputs->knob3Value);
 	SET_BLUE_LED(4095 - ((4095 + controlInputs->knob1Value - controlInputs->cv1Value) >> 1));
-
 }
+

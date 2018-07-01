@@ -14,7 +14,6 @@
 
 #define BUFFER_SIZE 64
 
-
 #define NUM_TAPS 24
 
 #define FIR8TAPS1_24 {37653504, 103041591, 262708334, 424417055, 491842679, 424417055, 262708334, 103041591 , 37653504}
@@ -121,16 +120,35 @@ controlRateInputs controlRateInput;
 
 int handleCoversionSlow(controlRateInputs *, uint32_t);
 
+// Mode enums and mode variables
+
+enum button1Modes {sum, subtract, product, PM};
+enum button4Modes {hard, pendulum};
+enum button3Modes {foldX, wrapX};
+enum button6Modes {foldY, wrapY};
+
+
+enum button1Modes button1Mode;
+enum button4Modes button4Mode;
+enum button3Modes button3Mode;
+enum button6Modes button6Mode;
+
+int familyIndicator;
+
+// function calling subfunctions to fill the sample buffer
+
 void fillBuffer(void);
 
 // pointer to the function that calculates samples and phase events
 
-void prepareCV(audioRateInputs *, controlRateInputs *, q31_t *, q31_t *);
-
-void (*scanTerrain)(q31_t *, q31_t *, int *, int, q31_t *);
+void foldBuffer(q31_t *, q31_t, q31_t *);
+void wrapBuffer(q31_t *, q31_t, q31_t *);
 
 void scanTerrainProduct(q31_t *, q31_t *, int *, int, q31_t *);
 void scanTerrainSum(q31_t *, q31_t *, int *, int, q31_t *);
+void scanTerrainSubtract(q31_t * xIndexArray, q31_t * yIndexArray, int * reverseArray, int zIndex, q31_t * output);
+void scanTerrainPM(q31_t * xIndexArray, q31_t * yIndexArray, int * reverseArray, int zIndex, q31_t * output);
+
 
 void (*logicAndFilter)(uint32_t *, audioRateOutputs *);
 

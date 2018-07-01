@@ -18,14 +18,48 @@ void fillBuffer(void) {
 	// profiling pin a logic out high
 	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 
-	prepareCV(inputRead, &controlRateInput, xIndexBuffer, yIndexBuffer);
+	switch(button3Mode) {
+		case foldX:
+			foldBuffer(inputRead->xCV, controlRateInput.knob2Value, xIndexBuffer);
+			break;
 
-	zIndex = __USAT((int)controlRateInput.knob3Value + 2200 - (int)controlRateInput.cv1Value, 12);
+		case wrapX:
+			wrapBuffer(inputRead->xCV, controlRateInput.knob2Value, xIndexBuffer);
+			break;
+	}
 
-	(*scanTerrain)(xIndexBuffer, yIndexBuffer, inputRead->reverseInput, zIndex, outputWrite->samples);
+	switch(button6Mode) {
+		case foldY:
+			foldBuffer(inputRead->yCV, controlRateInput.knob3Value, yIndexBuffer);
+			break;
 
-	//arm_fir_fast_q31(&fir, outputWrite->samples, outputWrite->samples, BUFFER_SIZE);
+		case wrapY:
+			wrapBuffer(inputRead->yCV, controlRateInput.knob3Value, yIndexBuffer);
+			break;
+	}
 
+	zIndex = __USAT((int)controlRateInput.knob1Value + 2200 - (int)controlRateInput.cv1Value, 12);
+
+	switch(button1Mode)  {
+
+		case sum:
+			scanTerrainSum(xIndexBuffer, yIndexBuffer, inputRead->reverseInput, zIndex, outputWrite->samples);
+			break;
+
+		case subtract:
+			scanTerrainSubtract(xIndexBuffer, yIndexBuffer, inputRead->reverseInput, zIndex, outputWrite->samples);
+			break;
+
+		case product:
+			scanTerrainProduct(xIndexBuffer, yIndexBuffer, inputRead->reverseInput, zIndex, outputWrite->samples);
+			break;
+
+		case PM:
+			scanTerrainPM(xIndexBuffer, yIndexBuffer, inputRead->reverseInput, zIndex, outputWrite->samples);
+			break;
+
+
+	}
 
 	// profiling pin a logic out low
 	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;

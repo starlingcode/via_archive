@@ -230,16 +230,16 @@ void ui_syncMenu(int sig)
 		uiTimerSetOverflow(65535);
 		uiTimerReset();
 		uiTimerEnable();
-		uiSetLEDs(syncMode);
+		uiSetLEDs(button4Mode);
 		break;
 
 	case SENSOR_EVENT_SIG:
 
 		if (SYNCSENSOR == RELEASED){
 			if(uiTimerRead() < 3000){
-				syncMode = (syncMode + 1) % 3;
-				modeStateBuffer = (modeStateBuffer & ~(SYNCMASK)) | (syncMode << SYNCSHIFT);
-				uiSetLEDs(syncMode);
+				button4Mode = (button4Mode + 1) % 3;
+				modeStateBuffer = (modeStateBuffer & ~(SYNCMASK)) | (button4Mode << SYNCSHIFT);
+				uiSetLEDs(button4Mode);
 				uiTransition(&ui_newMode);
 			} else {
 				//no mode change
@@ -584,7 +584,7 @@ void ui_scaleMenu(int sig) {
 
 			if(SCALESENSOR == RELEASED){
 				if (uiTimerRead() < 3000) {
-					currentScale = (currentScale + 1) % 8;
+					currentScale = (currentScale + 1) % 4;
 					modeStateBuffer = (modeStateBuffer & ~(SCALEMASK)) | (currentScale << SCALESHIFT);
 					switchFamily();
 					uiSetLEDs(currentScale);
@@ -624,7 +624,7 @@ void ui_scaleTypeUp(int sig) {
 	case SENSOR_EVENT_SIG:
 		if(UPSENSOR == RELEASED){
 			if (uiTimerRead() < 3000) {
-				scaleType = (scaleType + 1) % 3;
+				scaleType = (scaleType + 1) % 4;
 				currentScale = 0;
 				modeStateBuffer = (modeStateBuffer & ~(SCALETYPEMASK)) | (scaleType << SCALETYPESHIFT);
 				modeStateBuffer = (modeStateBuffer & ~(SCALEMASK)) | (scaleType << SCALESHIFT);
@@ -863,7 +863,7 @@ void uiLoadFromEEPROM(int position) {
 	controlScheme = modeStateBuffer & (XMASK);
 	currentScale = (modeStateBuffer & (SCALEMASK)) >> SCALESHIFT;
 	scaleType = (modeStateBuffer & (SCALETYPEMASK)) >> SCALETYPESHIFT;
-	syncMode = (modeStateBuffer & (SYNCMASK)) >> SYNCSHIFT;
+	button4Mode = (modeStateBuffer & (SYNCMASK)) >> SYNCSHIFT;
 	sampleHoldMode = (modeStateBuffer & (SHMASK)) >> SHSHIFT;
 	familyIndicator = (modeStateBuffer & (FAMILYMASK)) >> FAMILYSHIFT;
 	logicOutA = modeStateBuffer & (LOGICAMASK) >> LOGICASHIFT;

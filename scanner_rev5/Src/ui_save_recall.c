@@ -4,6 +4,7 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "eeprom.h"
+#include "dsp.h"
 #include "user_interface.h"
 #include "via_rev5_hardware_io.h"
 

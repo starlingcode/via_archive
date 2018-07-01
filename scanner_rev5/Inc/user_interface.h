@@ -96,10 +96,9 @@ void uiSetLEDDOn();
 void uiSetLEDDOff();
 
 void handleButton1ModeChange(int);
-void handleSHBModeChange(int);
 void handleButton3ModeChange(int);
-void handleSyncModeChange(int);
-void handleMorphModeChange(int);
+void handleButon4ModeChange(int);
+void handleButon6ModeChange(int);
 
 // UI States
 void (*ui_State)(int);
@@ -131,20 +130,6 @@ void ui_switchPreset(int sig);
 // Factory reset
 void ui_factoryReset(int sig);
 
-// Mode enums and mode variables
-
-enum button1Modes {none, decimate};
-enum button4Modes {hard, pendulum};
-enum button3Modes {product, sum};
-enum button6Modes {fold, wrap};
-
-
-enum button1Modes button1Mode;
-enum button4Modes button4Mode;
-enum button3Modes button3Mode;
-enum button6Modes button6Mode;
-
-int familyIndicator;
 
 // Flag word bit packing macros (stale from a different fimware)
 

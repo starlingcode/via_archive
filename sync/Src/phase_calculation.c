@@ -9,7 +9,7 @@
 #include "interrupt_functions.h"
 #include "int64.h"
 
-enum syncTypes syncMode; // {none, true, hardSync, catch}
+enum syncTypes button4Mode; // {none, true, hardSync, catch}
 enum controlSchemes controlScheme; // {root, dutyCycle, FM, phaseMod}
 enum sampleHoldModeTypes sampleHoldMode;
 

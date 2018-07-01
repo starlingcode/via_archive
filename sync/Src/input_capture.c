@@ -82,7 +82,8 @@ void generateFrequency(void) {
 
 	//PROFILING_START("ScaleGen");
 
-			scale = scaleGroup[currentScale];
+			scale = scaleGroup[currentScale + (scaleType*4)
+							   ];
 
 			if (scale.oneVoltOct == 0) {
 				if ((4095 - time1CVAverage) >= 2048) {
@@ -165,7 +166,7 @@ void generateFrequency(void) {
 					}
 				}
 
-				if (syncMode == hardSync) {
+				if (button4Mode == hardSync) {
 
 					position = 0;
 					holdPosition =0;
@@ -183,7 +184,7 @@ void generateFrequency(void) {
 						__HAL_TIM_ENABLE(&htim15);
 					}
 
-				} else if (syncMode == true) {
+				} else if (button4Mode == true) {
 					// if we are behind the phase of the clock, go faster, otherwise, go slower
 					if (position > span) {
 						pllNudge = (spanx2 - position) << 4;

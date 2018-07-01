@@ -163,10 +163,6 @@ int main(void)
 	initializeDoubleBuffer();
 	initializeFilter();
 
-	scanTerrain = scanTerrainProduct;
-
-
-
 	// set the priority and enable an interrupt line to be used by the retrigger input
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);

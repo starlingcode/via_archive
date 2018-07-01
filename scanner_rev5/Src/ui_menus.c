@@ -4,6 +4,7 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "eeprom.h"
+#include "dsp.h"
 #include "user_interface.h"
 #include "via_rev5_hardware_io.h"
 
@@ -47,7 +48,7 @@ void ui_button1Menu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (BUTTON1SENSOR == RELEASED){
 
-				button1Mode = (button1Mode + 1) % 2;
+				button1Mode = (button1Mode + 1) % 4;
 				modeStateBuffer = (modeStateBuffer & ~(BUTTON1_MASK)) | button1Mode;
 				handleButton1ModeChange(button1Mode);
 				uiTransition(&ui_default);
@@ -85,7 +86,7 @@ void ui_button4Menu(int sig)
 
 				button4Mode = (button4Mode + 1) % 2;
 				modeStateBuffer = (modeStateBuffer & ~(BUTTON4_MASK)) | (button4Mode << BUTTON4_SHIFT);
-				handleSyncModeChange(button4Mode);
+				handleButton4ModeChange(button4Mode);
 				uiTransition(&ui_default);
 
 		}
@@ -193,7 +194,7 @@ void ui_button3Menu(int sig) {
 		if(BUTTON3SENSOR == RELEASED){
 			if (UI_TIMER_READ < 3000) {
 				button3Mode = (button3Mode + 1) % 2;
-				modeStateBuffer = BUTTON3_MASK | (button3Mode << BUTTON3_MASK);
+				modeStateBuffer = (modeStateBuffer & ~(BUTTON3_MASK)) | (button3Mode << BUTTON3_MASK);
 				handleButton3ModeChange(button3Mode);
 				uiClearLEDs();
 				uiTransition(&ui_default);
@@ -230,10 +231,9 @@ void ui_button6Menu(int sig)
 
 			if(UI_TIMER_READ < 3000){
 				button6Mode = (button6Mode + 1) % 2;
-				modeStateBuffer = (modeStateBuffer & ~(BUTTON6_MASK)) | (button4Mode << BUTTON6_SHIFT);
-				handleMorphModeChange(button6Mode);
+				modeStateBuffer = (modeStateBuffer & ~(BUTTON6_MASK)) | (button6Mode << BUTTON6_SHIFT);
+				handleButton6ModeChange(button6Mode);
 				uiClearLEDs();
-				//uiSetLEDs(morphMode);
 				uiTransition(&ui_default);
 			} else {
 				uiTransition(&ui_default);

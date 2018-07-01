@@ -6,10 +6,15 @@
 
 
 
-Scale harmSubharm = {
-   .grid = harmSubharmGrid,
+Scale integerRatios = {
+   .grid = integerRatiosGrid,
    .t2Bitshift = 9,
-   .oneVoltOct = 1};
+   .oneVoltOct = 0};
+
+Scale pentamodal5primefullspan = {
+   .grid = pentamodal5primefullspanGrid,
+   .t2Bitshift = 9,
+   .oneVoltOct = 0};
 
 Scale harmSubharmfullspan = {
    .grid = harmSubharmfullspanGrid,
@@ -21,15 +26,15 @@ Scale modal5primefullspan = {
    .t2Bitshift = 9,
    .oneVoltOct = 0};
 
+Scale harmSubharm = {
+   .grid = harmSubharmGrid,
+   .t2Bitshift = 9,
+   .oneVoltOct = 1};
+
 Scale harmFolded4 = {
    .grid = harmFolded4Grid,
    .t2Bitshift = 10,
    .oneVoltOct = 1};
-
-Scale polyResets = {
-   .grid = polyResetsGrid,
-   .t2Bitshift = 8,
-   .oneVoltOct = 0};
 
 Scale pentamodal5prime = {
    .grid = pentamodal5primeGrid,
@@ -51,11 +56,6 @@ Scale seventhTetrads = {
    .t2Bitshift = 8,
    .oneVoltOct = 1};
 
-Scale rhythmDivisionsReset = {
-   .grid = rhythmDivisionsResetGrid,
-   .t2Bitshift = 9,
-   .oneVoltOct = 0};
-
 Scale modesOfLimitedTransposition = {
    .grid = modesOfLimitedTranspositionGrid,
    .t2Bitshift = 8,
@@ -66,41 +66,62 @@ Scale majMin9thPentStarling = {
    .t2Bitshift = 8,
    .oneVoltOct = 1};
 
-Scale Harm73_75 = {
-   .grid = Harm73_75Grid,
+Scale simpleRhythms = {
+   .grid = simpleRhythmsGrid,
    .t2Bitshift = 9,
-   .oneVoltOct = 1};
+   .oneVoltOct = 0};
 
-Scale h73_75_BPwide = {
-   .grid = h73_75_BPwideGrid,
-   .t2Bitshift = 8,
-   .oneVoltOct = 1};
+Scale simpleRhythms16 = {
+   .grid = simpleRhythms16Grid,
+   .t2Bitshift = 9,
+   .oneVoltOct = 0};
 
-Scale bohlenPeirce = {
-   .grid = bohlenPeirceGrid,
+Scale rhythmDivisionsReset = {
+   .grid = rhythmDivisionsResetGrid,
+   .t2Bitshift = 9,
+   .oneVoltOct = 0};
+
+Scale polyResets = {
+   .grid = polyResetsGrid,
    .t2Bitshift = 8,
    .oneVoltOct = 0};
 
-Scale add9thSixthsusp4th = {
-   .grid = add9thSixthsusp4thGrid,
-   .t2Bitshift = 8,
-   .oneVoltOct = 1};
-
 void initializeScales() {
-   scaleGroup[0] = harmSubharm;
-   scaleGroup[1] = harmSubharmfullspan;
-   scaleGroup[2] = modal5primefullspan;
-   scaleGroup[3] = harmFolded4;
-   scaleGroup[4] = polyResets;
-   scaleGroup[5] = pentamodal5prime;
-   scaleGroup[6] = triads;
-   scaleGroup[7] = seventhTetradsMinimalProgression;
-   scaleGroup[8] = seventhTetrads;
-   scaleGroup[9] = rhythmDivisionsReset;
+   scaleGroup[0] = integerRatios;
+   scaleGroup[1] = pentamodal5primefullspan;
+   scaleGroup[2] = harmSubharmfullspan;
+   scaleGroup[3] = modal5primefullspan;
+   scaleGroup[4] = harmSubharm;
+   scaleGroup[5] = harmFolded4;
+   scaleGroup[6] = pentamodal5prime;
+   scaleGroup[7] = triads;
+   scaleGroup[8] = seventhTetradsMinimalProgression;
+   scaleGroup[9] = seventhTetrads;
    scaleGroup[10] = modesOfLimitedTransposition;
    scaleGroup[11] = majMin9thPentStarling;
-   scaleGroup[12] = Harm73_75;
-   scaleGroup[13] = h73_75_BPwide;
-   scaleGroup[14] = bohlenPeirce;
-   scaleGroup[15] = add9thSixthsusp4th;
+   scaleGroup[12] = simpleRhythms;
+   scaleGroup[13] = simpleRhythms16;
+   scaleGroup[14] = rhythmDivisionsReset;
+   scaleGroup[15] = polyResets;
 }
+
+//void initializeScales() {
+//   scaleGroup[0] = pentamodal5prime;
+//   scaleGroup[1] = pentamodal5prime;
+//   scaleGroup[2] = pentamodal5prime;
+//   scaleGroup[3] = pentamodal5prime;
+//   scaleGroup[4] = harmSubharm;
+//   scaleGroup[5] = harmFolded4;
+//   scaleGroup[6] = pentamodal5prime;
+//   scaleGroup[7] = triads;
+//   scaleGroup[8] = seventhTetradsMinimalProgression;
+//   scaleGroup[9] = seventhTetrads;
+//   scaleGroup[10] = modesOfLimitedTransposition;
+//   scaleGroup[11] = majMin9thPentStarling;
+//   scaleGroup[12] = simpleRhythms;
+//   scaleGroup[13] = simpleRhythms16;
+//   scaleGroup[14] = rhythmDivisionsReset;
+//   scaleGroup[15] = polyResets;
+//}
+
+

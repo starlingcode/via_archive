@@ -8,9 +8,12 @@
 #include "pwm_tables.h"
 
 static inline int foldIndex(int);
+static inline int wrapIndex(int);
 static inline int getSampleQuinticSpline(int, uint32_t);
 static inline int getSampleProduct(int, int, int);
 static inline int getSampleSum(int, int, int);
+static inline int getSampleSubtract(int, int, int);
+static inline int getSamplePM(int, int, int);
 
 
 
@@ -20,76 +23,120 @@ static inline int getSampleSum(int, int, int);
  *
  */
 
-void prepareCV(audioRateInputs * audioInputs, controlRateInputs *controlInputs, q31_t *xIndices, q31_t *yIndices) {
+void foldBuffer(q31_t * input, q31_t offset, q31_t * output) {
 
 	// scale the CVs by the knob value cast from 0 to full scale q31_t, then shift left by 3
 
-	arm_offset_q31(audioInputs->xCV, (controlInputs->knob1Value - 2048) << 3, xIndices, BUFFER_SIZE);
-	arm_scale_q31(xIndices, 1 << 31, 1, xIndices, BUFFER_SIZE);
+	arm_scale_q31(input, 1 << 31, 3, output, BUFFER_SIZE);
+	arm_offset_q31(output, (offset - 2048) << 3, output, BUFFER_SIZE);
 
+	for (int i = 0; i < (BUFFER_SIZE); i++) {
 
-	arm_offset_q31(audioInputs->yCV, (controlInputs->knob2Value - 2048) << 3, yIndices, BUFFER_SIZE);
-	arm_scale_q31(yIndices, 1 << 31, 1, yIndices, BUFFER_SIZE);
+		output[i] = foldIndex(output[i]);
 
-
+	}
 
 }
+
+
+void wrapBuffer(q31_t * input, q31_t offset, q31_t * output) {
+
+	// scale the CVs by the knob value cast from 0 to full scale q31_t, then shift left by 3
+
+	arm_scale_q31(input, 1 << 31, 3, output, BUFFER_SIZE);
+	arm_offset_q31(output, (offset - 2048) << 3, output, BUFFER_SIZE);
+
+	for (int i = 0; i < (BUFFER_SIZE); i++) {
+
+		output[i] = wrapIndex(output[i]);
+
+	}
+
+}
+
 
 // generate the sample values and phase events for the buffer with the above modulation inputs
 
 void scanTerrainProduct(q31_t * xIndexArray, q31_t * yIndexArray, int * reverseArray, int zIndex, q31_t * output) {
 
-	int foldedX;
-	int foldedY;
-
 	for (int i = 0; i < (BUFFER_SIZE); i++) {
 
-		foldedX = foldIndex(xIndexArray[i] + reverseArray[i]);
-		foldedY = foldIndex(yIndexArray[i] + reverseArray[i]);
-
-		// calculate the sample value
-		output[i] = getSampleProduct(foldedX, foldedY, zIndex);
+		output[i] = getSampleProduct(xIndexArray[i], yIndexArray[i], zIndex);
 
 	}
+
 }
 
 void scanTerrainSum(q31_t * xIndexArray, q31_t * yIndexArray, int * reverseArray, int zIndex, q31_t * output) {
 
-	int foldedX;
-	int foldedY;
-
 	for (int i = 0; i < (BUFFER_SIZE); i++) {
 
-		foldedX = foldIndex(xIndexArray[i] + reverseArray[i]);
-		foldedY = foldIndex(yIndexArray[i] + reverseArray[i]);
-
-		// calculate the sample value
-		output[i] = getSampleSum(foldedX, foldedY, zIndex);
+		output[i] = getSampleSum(xIndexArray[i], yIndexArray[i], zIndex);
 
 	}
 }
 
+void scanTerrainSubtract(q31_t * xIndexArray, q31_t * yIndexArray, int * reverseArray, int zIndex, q31_t * output) {
+
+	for (int i = 0; i < (BUFFER_SIZE); i++) {
+
+		output[i] = getSampleSubtract(xIndexArray[i], yIndexArray[i], zIndex);
+
+	}
+}
+
+void scanTerrainPM(q31_t * xIndexArray, q31_t * yIndexArray, int * reverseArray, int zIndex, q31_t * output) {
+
+	for (int i = 0; i < (BUFFER_SIZE); i++) {
+
+		output[i] = getSamplePM(xIndexArray[i], yIndexArray[i], zIndex);
+
+	}
+}
+
+
 static inline int getSampleProduct(int xIndex, int yIndex, int zIndex) {
 
-	// waveterrain = sin(2pi * z * x) * sin(2pi * z * y)
+	// waveterrain = wavetable(x, z) * wavetable(y, z)
 
 	int xSample = getSampleQuinticSpline(xIndex << 10, zIndex >> 3);
 	int ySample = getSampleQuinticSpline(yIndex << 10, zIndex >> 3);
 
 	return (xSample * ySample) >> 18; //15 bit fixed point multiply and right shift by 3
 
+}
 
+static inline int getSamplePM(int xIndex, int yIndex, int zIndex) {
+
+	// waveterrain = wavetable(x + wavetable(y, z), z)
+
+	int xSample = getSampleQuinticSpline(xIndex << 10, zIndex);
+	int ySample = getSampleQuinticSpline(((yIndex << 10) + (xSample << 8)) & ((1<<25) - 1), zIndex);
+
+	return ySample >> 3; //right shift by 3 tp scale 15bit to 12bit
 
 }
 
 static inline int getSampleSum(int xIndex, int yIndex, int zIndex) {
 
-	// waveterrain = sin(2pi * z * x) * sin(2pi * z * y)
+	// waveterrain = wavetable(x, z) + wavetable(y, z)
 
 	int xSample = getSampleQuinticSpline(xIndex << 10, zIndex >> 3);
 	int ySample = getSampleQuinticSpline(yIndex << 10, zIndex >> 3);
 
-	return (xSample + ySample) >> 4;
+	return (xSample + ySample) >> 4; // scale from 15bit to 12 bit and divide by two to normalize the space (max value = 1+1)
+
+
+}
+
+static inline int getSampleSubtract(int xIndex, int yIndex, int zIndex) {
+
+	// waveterrain = wavetable(x, z) + wavetable(y, z)
+
+	int xSample = getSampleQuinticSpline(xIndex << 10, zIndex >> 3);
+	int ySample = getSampleQuinticSpline(yIndex << 10, zIndex >> 3);
+
+	return ((xSample - ySample) >> 4) + 2048; // scale from 15bit to 12 bit and divide by two to normalize the space (max value = 1+1)
 
 
 }
@@ -97,11 +144,19 @@ static inline int getSampleSum(int xIndex, int yIndex, int zIndex) {
 static inline int foldIndex(int phaseIn) {
 
 	// fold into the space [0, 2^15)
+	// check the lsb of abs(input) >> 15 (is phaseIn / 2^15 even or odd)
+	// mathematical conditional that adds the modulo 2^15 for odd and the inversion of that in 15 bit space for even
 
-	int absPhase = abs(phaseIn);
+	return ((phaseIn >> 15) & 1) ? (32767 - (phaseIn & 0x7fff)) : (phaseIn & 0x7fff);
 
-	return ((absPhase >> 15) & 1)*(32767 - (absPhase & 0b111111111111111)) +
-				(!((absPhase >> 15) & 1))*(absPhase & 0b111111111111111);
+
+}
+
+static inline int wrapIndex(int phaseIn) {
+
+	// wrap into the space [0, 2^15) by calculating the input modulo 2^15
+
+	return phaseIn & 0x7fff;
 
 }
 

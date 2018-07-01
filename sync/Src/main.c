@@ -104,7 +104,7 @@ uint16_t VarDataTab[NB_OF_VAR] = {0, 0};
 uint16_t VarValue,VarDataTmp;
 
 // these enums contain our mode information
-enum syncTypes syncMode; // {none, true, hardSync, catch}
+enum syncTypes button4Mode; // {none, true, hardSync, catch}
 enum controlSchemes controlScheme; // {gateLength, knobCV}
 enum scaleTypes scaleType; // {rhythms, pitches}
 enum sampleHoldModeTypes sampleHoldMode; // {nosampleandhold, a, b, ab, antidecimate, decimate}
