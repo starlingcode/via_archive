@@ -10,23 +10,29 @@ arm_fir_instance_q31 fir;
 
 void fillBuffer(void) {
 
-	q31_t incrementValues[BUFFER_SIZE];
-	q31_t phaseArray[BUFFER_SIZE];
-	q31_t phaseEventArray[BUFFER_SIZE];
-	uint32_t morph;
+	static q31_t incrementValues1[BUFFER_SIZE];
+	static q31_t incrementValues2[BUFFER_SIZE];
+	static q31_t phaseArray[BUFFER_SIZE];
+	static q31_t phaseEventArray[BUFFER_SIZE];
 	static int lastPhase;
+	static int oscillatorOn;
 	static uint32_t slowConversionCounter;
+
 
 	// profiling pin a logic out high
 	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 
-	getIncrementsComplex(inputRead->t2CV, &controlRateInput, inputRead->reverseInput, lastPhase, 0, 1 << 25, incrementValues);
+	(*getIncrements)(inputRead->t2CV, &controlRateInput, incrementValues1, incrementValues2);
 
-	lastPhase = advancePhaseNoLoopGate(incrementValues, inputRead->hardSyncInput, lastPhase, 1 << 25, phaseArray, phaseEventArray);
+	lastPhase = (*advancePhase)(incrementValues1, incrementValues2, inputRead->triggerInput, inputRead->gateInput, lastPhase, oscillatorOn, phaseArray, phaseEventArray);
 
 	arm_offset_q31(inputRead->morphCV, controlRateInput.knob3Value - 2048, inputRead->morphCV, BUFFER_SIZE);
 
-	getSamplesPWM(phaseArray, __USAT(inputRead->t2CV[0] + controlRateInput.knob2Value - 2048, 12), inputRead->morphCV, outputWrite->samples);
+	//arm_shift_q31(phaseArray, -13, outputWrite->samples, BUFFER_SIZE);
+
+	(*getSamples)(phaseArray, __USAT(inputRead->t2CV[0] + controlRateInput.knob2Value - 2048, 12), inputRead->morphCV, outputWrite->samples);
+
+	//(*handleLoop)(phaseEventArray, inputRead->triggerInput, outputWrite->samples, &oscillatorOn);
 
 	// profiling pin a logic out low
 	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
@@ -39,6 +45,31 @@ void fillBuffer(void) {
 
 //	// profiling pin b logic out low
 //	GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
+
+}
+
+void handleLoopOff(q31_t * phaseEvents, q31_t * triggers, q31_t * samples, int * oscillatorOn) {
+	return;
+}
+
+void handleLoopOn(q31_t * phaseEvents, q31_t * triggers, q31_t * samples, int * oscillatorOn) {
+
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+		switch (phaseEvents[i]) {
+			case (AT_A_FROM_ATTACK):
+			case (AT_A_FROM_RELEASE):
+			for (int j = i; j < BUFFER_SIZE; j ++) {
+				samples[j] = 0;
+				// set oscillator on to 0 if no rising edges in the rest of the buffer, else 1
+				*oscillatorOn |= !triggers[j];
+			}
+			break;
+
+		default:
+			break;
+
+		}
+	}
 
 }
 
@@ -67,13 +98,13 @@ void initializeDoubleBuffer() {
 
 	input1.t2CV = t2CVBuffer1;
 	input1.morphCV = morphCVBuffer1;
-	input1.hardSyncInput = hardSyncBuffer1;
-	input1.reverseInput = reverseBuffer1;
+	input1.triggerInput = hardSyncBuffer1;
+	input1.gateInput = reverseBuffer1;
 
 	input2.t2CV = t2CVBuffer2;
 	input2.morphCV = morphCVBuffer2;
-	input2.hardSyncInput = hardSyncBuffer2;
-	input2.reverseInput = reverseBuffer2;
+	input2.triggerInput = hardSyncBuffer2;
+	input2.gateInput = reverseBuffer2;
 
 	outputRead = &output1;
 	outputWrite = &output2;

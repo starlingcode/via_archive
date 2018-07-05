@@ -6,6 +6,7 @@
 #include "user_interface.h"
 #include "dsp.h"
 #include "main_state_machine.h"
+#include "modes.h"
 #include "via_rev5_hardware_io.h"
 
 // RGB led timer
@@ -22,25 +23,71 @@ TIM_HandleTypeDef htim5;
 void handleButton1ModeChange(int mode) {
 
 
+
 }
 
 void handleButton3ModeChange(int mode) {
 
+	switch (mode) {
+	case audio:
+		getIncrements = getIncrementsAudio;
+		getSamples = getSamplesNoPWM;
+		break;
+	case env:
+		getIncrements = getIncrementsEnv;
+		getSamples = getSamplesNoPWM;
+		break;
+	case seq:
+		getIncrements = getIncrementsSeq;
+		getSamples = getSamplesPWM;
+		break;
+	}
 
 
 }
 
 void handleButton4ModeChange(int mode) {
 
-
+	switch (mode) {
+	case noretrigger:
+		advancePhase = advancePhaseNoRetrig;
+		noRetrigStateMachine = noRetrigAttackState;
+		break;
+	case hardsync:
+		advancePhase = advancePhaseHardSync;
+		hardSyncStateMachine = hardSyncAttackState;
+		break;
+	case nongatedretrigger:
+		advancePhase = advancePhaseEnv;
+		envStateMachine = envAttackState;
+		break;
+	case gated:
+		advancePhase = advancePhaseGate;
+		gateStateMachine = gateAttackState;
+		break;
+	case pendulum:
+		advancePhase = advancePhasePendulum;
+		pendulumStateMachine = pendulumForwardAttackState;
+		break;
+	}
 
 }
 
 void handleButton6ModeChange(int mode) {
 
-
+	switch (mode) {
+	case noloop:
+		handleLoop = handleLoopOff;
+		break;
+	case looping:
+		handleLoop = handleLoopOn;
+		break;
+	}
 
 }
+
+
+
 
 
 

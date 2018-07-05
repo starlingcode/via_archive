@@ -163,9 +163,12 @@ int main(void)
 	initializeDoubleBuffer();
 	initializeFilter();
 
-	getIncrements = getIncrementsSimple;
-	advancePhase = advancePhaseLoopNoGate;
+	getIncrements = getIncrementsAudio;
+	advancePhase = advancePhaseNoRetrig;
 	getSamples = getSamplesNoPWM;
+	handleLoop = handleLoopOn;
+
+	noRetrigStateMachine = noRetrigAttackState;
 
 	SET_OSCILLATOR_ACTIVE;
 

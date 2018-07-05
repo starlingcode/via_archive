@@ -12,7 +12,7 @@
 #define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
 #define WAVETABLE_MAX_VALUE_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
 
-#define BUFFER_SIZE 64
+#define BUFFER_SIZE 8
 
 #define NUM_TAPS 24
 
@@ -58,8 +58,8 @@ typedef struct {
 typedef struct {
 	q31_t *t2CV;
 	q31_t *morphCV;
-	q31_t *hardSyncInput;
-	q31_t *reverseInput;
+	q31_t *triggerInput;
+	q31_t *gateInput;
 } audioRateInputs;
 
 // allocate a pair of buffers for each member of the above structs
@@ -120,49 +120,76 @@ controlRateInputs controlRateInput;
 
 int handleCoversionSlow(controlRateInputs *, uint32_t);
 
-// Mode enums and mode variables
-
-enum button1Modes {nosampleandhold, a, b, ab, antidecimate, decimate};
-enum button3Modes {audio, env, seq};
-enum button4Modes {noretrigger, hardsync, nongatedretrigger, gated, pendulum, pendulum2};
-enum button6Modes {noloop, looping};
-enum aux1Modes {triggerA, gateA, deltaA};
-enum aux2Modes {triggerB, gateB, deltaB};
-enum aux3Modes {APM, AM, A, M, PM, P};
-
-enum button1Modes button1Mode;
-enum button4Modes button4Mode;
-enum button3Modes button3Mode;
-enum button6Modes button6Mode;
-enum aux1Modes aux1Mode;
-enum aux2Modes aux2Mode;
-enum aux3Modes aux3Mode;
-
-int familyIndicator;
-
 // function calling subfunctions to fill the sample buffer
 
 void fillBuffer(void);
 
 // pointer to the function that calculates samples and phase events
 
-void (*getIncrements)(q31_t *, controlRateInputs *, q31_t *, int, int, int, q31_t *);
+// TODO contain via state data in a struct and pass by reference
 
-void getIncrementsAudio(q31_t *, controlRateInputs *, q31_t *, int, int, int, q31_t *);
-void getIncrementsSimple(q31_t *, controlRateInputs *, q31_t *, int, int, int, q31_t *);
-void getIncrementsComplex(q31_t *, controlRateInputs *, q31_t *, int, int, int, q31_t *);
+void (*getIncrements)(q31_t *, controlRateInputs *, q31_t *, q31_t *);
 
-int (*advancePhase)(q31_t *, q31_t *, int, int, q31_t *, q31_t *);
+void getIncrementsAudio(q31_t *, controlRateInputs *, q31_t *, q31_t *);
+void getIncrementsEnv(q31_t *, controlRateInputs *, q31_t *, q31_t *);
+void getIncrementsSeq(q31_t *, controlRateInputs *, q31_t *, q31_t *);
 
-int advancePhaseLoopNoGate(q31_t *, q31_t *, int, int, q31_t *, q31_t *);
-int advancePhaseLoopGate(q31_t *, q31_t *, int, int, q31_t *, q31_t *);
-int advancePhaseNoLoopNoGate(q31_t *, q31_t *, int, int, q31_t *, q31_t *);
-int advancePhaseNoLoopGate(q31_t *, q31_t *, int, int, q31_t *, q31_t *);
+int (*advancePhase)(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t *);
+
+// phase event defines generated in wrapPhaseAndLog and used in the state machines
+
+#define WAVETABLE_LENGTH 33554432
+#define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
+#define WAVETABLE_MAX_VALUE_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
+
+#define NO_EVENT 0
+#define AT_A_FROM_RELEASE -WAVETABLE_LENGTH + 1
+#define AT_A_FROM_ATTACK WAVETABLE_LENGTH - 1
+#define AT_B_FROM_ATTACK -1
+#define AT_B_FROM_RELEASE 1
+
+int advancePhaseNoRetrig(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t *);
+int advancePhaseHardSync(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t *);
+int advancePhaseEnv(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t *);
+int advancePhaseGate(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t *);
+int advancePhasePendulum(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t *);
+
+int (*noRetrigStateMachine)(int, int, int, int);
+int (*hardSyncStateMachine)(int, int, int, int);
+int (*envStateMachine)(int, int, int, int);
+int (*gateStateMachine)(int, int, int, int);
+int (*pendulumStateMachine)(int, int, int, int);
+
+int noRetrigAttackState(int, int, int, int);
+int noRetrigReleaseState(int, int, int, int);
+
+int hardSyncAttackState(int, int, int, int);
+int hardSyncReleaseState(int, int, int, int);
+
+int envAttackState(int, int, int, int);
+int envReleaseState(int, int, int, int);
+int envRetriggerState(int, int, int, int);
+
+int gateAttackState(int, int, int, int);
+int gateReleaseReverseState(int, int, int, int);
+int gatedState(int, int, int, int);
+int gateReleaseState(int, int, int, int);
+int gateRetriggerState(int, int, int, int);
+
+int pendulumForwardAttackState(int, int, int, int);
+int pendulumForwardReleaseState(int, int, int, int);
+int pendulumReverseAttackState(int, int, int, int);
+int pendulumReverseReleaseState(int, int, int, int);
 
 void (*getSamples)(q31_t *, int, q31_t *, q31_t *);
 
 void getSamplesNoPWM(q31_t *, int, q31_t *, q31_t *);
 void getSamplesPWM(q31_t *, int, q31_t *, q31_t *);
+
+void (*handleLoop)(q31_t *, q31_t * , q31_t *, int *);
+
+void handleLoopOff(q31_t *, q31_t * , q31_t *, int *);
+void handleLoopOn(q31_t *, q31_t * , q31_t *, int *);
 
 void (*calculateLogicA)(int *, logicHandler *);
 
@@ -172,29 +199,20 @@ void calculateLogicADelta(int *, logicHandler *);
 
 void (*calculateLogicB)(int *, logicHandler *);
 
-void calculateLogicAGate(int *, logicHandler *);
-void calculateLogicATrigger(int *, logicHandler *);
-void calculateLogicADelta(int *, logicHandler *);
+void calculateLogicBGate(int *, logicHandler *);
+void calculateLogicBTrigger(int *, logicHandler *);
+void calculateLogicBDelta(int *, logicHandler *);
 
 void calculateAuxLogic(int *, logicHandler *);
 
-void (*calculateSHA)(int *, logicHandler *);
+void (*calculateSH)(int *, logicHandler *);
 
-void calculateSHAMode1(int *, logicHandler *);
-void calculateSHAMode2(int *, logicHandler *);
-void calculateSHAMode3(int *, logicHandler *);
-void calculateSHAMode4(int *, logicHandler *);
-void calculateSHAMode5(int *, logicHandler *);
-void calculateSHAMode6(int *, logicHandler *);
-
-void (*calculateSHB)(int *, logicHandler *);
-
-void calculateSHBMode1(int *, logicHandler *);
-void calculateSHBMode2(int *, logicHandler *);
-void calculateSHBMode3(int *, logicHandler *);
-void calculateSHBMode4(int *, logicHandler *);
-void calculateSHBMode5(int *, logicHandler *);
-void calculateSHBMode6(int *, logicHandler *);
+void calculateSHMode1(int *, logicHandler *);
+void calculateSHMode2(int *, logicHandler *);
+void calculateSHMode3(int *, logicHandler *);
+void calculateSHMode4(int *, logicHandler *);
+void calculateSHMode5(int *, logicHandler *);
+void calculateSHMode6(int *, logicHandler *);
 
 // initialization functions
 

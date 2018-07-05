@@ -3,6 +3,7 @@
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
+#include "modes.h"
 
 const Family moogSquare = {
 	.attackFamily = moogSquareShiftAttackFamily,

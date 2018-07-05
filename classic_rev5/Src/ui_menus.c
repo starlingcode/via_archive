@@ -4,7 +4,7 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "eeprom.h"
-#include "dsp.h"
+#include "modes.h"
 #include "user_interface.h"
 #include "via_rev5_hardware_io.h"
 
@@ -48,7 +48,7 @@ void ui_button1Menu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (BUTTON1SENSOR == RELEASED){
 
-				button1Mode = (button1Mode + 1) % 4;
+				button1Mode = (button1Mode + 1) % numButton1Modes;
 				modeStateBuffer = (modeStateBuffer & ~(BUTTON1_MASK)) | button1Mode;
 				handleButton1ModeChange(button1Mode);
 				uiTransition(&ui_default);
@@ -84,7 +84,7 @@ void ui_button4Menu(int sig)
 
 		if (BUTTON4SENSOR == RELEASED){
 
-				button4Mode = (button4Mode + 1) % 2;
+				button4Mode = (button4Mode + 1) % numButton4Modes;
 				modeStateBuffer = (modeStateBuffer & ~(BUTTON4_MASK)) | (button4Mode << BUTTON4_SHIFT);
 				handleButton4ModeChange(button4Mode);
 				uiTransition(&ui_default);
@@ -193,7 +193,7 @@ void ui_button3Menu(int sig) {
 	case SENSOR_EVENT_SIG:
 		if(BUTTON3SENSOR == RELEASED){
 			if (UI_TIMER_READ < 3000) {
-				button3Mode = (button3Mode + 1) % 2;
+				button3Mode = (button3Mode + 1) % numButton3Modes;
 				modeStateBuffer = (modeStateBuffer & ~(BUTTON3_MASK)) | (button3Mode << BUTTON3_MASK);
 				handleButton3ModeChange(button3Mode);
 				uiClearLEDs();
@@ -223,14 +223,13 @@ void ui_button6Menu(int sig)
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
-		//uiSetLEDs(morphMode);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON6SENSOR == RELEASED){
 
 			if(UI_TIMER_READ < 3000){
-				button6Mode = (button6Mode + 1) % 2;
+				button6Mode = (button6Mode + 1) % numButton6Modes;
 				modeStateBuffer = (modeStateBuffer & ~(BUTTON6_MASK)) | (button6Mode << BUTTON6_SHIFT);
 				handleButton6ModeChange(button6Mode);
 				uiClearLEDs();

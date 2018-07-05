@@ -5,92 +5,297 @@
 #include "tables.h"
 #include "int64.h"
 #include "dsp.h"
-#include "pwm_tables.h"
-
-#define WAVETABLE_LENGTH 33554432
-#define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
-#define WAVETABLE_MAX_VALUE_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
 
 const uint32_t expoTable[4096] = expotable10oct;
 
-void getIncrementsAudio(q31_t * t2CV, controlRateInputs * controlInputs, q31_t * reverseArray, int lastPhase, int tableSizeCompensation, int span, q31_t * incrementValues) {
+// fill incrementValues 1 and 2 with the attack and release time increments, respectively
+
+void getIncrementsAudio(q31_t * t2CV, controlRateInputs * controlInputs, q31_t * incrementValues1,  q31_t * incrementValues2) {
+
+	// t1 is coarse, t2 is fine, release time = attack time
 
 	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 3]), expoTable[controlInputs->cv1Value] >> 2);
-	arm_offset_q31(t2CV, -1024, incrementValues, BUFFER_SIZE);
-	arm_shift_q31(incrementValues, 19 - tableSizeCompensation, incrementValues, BUFFER_SIZE);
-	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
-//	arm_mult_q31(incrementValues, reverseArray, incrementValues, BUFFER_SIZE);
+	arm_offset_q31(t2CV, -1024, incrementValues1, BUFFER_SIZE);
+	arm_shift_q31(incrementValues1, 19, incrementValues1, BUFFER_SIZE);
+	arm_scale_q31(incrementValues1, frequencyMultiplier, 0, incrementValues1, BUFFER_SIZE);
+	arm_copy_q31(incrementValues1, incrementValues2, BUFFER_SIZE);
 
 }
 
-void getIncrementsSimple(q31_t * t2CV, controlRateInputs * controlInputs, q31_t * reverseArray, int lastPhase, int tableSizeCompensation, int span, q31_t * incrementValues) {
+void getIncrementsEnv(q31_t * t2CV, controlRateInputs * controlInputs, q31_t * incrementValues1,  q31_t * incrementValues2) {
+
+	// t1 is attack time (incrementValues1), t2 is release time (incrementValues2)
 
 	int attackTime = expoTable[4095 - controlInputs->knob1Value] >> 10;
 	int releaseTime = expoTable[4095 - controlInputs->knob2Value] >> 10;
 
-	int dummyPhase = lastPhase;
+	arm_fill_q31(attackTime, incrementValues1, BUFFER_SIZE);
+	arm_fill_q31(releaseTime, incrementValues2, BUFFER_SIZE);
 
-	if (lastPhase < (span >> 1)) {
-		for (int i = 0; i < BUFFER_SIZE; i++) {
-			incrementValues[i] = attackTime;
-		}
-	} else {
-		for (int i = 0; i < BUFFER_SIZE; i++) {
-			incrementValues[i] = releaseTime;
-		}
-	}
-
-	//arm_mult_q31(incrementValues, reverseArray, incrementValues, BUFFER_SIZE);
 
 }
 
 
-void getIncrementsComplex(q31_t * t2CV, controlRateInputs * controlInputs, q31_t * reverseArray, int lastPhase, int tableSizeCompensation, int span, q31_t * incrementValues) {
+void getIncrementsSeq(q31_t * t2CV, controlRateInputs * controlInputs, q31_t * incrementValues1,  q31_t * incrementValues2) {
+
+	// t1 is cycle time, t2 is used to feed the duty cycle input for getSamples
 
 	q31_t frequencyMultiplier = fix16_mul(expoTable[4095 - controlInputs->knob1Value] >> 6, expoTable[4095 - controlInputs->cv1Value] >> 6);
-	arm_shift_q31(t2CV, 19 - tableSizeCompensation, incrementValues, BUFFER_SIZE);
-	arm_scale_q31(incrementValues, frequencyMultiplier, 0, incrementValues, BUFFER_SIZE);
-	//arm_mult_q31(incrementValues, reverseArray, incrementValues, BUFFER_SIZE);
+	arm_shift_q31(t2CV, 19, incrementValues1, BUFFER_SIZE);
+	arm_scale_q31(incrementValues1, frequencyMultiplier, 0, incrementValues1, BUFFER_SIZE);
+	arm_copy_q31(incrementValues1, incrementValues2, BUFFER_SIZE);
 
 }
 
+// use those increment values to calculate a phase array and phase event array
+// see main_trigger_states.c for more
 
-int advancePhaseLoopNoGate(q31_t * incrementValues, q31_t * hardSyncValues, int phase, int span, q31_t * phaseArray, q31_t * phaseEventArray) {
+int advancePhaseNoRetrig(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int oscillatorActive, q31_t * phaseArray, q31_t * phaseEventArray) {
 
 
 	static q31_t previousPhase;
-	q31_t wrapPhase;
+	static q31_t previousPhaseEvent;
+	q31_t phaseWrapper = 0;
 
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 
-		phase = (phase + incrementValues[i]) * hardSyncValues[i] * (OSCILLATOR_ACTIVE);
+		int increment = (*noRetrigStateMachine)(triggerValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]);
 
-		wrapPhase = 0;
+		phase = (phase + increment); //* (oscillatorActive);
 
-		wrapPhase += ((uint32_t)(phase) >> 31) * span;
-		wrapPhase -= ((uint32_t)(WAVETABLE_LENGTH - phase) >> 31) * span;
+		phaseWrapper = 0;
 
-		// apply the wrapping offset
-		// no effect if there is no overflow
+		// add wavetable length if phase < 0
 
-		phase += wrapPhase;
+		phaseWrapper += ((uint32_t)(phase) >> 31) * WAVETABLE_LENGTH;
+
+		// subtract wavetable length if phase > wavetable length
+
+		phaseWrapper -= ((uint32_t)(WAVETABLE_LENGTH - phase) >> 31) * WAVETABLE_LENGTH;
+
+		// apply the wrapping
+		// no effect if the phase is in bounds
+
+		phase += phaseWrapper;
 
 		// log a -1 if the max value index of the wavetable is traversed from the left
 		// log a 1 if traversed from the right
 		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
 		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
 
-		wrapPhase += ((uint32_t)(phase - (span >> 1)) >> 31) - ((uint32_t)(previousPhase - (span >> 1)) >> 31);
+		phaseWrapper += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(previousPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
 
-		// log the phase event by accumulating the indicative variables
-		// log 0 if no event
-
-		phaseEventArray[i] = wrapPhase;
+		phaseEventArray[i] = phaseWrapper;
 
 		// TODO rewrite logic parsing function
 
 		// store the current phase
 		previousPhase = phase;
+		previousPhaseEvent = phaseWrapper;
+
+		// calculate the sample value
+		phaseArray[i] = phase;
+	}
+
+	return phase;
+
+}
+
+int advancePhaseHardSync(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int oscillatorActive, q31_t * phaseArray, q31_t * phaseEventArray) {
+
+
+	static q31_t previousPhase;
+	static q31_t previousPhaseEvent;
+	q31_t phaseWrapper;
+
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+
+		int increment = (*hardSyncStateMachine)(triggerValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]);
+
+		phase = (phase + increment) * triggerValues[i];// * (oscillatorActive);
+
+		phaseWrapper = 0;
+
+		// add wavetable length if phase < 0
+
+		phaseWrapper += ((uint32_t)(phase) >> 31) * WAVETABLE_LENGTH;
+
+		// subtract wavetable length if phase > wavetable length
+
+		phaseWrapper -= ((uint32_t)(WAVETABLE_LENGTH - phase) >> 31) * WAVETABLE_LENGTH;
+
+		// apply the wrapping
+		// no effect if the phase is in bounds
+
+		phase += phaseWrapper;
+
+		// log a -1 if the max value index of the wavetable is traversed from the left
+		// log a 1 if traversed from the right
+		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
+		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
+
+		phaseWrapper += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(previousPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+
+		phaseEventArray[i] = phaseWrapper;
+
+		// TODO rewrite logic parsing function
+
+		// store the current phase
+		previousPhase = phase;
+		previousPhaseEvent = phaseWrapper;
+
+		// calculate the sample value
+		phaseArray[i] = phase;
+	}
+
+	return phase;
+
+}
+
+int advancePhaseEnv(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int oscillatorActive, q31_t * phaseArray, q31_t * phaseEventArray) {
+
+
+	static q31_t previousPhase;
+	static q31_t previousPhaseEvent;
+	q31_t phaseWrapper;
+
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+
+		int increment = (*envStateMachine)(triggerValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]);
+
+		phase = (phase + increment);// * (oscillatorActive);
+
+		phaseWrapper = 0;
+
+		// add wavetable length if phase < 0
+
+		phaseWrapper += ((uint32_t)(phase) >> 31) * WAVETABLE_LENGTH;
+
+		// subtract wavetable length if phase > wavetable length
+
+		phaseWrapper -= ((uint32_t)(WAVETABLE_LENGTH - phase) >> 31) * WAVETABLE_LENGTH;
+
+		// apply the wrapping
+		// no effect if the phase is in bounds
+
+		phase += phaseWrapper;
+
+		// log a -1 if the max value index of the wavetable is traversed from the left
+		// log a 1 if traversed from the right
+		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
+		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
+
+		phaseWrapper += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(previousPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+
+		phaseEventArray[i] = phaseWrapper;
+
+		// TODO rewrite logic parsing function
+
+		// store the current phase
+		previousPhase = phase;
+		previousPhaseEvent = phaseWrapper;
+
+		// calculate the sample value
+		phaseArray[i] = phase;
+	}
+
+	return phase;
+
+}
+
+int advancePhaseGate(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int oscillatorActive, q31_t * phaseArray, q31_t * phaseEventArray) {
+
+
+	static q31_t previousPhase;
+	static q31_t previousPhaseEvent;
+	q31_t phaseWrapper;
+
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+
+		int increment = (*gateStateMachine)(gateValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]);
+
+		phase = (phase + increment);// * (oscillatorActive);
+
+		phaseWrapper = 0;
+
+		// add wavetable length if phase < 0
+
+		phaseWrapper += ((uint32_t)(phase) >> 31) * WAVETABLE_LENGTH;
+
+		// subtract wavetable length if phase > wavetable length
+
+		phaseWrapper -= ((uint32_t)(WAVETABLE_LENGTH - phase) >> 31) * WAVETABLE_LENGTH;
+
+		// apply the wrapping
+		// no effect if the phase is in bounds
+
+		phase += phaseWrapper;
+
+		// log a -1 if the max value index of the wavetable is traversed from the left
+		// log a 1 if traversed from the right
+		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
+		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
+
+		phaseWrapper += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(previousPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+
+		phaseEventArray[i] = phaseWrapper;
+
+		// TODO rewrite logic parsing function
+
+		// store the current phase
+		previousPhase = phase;
+		previousPhaseEvent = phaseWrapper;
+
+		// calculate the sample value
+		phaseArray[i] = phase;
+	}
+
+	return phase;
+
+}
+
+int advancePhasePendulum(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int oscillatorActive, q31_t * phaseArray, q31_t * phaseEventArray) {
+
+
+	static q31_t previousPhase;
+	static q31_t previousPhaseEvent;
+	q31_t phaseWrapper;
+
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+
+		int increment = (*pendulumStateMachine)(triggerValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]);
+
+		phase = (phase + increment);// * (oscillatorActive);
+
+		phaseWrapper = 0;
+
+		// add wavetable length if phase < 0
+
+		phaseWrapper += ((uint32_t)(phase) >> 31) * WAVETABLE_LENGTH;
+
+		// subtract wavetable length if phase > wavetable length
+
+		phaseWrapper -= ((uint32_t)(WAVETABLE_LENGTH - phase) >> 31) * WAVETABLE_LENGTH;
+
+		// apply the wrapping
+		// no effect if the phase is in bounds
+
+		phase += phaseWrapper;
+
+		// log a -1 if the max value index of the wavetable is traversed from the left
+		// log a 1 if traversed from the right
+		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
+		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
+
+		phaseWrapper += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(previousPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+
+		phaseEventArray[i] = phaseWrapper;
+
+		// TODO rewrite logic parsing function
+
+		// store the current phase
+		previousPhase = phase;
+		previousPhaseEvent = phaseWrapper;
 
 		// calculate the sample value
 		phaseArray[i] = phase;
@@ -101,159 +306,47 @@ int advancePhaseLoopNoGate(q31_t * incrementValues, q31_t * hardSyncValues, int 
 
 }
 
-int advancePhaseLoopGate(q31_t * incrementValues, q31_t * hardSyncValues, int phase, int span, q31_t * phaseArray, q31_t * phaseEventArray) {
+// SLOW
+//static inline void wrapPhaseAndLog(int * phaseValue, int * phaseWrapper, int * previousPhase, int * previousPhaseEvent, int bufferIndex, q31_t * phaseBuffer, q31_t * phaseEventBuffer) {
+//
+//	// start with a 0 for no event
+//
+//	*phaseWrapper = 0;
+//
+//	// add wavetable length if phase < 0
+//
+//	*phaseWrapper += ((uint32_t)(*phaseValue) >> 31) * WAVETABLE_LENGTH;
+//
+//	// subtract wavetable length if phase > wavetable length
+//
+//	*phaseWrapper -= ((uint32_t)(WAVETABLE_LENGTH - *phaseValue) >> 31) * WAVETABLE_LENGTH;
+//
+//	// apply the wrapping
+//	// no effect if the phase is in bounds
+//
+//	*phaseValue += *phaseWrapper;
+//
+//	// log a -1 if the max value index of the wavetable is traversed from the left
+//	// log a 1 if traversed from the right
+//	// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
+//	// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
+//
+//	*phaseWrapper += ((uint32_t)(*phaseValue - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(*previousPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+//
+//	phaseEventBuffer[bufferIndex] = *phaseWrapper;
+//
+//	// TODO rewrite logic parsing function
+//
+//	// store the current phase
+//	*previousPhase = *phaseValue;
+//	*previousPhaseEvent = *phaseWrapper;
+//
+//	// calculate the sample value
+//	phaseBuffer[bufferIndex] = *phaseValue;
+//
+//
+//}
 
-	static q31_t lastPhase;
-	q31_t wrapPhase;
-
-	for (int i = 0; i < BUFFER_SIZE; i++) {
-
-		phase = (phase + incrementValues[i]) * hardSyncValues[i] * (OSCILLATOR_ACTIVE);
-
-		wrapPhase = 0;
-
-		wrapPhase = ((uint32_t)(phase) >> 31) * span;
-		wrapPhase -= ((uint32_t)(WAVETABLE_LENGTH - phase) >> 31) * span;
-
-		// apply the wrapping offset
-		// no effect if there is no overflow
-
-		phase += wrapPhase;
-
-		// log a -1 if the max value index of the wavetable is traversed from the left
-		// log a 1 if traversed from the right
-		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
-		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
-
-		int atBIndicator = ((uint32_t)(phase - (span >> 1)) >> 31) - ((uint32_t)(lastPhase - (span >> 1)) >> 31);
-		wrapPhase += atBIndicator;
-
-		// log the phase event by accumulating the indicative variables
-		// log 0 if no event
-
-		phaseEventArray[i] = wrapPhase;
-
-		// if GATE = 1 and atBIndicator = 1, undo the increment
-
-		phase -= (incrementValues[i]) * (GATE) * (abs(atBIndicator));
-
-
-		// store the current phase
-		lastPhase = phase;
-
-
-		phaseArray[i] = phase;
-
-
-	}
-
-	return lastPhase;
-
-}
-
-int advancePhaseNoLoopNoGate(q31_t * incrementValues, q31_t * hardSyncValues, int phase, int span, q31_t * phaseArray, q31_t * phaseEventArray) {
-
-	static q31_t lastPhase;
-	q31_t wrapPhase;
-
-	for (int i = 0; i < BUFFER_SIZE; i++) {
-
-		phase = (phase + incrementValues[i]) * hardSyncValues[i] * (OSCILLATOR_ACTIVE);
-
-		wrapPhase = 0;
-
-		wrapPhase = ((uint32_t)(phase) >> 31) * span;
-		wrapPhase -= ((uint32_t)(WAVETABLE_LENGTH - phase) >> 31) * span;
-
-		// apply the wrapping offset
-		// no effect if there is no overflow
-
-		phase += wrapPhase;
-
-		// log a -1 if the max value index of the wavetable is traversed from the left
-		// log a 1 if traversed from the right
-		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
-		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
-
-		wrapPhase += ((uint32_t)(phase - (span >> 1)) >> 31) - ((uint32_t)(lastPhase - (span >> 1)) >> 31);
-
-		// log the phase event by accumulating the indicative variables
-		// log 0 if no event
-
-		phaseEventArray[i] = wrapPhase;
-
-		// store the current phase
-		lastPhase = phase;
-
-		if (abs(wrapPhase) > 5) {
-
-			phase = 0;
-			CLEAR_OSCILLATOR_ACTIVE;
-
-		}
-
-		// calculate the sample value
-		phaseArray[i] = phase;
-
-	}
-
-	return lastPhase;
-
-}
-
-int advancePhaseNoLoopGate(q31_t * incrementValues, q31_t * hardSyncValues, int phase, int span, q31_t * phaseArray, q31_t * phaseEventArray) {
-
-	static q31_t lastPhase;
-	q31_t wrapPhase;
-
-	for (int i = 0; i < BUFFER_SIZE; i++) {
-
-		phase = (phase + incrementValues[i]) * (OSCILLATOR_ACTIVE);
-
-		wrapPhase = 0;
-
-		wrapPhase = ((uint32_t)(phase) >> 31) * span;
-		wrapPhase -= ((uint32_t)(WAVETABLE_LENGTH - phase) >> 31) * span;
-
-		// apply the wrapping offset
-		// no effect if there is no overflow
-
-		phase += wrapPhase;
-
-		// log a -1 if the max value index of the wavetable is traversed from the left
-		// log a 1 if traversed from the right
-		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
-		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
-
-		int atBIndicator = ((uint32_t)(phase - (span >> 1)) >> 31) - ((uint32_t)(lastPhase - (span >> 1)) >> 31);
-
-		wrapPhase += atBIndicator;
-
-		// log the phase event by accumulating the indicative variables
-		// log 0 if no event
-
-		phaseEventArray[i] = wrapPhase;
-
-		// if GATE = 1 and atBIndicator = 1, undo the increment
-
-		phase -= (incrementValues[i]) * (GATE) * (abs(atBIndicator));
-
-		// store the current phase
-		lastPhase = phase;
-
-		if (abs(wrapPhase) > 5) {
-
-			phase = 0;
-			CLEAR_OSCILLATOR_ACTIVE;
-
-		}
-
-		// calculate the sample value
-		phaseArray[i] = phase;
-	}
-
-	return lastPhase;
-}
 
 
 

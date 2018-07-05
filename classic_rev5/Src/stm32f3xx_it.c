@@ -55,8 +55,8 @@ enum
 	TSL_ERROR_SIG
 };
 
-int reverseMultiplier = 1;
-int hardSyncMultiplier;
+int gateSignal;
+int triggerSignal;
 
 /* USER CODE END 0 */
 
@@ -281,11 +281,20 @@ void TIM12_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM12_IRQn 0 */
 
-	if (TRIGGER_RISING_EDGE) {
-		SET_OSCILLATOR_ACTIVE;
-		reverseMultiplier = 65536 ;
-	} else {
-		reverseMultiplier = 0;
+#define RISING_EDGE 1
+#define FALLING_EDGE 0
+
+	static int trigStateSignal;
+
+	if (trigStateSignal == RISING_EDGE) {
+
+		gateSignal = 1;
+		triggerSignal = 0;
+		trigStateSignal = FALLING_EDGE;
+
+	} else { //falling edge
+		gateSignal = 0;
+		trigStateSignal = RISING_EDGE;
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
@@ -318,24 +327,25 @@ void TIM6_DAC1_IRQHandler(void)
 {
 	static uint32_t readIndex;
 
+
 	// write the sample to the dac
 
 
 	WRITE_DAC1(__USAT(4095 - outputRead->samples[readIndex], 12));
 	WRITE_DAC2(__USAT(outputRead->samples[readIndex], 12));
 
-	// write the current trig multiplier (used for sync) to the buffer
+	// write the current trigger signal value
 	// reset it to 1
-	inputWrite->hardSyncInput[readIndex] = hardSyncMultiplier;
-	hardSyncMultiplier = 1;
+	inputWrite->triggerInput[readIndex] = triggerSignal;
+	triggerSignal = 1;
 
-//	// store the x and morph CVs at sample rate
+	// write the gate signal as set by the trig handler
+	inputWrite->gateInput[readIndex] = gateSignal;
+
+	// store the x and morph CVs at sample rate
 	inputWrite->t2CV[readIndex] = __USAT(cv2, 12);
 	inputWrite->morphCV[readIndex] = __USAT(cv3, 12);
 
-	// write the current trig multiplier (used for sync) to the buffer
-
-	inputWrite->reverseInput[readIndex] = reverseMultiplier;
 
 	// TODO replace with linked list implementation that makes this prettier
 

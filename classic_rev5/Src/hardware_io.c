@@ -78,14 +78,6 @@ int handleCoversionSlow(controlRateInputs * inputs, uint32_t sequencingSignal) {
 		// update the runtime display if the UI menu is not turned on
 		if (RUNTIME_DISPLAY) {
 			updateRGB(inputs, inputRead);
-			pwmCounter++;
-			if (pwmCounter > button1Mode) {
-				LEDA_OFF;
-			} else {
-				LEDA_ON;
-			}
-
-			pwmCounter = pwmCounter & 4;
 		}
 
 		sequencingSignal = 0;
