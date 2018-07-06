@@ -24,15 +24,13 @@ void fillBuffer(void) {
 
 	(*getIncrements)(inputRead->t2CV, &controlRateInput, incrementValues1, incrementValues2);
 
-	lastPhase = (*advancePhase)(incrementValues1, incrementValues2, inputRead->triggerInput, inputRead->gateInput, lastPhase, oscillatorOn, phaseArray, phaseEventArray);
+	lastPhase = (*advancePhase)(incrementValues1, incrementValues2, inputRead->triggerInput, inputRead->gateInput, lastPhase, &oscillatorOn, phaseArray, phaseEventArray);
 
 	arm_offset_q31(inputRead->morphCV, controlRateInput.knob3Value - 2048, inputRead->morphCV, BUFFER_SIZE);
 
 	//arm_shift_q31(phaseArray, -13, outputWrite->samples, BUFFER_SIZE);
 
 	(*getSamples)(phaseArray, __USAT(inputRead->t2CV[0] + controlRateInput.knob2Value - 2048, 12), inputRead->morphCV, outputWrite->samples);
-
-	oscillatorOn = (*handleLoop)(phaseEventArray, inputRead->triggerInput, outputWrite->samples, oscillatorOn);
 
 	// profiling pin a logic out low
 	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
@@ -48,49 +46,6 @@ void fillBuffer(void) {
 
 }
 
-int handleLoopOff(q31_t * phaseEvents, q31_t * triggers, q31_t * samples, int oscillatorOn) {
-	return 1;
-}
-
-int handleLoopOn(q31_t * phaseEvents, q31_t * triggers, q31_t * samples, int oscillatorOn) {
-
-	if (oscillatorOn) {
-
-		for (int i = 0; i < BUFFER_SIZE; i++) {
-
-			switch (phaseEvents[i]) {
-				case (AT_A_FROM_ATTACK):
-				case (AT_A_FROM_RELEASE):
-					pendulumStateMachine = pendulumRestingState;
-					oscillatorOn = 0;
-					for (int j = i; j < BUFFER_SIZE; j ++) {
-						samples[j] = 0;
-					}
-					break;
-
-				default:
-					break;
-
-			}
-
-			if (triggers[i] == 0) {
-				pendulumStateMachine = pendulumForwardAttackState;
-				oscillatorOn = 1;
-			}
-		}
-	} else {
-		for (int i = 0; i < BUFFER_SIZE; i++) {
-			if (triggers[i] == 0) {
-				oscillatorOn = 1;
-			}
-		}
-	}
-
-
-
-	return oscillatorOn;
-
-}
 
 
 void initializeDoubleBuffer() {

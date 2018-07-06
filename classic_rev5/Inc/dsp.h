@@ -134,7 +134,7 @@ void getIncrementsAudio(q31_t *, controlRateInputs *, q31_t *, q31_t *);
 void getIncrementsEnv(q31_t *, controlRateInputs *, q31_t *, q31_t *);
 void getIncrementsSeq(q31_t *, controlRateInputs *, q31_t *, q31_t *);
 
-int (*advancePhase)(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t *);
+int (*advancePhase)(q31_t *, q31_t *, q31_t *, q31_t *, int, int *, q31_t *, q31_t *);
 
 // phase event defines generated in wrapPhaseAndLog and used in the state machines
 
@@ -148,17 +148,17 @@ int (*advancePhase)(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t
 #define AT_B_FROM_ATTACK -1
 #define AT_B_FROM_RELEASE 1
 
-int advancePhaseNoRetrig(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t *);
-int advancePhaseHardSync(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t *);
-int advancePhaseEnv(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t *);
-int advancePhaseGate(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t *);
-int advancePhasePendulum(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t *);
+int advancePhaseNoRetrig(q31_t *, q31_t *, q31_t *, q31_t *, int, int *, q31_t *, q31_t *);
+int advancePhaseHardSync(q31_t *, q31_t *, q31_t *, q31_t *, int, int *, q31_t *, q31_t *);
+int advancePhaseEnv(q31_t *, q31_t *, q31_t *, q31_t *, int, int *, q31_t *, q31_t *);
+int advancePhaseGate(q31_t *, q31_t *, q31_t *, q31_t *, int, int *, q31_t *, q31_t *);
+int advancePhasePendulum(q31_t *, q31_t *, q31_t *, q31_t *, int, int *, q31_t *, q31_t *);
 
 int (*noRetrigStateMachine)(int, int, int, int);
 int (*hardSyncStateMachine)(int, int, int, int);
 int (*envStateMachine)(int, int, int, int);
 int (*gateStateMachine)(int, int, int, int);
-int (*pendulumStateMachine)(int, int, int, int);
+int (*pendulumStateMachine)(int, int, int, int, int);
 
 int noRetrigAttackState(int, int, int, int);
 int noRetrigReleaseState(int, int, int, int);
@@ -176,21 +176,21 @@ int gatedState(int, int, int, int);
 int gateReleaseState(int, int, int, int);
 int gateRetriggerState(int, int, int, int);
 
-int pendulumRestingState(int, int, int, int);
-int pendulumForwardAttackState(int, int, int, int);
-int pendulumForwardReleaseState(int, int, int, int);
-int pendulumReverseAttackState(int, int, int, int);
-int pendulumReverseReleaseState(int, int, int, int);
+int pendulumRestingState(int, int, int, int, int);
+int pendulumForwardAttackState(int, int, int, int, int);
+int pendulumForwardReleaseState(int, int, int, int, int);
+int pendulumReverseAttackState(int, int, int, int, int);
+int pendulumReverseReleaseState(int, int, int, int, int);
 
 void (*getSamples)(q31_t *, int, q31_t *, q31_t *);
 
 void getSamplesNoPWM(q31_t *, int, q31_t *, q31_t *);
 void getSamplesPWM(q31_t *, int, q31_t *, q31_t *);
 
-int (*handleLoop)(q31_t *, q31_t * , q31_t *, int);
+int (*handleLoop)(q31_t, q31_t);
 
-int handleLoopOff(q31_t *, q31_t * , q31_t *, int);
-int handleLoopOn(q31_t *, q31_t * , q31_t *, int);
+int handleLoopOff(q31_t, q31_t);
+int handleLoopOn(q31_t, q31_t);
 
 void (*calculateLogicA)(int *, logicHandler *);
 

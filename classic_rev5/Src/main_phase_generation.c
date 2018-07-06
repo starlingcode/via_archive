@@ -50,16 +50,18 @@ void getIncrementsSeq(q31_t * t2CV, controlRateInputs * controlInputs, q31_t * i
 // use those increment values to calculate a phase array and phase event array
 // see main_trigger_states.c for more
 
-int advancePhaseNoRetrig(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int oscillatorActive, q31_t * phaseArray, q31_t * phaseEventArray) {
-
+int advancePhaseNoRetrig(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int * oscillatorActiveFlag, q31_t * phaseArray, q31_t * phaseEventArray) {
 
 	static q31_t previousPhase;
 	static q31_t previousPhaseEvent;
 	q31_t phaseWrapper = 0;
+	int oscillatorActive;
+
+	oscillatorActive = *oscillatorActiveFlag;
 
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 
-		int increment = (*noRetrigStateMachine)(triggerValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]) + oscillatorActive;
+		int increment = (*noRetrigStateMachine)(triggerValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]);
 
 		phase = (phase + increment) * (oscillatorActive);
 
@@ -93,20 +95,27 @@ int advancePhaseNoRetrig(q31_t * incrementValues1, q31_t * incrementValues2, q31
 		previousPhase = phase;
 		previousPhaseEvent = phaseWrapper;
 
+		oscillatorActive = (*handleLoop)(previousPhaseEvent, triggerValues[i]);
+
 		// calculate the sample value
 		phaseArray[i] = phase;
+
 	}
 
+	*oscillatorActiveFlag  = oscillatorActive;
 	return phase;
 
 }
 
-int advancePhaseHardSync(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int oscillatorActive, q31_t * phaseArray, q31_t * phaseEventArray) {
+int advancePhaseHardSync(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int * oscillatorActiveFlag, q31_t * phaseArray, q31_t * phaseEventArray) {
 
 
 	static q31_t previousPhase;
 	static q31_t previousPhaseEvent;
 	q31_t phaseWrapper;
+	int oscillatorActive;
+
+	oscillatorActive = *oscillatorActiveFlag;
 
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 
@@ -144,20 +153,27 @@ int advancePhaseHardSync(q31_t * incrementValues1, q31_t * incrementValues2, q31
 		previousPhase = phase;
 		previousPhaseEvent = phaseWrapper;
 
+		oscillatorActive = (*handleLoop)(previousPhaseEvent, triggerValues[i]);
+
+
 		// calculate the sample value
 		phaseArray[i] = phase;
 	}
 
+	*oscillatorActiveFlag  = oscillatorActive;
 	return phase;
 
 }
 
-int advancePhaseEnv(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int oscillatorActive, q31_t * phaseArray, q31_t * phaseEventArray) {
+int advancePhaseEnv(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int * oscillatorActiveFlag, q31_t * phaseArray, q31_t * phaseEventArray) {
 
 
 	static q31_t previousPhase;
 	static q31_t previousPhaseEvent;
 	q31_t phaseWrapper;
+	int oscillatorActive;
+
+	oscillatorActive = *oscillatorActiveFlag;
 
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 
@@ -195,20 +211,26 @@ int advancePhaseEnv(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * 
 		previousPhase = phase;
 		previousPhaseEvent = phaseWrapper;
 
+		oscillatorActive = (*handleLoop)(previousPhaseEvent, triggerValues[i]);
+
 		// calculate the sample value
 		phaseArray[i] = phase;
 	}
 
+	*oscillatorActiveFlag  = oscillatorActive;
 	return phase;
 
 }
 
-int advancePhaseGate(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int oscillatorActive, q31_t * phaseArray, q31_t * phaseEventArray) {
+int advancePhaseGate(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int * oscillatorActiveFlag, q31_t * phaseArray, q31_t * phaseEventArray) {
 
 
 	static q31_t previousPhase;
 	static q31_t previousPhaseEvent;
 	q31_t phaseWrapper;
+	int oscillatorActive;
+
+	oscillatorActive = *oscillatorActiveFlag;
 
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 
@@ -251,28 +273,33 @@ int advancePhaseGate(q31_t * incrementValues1, q31_t * incrementValues2, q31_t *
 		previousPhase = phase;
 		previousPhaseEvent = phaseWrapper;
 
+		oscillatorActive = (*handleLoop)(previousPhaseEvent, triggerValues[i]);
+
+
 		// calculate the sample value
 		phaseArray[i] = phase;
 	}
 
+	*oscillatorActiveFlag  = oscillatorActive;
 	return phase;
 
 }
 
-int advancePhasePendulum(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int oscillatorActive, q31_t * phaseArray, q31_t * phaseEventArray) {
+int advancePhasePendulum(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * triggerValues, q31_t * gateValues, int phase, int * oscillatorActiveFlag, q31_t * phaseArray, q31_t * phaseEventArray) {
 
 
 	static q31_t previousPhase;
 	static q31_t previousPhaseEvent;
 	q31_t phaseWrapper;
+	int oscillatorActive;
+	static int oscillatorActiveLastSample;
 
-	if (oscillatorActive == 0) {
-		pendulumStateMachine = pendulumRestingState;
-	}
+	oscillatorActive = *oscillatorActiveFlag;
+
 
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 
-		int increment = (*pendulumStateMachine)(triggerValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]);
+		int increment = (*pendulumStateMachine)(triggerValues[i], previousPhaseEvent, oscillatorActiveLastSample, incrementValues1[i], incrementValues2[i]);
 
 		phase = (phase + increment) * (oscillatorActive);
 
@@ -306,56 +333,35 @@ int advancePhasePendulum(q31_t * incrementValues1, q31_t * incrementValues2, q31
 		previousPhase = phase;
 		previousPhaseEvent = phaseWrapper;
 
+		oscillatorActiveLastSample = oscillatorActive;
+
+		oscillatorActive = (*handleLoop)(previousPhaseEvent, triggerValues[i]);
+
+
 		// calculate the sample value
 		phaseArray[i] = phase;
 
 	}
 
+	*oscillatorActiveFlag  = oscillatorActive;
 	return phase;
 
 }
 
-// SLOW
-//static inline void wrapPhaseAndLog(int * phaseValue, int * phaseWrapper, int * previousPhase, int * previousPhaseEvent, int bufferIndex, q31_t * phaseBuffer, q31_t * phaseEventBuffer) {
-//
-//	// start with a 0 for no event
-//
-//	*phaseWrapper = 0;
-//
-//	// add wavetable length if phase < 0
-//
-//	*phaseWrapper += ((uint32_t)(*phaseValue) >> 31) * WAVETABLE_LENGTH;
-//
-//	// subtract wavetable length if phase > wavetable length
-//
-//	*phaseWrapper -= ((uint32_t)(WAVETABLE_LENGTH - *phaseValue) >> 31) * WAVETABLE_LENGTH;
-//
-//	// apply the wrapping
-//	// no effect if the phase is in bounds
-//
-//	*phaseValue += *phaseWrapper;
-//
-//	// log a -1 if the max value index of the wavetable is traversed from the left
-//	// log a 1 if traversed from the right
-//	// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
-//	// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
-//
-//	*phaseWrapper += ((uint32_t)(*phaseValue - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(*previousPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
-//
-//	phaseEventBuffer[bufferIndex] = *phaseWrapper;
-//
-//	// TODO rewrite logic parsing function
-//
-//	// store the current phase
-//	*previousPhase = *phaseValue;
-//	*previousPhaseEvent = *phaseWrapper;
-//
-//	// calculate the sample value
-//	phaseBuffer[bufferIndex] = *phaseValue;
-//
-//
-//}
+int handleLoopOn(q31_t phaseEvents, q31_t trigger) {
+	return 1;
+}
+
+int handleLoopOff(q31_t phaseEvents, q31_t trigger) {
+
+	static int oscillatorActiveState;
+
+	oscillatorActiveState |= !trigger;
+
+	oscillatorActiveState &= !(abs(phaseEvents) >> 24);
+
+	return oscillatorActiveState;
 
 
-
+}
 

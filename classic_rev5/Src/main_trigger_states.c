@@ -233,7 +233,7 @@ int gateRetriggerState(int gate, int phaseEvent, int attackTime, int releaseTime
  *
  */
 
-int pendulumRestingState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
+int pendulumRestingState(int trigger, int phaseEvent, int oscillatorActive, int attackTime, int releaseTime) {
 	if (trigger == 0) {
 		pendulumStateMachine = pendulumForwardAttackState;
 		return attackTime;
@@ -242,12 +242,11 @@ int pendulumRestingState(int trigger, int phaseEvent, int attackTime, int releas
 	}
 }
 
-int pendulumForwardAttackState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
+int pendulumForwardAttackState(int trigger, int phaseEvent, int oscillatorActive, int attackTime, int releaseTime) {
 
-
-	if (trigger == 0) {
+	if (trigger == 0 && oscillatorActive) {
 		pendulumStateMachine = pendulumReverseAttackState;
-		return -attackTime;
+		return 0;
 	}
 
 	switch (phaseEvent) {
@@ -263,7 +262,8 @@ int pendulumForwardAttackState(int trigger, int phaseEvent, int attackTime, int 
 
 }
 
-int pendulumReverseAttackState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
+int pendulumReverseAttackState(int trigger, int phaseEvent, int oscillatorActive, int attackTime, int releaseTime) {
+
 
 	if (trigger == 0) {
 		pendulumStateMachine = pendulumForwardAttackState;
@@ -283,7 +283,7 @@ int pendulumReverseAttackState(int trigger, int phaseEvent, int attackTime, int 
 
 }
 
-int pendulumForwardReleaseState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
+int pendulumForwardReleaseState(int trigger, int phaseEvent, int oscillatorActive, int attackTime, int releaseTime) {
 
 	if (trigger == 0) {
 		pendulumStateMachine = pendulumReverseReleaseState;
@@ -303,7 +303,7 @@ int pendulumForwardReleaseState(int trigger, int phaseEvent, int attackTime, int
 
 }
 
-int pendulumReverseReleaseState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
+int pendulumReverseReleaseState(int trigger, int phaseEvent, int oscillatorActive, int attackTime, int releaseTime) {
 
 	if (trigger == 0) {
 		pendulumStateMachine = pendulumForwardReleaseState;
