@@ -32,7 +32,7 @@ void fillBuffer(void) {
 
 	(*getSamples)(phaseArray, __USAT(inputRead->t2CV[0] + controlRateInput.knob2Value - 2048, 12), inputRead->morphCV, outputWrite->samples);
 
-	//(*handleLoop)(phaseEventArray, inputRead->triggerInput, outputWrite->samples, &oscillatorOn);
+	oscillatorOn = (*handleLoop)(phaseEventArray, inputRead->triggerInput, outputWrite->samples, oscillatorOn);
 
 	// profiling pin a logic out low
 	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
@@ -48,28 +48,47 @@ void fillBuffer(void) {
 
 }
 
-void handleLoopOff(q31_t * phaseEvents, q31_t * triggers, q31_t * samples, int * oscillatorOn) {
-	return;
+int handleLoopOff(q31_t * phaseEvents, q31_t * triggers, q31_t * samples, int oscillatorOn) {
+	return 1;
 }
 
-void handleLoopOn(q31_t * phaseEvents, q31_t * triggers, q31_t * samples, int * oscillatorOn) {
+int handleLoopOn(q31_t * phaseEvents, q31_t * triggers, q31_t * samples, int oscillatorOn) {
 
-	for (int i = 0; i < BUFFER_SIZE; i++) {
-		switch (phaseEvents[i]) {
-			case (AT_A_FROM_ATTACK):
-			case (AT_A_FROM_RELEASE):
-			for (int j = i; j < BUFFER_SIZE; j ++) {
-				samples[j] = 0;
-				// set oscillator on to 0 if no rising edges in the rest of the buffer, else 1
-				*oscillatorOn |= !triggers[j];
+	if (oscillatorOn) {
+
+		for (int i = 0; i < BUFFER_SIZE; i++) {
+
+			switch (phaseEvents[i]) {
+				case (AT_A_FROM_ATTACK):
+				case (AT_A_FROM_RELEASE):
+					pendulumStateMachine = pendulumRestingState;
+					oscillatorOn = 0;
+					for (int j = i; j < BUFFER_SIZE; j ++) {
+						samples[j] = 0;
+					}
+					break;
+
+				default:
+					break;
+
 			}
-			break;
 
-		default:
-			break;
-
+			if (triggers[i] == 0) {
+				pendulumStateMachine = pendulumForwardAttackState;
+				oscillatorOn = 1;
+			}
+		}
+	} else {
+		for (int i = 0; i < BUFFER_SIZE; i++) {
+			if (triggers[i] == 0) {
+				oscillatorOn = 1;
+			}
 		}
 	}
+
+
+
+	return oscillatorOn;
 
 }
 

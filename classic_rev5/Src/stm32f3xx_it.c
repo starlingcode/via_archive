@@ -41,7 +41,7 @@
 #include "main.h"
 #include "user_interface.h"
 #include "via_rev5_hardware_io.h"
-extern TIM_HandleTypeDef htim3;
+
 
 enum
 {	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
@@ -286,15 +286,15 @@ void TIM12_IRQHandler(void)
 
 	static int trigStateSignal;
 
-	if (trigStateSignal == RISING_EDGE) {
+	if (TRIGGER_RISING_EDGE) {
 
 		gateSignal = 1;
 		triggerSignal = 0;
-		trigStateSignal = FALLING_EDGE;
+
 
 	} else { //falling edge
 		gateSignal = 0;
-		trigStateSignal = RISING_EDGE;
+
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
@@ -331,7 +331,7 @@ void TIM6_DAC1_IRQHandler(void)
 	// write the sample to the dac
 
 
-	WRITE_DAC1(__USAT(4095 - outputRead->samples[readIndex], 12));
+	WRITE_DAC1(__USAT((4095 - outputRead->samples[readIndex]), 12));
 	WRITE_DAC2(__USAT(outputRead->samples[readIndex], 12));
 
 	// write the current trigger signal value

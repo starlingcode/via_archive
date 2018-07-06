@@ -2,6 +2,7 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "dsp.h"
+#include "modes.h"
 
 
 /*
@@ -10,30 +11,30 @@
  *
  */
 
-int noRetrigAttackState(int trigger, int phaseEvent, int increment1, int increment2) {
+int noRetrigAttackState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
 
 	switch (phaseEvent) {
 
 	case (AT_B_FROM_ATTACK):
 		noRetrigStateMachine = noRetrigReleaseState;
-		return increment2;
+		return releaseTime;
 
 	default:
-		return increment1;
+		return attackTime;
 
 	}
 }
 
-int noRetrigReleaseState(int trigger, int phaseEvent, int increment1, int increment2) {
+int noRetrigReleaseState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
 
 	switch (phaseEvent) {
 
 	case (AT_A_FROM_RELEASE):
 		noRetrigStateMachine = noRetrigAttackState;
-		return increment1;
+		return attackTime;
 
 	default:
-		return increment2;
+		return releaseTime;
 
 	};
 }
@@ -44,21 +45,21 @@ int noRetrigReleaseState(int trigger, int phaseEvent, int increment1, int increm
  *
  */
 
-int hardSyncAttackState(int trigger, int phaseEvent, int increment1, int increment2) {
+int hardSyncAttackState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
 
 	switch (phaseEvent) {
 
 	case (AT_B_FROM_ATTACK):
 		hardSyncStateMachine = hardSyncReleaseState;
-		return increment2;
+		return releaseTime;
 
 	default:
-		return increment1;
+		return attackTime;
 
 	}
 }
 
-int hardSyncReleaseState(int trigger, int phaseEvent, int increment1, int increment2) {
+int hardSyncReleaseState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
 
 	if (trigger == 0) {
 		hardSyncStateMachine = hardSyncAttackState;
@@ -68,10 +69,10 @@ int hardSyncReleaseState(int trigger, int phaseEvent, int increment1, int increm
 
 	case (AT_A_FROM_RELEASE):
 		hardSyncStateMachine = hardSyncAttackState;
-		return increment1;
+		return attackTime;
 
 	default:
-		return increment2;
+		return releaseTime;
 
 	};
 }
@@ -82,64 +83,66 @@ int hardSyncReleaseState(int trigger, int phaseEvent, int increment1, int increm
  *
  */
 
-int envAttackState(int trigger, int phaseEvent, int increment1, int increment2) {
+int envAttackState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
 
 	switch (phaseEvent) {
 
 	case (AT_B_FROM_ATTACK):
 		envStateMachine = envReleaseState;
-		return increment2;
+		return releaseTime;
 
 	default:
-		return increment1;
+		return attackTime;
 
 	}
 }
 
-int envReleaseState(int trigger, int phaseEvent, int increment1, int increment2) {
+int envReleaseState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
 
 	if (trigger == 0) {
 		envStateMachine = envRetriggerState;
-		return -increment1;
+		return -attackTime;
 	}
 
 	switch (phaseEvent) {
 
 	case (AT_A_FROM_RELEASE):
 		envStateMachine = envAttackState;
-		return increment1;
+		return attackTime;
 
 	default:
-		return increment2;
+		return releaseTime;
 
 	};
 }
 
-int envRetriggerState(int trigger, int phaseEvent, int increment1, int increment2) {
+int envRetriggerState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
 
 	switch (phaseEvent) {
 
 	case (AT_B_FROM_RELEASE):
 		envStateMachine = envReleaseState;
-		return increment2;
+		return releaseTime;
 
 	default:
-		return -increment1;
+		return -attackTime;
 
 	}
 }
 
 /*
  *
- * gateStateMachine
+ * gateStateMachine loop
  *
  */
 
-int gateAttackState(int gate, int phaseEvent, int increment1, int increment2) {
+int gateAttackState(int gate, int phaseEvent, int attackTime, int releaseTime) {
 
-	if (gate == 0) {
+	int gateWLoopProtection = gate | LOOP_MODE
+
+	if (gateWLoopProtection == 0) {
 		gateStateMachine = gateReleaseReverseState;
-		return -increment2;
+		return -releaseTime;
 	}
 
 	switch (phaseEvent) {
@@ -149,75 +152,77 @@ int gateAttackState(int gate, int phaseEvent, int increment1, int increment2) {
 		return 0;
 
 	default:
-		return increment1;
+		return attackTime;
 
 	}
 }
 
-int gateReleaseReverseState(int gate, int phaseEvent, int increment1, int increment2) {
+int gateReleaseReverseState(int gate, int phaseEvent, int attackTime, int releaseTime) {
 
 	if (gate == 1) {
 		gateStateMachine = gateAttackState;
-		return increment1;
+		return attackTime;
 	}
 
 	switch (phaseEvent) {
 
 	case (AT_A_FROM_ATTACK):
 		gateStateMachine = gateAttackState;
-		return increment1;
+		return attackTime;
 
 	default:
-		return -increment2;
+		return -releaseTime;
 
 	};
 }
 
-int gatedState(int gate, int phaseEvent, int increment1, int increment2) {
+int gatedState(int gate, int phaseEvent, int attackTime, int releaseTime) {
 
-	if (gate == 2) {
+	if (gate == 0) {
 		gateStateMachine = gateReleaseState;
-		return increment2;
+		return releaseTime;
 	} else {
 		return 0;
 	}
 
 }
 
-int gateReleaseState(int gate, int phaseEvent, int increment1, int increment2) {
+int gateReleaseState(int gate, int phaseEvent, int attackTime, int releaseTime) {
 
 	if (gate == 1) {
 		gateStateMachine = gateRetriggerState;
-		return -increment1;
+		return -attackTime;
 	}
 
 	switch (phaseEvent) {
 
 	case (AT_A_FROM_RELEASE):
 		gateStateMachine = gateAttackState;
-		return increment1;
+		return attackTime;
 
 	default:
-		return increment2;
+		return releaseTime;
 
 	};
 }
 
-int gateRetriggerState(int gate, int phaseEvent, int increment1, int increment2) {
+int gateRetriggerState(int gate, int phaseEvent, int attackTime, int releaseTime) {
 
-	if (gate == 0) {
+	int gateWLoopProtection = gate | LOOP_MODE
+
+	if (gateWLoopProtection == 0) {
 		gateStateMachine = gateReleaseState;
-		return increment2;
+		return releaseTime;
 	}
 
 	switch (phaseEvent) {
 
 	case (AT_B_FROM_RELEASE):
-		gateStateMachine = gatedState;
-		return 0;
+		gateStateMachine = gateReleaseState;
+		return releaseTime;
 
 	default:
-		return -increment1;
+		return -attackTime;
 
 	}
 }
@@ -228,81 +233,91 @@ int gateRetriggerState(int gate, int phaseEvent, int increment1, int increment2)
  *
  */
 
-int pendulumForwardAttackState(int trigger, int phaseEvent, int increment1, int increment2) {
+int pendulumRestingState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
+	if (trigger == 0) {
+		pendulumStateMachine = pendulumForwardAttackState;
+		return attackTime;
+	} else {
+		return 0;
+	}
+}
+
+int pendulumForwardAttackState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
+
 
 	if (trigger == 0) {
 		pendulumStateMachine = pendulumReverseAttackState;
-		return -increment1;
+		return -attackTime;
 	}
 
 	switch (phaseEvent) {
 
 	case (AT_B_FROM_ATTACK):
 		pendulumStateMachine = pendulumForwardReleaseState;
-		return increment2;
+		return releaseTime;
 
 	default:
-		return increment1;
+		return attackTime;
 
 	}
 
 }
 
-int pendulumReverseAttackState(int trigger, int phaseEvent, int increment1, int increment2) {
+int pendulumReverseAttackState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
 
 	if (trigger == 0) {
 		pendulumStateMachine = pendulumForwardAttackState;
-		return increment1;
+		return attackTime;
 	}
 
 	switch (phaseEvent) {
 
 	case (AT_A_FROM_ATTACK):
 		pendulumStateMachine = pendulumReverseReleaseState;
-		return -increment2;
+		return -releaseTime;
 
 	default:
-		return -increment1;
+		return -attackTime;
 
 	}
 
 }
 
-int pendulumForwardReleaseState(int trigger, int phaseEvent, int increment1, int increment2) {
+int pendulumForwardReleaseState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
 
 	if (trigger == 0) {
 		pendulumStateMachine = pendulumReverseReleaseState;
-		return -increment2;
+		return -releaseTime;
 	}
 
 	switch (phaseEvent) {
 
 	case (AT_A_FROM_RELEASE):
 		pendulumStateMachine = pendulumForwardAttackState;
-		return increment1;
+		return attackTime;
 
 	default:
-		return increment2;
+		return releaseTime;
 
 	}
 
 }
 
-int pendulumReverseReleaseState(int trigger, int phaseEvent, int increment1, int increment2) {
+int pendulumReverseReleaseState(int trigger, int phaseEvent, int attackTime, int releaseTime) {
 
 	if (trigger == 0) {
 		pendulumStateMachine = pendulumForwardReleaseState;
-		return increment2;
+		return releaseTime;
 	}
 
 	switch (phaseEvent) {
 
 	case (AT_B_FROM_RELEASE):
 		pendulumStateMachine = pendulumReverseAttackState;
-		return -increment1;
+		return -attackTime;
 
 	default:
-		return -increment2;
+		return -releaseTime;
 
 	}
 

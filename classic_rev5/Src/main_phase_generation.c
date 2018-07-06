@@ -59,9 +59,9 @@ int advancePhaseNoRetrig(q31_t * incrementValues1, q31_t * incrementValues2, q31
 
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 
-		int increment = (*noRetrigStateMachine)(triggerValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]);
+		int increment = (*noRetrigStateMachine)(triggerValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]) + oscillatorActive;
 
-		phase = (phase + increment); //* (oscillatorActive);
+		phase = (phase + increment) * (oscillatorActive);
 
 		phaseWrapper = 0;
 
@@ -83,9 +83,9 @@ int advancePhaseNoRetrig(q31_t * incrementValues1, q31_t * incrementValues2, q31
 		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
 		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
 
-		phaseWrapper += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(previousPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+		phaseWrapper += ((uint32_t)(phase - AT_B_PHASE) >> 31) - ((uint32_t)(previousPhase - AT_B_PHASE) >> 31);
 
-		phaseEventArray[i] = phaseWrapper;
+		phaseEventArray[i] = phaseWrapper * (oscillatorActive);
 
 		// TODO rewrite logic parsing function
 
@@ -112,7 +112,7 @@ int advancePhaseHardSync(q31_t * incrementValues1, q31_t * incrementValues2, q31
 
 		int increment = (*hardSyncStateMachine)(triggerValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]);
 
-		phase = (phase + increment) * triggerValues[i];// * (oscillatorActive);
+		phase = (phase + increment) * triggerValues[i] * (oscillatorActive);
 
 		phaseWrapper = 0;
 
@@ -134,9 +134,9 @@ int advancePhaseHardSync(q31_t * incrementValues1, q31_t * incrementValues2, q31
 		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
 		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
 
-		phaseWrapper += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(previousPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+		phaseWrapper += ((uint32_t)(phase - AT_B_PHASE) >> 31) - ((uint32_t)(previousPhase - AT_B_PHASE) >> 31);
 
-		phaseEventArray[i] = phaseWrapper;
+		phaseEventArray[i] = phaseWrapper * (oscillatorActive);
 
 		// TODO rewrite logic parsing function
 
@@ -163,7 +163,7 @@ int advancePhaseEnv(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * 
 
 		int increment = (*envStateMachine)(triggerValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]);
 
-		phase = (phase + increment);// * (oscillatorActive);
+		phase = (phase + increment) * (oscillatorActive);
 
 		phaseWrapper = 0;
 
@@ -185,7 +185,7 @@ int advancePhaseEnv(q31_t * incrementValues1, q31_t * incrementValues2, q31_t * 
 		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
 		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
 
-		phaseWrapper += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(previousPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+		phaseWrapper += ((uint32_t)(phase - AT_B_PHASE) >> 31) - ((uint32_t)(previousPhase - AT_B_PHASE) >> 31);
 
 		phaseEventArray[i] = phaseWrapper;
 
@@ -214,7 +214,7 @@ int advancePhaseGate(q31_t * incrementValues1, q31_t * incrementValues2, q31_t *
 
 		int increment = (*gateStateMachine)(gateValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]);
 
-		phase = (phase + increment);// * (oscillatorActive);
+		phase = (phase + increment) * (oscillatorActive);
 
 		phaseWrapper = 0;
 
@@ -236,7 +236,12 @@ int advancePhaseGate(q31_t * incrementValues1, q31_t * incrementValues2, q31_t *
 		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
 		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
 
-		phaseWrapper += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(previousPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+		int atBIndicator = ((uint32_t)(phase - AT_B_PHASE) >> 31) - ((uint32_t)(previousPhase - AT_B_PHASE) >> 31);
+
+		phaseWrapper += atBIndicator;
+
+		// stick the position to WAVETABLE AT_B_PHASE
+		phase += (AT_B_PHASE - phase) * (abs(atBIndicator) & gateValues[i]);
 
 		phaseEventArray[i] = phaseWrapper;
 
@@ -261,11 +266,15 @@ int advancePhasePendulum(q31_t * incrementValues1, q31_t * incrementValues2, q31
 	static q31_t previousPhaseEvent;
 	q31_t phaseWrapper;
 
+	if (oscillatorActive == 0) {
+		pendulumStateMachine = pendulumRestingState;
+	}
+
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 
 		int increment = (*pendulumStateMachine)(triggerValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i]);
 
-		phase = (phase + increment);// * (oscillatorActive);
+		phase = (phase + increment) * (oscillatorActive);
 
 		phaseWrapper = 0;
 
@@ -287,7 +296,7 @@ int advancePhasePendulum(q31_t * incrementValues1, q31_t * incrementValues2, q31
 		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
 		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
 
-		phaseWrapper += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(previousPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+		phaseWrapper += ((uint32_t)(phase - AT_B_PHASE) >> 31) - ((uint32_t)(previousPhase - AT_B_PHASE) >> 31);
 
 		phaseEventArray[i] = phaseWrapper;
 

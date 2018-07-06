@@ -10,7 +10,7 @@
 
 #define WAVETABLE_LENGTH 33554432
 #define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
-#define WAVETABLE_MAX_VALUE_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
+#define AT_B_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
 
 #define BUFFER_SIZE 8
 
@@ -140,7 +140,7 @@ int (*advancePhase)(q31_t *, q31_t *, q31_t *, q31_t *, int, int, q31_t *, q31_t
 
 #define WAVETABLE_LENGTH 33554432
 #define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
-#define WAVETABLE_MAX_VALUE_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
+#define AT_B_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
 
 #define NO_EVENT 0
 #define AT_A_FROM_RELEASE -WAVETABLE_LENGTH + 1
@@ -176,6 +176,7 @@ int gatedState(int, int, int, int);
 int gateReleaseState(int, int, int, int);
 int gateRetriggerState(int, int, int, int);
 
+int pendulumRestingState(int, int, int, int);
 int pendulumForwardAttackState(int, int, int, int);
 int pendulumForwardReleaseState(int, int, int, int);
 int pendulumReverseAttackState(int, int, int, int);
@@ -186,10 +187,10 @@ void (*getSamples)(q31_t *, int, q31_t *, q31_t *);
 void getSamplesNoPWM(q31_t *, int, q31_t *, q31_t *);
 void getSamplesPWM(q31_t *, int, q31_t *, q31_t *);
 
-void (*handleLoop)(q31_t *, q31_t * , q31_t *, int *);
+int (*handleLoop)(q31_t *, q31_t * , q31_t *, int);
 
-void handleLoopOff(q31_t *, q31_t * , q31_t *, int *);
-void handleLoopOn(q31_t *, q31_t * , q31_t *, int *);
+int handleLoopOff(q31_t *, q31_t * , q31_t *, int);
+int handleLoopOn(q31_t *, q31_t * , q31_t *, int);
 
 void (*calculateLogicA)(int *, logicHandler *);
 
