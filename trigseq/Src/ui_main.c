@@ -122,7 +122,7 @@ void ui_newMode(int sig)
 	{
 	case ENTRY_SIG:
 		CLEAR_RUNTIME_DISPLAY;
-		uiStoreToEEPROM(0);
+		//uiStoreToEEPROM(0);
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(5000);
 		UI_TIMER_ENABLE;
@@ -181,7 +181,7 @@ void ui_button6SubMenu(int sig)
 	{
 	case ENTRY_SIG:
 		UI_TIMER_RESET;// start count over
-		uiStoreToEEPROM(0);  // store in preset 0 (current state)
+		//uiStoreToEEPROM(0);  // store in preset 0 (current state)
 		break;
 
 	case SENSOR_EVENT_SIG:

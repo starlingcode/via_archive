@@ -1,4 +1,4 @@
-#include "stm32f3xx_hal.h"
+ #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "main_state_machine.h"
@@ -111,7 +111,7 @@ static inline int getSamplePM(int xIndex, int yIndex, int zIndex) {
 	// waveterrain = wavetable(x + wavetable(y, z), z)
 
 	int xSample = getSampleQuinticSpline(xIndex << 10, zIndex);
-	int ySample = getSampleQuinticSpline(((yIndex << 10) + (xSample << 8)) & ((1<<25) - 1), zIndex);
+	int ySample = getSampleQuinticSpline(((yIndex << 10) + (xSample << 4)) & ((1<<25) - 1), zIndex);
 
 	return ySample >> 3; //right shift by 3 tp scale 15bit to 12bit
 

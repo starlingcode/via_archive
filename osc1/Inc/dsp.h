@@ -51,8 +51,8 @@ typedef struct {
 q31_t sampleBuffer1[BUFFER_SIZE];
 q31_t sampleBuffer2[BUFFER_SIZE];
 
-q31_t xCVBuffer1[BUFFER_SIZE];
-q31_t xCVBuffer2[BUFFER_SIZE];
+q31_t t2CVBuffer1[BUFFER_SIZE];
+q31_t t2CVBuffer2[BUFFER_SIZE];
 
 q31_t morphCVBuffer1[BUFFER_SIZE];
 q31_t morphCVBuffer2[BUFFER_SIZE];
@@ -123,7 +123,7 @@ void shASample(void);
 void shATrack(void);
 void shBSample(void);
 void shBTrack(void);
-void holdLogic(void);
+void logicNoOp(void);
 
 void initializeFilter();
 

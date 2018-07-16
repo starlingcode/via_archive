@@ -120,7 +120,7 @@ void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * 
 
 	#define WAVETABLE_LENGTH 33554432
 	#define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
-	#define WAVETABLE_MAX_VALUE_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
+	#define AT_B_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
 
 	static int phase;
 	static int lastPhase;
@@ -164,7 +164,7 @@ void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * 
 		// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
 		// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
 
-		wrapPhase += ((uint32_t)(phase - WAVETABLE_MAX_VALUE_PHASE) >> 31) - ((uint32_t)(lastPhase - WAVETABLE_MAX_VALUE_PHASE) >> 31);
+		wrapPhase += ((uint32_t)(phase - AT_B_PHASE) >> 31) - ((uint32_t)(lastPhase - AT_B_PHASE) >> 31);
 
 		// log the phase event by accumulating the indicative variables
 		// log 0 if no event

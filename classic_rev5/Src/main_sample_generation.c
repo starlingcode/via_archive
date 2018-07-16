@@ -3,24 +3,25 @@
 #include "stm32f3xx_it.h"
 #include "main_state_machine.h"
 #include "tables.h"
-#include "int64.h"
 #include "dsp.h"
 #include "pwm_tables.h"
+#include "fill_buffer.h"
+#include "via_rev5_hardware_io.h"
 
-static inline int getSampleQuinticSpline(int, uint32_t);
+static inline int getSampleQuinticSpline(int, uint32_t, int *);
 static inline int calculatePWMPhase(int, uint32_t);
 
-q31_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModPWM_2, phaseModPWM_3, phaseModPWM_4, phaseModPWM_5, phaseModPWM_6, phaseModPWM_7, phaseModPWM_8, phaseModPWM_9, phaseModPWM_10, phaseModPWM_11, phaseModPWM_12, phaseModPWM_13, phaseModPWM_14, phaseModPWM_15, phaseModPWM_16, phaseModPWM_17, phaseModPWM_18, phaseModPWM_19, phaseModPWM_20, phaseModPWM_21, phaseModPWM_22, phaseModPWM_23, phaseModPWM_24, phaseModPWM_25, phaseModPWM_26, phaseModPWM_27, phaseModPWM_28, phaseModPWM_29, phaseModPWM_30, phaseModPWM_31, phaseModPWM_32};
+const q31_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModPWM_2, phaseModPWM_3, phaseModPWM_4, phaseModPWM_5, phaseModPWM_6, phaseModPWM_7, phaseModPWM_8, phaseModPWM_9, phaseModPWM_10, phaseModPWM_11, phaseModPWM_12, phaseModPWM_13, phaseModPWM_14, phaseModPWM_15, phaseModPWM_16, phaseModPWM_17, phaseModPWM_18, phaseModPWM_19, phaseModPWM_20, phaseModPWM_21, phaseModPWM_22, phaseModPWM_23, phaseModPWM_24, phaseModPWM_25, phaseModPWM_26, phaseModPWM_27, phaseModPWM_28, phaseModPWM_29, phaseModPWM_30, phaseModPWM_31, phaseModPWM_32};
 
-void getSamplesNoPWM(q31_t * phaseArray, int PWM, q31_t * morphArray, q31_t * samples) {
+void getSamplesNoPWM(q31_t * phaseArray, int PWM, q31_t * morphArray, q31_t * samples, q31_t * deltaArray) {
 
 	for (int i = 0; i < BUFFER_SIZE; i++) {
-		samples[i] = getSampleQuinticSpline(phaseArray[i], __USAT(morphArray[i], 12));
+		samples[i] = getSampleQuinticSpline(phaseArray[i], __USAT(morphArray[i], 12), &deltaArray[i]);
 	}
 
 }
 
-void getSamplesPWM(q31_t * phaseArray, int PWM, q31_t * morphArray, q31_t * samples) {
+void getSamplesPWM(q31_t * phaseArray, int PWM, q31_t * morphArray, q31_t * samples, q31_t * deltaArray) {
 
 	int pwmIndex = __USAT(PWM, 12) << 9;
 
@@ -28,13 +29,13 @@ void getSamplesPWM(q31_t * phaseArray, int PWM, q31_t * morphArray, q31_t * samp
 
 		int ghostPhase = calculatePWMPhase(phaseArray[i], pwmIndex);
 
-		samples[i] = getSampleQuinticSpline(ghostPhase, __USAT(morphArray[i], 12));
+		samples[i] = getSampleQuinticSpline(ghostPhase, __USAT(morphArray[i], 12), &deltaArray[i]);
 	}
 
 }
 
 
-static inline int getSampleQuinticSpline(int phase, uint32_t morph) {
+static inline int getSampleQuinticSpline(int phase, uint32_t morph, int * delta) {
 
     /* in this function, we use our phase position to get the sample to give to our dacs using a quintic spline interpolation technique
     essentially, we need to get 6 pairs of sample values and two "fractional arguments" (where are we at in between those sample values)
@@ -57,7 +58,7 @@ static inline int getSampleQuinticSpline(int phase, uint32_t morph) {
 
 	// bit shifting to divide by the correct power of two takes a 12 bit number (our morph) and returns the a quotient in the range of our family size
 
-	LnFamily = morph >> 10;
+	LnFamily = morph >> 9;
 
 	leftIndex = &fullTableHoldArray[LnFamily][LnSample];
 	rightIndex = &fullTableHoldArray[LnFamily + 1][LnSample];
@@ -68,7 +69,7 @@ static inline int getSampleQuinticSpline(int phase, uint32_t morph) {
 
 	// we have to calculate the fractional portion and get it up to full scale q16
 
-	morphFrac = (morph - (LnFamily << 10)) << 6;
+	morphFrac = (morph - (LnFamily << 9)) << 7;
 
 	// perform the 6 linear interpolations to get the sample values and apply morph
 	// TODO track delta change in the phase event array
@@ -96,6 +97,10 @@ static inline int getSampleQuinticSpline(int phase, uint32_t morph) {
 					))
 			))
 		));
+
+	int deltaSign = ((sample3 - sample2) >> 31);
+
+	*delta = deltaSign * EXPAND_LOGIC_HIGH_MASK + !deltaSign * EXPAND_LOGIC_LOW_MASK;
 
 	return __USAT(out >> 3, 12);
 }

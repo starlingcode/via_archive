@@ -59,7 +59,7 @@ void handleCoversionSlow(controlRateInputs * inputs) {
 }
 
 // wrap register address functions to be loaded into the logic struct (which is loaded into a playback buffer)
-void holdLogic(void) {
+void logicNoOp(void) {
 
 }
 void logicAHigh(void) {

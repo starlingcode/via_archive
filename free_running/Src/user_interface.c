@@ -1,3 +1,7 @@
+
+#ifndef UI_HEADER
+#define UI_HEADER
+
 #include "tables.h"
 #include "main.h"
 #include "tsl_user.h"
@@ -1091,3 +1095,4 @@ void ui_factoryReset(int sig){
 	}
 }
 
+#endif

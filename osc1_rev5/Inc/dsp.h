@@ -10,7 +10,7 @@
 
 #define WAVETABLE_LENGTH 33554432
 #define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
-#define WAVETABLE_MAX_VALUE_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
+#define AT_B_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
 
 #define BUFFER_SIZE 8
 
@@ -38,10 +38,7 @@ typedef struct {
 
 // IO buffers
 
-// function pointers to handle the logic outs
-// this type can be stored in a buffer cleanly
-
-//typedef void (*logicHandler)(void);
+// GPIO pin mask for set and clear handling functions
 typedef uint32_t logicHandler;
 
 // store buffer pointers for the audio rate inputs and outputs
@@ -84,8 +81,8 @@ logicHandler logicBBuffer2[BUFFER_SIZE];
 logicHandler auxLogicBuffer1[BUFFER_SIZE];
 logicHandler auxLogicBuffer2[BUFFER_SIZE];
 
-q31_t xCVBuffer1[BUFFER_SIZE];
-q31_t xCVBuffer2[BUFFER_SIZE];
+q31_t t2CVBuffer1[BUFFER_SIZE];
+q31_t t2CVBuffer2[BUFFER_SIZE];
 
 q31_t morphCVBuffer1[BUFFER_SIZE];
 q31_t morphCVBuffer2[BUFFER_SIZE];

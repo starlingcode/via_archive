@@ -890,8 +890,15 @@ static void MX_GPIO_Init(void) {
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 	GPIO_InitStruct.Pin = GPIO_PIN_11;
-	GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+
+#ifdef BUILD_REV2
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; // rev2
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+#else
+	GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING; // rev4
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
+#endif
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }

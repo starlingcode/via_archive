@@ -112,12 +112,12 @@ void initializeDoubleBuffer() {
 	output1.auxLogicHandler = auxLogicBuffer1;
 	output2.auxLogicHandler = auxLogicBuffer2;
 
-	input1.xCV = xCVBuffer1;
+	input1.xCV = t2CVBuffer1;
 	input1.yCV = morphCVBuffer1;
 	input1.hardSyncInput = hardSyncBuffer1;
 	input1.reverseInput = reverseBuffer1;
 
-	input2.xCV = xCVBuffer2;
+	input2.xCV = t2CVBuffer2;
 	input2.yCV = morphCVBuffer2;
 	input2.hardSyncInput = hardSyncBuffer2;
 	input2.reverseInput = reverseBuffer2;

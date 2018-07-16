@@ -8,6 +8,7 @@
 #include "main_state_machine.h"
 #include "modes.h"
 #include "via_rev5_hardware_io.h"
+#include "fill_buffer.h"
 
 // RGB led timer
 TIM_HandleTypeDef htim3;
@@ -23,6 +24,26 @@ TIM_HandleTypeDef htim5;
 void handleButton1ModeChange(int mode) {
 
 
+	switch (mode) {
+	case nosampleandhold:
+		calculateSH = calculateSHMode1;
+		break;
+	case a:
+		calculateSH = calculateSHMode2;
+		break;
+	case b:
+		calculateSH = calculateSHMode3;
+		break;
+	case ab:
+		calculateSH = calculateSHMode4;
+		break;
+	case halfdecimate:
+		calculateSH = calculateSHMode5;
+		break;
+	case decimate:
+		calculateSH = calculateSHMode6;
+		break;
+	}
 
 }
 
@@ -32,10 +53,12 @@ void handleButton3ModeChange(int mode) {
 	case audio:
 		getIncrements = getIncrementsAudio;
 		getSamples = getSamplesNoPWM;
+		updateRGB = updateRGBAudio;
 		break;
 	case env:
 		getIncrements = getIncrementsEnv;
 		getSamples = getSamplesNoPWM;
+		updateRGB = updateRGBSubAudio;
 		break;
 	case seq:
 		getIncrements = getIncrementsSeq;

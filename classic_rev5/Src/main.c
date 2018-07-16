@@ -57,6 +57,7 @@
 #include "touchsensing.h"
 #include "tsc.h"
 #include "gpio.h"
+#include "fill_buffer.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -150,6 +151,30 @@ int main(void)
   MX_DAC2_Init();
   /* USER CODE BEGIN 2 */
 
+  /* Start Calibration in polling mode */
+  if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1) != HAL_OK)
+  {
+    LEDA_ON;
+  }
+
+  /* Pool for the end of calibration */
+  if (HAL_SDADC_PollForCalibEvent(&hsdadc1, 100) != HAL_OK)
+  {
+	    LEDB_ON;
+  }
+
+
+  if (HAL_SDADC_CalibrationStart(&hsdadc2, SDADC_CALIBRATION_SEQ_1) != HAL_OK)
+  {
+    LEDA_ON;
+  }
+
+  /* Pool for the end of calibration */
+  if (HAL_SDADC_PollForCalibEvent(&hsdadc2, 100) != HAL_OK)
+  {
+	    LEDB_ON;
+  }
+
 
 	uiSetLEDA = uiSetLEDAOff;
 	uiSetLEDB = uiSetLEDBOff;
@@ -167,14 +192,21 @@ int main(void)
 	advancePhase = advancePhaseNoRetrig;
 	getSamples = getSamplesNoPWM;
 	handleLoop = handleLoopOn;
+	calculateSH = calculateSHMode1;
+	updateRGB = updateRGBAudio;
+	calculateLogicA = calculateLogicAGate;
+	calculateLogicB = calculateLogicBGate;
 
 	noRetrigStateMachine = noRetrigAttackState;
 
 	SET_OSCILLATOR_ACTIVE;
 
-	// set the priority and enable an interrupt line to be used by the retrigger input
-	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
-	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+	// set the priority and enable an interrupt line to be used by the trigger button input and aux trigger
+	  HAL_NVIC_SetPriority(EXTI1_IRQn, 1, 0);
+	  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+
+	  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
+	  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 	// declare the initialization state
 	SET_RUNTIME_DISPLAY;
@@ -190,12 +222,6 @@ int main(void)
 
 	SH_A_TRACK;
 	SH_B_TRACK;
-
-	HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_3);
-	HAL_SDADC_PollForCalibEvent(&hsdadc1, 50000);
-	HAL_SDADC_CalibrationStart(&hsdadc2, SDADC_CALIBRATION_SEQ_3);
-	HAL_SDADC_PollForCalibEvent(&hsdadc2, 50000);
-
 
 	// initialize the ADCs and their respective DMA arrays
 	HAL_ADC_Start_DMA(&hadc1, slowADCReadings, 4);
@@ -237,6 +263,10 @@ int main(void)
   while (1)
   {
 	  //implement the main state machine
+
+
+
+
 	  (*main_State)();
 
   /* USER CODE END WHILE */

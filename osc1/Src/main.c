@@ -208,7 +208,7 @@ int main(void) {
 	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);
 
 	//start our DAC time base
-	HAL_TIM_Base_Start_IT(&htim6);
+	//HAL_TIM_Base_Start_IT(&htim6);
 
 	// clean up resampling from tim7 and tim8 init
 	SH_A_TRACK;
@@ -228,16 +228,7 @@ int main(void) {
 	/* USER CODE BEGIN WHILE */
 	while (1) {
 
-//		// another old complex state machine relic
-//		// check to see if the first task is the last task
-//		if (firstTask->next == &nullTask) {
-//			// if so, add the execute signal to the queue
-//			mainPush(MAIN_EXECUTE);
-//		}
-
-		// implement the main simplified state machine
-		// TODO inefficient and unnecessary to wrap this in a function
-		mainDispatch();
+		(*main_State)();
 
 		/* USER CODE END WHILE */
 		/* USER CODE BEGIN 3 */

@@ -57,19 +57,12 @@ uint32_t ADCReadings3[1]; //1 * 512 samples in holding buffer
 // macros for DMA array (change to array name?)
 
 #define knob2 ADCReadings2[0]
-#define knob2Last ADCReadings2[1022]
 #define knob3 ADCReadings2[1]
-#define knob3Last ADCReadings2[1023]
 #define cv1 ADCReadings1[0]
-#define cv1Last ADCReadings1[2044]
 #define cv2 ADCReadings1[1]
-#define cv2Last ADCReadings1[2045]
 #define cv3 ADCReadings1[2]
-#define cv3Last ADCReadings1[2046]
 #define resampling ADCReadings1[3]
-#define resamplingLast ADCReadings1[2055]
 #define knob1 ADCReadings3[0]
-#define knob1Last ADCReadings3[511]
 
 
 // circular buffer
@@ -81,16 +74,16 @@ typedef struct {
 
 // mode enums and mode variables
 
-enum shModes {none, decimate};
-enum syncModes {hard, pendulum};
-enum xModes {FM, PM};
-enum morphModes {morphCV, pwmCV};
+enum button1Modes {none, decimate};
+enum button4Modes {hard, pendulum};
+enum button3Modes {FM, PM};
+enum button6Modes {morphCV, pwmCV};
 
 
-enum shModes shMode;
-enum syncModes syncMode;
-enum xModes xMode;
-enum morphModes morphMode;
+enum button1Modes button1Mode;
+enum button4Modes button4Mode;
+enum button3Modes button3Mode;
+enum button6Modes button6Mode;
 
 int familyIndicator;
 

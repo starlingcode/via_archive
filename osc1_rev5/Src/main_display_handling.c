@@ -51,8 +51,8 @@ void displaySync_Soft(void) {
 
 
 void updateRGB(controlRateInputs * controlInputs, audioRateInputs * audioInputs) {
-	SET_RED_LED((4095 + controlInputs->knob1Value - controlInputs->cv1Value) >> 1);
+	SET_RED_LED((controlInputs->knob1Value + controlInputs->cv1Value) >> 1);
 	SET_GREEN_LED(__USAT(2400 + controlInputs->knob3Value - audioInputs->morphCV[0], 12) >> 1);
-	SET_BLUE_LED(4095 - ((4095 + controlInputs->knob1Value - controlInputs->cv1Value) >> 1));
+	SET_BLUE_LED(4095 - (controlInputs->knob1Value + controlInputs->cv1Value) >> 1);
 
 }

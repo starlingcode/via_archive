@@ -3,6 +3,7 @@
 #include "stm32f3xx_it.h"
 #include "main_state_machine.h"
 #include "dsp.h"
+#include "fill_buffer.h"
 #include "tables.h"
 
 arm_fir_instance_q31 fir;
@@ -14,9 +15,13 @@ void fillBuffer(void) {
 	static q31_t incrementValues2[BUFFER_SIZE];
 	static q31_t phaseArray[BUFFER_SIZE];
 	static q31_t phaseEventArray[BUFFER_SIZE];
+	static q31_t drumEnvelope[BUFFER_SIZE];
 	static int lastPhase;
 	static int oscillatorOn;
 	static uint32_t slowConversionCounter;
+
+	// eventually,
+	// static struct viaStateInfoHolder viaStateInfo;
 
 
 	// profiling pin a logic out high
@@ -27,17 +32,24 @@ void fillBuffer(void) {
 	lastPhase = (*advancePhase)(incrementValues1, incrementValues2, inputRead->triggerInput, inputRead->gateInput, lastPhase, &oscillatorOn, phaseArray, phaseEventArray);
 
 	arm_offset_q31(inputRead->morphCV, controlRateInput.knob3Value - 2048, inputRead->morphCV, BUFFER_SIZE);
+	arm_scale_q31(inputRead->morphCV, ((1<<28) - 1) * (currentFamily.familySize - 1), 0, inputRead->morphCV, BUFFER_SIZE);
 
-	//arm_shift_q31(phaseArray, -13, outputWrite->samples, BUFFER_SIZE);
+	(*getSamples)(phaseArray, __USAT(inputRead->t2CV[0] + controlRateInput.knob2Value - 2048, 12), inputRead->morphCV, outputWrite->samples, outputWrite->auxLogicHandler);
 
-	(*getSamples)(phaseArray, __USAT(inputRead->t2CV[0] + controlRateInput.knob2Value - 2048, 12), inputRead->morphCV, outputWrite->samples);
+	generateDrumEnv(inputRead->triggerInput, )
+
+	(*calculateSH)(phaseEventArray, outputWrite);
+
+	(*calculateLogicA)(phaseEventArray, inputRead->triggerInput, oscillatorOn, outputWrite);
+
+	(*calculateLogicB)(phaseEventArray, outputWrite);
 
 	// profiling pin a logic out low
 	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
 
 	slowConversionCounter++;
 
-	slowConversionCounter = handleCoversionSlow(&controlRateInput, slowConversionCounter);
+	slowConversionCounter = handleCoversionSlow(outputWrite->samples[BUFFER_SIZE - 1], lastPhase, &controlRateInput, inputRead, slowConversionCounter);
 
 	main_State = main_handleUI;
 

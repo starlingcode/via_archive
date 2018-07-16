@@ -242,14 +242,25 @@ void handleBLow(void){
 }
 
 void handleAuxHigh(void) {
+
+#ifndef BUILD_REV2
+	REV2_GATE_HIGH;
+#else
 	EXPAND_GATE_HIGH;
+#endif
+
 	if (RUNTIME_DISPLAY) {
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 1000);
 	}
 }
 
 void handleAuxLow(void) {
+
+#ifndef BUILD_REV2
+	REV2_GATE_LOW;
+#else
 	EXPAND_GATE_LOW;
+#endif
 	if (RUNTIME_DISPLAY) {
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
 	}

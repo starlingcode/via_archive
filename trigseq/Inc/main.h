@@ -42,6 +42,8 @@
 
 /* USER CODE BEGIN Includes */
 
+#define BUILD_REV2
+
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
@@ -162,6 +164,9 @@ int patternBankIndex;
 
 #define EXPAND_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
 #define EXPAND_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
+
+#define REV2_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_11;
+#define REV2_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_11;
 
 // LEDs
 

@@ -59,12 +59,12 @@ void initializeDoubleBuffer() {
 	output2.samples = sampleBuffer2;
 	output2.logicStates = logicStateBuffer2;
 
-	input1.xCV = xCVBuffer1;
+	input1.xCV = t2CVBuffer1;
 	input1.morphCV = morphCVBuffer1;
 	input1.hardSyncInput = hardSyncBuffer1;
 	input1.reverseInput = reverseBuffer1;
 
-	input2.xCV = xCVBuffer2;
+	input2.xCV = t2CVBuffer2;
 	input2.morphCV = morphCVBuffer2;
 	input2.hardSyncInput = hardSyncBuffer2;
 	input2.reverseInput = reverseBuffer2;

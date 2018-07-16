@@ -41,6 +41,11 @@
 #include "main.h"
 #include "user_interface.h"
 #include "via_rev5_hardware_io.h"
+#include "modes.h"
+
+extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim5;
 
 
 enum
@@ -243,7 +248,15 @@ void TIM16_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM16_IRQn 0 */
 
-	SH_B_SAMPLE;
+	switch (FREQ_MODE) {
+	case audio:
+		updateRGB = updateRGBAudio;
+		break;
+	case env:
+	case seq:
+		updateRGB = updateRGBSubAudio;
+		break;
+	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim16, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim16);
@@ -262,7 +275,8 @@ void TIM17_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM17_IRQn 0 */
 
-	SH_A_SAMPLE;
+	__HAL_TIM_ENABLE(&htim16);
+	updateRGB = updateRGBBlank;
 
 	__HAL_TIM_CLEAR_FLAG(&htim17, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim17);
@@ -281,20 +295,18 @@ void TIM12_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM12_IRQn 0 */
 
-#define RISING_EDGE 1
-#define FALLING_EDGE 0
-
-	static int trigStateSignal;
-
 	if (TRIGGER_RISING_EDGE) {
-
 		gateSignal = 1;
 		triggerSignal = 0;
-
-
+		if (TRIG_MODE != 0) {
+			updateRGB = &updateRGBTrigger;
+			__HAL_TIM_SET_COUNTER(&htim17, 0);
+			__HAL_TIM_SET_COUNTER(&htim16, 0);
+			__HAL_TIM_DISABLE(&htim16);
+			__HAL_TIM_ENABLE(&htim17);
+		}
 	} else { //falling edge
 		gateSignal = 0;
-
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
@@ -333,6 +345,16 @@ void TIM6_DAC1_IRQHandler(void)
 
 	WRITE_DAC1(__USAT((4095 - outputRead->samples[readIndex]), 12));
 	WRITE_DAC2(__USAT(outputRead->samples[readIndex], 12));
+
+//		WRITE_DAC1(cv2);
+//		WRITE_DAC2(cv3);
+
+	// replace with one function using runtime display as a mask
+	if (RUNTIME_DISPLAY) {
+		setLogicOutputs(outputRead->logicAHandler[readIndex], outputRead->logicBHandler[readIndex], outputRead->auxLogicHandler[readIndex], outputRead->shAHandler[readIndex], outputRead->shBHandler[readIndex]);
+	} else {
+		setLogicOutputsNoLEDs(outputRead->logicAHandler[readIndex], outputRead->logicBHandler[readIndex], outputRead->auxLogicHandler[readIndex], outputRead->shAHandler[readIndex], outputRead->shBHandler[readIndex]);
+	}
 
 	// write the current trigger signal value
 	// reset it to 1
@@ -419,6 +441,51 @@ void DMA2_Channel4_IRQHandler(void)
 
   /* USER CODE END DMA2_Channel4_IRQn 1 */
 }
+
+// trigger input interrupt
+
+void EXTI15_10_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+	if (EXPANDER_RISING_EDGE) {
+		gateSignal = 1;
+		triggerSignal = 0;
+	} else { //falling edge
+		gateSignal = 0;
+	}
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+
+  /* USER CODE END EXTI15_10_IRQn 1 */
+}
+
+//trigger button interrupt
+
+void EXTI1_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI1_IRQn 0 */
+
+	if (EXPANDER_BUTTON_PRESSED) {
+		gateSignal = 1;
+		triggerSignal = 0;
+		if (TRIG_MODE != 0) {
+			updateRGB = &updateRGBTrigger;
+			__HAL_TIM_ENABLE(&htim17);
+		}
+	} else { //falling edge
+		gateSignal = 0;
+	}
+
+  /* USER CODE END EXTI1_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
+  /* USER CODE BEGIN EXTI1_IRQn 1 */
+
+  /* USER CODE END EXTI1_IRQn 1 */
+}
+
 
 /* USER CODE BEGIN 1 */
 
