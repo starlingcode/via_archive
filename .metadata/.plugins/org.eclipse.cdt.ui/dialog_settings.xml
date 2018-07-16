@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.cdt.ui.OPEN_ACTION_SELECTION_DIALOG_SECTION">
+		<item value="623" key="DIALOG_WIDTH"/>
+		<item value="1|.SF NS Text|11.0|0|COCOA|1|.SFNSText-Regular" key="DIALOG_FONT_NAME"/>
+		<item value="375" key="DIALOG_HEIGHT"/>
+		<item value="321" key="DIALOG_X_ORIGIN"/>
+		<item value="134" key="DIALOG_Y_ORIGIN"/>
+	</section>
+	<section name="org.eclipse.cdt.internal.ui.text.QuickOutline">
+		<item value="true" key="org.eclipse.cdt.internal.ui.text.COutlineInformationControlDIALOG_USE_PERSISTED_SIZE"/>
+		<item value="339" key="org.eclipse.cdt.internal.ui.text.COutlineInformationControlDIALOG_Y_ORIGIN"/>
+		<item value="350" key="org.eclipse.cdt.internal.ui.text.COutlineInformationControlDIALOG_WIDTH"/>
+		<item value="true" key="org.eclipse.cdt.internal.ui.text.COutlineInformationControlDIALOG_USE_PERSISTED_LOCATION"/>
+		<item value="300" key="org.eclipse.cdt.internal.ui.text.COutlineInformationControlDIALOG_HEIGHT"/>
+		<item value="677" key="org.eclipse.cdt.internal.ui.text.COutlineInformationControlDIALOG_X_ORIGIN"/>
+	</section>
+	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration.internal">
+		<item value="180" key="size.height"/>
+		<item value="700" key="size.width"/>
+	</section>
+	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration">
+	</section>
+	<section name="PDOMSearchPage">
+		<item value="false" key="caseSensitive"/>
+		<item value="227191" key="searchFlags"/>
+		<list key="previousPatterns">
+			<item value="SET_SAMPLE_A"/>
+			<item value="shAMode"/>
+			<item value="GPIOC_BASE"/>
+			<item value="reverseMultiplier"/>
+			<item value="DAC_BUFFER_SIZE"/>
+			<item value="BSRR"/>
+			<item value="morphCVAverage"/>
+			<item value="output"/>
+			<item value="writeBuffer"/>
+			<item value="switchFamily"/>
+			<item value="fullTableHoldArray"/>
+			<item value="State"/>
+			<item value="familyIndicator"/>
+			<item value="auxLogicMode"/>
+			<item value="uiSetRGB"/>
+			<item value="rgb"/>
+			<item value="uiTimerEnable"/>
+			<item value="uiTimerDisable"/>
+			<item value="uiTimerReset"/>
+			<item value="loadSampleArray"/>
+			<item value="RESET_TRIGGER_BUTTON"/>
+		</list>
+	</section>
+	<section name="RenameInformationPopup">
+	</section>
+	<section name="CRenameRefactoringInputPage">
+		<item value="3" key="scope"/>
+		<item value="" key="workingset"/>
+		<item value="false" key="references_inv"/>
+		<item value="false" key="comment"/>
+		<item value="false" key="exhausiveFileSearch"/>
+		<item value="false" key="macroDefinition"/>
+	</section>
+	<section name="completion_proposal_size">
+	</section>
+</section>

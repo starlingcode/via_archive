@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;env_rev5/classic_rev5.xml&apos; to &apos;env_rev5.xml&apos;" description="Rename resource &apos;classic_rev5.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="classic_rev5.xml" name="env_rev5.xml" stamp="1531458485579" updateReferences="true"/>
+</session>

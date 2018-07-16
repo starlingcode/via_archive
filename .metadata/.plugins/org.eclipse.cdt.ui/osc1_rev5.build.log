@@ -1,0 +1,7 @@
+23:01:18 **** Clean-only build of configuration Release for project osc1_rev5 ****
+make clean 
+rm -rf *
+ 
+
+23:01:19 Build Finished (took 69ms)
+

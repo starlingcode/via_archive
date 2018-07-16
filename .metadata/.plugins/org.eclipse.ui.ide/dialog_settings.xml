@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="CleanDialogSettings">
+		<item value="484" key="DIALOG_WIDTH"/>
+		<item value="false" key="TOGGLE_SELECTED"/>
+		<item value="354" key="DIALOG_HEIGHT"/>
+		<item value="478" key="DIALOG_X_ORIGIN"/>
+		<item value="206" key="DIALOG_Y_ORIGIN"/>
+	</section>
+	<section name="ExternalProjectImportWizard">
+		<item value="false" key="WizardProjectsImportPage.STORE_NESTED_PROJECTS"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"/>
+		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
+			<item value="/Users/willmitchell/Documents/stm32_workspace/env_rev5"/>
+			<item value="/Users/willmitchell/Documents/stm32_workspace/f373_example_setup"/>
+			<item value="/Users/willmitchell/Documents/stm32_workspace/osc_touch_rev5"/>
+			<item value="/Users/willmitchell/Documents/stm32_workspace/classic_rev5"/>
+			<item value="/Users/willmitchell/Documents/stm32_workspace/f373"/>
+			<item value="/Users/willmitchell/Downloads/f373"/>
+			<item value="/Users/willmitchell/Documents/stm32_workspace/rev5_test_firmware"/>
+			<item value="/Users/willmitchell/Documents/stm32_workspace/rev5_test"/>
+			<item value="/Users/willmitchell/Documents/stm32_workspace/osc2"/>
+			<item value="/Users/willmitchell/Documents/stm32_workspace/osc1"/>
+			<item value="/Users/willmitchell/Documents/stm32_workspace/pllprotoV2"/>
+			<item value="/Users/willmitchell/Documents/stm32_workspace/prototype_aux_in"/>
+			<item value="/Users/willmitchell/Documents/stm32_workspace/compressor"/>
+			<item value="/Users/willmitchell/Documents/stm32_workspace/trigseq"/>
+		</list>
+		<list key="WizardProjectsImportPage.STORE_ARCHIVES">
+			<item value=""/>
+		</list>
+	</section>
+	<section name="NewWizardAction">
+	</section>
+</section>

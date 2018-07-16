@@ -83,8 +83,8 @@ logicHandler logicBBuffer2[BUFFER_SIZE];
 logicHandler auxLogicBuffer1[BUFFER_SIZE];
 logicHandler auxLogicBuffer2[BUFFER_SIZE];
 
-q31_t xCVBuffer1[BUFFER_SIZE];
-q31_t xCVBuffer2[BUFFER_SIZE];
+q31_t t2CVBuffer1[BUFFER_SIZE];
+q31_t t2CVBuffer2[BUFFER_SIZE];
 
 q31_t morphCVBuffer1[BUFFER_SIZE];
 q31_t morphCVBuffer2[BUFFER_SIZE];

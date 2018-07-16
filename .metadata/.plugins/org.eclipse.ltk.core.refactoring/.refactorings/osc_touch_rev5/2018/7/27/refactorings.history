@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;osc_touch_rev5/osc1_rev5.xml&apos; to &apos;osc_touch_rev5.xml&apos;" description="Rename resource &apos;osc1_rev5.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="osc1_rev5.xml" name="osc_touch_rev5.xml" stamp="1530944823284" updateReferences="true"/>
+</session>

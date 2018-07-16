@@ -1,0 +1,18 @@
+17:58:41 **** Build of configuration Debug for project rev5_test ****
+make all 
+Building file: ../Src/main.c
+In file included from /Users/willmitchell/Documents/stm32_workspace/rev5_test/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_rcc.h:45:0,
+                 from /Users/willmitchell/Documents/stm32_workspace/rev5_test/Inc/stm32f3xx_hal_conf.h:196,
+                 from /Users/willmitchell/Documents/stm32_workspace/rev5_test/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:46,
+                 from ../Src/main.c:41:
+/Users/willmitchell/Documents/stm32_workspace/rev5_test/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_def.h:46:23: fatal error: stm32f3xx.h: No such file or directory
+ #include "stm32f3xx.h"
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/rev5_test/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/rev5_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/rev5_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/rev5_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/rev5_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I../Drivers/CMSIS/Include  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
+                       ^
+compilation terminated.
+make: *** [Src/main.o] Error 1
+
+17:58:41 Build Finished (took 73ms)
+

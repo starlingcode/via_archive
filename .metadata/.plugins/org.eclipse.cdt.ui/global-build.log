@@ -1,0 +1,1071 @@
+02:31:03 **** Incremental Build of configuration Debug for project drum_rev5 ****
+make all 
+Building file: ../Src/main.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
+../Src/main.c: In function 'main':
+../Src/main.c:228:32: warning: passing argument 2 of 'HAL_SDADC_Start_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_SDADC_Start_DMA(&hsdadc1, fastADC1Readings, 1);
+                                ^
+In file included from /Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/stm32f3xx_hal_conf.h:292:0,
+                 from /Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:46,
+                 from ../Src/main.c:51:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_sdadc.h:630:19: note: expected 'uint32_t * {aka long unsigned int *}' but argument is of type 'int16_t * {aka short int *}'
+ HAL_StatusTypeDef HAL_SDADC_Start_DMA(SDADC_HandleTypeDef *hsdadc, uint32_t *pData, uint32_t Length);
+                   ^
+../Src/main.c:229:32: warning: passing argument 2 of 'HAL_SDADC_Start_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_SDADC_Start_DMA(&hsdadc2, fastADC2Readings, 1);
+                                ^
+In file included from /Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/stm32f3xx_hal_conf.h:292:0,
+                 from /Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:46,
+                 from ../Src/main.c:51:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_sdadc.h:630:19: note: expected 'uint32_t * {aka long unsigned int *}' but argument is of type 'int16_t * {aka short int *}'
+ HAL_StatusTypeDef HAL_SDADC_Start_DMA(SDADC_HandleTypeDef *hsdadc, uint32_t *pData, uint32_t Length);
+                   ^
+Finished building: ../Src/main.c
+ 
+Building file: ../Src/main_fillBuffer.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_fillBuffer.d" -MT"Src/main_fillBuffer.o" -o "Src/main_fillBuffer.o" "../Src/main_fillBuffer.c"
+../Src/main_fillBuffer.c: In function 'fillBuffer':
+../Src/main_fillBuffer.c:40:43: warning: passing argument 2 of 'generateDrumEnv' from incompatible pointer type [-Wincompatible-pointer-types]
+  generateDrumEnv(inputRead->triggerInput, &drumEnvelope);
+                                           ^
+In file included from ../Src/main_fillBuffer.c:6:0:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/fill_buffer.h:42:6: note: expected 'q31_t * {aka long int *}' but argument is of type 'q31_t (*)[8] {aka long int (*)[8]}'
+ void generateDrumEnv(q31_t * triggers, q31_t * drumEnv);
+      ^
+../Src/main_fillBuffer.c: In function 'initializeDoubleBuffer':
+../Src/main_fillBuffer.c:96:22: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+  input1.triggerInput = hardSyncBuffer1;
+                      ^
+../Src/main_fillBuffer.c:97:19: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+  input1.gateInput = reverseBuffer1;
+                   ^
+../Src/main_fillBuffer.c:101:22: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+  input2.triggerInput = hardSyncBuffer2;
+                      ^
+../Src/main_fillBuffer.c:102:19: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+  input2.gateInput = reverseBuffer2;
+                   ^
+In file included from ../Src/main_fillBuffer.c:7:0:
+../Src/main_fillBuffer.c: At top level:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7054:24: warning: 'skipsaw' defined but not used [-Wunused-variable]
+ static const uint16_t *skipsaw[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7058:24: warning: 'tenor257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7062:24: warning: 'bounce_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *bounce_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7066:24: warning: 'newBounceFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *newBounceFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7070:24: warning: 'additive_tri_to_pulseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *additive_tri_to_pulseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7074:24: warning: 'gamma257Attack' defined but not used [-Wunused-variable]
+ static const uint16_t *gamma257Attack[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7079:24: warning: 'algerianReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7083:24: warning: 'trioddReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7088:24: warning: 'quintic_out2quintic_in257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7093:24: warning: 'circular_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *circular_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7097:24: warning: 'quintic_outin2quintic_inout257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_outin2quintic_inout257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7102:24: warning: 'algerianAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7106:24: warning: 'impshort' defined but not used [-Wunused-variable]
+ static const uint16_t *impshort[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7111:24: warning: 'moogSquareShiftReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7116:24: warning: 'moogSquareShiftAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7121:24: warning: 'quintic_in2quintic_out257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_in2quintic_out257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7126:24: warning: 'testRMSRMSRls' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSRls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7130:24: warning: 'sawBendReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7134:24: warning: 'sawBendAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7138:24: warning: 'soprano257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7142:24: warning: 'linwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *linwavefold_257_Family[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7146:24: warning: 'exciteBikeReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7151:24: warning: 'testRMSRMSAtk' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSAtk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7155:24: warning: 'trioddAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7160:24: warning: 'sinwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *sinwavefold_257_Family[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7165:24: warning: 'exciteBikeAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7170:24: warning: 'soprano257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7174:24: warning: 'tenor257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7178:24: warning: 'quintic_inout2quintic_outin257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
+                        ^
+Finished building: ../Src/main_fillBuffer.c
+ 
+Building file: ../Src/main_logic_handling.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_logic_handling.d" -MT"Src/main_logic_handling.o" -o "Src/main_logic_handling.o" "../Src/main_logic_handling.c"
+../Src/main_logic_handling.c: In function 'calculateLogicAGate':
+../Src/main_logic_handling.c:52:13: warning: unused variable 'lastOscillatorOn' [-Wunused-variable]
+  static int lastOscillatorOn;
+             ^
+../Src/main_logic_handling.c: In function 'calculateSHMode1':
+../Src/main_logic_handling.c:115:17: warning: unused variable 'shBHandlerArray' [-Wunused-variable]
+  logicHandler * shBHandlerArray = output->shBHandler;
+                 ^
+../Src/main_logic_handling.c:114:17: warning: unused variable 'shAHandlerArray' [-Wunused-variable]
+  logicHandler * shAHandlerArray = output->shAHandler;
+                 ^
+Finished building: ../Src/main_logic_handling.c
+ 
+Building file: ../Src/main_phase_generation.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_phase_generation.d" -MT"Src/main_phase_generation.o" -o "Src/main_phase_generation.o" "../Src/main_phase_generation.c"
+In file included from ../Src/main_phase_generation.c:5:0:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7054:24: warning: 'skipsaw' defined but not used [-Wunused-variable]
+ static const uint16_t *skipsaw[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7058:24: warning: 'tenor257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7062:24: warning: 'bounce_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *bounce_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7066:24: warning: 'newBounceFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *newBounceFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7070:24: warning: 'additive_tri_to_pulseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *additive_tri_to_pulseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7074:24: warning: 'gamma257Attack' defined but not used [-Wunused-variable]
+ static const uint16_t *gamma257Attack[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7079:24: warning: 'algerianReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7083:24: warning: 'trioddReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7088:24: warning: 'quintic_out2quintic_in257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7093:24: warning: 'circular_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *circular_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7097:24: warning: 'quintic_outin2quintic_inout257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_outin2quintic_inout257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7102:24: warning: 'algerianAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7106:24: warning: 'impshort' defined but not used [-Wunused-variable]
+ static const uint16_t *impshort[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7111:24: warning: 'moogSquareShiftReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7116:24: warning: 'moogSquareShiftAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7121:24: warning: 'quintic_in2quintic_out257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_in2quintic_out257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7126:24: warning: 'testRMSRMSRls' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSRls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7130:24: warning: 'sawBendReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7134:24: warning: 'sawBendAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7138:24: warning: 'soprano257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7142:24: warning: 'linwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *linwavefold_257_Family[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7146:24: warning: 'exciteBikeReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7151:24: warning: 'testRMSRMSAtk' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSAtk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7155:24: warning: 'trioddAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7160:24: warning: 'sinwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *sinwavefold_257_Family[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7165:24: warning: 'exciteBikeAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7170:24: warning: 'soprano257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7174:24: warning: 'tenor257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7178:24: warning: 'quintic_inout2quintic_outin257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
+                        ^
+Finished building: ../Src/main_phase_generation.c
+ 
+Building file: ../Src/main_sample_generation.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_sample_generation.d" -MT"Src/main_sample_generation.o" -o "Src/main_sample_generation.o" "../Src/main_sample_generation.c"
+In file included from ../Src/main_sample_generation.c:5:0:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7054:24: warning: 'skipsaw' defined but not used [-Wunused-variable]
+ static const uint16_t *skipsaw[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7058:24: warning: 'tenor257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7062:24: warning: 'bounce_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *bounce_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7066:24: warning: 'newBounceFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *newBounceFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7070:24: warning: 'additive_tri_to_pulseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *additive_tri_to_pulseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7074:24: warning: 'gamma257Attack' defined but not used [-Wunused-variable]
+ static const uint16_t *gamma257Attack[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7079:24: warning: 'algerianReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7083:24: warning: 'trioddReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7088:24: warning: 'quintic_out2quintic_in257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7093:24: warning: 'circular_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *circular_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7097:24: warning: 'quintic_outin2quintic_inout257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_outin2quintic_inout257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7102:24: warning: 'algerianAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7106:24: warning: 'impshort' defined but not used [-Wunused-variable]
+ static const uint16_t *impshort[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7111:24: warning: 'moogSquareShiftReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7116:24: warning: 'moogSquareShiftAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7121:24: warning: 'quintic_in2quintic_out257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_in2quintic_out257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7126:24: warning: 'testRMSRMSRls' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSRls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7130:24: warning: 'sawBendReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7134:24: warning: 'sawBendAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7138:24: warning: 'soprano257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7142:24: warning: 'linwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *linwavefold_257_Family[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7146:24: warning: 'exciteBikeReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7151:24: warning: 'testRMSRMSAtk' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSAtk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7155:24: warning: 'trioddAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7160:24: warning: 'sinwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *sinwavefold_257_Family[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7165:24: warning: 'exciteBikeAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7170:24: warning: 'soprano257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7174:24: warning: 'tenor257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7178:24: warning: 'quintic_inout2quintic_outin257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
+                        ^
+Finished building: ../Src/main_sample_generation.c
+ 
+Building file: ../Src/main_trigger_states.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_trigger_states.d" -MT"Src/main_trigger_states.o" -o "Src/main_trigger_states.o" "../Src/main_trigger_states.c"
+Finished building: ../Src/main_trigger_states.c
+ 
+Building file: ../Src/ui_helpers.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/ui_helpers.d" -MT"Src/ui_helpers.o" -o "Src/ui_helpers.o" "../Src/ui_helpers.c"
+Finished building: ../Src/ui_helpers.c
+ 
+Building target: drum_rev5.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -L"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Lib"  -specs=nosys.specs -specs=nano.specs -T"../STM32F373CCTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "drum_rev5.elf" @"objects.list"  -larm_cortexM4lf_math -lm
+Finished building target: drum_rev5.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "drum_rev5.elf" "drum_rev5.bin"
+arm-none-eabi-size "drum_rev5.elf"
+   text	   data	    bss	    dec	    hex	filename
+ 155500	    972	  23744	 180216	  2bff8	drum_rev5.elf
+ 
+02:31:12 **** Incremental Build of configuration Debug for project drum_rev5 ****
+make all 
+make: Nothing to be done for `all'.
+02:32:32 **** Incremental Build of configuration Debug for project drum_rev5 ****
+make all 
+Building file: ../Src/main_phase_generation.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_phase_generation.d" -MT"Src/main_phase_generation.o" -o "Src/main_phase_generation.o" "../Src/main_phase_generation.c"
+In file included from ../Src/main_phase_generation.c:5:0:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7054:24: warning: 'skipsaw' defined but not used [-Wunused-variable]
+ static const uint16_t *skipsaw[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7058:24: warning: 'tenor257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7062:24: warning: 'bounce_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *bounce_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7066:24: warning: 'newBounceFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *newBounceFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7070:24: warning: 'additive_tri_to_pulseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *additive_tri_to_pulseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7074:24: warning: 'gamma257Attack' defined but not used [-Wunused-variable]
+ static const uint16_t *gamma257Attack[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7079:24: warning: 'algerianReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7083:24: warning: 'trioddReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7088:24: warning: 'quintic_out2quintic_in257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7093:24: warning: 'circular_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *circular_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7097:24: warning: 'quintic_outin2quintic_inout257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_outin2quintic_inout257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7102:24: warning: 'algerianAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7106:24: warning: 'impshort' defined but not used [-Wunused-variable]
+ static const uint16_t *impshort[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7111:24: warning: 'moogSquareShiftReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7116:24: warning: 'moogSquareShiftAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7121:24: warning: 'quintic_in2quintic_out257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_in2quintic_out257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7126:24: warning: 'testRMSRMSRls' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSRls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7130:24: warning: 'sawBendReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7134:24: warning: 'sawBendAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7138:24: warning: 'soprano257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7142:24: warning: 'linwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *linwavefold_257_Family[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7146:24: warning: 'exciteBikeReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7151:24: warning: 'testRMSRMSAtk' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSAtk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7155:24: warning: 'trioddAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7160:24: warning: 'sinwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *sinwavefold_257_Family[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7165:24: warning: 'exciteBikeAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7170:24: warning: 'soprano257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7174:24: warning: 'tenor257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7178:24: warning: 'quintic_inout2quintic_outin257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
+                        ^
+Finished building: ../Src/main_phase_generation.c
+ 
+Building target: drum_rev5.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -L"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Lib"  -specs=nosys.specs -specs=nano.specs -T"../STM32F373CCTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "drum_rev5.elf" @"objects.list"  -larm_cortexM4lf_math -lm
+Finished building target: drum_rev5.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "drum_rev5.elf" "drum_rev5.bin"
+arm-none-eabi-size "drum_rev5.elf"
+   text	   data	    bss	    dec	    hex	filename
+ 155500	    972	  23744	 180216	  2bff8	drum_rev5.elf
+ 
+02:36:37 **** Incremental Build of configuration Debug for project drum_rev5 ****
+make all 
+Building file: ../Src/main.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
+../Src/main.c: In function 'main':
+../Src/main.c:228:32: warning: passing argument 2 of 'HAL_SDADC_Start_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_SDADC_Start_DMA(&hsdadc1, fastADC1Readings, 1);
+                                ^
+In file included from /Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/stm32f3xx_hal_conf.h:292:0,
+                 from /Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:46,
+                 from ../Src/main.c:51:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_sdadc.h:630:19: note: expected 'uint32_t * {aka long unsigned int *}' but argument is of type 'int16_t * {aka short int *}'
+ HAL_StatusTypeDef HAL_SDADC_Start_DMA(SDADC_HandleTypeDef *hsdadc, uint32_t *pData, uint32_t Length);
+                   ^
+../Src/main.c:229:32: warning: passing argument 2 of 'HAL_SDADC_Start_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_SDADC_Start_DMA(&hsdadc2, fastADC2Readings, 1);
+                                ^
+In file included from /Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/stm32f3xx_hal_conf.h:292:0,
+                 from /Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:46,
+                 from ../Src/main.c:51:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_sdadc.h:630:19: note: expected 'uint32_t * {aka long unsigned int *}' but argument is of type 'int16_t * {aka short int *}'
+ HAL_StatusTypeDef HAL_SDADC_Start_DMA(SDADC_HandleTypeDef *hsdadc, uint32_t *pData, uint32_t Length);
+                   ^
+Finished building: ../Src/main.c
+ 
+Building file: ../Src/main_fillBuffer.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_fillBuffer.d" -MT"Src/main_fillBuffer.o" -o "Src/main_fillBuffer.o" "../Src/main_fillBuffer.c"
+../Src/main_fillBuffer.c: In function 'fillBuffer':
+../Src/main_fillBuffer.c:40:79: warning: passing argument 3 of 'generateDrumEnv' from incompatible pointer type [-Wincompatible-pointer-types]
+  generateDrumEnv(4095 - controlRateInput.knob2Value, inputRead->triggerInput, &drumEnvelope);
+                                                                               ^
+In file included from ../Src/main_fillBuffer.c:6:0:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/fill_buffer.h:42:6: note: expected 'q31_t * {aka long int *}' but argument is of type 'q31_t (*)[8] {aka long int (*)[8]}'
+ void generateDrumEnv(q31_t time, q31_t * triggers, q31_t * drumEnv);
+      ^
+../Src/main_fillBuffer.c: In function 'initializeDoubleBuffer':
+../Src/main_fillBuffer.c:96:22: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+  input1.triggerInput = hardSyncBuffer1;
+                      ^
+../Src/main_fillBuffer.c:97:19: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+  input1.gateInput = reverseBuffer1;
+                   ^
+../Src/main_fillBuffer.c:101:22: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+  input2.triggerInput = hardSyncBuffer2;
+                      ^
+../Src/main_fillBuffer.c:102:19: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+  input2.gateInput = reverseBuffer2;
+                   ^
+In file included from ../Src/main_fillBuffer.c:7:0:
+../Src/main_fillBuffer.c: At top level:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7054:24: warning: 'skipsaw' defined but not used [-Wunused-variable]
+ static const uint16_t *skipsaw[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7058:24: warning: 'tenor257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7062:24: warning: 'bounce_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *bounce_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7066:24: warning: 'newBounceFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *newBounceFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7070:24: warning: 'additive_tri_to_pulseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *additive_tri_to_pulseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7074:24: warning: 'gamma257Attack' defined but not used [-Wunused-variable]
+ static const uint16_t *gamma257Attack[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7079:24: warning: 'algerianReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7083:24: warning: 'trioddReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7088:24: warning: 'quintic_out2quintic_in257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7093:24: warning: 'circular_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *circular_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7097:24: warning: 'quintic_outin2quintic_inout257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_outin2quintic_inout257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7102:24: warning: 'algerianAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7106:24: warning: 'impshort' defined but not used [-Wunused-variable]
+ static const uint16_t *impshort[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7111:24: warning: 'moogSquareShiftReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7116:24: warning: 'moogSquareShiftAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7121:24: warning: 'quintic_in2quintic_out257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_in2quintic_out257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7126:24: warning: 'testRMSRMSRls' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSRls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7130:24: warning: 'sawBendReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7134:24: warning: 'sawBendAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7138:24: warning: 'soprano257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7142:24: warning: 'linwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *linwavefold_257_Family[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7146:24: warning: 'exciteBikeReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7151:24: warning: 'testRMSRMSAtk' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSAtk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7155:24: warning: 'trioddAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7160:24: warning: 'sinwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *sinwavefold_257_Family[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7165:24: warning: 'exciteBikeAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7170:24: warning: 'soprano257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7174:24: warning: 'tenor257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7178:24: warning: 'quintic_inout2quintic_outin257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
+                        ^
+Finished building: ../Src/main_fillBuffer.c
+ 
+Building file: ../Src/main_logic_handling.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_logic_handling.d" -MT"Src/main_logic_handling.o" -o "Src/main_logic_handling.o" "../Src/main_logic_handling.c"
+../Src/main_logic_handling.c: In function 'calculateLogicAGate':
+../Src/main_logic_handling.c:52:13: warning: unused variable 'lastOscillatorOn' [-Wunused-variable]
+  static int lastOscillatorOn;
+             ^
+../Src/main_logic_handling.c: In function 'calculateSHMode1':
+../Src/main_logic_handling.c:115:17: warning: unused variable 'shBHandlerArray' [-Wunused-variable]
+  logicHandler * shBHandlerArray = output->shBHandler;
+                 ^
+../Src/main_logic_handling.c:114:17: warning: unused variable 'shAHandlerArray' [-Wunused-variable]
+  logicHandler * shAHandlerArray = output->shAHandler;
+                 ^
+Finished building: ../Src/main_logic_handling.c
+ 
+Building file: ../Src/main_phase_generation.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_phase_generation.d" -MT"Src/main_phase_generation.o" -o "Src/main_phase_generation.o" "../Src/main_phase_generation.c"
+In file included from ../Src/main_phase_generation.c:5:0:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7054:24: warning: 'skipsaw' defined but not used [-Wunused-variable]
+ static const uint16_t *skipsaw[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7058:24: warning: 'tenor257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7062:24: warning: 'bounce_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *bounce_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7066:24: warning: 'newBounceFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *newBounceFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7070:24: warning: 'additive_tri_to_pulseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *additive_tri_to_pulseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7074:24: warning: 'gamma257Attack' defined but not used [-Wunused-variable]
+ static const uint16_t *gamma257Attack[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7079:24: warning: 'algerianReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7083:24: warning: 'trioddReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7088:24: warning: 'quintic_out2quintic_in257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7093:24: warning: 'circular_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *circular_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7097:24: warning: 'quintic_outin2quintic_inout257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_outin2quintic_inout257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7102:24: warning: 'algerianAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7106:24: warning: 'impshort' defined but not used [-Wunused-variable]
+ static const uint16_t *impshort[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7111:24: warning: 'moogSquareShiftReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7116:24: warning: 'moogSquareShiftAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7121:24: warning: 'quintic_in2quintic_out257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_in2quintic_out257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7126:24: warning: 'testRMSRMSRls' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSRls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7130:24: warning: 'sawBendReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7134:24: warning: 'sawBendAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7138:24: warning: 'soprano257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7142:24: warning: 'linwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *linwavefold_257_Family[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7146:24: warning: 'exciteBikeReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7151:24: warning: 'testRMSRMSAtk' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSAtk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7155:24: warning: 'trioddAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7160:24: warning: 'sinwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *sinwavefold_257_Family[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7165:24: warning: 'exciteBikeAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7170:24: warning: 'soprano257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7174:24: warning: 'tenor257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7178:24: warning: 'quintic_inout2quintic_outin257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
+                        ^
+Finished building: ../Src/main_phase_generation.c
+ 
+Building file: ../Src/main_sample_generation.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_sample_generation.d" -MT"Src/main_sample_generation.o" -o "Src/main_sample_generation.o" "../Src/main_sample_generation.c"
+In file included from ../Src/main_sample_generation.c:5:0:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7054:24: warning: 'skipsaw' defined but not used [-Wunused-variable]
+ static const uint16_t *skipsaw[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7058:24: warning: 'tenor257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7062:24: warning: 'bounce_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *bounce_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7066:24: warning: 'newBounceFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *newBounceFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7070:24: warning: 'additive_tri_to_pulseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *additive_tri_to_pulseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7074:24: warning: 'gamma257Attack' defined but not used [-Wunused-variable]
+ static const uint16_t *gamma257Attack[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7079:24: warning: 'algerianReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7083:24: warning: 'trioddReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7088:24: warning: 'quintic_out2quintic_in257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7093:24: warning: 'circular_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *circular_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7097:24: warning: 'quintic_outin2quintic_inout257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_outin2quintic_inout257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7102:24: warning: 'algerianAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7106:24: warning: 'impshort' defined but not used [-Wunused-variable]
+ static const uint16_t *impshort[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7111:24: warning: 'moogSquareShiftReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7116:24: warning: 'moogSquareShiftAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7121:24: warning: 'quintic_in2quintic_out257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_in2quintic_out257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7126:24: warning: 'testRMSRMSRls' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSRls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7130:24: warning: 'sawBendReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7134:24: warning: 'sawBendAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7138:24: warning: 'soprano257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7142:24: warning: 'linwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *linwavefold_257_Family[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7146:24: warning: 'exciteBikeReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7151:24: warning: 'testRMSRMSAtk' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSAtk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7155:24: warning: 'trioddAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7160:24: warning: 'sinwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *sinwavefold_257_Family[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7165:24: warning: 'exciteBikeAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7170:24: warning: 'soprano257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7174:24: warning: 'tenor257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7178:24: warning: 'quintic_inout2quintic_outin257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
+                        ^
+Finished building: ../Src/main_sample_generation.c
+ 
+Building file: ../Src/main_trigger_states.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_trigger_states.d" -MT"Src/main_trigger_states.o" -o "Src/main_trigger_states.o" "../Src/main_trigger_states.c"
+Finished building: ../Src/main_trigger_states.c
+ 
+Building file: ../Src/ui_helpers.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/ui_helpers.d" -MT"Src/ui_helpers.o" -o "Src/ui_helpers.o" "../Src/ui_helpers.c"
+Finished building: ../Src/ui_helpers.c
+ 
+Building target: drum_rev5.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -L"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Lib"  -specs=nosys.specs -specs=nano.specs -T"../STM32F373CCTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "drum_rev5.elf" @"objects.list"  -larm_cortexM4lf_math -lm
+Finished building target: drum_rev5.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "drum_rev5.elf" "drum_rev5.bin"
+arm-none-eabi-size "drum_rev5.elf"
+   text	   data	    bss	    dec	    hex	filename
+ 155532	    972	  23744	 180248	  2c018	drum_rev5.elf
+ 
+02:37:36 **** Incremental Build of configuration Debug for project drum_rev5 ****
+make all 
+Building file: ../Src/main_phase_generation.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_phase_generation.d" -MT"Src/main_phase_generation.o" -o "Src/main_phase_generation.o" "../Src/main_phase_generation.c"
+In file included from ../Src/main_phase_generation.c:5:0:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7054:24: warning: 'skipsaw' defined but not used [-Wunused-variable]
+ static const uint16_t *skipsaw[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7058:24: warning: 'tenor257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7062:24: warning: 'bounce_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *bounce_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7066:24: warning: 'newBounceFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *newBounceFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7070:24: warning: 'additive_tri_to_pulseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *additive_tri_to_pulseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7074:24: warning: 'gamma257Attack' defined but not used [-Wunused-variable]
+ static const uint16_t *gamma257Attack[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7079:24: warning: 'algerianReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7083:24: warning: 'trioddReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7088:24: warning: 'quintic_out2quintic_in257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7093:24: warning: 'circular_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *circular_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7097:24: warning: 'quintic_outin2quintic_inout257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_outin2quintic_inout257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7102:24: warning: 'algerianAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7106:24: warning: 'impshort' defined but not used [-Wunused-variable]
+ static const uint16_t *impshort[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7111:24: warning: 'moogSquareShiftReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7116:24: warning: 'moogSquareShiftAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7121:24: warning: 'quintic_in2quintic_out257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_in2quintic_out257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7126:24: warning: 'testRMSRMSRls' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSRls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7130:24: warning: 'sawBendReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7134:24: warning: 'sawBendAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7138:24: warning: 'soprano257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7142:24: warning: 'linwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *linwavefold_257_Family[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7146:24: warning: 'exciteBikeReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7151:24: warning: 'testRMSRMSAtk' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSAtk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7155:24: warning: 'trioddAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7160:24: warning: 'sinwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *sinwavefold_257_Family[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7165:24: warning: 'exciteBikeAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7170:24: warning: 'soprano257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7174:24: warning: 'tenor257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7178:24: warning: 'quintic_inout2quintic_outin257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
+                        ^
+Finished building: ../Src/main_phase_generation.c
+ 
+Building target: drum_rev5.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -L"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Lib"  -specs=nosys.specs -specs=nano.specs -T"../STM32F373CCTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "drum_rev5.elf" @"objects.list"  -larm_cortexM4lf_math -lm
+Finished building target: drum_rev5.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "drum_rev5.elf" "drum_rev5.bin"
+arm-none-eabi-size "drum_rev5.elf"
+   text	   data	    bss	    dec	    hex	filename
+ 155532	    972	  23744	 180248	  2c018	drum_rev5.elf
+ 
+02:38:25 **** Incremental Build of configuration Debug for project drum_rev5 ****
+make all 
+Building file: ../Src/main_phase_generation.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Drivers/CMSIS/Include"  -O3 -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main_phase_generation.d" -MT"Src/main_phase_generation.o" -o "Src/main_phase_generation.o" "../Src/main_phase_generation.c"
+In file included from ../Src/main_phase_generation.c:5:0:
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7054:24: warning: 'skipsaw' defined but not used [-Wunused-variable]
+ static const uint16_t *skipsaw[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7058:24: warning: 'tenor257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7062:24: warning: 'bounce_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *bounce_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7066:24: warning: 'newBounceFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *newBounceFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7070:24: warning: 'additive_tri_to_pulseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *additive_tri_to_pulseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7074:24: warning: 'gamma257Attack' defined but not used [-Wunused-variable]
+ static const uint16_t *gamma257Attack[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7079:24: warning: 'algerianReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7083:24: warning: 'trioddReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7088:24: warning: 'quintic_out2quintic_in257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7093:24: warning: 'circular_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *circular_257_slopes[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7097:24: warning: 'quintic_outin2quintic_inout257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_outin2quintic_inout257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7102:24: warning: 'algerianAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7106:24: warning: 'impshort' defined but not used [-Wunused-variable]
+ static const uint16_t *impshort[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7111:24: warning: 'moogSquareShiftReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7116:24: warning: 'moogSquareShiftAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7121:24: warning: 'quintic_in2quintic_out257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_in2quintic_out257_slopes[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7126:24: warning: 'testRMSRMSRls' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSRls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7130:24: warning: 'sawBendReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendReleaseFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7134:24: warning: 'sawBendAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendAttackFamily[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7138:24: warning: 'soprano257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7142:24: warning: 'linwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *linwavefold_257_Family[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7146:24: warning: 'exciteBikeReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeReleaseFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7151:24: warning: 'testRMSRMSAtk' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSAtk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7155:24: warning: 'trioddAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7160:24: warning: 'sinwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *sinwavefold_257_Family[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7165:24: warning: 'exciteBikeAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeAttackFamily[9] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7170:24: warning: 'soprano257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Atk[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7174:24: warning: 'tenor257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Rls[5] = {
+                        ^
+/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Inc/tables.h:7178:24: warning: 'quintic_inout2quintic_outin257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
+                        ^
+Finished building: ../Src/main_phase_generation.c
+ 
+Building target: drum_rev5.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -L"/Users/willmitchell/Documents/stm32_workspace/drum_rev5/Lib"  -specs=nosys.specs -specs=nano.specs -T"../STM32F373CCTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "drum_rev5.elf" @"objects.list"  -larm_cortexM4lf_math -lm
+Finished building target: drum_rev5.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "drum_rev5.elf" "drum_rev5.bin"
+arm-none-eabi-size "drum_rev5.elf"
+   text	   data	    bss	    dec	    hex	filename
+ 155532	    972	  23744	 180248	  2c018	drum_rev5.elf
+ 

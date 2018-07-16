@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;f373/Src/tables.c&apos; to &apos;table_init.c&apos;" description="Rename resource &apos;tables.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Src/tables.c" name="table_init.c" stamp="1528867116279" updateReferences="true"/>
+</session>

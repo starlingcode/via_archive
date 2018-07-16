@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;osc1/Src/main_fillBuffer&apos; to &apos;main_fillBuffer.c&apos;" description="Rename resource &apos;main_fillBuffer&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Src/main_fillBuffer" name="main_fillBuffer.c" stamp="1527053542396" updateReferences="true"/>
+</session>

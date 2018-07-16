@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;osc2/osc1.xml&apos; to &apos;osc2.xml&apos;" description="Rename resource &apos;osc1.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="osc1.xml" name="osc2.xml" stamp="1526438311302" updateReferences="true"/>
+</session>

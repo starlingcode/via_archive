@@ -1,0 +1,6 @@
+23:01:19 **** Clean-only build of configuration Release for project scanner_rev5 ****
+make clean 
+make: *** No rule to make target `clean'.  Stop.
+
+23:01:19 Build Finished (took 68ms)
+
