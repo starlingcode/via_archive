@@ -14,11 +14,9 @@ void getIncrementsAudio(q31_t * t2CV, controlRateInputs * controlInputs, q31_t *
 
 	// t1 is coarse, t2 is fine, release time = attack time
 
-	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 3]), expoTable[controlInputs->cv1Value] >> 2);
-	arm_offset_q31(t2CV, -1024, attackIncrements, BUFFER_SIZE);
-	arm_shift_q31(attackIncrements, 19, attackIncrements, BUFFER_SIZE);
-	arm_scale_q31(attackIncrements, frequencyMultiplier, 0, attackIncrements, BUFFER_SIZE);
-	arm_copy_q31(attackIncrements, releaseIncrements, BUFFER_SIZE);
+	q31_t frequencyMultiplier = fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->cv1Value] >> 2);
+	arm_fill_q31(frequencyMultiplier, attackIncrements, BUFFER_SIZE);
+	arm_fill_q31(frequencyMultiplier, releaseIncrements, BUFFER_SIZE);
 
 }
 
@@ -50,22 +48,52 @@ void getIncrementsSeq(q31_t * t2CV, controlRateInputs * controlInputs, q31_t * a
 void generateDrumEnv(q31_t time, q31_t * triggers, q31_t * drumEnv) {
 
 	static int drumPhase;
-	static int drumActive;
+	static int drumState;
+
+	#define drumResting 0
+	#define drumAttacking 1
+	#define drumReleasing 2
 
 	for (int i = 0; i < BUFFER_SIZE; i++) {
-		if (drumActive) {
-			drumPhase += time >> 2;
-			if (drumPhase > 3840 << 12 ) {
-				drumPhase = 0;
-				drumActive = 0;
-				drumEnv[i] = 0;
-			} else {
-				drumEnv[i] = expoTable[3840 - (drumPhase >> 12)] >> 16;
-			}
-		} else {
-			if (triggers[i] == 0) {
-				drumActive = 1;
-			}
+		switch (drumState) {
+		case drumResting:
+			// keep the drum envelope at 0
+			drumEnv[i] = 0;
+			// if there is a 0 in the trigger array (rising edge), set the drum state to attack
+			drumState |= !triggers[i];
+			break;
+		case drumAttacking:
+			// increment the drum envelope phase
+			drumPhase += (65535 << 5);
+			// extract the sign bit of drumPhase less the max valid interpolation index
+			// the expression returns 0 if the phase has exceeded (4094 << 16) (max valid interpolation index), 1 otherwise
+			// invert for a more useful value, aka 1 if overflow
+			uint32_t endOfAttack = !((uint32_t)(drumPhase - (4094 << 16)) >> 31);
+			// if 0, switch to release state
+			drumState += endOfAttack;
+			// funny way of clamping at 4094 by incrementing back to 4094 if greater than 4094
+			drumPhase -= endOfAttack * (drumPhase - (4094 << 16));
+			uint32_t envelopeSampleIndex = drumPhase >> 16;
+			drumEnv[i] = fix16_lerp(expoTable[envelopeSampleIndex], expoTable[envelopeSampleIndex + 1], drumPhase & 0xFFFF) >> 16;
+			break;
+		case drumReleasing:
+			// increment the drum envelope phase
+				drumState -= !triggers[i];
+				drumPhase -= expoTable[time] >> 8;
+				// extract the sign bit of drumPhase less the max valid interpolation index
+				// the expression returns 1 if the phase is negative, 0 otherwise
+				// no need to invert
+				uint32_t endOfRelease = ((uint32_t)(drumPhase) >> 31);
+				// if 0, switch to resting state
+				drumState -= endOfRelease * 2;
+				// funny way of clamping at 0 by incrementing back to 4094 if greater than 4094
+				drumPhase -= endOfRelease * (drumPhase);
+				envelopeSampleIndex = drumPhase >> 16;
+				drumEnv[i] = fix16_lerp(expoTable[envelopeSampleIndex], expoTable[envelopeSampleIndex + 1], drumPhase & 0xFFFF) >> 16;
+
+			break;
+		default:
+			break;
 		}
 	}
 

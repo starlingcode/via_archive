@@ -5,6 +5,7 @@
 #include "dsp.h"
 #include "fill_buffer.h"
 #include "tables.h"
+#include "via_rev5_hardware_io.h"
 
 arm_fir_instance_q31 fir;
 
@@ -17,6 +18,12 @@ void fillBuffer(void) {
 	static q31_t phaseEventArray[BUFFER_SIZE];
 	static q31_t drumEnvelope[BUFFER_SIZE];
 
+	#define DELAY_BUFFER_SIZE 512
+
+	static q31_t delayBufferA[DELAY_BUFFER_SIZE];
+	static q31_t delayBufferB[DELAY_BUFFER_SIZE];
+	static q31_t writeIndex;
+
 	static int lastPhase;
 	static int oscillatorOn;
 	static uint32_t slowConversionCounter;
@@ -28,7 +35,7 @@ void fillBuffer(void) {
 	// profiling pin a logic out high
 	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 
-	(*getIncrements)(inputRead->morphCV, &controlRateInput, incrementValues1, incrementValues2);
+	(*getIncrements)(inputRead->t2CV, &controlRateInput, incrementValues1, incrementValues2);
 
 	lastPhase = (*advancePhase)(incrementValues1, incrementValues2, inputRead->triggerInput, inputRead->gateInput, lastPhase, &oscillatorOn, phaseArray, phaseEventArray);
 
@@ -37,18 +44,27 @@ void fillBuffer(void) {
 
 	getSamplesDifferential(phaseArray, __USAT(inputRead->t2CV[0] + controlRateInput.knob2Value - 2048, 12), inputRead->morphCV, outputWrite->samplesA, outputWrite->samplesB, outputWrite->auxLogicHandler);
 
-	generateDrumEnv(4095 - controlRateInput.knob2Value, inputRead->triggerInput, &drumEnvelope);
+	generateDrumEnv(__USAT(inputRead->t2CV[0] + 2048 - controlRateInput.knob2Value, 12), inputRead->triggerInput, &drumEnvelope);
+
 
 	for (int i = i; i < BUFFER_SIZE; i++) {
 		outputWrite->samplesA[i] = (outputWrite->samplesA[i] * drumEnvelope[i]) >> 10;
 		outputWrite->samplesB[i] = (outputWrite->samplesB[i] * drumEnvelope[i]) >> 10;
+		delayBufferA[writeIndex] = outputWrite->samplesA[i];
+		delayBufferB[writeIndex] = outputWrite->samplesA[i];
+		writeIndex = (writeIndex + 1) & (DELAY_BUFFER_SIZE - 1);
+		outputWrite->samplesA[i] = delayBufferA[(writeIndex + (~(inputRead->morphCV[i]>>5))) & (DELAY_BUFFER_SIZE - 1)];
+		outputWrite->samplesB[i] = delayBufferB[(writeIndex + (~(-inputRead->morphCV[i]>>5))) & (DELAY_BUFFER_SIZE - 1)];
+
 	}
 
-	(*calculateSH)(phaseEventArray, outputWrite);
 
-	(*calculateLogicA)(phaseEventArray, inputRead->triggerInput, oscillatorOn, outputWrite);
 
-	(*calculateLogicB)(phaseEventArray, outputWrite);
+	//(*calculateSH)(phaseEventArray, outputWrite);
+
+	//(*calculateLogicA)(phaseEventArray, inputRead->triggerInput, oscillatorOn, outputWrite);
+
+	//(*calculateLogicB)(phaseEventArray, outputWrite);
 
 	// profiling pin a logic out low
 	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;

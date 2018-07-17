@@ -36,7 +36,6 @@ void fillBuffer(void) {
 
 	(*getSamples)(phaseArray, __USAT(inputRead->t2CV[0] + controlRateInput.knob2Value - 2048, 12), inputRead->morphCV, outputWrite->samples, outputWrite->auxLogicHandler);
 
-	generateDrumEnv(inputRead->triggerInput, )
 
 	(*calculateSH)(phaseEventArray, outputWrite);
 
