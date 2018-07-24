@@ -329,11 +329,11 @@ void TIM6_DAC1_IRQHandler(void)
 	static uint32_t readIndex;
 
 	// write the sample to the dac
-	WRITE_DAC1(__USAT(4095 - (outputRead->samples[readIndex]), 12));
-	WRITE_DAC2(__USAT(outputRead->samples[readIndex], 12));
+	WRITE_DAC1(__USAT(4095 - (outputs->samples[readIndex]), 12));
+	WRITE_DAC2(__USAT(outputs->samples[readIndex], 12));
 
 	// handle the logic outputs
-	setLogicOutputs(outputRead->logicAHandler[readIndex], outputRead->logicBHandler[readIndex], outputRead->auxLogicHandler[readIndex], outputRead->shAHandler[readIndex], outputRead->shBHandler[readIndex]);
+	setLogicOutputs(outputs->logicAHandler[readIndex], outputs->logicBHandler[readIndex], outputs->auxLogicHandler[readIndex], outputs->shAHandler[readIndex], outputs->shBHandler[readIndex]);
 
 	// store the x and morph CVs at sample rate
 	inputWrite->xCV[readIndex] = 4095 - __USAT(cv2, 12);
@@ -360,11 +360,11 @@ void TIM6_DAC1_IRQHandler(void)
 		inputRead = temp1;
 
 		audioRateOutputs *temp2 = outputWrite;
-		outputWrite = outputRead;
-		outputRead = temp2;
+		outputWrite = outputs;
+		outputs = temp2;
 
 		// tell the main loop to fill the next buffer
-		main_State = main_fillBuffer;
+		main_State = main_nextSample;
 
 	} else {
 		// otherwise, increment the buffer read counter

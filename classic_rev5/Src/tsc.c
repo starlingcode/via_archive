@@ -79,7 +79,7 @@ void MX_TSC_Init(void)
   htsc.Init.ChannelIOs = TSC_GROUP4_IO2|TSC_GROUP5_IO2|TSC_GROUP5_IO3|TSC_GROUP5_IO4
                     |TSC_GROUP6_IO2|TSC_GROUP6_IO3;
   htsc.Init.ShieldIOs = 0;
-  htsc.Init.SamplingIOs = TSC_GROUP4_IO1|TSC_GROUP5_IO1|TSC_GROUP6_IO1;
+  htsc.Init.SamplingIOs = TSC_GROUP4_IO1|TSC_GROUP5_IO2|TSC_GROUP6_IO1;
   if (HAL_TSC_Init(&htsc) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -110,14 +110,14 @@ void HAL_TSC_MspInit(TSC_HandleTypeDef* tscHandle)
     PB6     ------> TSC_G5_IO3
     PB7     ------> TSC_G5_IO4 
     */
-    GPIO_InitStruct.Pin = GROUP_6_SAMPLING_Pin|GPIO_PIN_3;
+    GPIO_InitStruct.Pin = GROUP_6_SAMPLING_Pin|GPIO_PIN_4;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF3_TSC;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = GPIO_PIN_15|GPIO_PIN_4|GPIO_PIN_6|GPIO_PIN_7;
+    GPIO_InitStruct.Pin = GPIO_PIN_15|GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_3;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

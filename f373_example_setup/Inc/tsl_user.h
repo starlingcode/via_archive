@@ -83,7 +83,7 @@ typedef enum
 #define CHANNEL_1_SRC       (TSC_GROUP5_IDX) 
 #define CHANNEL_1_DEST      (1) 
 
-#define CHANNEL_2_IO_MSK    (TSC_GROUP5_IO2)
+#define CHANNEL_2_IO_MSK    (TSC_GROUP5_IO1)
 #define CHANNEL_2_GRP_MSK   (TSC_GROUP5)
 #define CHANNEL_2_SRC       (TSC_GROUP5_IDX) 
 #define CHANNEL_2_DEST      (2) 

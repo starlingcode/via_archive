@@ -66,7 +66,7 @@ int handleCoversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs 
 	case 2:
 		// implement a running average on the control rate CV inputs
 		knob3Sum = knob3 + knob3Sum - readBuffer(&knob3Buffer, 31);
-		cv1Sum = cv1 + cv1Sum - readBuffer(&cv1Buffer, 7);
+		cv1Sum = cv1 + cv1Sum - readBuffer(&cv1Buffer, 3);
 
 		// store the newest value in a ring buffer
 		writeBuffer(&knob3Buffer, knob3);
@@ -74,7 +74,7 @@ int handleCoversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs 
 
 		// write the averaged inputs to the holding struct
 		controls->knob3Value = knob3Sum >> 5;
-		controls->cv1Value = cv1Sum >> 3;
+		controls->cv1Value = cv1Sum >> 2;
 
 		break;
 
@@ -103,14 +103,14 @@ int handleCoversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs 
 
 void updateRGBAudio(controlRateInputs * controls, audioRateInputs * inputBuffer, int lastSample, int lastPhaseValue) {
 	SET_BLUE_LED(__USAT((controls->knob1Value + controls->cv1Value + (controls->knob1Value >> 4)) >> 1, 12));
-	SET_GREEN_LED(__USAT((inputBuffer->morphCV[BUFFER_SIZE] + controls->knob3Value - 2048), 12) >> 1);
+	SET_GREEN_LED(__USAT((inputBuffer->cv3Input[BUFFER_SIZE] + controls->knob3Value - 2048), 12) >> 1);
 	SET_RED_LED(4095 - __USAT((controls->knob1Value + controls->cv1Value + (controls->knob1Value >> 4)) >> 1, 12));
 }
 
 void updateRGBSubAudio(controlRateInputs * controls, audioRateInputs * inputBuffer, int lastSample, int lastPhaseValue) {
 	SET_RED_LED(lastSample * (lastPhaseValue >> 24));
 	SET_BLUE_LED(lastSample * (!(lastPhaseValue >> 24)));
-	SET_GREEN_LED(__USAT((inputBuffer->morphCV[BUFFER_SIZE] + controls->knob3Value - 2048), 12) * lastSample >> 12);
+	SET_GREEN_LED(__USAT((inputBuffer->cv3Input[BUFFER_SIZE] + controls->knob3Value - 2048), 12) * lastSample >> 12);
 }
 
 void updateRGBTrigger(controlRateInputs * controls, audioRateInputs * inputBuffer, int lastSample, int lastPhaseValue) {

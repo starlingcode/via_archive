@@ -102,7 +102,7 @@ int reverseBuffer2[BUFFER_SIZE];
 audioRateOutputs output1;
 audioRateOutputs output2;
 
-audioRateOutputs *outputRead;
+audioRateOutputs *outputs;
 audioRateOutputs *outputWrite;
 
 audioRateInputs input1;

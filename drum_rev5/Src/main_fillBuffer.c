@@ -117,7 +117,7 @@ void initializeDoubleBuffer() {
 	input2.triggerInput = hardSyncBuffer2;
 	input2.gateInput = reverseBuffer2;
 
-	outputRead = &output1;
+	outputs = &output1;
 	outputWrite = &output2;
 
 	inputRead = &input1;

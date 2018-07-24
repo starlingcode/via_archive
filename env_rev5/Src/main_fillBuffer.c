@@ -26,13 +26,13 @@ void fillBuffer(void) {
 	// profiling pin a logic out high
 	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 
-	getIncrementsEnv(inputRead->morphCV, &controlRateInput, incrementValues1, incrementValues2);
+	getIncrementsEnv(inputRead->cv3Input, &controlRateInput, incrementValues1, incrementValues2);
 
 	lastPhase = (*advancePhase)(incrementValues1, incrementValues2, inputRead->triggerInput, inputRead->gateInput, lastPhase, &oscillatorOn, phaseArray, phaseEventArray);
 
-	arm_offset_q31(inputRead->morphCV, controlRateInput.knob3Value - 2048, inputRead->morphCV, BUFFER_SIZE);
+	arm_offset_q31(inputRead->cv3Input, controlRateInput.knob3Value - 2048, inputRead->cv3Input, BUFFER_SIZE);
 
-	(*getSamples)(phaseArray, __USAT(inputRead->t2CV[0] + controlRateInput.knob2Value - 2048, 12), inputRead->morphCV, outputWrite->samples, outputWrite->auxLogicHandler);
+	(*getSamples)(phaseArray, __USAT(inputRead->cv2Input[0] + controlRateInput.knob2Value - 2048, 12), inputRead->cv3Input, outputWrite->samples, outputWrite->auxLogicHandler);
 
 	(*calculateSHA)(phaseEventArray, outputWrite);
 
@@ -80,17 +80,17 @@ void initializeDoubleBuffer() {
 	output1.auxLogicHandler = auxLogicBuffer1;
 	output2.auxLogicHandler = auxLogicBuffer2;
 
-	input1.t2CV = t2CVBuffer1;
-	input1.morphCV = morphCVBuffer1;
+	input1.cv2Input = t2CVBuffer1;
+	input1.cv3Input = morphCVBuffer1;
 	input1.triggerInput = hardSyncBuffer1;
 	input1.gateInput = reverseBuffer1;
 
-	input2.t2CV = t2CVBuffer2;
-	input2.morphCV = morphCVBuffer2;
+	input2.cv2Input = t2CVBuffer2;
+	input2.cv3Input = morphCVBuffer2;
 	input2.triggerInput = hardSyncBuffer2;
 	input2.gateInput = reverseBuffer2;
 
-	outputRead = &output1;
+	outputs = &output1;
 	outputWrite = &output2;
 
 	inputRead = &input1;

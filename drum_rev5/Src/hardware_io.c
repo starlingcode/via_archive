@@ -103,14 +103,14 @@ int handleCoversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs 
 
 void updateRGBAudio(controlRateInputs * controls, audioRateInputs * inputBuffer, int lastSample, int lastPhaseValue) {
 	SET_BLUE_LED(__USAT((controls->knob1Value + controls->cv1Value + (controls->knob1Value >> 4)) >> 1, 12));
-	SET_GREEN_LED(__USAT((inputBuffer->morphCV[BUFFER_SIZE] + controls->knob3Value - 2048), 12) >> 1);
+	SET_GREEN_LED(__USAT((inputBuffer->cv3Input[BUFFER_SIZE] + controls->knob3Value - 2048), 12) >> 1);
 	SET_RED_LED(4095 - __USAT((controls->knob1Value + controls->cv1Value + (controls->knob1Value >> 4)) >> 1, 12));
 }
 
 void updateRGBSubAudio(controlRateInputs * controls, audioRateInputs * inputBuffer, int lastSample, int lastPhaseValue) {
 	SET_RED_LED(lastSample * (lastPhaseValue >> 24));
 	SET_BLUE_LED(lastSample * (!(lastPhaseValue >> 24)));
-	SET_GREEN_LED(__USAT((inputBuffer->morphCV[BUFFER_SIZE] + controls->knob3Value - 2048), 12) * lastSample >> 12);
+	SET_GREEN_LED(__USAT((inputBuffer->cv3Input[BUFFER_SIZE] + controls->knob3Value - 2048), 12) * lastSample >> 12);
 }
 
 void updateRGBTrigger(controlRateInputs * controls, audioRateInputs * inputBuffer, int lastSample, int lastPhaseValue) {

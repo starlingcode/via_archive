@@ -30,7 +30,7 @@ void (*main_State)(void);
 
 
 // get next sample(s) then switch to ui handling state
-void main_fillBuffer(void);
+void main_nextSample(void);
 
 // execute the touch sensor state machine and expander button
 void main_handleUI(void);

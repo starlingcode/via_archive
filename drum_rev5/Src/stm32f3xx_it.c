@@ -343,17 +343,17 @@ void TIM6_DAC1_IRQHandler(void)
 	// write the sample to the dac
 
 
-	WRITE_DAC1(__USAT(outputRead->samplesA[readIndex], 12));
-	WRITE_DAC2(__USAT(outputRead->samplesB[readIndex], 12));
+	WRITE_DAC1(__USAT(outputs->samplesA[readIndex], 12));
+	WRITE_DAC2(__USAT(outputs->samplesB[readIndex], 12));
 
 //		WRITE_DAC1(cv2);
 //		WRITE_DAC2(cv3);
 
 	// replace with one function using runtime display as a mask
 	if (RUNTIME_DISPLAY) {
-		setLogicOutputs(outputRead->logicAHandler[readIndex], outputRead->logicBHandler[readIndex], outputRead->auxLogicHandler[readIndex], outputRead->shAHandler[readIndex], outputRead->shBHandler[readIndex]);
+		setLogicOutputs(outputs->logicAHandler[readIndex], outputs->logicBHandler[readIndex], outputs->auxLogicHandler[readIndex], outputs->shAHandler[readIndex], outputs->shBHandler[readIndex]);
 	} else {
-		setLogicOutputsNoLEDs(outputRead->logicAHandler[readIndex], outputRead->logicBHandler[readIndex], outputRead->auxLogicHandler[readIndex], outputRead->shAHandler[readIndex], outputRead->shBHandler[readIndex]);
+		setLogicOutputsNoLEDs(outputs->logicAHandler[readIndex], outputs->logicBHandler[readIndex], outputs->auxLogicHandler[readIndex], outputs->shAHandler[readIndex], outputs->shBHandler[readIndex]);
 	}
 
 	// write the current trigger signal value
@@ -383,11 +383,11 @@ void TIM6_DAC1_IRQHandler(void)
 		inputRead = temp1;
 
 		audioRateOutputs *temp2 = outputWrite;
-		outputWrite = outputRead;
-		outputRead = temp2;
+		outputWrite = outputs;
+		outputs = temp2;
 
 		// tell the main loop to fill the next buffer
-		main_State = main_fillBuffer;
+		main_State = main_nextSample;
 
 	} else {
 		// otherwise, increment the buffer read counter

@@ -11,7 +11,7 @@
  */
 
 // get next sample(s) then switch to ui handling state
-void main_fillBuffer(void) {
+void main_nextSample(void) {
 
 	// call the appropriate function to fill the sample buffer per the current mode
 	(*fillBuffer)();

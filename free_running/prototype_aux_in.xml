@@ -10,10 +10,10 @@
 ]>
 
 <targetDefinitions>
-  <board id="prototype_aux_in">
-    <name>prototype_aux_in</name>
-    <dbgIF>SWD</dbgIF>
-    <dbgDEV>ST-Link</dbgDEV>
-    <mcuId>stm32f303cctx</mcuId>
-  </board>
+	<board id="prototype_aux_in">
+		<name>prototype_aux_in</name>
+		<dbgIF>SWD</dbgIF>
+		<dbgDEV>ST-Link</dbgDEV>
+		<mcuId>stm32f303cctx</mcuId>
+	</board>
 </targetDefinitions>

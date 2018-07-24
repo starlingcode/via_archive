@@ -289,16 +289,16 @@ void TIM6_DAC_IRQHandler(void) {
 	static uint32_t readIndex;
 
 	// write the sample to the dac
-	WRITE_DAC1(__USAT(4095 - (outputRead->samples[readIndex] + 2048), 12));
-	WRITE_DAC2(__USAT(outputRead->samples[readIndex] + 2048, 12));
+	WRITE_DAC1(__USAT(4095 - (outputs->samples[readIndex] + 2048), 12));
+	WRITE_DAC2(__USAT(outputs->samples[readIndex] + 2048, 12));
 
 
 	// execute the GPIO handlers
-	(*outputRead->logicStates[readIndex].shAHandler)();
-	(*outputRead->logicStates[readIndex].shBHandler)();
-	(*outputRead->logicStates[readIndex].logicAHandler)();
-	(*outputRead->logicStates[readIndex].logicBHandler)();
-	(*outputRead->logicStates[readIndex].auxLogicHandler)();
+	(*outputs->logicStates[readIndex].shAHandler)();
+	(*outputs->logicStates[readIndex].shBHandler)();
+	(*outputs->logicStates[readIndex].logicAHandler)();
+	(*outputs->logicStates[readIndex].logicBHandler)();
+	(*outputs->logicStates[readIndex].auxLogicHandler)();
 
 	// store the x and morph CVs at sample rate
 	inputWrite->xCV[readIndex] = cv2;
@@ -325,11 +325,11 @@ void TIM6_DAC_IRQHandler(void) {
 		inputRead = temp1;
 
 		audioRateOutputs *temp2 = outputWrite;
-		outputWrite = outputRead;
-		outputRead = temp2;
+		outputWrite = outputs;
+		outputs = temp2;
 
 		// tell the main loop to fill the next buffer
-		main_State = main_fillBuffer;
+		main_State = main_nextSample;
 
 	} else {
 		// otherwise, increment the buffer read counter

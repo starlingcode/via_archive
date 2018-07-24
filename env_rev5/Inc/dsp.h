@@ -54,8 +54,8 @@ typedef struct {
 // declare a struct to hold the current audio rate inputs
 
 typedef struct {
-	q31_t *t2CV;
-	q31_t *morphCV;
+	q31_t *cv2Input;
+	q31_t *cv3Input;
 	q31_t *triggerInput;
 	q31_t *gateInput;
 } audioRateInputs;
@@ -98,7 +98,7 @@ int reverseBuffer2[BUFFER_SIZE];
 audioRateOutputs output1;
 audioRateOutputs output2;
 
-audioRateOutputs *outputRead;
+audioRateOutputs *outputs;
 audioRateOutputs *outputWrite;
 
 audioRateInputs input1;

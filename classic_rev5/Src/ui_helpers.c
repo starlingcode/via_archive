@@ -15,6 +15,12 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 
+int pitch = 2048;
+
+#define OCTAVE 384
+
+extern DAC_HandleTypeDef hdac2;
+
 /**
  *
  * Mode change helpers
@@ -48,6 +54,9 @@ void handleButton1ModeChange(int mode) {
 }
 
 void handleButton3ModeChange(int mode) {
+
+	pitch = (pitch - OCTAVE) % 3840;
+	HAL_DAC_SetValue(&hdac2, DAC_CHANNEL_1, DAC_ALIGN_12B_R, pitch);
 
 	switch (mode) {
 	case audio:
@@ -97,6 +106,10 @@ void handleButton4ModeChange(int mode) {
 }
 
 void handleButton6ModeChange(int mode) {
+
+	pitch = (pitch + OCTAVE) % 3840;
+	HAL_DAC_SetValue(&hdac2, DAC_CHANNEL_1, DAC_ALIGN_12B_R, pitch);
+
 
 	switch (mode) {
 	case noloop:

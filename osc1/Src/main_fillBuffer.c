@@ -69,7 +69,7 @@ void initializeDoubleBuffer() {
 	input2.hardSyncInput = hardSyncBuffer2;
 	input2.reverseInput = reverseBuffer2;
 
-	outputRead = &output1;
+	outputs = &output1;
 	outputWrite = &output2;
 
 	inputRead = &input1;

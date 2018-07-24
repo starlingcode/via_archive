@@ -231,6 +231,9 @@ int main(void)
 	// initialize the DAC
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_2);
+	HAL_DAC_Start(&hdac2, DAC_CHANNEL_1);
+
+	HAL_DAC_SetValue(&hdac2, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 4095);
 
 	//start our DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);
@@ -252,9 +255,6 @@ int main(void)
 	// initialize the main state machine to handle the UI first
 	main_State = &main_handleUI;
 
-//	// enable display update timer
-//	__HAL_TIM_ENABLE_IT(&htim13, TIM_IT_UPDATE);
-//	HAL_TIM_Base_Start(&htim13);
 
   /* USER CODE END 2 */
 
