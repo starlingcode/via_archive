@@ -128,6 +128,7 @@ int main(void)
   MX_TOUCHSENSING_Init();
   MX_DAC1_Init();
   MX_DAC2_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */

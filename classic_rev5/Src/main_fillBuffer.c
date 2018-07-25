@@ -32,7 +32,7 @@ void fillBuffer(void) {
 	lastPhase = (*advancePhase)(incrementValues1, incrementValues2, inputRead->triggerInput, inputRead->gateInput, lastPhase, &oscillatorOn, phaseArray, phaseEventArray);
 
 	arm_offset_q31(inputRead->cv3Input, controlRateInput.knob3Value - 2048, inputRead->cv3Input, BUFFER_SIZE);
-	arm_scale_q31(inputRead->cv3Input, ((1<<28) - 1) * (currentFamily.familySize - 1), 0, inputRead->cv3Input, BUFFER_SIZE);
+	arm_scale_q31(inputRead->cv3Input, ((1<<28) - 1) * (currentFamily->familySize - 1), 0, inputRead->cv3Input, BUFFER_SIZE);
 
 	(*getSamples)(phaseArray, __USAT(inputRead->cv2Input[0] + controlRateInput.knob2Value - 2048, 12), inputRead->cv3Input, outputWrite->samples, outputWrite->auxLogicHandler);
 
