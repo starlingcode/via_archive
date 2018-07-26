@@ -190,7 +190,7 @@ int main(void)
 
 	getIncrement = getIncrementAttack;
 	advancePhase = advancePhaseRoot;
-	calculateSH = calculateSHMode1;
+	calculateSH = calculateSHMode2;
 	updateRGB = updateRGBAudio;
 
 	initializeScales();

@@ -24,7 +24,7 @@ void nextSample(controlRateInputs * controls, audioRateInputs * inputs, audioRat
 
 	calculateDac3(&viaStateVariables, outputs);
 
-//	(*calculateSH)(&viaStateVariables, outputs);
+	(*calculateSH)(&viaStateVariables, outputs);
 
 	softwareSignals->phaseSignal = viaStateVariables.phase;
 
