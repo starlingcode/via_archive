@@ -9,34 +9,29 @@ extern void handleCoversionSlow(viaStateVariableSet *, controlRateInputs *, audi
 
 void nextSample(controlRateInputs * controls, audioRateInputs * inputs, audioRateOutputs * outputs, softwareSignaling * softwareSignals) {
 
-	ALOGIC_HIGH;
+//	ALOGIC_HIGH;
 
 	static viaStateVariableSet viaStateVariables;
 
 	viaStateVariables.incrementValue1 = softwareSignals->attackIncrement;
 	viaStateVariables.incrementValue2 = softwareSignals->releaseIncrement;
 
-//	viaStateVariables.incrementValue1 = 1000;
-//	viaStateVariables.incrementValue2 = 1000;
-
 	(*advancePhase)(inputs, &viaStateVariables);
 
 	calculateSample(controls, inputs, &viaStateVariables, outputs);
 
-//	calculateLogicA(&viaStateVariables, outputs);
+	calculateLogicA(&viaStateVariables, outputs);
 
-//	calculateDac3(&viaStateVariables, outputs);
-//
-//	calculateAuxLogic(&viaStateVariables, outputs);
+	calculateDac3(&viaStateVariables, outputs);
 
 //	(*calculateSH)(&viaStateVariables, outputs);
+
+	softwareSignals->phaseSignal = viaStateVariables.phase;
 
 	viaStateVariables.slowConversionCounter += 1;
 
 	handleCoversionSlow(&viaStateVariables, controls, inputs, outputs);
 
-	ALOGIC_LOW;
-
-
+//	ALOGIC_LOW;
 
 }

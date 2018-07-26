@@ -6,7 +6,6 @@
 #include "modes.h"
 
 void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, softwareSignaling * softwareSignals);
-
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim16;
 extern TIM_HandleTypeDef htim17;
@@ -25,10 +24,8 @@ void mainRisingEdgeCallback(controlRateInputs * controls, audioRateInputs * inpu
 }
 
 void mainFallingEdgeCallback(softwareSignaling * softwareSignals) {
-	// get the timer value that which was reset on last rising edge
-//
-//	softwareSignals->gateOnCount = __HAL_TIM_GET_COUNTER(&htim2);
-	softwareSignals->gateOnCount = softwareSignals->periodCount >> 1;
+
+	EXPAND_LOGIC_LOW;
 
 }
 
@@ -51,13 +48,14 @@ void ioProcessCallback(audioRateInputs * inputWrite, audioRateOutputs * outputRe
 
 	WRITE_DAC1(__USAT((4095 - outputRead->samples), 12));
 	WRITE_DAC2(__USAT(outputRead->samples, 12));
+	WRITE_DAC3(__USAT(outputRead->dac3Sample, 12));
 
 
 	// replace with one function using runtime display as a mask
 //	if (RUNTIME_DISPLAY) {
 //		setLogicOutputs(outputRead->logicAHandler, outputRead->logicBHandler, outputRead->auxLogicHandler, outputRead->shAHandler, outputRead->shBHandler);
 //	} else {
-//		setLogicOutputsNoLEDs(outputRead->logicAHandler, outputRead->logicBHandler, outputRead->auxLogicHandler, outputRead->shAHandler, outputRead->shBHandler);
+		setLogicOutputsNoLEDs(outputRead->logicAHandler, outputRead->auxLogicHandler, outputRead->shAHandler, outputRead->shBHandler);
 //	}
 
 	// store the x and morph CVs at sample rate
@@ -85,13 +83,9 @@ void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, s
 
 	Scale * scale = softwareSignals->scale;
 
-	if (scale->oneVoltOct == 0) {
-		noteIndex = combine12BitKnobCVTernary(controls->knob1Value, (4095 - controls->cv1Value)) >> 5;
-	} else {
-		noteIndex = __USAT((4095 - controls->cv1Value) + (controls->knob1Value >> 2) -1390, 12) >> 5;
-	}
-
-	rootIndex = combine12BitKnobCVTernary(controls->knob2Value, (4095 - inputs->cv2Input)) >> scale->t2Bitshift;
+	noteIndex = (controls->knob1Value) >> 5;
+//	rootIndex = (controls->knob2Value) >> scale->t2Bitshift;
+	rootIndex = (controls->knob2Value) >> 9;
 
 	fracMultiplier = scale->grid[rootIndex][noteIndex]->fractionalPart;
 	intMultiplier = scale->grid[rootIndex][noteIndex]->integerPart;
@@ -99,53 +93,26 @@ void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, s
 	multKey = fracMultiplier + intMultiplier;
 
 	if (lastMultiplier != multKey) {
-		// TODO ratio change trigger
+		EXPAND_LOGIC_HIGH;
 	}
 
 	lastMultiplier = multKey;
 
-	//pllCounter ++;
+	pllCounter ++;
 
-//	if (pllCounter >= gcd || (EXTPLL)) {
-//
-//		if (button4Mode == hardSync) {
-//
-//			position = 0;
-//			holdPosition =0;
-//			if (GATEA) {
-//				ALOGIC_HIGH;
-//				if (RUNTIME_DISPLAY) {
-//					LEDC_ON;
-//				}
-//			} else if (TRIGA) {
-//				ALOGIC_HIGH;
-//				if (RUNTIME_DISPLAY) {
-//					LEDC_ON;
-//				}
-//				__HAL_TIM_SET_COUNTER(&htim15, 0);
-//				__HAL_TIM_ENABLE(&htim15);
-//			}
-//
-//		} else if (button4Mode == true) {
-//			// if we are behind the phase of the clock, go faster, otherwise, go slower
-//			if (position > span) {
-//				pllNudge = (spanx2 - position) << 4;
-//			} else {
-//				pllNudge = -(position) << 4;
-//			}
-//		}
-//		pllCounter = 0;
-//		CLEAR_EXTPLL;
-//	}
+	int phase = softwareSignals->phaseSignal;
 
-	uint32_t attackInc = (((AT_B_PHASE << 7)) / softwareSignals->gateOnCount);
-	uint32_t releaseInc = (((AT_B_PHASE << 7) + pllNudge) / (softwareSignals->periodCount - softwareSignals->gateOnCount));
+	if (pllCounter >= gcd) {
+		pllNudge = (((phase >> 24)*WAVETABLE_LENGTH - phase) << 8);
+		pllCounter = 0;
+	}
+
+	uint32_t attackInc = ((((uint64_t)((uint64_t)AT_B_PHASE << 18) + pllNudge)) / (softwareSignals->periodCount));
+//	uint32_t releaseInc = ((((uint64_t)AT_B_PHASE << 9) + pllNudge) / (softwareSignals->periodCount - softwareSignals->gateOnCount));
 	attackInc = fix48_mul(attackInc, fracMultiplier) + fix16_mul(attackInc, intMultiplier);
-	releaseInc = fix48_mul(releaseInc, fracMultiplier) + fix16_mul(releaseInc, intMultiplier);
+//	releaseInc = fix48_mul(releaseInc, fracMultiplier) + fix16_mul(releaseInc, intMultiplier);
 
-	softwareSignals->attackIncrement = __USAT(attackInc, 24);
-	softwareSignals->releaseIncrement = __USAT(releaseInc, 24);
-
-
+	softwareSignals->attackIncrement = __USAT(attackInc >> 8, 24);
+	softwareSignals->releaseIncrement = __USAT(attackInc >> 8, 24);
 }
 

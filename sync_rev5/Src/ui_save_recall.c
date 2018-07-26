@@ -49,7 +49,7 @@ void uiInitialize()
 	switchFamily();
 
 	HAL_FLASH_Unlock();
-	eepromStatus = EE_Init();
+	//eepromStatus = EE_Init();
 
 	// error handling
 	if(eepromStatus != EE_OK) {

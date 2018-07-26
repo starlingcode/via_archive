@@ -71,26 +71,11 @@ void calculateLogicA(viaStateVariableSet * stateVariables, audioRateOutputs * ou
 
 }
 
-void calculateLogicB(viaStateVariableSet * stateVariables, audioRateOutputs * output) {
+void calculateDac3(viaStateVariableSet * stateVariables, audioRateOutputs * output) {
 
-		switch (stateVariables->phaseEvent) {
-			//no logic events
-			case 0:
-				output->logicBHandler = GPIO_NOP;
-				break;
-			//dummy at a handling
-			case AT_A_FROM_RELEASE:
-			case AT_A_FROM_ATTACK:
-				output->logicBHandler = BLOGIC_LOW_MASK;
-				break;
-			//dummy at b handling
-			case AT_B_FROM_RELEASE:
-			case AT_B_FROM_ATTACK:
-				output->logicBHandler = BLOGIC_HIGH_MASK;
-				break;
-			default:
-				break;
-		}
+
+	output->dac3Sample = stateVariables->delta << 12;
+
 
 
 }

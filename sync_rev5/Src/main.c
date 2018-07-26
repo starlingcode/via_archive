@@ -245,6 +245,7 @@ int main(void)
 
 	softwareSignals.gateOnCount = 10000;
 	softwareSignals.periodCount = 10000;
+	softwareSignals.phaseSignal = 0;
 
 	__HAL_TIM_ENABLE(&htim2);
 	// initialize the timer that is used to detect rising and falling edges at the trigger input
@@ -264,11 +265,6 @@ int main(void)
   while (1)
   {
 	  //implement the main state machine
-
-
-	  if(__HAL_TIM_GET_COUNTER(&htim2)) {
-		  LEDA_ON;
-	  }
 
 	  (*main_State)();
 

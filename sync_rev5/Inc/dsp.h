@@ -46,7 +46,7 @@ typedef struct {
 	logicHandler shAHandler;
 	logicHandler shBHandler;
 	logicHandler logicAHandler;
-	logicHandler logicBHandler;
+	q31_t dac3Sample;
 	logicHandler auxLogicHandler;
 } audioRateOutputs;
 
@@ -70,6 +70,7 @@ typedef struct {
 	uint32_t periodCount;
 	uint32_t gateOnCount;
 	uint32_t flagWord;
+	uint32_t phaseSignal;
 	Scale * scale;
 } softwareSignaling;
 

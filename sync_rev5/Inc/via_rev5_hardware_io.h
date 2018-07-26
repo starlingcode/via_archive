@@ -107,7 +107,7 @@ static inline void setLogicOutputs(uint32_t logicA, uint32_t logicB, uint32_t lo
 	#define LEDD_MASK (__ROR(logicB, 16) >> 13)
 
 	//combine the mask variables for a shared GPIO group with a bitwise or
-	SET_A_B_LOGIC(/*logicA |*/ logicB | LEDB_MASK);
+	SET_A_B_LOGIC(logicA | logicB | LEDB_MASK);
 
 	SET_EXPAND_LOGIC(logicExpander | LEDC_MASK);
 
@@ -117,7 +117,7 @@ static inline void setLogicOutputs(uint32_t logicA, uint32_t logicB, uint32_t lo
 
 }
 
-static inline void setLogicOutputsNoLEDs(uint32_t logicA, uint32_t logicB, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
+static inline void setLogicOutputsNoLEDs(uint32_t logicA, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
 
 	// LEDA_HIGH_MASK -> SH_A_SAMPLE_MASK >> 16 >> 1 (pin 8 to pin 7, F)
 	// LEDB_HIGH_MASK -> SH_B_SAMPLE_MASK >> 16 << 5 (pin 9 to pin 14, C)
@@ -130,7 +130,7 @@ static inline void setLogicOutputsNoLEDs(uint32_t logicA, uint32_t logicB, uint3
 	#define LEDD_MASK (__ROR(logicB, 16) >> 13)
 
 	//combine the mask variables for a shared GPIO group with a bitwise or
-	SET_A_B_LOGIC(/*logicA |*/ logicB);
+	SET_A_B_LOGIC(logicA);
 
 	SET_EXPAND_LOGIC(logicExpander);
 
@@ -143,9 +143,11 @@ static inline void setLogicOutputsNoLEDs(uint32_t logicA, uint32_t logicB, uint3
 
 #define DAC1_ADDR     1073771528
 #define DAC2_ADDR     1073771540
+#define DAC3_ADDR     1073780744
 
 #define WRITE_DAC1(X) ((*(volatile uint32_t *) DAC1_ADDR) = X);
 #define WRITE_DAC2(X) ((*(volatile uint32_t *) DAC2_ADDR) = X);
+#define WRITE_DAC3(X) ((*(volatile uint32_t *) DAC3_ADDR) = X);
 
 // Trigger input and button "high" (inverted in hardware)
 
