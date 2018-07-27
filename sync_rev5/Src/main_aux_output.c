@@ -54,11 +54,11 @@ void calculateDac3(viaStateVariableSet * stateVariables, audioRateOutputs * outp
 		int lastFractionalPhase = impulsePhase - lastPhase;
 		int increment = stateVariables->incrementValue1;
 
-		int lastBlepCoefficient = (lastFractionalPhase << 24) / increment;
+		int lastBlepCoefficient = (lastFractionalPhase << 24) / (increment << 4);
 		int lastBlep = (lastBlepCoefficient << 1) - fix16_square(lastBlepCoefficient) - (1 << 16);
 		lastSample += lastBlep * (delta);
 
-		int thisBlepCoefficient = (thisFractionalPhase << 24) / increment;
+		int thisBlepCoefficient = (thisFractionalPhase << 24) / (increment << 4);
 		int thisBlep = fix16_square(thisBlepCoefficient) - (thisBlepCoefficient << 1) + (1 << 16);
 		thisSample = (delta << 16) + thisBlep * (delta);
 
