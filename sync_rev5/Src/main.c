@@ -189,7 +189,8 @@ int main(void)
 
 
 	getIncrement = getIncrementAttack;
-	advancePhase = advancePhaseRoot;
+	advancePhase = advancePhasePM;
+	// TODO: Pll function pointer
 	calculateSH = calculateSHMode2;
 	updateRGB = updateRGBAudio;
 

@@ -83,12 +83,12 @@ void initializeDoubleBuffer() {
 		shABuffer1[i] = &logicNoOp;
 		shBBuffer1[i] = &logicNoOp;
 		logicABuffer1[i] = &logicNoOp;
-		logicBBuffer1[i] = &logicNoOp;
+		dac3SampleBuffer1[i] = &logicNoOp;
 		auxLogicBuffer1[i]= &logicNoOp;
 		shABuffer2[i] = &logicNoOp;
 		shBBuffer2[i] = &logicNoOp;
 		logicABuffer2[i] = &logicNoOp;
-		logicBBuffer2[i] = &logicNoOp;
+		dac3SampleBuffer2[i] = &logicNoOp;
 		auxLogicBuffer2[i]= &logicNoOp;
 	}
 
@@ -106,8 +106,8 @@ void initializeDoubleBuffer() {
 	output1.logicAHandler = logicABuffer1;
 	output2.logicAHandler = logicABuffer2;
 
-	output1.logicBHandler = logicBBuffer1;
-	output2.logicBHandler = logicBBuffer2;
+	output1.logicBHandler = dac3SampleBuffer1;
+	output2.logicBHandler = dac3SampleBuffer2;
 
 	output1.auxLogicHandler = auxLogicBuffer1;
 	output2.auxLogicHandler = auxLogicBuffer2;

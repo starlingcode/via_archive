@@ -208,6 +208,7 @@ int main(void)
 	// initialize the DAC
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_2);
+	HAL_DAC_Start(&hdac2, DAC_CHANNEL_1);
 
 	//start our DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);

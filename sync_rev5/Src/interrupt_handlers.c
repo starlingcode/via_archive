@@ -55,7 +55,7 @@ void ioProcessCallback(audioRateInputs * inputWrite, audioRateOutputs * outputRe
 //	if (RUNTIME_DISPLAY) {
 //		setLogicOutputs(outputRead->logicAHandler, outputRead->logicBHandler, outputRead->auxLogicHandler, outputRead->shAHandler, outputRead->shBHandler);
 //	} else {
-		setLogicOutputsNoLEDs(outputRead->logicAHandler, outputRead->auxLogicHandler, outputRead->shAHandler, outputRead->shBHandler);
+//		setLogicOutputsNoLEDs(outputRead->logicAHandler, outputRead->auxLogicHandler, outputRead->shAHandler, outputRead->shBHandler);
 //	}
 
 	// store the x and morph CVs at sample rate

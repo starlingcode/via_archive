@@ -12,7 +12,7 @@
 #define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
 #define AT_B_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
 
-#define BUFFER_SIZE 8
+#define BUFFER_SIZE 64
 
 
 #define NUM_TAPS 24
@@ -48,7 +48,7 @@ typedef struct {
 	logicHandler *shAHandler;
 	logicHandler *shBHandler;
 	logicHandler *logicAHandler;
-	logicHandler *logicBHandler;
+	q31_t *dac3Samples;
 	logicHandler *auxLogicHandler;
 } audioRateOutputs;
 
@@ -75,8 +75,8 @@ logicHandler shBBuffer2[BUFFER_SIZE];
 logicHandler logicABuffer1[BUFFER_SIZE];
 logicHandler logicABuffer2[BUFFER_SIZE];
 
-logicHandler logicBBuffer1[BUFFER_SIZE];
-logicHandler logicBBuffer2[BUFFER_SIZE];
+q31_t dac3SampleBuffer1[BUFFER_SIZE];
+q31_t dac3SampleBuffer2[BUFFER_SIZE];
 
 logicHandler auxLogicBuffer1[BUFFER_SIZE];
 logicHandler auxLogicBuffer2[BUFFER_SIZE];
@@ -130,7 +130,7 @@ void prepareCV_PM_Morph(audioRateInputs *, controlRateInputs *, q31_t *, q31_t *
 void prepareCV_FM_PWM(audioRateInputs *, controlRateInputs *, q31_t *, q31_t *, q31_t *, q31_t *);
 void prepareCV_PM_PWM(audioRateInputs *, controlRateInputs *, q31_t *, q31_t *, q31_t *, q31_t *);
 
-void incrementOscillator(q31_t * , q31_t *, q31_t *, q31_t *, q31_t *, q31_t *, q31_t *, int *);
+void incrementOscillator(q31_t * , q31_t *, q31_t *, q31_t *, q31_t *, q31_t *, q31_t *, int *, q31_t *);
 
 void (*logicAndFilter)(uint32_t *, audioRateOutputs *);
 
@@ -167,6 +167,8 @@ static inline int fix16_mul(int in0, int in1) {
 	  return __ROR(__PKHBT(msb, lsb, 0), 16);
 
 }
+
+#define fix16_square(X) fix16_mul(X,X)
 
 // doubting such an optimization would work here
 // probaby not needed (called once per sample)

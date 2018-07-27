@@ -78,8 +78,8 @@ void advancePhasePM(audioRateInputs * inputs, viaStateVariableSet * stateVariabl
 
 	int increment = (*getIncrement)(stateVariables);
 	q31_t cvInput = inputs->cv2Input;
-	phase += increment + (cvInput - lastCV) << 8;
-	lastCV = inputs->cv2Input;
+	phase += increment + ((cvInput - lastCV) << 13);
+	lastCV = cvInput;
 
 	int phaseEventCalculator = 0;
 

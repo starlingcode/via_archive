@@ -164,8 +164,8 @@ void ui_newMode(int sig)
 		break;
 
 	case EXIT_SIG:
-		uiClearLEDs();
-		uiClearRGB();
+		//uiClearLEDs();
+		//uiClearRGB();
 		break;
 	}
 

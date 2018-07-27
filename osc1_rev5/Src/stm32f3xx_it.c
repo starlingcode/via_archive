@@ -329,11 +329,12 @@ void TIM6_DAC1_IRQHandler(void)
 	static uint32_t readIndex;
 
 	// write the sample to the dac
-	WRITE_DAC1(__USAT(4095 - (outputs->samples[readIndex]), 12));
-	WRITE_DAC2(__USAT(outputs->samples[readIndex], 12));
+	WRITE_DAC1(4095 - (outputs->samples[readIndex]));
+	WRITE_DAC2(outputs->samples[readIndex]);
+	WRITE_DAC3(outputs->dac3Samples[readIndex]);
 
 	// handle the logic outputs
-	setLogicOutputs(outputs->logicAHandler[readIndex], outputs->logicBHandler[readIndex], outputs->auxLogicHandler[readIndex], outputs->shAHandler[readIndex], outputs->shBHandler[readIndex]);
+	setLogicOutputs(outputs->logicAHandler[readIndex], outputs->auxLogicHandler[readIndex], outputs->shAHandler[readIndex], outputs->shBHandler[readIndex]);
 
 	// store the x and morph CVs at sample rate
 	inputWrite->xCV[readIndex] = 4095 - __USAT(cv2, 12);

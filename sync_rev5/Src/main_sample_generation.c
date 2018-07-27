@@ -80,7 +80,7 @@ static inline int getSampleQuinticSpline(int phase, uint32_t morph, int * delta)
 
 	int deltaSign = ((sample3 - sample2) >> 31);
 
-	*delta = deltaSign * EXPAND_LOGIC_HIGH_MASK + !deltaSign * EXPAND_LOGIC_LOW_MASK;
+	*delta = deltaSign;
 
 	return __USAT(out >> 3, 12);
 }

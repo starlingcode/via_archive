@@ -106,6 +106,8 @@ static inline int fix16_mul(int in0, int in1) {
 
 }
 
+#define fix16_square(X) fix16_mul(X,X)
+
 // doubting such an optimization would work here
 // probaby not needed (called once per sample)
 

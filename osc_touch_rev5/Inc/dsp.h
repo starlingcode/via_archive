@@ -48,7 +48,7 @@ typedef struct {
 	logicHandler *shAHandler;
 	logicHandler *shBHandler;
 	logicHandler *logicAHandler;
-	logicHandler *logicBHandler;
+	logicHandler *dac3Samples;
 	logicHandler *auxLogicHandler;
 } audioRateOutputs;
 
@@ -75,8 +75,8 @@ logicHandler shBBuffer2[BUFFER_SIZE];
 logicHandler logicABuffer1[BUFFER_SIZE];
 logicHandler logicABuffer2[BUFFER_SIZE];
 
-logicHandler logicBBuffer1[BUFFER_SIZE];
-logicHandler logicBBuffer2[BUFFER_SIZE];
+logicHandler dac3SampleBuffer1[BUFFER_SIZE];
+logicHandler dac3SampleBuffer2[BUFFER_SIZE];
 
 logicHandler auxLogicBuffer1[BUFFER_SIZE];
 logicHandler auxLogicBuffer2[BUFFER_SIZE];

@@ -9,7 +9,7 @@ extern void handleCoversionSlow(viaStateVariableSet *, controlRateInputs *, audi
 
 void nextSample(controlRateInputs * controls, audioRateInputs * inputs, audioRateOutputs * outputs, softwareSignaling * softwareSignals) {
 
-//	ALOGIC_HIGH;
+
 
 	static viaStateVariableSet viaStateVariables;
 
@@ -32,6 +32,6 @@ void nextSample(controlRateInputs * controls, audioRateInputs * inputs, audioRat
 
 	handleCoversionSlow(&viaStateVariables, controls, inputs, outputs);
 
-//	ALOGIC_LOW;
+
 
 }

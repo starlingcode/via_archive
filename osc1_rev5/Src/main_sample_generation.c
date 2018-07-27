@@ -14,7 +14,7 @@ q31_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModPWM_2, 
 
 q31_t virtualGround[BUFFER_SIZE];
 
-static inline int getSampleQuinticSpline(int, uint32_t);
+static inline int getSampleQuinticSpline(int, uint32_t, int *);
 static inline int calculatePWMPhase(int, uint32_t);
 
 /**
@@ -116,7 +116,7 @@ void prepareCV_PM_PWM(audioRateInputs * audioInputs, controlRateInputs *controlI
 
 // generate the sample values and phase events for the buffer with the above modulation inputs
 
-void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * morphArray, q31_t * pwmArray, q31_t * hardSyncArray, q31_t * reverseArray, q31_t * output, int * phaseEventArray) {
+void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * morphArray, q31_t * pwmArray, q31_t * hardSyncArray, q31_t * reverseArray, q31_t * output, int * phaseEventArray, q31_t * delta) {
 
 	#define WAVETABLE_LENGTH 33554432
 	#define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
@@ -180,12 +180,15 @@ void incrementOscillator(q31_t * incrementArray, q31_t * phaseModArray, q31_t * 
 		ghostPhase = calculatePWMPhase(phase, pwmArray[i]);
 
 		// calculate the sample value
-		output[i] = getSampleQuinticSpline(ghostPhase, __USAT(morphArray[i], 12));
+		output[i] = getSampleQuinticSpline(ghostPhase, __USAT(morphArray[i], 12), &delta[i]);
+
+		// write over the phase mod array to test blep
+		phaseModArray[i] = phase;
 
 	}
 }
 
-static inline int getSampleQuinticSpline(int phase, uint32_t morph) {
+static inline int getSampleQuinticSpline(int phase, uint32_t morph, int * delta) {
 
     /* in this function, we use our phase position to get the sample to give to our dacs using a quintic spline interpolation technique
     essentially, we need to get 6 pairs of sample values and two "fractional arguments" (where are we at in between those sample values)
@@ -247,6 +250,10 @@ static inline int getSampleQuinticSpline(int phase, uint32_t morph) {
 					))
 			))
 		));
+
+	int deltaSign = ((sample3 - sample2) >> 31);
+
+	*delta = deltaSign;
 
 	return __USAT(out >> 3, 12);
 }

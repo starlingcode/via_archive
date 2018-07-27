@@ -33,17 +33,50 @@ void calculateLogicA(viaStateVariableSet * stateVariables, audioRateOutputs * ou
 				break;
 		}
 
-
 }
 
 void calculateDac3(viaStateVariableSet * stateVariables, audioRateOutputs * output) {
 
+	static int lastDelta;
+	static int lastPhase;
+	static int lastSample;
+	static int deltaChanged;
+	int thisSample;
+	int blep;
 
-	output->dac3Sample = stateVariables->delta << 12;
+	int delta = stateVariables->delta * 2 - 1;
+	int phase = stateVariables->phase;
+
+	if (lastDelta != delta) {
+
+		int impulsePhase = phase & 0xFFFF0000;
+		int thisFractionalPhase = phase - impulsePhase;
+		int lastFractionalPhase = impulsePhase - lastPhase;
+		int increment = stateVariables->incrementValue1;
+
+		int lastBlepCoefficient = (lastFractionalPhase << 24) / increment;
+		int lastBlep = (lastBlepCoefficient << 1) - fix16_square(lastBlepCoefficient) - (1 << 16);
+		lastSample += lastBlep * (delta);
+
+		int thisBlepCoefficient = (thisFractionalPhase << 24) / increment;
+		int thisBlep = fix16_square(thisBlepCoefficient) - (thisBlepCoefficient << 1) + (1 << 16);
+		thisSample = (delta << 16) + thisBlep * (delta);
 
 
+	} else {
+		thisSample = (delta << 16);
+	}
+
+	//thisSample = (delta << 16);
+
+	output->dac3Sample = ((lastSample >> 6) + 4095);
+
+	lastSample = thisSample;
+	lastPhase = phase;
+	lastDelta = delta;
 
 }
+
 
 
 

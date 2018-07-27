@@ -5,6 +5,8 @@
 #include "dsp.h"
 #include "tables.h"
 
+void calculateDac3Samples(q31_t *, q31_t *, q31_t *);
+
 void fillBuffer(void) {
 
 	q31_t incrementBuffer[BUFFER_SIZE];
@@ -14,22 +16,14 @@ void fillBuffer(void) {
 	int phaseEvents[BUFFER_SIZE];
 	static uint32_t slowConversionCounter;
 
-	// profiling pin a logic out high
-	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
-
 
 	(*prepareCV)(inputRead, &controlRateInput, incrementBuffer, phaseModBuffer, morphBuffer, pwmBuffer);
 
-	incrementOscillator(incrementBuffer, phaseModBuffer, morphBuffer, pwmBuffer, inputRead->hardSyncInput, inputRead->reverseInput, outputWrite->samples, phaseEvents);
-
-	// profiling pin a logic out low
-	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
-
-//	// profiling pin b logic out high
-//	GPIOC->BRR = (uint32_t)GPIO_PIN_15;
-
+	incrementOscillator(incrementBuffer, phaseModBuffer, morphBuffer, pwmBuffer, inputRead->hardSyncInput, inputRead->reverseInput, outputWrite->samples, phaseEvents, outputWrite->dac3Samples);
 
 	(*logicAndFilter)(phaseEvents, outputWrite);
+
+	calculateDac3Samples(outputWrite->dac3Samples, phaseModBuffer, incrementBuffer);
 
 	slowConversionCounter++;
 
@@ -39,6 +33,51 @@ void fillBuffer(void) {
 
 	// profiling pin b logic out low
 //	GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
+
+}
+
+void calculateDac3Samples(q31_t * deltaBuffer, q31_t * phaseBuffer, q31_t * incrementBuffer) {
+
+	static int lastDelta;
+	static int lastPhase;
+	static int lastSample;
+	int thisSample;
+	int delta;
+	int phase;
+
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+
+		delta = deltaBuffer[i] * 2 - 1;
+		phase = phaseBuffer[i];
+
+		if (lastDelta != delta) {
+
+			int impulsePhase = phase & 0xFFFF0000;
+			int thisFractionalPhase = phase - impulsePhase;
+			int lastFractionalPhase = impulsePhase - lastPhase;
+			int increment = incrementBuffer[i];
+
+			int lastBlepCoefficient = (lastFractionalPhase << 24) / increment;
+			int lastBlep = (lastBlepCoefficient << 1) - fix16_square(lastBlepCoefficient) - (1 << 16);
+			lastSample += lastBlep * (delta);
+
+			int thisBlepCoefficient = (thisFractionalPhase << 24) / increment;
+			int thisBlep = fix16_square(thisBlepCoefficient) - (thisBlepCoefficient << 1) + (1 << 16);
+			thisSample = (delta << 16) + thisBlep * (delta);
+
+		} else {
+			thisSample = (delta << 16);
+		}
+
+		deltaBuffer[i] = ((lastSample >> 6) + 4095);
+
+		lastSample = thisSample;
+		lastPhase = phase;
+		lastDelta = delta;
+
+
+	}
+
 
 }
 
@@ -59,8 +98,8 @@ void initializeDoubleBuffer() {
 	output1.logicAHandler = logicABuffer1;
 	output2.logicAHandler = logicABuffer2;
 
-	output1.logicBHandler = logicBBuffer1;
-	output2.logicBHandler = logicBBuffer2;
+	output1.dac3Samples = dac3SampleBuffer1;
+	output2.dac3Samples = dac3SampleBuffer2;
 
 	output1.auxLogicHandler = auxLogicBuffer1;
 	output2.auxLogicHandler = auxLogicBuffer2;

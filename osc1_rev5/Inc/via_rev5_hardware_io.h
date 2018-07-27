@@ -92,10 +92,10 @@ uint32_t fastADC2Readings[1];
 
 #define GPIO_NOP 0
 
-static inline void setLogicOutputs(uint32_t logicA, uint32_t logicB, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
+static inline void setLogicOutputs(uint32_t logicA, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
 
 	//combine the mask variables for a shared GPIO group with a bitwise or
-	SET_A_B_LOGIC(logicA | logicB);
+	SET_A_B_LOGIC(logicA);
 
 	SET_EXPAND_LOGIC(logicExpander);
 
@@ -108,9 +108,13 @@ static inline void setLogicOutputs(uint32_t logicA, uint32_t logicB, uint32_t lo
 
 #define DAC1_ADDR     1073771528
 #define DAC2_ADDR     1073771540
+#define DAC3_ADDR     1073780744
+
 
 #define WRITE_DAC1(X) ((*(volatile uint32_t *) DAC1_ADDR) = X);
 #define WRITE_DAC2(X) ((*(volatile uint32_t *) DAC2_ADDR) = X);
+#define WRITE_DAC3(X) ((*(volatile uint32_t *) DAC3_ADDR) = X);
+
 
 // Trigger input and button "high" (inverted in hardware)
 

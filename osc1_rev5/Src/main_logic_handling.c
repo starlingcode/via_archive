@@ -67,7 +67,7 @@ void resampleB(void);
 
 static inline void calculateLogicSHOn(uint32_t * phaseEvents, audioRateOutputs * output) {
 
-	for (int i; i < BUFFER_SIZE; i++) {
+	for (int i = 0; i < BUFFER_SIZE; i++) {
 
 		switch (phaseEvents[i]) {
 			//no logic events
@@ -75,7 +75,6 @@ static inline void calculateLogicSHOn(uint32_t * phaseEvents, audioRateOutputs *
 				output->shAHandler[i] = SH_A_SAMPLE_MASK;
 				output->shBHandler[i] = SH_B_SAMPLE_MASK;
 				output->logicAHandler[i] = GPIO_NOP;
-				output->logicBHandler[i] = GPIO_NOP;
 				output->auxLogicHandler[i] = GPIO_NOP;
 				break;
 			// at a handling
@@ -86,7 +85,6 @@ static inline void calculateLogicSHOn(uint32_t * phaseEvents, audioRateOutputs *
 				output->shAHandler[i] = SH_A_SAMPLE_MASK;
 				output->shBHandler[i] = SH_B_TRACK_MASK;
 				output->logicAHandler[i] = GPIO_NOP;
-				output->logicBHandler[i] = BLOGIC_HIGH_MASK;
 				output->auxLogicHandler[i] = GPIO_NOP;
 				break;
 			// at b handling
@@ -95,7 +93,6 @@ static inline void calculateLogicSHOn(uint32_t * phaseEvents, audioRateOutputs *
 				output->shAHandler[i] = SH_A_TRACK_MASK;
 				output->shBHandler[i] = SH_B_SAMPLE_MASK;
 				output->logicAHandler[i] = GPIO_NOP;
-				output->logicBHandler[i] = BLOGIC_LOW_MASK;
 				output->auxLogicHandler[i] = GPIO_NOP;
 				break;
 			default:
@@ -116,7 +113,6 @@ static inline void calculateLogicSHOff(uint32_t * phase, audioRateOutputs * outp
 				output->shAHandler[i] = SH_A_TRACK_MASK;
 				output->shBHandler[i] = SH_A_TRACK_MASK;
 				output->logicAHandler[i] = GPIO_NOP;
-				output->logicBHandler[i] = GPIO_NOP;
 				output->auxLogicHandler[i] = GPIO_NOP;
 				break;
 			//dummy at a handling
@@ -127,7 +123,6 @@ static inline void calculateLogicSHOff(uint32_t * phase, audioRateOutputs * outp
 				output->shAHandler[i] = SH_A_TRACK_MASK;
 				output->shBHandler[i] = SH_A_TRACK_MASK;
 				output->logicAHandler[i] = GPIO_NOP;
-				output->logicBHandler[i] = GPIO_NOP;
 				output->auxLogicHandler[i] = GPIO_NOP;
 				break;
 			//dummy at b handling
@@ -136,7 +131,6 @@ static inline void calculateLogicSHOff(uint32_t * phase, audioRateOutputs * outp
 				output->shAHandler[i] = SH_A_TRACK_MASK;
 				output->shBHandler[i] = SH_A_TRACK_MASK;
 				output->logicAHandler[i] = GPIO_NOP;
-				output->logicBHandler[i] = GPIO_NOP;
 				output->auxLogicHandler[i]= GPIO_NOP;
 				break;
 			default:

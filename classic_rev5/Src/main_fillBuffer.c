@@ -75,8 +75,8 @@ void initializeDoubleBuffer() {
 	output1.logicAHandler = logicABuffer1;
 	output2.logicAHandler = logicABuffer2;
 
-	output1.logicBHandler = logicBBuffer1;
-	output2.logicBHandler = logicBBuffer2;
+	output1.logicBHandler = dac3SampleBuffer1;
+	output2.logicBHandler = dac3SampleBuffer2;
 
 	output1.auxLogicHandler = auxLogicBuffer1;
 	output2.auxLogicHandler = auxLogicBuffer2;
