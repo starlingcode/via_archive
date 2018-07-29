@@ -23,7 +23,7 @@ typedef struct {
 
 
 
-Scale *scaleGroup[16];
+Scale *scaleArray[4][4];
 
 void initializeScales(void);
 

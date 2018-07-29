@@ -15,106 +15,20 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 
-int pitch = 2048;
-
-#define OCTAVE 384
-
-extern DAC_HandleTypeDef hdac2;
-
-/**
- *
- * Mode change helpers
- *
- */
-
-void handleButton1ModeChange(int mode) {
 
 
-//	switch (mode) {
-//	case nosampleandhold:
-//		calculateSH = calculateSHMode1;
-//		break;
-//	case a:
-//		calculateSH = calculateSHMode2;
-//		break;
-//	case b:
-//		calculateSH = calculateSHMode3;
-//		break;
-//	case ab:
-//		calculateSH = calculateSHMode4;
-//		break;
-//	case halfdecimate:
-//		calculateSH = calculateSHMode5;
-//		break;
-//	case decimate:
-//		calculateSH = calculateSHMode6;
-//		break;
-//	}
-
+int incrementModeAndStore(int mode, int mask, int numModes) {
+	mode = (mode + 1) % numModes;
+	modeStateBuffer = (modeStateBuffer & ~(mask)) | mode;
+	return mode;
 }
 
-void handleButton3ModeChange(int mode) {
-
-
-//	switch (mode) {
-//	case audio:
-//		getIncrements = getIncrementsAudio;
-//		getSamples = getSamplesNoPWM;
-//		updateRGB = updateRGBAudio;
-//		break;
-//	case env:
-//		getIncrements = getIncrementsEnv;
-//		getSamples = getSamplesNoPWM;
-//		updateRGB = updateRGBSubAudio;
-//		break;
-//	case seq:
-//		getIncrements = getIncrementsSeq;
-//		getSamples = getSamplesPWM;
-//		break;
-//	}
-
-
+int decrementModeAndStore(int mode, int mask, int numModes) {
+	mode = (mode - 1) % numModes;
+	modeStateBuffer = (modeStateBuffer & ~(mask)) | mode;
+	return mode;
 }
 
-void handleButton4ModeChange(int mode) {
-
-//	switch (mode) {
-//	case noretrigger:
-//		advancePhase = advancePhaseNoRetrig;
-//		noRetrigStateMachine = noRetrigAttackState;
-//		break;
-//	case hardsync:
-//		advancePhase = advancePhaseHardSync;
-//		hardSyncStateMachine = hardSyncAttackState;
-//		break;
-//	case nongatedretrigger:
-//		advancePhase = advancePhaseEnv;
-//		envStateMachine = envAttackState;
-//		break;
-//	case gated:
-//		advancePhase = advancePhaseGate;
-//		gateStateMachine = gateAttackState;
-//		break;
-//	case pendulum:
-//		advancePhase = advancePhasePendulum;
-//		pendulumStateMachine = pendulumForwardAttackState;
-//		break;
-//	}
-
-}
-
-void handleButton6ModeChange(int mode) {
-
-//	switch (mode) {
-//	case noloop:
-//		handleLoop = handleLoopOff;
-//		break;
-//	case looping:
-//		handleLoop = handleLoopOn;
-//		break;
-//	}
-
-}
 
 
 /**

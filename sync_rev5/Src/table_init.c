@@ -8,7 +8,7 @@
 // this sets the flags to be used in the interrupt and also fills the holding array on the heap
 void switchFamily(void) {
 
-	currentFamily = familyArray[FREQ_MODE][familyIndicator];
+	currentFamily = familyArray[GROUP_MODE][TABLE_MODE];
 	loadSampleArray(currentFamily);
 
 

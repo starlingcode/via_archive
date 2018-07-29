@@ -15,23 +15,34 @@ uint32_t eepromStatus;
 #define UI_TIMER_READ __HAL_TIM_GET_COUNTER(&htim7)
 
 // how modes are arranged by size and location in modeStateBuffer (formatted for EEPROM storage).
-#define BUTTON1_MASK 		0b00000000000000000000000000000000
+#define BUTTON1_MASK 		0b00000000000000000000000000000111
 
-#define BUTTON4_MASK 		0b00000000000000000000000011110000
-#define BUTTON4_SHIFT		4
+#define BUTTON2_MASK 		0b00000000000000000000000000111000
+#define BUTTON2_SHIFT		3
 
-#define BUTTON3_MASK 		0b00000000000000000000111100000000
-#define BUTTON3_SHIFT 		8
+#define BUTTON3_MASK 		0b00000000000000000000000111000000
+#define BUTTON3_SHIFT 		6
 
-#define BUTTON6_MASK 		0b00000000000000001111000000000000
-#define BUTTON6_SHIFT 		12
+#define BUTTON4_MASK 		0b00000000000000000000111000000000
+#define BUTTON4_SHIFT 		9
 
-#define BUTTON5_MASK	 	0b00000000000011110000000000000000
-#define TABLE_SHIFT	 		16
+#define BUTTON5_MASK	 	0b00000000000000000111000000000000
+#define BUTTON5_SHIFT	 	12
 
-#define AUX_MODE_1			0b00000000111100000000000000000000
-#define AUX_LOGIC_SHIFT		20
+#define BUTTON6_MASK		0b00000000000000111000000000000000
+#define BUTTON6_SHIFT		15
 
+#define AUX_MODE1_MASK		0b00000000000111000000000000000000
+#define AUX_MODE1_SHIFT		18
+
+#define AUX_MODE2_MASK		0b00000000111000000000000000000000
+#define AUX_MODE2_SHIFT		21
+
+#define AUX_MODE3_MASK		0b00000111000000000000000000000000
+#define AUX_MODE3_SHIFT		24
+
+#define AUX_MODE4_MASK		0b00111000000000000000000000000000
+#define AUX_MODE4_SHIFT		27
 
 
 #define DEFAULTPRESET1 0b0000000000000000
@@ -95,10 +106,29 @@ void uiSetLEDCOff();
 void uiSetLEDDOn();
 void uiSetLEDDOff();
 
+int incrementModeAndStore(int, int, int);
+int decrementModeAndStore(int, int, int);
+
 void handleButton1ModeChange(int);
+void handleButton2ModeChange(int);
 void handleButton3ModeChange(int);
-void handleButon4ModeChange(int);
+void handleButton4ModeChange(int);
+void handleButon5ModeChange(int);
 void handleButon6ModeChange(int);
+
+void handleButton1Tap(void);
+void handleButton2Tap(void);
+void handleButton3Tap(void);
+void handleButton4Tap(void);
+void handleButon5Tap(void);
+void handleButon6Tap(void);
+
+void handleButton1Hold(void);
+void handleButton2Hold(void);
+void handleButton3Hold(void);
+void handleButton4Hold(void);
+void handleButon5Hold(void);
+void handleButon6Hold(void);
 
 // UI States
 void (*ui_State)(int);

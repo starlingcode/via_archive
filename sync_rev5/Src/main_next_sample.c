@@ -16,6 +16,8 @@ void nextSample(controlRateInputs * controls, audioRateInputs * inputs, audioRat
 	viaStateVariables.incrementValue1 = softwareSignals->attackIncrement;
 	viaStateVariables.incrementValue2 = softwareSignals->releaseIncrement;
 
+	viaStateVariables.phase = softwareSignals->phaseSignal;
+
 	(*advancePhase)(inputs, &viaStateVariables);
 
 	calculateSample(controls, inputs, &viaStateVariables, outputs);

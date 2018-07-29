@@ -6,12 +6,19 @@
 #include "dsp.h"
 #include "fill_buffer.h"
 #include "via_rev5_hardware_io.h"
+#include "pwm_tables.h"
+
+q31_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModPWM_2, phaseModPWM_3, phaseModPWM_4, phaseModPWM_5, phaseModPWM_6, phaseModPWM_7, phaseModPWM_8, phaseModPWM_9, phaseModPWM_10, phaseModPWM_11, phaseModPWM_12, phaseModPWM_13, phaseModPWM_14, phaseModPWM_15, phaseModPWM_16, phaseModPWM_17, phaseModPWM_18, phaseModPWM_19, phaseModPWM_20, phaseModPWM_21, phaseModPWM_22, phaseModPWM_23, phaseModPWM_24, phaseModPWM_25, phaseModPWM_26, phaseModPWM_27, phaseModPWM_28, phaseModPWM_29, phaseModPWM_30, phaseModPWM_31, phaseModPWM_32};
+
+static inline int calculatePWMPhase(int, uint32_t);
 
 static inline int getSampleQuinticSpline(int, uint32_t, int *);
 
 void calculateSample(controlRateInputs * controls, audioRateInputs * inputs, viaStateVariableSet * stateVariables, audioRateOutputs * output) {
 
-	output->samples = getSampleQuinticSpline(stateVariables->phase, __USAT(4095 - inputs->cv3Input - 2048 + controls->knob3Value, 12), &(stateVariables->delta));
+	int phase = calculatePWMPhase(stateVariables->phase, stateVariables->dutyCycle);
+
+	output->samples = getSampleQuinticSpline(phase, __USAT(4095 - inputs->cv3Input - 2048 + controls->knob3Value, 12), &(stateVariables->delta));
 
 }
 
@@ -85,4 +92,22 @@ static inline int getSampleQuinticSpline(int phase, uint32_t morph, int * delta)
 	return __USAT(out >> 3, 12);
 }
 
+
+static inline int calculatePWMPhase(int phaseIn, uint32_t pwm) {
+
+	#define phaseIndex (phaseIn >> 19)
+	#define phaseFrac (phaseIn & 0b0000000000001111111111111111111) >> 3
+	#define pwmIndex (pwm >> 7)
+	#define pwmFrac (pwm & 0b00000000000000001111111) << 9
+	uint32_t sampleA_0 = phaseModPWMTables[pwmIndex][phaseIndex];
+	uint32_t sampleA_1 = phaseModPWMTables[pwmIndex][phaseIndex + 1];
+	uint32_t sampleB_0 = phaseModPWMTables[pwmIndex + 1][phaseIndex];
+	uint32_t sampleB_1 = phaseModPWMTables[pwmIndex + 1][phaseIndex + 1];
+
+	int interp0 = fix16_lerp(sampleA_0, sampleA_1, phaseFrac);
+	int interp1 = fix16_lerp(sampleB_0, sampleB_1, phaseFrac);
+
+	return fix16_lerp(interp0, interp1, pwmFrac);
+
+}
 

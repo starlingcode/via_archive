@@ -24,24 +24,18 @@ enum
 	TSL_ERROR_SIG
 };
 
-enum {
-	DAC_GATE_HIGH,
-	DAC_GATE_LOW,
-	DAC_EXECUTE,
-};
-
 /**
  *
  * Preset select menu
  *
  */
 
-void ui_presetMenu(int sig)
-{
+void ui_presetMenu(int sig) {
+
 	switch (sig){
 
 	case ENTRY_SIG:
-		SET_RUNTIME_DISPLAY;
+		CLEAR_RUNTIME_DISPLAY;
 		uiClearLEDs();
 		uiClearRGB();
 		UI_TIMER_RESET;
@@ -117,19 +111,19 @@ void ui_presetPressedMenu(int sig){
 			}
 			break;
 		case 3:
-			if (BUTTON2SENSOR == RELEASED){
+			if (BUTTON3SENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
 				uiTransition(&ui_switchPreset);
 			}
 			break;
 		case 4:
-			if (BUTTON5SENSOR == RELEASED){
+			if (BUTTON4SENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
 				uiTransition(&ui_switchPreset);
 			}
 			break;
 		case 5:
-			if (BUTTON3SENSOR == RELEASED){
+			if (BUTTON5SENSOR == RELEASED){
 				uiLoadFromEEPROM(presetNumber);
 				uiTransition(&ui_switchPreset);
 			}
@@ -210,7 +204,7 @@ void ui_switchPreset(int sig){
 			uiSetLEDs(flashCounter % 4);
 		} else {
 			flashCounter = 0;
-			uiTransition(&ui_presetMenu);
+			uiTransition(&ui_default);
 		}
 	}
 }

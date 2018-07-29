@@ -4,6 +4,7 @@
 #include "user_interface.h"
 #include "via_rev5_hardware_io.h"
 #include "modes.h"
+#include "fill_buffer.h"
 
 void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, softwareSignaling * softwareSignals);
 extern TIM_HandleTypeDef htim2;
@@ -55,7 +56,7 @@ void ioProcessCallback(audioRateInputs * inputWrite, audioRateOutputs * outputRe
 //	if (RUNTIME_DISPLAY) {
 //		setLogicOutputs(outputRead->logicAHandler, outputRead->logicBHandler, outputRead->auxLogicHandler, outputRead->shAHandler, outputRead->shBHandler);
 //	} else {
-//		setLogicOutputsNoLEDs(outputRead->logicAHandler, outputRead->auxLogicHandler, outputRead->shAHandler, outputRead->shBHandler);
+		setLogicOutputsNoLEDs(outputRead->logicAHandler, outputRead->auxLogicHandler, outputRead->shAHandler, outputRead->shBHandler);
 //	}
 
 	// store the x and morph CVs at sample rate
@@ -83,9 +84,12 @@ void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, s
 
 	Scale * scale = softwareSignals->scale;
 
-	noteIndex = (controls->knob1Value) >> 5;
-//	rootIndex = (controls->knob2Value) >> scale->t2Bitshift;
-	rootIndex = (controls->knob2Value) >> 9;
+	noteIndex = __USAT(controls->knob1Value + 2048 - controls->cv1Value, 12) >> 5;
+	if (advancePhase == &advancePhaseRoot) {
+		rootIndex = (__USAT(controls->knob2Value + 2048 - inputs->cv2Input, 12)) >> scale->t2Bitshift;
+	} else {
+		rootIndex = controls->knob2Value >> scale->t2Bitshift;
+	}
 
 	fracMultiplier = scale->grid[rootIndex][noteIndex]->fractionalPart;
 	intMultiplier = scale->grid[rootIndex][noteIndex]->integerPart;
@@ -103,16 +107,29 @@ void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, s
 	int phase = softwareSignals->phaseSignal;
 
 	if (pllCounter >= gcd) {
-		pllNudge = (((phase >> 24)*WAVETABLE_LENGTH - phase) << 8);
-		pllCounter = 0;
+		switch (softwareSignals->syncMode) {
+		case nosync:
+			pllNudge = 0;
+			break;
+		case true:
+			pllNudge = (((phase >> 24)*WAVETABLE_LENGTH - phase) << 8);
+			pllCounter = 0;
+			break;
+		case hardsync:
+			softwareSignals->phaseSignal = 0;
+			pllCounter = 0;
+			break;
+		default:
+			break;
+		}
 	}
 
-	uint32_t attackInc = ((((uint64_t)((uint64_t)AT_B_PHASE << 18) + pllNudge)) / (softwareSignals->periodCount));
+	uint32_t attackInc = ((((uint64_t)((uint64_t)WAVETABLE_LENGTH << 17) + pllNudge)) / (softwareSignals->periodCount));
 //	uint32_t releaseInc = ((((uint64_t)AT_B_PHASE << 9) + pllNudge) / (softwareSignals->periodCount - softwareSignals->gateOnCount));
-	attackInc = fix48_mul(attackInc, fracMultiplier) + fix16_mul(attackInc, intMultiplier);
+	attackInc = fix48_mul(attackInc >> 8, fracMultiplier) + fix16_mul(attackInc >> 8, intMultiplier);
 //	releaseInc = fix48_mul(releaseInc, fracMultiplier) + fix16_mul(releaseInc, intMultiplier);
 
-	softwareSignals->attackIncrement = __USAT(attackInc >> 8, 24);
-	softwareSignals->releaseIncrement = __USAT(attackInc >> 8, 24);
+	softwareSignals->attackIncrement = __USAT(attackInc, 24);
+	softwareSignals->releaseIncrement = __USAT(attackInc, 24);
 }
 

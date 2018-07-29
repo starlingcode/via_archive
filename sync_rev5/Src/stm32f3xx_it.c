@@ -253,15 +253,15 @@ void TIM16_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM16_IRQn 0 */
 
-	switch (FREQ_MODE) {
-	case audio:
-		updateRGB = updateRGBAudio;
-		break;
-	case env:
-	case seq:
-		updateRGB = updateRGBSubAudio;
-		break;
-	}
+//	switch (FREQ_MODE) {
+//	case audio:
+//		updateRGB = updateRGBAudio;
+//		break;
+//	case env:
+//	case seq:
+//		updateRGB = updateRGBSubAudio;
+//		break;
+//	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim16, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim16);
@@ -414,9 +414,15 @@ void EXTI1_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI1_IRQn 0 */
 
-	if (EXPANDER_BUTTON_PRESSED) {
+	static int buttonPressed;
+
+	buttonPressed = !buttonPressed;
+
+	if (buttonPressed) {
+		uiDispatch(EXPAND_SW_ON_SIG);
 		//buttonPressedCallback();
 	} else { //falling edge
+		uiDispatch(EXPAND_SW_OFF_SIG);
 		//buttonReleasedCallback();
 	}
 

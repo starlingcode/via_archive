@@ -23,18 +23,6 @@ enum
 	TSL_ERROR_SIG
 };
 
-enum {
-	DAC_GATE_HIGH,
-	DAC_GATE_LOW,
-	DAC_EXECUTE,
-};
-
-/**
- *
- * S&H A menu
- *
- */
-
 void ui_button1Menu(int sig)
 {
 	switch (sig)
@@ -49,14 +37,9 @@ void ui_button1Menu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (BUTTON1SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				button1Mode = (button1Mode + 1) % numButton1Modes;
-				modeStateBuffer = (modeStateBuffer & ~(BUTTON1_MASK)) | button1Mode;
-				handleButton1ModeChange(button1Mode);
-				uiClearLEDs();
-				uiSetLEDs(button1Mode);
-				uiTransition(&ui_newMode);
+				handleButton1Tap();
 			} else {
-				uiTransition(&ui_default);
+				handleButton1Hold();
 			}
 		}
 		break;
@@ -68,11 +51,54 @@ void ui_button1Menu(int sig)
 	}
 }
 
-/**
- *
- * S&H B menu
- *
- */
+void ui_button2Menu(int sig)
+{
+	switch (sig)
+	{
+	case ENTRY_SIG:
+
+		UI_TIMER_RESET;
+		UI_TIMER_SET_OVERFLOW(65535);
+		UI_TIMER_ENABLE;
+		uiSetLEDs(button2Mode);
+		break;
+
+	case SENSOR_EVENT_SIG:
+		if (BUTTON2SENSOR == RELEASED){
+			if(UI_TIMER_READ < 3000){
+				handleButton2Tap();
+			} else {
+				handleButton2Hold();
+			}
+		}
+		break;
+	}
+}
+
+void ui_button3Menu(int sig) {
+	switch (sig) {
+
+	case ENTRY_SIG:
+		uiSetLEDs(button3Mode);
+		UI_TIMER_RESET;
+		UI_TIMER_SET_OVERFLOW(65535);
+		UI_TIMER_ENABLE;
+		break;
+
+	case SENSOR_EVENT_SIG:
+		if(BUTTON3SENSOR == RELEASED){
+			if(UI_TIMER_READ < 3000){
+				handleButton3Tap();
+			} else {
+				handleButton3Hold();
+			}
+		}
+		break;
+
+	case INIT_SIG:
+		break;
+	}
+}
 
 void ui_button4Menu(int sig)
 {
@@ -90,14 +116,9 @@ void ui_button4Menu(int sig)
 
 		if (BUTTON4SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				button4Mode = (button4Mode + 1) % numButton4Modes;
-				modeStateBuffer = (modeStateBuffer & ~(BUTTON4_MASK)) | (button4Mode << BUTTON4_SHIFT);
-				handleButton4ModeChange(button4Mode);
-				uiClearLEDs();
-				uiSetLEDs(button4Mode);
-				uiTransition(&ui_newMode);
+				handleButton4Tap();
 			} else {
-				uiTransition(&ui_default);
+				handleButton4Hold();
 			}
 		}
 		break;
@@ -111,47 +132,6 @@ void ui_button4Menu(int sig)
 
 }
 
-/**
- *
- * Grid select up menu
- *
- */
-
-
-void ui_button2Menu(int sig)
-{
-	switch (sig)
-	{
-	case ENTRY_SIG:
-
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
-		uiSetLEDs(familyIndicator);
-		break;
-
-	case SENSOR_EVENT_SIG:
-		if (BUTTON2SENSOR == RELEASED){
-			if(UI_TIMER_READ < 3000){
-				familyIndicator = (familyIndicator + 1) % 8;
-				modeStateBuffer = (modeStateBuffer & ~(BUTTON5_MASK)) | (familyIndicator << TABLE_SHIFT);
-				switchFamily();
-				uiClearLEDs();
-				uiSetLEDs(familyIndicator);
-				uiTransition( &ui_newMode);
-			} else {
-				uiTransition( &ui_default);
-			}
-		}
-		break;
-	}
-}
-
-/**
- *
- * Grid select down menu
- *
- */
 
 void ui_button5Menu(int sig)
 {
@@ -161,71 +141,21 @@ void ui_button5Menu(int sig)
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(65535);
 		UI_TIMER_ENABLE;
-		uiSetLEDs(familyIndicator);
+		uiSetLEDs(button5Mode);
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON5SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				if (familyIndicator == 0) {
-					familyIndicator = 7;  // wrap around
-				} else {
-					familyIndicator--;
-				}
-				modeStateBuffer = (modeStateBuffer & ~(BUTTON5_MASK)) | (familyIndicator << TABLE_SHIFT);
-				switchFamily();
-				uiClearLEDs();
-				uiSetLEDs(familyIndicator);
-				uiTransition( &ui_newMode);
+				handleButton5Tap();
 			} else {
-				uiTransition(&ui_default);
+				handleButton5Hold();
 			}
 		}
 		break;
 	}
 }
 
-/**
- *
- * And A menu
- *
- */
-
-void ui_button3Menu(int sig) {
-	switch (sig) {
-
-	case ENTRY_SIG:
-		uiSetLEDs(button3Mode);
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
-		break;
-
-	case SENSOR_EVENT_SIG:
-		if(BUTTON3SENSOR == RELEASED){
-			if (UI_TIMER_READ < 3000) {
-				button3Mode = (button3Mode + 1) % numButton3Modes;
-				modeStateBuffer = (modeStateBuffer & ~(BUTTON3_MASK)) | (button3Mode << BUTTON3_MASK);
-				handleButton3ModeChange(button3Mode);
-				uiClearLEDs();
-				uiSetLEDs(button3Mode);
-				uiTransition(&ui_newMode);
-			} else {
-				uiTransition(&ui_default);
-			}
-		}
-		break;
-
-	case INIT_SIG:
-		break;
-	}
-}
-
-/**
- *
- * And B menu
- *
- */
 
 void ui_button6Menu(int sig)
 {
@@ -240,16 +170,10 @@ void ui_button6Menu(int sig)
 
 	case SENSOR_EVENT_SIG:
 		if (BUTTON6SENSOR == RELEASED){
-
 			if(UI_TIMER_READ < 3000){
-				button6Mode = (button6Mode + 1) % numButton6Modes;
-				modeStateBuffer = (modeStateBuffer & ~(BUTTON6_MASK)) | (button6Mode << BUTTON6_SHIFT);
-				handleButton6ModeChange(button6Mode);
-				uiClearLEDs();
-				uiSetLEDs(button6Mode);
-				uiTransition(&ui_newMode);
+				handleButton6Tap();
 			} else {
-				uiTransition(&ui_default);
+				handleButton6Hold();
 			}
 		}
 		break;

@@ -11,6 +11,7 @@ typedef struct {
 	q31_t incrementValue2;
 	q31_t phase;
 	q31_t phaseEvent;
+	q31_t dutyCycle;
 	int lastPhase;
 	int delta;
 	int oscillatorOn;

@@ -25,7 +25,7 @@ typedef const struct {
 
 } Family;
 
-Family *familyArray[3][8];
+Family *familyArray[4][4];
 Family *currentFamily;
 
 q31_t fullTableHoldArray[9][517];

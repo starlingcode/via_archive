@@ -158,30 +158,25 @@ const Family quintic_in2quintic_out257 = {
 
 void fillFamilyArray(void) {
 
-	familyArray[audio][0] = &tenor257;
-	familyArray[audio][1] = &soprano257;
-	familyArray[audio][2] = &impevens;
-	familyArray[audio][3] = &linwavefold_257;
-	familyArray[audio][4] = &skipSaw;
-	familyArray[audio][5] = &sinwavefold_257;
-	familyArray[audio][6] = &additive_tri_to_pulse;
-	familyArray[audio][7] = &newBounce;
-	familyArray[env][0] = &testRMS;
-	familyArray[env][1] = &gamma257;
-	familyArray[env][2] = &bounce_257;
-	familyArray[env][3] = &circular_257;
-	familyArray[env][4] = &quintic_outin2quintic_inout257;
-	familyArray[env][5] = &quintic_out2quintic_in257;
-	familyArray[env][6] = &quintic_inout2quintic_outin257;
-	familyArray[env][7] = &quintic_in2quintic_out257;
-	familyArray[seq][0] = &bounce_257;
-	familyArray[seq][1] = &exciteBike;
-	familyArray[seq][2] = &newBounce;
-	familyArray[seq][3] = &sawBend;
-	familyArray[seq][4] = &triOdd;
-	familyArray[seq][5] = &moogSquare;
-	familyArray[seq][6] = &algerian;
-	familyArray[seq][7] = &exciteBike;
+	familyArray[0][0] = &tenor257;
+	familyArray[0][1] = &soprano257;
+	familyArray[0][2] = &impevens;
+	familyArray[0][3] = &linwavefold_257;
+
+	familyArray[1][0] = &skipSaw;
+	familyArray[1][1] = &sinwavefold_257;
+	familyArray[1][2] = &additive_tri_to_pulse;
+	familyArray[1][3] = &newBounce;
+
+	familyArray[2][0] = &triOdd;
+	familyArray[2][1] = &moogSquare;
+	familyArray[2][2] = &algerian;
+	familyArray[2][3] = &exciteBike;
+
+	familyArray[3][0] = &testRMS;
+	familyArray[3][1] = &gamma257;
+	familyArray[3][2] = &bounce_257;
+	familyArray[3][3] = &circular_257;
 
 	switchFamily();
 

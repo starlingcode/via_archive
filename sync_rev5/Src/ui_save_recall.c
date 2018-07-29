@@ -44,12 +44,15 @@ void uiInitialize()
 {
 	fillFamilyArray();
 
+	GROUP_MODE = 0;
+	SCALE_MODE = 0;
+
 	familyIndicator = 2;
 
 	switchFamily();
 
 	HAL_FLASH_Unlock();
-	//eepromStatus = EE_Init();
+	eepromStatus = EE_Init();
 
 	// error handling
 	if(eepromStatus != EE_OK) {
@@ -60,21 +63,11 @@ void uiInitialize()
 	HAL_Delay(500);  // init time
 	//uiLoadFromEEPROM(0);  // load the most recently stored state from memory
 
-
-
-	// load calibration values from virtual EEPROM
-//	eepromStatus = EE_ReadVariable(VirtAddVarTab[7], &EEPROMTemp);
-//	cv3Cal = EEPROMTemp >> 8;
-//	cv2Cal = EEPROMTemp & 0xFF00;
-//	eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1], &EEPROMTemp);
-//	cv1Cal = EEPROMTemp;
-
 	ui_State = &ui_default;
 	uiTransition( &ui_default);
 }
 
 
-// there may be a clever way to do this without EEPROMTemp but i think the different typing may make that unnecessarily difficult.
 void uiLoadFromEEPROM(int position) {
 
 	eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &EEPROMTemp);
@@ -90,7 +83,7 @@ void uiLoadFromEEPROM(int position) {
 	button1Mode = modeStateBuffer & BUTTON1_MASK;
 	button3Mode = (modeStateBuffer & BUTTON3_MASK) >> BUTTON3_SHIFT;
 	button4Mode = (modeStateBuffer & BUTTON4_MASK) >> BUTTON4_SHIFT;
-	familyIndicator = (modeStateBuffer & BUTTON5_MASK) >> TABLE_SHIFT;
+	familyIndicator = (modeStateBuffer & BUTTON5_MASK) >> BUTTON2_SHIFT;
 
 	/* ... initialization of ui attributes */
 	// call each menu to initialize, to make UI process the stored modes
@@ -121,8 +114,6 @@ void ui_factoryReset(int sig){
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(1000);
 		UI_TIMER_ENABLE;
-		// disable any DAC writes here?
-		// maximize length of averaging?
 		modeStateBuffer = DEFAULTPRESET1;
 		uiStoreToEEPROM(1);
 		modeStateBuffer = DEFAULTPRESET2;
@@ -139,9 +130,6 @@ void ui_factoryReset(int sig){
 		break;
 
 	case TIMEOUT_SIG:
-	    //tempData = (cv3Average - 2048) << 8 | ((cv2Average - 2048) & 0xFFFFFF00);
-		//eepromStatus = EE_WriteVariable(VirtAddVarTab[7], tempData);
-		//eepromStatus |= EE_WriteVariable(VirtAddVarTab[15], (uint16_t)cv1Average - 2048);  // make sure i'm shifting in the right direction here!!
 		if (eepromStatus != EE_OK){
 			uiSetLEDs(4);
 			uiTransition(&ui_error);

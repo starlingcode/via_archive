@@ -5,11 +5,7 @@
 #include "tables.h"
 #include "dsp.h"
 #include "fill_buffer.h"
-#include "pwm_tables.h"
 
-const q31_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModPWM_2, phaseModPWM_3, phaseModPWM_4, phaseModPWM_5, phaseModPWM_6, phaseModPWM_7, phaseModPWM_8, phaseModPWM_9, phaseModPWM_10, phaseModPWM_11, phaseModPWM_12, phaseModPWM_13, phaseModPWM_14, phaseModPWM_15, phaseModPWM_16, phaseModPWM_17, phaseModPWM_18, phaseModPWM_19, phaseModPWM_20, phaseModPWM_21, phaseModPWM_22, phaseModPWM_23, phaseModPWM_24, phaseModPWM_25, phaseModPWM_26, phaseModPWM_27, phaseModPWM_28, phaseModPWM_29, phaseModPWM_30, phaseModPWM_31, phaseModPWM_32};
-
-static inline int calculatePWMPhase(int, uint32_t);
 
 int getIncrementAttack(viaStateVariableSet * stateVariables) {
 	if (stateVariables->phaseEvent) {
@@ -62,7 +58,7 @@ void advancePhaseRoot(audioRateInputs * inputs, viaStateVariableSet * stateVaria
 
 	stateVariables->phaseEvent = phaseEventCalculator;
 
-	// TODO rewrite logic parsing function
+	stateVariables->dutyCycle = 2048;
 
 	// store the current phase
 	previousPhase = phase;
@@ -107,7 +103,7 @@ void advancePhasePM(audioRateInputs * inputs, viaStateVariableSet * stateVariabl
 
 	stateVariables->phaseEvent = phaseEventCalculator;
 
-	// TODO rewrite logic parsing function
+	stateVariables->dutyCycle = 2048;
 
 	// store the current phase
 	previousPhase = phase;
@@ -120,7 +116,7 @@ void advancePhaseFM(audioRateInputs * inputs, viaStateVariableSet * stateVariabl
 	q31_t phase = stateVariables->phase;
 	static q31_t previousPhase;
 
-	int increment = (*getIncrement)(stateVariables);
+	int increment = stateVariables->incrementValue1;
 	phase += fix16_mul(increment, inputs->cv2Input << 5);
 
 	int phaseEventCalculator = 0;
@@ -149,7 +145,7 @@ void advancePhaseFM(audioRateInputs * inputs, viaStateVariableSet * stateVariabl
 
 	stateVariables->phaseEvent = phaseEventCalculator;
 
-	// TODO rewrite logic parsing function
+	stateVariables->dutyCycle = 2048;
 
 	// store the current phase
 	previousPhase = phase;
@@ -162,7 +158,7 @@ void advancePhasePWM(audioRateInputs * inputs, viaStateVariableSet * stateVariab
 	q31_t phase = stateVariables->phase;
 	static q31_t previousPhase;
 
-	int increment = (*getIncrement)(stateVariables);
+	int increment = stateVariables->incrementValue1;
 	phase += increment;
 
 	int phaseEventCalculator = 0;
@@ -191,31 +187,10 @@ void advancePhasePWM(audioRateInputs * inputs, viaStateVariableSet * stateVariab
 
 	stateVariables->phaseEvent = phaseEventCalculator;
 
-	// TODO rewrite logic parsing function
+	stateVariables->dutyCycle = inputs->cv2Input;
 
 	// store the current phase
 	previousPhase = phase;
 
-	// shift 12 bit cv left by 9 so max value is 32 in 16 bit (sigh)
-	phase = calculatePWMPhase(phase, inputs->cv2Input << 9);
-
 	stateVariables->phase = phase;
-}
-
-static inline int calculatePWMPhase(int phaseIn, uint32_t pwm) {
-
-	#define phaseIndex (phaseIn >> 19)
-	#define phaseFrac (phaseIn & 0b0000000000001111111111111111111) >> 3
-	#define pwmIndex (pwm >> 16)
-	#define pwmFrac (pwm & 0b00000000000000001111111111111111)
-	uint32_t sampleA_0 = phaseModPWMTables[pwmIndex][phaseIndex];
-	uint32_t sampleA_1 = phaseModPWMTables[pwmIndex][phaseIndex + 1];
-	uint32_t sampleB_0 = phaseModPWMTables[pwmIndex + 1][phaseIndex];
-	uint32_t sampleB_1 = phaseModPWMTables[pwmIndex + 1][phaseIndex + 1];
-
-	int interp0 = fix16_lerp(sampleA_0, sampleA_1, phaseFrac);
-	int interp1 = fix16_lerp(sampleB_0, sampleB_1, phaseFrac);
-
-	return fix16_lerp(interp0, interp1, pwmFrac);
-
 }

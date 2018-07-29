@@ -187,7 +187,6 @@ int main(void)
 	tsl_user_Init();
 	uiInitialize();
 
-
 	getIncrement = getIncrementAttack;
 	advancePhase = advancePhasePM;
 	// TODO: Pll function pointer
@@ -196,7 +195,7 @@ int main(void)
 
 	initializeScales();
 
-	softwareSignals.scale = scaleGroup[0];
+	softwareSignals.scale = scaleArray[0][0];
 
 	// set the priority and enable an interrupt line to be used by the trigger button input and aux trigger
 	HAL_NVIC_SetPriority(EXTI1_IRQn, 1, 0);
