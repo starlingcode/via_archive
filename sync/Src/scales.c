@@ -88,22 +88,22 @@ Scale polyResets = {
    .oneVoltOct = 0};
 
 void initializeScales() {
-   scaleGroup[0] = integerRatios;
-   scaleGroup[1] = pentamodal5primefullspan;
-   scaleGroup[2] = harmSubharmfullspan;
-   scaleGroup[3] = modal5primefullspan;
-   scaleGroup[4] = harmSubharm;
-   scaleGroup[5] = harmFolded4;
-   scaleGroup[6] = pentamodal5prime;
-   scaleGroup[7] = triads;
-   scaleGroup[8] = seventhTetradsMinimalProgression;
-   scaleGroup[9] = seventhTetrads;
-   scaleGroup[10] = modesOfLimitedTransposition;
-   scaleGroup[11] = majMin9thPentStarling;
-   scaleGroup[12] = simpleRhythms;
-   scaleGroup[13] = simpleRhythms16;
-   scaleGroup[14] = rhythmDivisionsReset;
-   scaleGroup[15] = polyResets;
+   scaleArray[0] = integerRatios;
+   scaleArray[1] = pentamodal5primefullspan;
+   scaleArray[2] = harmSubharmfullspan;
+   scaleArray[3] = modal5primefullspan;
+   scaleArray[4] = harmSubharm;
+   scaleArray[5] = harmFolded4;
+   scaleArray[6] = pentamodal5prime;
+   scaleArray[7] = triads;
+   scaleArray[8] = seventhTetradsMinimalProgression;
+   scaleArray[9] = seventhTetrads;
+   scaleArray[10] = modesOfLimitedTransposition;
+   scaleArray[11] = majMin9thPentStarling;
+   scaleArray[12] = simpleRhythms;
+   scaleArray[13] = simpleRhythms16;
+   scaleArray[14] = rhythmDivisionsReset;
+   scaleArray[15] = polyResets;
 }
 
 //void initializeScales() {

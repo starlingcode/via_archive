@@ -7,6 +7,7 @@
 #include "user_interface.h"
 #include "main_state_machine.h"
 #include "via_rev5_hardware_io.h"
+#include "modes.h"
 
 // UI timer
 TIM_HandleTypeDef htim7;
@@ -125,7 +126,7 @@ void ui_newMode(int sig)
 	{
 	case ENTRY_SIG:
 		CLEAR_RUNTIME_DISPLAY;
-		//uiStoreToEEPROM(0);
+		uiStoreToEEPROM(0);
 		UI_TIMER_RESET;
 		UI_TIMER_SET_OVERFLOW(5000);
 		UI_TIMER_ENABLE;
@@ -178,7 +179,7 @@ void ui_newMode(int sig)
  *
  */
 
-void ui_button6SubMenu(int sig)
+void ui_newAuxMode(int sig)
 {
 	switch (sig)
 	{
@@ -188,10 +189,27 @@ void ui_button6SubMenu(int sig)
 		break;
 
 	case SENSOR_EVENT_SIG:
-		// in case either logic mode sensors are pressed, jump to their menu
-		if (BUTTON3SENSOR == PRESSED){
-			uiTransition(&ui_button6_3Menu);
-		} else if (BUTTON6SENSOR == RELEASED){
+#ifdef AUX1_MODE_USED
+		if (BUTTON1SENSOR == PRESSED) {
+			uiTransition(&ui_aux1Menu);
+		}
+#endif
+#ifdef AUX2_MODE_USED
+		if (BUTTON3SENSOR == PRESSED) {
+			uiTransition(&ui_aux2Menu);
+		}
+#endif
+#ifdef AUX3_MODE_USED
+		if (BUTTON4SENSOR == PRESSED) {
+			uiTransition(&ui_aux3Menu);
+		}
+#endif
+#ifdef AUX4_MODE_USED
+		if (BUTTON6SENSOR == PRESSED) {
+			uiTransition(&ui_aux4Menu);
+		}
+#endif
+		if (BUTTON5SENSOR == RELEASED){
 			uiTransition(&ui_default);
 		}
 		break;

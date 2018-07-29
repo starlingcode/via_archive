@@ -72,6 +72,7 @@ typedef struct {
 	uint32_t flagWord;
 	uint32_t phaseSignal;
 	uint32_t syncMode;
+	uint32_t morphShift;
 	Scale * scale;
 } softwareSignaling;
 

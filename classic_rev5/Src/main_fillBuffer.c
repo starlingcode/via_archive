@@ -36,7 +36,6 @@ void fillBuffer(void) {
 
 	(*getSamples)(phaseArray, __USAT(inputRead->cv2Input[0] + controlRateInput.knob2Value - 2048, 12), inputRead->cv3Input, outputWrite->samples, outputWrite->auxLogicHandler);
 
-
 	(*calculateSH)(phaseEventArray, outputWrite);
 
 	(*calculateLogicA)(phaseEventArray, inputRead->triggerInput, oscillatorOn, outputWrite);

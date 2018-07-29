@@ -9,7 +9,7 @@
 #include "modes.h"
 #include "via_rev5_hardware_io.h"
 #include "fill_buffer.h"
-
+#include "tables.h"
 
 void handleButton1Tap(void) {
 	SH_MODE = incrementModeAndStore(SH_MODE, BUTTON1_MASK, numButton1Modes);
@@ -54,6 +54,14 @@ void handleButton6Tap(void) {
 	uiTransition(&ui_newMode);
 }
 
+void handleAux4Tap(void) {
+	TABLE_GROUP_MODE = incrementModeAndStore(TABLE_GROUP_MODE, AUX_MODE4_MASK, numAux4Modes);
+	handleAux4ModeChange(TABLE_GROUP_MODE);
+	uiClearLEDs();
+	uiSetLEDs(TABLE_GROUP_MODE);
+	uiTransition(&ui_newAuxMode);
+}
+
 void handleButton1Hold(void) {
 	uiTransition(&ui_default);
 }
@@ -71,6 +79,9 @@ void handleButton5Hold(void) {
 }
 void handleButton6Hold(void) {
 	uiTransition(&ui_default);
+}
+void handleAux4Hold(void) {
+	uiTransition(&ui_newAuxMode);
 }
 
 void handleButton1ModeChange(int mode) {
@@ -128,12 +139,67 @@ void handleButton4ModeChange(int mode) {
 void handleButton5ModeChange(int mode) {
 
 	softwareSignals.scale = scaleArray[mode][SCALE_MODE];
-	switchFamily();
+	if (!TABLE_GROUP_MODE) {
+		switchFamily();
+		switch (currentFamily->familySize) {
+			case 2:
+				softwareSignals.morphShift = 1;
+				break;
+			case 3:
+				softwareSignals.morphShift = 2;
+				break;
+			case 5:
+				softwareSignals.morphShift = 3;
+				break;
+			case 9:
+				softwareSignals.morphShift = 4;
+				break;
+		}
+	}
 
 }
 
 void handleButton6ModeChange(int mode) {
 
-	switchFamily();
+	if (TABLE_GROUP_MODE) {
+		switchGlobalFamily();
+	} else {
+		switchFamily();
+		switch (currentFamily->familySize) {
+			case 2:
+				softwareSignals.morphShift = 1;
+				break;
+			case 3:
+				softwareSignals.morphShift = 2;
+				break;
+			case 5:
+				softwareSignals.morphShift = 3;
+				break;
+			case 9:
+				softwareSignals.morphShift = 4;
+				break;
+		}
+	}
+
+
+}
+
+void handleAux4ModeChange(int mode) {
+
+	switchGlobalFamily();
+	switch (currentFamily->familySize) {
+		case 2:
+			softwareSignals.morphShift = 1;
+			break;
+		case 3:
+			softwareSignals.morphShift = 2;
+			break;
+		case 5:
+			softwareSignals.morphShift = 3;
+			break;
+		case 9:
+			softwareSignals.morphShift = 4;
+			break;
+	}
 
 }

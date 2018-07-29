@@ -11,8 +11,18 @@ void switchFamily(void) {
 	currentFamily = familyArray[GROUP_MODE][TABLE_MODE];
 	loadSampleArray(currentFamily);
 
+}
+
+// this sets the flags to be used in the interrupt and also fills the holding array on the heap
+void switchGlobalFamily(void) {
+
+	currentFamily = globalFamilyArray[TABLE_MODE];
+	loadSampleArray(currentFamily);
 
 }
+
+
+
 
 // this shuttles the data from flash to ram and fills our holding array
 void loadSampleArray(Family *family) {

@@ -20,6 +20,8 @@ void nextSample(controlRateInputs * controls, audioRateInputs * inputs, audioRat
 
 	(*advancePhase)(inputs, &viaStateVariables);
 
+	viaStateVariables.morph = __USAT(4095 - inputs->cv3Input - 2048 + controls->knob3Value, 12) << softwareSignals->morphShift;
+
 	calculateSample(controls, inputs, &viaStateVariables, outputs);
 
 	calculateLogicA(&viaStateVariables, outputs);

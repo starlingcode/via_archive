@@ -20,7 +20,7 @@ typedef struct {
 
 
 
-Scale scaleGroup[16];
+Scale scaleArray[16];
 
 
 

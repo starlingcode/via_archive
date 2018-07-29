@@ -178,6 +178,11 @@ void fillFamilyArray(void) {
 	familyArray[3][2] = &bounce_257;
 	familyArray[3][3] = &circular_257;
 
+	globalFamilyArray[0] = &linwavefold_257;
+	globalFamilyArray[1] = &sinwavefold_257;
+	globalFamilyArray[2] = &newBounce;
+	globalFamilyArray[3] = &skipSaw;
+
 	switchFamily();
 
 }

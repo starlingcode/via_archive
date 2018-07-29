@@ -12,6 +12,7 @@ typedef struct {
 	q31_t phase;
 	q31_t phaseEvent;
 	q31_t dutyCycle;
+	q31_t morph;
 	int lastPhase;
 	int delta;
 	int oscillatorOn;

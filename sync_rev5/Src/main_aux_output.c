@@ -43,9 +43,11 @@ void calculateDac3(viaStateVariableSet * stateVariables, audioRateOutputs * outp
 	static int deltaChanged;
 	int thisSample;
 	int blep;
+	int delta;
+	int phase;
 
-	int delta = (stateVariables->delta * 2) - 1;
-	int phase = stateVariables->phase;
+	delta = (stateVariables->delta) * 2 - 1;
+	phase = stateVariables->phase;
 
 	if (lastDelta != delta) {
 
@@ -54,22 +56,20 @@ void calculateDac3(viaStateVariableSet * stateVariables, audioRateOutputs * outp
 		int lastFractionalPhase = impulsePhase - lastPhase;
 		int increment = stateVariables->incrementValue1;
 
-		int lastBlepCoefficient = (lastFractionalPhase << 24) / (increment << 8);
+		int lastBlepCoefficient = (lastFractionalPhase << 16) / increment;
 		int lastBlep = (lastBlepCoefficient << 1) - fix16_square(lastBlepCoefficient) - (1 << 16);
-		lastSample += lastBlep * (delta);
+		lastSample -= lastBlep * (delta);
 
-		int thisBlepCoefficient = (thisFractionalPhase << 24) / (increment << 8);
+		int thisBlepCoefficient = (thisFractionalPhase << 16) / increment;
 		int thisBlep = fix16_square(thisBlepCoefficient) + (thisBlepCoefficient << 1) + (1 << 16);
-		thisSample = (delta << 16) + thisBlep * (delta);
+		thisSample = (delta << 16) - thisBlep * (delta);
 
-
-	} else {
+	}
+	else {
 		thisSample = (delta << 16);
 	}
 
-	//thisSample = (delta << 16);
-
-	output->dac3Sample = ((lastSample >> 6) + 4095);
+	output->dac3Sample = ((lastSample >> 6) + 2048);
 
 	lastSample = thisSample;
 	lastPhase = phase;

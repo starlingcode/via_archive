@@ -145,6 +145,28 @@ void ui_button5Menu(int sig)
 		break;
 
 	case SENSOR_EVENT_SIG:
+
+#ifdef AUX1_MODE_USED
+		if (BUTTON1SENSOR == PRESSED) {
+			uiTransition(&ui_aux1Menu);
+		}
+#endif
+#ifdef AUX2_MODE_USED
+		if (BUTTON3SENSOR == PRESSED) {
+			uiTransition(&ui_aux2Menu);
+		}
+#endif
+#ifdef AUX3_MODE_USED
+		if (BUTTON4SENSOR == PRESSED) {
+			uiTransition(&ui_aux3Menu);
+		}
+#endif
+#ifdef AUX4_MODE_USED
+		if (BUTTON6SENSOR == PRESSED) {
+			uiTransition(&ui_aux4Menu);
+		}
+#endif
+
 		if (BUTTON5SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
 				handleButton5Tap();
@@ -174,6 +196,110 @@ void ui_button6Menu(int sig)
 				handleButton6Tap();
 			} else {
 				handleButton6Hold();
+			}
+		}
+		break;
+
+	case INIT_SIG:
+		break;
+	}
+}
+
+void ui_aux1Menu(int sig)
+{
+	switch (sig) {
+
+	case ENTRY_SIG:
+		uiSetLEDs(aux1Mode);
+		UI_TIMER_RESET;
+		UI_TIMER_SET_OVERFLOW(65535);
+		UI_TIMER_ENABLE;
+		break;
+
+	case SENSOR_EVENT_SIG:
+		if (BUTTON1SENSOR == RELEASED){
+			if(UI_TIMER_READ < 3000){
+				handleAux1Tap();
+			} else {
+				handleAux1Hold();
+			}
+		}
+		break;
+
+	case INIT_SIG:
+		break;
+	}
+}
+
+void ui_aux2Menu(int sig)
+{
+	switch (sig) {
+
+	case ENTRY_SIG:
+		uiSetLEDs(aux2Mode);
+		UI_TIMER_RESET;
+		UI_TIMER_SET_OVERFLOW(65535);
+		UI_TIMER_ENABLE;
+		break;
+
+	case SENSOR_EVENT_SIG:
+		if (BUTTON3SENSOR == RELEASED){
+			if(UI_TIMER_READ < 3000){
+				handleAux2Tap();
+			} else {
+				handleAux2Hold();
+			}
+		}
+		break;
+
+	case INIT_SIG:
+		break;
+	}
+}
+
+void ui_aux3Menu(int sig)
+{
+	switch (sig) {
+
+	case ENTRY_SIG:
+		uiSetLEDs(aux3Mode);
+		UI_TIMER_RESET;
+		UI_TIMER_SET_OVERFLOW(65535);
+		UI_TIMER_ENABLE;
+		break;
+
+	case SENSOR_EVENT_SIG:
+		if (BUTTON4SENSOR == RELEASED){
+			if(UI_TIMER_READ < 3000){
+				handleAux3Tap();
+			} else {
+				handleAux3Hold();
+			}
+		}
+		break;
+
+	case INIT_SIG:
+		break;
+	}
+}
+
+void ui_aux4Menu(int sig)
+{
+	switch (sig) {
+
+	case ENTRY_SIG:
+		uiSetLEDs(aux4Mode);
+		UI_TIMER_RESET;
+		UI_TIMER_SET_OVERFLOW(65535);
+		UI_TIMER_ENABLE;
+		break;
+
+	case SENSOR_EVENT_SIG:
+		if (BUTTON6SENSOR == RELEASED){
+			if(UI_TIMER_READ < 3000){
+				handleAux4Tap();
+			} else {
+				handleAux4Hold();
 			}
 		}
 		break;

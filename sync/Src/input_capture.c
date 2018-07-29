@@ -82,7 +82,7 @@ void generateFrequency(void) {
 
 	//PROFILING_START("ScaleGen");
 
-			scale = scaleGroup[currentScale + (scaleType*4)
+			scale = scaleArray[currentScale + (scaleType*4)
 							   ];
 
 			if (scale.oneVoltOct == 0) {

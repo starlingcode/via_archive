@@ -18,7 +18,7 @@ void calculateSample(controlRateInputs * controls, audioRateInputs * inputs, via
 
 	int phase = calculatePWMPhase(stateVariables->phase, stateVariables->dutyCycle);
 
-	output->samples = getSampleQuinticSpline(phase, __USAT(4095 - inputs->cv3Input - 2048 + controls->knob3Value, 12), &(stateVariables->delta));
+	output->samples = getSampleQuinticSpline(phase, stateVariables->morph, &(stateVariables->delta));
 
 }
 
@@ -45,18 +45,19 @@ static inline int getSampleQuinticSpline(int phase, uint32_t morph, int * delta)
 
 	// bit shifting to divide by the correct power of two takes a 12 bit number (our morph) and returns the a quotient in the range of our family size
 
-	LnFamily = morph >> 9;
+	LnFamily = morph >> 13;
 
 	leftIndex = &fullTableHoldArray[LnFamily][LnSample];
 	rightIndex = &fullTableHoldArray[LnFamily + 1][LnSample];
 
 	// determine the fractional part of our phase phase by masking off the integer
 
-	phaseFrac = 0x0000FFFF & phase;
+	phaseFrac = phase & 0x0000FFFF;
 
 	// we have to calculate the fractional portion and get it up to full scale q16
 
-	morphFrac = (morph - (LnFamily << 9)) << 7;
+	morphFrac = (morph & 0x1FFF) << 3
+			;
 
 	// perform the 6 linear interpolations to get the sample values and apply morph
 	// TODO track delta change in the phase event array
@@ -85,7 +86,7 @@ static inline int getSampleQuinticSpline(int phase, uint32_t morph, int * delta)
 			))
 		));
 
-	int deltaSign = ((sample3 - sample2) >> 31);
+	int deltaSign = ((uint32_t)(sample3 - sample2) >> 31);
 
 	*delta = deltaSign;
 

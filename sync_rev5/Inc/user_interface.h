@@ -120,15 +120,23 @@ void handleButton1Tap(void);
 void handleButton2Tap(void);
 void handleButton3Tap(void);
 void handleButton4Tap(void);
-void handleButon5Tap(void);
-void handleButon6Tap(void);
+void handleButton5Tap(void);
+void handleButton6Tap(void);
+void handleAux1Tap(void);
+void handleAux2Tap(void);
+void handleAux3Tap(void);
+void handleAux4Tap(void);
 
 void handleButton1Hold(void);
 void handleButton2Hold(void);
 void handleButton3Hold(void);
 void handleButton4Hold(void);
-void handleButon5Hold(void);
-void handleButon6Hold(void);
+void handleButton5Hold(void);
+void handleButton6Hold(void);
+void handleAux1Hold(void);
+void handleAux2Hold(void);
+void handleAux3Hold(void);
+void handleAux4Hold(void);
 
 // UI States
 void (*ui_State)(int);
@@ -139,6 +147,7 @@ void uiDispatch(int);  // dispatch signal to state
 // Main
 void ui_default(int sig);
 void ui_newMode(int sig);
+void ui_newAuxMode(int sig);
 void ui_error(int sig);
 
 // Button menus
@@ -148,8 +157,10 @@ void ui_button2Menu(int sig);
 void ui_button5Menu(int sig);
 void ui_button3Menu(int sig);
 void ui_button6Menu(int sig);
-void ui_button6_3Menu(int sig);
-void ui_button6SubMenu(int sig);
+void ui_aux1Menu(int sig);
+void ui_aux2Menu(int sig);
+void ui_aux3Menu(int sig);
+void ui_aux4Menu(int sig);
 
 // Preset menus
 void ui_presetMenu(int sig);
