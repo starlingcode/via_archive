@@ -57,7 +57,6 @@
 #include "touchsensing.h"
 #include "tsc.h"
 #include "gpio.h"
-#include "fill_buffer.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -67,7 +66,8 @@
 #include "user_interface.h"
 #include "main_state_machine.h"
 #include "dsp.h"
-#include "scales.h"
+#include "interrupt_handlers.h"
+#include "patterns.h"
 
 
 
@@ -187,14 +187,13 @@ int main(void)
 	tsl_user_Init();
 	uiInitialize();
 
-	getIncrement = getIncrementAttack;
-	advancePhase = advancePhasePM;
-	calculateSH = calculateSHMode2;
-	updateRGB = updateRGBAudio;
+	manageADac = dacAHigh;
+	manageBDac = dacBHigh;
 
-	initializeScales();
+	initializePatterns();
 
-	softwareSignals.scale = scaleArray[0][0];
+	softwareSignals.currentABank = patternBanks[0];
+	softwareSignals.currentBBank = patternBanks[0];
 
 	// set the priority and enable an interrupt line to be used by the trigger button input and aux trigger
 	HAL_NVIC_SetPriority(EXTI1_IRQn, 1, 0);
@@ -242,19 +241,12 @@ int main(void)
 	SH_A_TRACK;
 	SH_B_TRACK;
 
-	softwareSignals.gateOnCount = 10000;
-	softwareSignals.periodCount = 10000;
-	softwareSignals.phaseSignal = 0;
-
 	__HAL_TIM_ENABLE(&htim2);
 	// initialize the timer that is used to detect rising and falling edges at the trigger input
 	HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
 
 	// initialize the main state machine to handle the UI first
 	main_State = &main_handleUI;
-
-	softwareSignals.attackIncrement = 1000;
-	softwareSignals.releaseIncrement = 1000;
 
 
   /* USER CODE END 2 */

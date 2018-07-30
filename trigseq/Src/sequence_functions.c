@@ -108,6 +108,7 @@ void processClock(void) {
 			}
 			break;
 		case nand:
+
 			if ((!aPatternValue) && (!bPatternValue)) {
 				handleAuxHigh();
 			} else {
