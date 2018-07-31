@@ -9,7 +9,7 @@
 #include "via_rev5_hardware_io.h"
 
 // UI timer
-TIM_HandleTypeDef htim7;
+extern TIM_HandleTypeDef htim7;
 
 uint16_t VirtAddVarTab[NB_OF_VAR];
 
