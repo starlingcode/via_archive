@@ -73,7 +73,7 @@ static inline void viaSignalInit(void) {
 
 	signals.controls = controlRateInputAddress;
 	signals.inputs = audioRateInputAddress;
-	signals.outputs = audioRateInputAddress;
+	signals.outputs = audioRateOutputAddress;
 	signals.softwareSignals = softwareSignalsAddress;
 
 }

@@ -62,7 +62,6 @@
 
 #include "via_rev5_hardware_io.h"
 #include "sync_interrupt_handlers.h"
-#include "signals.h"
 
 extern void mainHardwareInit(void);
 
@@ -151,7 +150,7 @@ int main(void)
   while (1)
   {
 
-  /* USER CODE END WHILE */
+	  /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
 

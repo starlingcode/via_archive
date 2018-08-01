@@ -58,11 +58,6 @@ void mainHardwareInit(void) {
 	HAL_TIM_Base_Start(&htim5);
 	HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
 
-	SET_RED_LED(4095);
-
-
-
-
 	// initialize the DAC
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_2);
@@ -75,6 +70,8 @@ void mainHardwareInit(void) {
 //	 initialize the timer that is used for touch sensor press timeout
 	__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
 
+	// set the dac timer overflow to 1023 to facilitate frequency division
+	TIM2->ARR = 1023;
 
 	__HAL_TIM_ENABLE(&htim2);
 	 //initialize the timer that is used to detect rising and falling edges at the trigger input
