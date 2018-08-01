@@ -96,7 +96,7 @@ int16_t fastADC2Readings[1];
 
 #define GPIO_NOP 0
 
-static inline void setLogicOutputs(uint32_t logicA, uint32_t logicB, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
+static inline void setLogicOutputs(uint32_t logicA, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
 
 	// LEDA_HIGH_MASK -> SH_A_SAMPLE_MASK >> 16 >> 1 (pin 8 to pin 7, F)
 	// LEDB_HIGH_MASK -> SH_B_SAMPLE_MASK >> 16 << 5 (pin 9 to pin 14, C)
@@ -106,14 +106,14 @@ static inline void setLogicOutputs(uint32_t logicA, uint32_t logicB, uint32_t lo
 	#define LEDA_MASK (__ROR(shA, 16) >> 1)
 	#define LEDB_MASK (__ROR(shB, 16) << 5)
 	#define LEDC_MASK (__ROR(logicA, 16) >> 11)
-	#define LEDD_MASK (__ROR(logicB, 16) >> 13)
+	//#define LEDD_MASK (__ROR(logicB, 16) >> 13)
 
 	//combine the mask variables for a shared GPIO group with a bitwise or
-	SET_A_B_LOGIC(logicA | logicB | LEDB_MASK);
+	SET_A_B_LOGIC(logicA /*| logicB */| LEDB_MASK);
 
 	SET_EXPAND_LOGIC(logicExpander | LEDC_MASK);
 
-	SET_SH(shA | shB | LEDD_MASK);
+	SET_SH(shA | shB /* | LEDD_MASK*/);
 
 	SET_LEDA(LEDA_MASK);
 
