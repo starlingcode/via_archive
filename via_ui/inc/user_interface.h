@@ -87,64 +87,12 @@ void uiInitialize(void);
 void uiLoadFromEEPROM(int);
 void uiStoreToEEPROM(int);
 
-// helper functions for the UI
-void uiClearLEDs();
-void uiSetLEDs(int);
-void uiClearRGB();
-void uiSetRGB(rgb);
-
-void uiStaticLEDHandler();
-void (*uiSetLEDA)();
-void (*uiSetLEDB)();
-void (*uiSetLEDC)();
-void (*uiSetLEDD)();
-
-void uiSetLEDAOn();
-void uiSetLEDAOff();
-void uiSetLEDBOn();
-void uiSetLEDBOff();
-void uiSetLEDCOn();
-void uiSetLEDCOff();
-void uiSetLEDDOn();
-void uiSetLEDDOff();
-
-int incrementModeAndStore(int, int, int);
-int decrementModeAndStore(int, int, int);
-
-void handleButton1ModeChange(int);
-void handleButton2ModeChange(int);
-void handleButton3ModeChange(int);
-void handleButton4ModeChange(int);
-void handleButon5ModeChange(int);
-void handleButon6ModeChange(int);
-
-void handleButton1Tap(void);
-void handleButton2Tap(void);
-void handleButton3Tap(void);
-void handleButton4Tap(void);
-void handleButton5Tap(void);
-void handleButton6Tap(void);
-void handleAux1Tap(void);
-void handleAux2Tap(void);
-void handleAux3Tap(void);
-void handleAux4Tap(void);
-
-void handleButton1Hold(void);
-void handleButton2Hold(void);
-void handleButton3Hold(void);
-void handleButton4Hold(void);
-void handleButton5Hold(void);
-void handleButton6Hold(void);
-void handleAux1Hold(void);
-void handleAux2Hold(void);
-void handleAux3Hold(void);
-void handleAux4Hold(void);
-
 // UI States
 void (*ui_State)(int);
 
 // dispatch a signal to current state
 void uiDispatch(int);  // dispatch signal to state
+void uiTransition(void (*func)(int));
 
 // Main
 void ui_default(int sig);
@@ -173,6 +121,30 @@ void ui_switchPreset(int sig);
 // Factory reset
 void ui_factoryReset(int sig);
 
+void (*button1TapCallback)(void);
+void (*button1HoldCallback)(void);
+void (*button2TapCallback)(void);
+void (*button2HoldCallback)(void);
+void (*button3TapCallback)(void);
+void (*button3HoldCallback)(void);
+void (*button4TapCallback)(void);
+void (*button4HoldCallback)(void);
+void (*button5TapCallback)(void);
+void (*button5HoldCallback)(void);
+void (*button6TapCallback)(void);
+void (*button6HoldCallback)(void);
+
+void (*aux1TapCallback)(void);
+void (*aux1HoldCallback)(void);
+void (*aux2TapCallback)(void);
+void (*aux2HoldCallback)(void);
+void (*aux3TapCallback)(void);
+void (*aux3HoldCallback)(void);
+void (*aux4TapCallback)(void);
+void (*aux4HoldCallback)(void);
+
+void initializeUICallbacks(void);
+
 int button1Mode;
 int button2Mode;
 int button3Mode;
@@ -183,6 +155,30 @@ int aux1Mode;
 int aux2Mode;
 int aux3Mode;
 int aux4Mode;
+
+// helper functions for the UI
+void uiClearLEDs();
+void uiSetLEDs(int);
+void uiClearRGB();
+void uiSetRGB(rgb);
+
+void uiStaticLEDHandler();
+void (*uiSetLEDA)();
+void (*uiSetLEDB)();
+void (*uiSetLEDC)();
+void (*uiSetLEDD)();
+
+void uiSetLEDAOn();
+void uiSetLEDAOff();
+void uiSetLEDBOn();
+void uiSetLEDBOff();
+void uiSetLEDCOn();
+void uiSetLEDCOff();
+void uiSetLEDDOn();
+void uiSetLEDDOff();
+
+int incrementModeAndStore(int, int, int);
+int decrementModeAndStore(int, int, int);
 
 // TODO HALF ASSED
 uint32_t runtimeDisplay;

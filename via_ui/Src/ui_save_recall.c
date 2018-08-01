@@ -82,7 +82,6 @@ void uiStoreToEEPROM(int position){
 
 // calibration and default preset initialization
 void ui_factoryReset(int sig){
-	static uint16_t tempData;
 	switch (sig){
 	case ENTRY_SIG:
 		UI_TIMER_RESET;

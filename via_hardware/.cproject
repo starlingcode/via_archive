@@ -39,7 +39,7 @@
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.1991723129" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="../Inc"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_ui_library/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_ui/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_TouchSensing_Library/inc"/>
@@ -108,7 +108,7 @@
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.1802070575" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="../Inc"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_ui_library/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_ui/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_TouchSensing_Library/inc"/>

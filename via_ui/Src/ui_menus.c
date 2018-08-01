@@ -1,3 +1,5 @@
+
+// TODO this is a hole in the implementation along with setruntime display
 #define AUX2_MODE_USED
 
 #include "user_interface.h"
@@ -32,9 +34,9 @@ void ui_button1Menu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (BUTTON1SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				handleButton1Tap();
+				(*button1TapCallback)();
 			} else {
-				handleButton1Hold();
+				(*button1HoldCallback)();
 			}
 		}
 		break;
@@ -61,9 +63,9 @@ void ui_button2Menu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (BUTTON2SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				handleButton2Tap();
+				(*button2TapCallback)();
 			} else {
-				handleButton2Hold();
+				(*button2HoldCallback)();
 			}
 		}
 		break;
@@ -83,9 +85,9 @@ void ui_button3Menu(int sig) {
 	case SENSOR_EVENT_SIG:
 		if(BUTTON3SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				handleButton3Tap();
+				(*button3TapCallback)();
 			} else {
-				handleButton3Hold();
+				(*button3HoldCallback)();
 			}
 		}
 		break;
@@ -111,9 +113,9 @@ void ui_button4Menu(int sig)
 
 		if (BUTTON4SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				handleButton4Tap();
+				(*button4TapCallback)();
 			} else {
-				handleButton4Hold();
+				(*button4HoldCallback)();
 			}
 		}
 		break;
@@ -164,9 +166,9 @@ void ui_button5Menu(int sig)
 
 		if (BUTTON5SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				handleButton5Tap();
+				(*button5TapCallback)();
 			} else {
-				handleButton5Hold();
+				(*button5HoldCallback)();
 			}
 		}
 		break;
@@ -188,9 +190,9 @@ void ui_button6Menu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (BUTTON6SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				handleButton6Tap();
+				(*button6TapCallback)();
 			} else {
-				handleButton6Hold();
+				(*button6HoldCallback)();
 			}
 		}
 		break;
@@ -214,9 +216,9 @@ void ui_aux1Menu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (BUTTON1SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				handleAux1Tap();
+				(*aux1TapCallback)();
 			} else {
-				handleAux1Hold();
+				(*aux1HoldCallback)();
 			}
 		}
 		break;
@@ -240,9 +242,9 @@ void ui_aux2Menu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (BUTTON3SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				handleAux2Tap();
+				(*aux2TapCallback)();
 			} else {
-				handleAux2Hold();
+				(*aux2HoldCallback)();
 			}
 		}
 		break;
@@ -266,9 +268,9 @@ void ui_aux3Menu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (BUTTON4SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				handleAux3Tap();
+				(*aux3TapCallback)();
 			} else {
-				handleAux3Hold();
+				(*aux3HoldCallback)();
 			}
 		}
 		break;
@@ -292,9 +294,9 @@ void ui_aux4Menu(int sig)
 	case SENSOR_EVENT_SIG:
 		if (BUTTON6SENSOR == RELEASED){
 			if(UI_TIMER_READ < 3000){
-				handleAux4Tap();
+				(*aux4TapCallback)();
 			} else {
-				handleAux4Hold();
+				(*aux4HoldCallback)();
 			}
 		}
 		break;

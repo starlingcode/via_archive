@@ -10,6 +10,8 @@ extern uint16_t VirtAddVarTab[NB_OF_VAR] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0
 
 void trigseqInit(void) {
 
+	initializeUICallbacks();
+
 	// initialize our touch sensors
 	tsl_user_Init();
 	uiInitialize();

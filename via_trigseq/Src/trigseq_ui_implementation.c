@@ -4,6 +4,32 @@
 #include "trigseq_modes.h"
 #include "via_rev5_hardware_io.h"
 #include "trigseq_patterns.h"
+#include "trigseq_ui_implementation.h"
+
+void initializeUICallbacks(void) {
+
+	button1TapCallback = handleButton1Tap;
+	button1HoldCallback = handleButton1Hold;
+	button2TapCallback = handleButton2Tap;
+	button2HoldCallback = handleButton2Hold;
+	button3TapCallback = handleButton3Tap;
+	button3HoldCallback = handleButton3Hold;
+	button4TapCallback = handleButton4Tap;
+	button4HoldCallback = handleButton4Hold;
+	button5TapCallback = handleButton5Tap;
+	button5HoldCallback = handleButton5Hold;
+	button6TapCallback = handleButton6Tap;
+	button6HoldCallback = handleButton6Hold;
+
+	aux1TapCallback = handleButton1Tap;
+	aux1HoldCallback = handleButton1Hold;
+	aux2TapCallback = handleButton2Tap;
+	aux2HoldCallback = handleButton2Hold;
+	aux3TapCallback = handleButton3Tap;
+	aux3HoldCallback = handleButton3Hold;
+	aux4TapCallback = handleButton4Tap;
+	aux4HoldCallback = handleButton4Hold;
+}
 
 void handleButton1Tap(void) {
 
