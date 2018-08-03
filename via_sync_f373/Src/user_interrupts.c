@@ -28,30 +28,13 @@ extern TIM_HandleTypeDef htim17;
 
 tsl_user_status_t tsl_status;
 
-void TIM16_IRQHandler(void)
-{
+/*
+ *
+ *  Logic input interrupts
+ *
+ */
 
-	SH_A_SAMPLE
-	if (RUNTIME_DISPLAY) {
-		LEDA_ON;
-	}
-
-	__HAL_TIM_CLEAR_FLAG(&htim16, TIM_FLAG_UPDATE);
-	__HAL_TIM_DISABLE(&htim16);
-
-}
-
-void TIM17_IRQHandler(void)
-{
-
-	SH_B_SAMPLE;
-	if (RUNTIME_DISPLAY) {
-		LEDB_ON;
-	}
-	__HAL_TIM_CLEAR_FLAG(&htim17, TIM_FLAG_UPDATE);
-	__HAL_TIM_DISABLE(&htim17);
-
-}
+// Main trigger input
 
 void TIM12_IRQHandler(void)
 {
@@ -66,38 +49,7 @@ void TIM12_IRQHandler(void)
 
 }
 
-
-void TIM13_IRQHandler(void)
-{
-
-	// run the state machine from the STM Touch Library
-	tsl_status = tsl_user_Exec();
-	__HAL_TIM_CLEAR_FLAG(&htim13, TIM_FLAG_UPDATE);
-
-}
-
-
-void TIM6_DAC1_IRQHandler(void)
-{
-
-	ioProcessCallback(&signals);
-	nextSampleCallback(&signals);
-
-
-	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
-
-}
-
-void TIM7_IRQHandler(void)
-{
-
-	uiDispatch(TIMEOUT_SIG);
-
-	HAL_TIM_IRQHandler(&htim7);
-
-}
-
-
+// Aux trigger input
 
 void EXTI15_10_IRQHandler(void)
 {
@@ -112,7 +64,7 @@ void EXTI15_10_IRQHandler(void)
 
 }
 
-
+// Expander button
 
 void EXTI1_IRQHandler(void)
 {
@@ -132,3 +84,81 @@ void EXTI1_IRQHandler(void)
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
 
 }
+
+/*
+ *
+ *  DAC sample rate
+ *
+ */
+
+// DAC timer interrupt, sample rate callbacks
+
+void TIM6_DAC1_IRQHandler(void)
+{
+
+	ioProcessCallback(&signals);
+	nextSampleCallback(&signals);
+
+
+	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
+
+}
+
+// Sample and hold helpers
+
+// SH A
+
+void TIM16_IRQHandler(void)
+{
+
+	SH_A_SAMPLE
+	if (RUNTIME_DISPLAY) {
+		LEDA_ON;
+	}
+
+	__HAL_TIM_CLEAR_FLAG(&htim16, TIM_FLAG_UPDATE);
+	__HAL_TIM_DISABLE(&htim16);
+
+}
+
+// SH B
+
+void TIM17_IRQHandler(void)
+{
+
+	SH_B_SAMPLE;
+	if (RUNTIME_DISPLAY) {
+		LEDB_ON;
+	}
+	__HAL_TIM_CLEAR_FLAG(&htim17, TIM_FLAG_UPDATE);
+	__HAL_TIM_DISABLE(&htim17);
+
+}
+
+/*
+ *
+ *  UI interrupts
+ *
+ */
+
+void TIM13_IRQHandler(void)
+{
+
+	// run the state machine from the STM Touch Library
+	tsl_status = tsl_user_Exec();
+	__HAL_TIM_CLEAR_FLAG(&htim13, TIM_FLAG_UPDATE);
+
+}
+
+
+void TIM7_IRQHandler(void)
+{
+
+	uiDispatch(TIMEOUT_SIG);
+
+	HAL_TIM_IRQHandler(&htim7);
+
+}
+
+
+

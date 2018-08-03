@@ -1,8 +1,6 @@
 
 #include "sync_scales.h"
 
-
-
 Scale integerRatios = {
    .grid = integerRatiosGrid,
    .t2Bitshift = 9,

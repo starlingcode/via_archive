@@ -5,6 +5,7 @@
 #include "sync_next_sample.h"
 
 void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, softwareSignaling * softwareSignals);
+
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim16;
 extern TIM_HandleTypeDef htim17;
@@ -126,8 +127,12 @@ void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, s
 		}
 	}
 
+
+
 	uint32_t attackInc = ((((uint64_t)((uint64_t)WAVETABLE_LENGTH << 17) + pllNudge)) / (softwareSignals->periodCount));
 	attackInc = fix48_mul(attackInc >> 8, fracMultiplier) + fix16_mul(attackInc >> 8, intMultiplier);
+
+
 
 	softwareSignals->attackIncrement = __USAT(attackInc, 24);
 	softwareSignals->releaseIncrement = __USAT(attackInc, 24);

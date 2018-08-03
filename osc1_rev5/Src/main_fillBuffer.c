@@ -29,7 +29,7 @@ void fillBuffer(void) {
 
 	handleCoversionSlow(&controlRateInput, slowConversionCounter);
 
-	main_State = main_handleUI;
+	main_state = main_handleUI;
 
 	// profiling pin b logic out low
 //	GPIOC->BSRR = (uint32_t)GPIO_PIN_15;

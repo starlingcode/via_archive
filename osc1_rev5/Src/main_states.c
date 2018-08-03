@@ -17,7 +17,7 @@ void main_nextSample(void) {
 	(*fillBuffer)();
 
 	// transition to the UI handling state when complete
-	main_State = &main_handleUI;
+	main_state = &main_handleUI;
 
 }
 

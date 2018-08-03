@@ -14,7 +14,7 @@
  *
  */
 
-void (*main_State)(void);
+void (*main_state)(void);
 
 /**
  *

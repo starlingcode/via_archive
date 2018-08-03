@@ -253,7 +253,7 @@ int main(void)
 	SH_B_TRACK;
 
 	// initialize the main state machine to handle the UI first
-	main_State = &main_handleUI;
+	main_state = &main_handleUI;
 
 
   /* USER CODE END 2 */
@@ -267,7 +267,7 @@ int main(void)
 
 
 
-	  (*main_State)();
+	  (*main_state)();
 
   /* USER CODE END WHILE */
 

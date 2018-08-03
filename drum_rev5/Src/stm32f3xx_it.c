@@ -387,7 +387,7 @@ void TIM6_DAC1_IRQHandler(void)
 		outputs = temp2;
 
 		// tell the main loop to fill the next buffer
-		main_State = main_nextSample;
+		main_state = main_nextSample;
 
 	} else {
 		// otherwise, increment the buffer read counter
