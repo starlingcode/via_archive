@@ -84,14 +84,6 @@ int handleCoversionSlow(controlRateInputs * inputs, uint32_t sequencingSignal) {
 		if (RUNTIME_DISPLAY) {
 			// TODO pass by reference
 			updateRGB(inputs, signals.inputRead);
-			pwmCounter++;
-			if (pwmCounter > button1Mode) {
-				LEDA_OFF;
-			} else {
-				LEDA_ON;
-			}
-
-			pwmCounter = pwmCounter & 4;
 		}
 
 		sequencingSignal = 0;

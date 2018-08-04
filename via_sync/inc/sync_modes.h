@@ -21,7 +21,7 @@
 #define numButton6Modes 4
 #define numAux1Modes 0
 #define numAux2Modes 0
-#define numAux3Modes
+#define numAux3Modes 0
 #define numAux4Modes 2
 
 enum button1Modes {noSH, sampletrack, resample};

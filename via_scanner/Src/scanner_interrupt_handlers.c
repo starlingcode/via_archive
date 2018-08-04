@@ -41,16 +41,16 @@ void ioProcessCallback(viaSignals * signals) {
 	WRITE_DAC3(__USAT(outputRead->dac3Samples[readIndex], 12));
 
 	// replace with one function using runtime display as a mask
-	if (RUNTIME_DISPLAY) {
-		setLogicOutputs(outputRead->logicAHandler, outputRead->auxLogicHandler, outputRead->shAHandler, outputRead->shBHandler);
-	} else {
-		setLogicOutputsNoLEDs(outputRead->logicAHandler, outputRead->auxLogicHandler, outputRead->shAHandler, outputRead->shBHandler);
-	}
+//	if (RUNTIME_DISPLAY) {
+//		setLogicOutputs(outputRead->logicAHandler[readIndex], outputRead->auxLogicHandler[readIndex], outputRead->shAHandler[readIndex], outputRead->shBHandler[readIndex]);
+//	} else {
+//		setLogicOutputsNoLEDs(outputRead->logicAHandler[readIndex], outputRead->auxLogicHandler[readIndex], outputRead->shAHandler[readIndex], outputRead->shBHandler[readIndex]);
+//	}
 
 	audioRateInputs* inputWrite = signals->inputWrite;
 	// store the x and morph CVs at sample rate
-	inputWrite->cv2Input = __USAT(cv2, 12);
-	inputWrite->cv3Input = __USAT(cv3, 12);
+	inputWrite->cv2Input[readIndex] = __USAT(cv2, 12);
+	inputWrite->cv3Input[readIndex] = __USAT(cv3, 12);
 
 	// store the sync signal and reset it to 1 after reading
 	// this writes a 0 at every rising edge
@@ -71,7 +71,7 @@ void ioProcessCallback(viaSignals * signals) {
 
 		// switch out the read/write struct pointers for inputs and outputs
 		audioRateInputs *temp1 = inputWrite;
-		inputWrite = signals->inputRead;
+		signals->inputWrite = signals->inputRead;
 		signals->inputRead = temp1;
 
 		audioRateOutputs *temp2 = signals->outputWrite;

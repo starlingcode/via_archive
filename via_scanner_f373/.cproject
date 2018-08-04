@@ -83,7 +83,6 @@
 									<listOptionValue builtIn="false" value="via_ui"/>
 									<listOptionValue builtIn="false" value="via_hardware"/>
 									<listOptionValue builtIn="false" value="via_scanner"/>
-									<listOptionValue builtIn="false" value="arm_cortexM4lf_math"/>
 								</option>
 								<option id="gnu.c.link.option.paths.1447018029" name="Library search path (-L)" superClass="gnu.c.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_scanner/Debug}&quot;"/>
@@ -244,6 +243,10 @@
 								<option id="gnu.both.asm.option.include.paths.1829635808" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.2021347463" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1180622113" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
+							</tool>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release.1264025460" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.798728094" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1202295398" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>

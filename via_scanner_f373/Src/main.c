@@ -142,6 +142,9 @@ int main(void)
   scannerInit();
   mainHardwareInit();
 
+  SH_A_TRACK;
+  SH_B_TRACK;
+
 
 
   /* USER CODE END 2 */

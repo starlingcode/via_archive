@@ -38,8 +38,9 @@ void fillBuffer(viaSignals * signals) {
 //			break;
 //	}
 
-	foldBuffer(inputRead->cv2Input, controls->knob2Value, xIndexBuffer);
 	wrapBuffer(inputRead->cv2Input, controls->knob2Value, xIndexBuffer);
+	wrapBuffer(inputRead->cv3Input, controls->knob3Value, yIndexBuffer);
+
 
 
 	zIndex = __USAT((int)controls->knob1Value + 2200 - (int)controls->cv1Value, 12);
@@ -66,7 +67,7 @@ void fillBuffer(viaSignals * signals) {
 
 	slowConversionCounter++;
 
-	slowConversionCounter = handleCoversionSlow(&controlRateInput, slowConversionCounter);
+	slowConversionCounter = handleCoversionSlow(signals->controls, slowConversionCounter);
 
 }
 

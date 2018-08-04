@@ -2,7 +2,7 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #include "scanner_main_states.h"
-#include "scanner_dsp.h"
+#include "signals.h"
 
 /**
  *
@@ -14,7 +14,7 @@
 void main_nextSample(void) {
 
 	// call the appropriate function to fill the sample buffer per the current mode
-	fillBuffer();
+	fillBuffer(&signals);
 
 	// transition to the UI handling state when complete
 	main_state = &main_idle;

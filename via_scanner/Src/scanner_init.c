@@ -27,9 +27,8 @@ void scannerInit(void) {
 	uiSetLEDC = uiSetLEDCOff;
 	uiSetLEDD = uiSetLEDDOff;
 
-	// initialize our touch sensors
-	tsl_user_Init();
-	uiInitialize();
+	SH_A_TRACK;
+	SH_B_TRACK;
 
 	// initialize the main state machine to handle the UI first
 	main_state = &main_idle;

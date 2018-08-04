@@ -58,6 +58,11 @@ void mainHardwareInit(void) {
 	HAL_TIM_Base_Start(&htim5);
 	HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
 
+	// initialize the ADCs and their respective DMA arrays
+	HAL_ADC_Start_DMA(&hadc1, slowADCReadings, 4);
+	HAL_SDADC_Start_DMA(&hsdadc1, fastADC1Readings, 1);
+	HAL_SDADC_Start_DMA(&hsdadc2, fastADC2Readings, 1);
+
 	// initialize the DAC
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_2);
