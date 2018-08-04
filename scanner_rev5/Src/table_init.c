@@ -1,5 +1,8 @@
-#include "scanner_tables.h"
-
+#include "tables.h"
+#include "main.h"
+#include "stm32f3xx_hal.h"
+#include "stm32f3xx.h"
+#include "stm32f3xx_it.h"
 
 const Family moogSquare = {
 	.attackFamily = moogSquareShiftAttackFamily,
@@ -174,57 +177,41 @@ void fillFamilyArray(void) {
 	familyArray[6] = &additive_tri_to_pulse;
 	familyArray[7] = &newBounce;
 
-	switchXFamily(familyArray[0]);
-	switchYFamily(familyArray[0]);
+	currentFamily = *familyArray[0];
+	switchFamily();
+
+}
+
+// this sets the flags to be used in the interrupt and also fills the holding array on the heap
+void switchFamily(void) {
+
+	currentFamily = *familyArray[familyIndicator];
+	loadSampleArray(currentFamily);
+
 
 }
 
 // this shuttles the data from flash to ram and fills our holding array
-void loadSampleArrayX(Family * family) {
+void loadSampleArray(Family family) {
 
-	uint32_t numSamples = family->tableLength;
-
-	//for each table in the family
-	for (int i = 0; i < 5; i++) {
-		//include the "last two" samples from release
-		fullTableHoldArrayX[i][0] = *(*(family->releaseFamily + i) + 0);
-		fullTableHoldArrayX[i][1] = *(*(family->releaseFamily + i) + 0);
-		//fill in a full cycle's worth of samples
-		//the release gets reversed
-		//we drop the last sample from attack and the first from releas
-		for (int j = 0;j < numSamples; j++) {
-			fullTableHoldArrayX[i][2 + j] = *(*(family->attackFamily + i) + j);
-			fullTableHoldArrayX[i][2 + numSamples + j] = *(*(family->releaseFamily + i) + family->tableLength - j);
-		}
-		//pad out the "first two" samples from attack
-		fullTableHoldArrayX[i][(numSamples << 1) + 2] = *(*(family->attackFamily + i) + 0);
-		fullTableHoldArrayX[i][(numSamples << 1) + 3] = *(*(family->attackFamily + i) + 0);
-		fullTableHoldArrayX[i][(numSamples << 1) + 4] = *(*(family->attackFamily + i) + 0);
-	}
-
-}
-
-// this shuttles the data from flash to ram and fills our holding array
-void loadSampleArrayY(Family * family) {
-
-	uint32_t numSamples = family->tableLength;
+	uint32_t numSamples = family.tableLength;
 
 	//for each table in the family
 	for (int i = 0; i < 5; i++) {
 		//include the "last two" samples from release
-		fullTableHoldArrayY[i][0] = *(*(family->releaseFamily + i) + 0);
-		fullTableHoldArrayY[i][1] = *(*(family->releaseFamily + i) + 0);
+		fullTableHoldArray[i][0] = *(*(family.releaseFamily + i) + 0);
+		fullTableHoldArray[i][1] = *(*(family.releaseFamily + i) + 0);
 		//fill in a full cycle's worth of samples
 		//the release gets reversed
 		//we drop the last sample from attack and the first from releas
 		for (int j = 0;j < numSamples; j++) {
-			fullTableHoldArrayY[i][2 + j] = *(*(family->attackFamily + i) + j);
-			fullTableHoldArrayY[i][2 + numSamples + j] = *(*(family->releaseFamily + i) + family->tableLength - j);
+			fullTableHoldArray[i][2 + j] = *(*(family.attackFamily + i) + j);
+			fullTableHoldArray[i][2 + numSamples + j] = *(*(family.releaseFamily + i) + family.tableLength - j);
 		}
 		//pad out the "first two" samples from attack
-		fullTableHoldArrayY[i][(numSamples << 1) + 2] = *(*(family->attackFamily + i) + 0);
-		fullTableHoldArrayY[i][(numSamples << 1) + 3] = *(*(family->attackFamily + i) + 0);
-		fullTableHoldArrayY[i][(numSamples << 1) + 4] = *(*(family->attackFamily + i) + 0);
+		fullTableHoldArray[i][(numSamples << 1) + 2] = *(*(family.attackFamily + i) + 0);
+		fullTableHoldArray[i][(numSamples << 1) + 3] = *(*(family.attackFamily + i) + 0);
+		fullTableHoldArray[i][(numSamples << 1) + 4] = *(*(family.attackFamily + i) + 0);
 	}
 
 }

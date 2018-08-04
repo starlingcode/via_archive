@@ -215,7 +215,7 @@ int main(void)
 	SH_B_TRACK;
 
 	// initialize the main state machine to handle the UI first
-	main_state = &main_handleUI;
+	main_state = &main_idle;
 
 //	// enable display update timer
 //	__HAL_TIM_ENABLE_IT(&htim13, TIM_IT_UPDATE);

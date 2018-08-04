@@ -205,14 +205,14 @@ void handleAux4ModeChange(int mode) {
 
 void switchXFamily(void) {
 
-	loadSampleArray(familyArray[X_TABLE]);
+	loadSampleArrayX(familyArray[X_TABLE]);
 	softwareSignals.xTable = familyArray[X_TABLE];
 
 }
 
 void switchYFamily(void) {
 
-	loadSampleArray(familyArray[Y_TABLE]);
+	loadSampleArrayY(familyArray[Y_TABLE]);
 	softwareSignals.yTable = familyArray[Y_TABLE];
 
 }

@@ -117,7 +117,7 @@
 
 /** Proximity detection usage (0=No, 1=Yes)
 */
-#define TSLPRM_USE_PROX (1)
+#define TSLPRM_USE_PROX (0)
 
  /** Zone management usage (0=No, 1=Yes)
 */
@@ -192,7 +192,7 @@
 /** TouchKeys Detect state output threshold (range=0..255)
   - Exit Detect state if delta is below
 */
-#define TSLPRM_TKEY_DETECT_OUT_TH (100)
+#define TSLPRM_TKEY_DETECT_OUT_TH (50)
 
 /** TouchKeys re-Calibration threshold (range=0..255)
   - @warning The value is inverted in the sensor state machine

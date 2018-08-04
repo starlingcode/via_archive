@@ -1,6 +1,11 @@
 #include "main.h"
 #include "tsl_user.h"
+#include "stm32f3xx_hal.h"
+#include "stm32f3xx.h"
+#include "stm32f3xx_it.h"
 #include "user_interface.h"
+#include "dsp.h"
+#include "main_state_machine.h"
 #include "via_rev5_hardware_io.h"
 
 // RGB led timer
@@ -8,23 +13,69 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 
+/**
+ *
+ * Mode change helpers
+ *
+ */
 
+void handleButton1ModeChange(int mode) {
 
-int incrementModeAndStore(int mode, int mask, int numModes) {
-	mode = (mode + 1) % numModes;
-	modeStateBuffer = (modeStateBuffer & ~(mask)) | mode;
-	return mode;
-}
+	//TODO write a static led display callback for when entering default
 
-int decrementModeAndStore(int mode, int mask, int numModes) {
-	mode = (mode - 1);
-	if (mode < 0)
-	{
-		mode += numModes;
+	switch (mode) {
+	case 0:
+		uiSetLEDA = uiSetLEDAOff;
+		break;
+	case 1:
+		uiSetLEDA = uiSetLEDAOn;
+		break;
+	default:
+		break;
 	}
 
-	modeStateBuffer = (modeStateBuffer & ~(mask)) | mode;
-	return mode;
+}
+
+void handleButton3ModeChange(int mode) {
+
+	//TODO write a static led display callback for when entering default
+
+	switch (mode) {
+	case 0:
+		uiSetLEDC = uiSetLEDCOff;
+		break;
+	case 1:
+		uiSetLEDC = uiSetLEDCOn;
+		break;
+	}
+
+
+}
+
+void handleButton4ModeChange(int mode) {
+
+	switch (mode) {
+	case 0:
+		uiSetLEDB = uiSetLEDBOff;
+		break;
+	case 1:
+		uiSetLEDB = uiSetLEDBOn;
+		break;
+	}
+
+}
+
+void handleButton6ModeChange(int mode) {
+
+	switch (mode) {
+	case 0:
+		uiSetLEDD = uiSetLEDDOff;
+		break;
+	case 1:
+		uiSetLEDD = uiSetLEDDOn;
+		break;
+	}
+
 }
 
 
