@@ -11,10 +11,10 @@
 
 // Mode enums and mode variables
 
-#define X_TABLE button1Mode
-#define Y_TABLE button2Mode
+#define SH_MODE button1Mode
+#define TABLE button2Mode
 #define SYNC_MODE button4Mode
-#define TERRAIN_MODE button6Mode
+#define MORPH_PWM_MODE button6Mode
 
 #define AUX4_MODE_USED
 

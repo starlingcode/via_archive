@@ -32,22 +32,10 @@ void handleAux2Hold(void);
 void handleAux3Hold(void);
 void handleAux4Hold(void);
 
-// pointers and functions to show the mode
-// these are probably out of place here
-// TODO show sync mode
-// TODO show (and implement) morph mode
-void (*displaySHMode)(void);
-void (*displaySyncMode)(void);
-void (*displayXCVMode)(void);
-void (*displayMorphMode)(void);
-
-void displayXCV_FM(void);
-void displayXCV_PM(void);
-void displayMorph_Morph(void);
-void displayMorph_PMW(void);
-void displaySH_On(void);
-void displaySH_Off(void);
-void displaySync_Hard(void);
-void displaySync_Soft(void);
+void (*updateRGB)(controlRateInputs *, audioRateInputs *, int, int);
+void updateRGBAudio(controlRateInputs *, audioRateInputs *, int, int);
+void updateRGBSubAudio(controlRateInputs *, audioRateInputs *, int, int);
+void updateRGBTrigger(controlRateInputs *, audioRateInputs *, int, int);
+void updateRGBBlank(controlRateInputs *, audioRateInputs *, int, int);
 
 #endif

@@ -31,24 +31,24 @@ void initializeUICallbacks(void) {
 }
 
 void handleButton1Tap(void) {
-	X_TABLE = incrementModeAndStore(X_TABLE, BUTTON1_MASK, numButton1Modes);
-	handleButton1ModeChange(X_TABLE);
+	SH_MODE = incrementModeAndStore(SH_MODE, BUTTON1_MASK, numButton1Modes);
+	handleButton1ModeChange(SH_MODE);
 	uiClearLEDs();
-	uiSetLEDs(X_TABLE);
+	uiSetLEDs(SH_MODE);
 	uiTransition(&ui_newMode);
 }
 void handleButton2Tap(void) {
-	Y_TABLE = incrementModeAndStore(Y_TABLE, BUTTON2_MASK, numButton2Modes);
-	handleButton2ModeChange(Y_TABLE);
+	TABLE = incrementModeAndStore(TABLE, BUTTON2_MASK, numButton2Modes);
+	handleButton2ModeChange(TABLE);
 	uiClearLEDs();
-	uiSetLEDs(Y_TABLE);
+	uiSetLEDs(TABLE);
 	uiTransition(&ui_newMode);
 }
 void handleButton3Tap(void) {
-	X_TABLE = decrementModeAndStore(X_TABLE, BUTTON3_MASK, numButton3Modes);
-	handleButton3ModeChange(X_TABLE);
+	SH_MODE = decrementModeAndStore(SH_MODE, BUTTON3_MASK, numButton3Modes);
+	handleButton3ModeChange(SH_MODE);
 	uiClearLEDs();
-	uiSetLEDs(X_TABLE);
+	uiSetLEDs(SH_MODE);
 	uiTransition(&ui_newMode);
 }
 void handleButton4Tap(void) {
@@ -59,17 +59,17 @@ void handleButton4Tap(void) {
 	uiTransition(&ui_newMode);
 }
 void handleButton5Tap(void) {
-	Y_TABLE = decrementModeAndStore(Y_TABLE, BUTTON5_MASK, numButton5Modes);
-	handleButton5ModeChange(Y_TABLE);
+	TABLE = decrementModeAndStore(TABLE, BUTTON5_MASK, numButton5Modes);
+	handleButton5ModeChange(TABLE);
 	uiClearLEDs();
-	uiSetLEDs(Y_TABLE);
+	uiSetLEDs(TABLE);
 	uiTransition(&ui_newMode);
 }
 void handleButton6Tap(void) {
-	TERRAIN_MODE = incrementModeAndStore(TERRAIN_MODE, BUTTON6_MASK, numButton6Modes);
-	handleButton6ModeChange(TERRAIN_MODE);
+	MORPH_PWM_MODE = incrementModeAndStore(MORPH_PWM_MODE, BUTTON6_MASK, numButton6Modes);
+	handleButton6ModeChange(MORPH_PWM_MODE);
 	uiClearLEDs();
-	uiSetLEDs(TERRAIN_MODE);
+	uiSetLEDs(MORPH_PWM_MODE);
 	uiTransition(&ui_newMode);
 }
 
@@ -205,14 +205,14 @@ void handleAux4ModeChange(int mode) {
 
 void switchXFamily(void) {
 
-	loadSampleArrayX(familyArray[X_TABLE]);
-	softwareSignals.xTable = familyArray[X_TABLE];
+	loadSampleArrayX(familyArray[SH_MODE]);
+	softwareSignals.xTable = familyArray[SH_MODE];
 
 }
 
 void switchYFamily(void) {
 
-	loadSampleArrayY(familyArray[Y_TABLE]);
-	softwareSignals.yTable = familyArray[Y_TABLE];
+	loadSampleArrayY(familyArray[TABLE]);
+	softwareSignals.yTable = familyArray[TABLE];
 
 }
