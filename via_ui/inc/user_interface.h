@@ -143,6 +143,18 @@ void (*aux3HoldCallback)(void);
 void (*aux4TapCallback)(void);
 void (*aux4HoldCallback)(void);
 
+void (*button1EnterMenuCallback)(void);
+void (*button2EnterMenuCallback)(void);
+void (*button3EnterMenuCallback)(void);
+void (*button4EnterMenuCallback)(void);
+void (*button5EnterMenuCallback)(void);
+void (*button6EnterMenuCallback)(void);
+
+void (*aux1EnterMenuCallback)(void);
+void (*aux2EnterMenuCallback)(void);
+void (*aux3EnterMenuCallback)(void);
+void (*aux4EnterMenuCallback)(void);
+
 void initializeUICallbacks(void);
 
 int button1Mode;
@@ -179,6 +191,11 @@ void uiSetLEDDOff();
 
 int incrementModeAndStore(int, int, int);
 int decrementModeAndStore(int, int, int);
+static inline void uiResetTimerMenu(void) {
+	UI_TIMER_RESET;
+	UI_TIMER_SET_OVERFLOW(65535);
+	UI_TIMER_ENABLE;
+}
 
 // TODO HALF ASSED
 uint32_t runtimeDisplay;

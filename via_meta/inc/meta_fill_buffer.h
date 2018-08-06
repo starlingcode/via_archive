@@ -99,11 +99,10 @@ void calculateLogicAGate(q31_t * phaseEvents, q31_t * triggers, int oscillatorOn
 void calculateLogicATrigger(q31_t * phaseEvents, q31_t * triggers, int oscillatorOn, audioRateOutputs * output);
 void calculateLogicADelta(q31_t * phaseEvents, q31_t * triggers, int oscillatorOn, audioRateOutputs * output);
 
-void (*calculateLogicB)(q31_t * phaseEvents, audioRateOutputs * output);
+void (*calculateDac3)(q31_t * phase, audioRateOutputs * output);
 
-void calculateLogicBGate(q31_t * phaseEvents, audioRateOutputs * output);
-void calculateLogicBTrigger(q31_t * phaseEvents, audioRateOutputs * output);
-void calculateLogicBDelta(q31_t * phaseEvents, audioRateOutputs * output);
+void calculateDac3Phasor(q31_t * phaseEvents, audioRateOutputs * output);
+void calculateDac3Contour(q31_t * phaseEvents, audioRateOutputs * output);
 
 void calculateAuxLogic(q31_t * phaseEvents, audioRateOutputs * output);
 

@@ -22,25 +22,26 @@ void mainHardwareInit(void) {
 
 	if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1) != HAL_OK)
 	{
-		LEDA_ON;
+		//sdadc calibration error
 	}
 
 	/* Pool for the end of calibration */
 	if (HAL_SDADC_PollForCalibEvent(&hsdadc1, 100) != HAL_OK)
 	{
-		LEDB_ON;
+		//sdadc calibration error
 	}
+
 
 
 	if (HAL_SDADC_CalibrationStart(&hsdadc2, SDADC_CALIBRATION_SEQ_1) != HAL_OK)
 	{
-		LEDA_ON;
+		//sdadc calibration error
 	}
 
 	/* Pool for the end of calibration */
 	if (HAL_SDADC_PollForCalibEvent(&hsdadc2, 100) != HAL_OK)
 	{
-		LEDB_ON;
+		//sdadc calibration error
 	}
 
 	// set the priority and enable an interrupt line to be used by the trigger button input and aux trigger
@@ -68,15 +69,14 @@ void mainHardwareInit(void) {
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_2);
 	HAL_DAC_Start(&hdac2, DAC_CHANNEL_1);
 
+	// set the dac timer overflow to 1023 to facilitate frequency division
+	TIM6->ARR = 1535;
+
 	//start our DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);
 
-
 //	 initialize the timer that is used for touch sensor press timeout
 	__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
-
-	// set the dac timer overflow to 1023 to facilitate frequency division
-	TIM2->ARR = 1023;
 
 	__HAL_TIM_ENABLE(&htim2);
 	 //initialize the timer that is used to detect rising and falling edges at the trigger input
@@ -89,5 +89,7 @@ void mainHardwareInit(void) {
 	// initialize the shB timer
 	__HAL_TIM_ENABLE_IT(&htim17, TIM_IT_UPDATE);
 
+	// set timer 16 to a debounce frequency
+	TIM16->ARR = 10000;
 
 }

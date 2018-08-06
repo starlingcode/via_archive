@@ -171,29 +171,15 @@ void ui_newAuxMode(int sig)
 		break;
 
 	case SENSOR_EVENT_SIG:
-#ifdef AUX1_MODE_USED
 		if (BUTTON1SENSOR == PRESSED) {
 			uiTransition(&ui_aux1Menu);
-		}
-#endif
-#ifdef AUX2_MODE_USED
-		if (BUTTON3SENSOR == PRESSED) {
+		} else if (BUTTON3SENSOR == PRESSED) {
 			uiTransition(&ui_aux2Menu);
-		}
-#endif
-#ifdef AUX3_MODE_USED
-		if (BUTTON4SENSOR == PRESSED) {
+		} else if (BUTTON4SENSOR == PRESSED) {
 			uiTransition(&ui_aux3Menu);
-		}
-#endif
-#ifdef AUX4_MODE_USED
-		if (BUTTON6SENSOR == PRESSED) {
+		} else if (BUTTON6SENSOR == PRESSED) {
 			uiTransition(&ui_aux4Menu);
-		} else if (BUTTON6SENSOR == RELEASED) {
-			uiTransition(&ui_default);
-		}
-#endif
-		if (BUTTON5SENSOR == RELEASED){
+		} else if (BUTTON5SENSOR == RELEASED){
 			uiTransition(&ui_default);
 		}
 		break;

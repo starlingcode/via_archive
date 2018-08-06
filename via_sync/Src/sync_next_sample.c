@@ -11,7 +11,6 @@ void nextSample(controlRateInputs * controls, audioRateInputs * inputs, audioRat
 	static viaStateVariableSet viaStateVariables;
 
 	viaStateVariables.incrementValue1 = softwareSignals->attackIncrement;
-	viaStateVariables.incrementValue2 = softwareSignals->releaseIncrement;
 
 	viaStateVariables.phase = softwareSignals->phaseSignal;
 
@@ -28,6 +27,12 @@ void nextSample(controlRateInputs * controls, audioRateInputs * inputs, audioRat
 	(*calculateSH)(&viaStateVariables, outputs);
 
 	softwareSignals->phaseSignal = viaStateVariables.phase;
+
+	int overflowAndTapTempo = viaStateVariables.phaseEvent * softwareSignals->tapTempo;
+
+	if (overflowAndTapTempo == AT_A_FROM_RELEASE) {
+		generateFrequency(controls, inputs, softwareSignals);
+	}
 
 	viaStateVariables.slowConversionCounter += 1;
 

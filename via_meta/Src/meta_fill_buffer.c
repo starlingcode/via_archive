@@ -28,8 +28,6 @@ void fillBuffer(viaSignals * signals) {
 	softwareSignaling * softwareSignals = signals->softwareSignals;
 	controlRateInputs * controls = signals->controls;
 
-	// profiling pin a logic out high
-	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 
 	(*getIncrements)(inputRead->cv2Input, &controlRateInput, incrementValues1, incrementValues2);
 
@@ -44,7 +42,7 @@ void fillBuffer(viaSignals * signals) {
 
 	(*calculateLogicA)(phaseEventArray, inputRead->triggerInput, oscillatorOn, outputWrite);
 
-	//calculateDac3Samples(outputWrite->dac3Samples, phaseModBuffer, incrementBuffer);
+	(*calculateDac3)(phaseArray, outputWrite);
 
 	slowConversionCounter = handleCoversionSlow(outputWrite->samples[BUFFER_SIZE - 1], lastPhase, controls, inputRead, slowConversionCounter);
 

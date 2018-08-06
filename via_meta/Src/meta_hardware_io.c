@@ -38,10 +38,10 @@ int handleCoversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs 
 
 	// TODO apply SIMD instructions?
 
-	static uint32_t knob1Sum;
-	static uint32_t knob2Sum;
-	static uint32_t knob3Sum;
-	static uint32_t cv1Sum;
+	static int knob1Sum;
+	static int knob2Sum;
+	static int knob3Sum;
+	static int cv1Sum;
 	static buffer knob1Buffer;
 	static buffer knob2Buffer;
 	static buffer knob3Buffer;
@@ -59,7 +59,7 @@ int handleCoversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs 
 
 		// write the averaged controls to the holding struct
 		controls->knob1Value = knob1Sum >> 5;
-		controls->knob2Value = knob2Sum >> 5;
+		controls->knob2Value = __USAT(knob2Sum >> 5, 12);
 
 		break;
 

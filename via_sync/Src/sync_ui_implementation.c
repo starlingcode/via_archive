@@ -8,6 +8,18 @@
 
 void initializeUICallbacks(void) {
 
+	button1EnterMenuCallback = handleButton1EnterMenu;
+	button2EnterMenuCallback = handleButton2EnterMenu;
+	button3EnterMenuCallback = handleButton3EnterMenu;
+	button4EnterMenuCallback = handleButton4EnterMenu;
+	button5EnterMenuCallback = handleButton5EnterMenu;
+	button6EnterMenuCallback = handleButton6EnterMenu;
+
+	aux1EnterMenuCallback = handleAux1EnterMenu;
+	aux2EnterMenuCallback = handleAux2EnterMenu;
+	aux3EnterMenuCallback = handleAux3EnterMenu;
+	aux4EnterMenuCallback = handleAux4EnterMenu;
+
 	button1TapCallback = handleButton1Tap;
 	button1HoldCallback = handleButton1Hold;
 	button2TapCallback = handleButton2Tap;
@@ -21,14 +33,55 @@ void initializeUICallbacks(void) {
 	button6TapCallback = handleButton6Tap;
 	button6HoldCallback = handleButton6Hold;
 
-	aux1TapCallback = handleButton1Tap;
-	aux1HoldCallback = handleButton1Hold;
-	aux2TapCallback = handleButton2Tap;
-	aux2HoldCallback = handleButton2Hold;
-	aux3TapCallback = handleButton3Tap;
-	aux3HoldCallback = handleButton3Hold;
-	aux4TapCallback = handleButton4Tap;
-	aux4HoldCallback = handleButton4Hold;
+	aux1TapCallback = handleAux1Tap;
+	aux1HoldCallback = handleAux1Hold;
+	aux2TapCallback = handleAux2Tap;
+	aux2HoldCallback = handleAux2Hold;
+	aux3TapCallback = handleAux3Tap;
+	aux3HoldCallback = handleAux3Hold;
+	aux4TapCallback = handleAux4Tap;
+	aux4HoldCallback = handleAux4Hold;
+}
+
+void handleButton1EnterMenu(void) {
+	uiSetLEDs(SH_MODE);
+	uiResetTimerMenu();
+}
+void handleButton2EnterMenu(void) {
+	uiSetLEDs(SCALE_MODE);
+	uiResetTimerMenu();
+}
+void handleButton3EnterMenu(void) {
+	uiSetLEDs(X_MODE);
+	uiResetTimerMenu();
+}
+void handleButton4EnterMenu(void) {
+	uiSetLEDs(SYNC_MODE);
+	uiResetTimerMenu();
+}
+void handleButton5EnterMenu(void) {
+	uiSetLEDs(GROUP_MODE);
+	uiResetTimerMenu();
+}
+void handleButton6EnterMenu(void) {
+	uiSetLEDs(TABLE_MODE);
+	uiResetTimerMenu();
+}
+void handleAux1EnterMenu(void) {
+	uiTransition(ui_button5Menu);
+}
+void handleAux2EnterMenu(void) {
+	uiClearLEDs();
+	uiSetLEDs(LOGIC_A_MODE);
+	uiResetTimerMenu();
+}
+void handleAux3EnterMenu(void) {
+	uiTransition(ui_button5Menu);
+}
+void handleAux4EnterMenu(void) {
+	uiClearLEDs();
+	uiSetLEDs(TABLE_GROUP_MODE);
+	uiResetTimerMenu();
 }
 
 void handleButton1Tap(void) {
@@ -74,6 +127,22 @@ void handleButton6Tap(void) {
 	uiTransition(&ui_newMode);
 }
 
+void handleAux1Tap(void) {
+	uiTransition(ui_button5Menu);
+}
+
+void handleAux2Tap(void) {
+	LOGIC_A_MODE = incrementModeAndStore(LOGIC_A_MODE, AUX_MODE2_MASK, numAux2Modes);
+	handleAux2ModeChange(LOGIC_A_MODE);
+	uiClearLEDs();
+	uiSetLEDs(LOGIC_A_MODE);
+	uiTransition(&ui_newAuxMode);
+}
+
+void handleAux3Tap(void) {
+	uiTransition(ui_button5Menu);
+}
+
 void handleAux4Tap(void) {
 	TABLE_GROUP_MODE = incrementModeAndStore(TABLE_GROUP_MODE, AUX_MODE4_MASK, numAux4Modes);
 	handleAux4ModeChange(TABLE_GROUP_MODE);
@@ -100,9 +169,19 @@ void handleButton5Hold(void) {
 void handleButton6Hold(void) {
 	uiTransition(&ui_default);
 }
+void handleAux1Hold(void) {
+	uiTransition(&ui_button5Menu);
+}
+void handleAux2Hold(void) {
+	uiTransition(&ui_newAuxMode);
+}
+void handleAux3Hold(void) {
+	uiTransition(&ui_newAuxMode);
+}
 void handleAux4Hold(void) {
 	uiTransition(&ui_newAuxMode);
 }
+
 
 void handleButton1ModeChange(int mode) {
 
@@ -200,6 +279,33 @@ void handleButton6ModeChange(int mode) {
 				break;
 		}
 	}
+
+
+}
+
+void handleAux1ModeChange(int mode) {
+
+
+}
+
+
+void handleAux2ModeChange(int mode) {
+
+	switch (mode) {
+	case root:
+		calculateLogicA = calculateLogicAGate;
+		break;
+	case pm:
+		calculateLogicA = calculateLogicADelta;
+		break;
+	default:
+		break;
+	}
+
+}
+
+
+void handleAux3ModeChange(int mode) {
 
 
 }

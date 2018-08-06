@@ -9,7 +9,7 @@
  *
  */
 
-void calculateLogicA(viaStateVariableSet * stateVariables, audioRateOutputs * output) {
+void calculateLogicAGate(viaStateVariableSet * stateVariables, audioRateOutputs * output) {
 
 		switch (stateVariables->phaseEvent) {
 			//no logic events
@@ -32,45 +32,32 @@ void calculateLogicA(viaStateVariableSet * stateVariables, audioRateOutputs * ou
 
 }
 
+void calculateLogicADelta(viaStateVariableSet * stateVariables, audioRateOutputs * output) {
+
+		switch (stateVariables->delta) {
+			//no logic events
+			case 0:
+				output->logicAHandler = ALOGIC_LOW_MASK;
+				break;
+			//dummy at a handling
+			case 1:
+				output->logicAHandler = ALOGIC_HIGH_MASK;
+				break;
+			default:
+				break;
+		}
+
+}
+
 void calculateDac3(viaStateVariableSet * stateVariables, audioRateOutputs * output) {
 
-	static int lastDelta;
-	static int lastPhase;
-	static int lastSample;
-	static int deltaChanged;
-	int thisSample;
-	int blep;
-	int delta;
-	int phase;
+	int phase = stateVariables->phase;
 
-	delta = (stateVariables->delta) * 2 - 1;
-	phase = stateVariables->phase;
-
-	if (lastDelta != delta) {
-
-		int impulsePhase = phase & 0xFFFF0000;
-		int thisFractionalPhase = phase - impulsePhase;
-		int lastFractionalPhase = impulsePhase - lastPhase;
-		int increment = stateVariables->incrementValue1;
-
-		int lastBlepCoefficient = (lastFractionalPhase << 16) / increment;
-		int lastBlep = (lastBlepCoefficient << 1) - fix16_square(lastBlepCoefficient) - (1 << 16);
-		lastSample -= lastBlep * (delta);
-
-		int thisBlepCoefficient = (thisFractionalPhase << 16) / increment;
-		int thisBlep = fix16_square(thisBlepCoefficient) + (thisBlepCoefficient << 1) + (1 << 16);
-		thisSample = (delta << 16) - thisBlep * (delta);
-
+	if (phase >> 24) {
+		output->dac3Sample = 8191 - (phase >> 12);
+	} else {
+		output->dac3Sample = phase >> 12;
 	}
-	else {
-		thisSample = (delta << 16);
-	}
-
-	output->dac3Sample = ((lastSample >> 6) + 2048);
-
-	lastSample = thisSample;
-	lastPhase = phase;
-	lastDelta = delta;
 
 }
 

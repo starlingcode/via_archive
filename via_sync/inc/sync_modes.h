@@ -9,8 +9,7 @@
 #define SYNC_MODE button4Mode
 #define GROUP_MODE button5Mode
 #define TABLE_MODE button6Mode
-
-#define AUX4_MODE_USED
+#define LOGIC_A_MODE aux4Mode
 #define TABLE_GROUP_MODE aux4Mode
 
 #define numButton1Modes 3
@@ -20,7 +19,7 @@
 #define numButton5Modes 4
 #define numButton6Modes 4
 #define numAux1Modes 0
-#define numAux2Modes 0
+#define numAux2Modes 2
 #define numAux3Modes 0
 #define numAux4Modes 2
 

@@ -15,7 +15,7 @@ void getIncrementsAudio(q31_t * t2CV, controlRateInputs * controlInputs, q31_t *
 
 	// t1 is coarse, t2 is fine, release time = attack time
 
-	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 3, expoTable[controlInputs->knob2Value >> 3]), expoTable[controlInputs->cv1Value] >> 2);
+	q31_t frequencyMultiplier = fix16_mul(fix16_mul(expoTable[controlInputs->knob1Value] >> 5, expoTable[(controlInputs->knob2Value >> 3) + 200]), expoTable[controlInputs->cv1Value] >> 2);
 	arm_offset_q31(t2CV, -1024, attackIncrements, BUFFER_SIZE);
 	arm_shift_q31(attackIncrements, 19, attackIncrements, BUFFER_SIZE);
 	arm_scale_q31(attackIncrements, frequencyMultiplier, 0, attackIncrements, BUFFER_SIZE);
@@ -27,8 +27,8 @@ void getIncrementsEnv(q31_t * t2CV, controlRateInputs * controlInputs, q31_t * a
 
 	// t1 is attack time (attackIncrements), t2 is release time (releaseIncrements)
 
-	int attackTime = expoTable[(4095 - controlInputs->knob1Value) >> 1] >> 10;
-	int releaseTime = expoTable[(4095 - controlInputs->knob2Value) >> 1] >> 10;
+	int attackTime = expoTable[((4095 - controlInputs->knob1Value) >> 2) * 3] >> 8;
+	int releaseTime = expoTable[((4095 - controlInputs->knob2Value) >> 2) * 3] >> 10;
 
 	arm_fill_q31(attackTime, attackIncrements, BUFFER_SIZE);
 	arm_fill_q31(releaseTime, releaseIncrements, BUFFER_SIZE);
@@ -41,7 +41,7 @@ void getIncrementsSeq(q31_t * t2CV, controlRateInputs * controlInputs, q31_t * a
 
 	// t1 is cycle time, t2 is used to feed the duty cycle input for getSamples
 
-	q31_t frequencyMultiplier = fix16_mul(expoTable[4095 - controlInputs->knob1Value] >> 6, expoTable[4095 - controlInputs->cv1Value] >> 6);
+	q31_t frequencyMultiplier = fix16_mul(expoTable[4095 - controlInputs->knob1Value] >> 9, expoTable[4095 - controlInputs->cv1Value] >> 9);
 	arm_shift_q31(t2CV, 19, attackIncrements, BUFFER_SIZE);
 	arm_scale_q31(attackIncrements, frequencyMultiplier, 0, attackIncrements, BUFFER_SIZE);
 	arm_copy_q31(attackIncrements, releaseIncrements, BUFFER_SIZE);

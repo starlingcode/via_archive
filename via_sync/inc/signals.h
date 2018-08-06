@@ -38,7 +38,8 @@ typedef struct {
 	uint32_t releaseIncrement;
 	uint32_t periodCount;
 	uint32_t gateOnCount;
-	uint32_t flagWord;
+	uint32_t pllReset;
+	uint32_t tapTempo;
 	uint32_t phaseSignal;
 	uint32_t syncMode;
 	uint32_t morphShift;

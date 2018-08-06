@@ -50,7 +50,10 @@ int getIncrementRelease(viaStateVariableSet *);
 
 void calculateSample(controlRateInputs *, audioRateInputs *, viaStateVariableSet *, audioRateOutputs * output);
 
-void calculateLogicA(viaStateVariableSet *, audioRateOutputs * output);
+void (*calculateLogicA)(viaStateVariableSet *, audioRateOutputs * output);
+
+void calculateLogicAGate(viaStateVariableSet *, audioRateOutputs * output);
+void calculateLogicADelta(viaStateVariableSet *, audioRateOutputs * output);
 
 void calculateDac3(viaStateVariableSet *, audioRateOutputs * output);
 
@@ -67,5 +70,7 @@ void updateRGBAudio(controlRateInputs *, audioRateInputs *, int, int);
 void updateRGBSubAudio(controlRateInputs *, audioRateInputs *, int, int);
 void updateRGBTrigger(controlRateInputs *, audioRateInputs *, int, int);
 void updateRGBBlank(controlRateInputs *, audioRateInputs *, int, int);
+
+void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, softwareSignaling * softwareSignals);
 
 #endif

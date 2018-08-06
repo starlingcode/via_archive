@@ -6,6 +6,7 @@
 #include "sync_modes.h"
 #include "sync_interrupt_handlers.h"
 
+int triggerDebounce;
 
 enum
 {	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
@@ -69,16 +70,23 @@ void EXTI15_10_IRQHandler(void)
 void EXTI1_IRQHandler(void)
 {
 
-	static int buttonPressed;
+	if (EXPANDER_BUTTON_PRESSED) {
+		if (triggerDebounce) {
 
-	buttonPressed = !buttonPressed;
-
-	if (buttonPressed) {
-		uiDispatch(EXPAND_SW_ON_SIG);
-		buttonPressedCallback(&signals);
+		} else {
+			triggerDebounce = 1;
+			__HAL_TIM_ENABLE(&htim16);
+			buttonPressedCallback(&signals);
+		}
 	} else { //falling edge
-		uiDispatch(EXPAND_SW_OFF_SIG);
-		buttonReleasedCallback(&signals);
+		if (triggerDebounce) {
+
+		} else {
+			uiDispatch(EXPAND_SW_OFF_SIG);
+			triggerDebounce = 1;
+			__HAL_TIM_ENABLE(&htim16);
+			buttonReleasedCallback(&signals);
+		}
 	}
 
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
@@ -111,10 +119,12 @@ void TIM6_DAC1_IRQHandler(void)
 void TIM16_IRQHandler(void)
 {
 
-	SH_A_SAMPLE
-	if (RUNTIME_DISPLAY) {
-		LEDA_ON;
-	}
+//	SH_A_SAMPLE
+//	if (RUNTIME_DISPLAY) {
+//		LEDA_ON;
+//	}
+
+    triggerDebounce = 0;
 
 	__HAL_TIM_CLEAR_FLAG(&htim16, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim16);

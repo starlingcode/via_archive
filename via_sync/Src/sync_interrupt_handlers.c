@@ -4,6 +4,19 @@
 #include "sync_modes.h"
 #include "sync_next_sample.h"
 
+enum
+{	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
+	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
+	EXIT_SIG,	  // Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
+	INIT_SIG,     // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
+	TIMEOUT_SIG,// timer timeout
+	SENSOR_EVENT_SIG,  // Sensor state machine not busy, can be queried for events
+	EXPAND_SW_ON_SIG,  // expander button depressed
+	EXPAND_SW_OFF_SIG, // expander button released
+	TSL_ERROR_SIG
+};
+
+
 void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, softwareSignaling * softwareSignals);
 
 extern TIM_HandleTypeDef htim2;
@@ -21,26 +34,54 @@ void mainRisingEdgeCallback(viaSignals * signals) {
 	// generate increments from the timing reading
 	generateFrequency(signals->controls, signals->inputs, signals->softwareSignals);
 
+	signals->softwareSignals->tapTempo = 0;
+
 }
 
 void mainFallingEdgeCallback(softwareSignaling * softwareSignals) {
 
-	EXPAND_LOGIC_LOW;
+
 
 }
 
 void auxRisingEdgeCallback(viaSignals * signals) {
-	;
+	// arbitrary big number guaranteed to be greater than the largest gcd value for the scales
+	// see generateFrequency for implementation
+	signals->softwareSignals->pllReset = 65535;
+	// apply the pll if uncommented
+	// generateFrequency(signals->controls, signals->inputs, signals->softwareSignals);
 }
 void auxFallingEdgeCallback(viaSignals * signals) {
 	;
 }
 
 void buttonPressedCallback(viaSignals * signals) {
-	;
+
+	static int lastTap;
+
+	uiDispatch(EXPAND_SW_ON_SIG);
+
+	if (signals->softwareSignals->tapTempo) {
+		// store the length of the last period
+
+		int tap = __HAL_TIM_GET_COUNTER(&htim2);
+
+		signals->softwareSignals->periodCount = (tap + lastTap) >> 1;
+
+		lastTap = tap;
+
+		// reset the timer value
+		__HAL_TIM_SET_COUNTER(&htim2, 0);
+
+		// generate increments from the timing reading
+		generateFrequency(signals->controls, signals->inputs, signals->softwareSignals);
+	} else {
+		signals->softwareSignals->tapTempo = 1;
+	}
+
 }
 void buttonReleasedCallback(viaSignals * signals) {
-	;
+	uiDispatch(EXPAND_SW_OFF_SIG);
 }
 
 void ioProcessCallback(viaSignals * signals) {
@@ -72,69 +113,3 @@ void nextSampleCallback(viaSignals * signals) {
 	nextSample(signals->controls, signals->inputs, signals->outputs, signals->softwareSignals);
 
 }
-
-void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, softwareSignaling * softwareSignals) {
-
-	int pllNudge = 0;
-	static uint32_t pllCounter;
-	uint32_t fracMultiplier;
-	uint32_t intMultiplier;
-	uint32_t gcd;
-	uint32_t noteIndex;
-	uint32_t rootIndex;
-	uint32_t multKey;
-	static uint32_t lastMultiplier;
-
-	Scale * scale = softwareSignals->scale;
-
-	noteIndex = __USAT(controls->knob1Value + 2048 - controls->cv1Value, 12) >> 5;
-	if (advancePhase == &advancePhaseRoot) {
-		rootIndex = (__USAT(controls->knob2Value + 2048 - inputs->cv2Input, 12)) >> scale->t2Bitshift;
-	} else {
-		rootIndex = controls->knob2Value >> scale->t2Bitshift;
-	}
-
-	fracMultiplier = scale->grid[rootIndex][noteIndex]->fractionalPart;
-	intMultiplier = scale->grid[rootIndex][noteIndex]->integerPart;
-	gcd = scale->grid[rootIndex][noteIndex]->fundamentalDivision;
-	multKey = fracMultiplier + intMultiplier;
-
-	if (lastMultiplier != multKey) {
-		EXPAND_LOGIC_HIGH;
-	}
-
-	lastMultiplier = multKey;
-
-	pllCounter ++;
-
-	int phase = softwareSignals->phaseSignal;
-
-	if (pllCounter >= gcd) {
-		switch (softwareSignals->syncMode) {
-		case nosync:
-			pllNudge = 0;
-			break;
-		case true:
-			pllNudge = (((phase >> 24)*WAVETABLE_LENGTH - phase) << 8);
-			pllCounter = 0;
-			break;
-		case hardsync:
-			softwareSignals->phaseSignal = 0;
-			pllCounter = 0;
-			break;
-		default:
-			break;
-		}
-	}
-
-
-
-	uint32_t attackInc = ((((uint64_t)((uint64_t)WAVETABLE_LENGTH << 17) + pllNudge)) / (softwareSignals->periodCount));
-	attackInc = fix48_mul(attackInc >> 8, fracMultiplier) + fix16_mul(attackInc >> 8, intMultiplier);
-
-
-
-	softwareSignals->attackIncrement = __USAT(attackInc, 24);
-	softwareSignals->releaseIncrement = __USAT(attackInc, 24);
-}
-

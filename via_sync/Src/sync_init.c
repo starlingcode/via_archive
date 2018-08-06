@@ -33,7 +33,8 @@ void syncInit(void) {
 
 	getIncrement = getIncrementAttack;
 	advancePhase = advancePhasePM;
-	calculateSH = calculateSHMode2;
+	calculateSH = calculateSHMode1;
+	calculateLogicA = calculateLogicAGate;
 	updateRGB = updateRGBAudio;
 
 	initializeScales();

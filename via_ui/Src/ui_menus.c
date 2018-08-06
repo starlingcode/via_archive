@@ -1,7 +1,4 @@
 
-// TODO this is a hole in the implementation along with setruntime display
-#define AUX2_MODE_USED
-
 #include "user_interface.h"
 
 
@@ -25,10 +22,8 @@ void ui_button1Menu(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
-		uiSetLEDs(button1Mode);
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
+		(*button1EnterMenuCallback)();
+
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -40,11 +35,6 @@ void ui_button1Menu(int sig)
 			}
 		}
 		break;
-
-	case INIT_SIG:
-		SH_A_TRACK;
-		SH_B_TRACK;
-		break;
 	}
 }
 
@@ -53,11 +43,8 @@ void ui_button2Menu(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
+		(*button2EnterMenuCallback)();
 
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
-		uiSetLEDs(button2Mode);
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -76,10 +63,7 @@ void ui_button3Menu(int sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
-		uiSetLEDs(button3Mode);
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
+		(*button3EnterMenuCallback)();
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -102,10 +86,7 @@ void ui_button4Menu(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
-		uiSetLEDs(button4Mode);
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
+		(*button4EnterMenuCallback)();
 
 		break;
 
@@ -135,36 +116,21 @@ void ui_button5Menu(int sig)
 	switch (sig)
 	{
 	case ENTRY_SIG:
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
-		uiSetLEDs(button5Mode);
+		(*button5EnterMenuCallback)();
 		break;
 
 	case SENSOR_EVENT_SIG:
 
-#ifdef AUX1_MODE_USED
+		// Check for entry into an aux mode
 		if (BUTTON1SENSOR == PRESSED) {
 			uiTransition(&ui_aux1Menu);
-		}
-#endif
-#ifdef AUX2_MODE_USED
-		if (BUTTON3SENSOR == PRESSED) {
+		} else if (BUTTON3SENSOR == PRESSED) {
 			uiTransition(&ui_aux2Menu);
-		}
-#endif
-#ifdef AUX3_MODE_USED
-		if (BUTTON4SENSOR == PRESSED) {
+		} else if (BUTTON4SENSOR == PRESSED) {
 			uiTransition(&ui_aux3Menu);
-		}
-#endif
-#ifdef AUX4_MODE_USED
-		if (BUTTON6SENSOR == PRESSED) {
+		} else if (BUTTON6SENSOR == PRESSED) {
 			uiTransition(&ui_aux4Menu);
-		}
-#endif
-
-		if (BUTTON5SENSOR == RELEASED){
+		} else if (BUTTON5SENSOR == RELEASED) {
 			if(UI_TIMER_READ < 3000){
 				(*button5TapCallback)();
 			} else {
@@ -181,10 +147,7 @@ void ui_button6Menu(int sig)
 	switch (sig) {
 
 	case ENTRY_SIG:
-		uiSetLEDs(button6Mode);
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
+		(*button6EnterMenuCallback)();
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -207,10 +170,7 @@ void ui_aux1Menu(int sig)
 	switch (sig) {
 
 	case ENTRY_SIG:
-		uiSetLEDs(aux1Mode);
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
+		(*aux1EnterMenuCallback)();
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -233,10 +193,7 @@ void ui_aux2Menu(int sig)
 	switch (sig) {
 
 	case ENTRY_SIG:
-		uiSetLEDs(aux2Mode);
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
+		(*aux2EnterMenuCallback)();
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -259,10 +216,7 @@ void ui_aux3Menu(int sig)
 	switch (sig) {
 
 	case ENTRY_SIG:
-		uiSetLEDs(aux3Mode);
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
+		(*aux3EnterMenuCallback)();
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -285,10 +239,7 @@ void ui_aux4Menu(int sig)
 	switch (sig) {
 
 	case ENTRY_SIG:
-		uiSetLEDs(aux4Mode);
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(65535);
-		UI_TIMER_ENABLE;
+		(*aux4EnterMenuCallback)();
 		break;
 
 	case SENSOR_EVENT_SIG:

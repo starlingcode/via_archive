@@ -26,8 +26,7 @@ void advancePhaseRoot(audioRateInputs * inputs, viaStateVariableSet * stateVaria
 	q31_t phase = stateVariables->phase;
 	static q31_t previousPhase;
 
-	int increment = (*getIncrement)(stateVariables);
-	phase += increment;
+	phase += stateVariables->incrementValue1;
 
 	int phaseEventCalculator = 0;
 
@@ -69,9 +68,8 @@ void advancePhasePM(audioRateInputs * inputs, viaStateVariableSet * stateVariabl
 	static q31_t previousPhase;
 	static q31_t lastCV;
 
-	int increment = (*getIncrement)(stateVariables);
 	q31_t cvInput = inputs->cv2Input;
-	phase += increment + ((cvInput - lastCV) << 13);
+	phase += stateVariables->incrementValue1 + ((cvInput - lastCV) << 13);
 	lastCV = cvInput;
 
 	int phaseEventCalculator = 0;
@@ -113,8 +111,7 @@ void advancePhaseFM(audioRateInputs * inputs, viaStateVariableSet * stateVariabl
 	q31_t phase = stateVariables->phase;
 	static q31_t previousPhase;
 
-	int increment = stateVariables->incrementValue1;
-	phase += fix16_mul(increment, inputs->cv2Input << 5);
+	phase += fix16_mul(stateVariables->incrementValue1, inputs->cv2Input << 5);
 
 	int phaseEventCalculator = 0;
 
@@ -155,8 +152,7 @@ void advancePhasePWM(audioRateInputs * inputs, viaStateVariableSet * stateVariab
 	q31_t phase = stateVariables->phase;
 	static q31_t previousPhase;
 
-	int increment = stateVariables->incrementValue1;
-	phase += increment;
+	phase += stateVariables->incrementValue1;
 
 	int phaseEventCalculator = 0;
 

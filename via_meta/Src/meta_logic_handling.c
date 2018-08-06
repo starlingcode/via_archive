@@ -45,6 +45,29 @@ void calculateLogicAGate(q31_t * phaseEvents, q31_t * triggers, int oscillatorOn
 
 }
 
+void calculateDac3Phasor(q31_t * phase, audioRateOutputs * output) {
+
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+
+		if (phase[i] >> 24) {
+			output->dac3Samples[i] = 8191 - (phase[i] >> 12);
+		} else {
+			output->dac3Samples[i] = phase[i] >> 12;
+		}
+	}
+
+}
+
+void calculateDac3Contour(q31_t * phase, audioRateOutputs * output) {
+
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+
+			output->dac3Samples[i] = output->samples[i];
+
+	}
+
+}
+
 
 
 // No S&H

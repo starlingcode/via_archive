@@ -8,6 +8,18 @@
 
 void initializeUICallbacks(void) {
 
+	button1EnterMenuCallback = handleButton1EnterMenu;
+	button2EnterMenuCallback = handleButton2EnterMenu;
+	button3EnterMenuCallback = handleButton3EnterMenu;
+	button4EnterMenuCallback = handleButton4EnterMenu;
+	button5EnterMenuCallback = handleButton5EnterMenu;
+	button6EnterMenuCallback = handleButton6EnterMenu;
+
+	aux1EnterMenuCallback = handleAux1EnterMenu;
+	aux2EnterMenuCallback = handleAux2EnterMenu;
+	aux3EnterMenuCallback = handleAux3EnterMenu;
+	aux4EnterMenuCallback = handleAux4EnterMenu;
+
 	button1TapCallback = handleButton1Tap;
 	button1HoldCallback = handleButton1Hold;
 	button2TapCallback = handleButton2Tap;
@@ -21,14 +33,57 @@ void initializeUICallbacks(void) {
 	button6TapCallback = handleButton6Tap;
 	button6HoldCallback = handleButton6Hold;
 
-	aux1TapCallback = handleButton1Tap;
-	aux1HoldCallback = handleButton1Hold;
-	aux2TapCallback = handleButton2Tap;
-	aux2HoldCallback = handleButton2Hold;
-	aux3TapCallback = handleButton3Tap;
-	aux3HoldCallback = handleButton3Hold;
-	aux4TapCallback = handleButton4Tap;
-	aux4HoldCallback = handleButton4Hold;
+	aux1TapCallback = handleAux1Tap;
+	aux1HoldCallback = handleAux1Hold;
+	aux2TapCallback = handleAux2Tap;
+	aux2HoldCallback = handleAux2Hold;
+	aux3TapCallback = handleAux3Tap;
+	aux3HoldCallback = handleAux3Hold;
+	aux4TapCallback = handleAux4Tap;
+	aux4HoldCallback = handleAux4Hold;
+}
+
+void handleButton1EnterMenu(void) {
+	uiSetLEDs(SH_MODE);
+	uiResetTimerMenu();
+}
+void handleButton2EnterMenu(void) {
+	uiSetLEDs(TABLE);
+	uiResetTimerMenu();
+}
+void handleButton3EnterMenu(void) {
+	uiSetLEDs(FREQ_MODE);
+	uiResetTimerMenu();
+}
+void handleButton4EnterMenu(void) {
+	uiSetLEDs(TRIG_MODE);
+	uiResetTimerMenu();
+}
+void handleButton5EnterMenu(void) {
+	uiSetLEDs(TABLE);
+	uiResetTimerMenu();
+}
+void handleButton6EnterMenu(void) {
+	uiSetLEDs(LOOP_MODE);
+	uiResetTimerMenu();
+}
+void handleAux1EnterMenu(void) {
+	uiTransition(ui_button5Menu);
+}
+void handleAux2EnterMenu(void) {
+	uiClearLEDs();
+	uiSetLEDs(LOGIC_A_MODE);
+	uiResetTimerMenu();
+}
+void handleAux3EnterMenu(void) {
+	uiClearLEDs();
+	uiSetLEDs(DRUM_MODE);
+	uiResetTimerMenu();
+}
+void handleAux4EnterMenu(void) {
+	uiClearLEDs();
+	uiSetLEDs(DAC_3_MODE);
+	uiResetTimerMenu();
 }
 
 void handleButton1Tap(void) {
@@ -46,7 +101,7 @@ void handleButton2Tap(void) {
 	uiTransition(&ui_newMode);
 }
 void handleButton3Tap(void) {
-	FREQ_MODE = decrementModeAndStore(FREQ_MODE, BUTTON3_MASK, numButton3Modes);
+	FREQ_MODE = incrementModeAndStore(FREQ_MODE, BUTTON3_MASK, numButton3Modes);
 	handleButton3ModeChange(FREQ_MODE);
 	uiClearLEDs();
 	uiSetLEDs(FREQ_MODE);
@@ -74,8 +129,32 @@ void handleButton6Tap(void) {
 	uiTransition(&ui_newMode);
 }
 
-void handleAux4Tap(void) {
+void handleAux1Tap(void) {
+	uiTransition(ui_button5Menu);
+}
 
+void handleAux2Tap(void) {
+	LOGIC_A_MODE = incrementModeAndStore(LOGIC_A_MODE, AUX_MODE2_MASK, numAux2Modes);
+	handleAux2ModeChange(LOGIC_A_MODE);
+	uiClearLEDs();
+	uiSetLEDs(LOGIC_A_MODE);
+	uiTransition(&ui_newAuxMode);
+}
+
+void handleAux3Tap(void) {
+	DRUM_MODE = incrementModeAndStore(DRUM_MODE, AUX_MODE3_MASK, numAux3Modes);
+	handleAux3ModeChange(DRUM_MODE);
+	uiClearLEDs();
+	uiSetLEDs(DRUM_MODE);
+	uiTransition(&ui_newAuxMode);
+}
+
+void handleAux4Tap(void) {
+	DAC_3_MODE = incrementModeAndStore(DAC_3_MODE, AUX_MODE4_MASK, numAux4Modes);
+	handleAux4ModeChange(DAC_3_MODE);
+	uiClearLEDs();
+	uiSetLEDs(DAC_3_MODE);
+	uiTransition(&ui_newAuxMode);
 }
 
 void handleButton1Hold(void) {
@@ -96,7 +175,26 @@ void handleButton5Hold(void) {
 void handleButton6Hold(void) {
 	uiTransition(&ui_default);
 }
+
+void handleAux1Hold(void) {
+	uiTransition(ui_button5Menu);
+}
+
+void handleAux2Hold(void) {
+
+	uiTransition(&ui_default);
+
+}
+
+void handleAux3Hold(void) {
+
+	uiTransition(&ui_default);
+
+}
+
 void handleAux4Hold(void) {
+
+	uiTransition(&ui_default);
 
 }
 
@@ -204,8 +302,31 @@ void handleButton6ModeChange(int mode) {
 
 }
 
+void handleAux1ModeChange(int mode) {
+
+
+}
+
+void handleAux2ModeChange(int mode) {
+
+
+}
+
+void handleAux3ModeChange(int mode) {
+
+
+}
+
 void handleAux4ModeChange(int mode) {
 
+	switch (mode) {
+	case phasor:
+		calculateDac3 = calculateDac3Phasor;
+		break;
+	case contour:
+		calculateDac3 = calculateDac3Contour;
+		break;
+	}
 
 }
 

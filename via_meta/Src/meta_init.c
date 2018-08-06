@@ -30,6 +30,7 @@ void metaInit(void) {
 	calculateSH = calculateSHMode1;
 	updateRGB = updateRGBAudio;
 	calculateLogicA = calculateLogicAGate;
+	calculateDac3 = calculateDac3Phasor;
 
 	noRetrigStateMachine = noRetrigAttackState;
 
