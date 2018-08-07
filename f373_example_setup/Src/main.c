@@ -60,6 +60,8 @@
 
 /* USER CODE BEGIN Includes */
 
+#include "tables.h"
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -78,6 +80,10 @@ void SystemClock_Config(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
+
+uint32_t wavetable[512];
+uint32_t adcReadings[4];
+
 
 /* USER CODE END 0 */
 
@@ -129,7 +135,24 @@ int main(void)
   MX_DAC1_Init();
   MX_DAC2_Init();
   MX_TIM2_Init();
+  MX_TIM19_Init();
+  MX_TIM15_Init();
+  MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
+
+  for (int i = 0; i < 256; i++) {
+	  wavetable[i] = __USAT(tenor257Atk1[i] >> 3, 12);
+  }
+
+  for (int i = 0; i < 257; i++) {
+	  wavetable[255 + i] = __USAT(tenor257Rls1[256 - i] >> 3, 12);
+  }
+
+  HAL_ADC_Start_DMA(&hadc1, adcReadings, 4);
+
+
+  HAL_TIM_Base_Start(&htim18);
+  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, wavetable, 512, DAC_ALIGN_12B_R);
 
   /* USER CODE END 2 */
 
@@ -139,6 +162,8 @@ int main(void)
   {
 
   /* USER CODE END WHILE */
+
+	  TIM18->ARR = 20 + adcReadings[2];
 
   /* USER CODE BEGIN 3 */
 

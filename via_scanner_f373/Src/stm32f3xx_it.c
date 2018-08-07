@@ -201,8 +201,17 @@ void DMA1_Channel1_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
 
+	//minimal interrupt handler for circular buffer
+
+	/* Clear the half transfer complete flag */
+	(&hdma_adc1)->DmaBaseAddress->IFCR = DMA_FLAG_HT1 << (&hdma_adc1)->ChannelIndex;
+  	/* Clear the transfer complete flag */
+	(&hdma_adc1)->DmaBaseAddress->IFCR = DMA_FLAG_TC1 << (&hdma_adc1)->ChannelIndex;
+
+
+
   /* USER CODE END DMA1_Channel1_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_adc1);
+  //HAL_DMA_IRQHandler(&hdma_adc1);
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
 
   /* USER CODE END DMA1_Channel1_IRQn 1 */
@@ -216,8 +225,14 @@ void DMA2_Channel3_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Channel3_IRQn 0 */
 
+	/* Clear the half transfer complete flag */
+	(&hdma_sdadc1)->DmaBaseAddress->IFCR = DMA_FLAG_HT1 << (&hdma_sdadc1)->ChannelIndex;
+  	/* Clear the transfer complete flag */
+	(&hdma_sdadc1)->DmaBaseAddress->IFCR = DMA_FLAG_TC1 << (&hdma_sdadc1)->ChannelIndex;
+
+
   /* USER CODE END DMA2_Channel3_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_sdadc1);
+  //HAL_DMA_IRQHandler(&hdma_sdadc1);
   /* USER CODE BEGIN DMA2_Channel3_IRQn 1 */
 
   /* USER CODE END DMA2_Channel3_IRQn 1 */
@@ -230,8 +245,13 @@ void DMA2_Channel4_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Channel4_IRQn 0 */
 
+	/* Clear the half transfer complete flag */
+	(&hdma_sdadc2)->DmaBaseAddress->IFCR = DMA_FLAG_HT1 << (&hdma_sdadc2)->ChannelIndex;
+  	/* Clear the transfer complete flag */
+	(&hdma_sdadc2)->DmaBaseAddress->IFCR = DMA_FLAG_TC1 << (&hdma_sdadc2)->ChannelIndex;
+
   /* USER CODE END DMA2_Channel4_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_sdadc2);
+  //HAL_DMA_IRQHandler(&hdma_sdadc2);
   /* USER CODE BEGIN DMA2_Channel4_IRQn 1 */
 
   /* USER CODE END DMA2_Channel4_IRQn 1 */

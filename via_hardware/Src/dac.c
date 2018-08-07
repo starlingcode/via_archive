@@ -49,7 +49,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "dac.h"
-
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
@@ -58,6 +57,12 @@
 
 DAC_HandleTypeDef hdac1;
 DAC_HandleTypeDef hdac2;
+
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
+
+
 
 /* DAC1 init function */
 void MX_DAC1_Init(void)
@@ -133,6 +138,8 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* dacHandle)
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+
 
     /* DAC1 interrupt Init */
     HAL_NVIC_SetPriority(TIM6_DAC1_IRQn, 0, 0);

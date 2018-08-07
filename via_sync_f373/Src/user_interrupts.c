@@ -104,7 +104,6 @@ void EXTI1_IRQHandler(void)
 void TIM6_DAC1_IRQHandler(void)
 {
 
-	ioProcessCallback(&signals);
 	nextSampleCallback(&signals);
 
 

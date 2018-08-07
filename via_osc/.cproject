@@ -83,10 +83,13 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/via_ui_library"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/via_scanner"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/via_osc"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/via_ui_library/Release"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/via_scanner/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/via_osc/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="via_ui_library" srcPrefixMapping="" srcRootPath=""/>
 						<entry flags="RESOLVED" kind="libraryFile" name="via_scanner" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="RESOLVED" kind="libraryFile" name="via_osc" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -98,7 +101,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="a" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" id="fr.ac6.managedbuild.config.gnu.cross.lib.release.1266426159" name="Release" parent="fr.ac6.managedbuild.config.gnu.cross.lib.release">
+				<configuration artifactExtension="a" artifactName="via_osc" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" id="fr.ac6.managedbuild.config.gnu.cross.lib.release.1266426159" name="Release" parent="fr.ac6.managedbuild.config.gnu.cross.lib.release">
 					<folderInfo id="fr.ac6.managedbuild.config.gnu.cross.lib.release.1266426159." name="/" resourcePath="">
 						<toolChain id="fr.ac6.managedbuild.toolchain.gnu.cross.lib.release.1311371834" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.lib.release">
 							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.11651201" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu" useByScannerDiscovery="false" value="STM32F373CCTx" valueType="string"/>
@@ -171,6 +174,14 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/via_osc"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/via_osc"/>
+		</configuration>
+	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

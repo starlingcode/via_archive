@@ -64,9 +64,12 @@ TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim7;
 TIM_HandleTypeDef htim12;
 TIM_HandleTypeDef htim13;
+TIM_HandleTypeDef htim14;
+TIM_HandleTypeDef htim15;
 TIM_HandleTypeDef htim16;
 TIM_HandleTypeDef htim17;
 TIM_HandleTypeDef htim18;
+TIM_HandleTypeDef htim19;
 
 /* TIM2 init function */
 void MX_TIM2_Init(void)
@@ -295,6 +298,54 @@ void MX_TIM13_Init(void)
   }
 
 }
+/* TIM14 init function */
+void MX_TIM14_Init(void)
+{
+
+  htim14.Instance = TIM14;
+  htim14.Init.Prescaler = 0;
+  htim14.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim14.Init.Period = 0;
+  htim14.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim14.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim14) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+/* TIM15 init function */
+void MX_TIM15_Init(void)
+{
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim15.Instance = TIM15;
+  htim15.Init.Prescaler = 0;
+  htim15.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim15.Init.Period = 0;
+  htim15.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim15.Init.RepetitionCounter = 0;
+  htim15.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim15) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim15, &sClockSourceConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim15, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
 /* TIM16 init function */
 void MX_TIM16_Init(void)
 {
@@ -335,18 +386,49 @@ void MX_TIM18_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim18.Instance = TIM18;
-  htim18.Init.Prescaler = 0;
+  htim18.Init.Prescaler = 1;
   htim18.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim18.Init.Period = 0;
-  htim18.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  htim18.Init.Period = 1000;
+  htim18.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim18) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim18, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+/* TIM19 init function */
+void MX_TIM19_Init(void)
+{
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim19.Instance = TIM19;
+  htim19.Init.Prescaler = 0;
+  htim19.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim19.Init.Period = 0;
+  htim19.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim19.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim19) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim19, &sClockSourceConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
 
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim18, &sMasterConfig) != HAL_OK)
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim19, &sMasterConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
@@ -412,6 +494,28 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
 
   /* USER CODE END TIM13_MspInit 1 */
   }
+  else if(tim_baseHandle->Instance==TIM14)
+  {
+  /* USER CODE BEGIN TIM14_MspInit 0 */
+
+  /* USER CODE END TIM14_MspInit 0 */
+    /* TIM14 clock enable */
+    __HAL_RCC_TIM14_CLK_ENABLE();
+  /* USER CODE BEGIN TIM14_MspInit 1 */
+
+  /* USER CODE END TIM14_MspInit 1 */
+  }
+  else if(tim_baseHandle->Instance==TIM15)
+  {
+  /* USER CODE BEGIN TIM15_MspInit 0 */
+
+  /* USER CODE END TIM15_MspInit 0 */
+    /* TIM15 clock enable */
+    __HAL_RCC_TIM15_CLK_ENABLE();
+  /* USER CODE BEGIN TIM15_MspInit 1 */
+
+  /* USER CODE END TIM15_MspInit 1 */
+  }
   else if(tim_baseHandle->Instance==TIM16)
   {
   /* USER CODE BEGIN TIM16_MspInit 0 */
@@ -452,6 +556,17 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
   /* USER CODE BEGIN TIM18_MspInit 1 */
 
   /* USER CODE END TIM18_MspInit 1 */
+  }
+  else if(tim_baseHandle->Instance==TIM19)
+  {
+  /* USER CODE BEGIN TIM19_MspInit 0 */
+
+  /* USER CODE END TIM19_MspInit 0 */
+    /* TIM19 clock enable */
+    __HAL_RCC_TIM19_CLK_ENABLE();
+  /* USER CODE BEGIN TIM19_MspInit 1 */
+
+  /* USER CODE END TIM19_MspInit 1 */
   }
 }
 
@@ -652,6 +767,28 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 
   /* USER CODE END TIM13_MspDeInit 1 */
   }
+  else if(tim_baseHandle->Instance==TIM14)
+  {
+  /* USER CODE BEGIN TIM14_MspDeInit 0 */
+
+  /* USER CODE END TIM14_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_TIM14_CLK_DISABLE();
+  /* USER CODE BEGIN TIM14_MspDeInit 1 */
+
+  /* USER CODE END TIM14_MspDeInit 1 */
+  }
+  else if(tim_baseHandle->Instance==TIM15)
+  {
+  /* USER CODE BEGIN TIM15_MspDeInit 0 */
+
+  /* USER CODE END TIM15_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_TIM15_CLK_DISABLE();
+  /* USER CODE BEGIN TIM15_MspDeInit 1 */
+
+  /* USER CODE END TIM15_MspDeInit 1 */
+  }
   else if(tim_baseHandle->Instance==TIM16)
   {
   /* USER CODE BEGIN TIM16_MspDeInit 0 */
@@ -690,6 +827,17 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
   /* USER CODE BEGIN TIM18_MspDeInit 1 */
 
   /* USER CODE END TIM18_MspDeInit 1 */
+  }
+  else if(tim_baseHandle->Instance==TIM19)
+  {
+  /* USER CODE BEGIN TIM19_MspDeInit 0 */
+
+  /* USER CODE END TIM19_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_TIM19_CLK_DISABLE();
+  /* USER CODE BEGIN TIM19_MspDeInit 1 */
+
+  /* USER CODE END TIM19_MspDeInit 1 */
   }
 }
 

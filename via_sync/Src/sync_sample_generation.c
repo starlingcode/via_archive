@@ -10,12 +10,16 @@ const q31_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModP
 static inline int calculatePWMPhase(int, uint32_t);
 
 static inline int getSampleQuinticSpline(int, uint32_t, int *);
+static inline int getSampleLinear(int, uint32_t, int *);
+
 
 void calculateSample(controlRateInputs * controls, audioRateInputs * inputs, viaStateVariableSet * stateVariables, audioRateOutputs * output) {
 
 	int phase = calculatePWMPhase(stateVariables->phase, stateVariables->dutyCycle);
 
-	output->samples = getSampleQuinticSpline(phase, stateVariables->morph, &(stateVariables->delta));
+//	output->samples = getSampleQuinticSpline(phase, stateVariables->morph, &(stateVariables->delta));
+	output->samples = getSampleLinear(phase, stateVariables->morph, &(stateVariables->delta));
+
 
 }
 
@@ -53,8 +57,7 @@ static inline int getSampleQuinticSpline(int phase, uint32_t morph, int * delta)
 
 	// we have to calculate the fractional portion and get it up to full scale q16
 
-	morphFrac = (morph & 0x1FFF) << 3
-			;
+	morphFrac = (morph & 0x1FFF) << 3;
 
 	// perform the 6 linear interpolations to get the sample values and apply morph
 	// TODO track delta change in the phase event array
@@ -88,6 +91,28 @@ static inline int getSampleQuinticSpline(int phase, uint32_t morph, int * delta)
 	*delta = deltaSign;
 
 	return __USAT(out >> 3, 12);
+}
+
+static inline int getSampleLinear(int phase, uint32_t morph, int * delta) {
+
+	#define phaseIndex (phase >> 16)
+	#define phaseFrac (phase & 0x0000FFFF)
+	#define pwmIndex (morph >> 13)
+	#define pwmFrac (morph & 0x1FFF) << 3
+	uint32_t sampleA_0 = fullTableHoldArray[pwmIndex][phaseIndex];
+	uint32_t sampleA_1 = fullTableHoldArray[pwmIndex][phaseIndex + 1];
+	uint32_t sampleB_0 = fullTableHoldArray[pwmIndex + 1][phaseIndex];
+	uint32_t sampleB_1 = fullTableHoldArray[pwmIndex + 1][phaseIndex + 1];
+
+	int interp0 = fix16_lerp(sampleA_0, sampleA_1, phaseFrac);
+	int interp1 = fix16_lerp(sampleB_0, sampleB_1, phaseFrac);
+
+	int deltaSign = ((uint32_t)(interp1 - interp0) >> 31);
+
+	*delta = deltaSign;
+
+	return fix16_lerp(interp0, interp1, pwmFrac) >> 3;
+
 }
 
 
