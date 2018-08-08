@@ -37,6 +37,9 @@
 
 /* USER CODE BEGIN 0 */
 
+extern void dac3HalfTransferCallback(void);
+extern void dac3FullTransferCallback(void);
+
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -267,8 +270,18 @@ void DMA1_Channel5_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel5_IRQn 0 */
 
+	// channel 5 left shift in the DMA base address is (5-1) * 4
+
+	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
+		fillBuffer1();
+		DMA1->IFCR = DMA_FLAG_HT1 << 16;
+	} else {
+		fillBuffer2();
+		DMA1->IFCR = DMA_FLAG_TC1 << 16;
+	}
+
   /* USER CODE END DMA1_Channel5_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_dac2_ch1);
+  //HAL_DMA_IRQHandler(&hdma_dac2_ch1);
   /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
 
   /* USER CODE END DMA1_Channel5_IRQn 1 */
