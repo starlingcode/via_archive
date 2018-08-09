@@ -60,6 +60,8 @@
 
 /* USER CODE BEGIN Includes */
 
+
+
 #include "simple_wavetable.h"
 
 /* USER CODE END Includes */
@@ -161,15 +163,23 @@ int main(void)
 //
 //  	}
 
-//	HAL_SDADC_Start_DMA(&hsdadc1, cv2, 1);
-	//HAL_SDADC_Start_DMA(&hsdadc2, cv3, 1);
+	 //initialize the timer that is used to detect rising and falling edges at the trigger input
+  HAL_NVIC_SetPriority(TIM12_IRQn, 0, 0);
+	HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
+
+
+	HAL_SDADC_Start_DMA(&hsdadc1, cv2, 1);
+	HAL_SDADC_Start_DMA(&hsdadc2, cv3, 1);
 
   HAL_ADC_Start_DMA(&hadc1, adcReadings, 4);
 
-  TIM18->ARR = 90;
+  TIM18->ARR = 45;
+
 
   HAL_TIM_Base_Start(&htim18);
   HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer, 16, DAC_ALIGN_12B_R);
+
+
 
   /* USER CODE END 2 */
 

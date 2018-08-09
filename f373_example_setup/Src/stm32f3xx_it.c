@@ -37,8 +37,17 @@
 
 /* USER CODE BEGIN 0 */
 
-extern void dac3HalfTransferCallback(void);
-extern void dac3FullTransferCallback(void);
+#include "simple_wavetable.h"
+#include "via_rev5_hardware_io.h"
+
+
+extern uint32_t phase;
+
+int stop;
+
+extern DAC_HandleTypeDef hdac2;
+
+extern TIM_HandleTypeDef htim18;
 
 /* USER CODE END 0 */
 
@@ -273,11 +282,11 @@ void DMA1_Channel5_IRQHandler(void)
 	// channel 5 left shift in the DMA base address is (5-1) * 4
 
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
-		fillBuffer1();
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;
-	} else {
-		fillBuffer2();
+		fillBuffer1();
+	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;
+		fillBuffer2();
 	}
 
   /* USER CODE END DMA1_Channel5_IRQn 0 */
@@ -322,6 +331,8 @@ void EXTI15_10_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
 
+	stop = 1;
+
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
@@ -335,6 +346,29 @@ void EXTI15_10_IRQHandler(void)
 void TIM12_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM12_IRQn 0 */
+
+
+
+
+	if (stop) {
+		HAL_DMA_Abort(&hdma_dac2_ch1);
+		WRITE_DAC3(4095);
+		phase = 0;
+		fillBuffer1();
+		fillBuffer2();
+		stop = 0;
+		DMA1_Channel5->CNDTR = 16;
+		__HAL_TIM_DISABLE(&htim18);
+		TIM18->CNT = 0;
+		DMA1_Channel5->CCR |= (DMA_IT_TC | DMA_IT_HT | DMA_IT_TE);
+		DMA1_Channel5->CCR |= DMA_CCR_EN;
+	} else {
+		TIM18->CR1 |= TIM_CR1_CEN;
+		stop = 1;
+	}
+
+
+
 
   /* USER CODE END TIM12_IRQn 0 */
   HAL_TIM_IRQHandler(&htim12);
