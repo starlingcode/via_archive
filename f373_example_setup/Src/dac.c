@@ -147,7 +147,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* dacHandle)
     hdma_dac1_ch1.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
     hdma_dac1_ch1.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
     hdma_dac1_ch1.Init.Mode = DMA_CIRCULAR;
-    hdma_dac1_ch1.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+    hdma_dac1_ch1.Init.Priority = DMA_PRIORITY_HIGH;
     if (HAL_DMA_Init(&hdma_dac1_ch1) != HAL_OK)
     {
       _Error_Handler(__FILE__, __LINE__);
@@ -165,7 +165,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* dacHandle)
     hdma_dac1_ch2.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
     hdma_dac1_ch2.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
     hdma_dac1_ch2.Init.Mode = DMA_CIRCULAR;
-    hdma_dac1_ch2.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+    hdma_dac1_ch2.Init.Priority = DMA_PRIORITY_HIGH;
     if (HAL_DMA_Init(&hdma_dac1_ch2) != HAL_OK)
     {
       _Error_Handler(__FILE__, __LINE__);
@@ -176,7 +176,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* dacHandle)
     __HAL_LINKDMA(dacHandle,DMA_Handle2,hdma_dac1_ch2);
 
     /* DAC1 interrupt Init */
-    HAL_NVIC_SetPriority(TIM6_DAC1_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(TIM6_DAC1_IRQn, 1, 1);
     HAL_NVIC_EnableIRQ(TIM6_DAC1_IRQn);
   /* USER CODE BEGIN DAC1_MspInit 1 */
 

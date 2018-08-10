@@ -40,14 +40,19 @@
 #include "simple_wavetable.h"
 #include "via_rev5_hardware_io.h"
 
+#define HALT_SIGNAL_STOP 0
+#define HALT_SIGNAL_RUN 1
+uint32_t haltSignal;
 
 extern uint32_t phase;
-
-int stop;
 
 extern DAC_HandleTypeDef hdac2;
 
 extern TIM_HandleTypeDef htim18;
+
+#define draw 0
+#define pause 1
+int scanLineStatus;
 
 /* USER CODE END 0 */
 
@@ -283,10 +288,16 @@ void DMA1_Channel5_IRQHandler(void)
 
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;
-		fillBuffer1();
+		//fillBuffer1();
 	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;
-		fillBuffer2();
+		if (haltSignal) {
+			HAL_DMA_Abort_IT(&hdma_dac2_ch1);
+			TIM18->CR1 &= ~TIM_CR1_CEN;
+			TIM18->CNT = 0;
+			DMA1_Channel5->CNDTR = 64;
+			//TIM18->ARR = (adcReadings[2] >> 6) + 20;
+		}
 	}
 
   /* USER CODE END DMA1_Channel5_IRQn 0 */
@@ -331,7 +342,7 @@ void EXTI15_10_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
 
-	stop = 1;
+	scanLineStatus = draw;
 
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
@@ -347,24 +358,16 @@ void TIM12_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM12_IRQn 0 */
 
-
-
-
-	if (stop) {
-		HAL_DMA_Abort(&hdma_dac2_ch1);
-		WRITE_DAC3(4095);
-		phase = 0;
-		fillBuffer1();
-		fillBuffer2();
-		stop = 0;
-		DMA1_Channel5->CNDTR = 16;
-		__HAL_TIM_DISABLE(&htim18);
-		TIM18->CNT = 0;
+	if (scanLineStatus == draw) {
 		DMA1_Channel5->CCR |= (DMA_IT_TC | DMA_IT_HT | DMA_IT_TE);
 		DMA1_Channel5->CCR |= DMA_CCR_EN;
-	} else {
 		TIM18->CR1 |= TIM_CR1_CEN;
-		stop = 1;
+		scanLineStatus = pause;
+	} else {
+		haltSignal = 1;
+		scanLineStatus = draw;
+		renderLine();
+
 	}
 
 
@@ -383,6 +386,8 @@ void TIM12_IRQHandler(void)
 void TIM13_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM13_IRQn 0 */
+
+	ALOGIC_LOW;
 
   /* USER CODE END TIM13_IRQn 0 */
   HAL_TIM_IRQHandler(&htim13);

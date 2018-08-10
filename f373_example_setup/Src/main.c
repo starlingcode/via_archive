@@ -140,6 +140,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   oscillatorInit();
+  renderLine();
 
 //  if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1) != HAL_OK)
 //  	{
@@ -164,7 +165,6 @@ int main(void)
 //  	}
 
 	 //initialize the timer that is used to detect rising and falling edges at the trigger input
-  HAL_NVIC_SetPriority(TIM12_IRQn, 0, 0);
 	HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
 
 
@@ -173,11 +173,15 @@ int main(void)
 
   HAL_ADC_Start_DMA(&hadc1, adcReadings, 4);
 
-  TIM18->ARR = 45;
+  TIM18->ARR = 30;
 
 
   HAL_TIM_Base_Start(&htim18);
-  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer, 16, DAC_ALIGN_12B_R);
+  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer, 64, DAC_ALIGN_12B_R);
+  //HAL_DAC_Start(&hdac2, DAC_CHANNEL_1);
+
+  //HAL_TIM_Base_Start_IT(&htim13);
+
 
 
 
