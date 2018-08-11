@@ -51,13 +51,14 @@ void calculateLogicADelta(viaStateVariableSet * stateVariables, audioRateOutputs
 
 void calculateDac3(viaStateVariableSet * stateVariables, audioRateOutputs * output) {
 
-	int phase = stateVariables->phase;
+	int phase = (stateVariables->phase + (1 << 23)) & ((1<<25) - 1);
 
 	if (phase >> 24) {
 		output->dac3Sample = 8191 - (phase >> 12);
 	} else {
 		output->dac3Sample = phase >> 12;
 	}
+
 
 }
 

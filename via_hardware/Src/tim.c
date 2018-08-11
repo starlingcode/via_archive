@@ -76,7 +76,7 @@ void MX_TIM2_Init(void) {
 
 
 	htim2.Instance = TIM2;
-	htim2.Init.Prescaler = 1;
+	htim2.Init.Prescaler = 0;
 	htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
 	htim2.Init.Period = 4294967295;
 	htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -417,7 +417,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
     __HAL_RCC_TIM6_CLK_ENABLE();
 
     /* TIM6 interrupt Init */
-    HAL_NVIC_SetPriority(TIM6_DAC1_IRQn, 0, 1);
+    HAL_NVIC_SetPriority(TIM6_DAC1_IRQn, 1, 0);
     HAL_NVIC_EnableIRQ(TIM6_DAC1_IRQn);
   /* USER CODE BEGIN TIM6_MspInit 1 */
 
@@ -514,7 +514,7 @@ void HAL_TIM_IC_MspInit(TIM_HandleTypeDef* tim_icHandle)
     GPIO_InitStruct.Pin = GPIO_PIN_15;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF10_TIM12;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 

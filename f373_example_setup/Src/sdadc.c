@@ -190,7 +190,7 @@ void HAL_SDADC_MspInit(SDADC_HandleTypeDef* sdadcHandle)
     hdma_sdadc1.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
     hdma_sdadc1.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
     hdma_sdadc1.Init.Mode = DMA_CIRCULAR;
-    hdma_sdadc1.Init.Priority = DMA_PRIORITY_LOW;
+    hdma_sdadc1.Init.Priority = DMA_PRIORITY_HIGH;
     if (HAL_DMA_Init(&hdma_sdadc1) != HAL_OK)
     {
       _Error_Handler(__FILE__, __LINE__);
@@ -227,7 +227,7 @@ void HAL_SDADC_MspInit(SDADC_HandleTypeDef* sdadcHandle)
     hdma_sdadc2.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
     hdma_sdadc2.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
     hdma_sdadc2.Init.Mode = DMA_CIRCULAR;
-    hdma_sdadc2.Init.Priority = DMA_PRIORITY_LOW;
+    hdma_sdadc2.Init.Priority = DMA_PRIORITY_HIGH;
     if (HAL_DMA_Init(&hdma_sdadc2) != HAL_OK)
     {
       _Error_Handler(__FILE__, __LINE__);

@@ -44,12 +44,12 @@ void mainHardwareInit(void) {
 		//sdadc calibration error
 	}
 
-	// set the priority and enable an interrupt line to be used by the trigger button input and aux trigger
-	HAL_NVIC_SetPriority(EXTI1_IRQn, 1, 0);
-	HAL_NVIC_EnableIRQ(EXTI1_IRQn);
-
-	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
-	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+//	// set the priority and enable an interrupt line to be used by the trigger button input and aux trigger
+//	HAL_NVIC_SetPriority(EXTI1_IRQn, 1, 0);
+//	HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+//
+//	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
+//	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 	// initialize RGB led
 	HAL_TIM_Base_Start(&htim3);
@@ -63,14 +63,14 @@ void mainHardwareInit(void) {
 	HAL_ADC_Start_DMA(&hadc1, slowADCReadings, 4);
 	HAL_SDADC_Start_DMA(&hsdadc1, fastADC1Readings, 1);
 	HAL_SDADC_Start_DMA(&hsdadc2, fastADC2Readings, 1);
-
-	// initialize the DAC
+//
+//	// initialize the DAC
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_2);
 	HAL_DAC_Start(&hdac2, DAC_CHANNEL_1);
 
 	// set the dac timer overflow to 1023 to facilitate frequency division
-	TIM6->ARR = 1535;
+	TIM6->ARR = 1023;
 
 	//start our DAC time base
 	HAL_TIM_Base_Start_IT(&htim6);

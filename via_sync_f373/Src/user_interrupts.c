@@ -43,6 +43,7 @@ void TIM12_IRQHandler(void)
 	if (TRIGGER_RISING_EDGE) {
 		mainRisingEdgeCallback(&signals);
 	} else {
+
 		mainFallingEdgeCallback(&signals);
 	}
 

@@ -61,10 +61,8 @@ extern DMA_HandleTypeDef hdma_adc1;
 extern DMA_HandleTypeDef hdma_dac1_ch1;
 extern DMA_HandleTypeDef hdma_dac1_ch2;
 extern DMA_HandleTypeDef hdma_dac2_ch1;
-extern DAC_HandleTypeDef hdac1;
 extern DMA_HandleTypeDef hdma_sdadc1;
 extern DMA_HandleTypeDef hdma_sdadc2;
-extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim12;
 extern TIM_HandleTypeDef htim13;
@@ -288,20 +286,24 @@ void DMA1_Channel5_IRQHandler(void)
 
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;
+
 		//fillBuffer1();
 	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
+//		TIM18->CR1 &= ~TIM_CR1_CEN;
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;
-		if (haltSignal) {
-			HAL_DMA_Abort_IT(&hdma_dac2_ch1);
-			TIM18->CR1 &= ~TIM_CR1_CEN;
-			TIM18->CNT = 0;
-			DMA1_Channel5->CNDTR = 64;
-			//TIM18->ARR = (adcReadings[2] >> 6) + 20;
-		}
+		DMA1_Channel5->CCR &= ~DMA_CCR_EN;
+		DMA1_Channel5->CNDTR = 8;
+//		if (haltSignal) {
+//			HAL_DMA_Abort_IT(&hdma_dac2_ch1);
+//			TIM18->CR1 &= ~TIM_CR1_CEN;
+//			TIM18->CNT = 0;
+//			DMA1_Channel5->CNDTR = 64;
+//			//TIM18->ARR = (adcReadings[2] >> 6) + 20;
+//		}
 	}
 
   /* USER CODE END DMA1_Channel5_IRQn 0 */
-  //HAL_DMA_IRQHandler(&hdma_dac2_ch1);
+  HAL_DMA_IRQHandler(&hdma_dac2_ch1);
   /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
 
   /* USER CODE END DMA1_Channel5_IRQn 1 */
@@ -358,20 +360,7 @@ void TIM12_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM12_IRQn 0 */
 
-	if (scanLineStatus == draw) {
-		DMA1_Channel5->CCR |= (DMA_IT_TC | DMA_IT_HT | DMA_IT_TE);
-		DMA1_Channel5->CCR |= DMA_CCR_EN;
-		TIM18->CR1 |= TIM_CR1_CEN;
-		scanLineStatus = pause;
-	} else {
-		haltSignal = 1;
-		scanLineStatus = draw;
-		renderLine();
-
-	}
-
-
-
+	EXPAND_LOGIC_HIGH;
 
   /* USER CODE END TIM12_IRQn 0 */
   HAL_TIM_IRQHandler(&htim12);
@@ -387,28 +376,13 @@ void TIM13_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM13_IRQn 0 */
 
-	ALOGIC_LOW;
+	EXPAND_LOGIC_LOW;
 
   /* USER CODE END TIM13_IRQn 0 */
   HAL_TIM_IRQHandler(&htim13);
   /* USER CODE BEGIN TIM13_IRQn 1 */
 
   /* USER CODE END TIM13_IRQn 1 */
-}
-
-/**
-* @brief This function handles TIM6 global interrupt and DAC1 underrun error interrupts.
-*/
-void TIM6_DAC1_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM6_DAC1_IRQn 0 */
-
-  /* USER CODE END TIM6_DAC1_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim6);
-  HAL_DAC_IRQHandler(&hdac1);
-  /* USER CODE BEGIN TIM6_DAC1_IRQn 1 */
-
-  /* USER CODE END TIM6_DAC1_IRQn 1 */
 }
 
 /**

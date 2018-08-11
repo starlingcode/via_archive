@@ -122,7 +122,6 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM4_Init();
   MX_TIM5_Init();
-  MX_TIM12_Init();
   MX_TIM13_Init();
   MX_TIM16_Init();
   MX_TIM17_Init();
@@ -133,14 +132,13 @@ int main(void)
   MX_TOUCHSENSING_Init();
   MX_DAC1_Init();
   MX_DAC2_Init();
-  MX_TIM2_Init();
   MX_TIM19_Init();
   MX_TIM15_Init();
   MX_TIM14_Init();
+  MX_TIM12_Init();
   /* USER CODE BEGIN 2 */
 
   oscillatorInit();
-  renderLine();
 
 //  if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1) != HAL_OK)
 //  	{
@@ -168,19 +166,20 @@ int main(void)
 	HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
 
 
-	HAL_SDADC_Start_DMA(&hsdadc1, cv2, 1);
-	HAL_SDADC_Start_DMA(&hsdadc2, cv3, 1);
+	//HAL_SDADC_Start_DMA(&hsdadc1, cv2, 1);
+	//HAL_SDADC_Start_DMA(&hsdadc2, cv3, 1);
 
-  HAL_ADC_Start_DMA(&hadc1, adcReadings, 4);
+  //HAL_ADC_Start_DMA(&hadc1, adcReadings, 4);
 
   TIM18->ARR = 30;
 
+  renderLine();
 
-  HAL_TIM_Base_Start(&htim18);
-  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer, 64, DAC_ALIGN_12B_R);
+  HAL_TIM_Base_Start_IT(&htim18);
+  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer, 8, DAC_ALIGN_12B_R);
   //HAL_DAC_Start(&hdac2, DAC_CHANNEL_1);
 
-  //HAL_TIM_Base_Start_IT(&htim13);
+  HAL_TIM_Base_Start_IT(&htim13);
 
 
 

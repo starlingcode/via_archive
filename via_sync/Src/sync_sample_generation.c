@@ -17,8 +17,8 @@ void calculateSample(controlRateInputs * controls, audioRateInputs * inputs, via
 
 	int phase = calculatePWMPhase(stateVariables->phase, stateVariables->dutyCycle);
 
-//	output->samples = getSampleQuinticSpline(phase, stateVariables->morph, &(stateVariables->delta));
-	output->samples = getSampleLinear(phase, stateVariables->morph, &(stateVariables->delta));
+	output->samples = getSampleQuinticSpline(phase, stateVariables->morph, &(stateVariables->delta));
+//	output->samples = getSampleLinear(phase, stateVariables->morph, &(stateVariables->delta));
 
 
 }

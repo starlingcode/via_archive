@@ -142,7 +142,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* dacHandle)
 
 
     /* DAC1 interrupt Init */
-    HAL_NVIC_SetPriority(TIM6_DAC1_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(TIM6_DAC1_IRQn, 1, 1);
     HAL_NVIC_EnableIRQ(TIM6_DAC1_IRQn);
   /* USER CODE BEGIN DAC1_MspInit 1 */
 

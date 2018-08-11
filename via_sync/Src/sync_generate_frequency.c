@@ -46,7 +46,8 @@ void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, s
 	pllCounter += softwareSignals->pllReset;
 	softwareSignals->pllReset = 0;
 
-	int phase = softwareSignals->phaseSignal;
+	int phaseOffset = softwareSignals->phaseOffset;
+	int phase = (softwareSignals->phaseSignal + phaseOffset) & ((1 << 25) - 1);
 
 	if (pllCounter >= gcd) {
 		switch (softwareSignals->syncMode) {
@@ -55,11 +56,11 @@ void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, s
 			pllCounter = 0;
 			break;
 		case true:
-			pllNudge = (((phase >> 24)*WAVETABLE_LENGTH - phase) << 8);
+			pllNudge = (((phase >> 24)*WAVETABLE_LENGTH - phase) << 16);
 			pllCounter = 0;
 			break;
 		case hardsync:
-			softwareSignals->phaseSignal = 0;
+			softwareSignals->phaseSignal = phaseOffset;
 			pllCounter = 0;
 			break;
 		default:
@@ -69,10 +70,10 @@ void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, s
 
 
 
-	uint32_t attackInc = ((((uint64_t)((uint64_t)WAVETABLE_LENGTH << 17) + pllNudge)) / (softwareSignals->periodCount));
+	uint32_t attackInc = ((((uint64_t)((uint64_t)WAVETABLE_LENGTH << 18) + pllNudge)) / (softwareSignals->periodCount));
 	attackInc = fix48_mul(attackInc >> 8, fracMultiplier) + fix16_mul(attackInc >> 8, intMultiplier);
 
-	softwareSignals->attackIncrement = __USAT(3 * (attackInc >> 1), 24);
+	softwareSignals->attackIncrement = __USAT(attackInc, 24);
 }
 
 

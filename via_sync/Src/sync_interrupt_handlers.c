@@ -26,21 +26,21 @@ extern TIM_HandleTypeDef htim17;
 void mainRisingEdgeCallback(viaSignals * signals) {
 
 	// store the length of the last period
-	signals->softwareSignals->periodCount = __HAL_TIM_GET_COUNTER(&htim2);
+	signals->softwareSignals->periodCount = TIM2->CNT;
 
 	// reset the timer value
-	__HAL_TIM_SET_COUNTER(&htim2, 0);
+	TIM2->CNT = 0;
 
 	// generate increments from the timing reading
 	generateFrequency(signals->controls, signals->inputs, signals->softwareSignals);
 
 	signals->softwareSignals->tapTempo = 0;
 
+
+
 }
 
 void mainFallingEdgeCallback(softwareSignaling * softwareSignals) {
-
-
 
 }
 

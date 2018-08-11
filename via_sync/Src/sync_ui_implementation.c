@@ -76,7 +76,9 @@ void handleAux2EnterMenu(void) {
 	uiResetTimerMenu();
 }
 void handleAux3EnterMenu(void) {
-	uiTransition(ui_button5Menu);
+	uiClearLEDs();
+	uiSetLEDs(QUADRATURE_MODE);
+	uiResetTimerMenu();
 }
 void handleAux4EnterMenu(void) {
 	uiClearLEDs();
@@ -140,7 +142,11 @@ void handleAux2Tap(void) {
 }
 
 void handleAux3Tap(void) {
-	uiTransition(ui_button5Menu);
+	QUADRATURE_MODE = incrementModeAndStore(QUADRATURE_MODE, AUX_MODE3_MASK, numAux3Modes);
+	handleAux3ModeChange(QUADRATURE_MODE);
+	uiClearLEDs();
+	uiSetLEDs(QUADRATURE_MODE);
+	uiTransition(&ui_newAuxMode);
 }
 
 void handleAux4Tap(void) {
@@ -292,10 +298,10 @@ void handleAux1ModeChange(int mode) {
 void handleAux2ModeChange(int mode) {
 
 	switch (mode) {
-	case root:
+	case gate:
 		calculateLogicA = calculateLogicAGate;
 		break;
-	case pm:
+	case delta:
 		calculateLogicA = calculateLogicADelta;
 		break;
 	default:
@@ -307,6 +313,22 @@ void handleAux2ModeChange(int mode) {
 
 void handleAux3ModeChange(int mode) {
 
+	switch (mode) {
+	case noOffset:
+		softwareSignals.phaseOffset = 0;
+		break;
+	case quarter:
+		softwareSignals.phaseOffset = 1 << 23;
+		break;
+	case half:
+		softwareSignals.phaseOffset = 1 << 24;
+		break;
+	case threeQuarters:
+		softwareSignals.phaseOffset = (3 << 23);
+		break;
+	default:
+		break;
+	}
 
 }
 
