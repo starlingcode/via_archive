@@ -40,19 +40,8 @@
 #include "simple_wavetable.h"
 #include "via_rev5_hardware_io.h"
 
-#define HALT_SIGNAL_STOP 0
-#define HALT_SIGNAL_RUN 1
-uint32_t haltSignal;
 
-extern uint32_t phase;
-
-extern DAC_HandleTypeDef hdac2;
-
-extern TIM_HandleTypeDef htim18;
-
-#define draw 0
-#define pause 1
-int scanLineStatus;
+uint32_t transferComplete = 1;
 
 /* USER CODE END 0 */
 
@@ -240,8 +229,14 @@ void DMA1_Channel1_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
 
+	if ((DMA1->ISR & (DMA_FLAG_HT1)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1;
+	} else if ((DMA1->ISR & (DMA_FLAG_TC1)) != 0) {
+		DMA1->IFCR = DMA_FLAG_TC1;
+		handleConversionSlow(&controls);
+	}
+
   /* USER CODE END DMA1_Channel1_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_adc1);
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
 
   /* USER CODE END DMA1_Channel1_IRQn 1 */
@@ -286,20 +281,12 @@ void DMA1_Channel5_IRQHandler(void)
 
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;
-
-		//fillBuffer1();
+		renderLine1(&controls);
 	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
-//		TIM18->CR1 &= ~TIM_CR1_CEN;
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;
 		DMA1_Channel5->CCR &= ~DMA_CCR_EN;
-		DMA1_Channel5->CNDTR = 8;
-//		if (haltSignal) {
-//			HAL_DMA_Abort_IT(&hdma_dac2_ch1);
-//			TIM18->CR1 &= ~TIM_CR1_CEN;
-//			TIM18->CNT = 0;
-//			DMA1_Channel5->CNDTR = 64;
-//			//TIM18->ARR = (adcReadings[2] >> 6) + 20;
-//		}
+		DMA1_Channel5->CNDTR = 64;
+		transferComplete = 1;
 	}
 
   /* USER CODE END DMA1_Channel5_IRQn 0 */
@@ -344,8 +331,6 @@ void EXTI15_10_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
 
-	scanLineStatus = draw;
-
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
@@ -360,10 +345,18 @@ void TIM12_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM12_IRQn 0 */
 
-	EXPAND_LOGIC_HIGH;
+	TIM18->CNT = 0;
+	DMA1_Channel5->CCR |= DMA_CCR_EN;
+
+	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
+
+	if (transferComplete) {
+		renderLine2(&controls);
+		transferComplete = 0;
+	}
 
   /* USER CODE END TIM12_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim12);
+//  HAL_TIM_IRQHandler(&htim12);
   /* USER CODE BEGIN TIM12_IRQn 1 */
 
   /* USER CODE END TIM12_IRQn 1 */
@@ -406,8 +399,14 @@ void DMA2_Channel3_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Channel3_IRQn 0 */
 
+	if ((DMA2->ISR & (DMA_FLAG_HT1 << 8)) != 0) {
+		DMA2->IFCR = DMA_FLAG_HT1 << 8;
+	} else if ((DMA2->ISR & (DMA_FLAG_TC1 << 8)) != 0) {
+		DMA2->IFCR = DMA_FLAG_TC1 << 8;
+	}
+
   /* USER CODE END DMA2_Channel3_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_sdadc1);
+//  HAL_DMA_IRQHandler(&hdma_sdadc1);
   /* USER CODE BEGIN DMA2_Channel3_IRQn 1 */
 
   /* USER CODE END DMA2_Channel3_IRQn 1 */
@@ -420,8 +419,14 @@ void DMA2_Channel4_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Channel4_IRQn 0 */
 
+	if ((DMA2->ISR & (DMA_FLAG_HT1 << 12)) != 0) {
+		DMA2->IFCR = DMA_FLAG_HT1 << 12;
+	} else if ((DMA2->ISR & (DMA_FLAG_TC1 << 12)) != 0) {
+		DMA2->IFCR = DMA_FLAG_TC1 << 12;
+	}
+
   /* USER CODE END DMA2_Channel4_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_sdadc2);
+ // HAL_DMA_IRQHandler(&hdma_sdadc2);
   /* USER CODE BEGIN DMA2_Channel4_IRQn 1 */
 
   /* USER CODE END DMA2_Channel4_IRQn 1 */

@@ -139,6 +139,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   oscillatorInit();
+  renderLine1(&controls);
+  renderLine2(&controls);
 
 //  if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1) != HAL_OK)
 //  	{
@@ -166,20 +168,18 @@ int main(void)
 	HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
 
 
-	//HAL_SDADC_Start_DMA(&hsdadc1, cv2, 1);
-	//HAL_SDADC_Start_DMA(&hsdadc2, cv3, 1);
+	HAL_SDADC_Start_DMA(&hsdadc1, cv2, 1);
+	HAL_SDADC_Start_DMA(&hsdadc2, cv3, 1);
 
-  //HAL_ADC_Start_DMA(&hadc1, adcReadings, 4);
+  HAL_ADC_Start_DMA(&hadc1, adcReadings, 64);
 
-  TIM18->ARR = 30;
-
-  renderLine();
+  TIM18->ARR = 45;
 
   HAL_TIM_Base_Start_IT(&htim18);
-  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer, 8, DAC_ALIGN_12B_R);
+  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer, 64, DAC_ALIGN_12B_R);
   //HAL_DAC_Start(&hdac2, DAC_CHANNEL_1);
 
-  HAL_TIM_Base_Start_IT(&htim13);
+  //HAL_TIM_Base_Start_IT(&htim13);
 
 
 
@@ -261,7 +261,7 @@ void SystemClock_Config(void)
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
   /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(SysTick_IRQn, 1, 0);
 }
 
 /* USER CODE BEGIN 4 */
