@@ -13,7 +13,7 @@ extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim16;
 extern TIM_HandleTypeDef htim17;
 
-void handleCoversionSlow(controlRateInputs *);
+void handleConversionSlow(controlRateInputs *);
 
 //////////////////////////
 // dac handling functions
@@ -275,7 +275,7 @@ int readBuffer(buffer* buffer, int Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
 }
 
-void handleCoversionSlow(controlRateInputs * controls) {
+void handleConversionSlow(controlRateInputs * controls) {
 
 	// TODO apply SIMD instructions?
 

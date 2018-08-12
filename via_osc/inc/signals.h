@@ -14,77 +14,23 @@
 // declare a struct to hold the audio rate outputs
 
 typedef struct {
-	q31_t *samples;
+	q31_t *dac1Samples;
+	q31_t *dac2Samples;
 	q31_t *dac3Samples;
-	uint32_t *shAHandler;
-	uint32_t *shBHandler;
-	uint32_t *logicAHandler;
-	uint32_t *auxLogicHandler;
+	uint32_t shAHandler;
+	uint32_t shBHandler;
+	uint32_t logicAHandler;
+	uint32_t auxLogicHandler;
 } audioRateOutputs;
 
 // declare a struct to hold the audio rate inputs
 
 typedef struct {
-	q31_t *cv2Input;
-	q31_t *cv3Input;
-	q31_t * hardSyncInput;
-	q31_t * reverseInput;
+	q31_t cv2Input;
+	q31_t cv3Input;
+	q31_t mainLogicInput;
+	q31_t auxLogicInnput;
 } audioRateInputs;
-
-// declare a struct to hold the signals passed between functions
-
-typedef struct {
-	q31_t syncSignal;
-	q31_t reverseSignal;
-	q31_t morphShift;
-	q31_t syncMode;
-	Family * currentFamily;
-} softwareSignaling;
-
-// allocate a pair of buffers for each member of the above structs
-
-// outputs
-
-q31_t sampleBuffer1[BUFFER_SIZE];
-q31_t sampleBuffer2[BUFFER_SIZE];
-
-q31_t dac3SampleBuffer1[BUFFER_SIZE];
-q31_t dac3SampleBuffer2[BUFFER_SIZE];
-
-uint32_t shABuffer1[BUFFER_SIZE];
-uint32_t shABuffer2[BUFFER_SIZE];
-
-uint32_t shBBuffer1[BUFFER_SIZE];
-uint32_t shBBuffer2[BUFFER_SIZE];
-
-uint32_t logicABuffer1[BUFFER_SIZE];
-uint32_t logicABuffer2[BUFFER_SIZE];
-
-uint32_t auxLogicBuffer1[BUFFER_SIZE];
-uint32_t auxLogicBuffer2[BUFFER_SIZE];
-
-// inputs
-
-q31_t t2CVBuffer1[BUFFER_SIZE];
-q31_t t2CVBuffer2[BUFFER_SIZE];
-
-q31_t morphCVBuffer1[BUFFER_SIZE];
-q31_t morphCVBuffer2[BUFFER_SIZE];
-
-uint32_t syncBuffer1[BUFFER_SIZE];
-uint32_t syncBuffer2[BUFFER_SIZE];
-
-uint32_t reverseBuffer1[BUFFER_SIZE];
-uint32_t reverseBuffer2[BUFFER_SIZE];
-
-// create a pair each of input and output structs
-// a pair of pointers can be found in the signals typedef
-
-audioRateOutputs output1;
-audioRateOutputs output2;
-
-audioRateInputs input1;
-audioRateInputs input2;
 
 typedef struct {
 	q31_t knob1Value;
@@ -93,21 +39,31 @@ typedef struct {
 	q31_t cv1Value;
 } controlRateInputs;
 
-controlRateInputs controlRateInput;
+// declare a struct to hold the signals passed between functions
 
 typedef struct {
-	audioRateOutputs * outputRead;
-	audioRateOutputs * outputWrite;
-	audioRateInputs * inputRead;
-	audioRateInputs * inputWrite;
+	q31_t morphShift;
+	q31_t syncMode;
+	Family * currentFamily;
+} softwareSignaling;
+
+// allocate a DMA buffer for each oversampled output
+
+q31_t dac1SampleBuffer[BUFFER_SIZE*2];
+q31_t dac2SampleBuffer[BUFFER_SIZE*2];
+q31_t dac3SampleBuffer[BUFFER_SIZE*2];
+
+audioRateOutputs audioRateOutput;
+audioRateInputs audioRateInput;
+controlRateInputs controlRateInput;
+softwareSignaling softwareSignals;
+
+typedef struct {
+	audioRateOutputs * outputs;
+	audioRateInputs * inputs;
 	controlRateInputs * controls;
 	softwareSignaling * softwareSignals;
 } viaSignals;
-
-controlRateInputs controlRateInput;
-audioRateInputs audioRateInput;
-audioRateOutputs audioRateOutput;
-softwareSignaling softwareSignals;
 
 viaSignals signals;
 

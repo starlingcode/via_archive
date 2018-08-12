@@ -7,7 +7,7 @@
 #include "../inc/meta_modes.h"
 #include "../inc/meta_tables.h"
 
-extern int handleCoversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs * controls, audioRateInputs * inputBuffer, uint32_t sequencingSignal);
+extern int handleConversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs * controls, audioRateInputs * inputBuffer, uint32_t sequencingSignal);
 
 void fillBuffer(viaSignals * signals) {
 
@@ -44,7 +44,7 @@ void fillBuffer(viaSignals * signals) {
 
 	(*calculateDac3)(phaseArray, outputWrite);
 
-	slowConversionCounter = handleCoversionSlow(outputWrite->samples[BUFFER_SIZE - 1], lastPhase, controls, inputRead, slowConversionCounter);
+	slowConversionCounter = handleConversionSlow(outputWrite->samples[BUFFER_SIZE - 1], lastPhase, controls, inputRead, slowConversionCounter);
 
 	main_state = main_idle;
 

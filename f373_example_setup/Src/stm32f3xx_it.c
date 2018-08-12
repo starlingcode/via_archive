@@ -237,6 +237,7 @@ void DMA1_Channel1_IRQHandler(void)
 	}
 
   /* USER CODE END DMA1_Channel1_IRQn 0 */
+//  HAL_DMA_IRQHandler(&hdma_adc1);
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
 
   /* USER CODE END DMA1_Channel1_IRQn 1 */
@@ -249,8 +250,14 @@ void DMA1_Channel3_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel3_IRQn 0 */
 
+	if ((DMA1->ISR & (DMA_FLAG_HT1 << 8)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1 << 8;
+	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 8)) != 0)  {
+		DMA1->IFCR = DMA_FLAG_TC1 << 8;
+	}
+
   /* USER CODE END DMA1_Channel3_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_dac1_ch1);
+//  HAL_DMA_IRQHandler(&hdma_dac1_ch1);
   /* USER CODE BEGIN DMA1_Channel3_IRQn 1 */
 
   /* USER CODE END DMA1_Channel3_IRQn 1 */
@@ -263,8 +270,14 @@ void DMA1_Channel4_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel4_IRQn 0 */
 
+	if ((DMA1->ISR & (DMA_FLAG_HT1 << 12)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1 << 12;
+	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 12)) != 0)  {
+		DMA1->IFCR = DMA_FLAG_TC1 << 12;
+	}
+
   /* USER CODE END DMA1_Channel4_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_dac1_ch2);
+//  HAL_DMA_IRQHandler(&hdma_dac1_ch2);
   /* USER CODE BEGIN DMA1_Channel4_IRQn 1 */
 
   /* USER CODE END DMA1_Channel4_IRQn 1 */
@@ -284,13 +297,15 @@ void DMA1_Channel5_IRQHandler(void)
 		renderLine1(&controls);
 	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;
-		DMA1_Channel5->CCR &= ~DMA_CCR_EN;
-		DMA1_Channel5->CNDTR = 64;
-		transferComplete = 1;
+//		DMA1_Channel5->CCR &= ~DMA_CCR_EN;
+//		DMA1_Channel5->CNDTR = 64;
+//		transferComplete = 1;
+		renderLine2(&controls);
+
 	}
 
   /* USER CODE END DMA1_Channel5_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_dac2_ch1);
+ // HAL_DMA_IRQHandler(&hdma_dac2_ch1);
   /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
 
   /* USER CODE END DMA1_Channel5_IRQn 1 */
@@ -356,7 +371,7 @@ void TIM12_IRQHandler(void)
 	}
 
   /* USER CODE END TIM12_IRQn 0 */
-//  HAL_TIM_IRQHandler(&htim12);
+  HAL_TIM_IRQHandler(&htim12);
   /* USER CODE BEGIN TIM12_IRQn 1 */
 
   /* USER CODE END TIM12_IRQn 1 */
@@ -426,7 +441,7 @@ void DMA2_Channel4_IRQHandler(void)
 	}
 
   /* USER CODE END DMA2_Channel4_IRQn 0 */
- // HAL_DMA_IRQHandler(&hdma_sdadc2);
+//  HAL_DMA_IRQHandler(&hdma_sdadc2);
   /* USER CODE BEGIN DMA2_Channel4_IRQn 1 */
 
   /* USER CODE END DMA2_Channel4_IRQn 1 */

@@ -181,7 +181,7 @@ void SysTick_Handler(void)
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
-  HAL_SYSTICK_IRQHandler();
+//  HAL_SYSTICK_IRQHandler();
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
@@ -203,10 +203,14 @@ void DMA1_Channel1_IRQHandler(void)
 
 	//minimal interrupt handler for circular buffer
 
-	/* Clear the half transfer complete flag */
-	(&hdma_adc1)->DmaBaseAddress->IFCR = DMA_FLAG_HT1 << (&hdma_adc1)->ChannelIndex;
-  	/* Clear the transfer complete flag */
-	(&hdma_adc1)->DmaBaseAddress->IFCR = DMA_FLAG_TC1 << (&hdma_adc1)->ChannelIndex;
+	if ((DMA1->ISR & (DMA_FLAG_HT1)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1;
+		handleConversionSlow(&signals, 0);
+	} else {
+		DMA1->IFCR = DMA_FLAG_TC1;
+		handleConversionSlow(&signals, 1);
+	}
+
 
 
 

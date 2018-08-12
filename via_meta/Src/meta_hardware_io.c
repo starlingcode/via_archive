@@ -6,7 +6,7 @@
 #include "../inc/meta_ui_implementation.h"
 #include "signals.h"
 
-int handleCoversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs * controls, audioRateInputs * inputBuffer, uint32_t sequencingSignal);
+int handleConversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs * controls, audioRateInputs * inputBuffer, uint32_t sequencingSignal);
 
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
@@ -34,7 +34,7 @@ int readBuffer(buffer* buffer, int Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
 }
 
-int handleCoversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs * controls, audioRateInputs * inputBuffer, uint32_t sequencingSignal) {
+int handleConversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs * controls, audioRateInputs * inputBuffer, uint32_t sequencingSignal) {
 
 	// TODO apply SIMD instructions?
 

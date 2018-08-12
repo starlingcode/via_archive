@@ -2,7 +2,7 @@
 #include "sync_next_sample.h"
 #include "via_rev5_hardware_io.h"
 
-extern void handleCoversionSlow(viaStateVariableSet *, controlRateInputs *, audioRateInputs *, audioRateOutputs * outputs);
+extern void handleConversionSlow(viaStateVariableSet *, controlRateInputs *, audioRateInputs *, audioRateOutputs * outputs);
 
 void nextSample(controlRateInputs * controls, audioRateInputs * inputs, audioRateOutputs * outputs, softwareSignaling * softwareSignals) {
 
@@ -36,7 +36,7 @@ void nextSample(controlRateInputs * controls, audioRateInputs * inputs, audioRat
 
 	viaStateVariables.slowConversionCounter += 1;
 
-	handleCoversionSlow(&viaStateVariables, controls, inputs, outputs);
+	handleConversionSlow(&viaStateVariables, controls, inputs, outputs);
 
 
 

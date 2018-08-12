@@ -33,7 +33,7 @@ int readBuffer(buffer* buffer, int Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
 }
 
-int handleCoversionSlow(controlRateInputs * inputs, uint32_t sequencingSignal) {
+int handleConversionSlow(controlRateInputs * inputs, uint32_t sequencingSignal) {
 
 	// TODO apply SIMD instructions?
 

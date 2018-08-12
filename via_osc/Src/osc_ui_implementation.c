@@ -8,6 +8,18 @@
 
 void initializeUICallbacks(void) {
 
+	button1EnterMenuCallback = handleButton1EnterMenu;
+	button2EnterMenuCallback = handleButton2EnterMenu;
+	button3EnterMenuCallback = handleButton3EnterMenu;
+	button4EnterMenuCallback = handleButton4EnterMenu;
+	button5EnterMenuCallback = handleButton5EnterMenu;
+	button6EnterMenuCallback = handleButton6EnterMenu;
+
+	aux1EnterMenuCallback = handleAux1EnterMenu;
+	aux2EnterMenuCallback = handleAux2EnterMenu;
+	aux3EnterMenuCallback = handleAux3EnterMenu;
+	aux4EnterMenuCallback = handleAux4EnterMenu;
+
 	button1TapCallback = handleButton1Tap;
 	button1HoldCallback = handleButton1Hold;
 	button2TapCallback = handleButton2Tap;
@@ -30,6 +42,44 @@ void initializeUICallbacks(void) {
 	aux4TapCallback = handleButton4Tap;
 	aux4HoldCallback = handleButton4Hold;
 }
+
+void handleButton1EnterMenu(void) {
+	uiSetLEDs(SH_MODE);
+	uiResetTimerMenu();
+}
+void handleButton2EnterMenu(void) {
+	uiSetLEDs(TABLE);
+	uiResetTimerMenu();
+}
+void handleButton3EnterMenu(void) {
+	uiSetLEDs(FM_PM_MODE);
+	uiResetTimerMenu();
+}
+void handleButton4EnterMenu(void) {
+	uiSetLEDs(SYNC_MODE);
+	uiResetTimerMenu();
+}
+void handleButton5EnterMenu(void) {
+	uiSetLEDs(TABLE);
+	uiResetTimerMenu();
+}
+void handleButton6EnterMenu(void) {
+	uiSetLEDs(SYNC_MODE);
+	uiResetTimerMenu();
+}
+void handleAux1EnterMenu(void) {
+	uiTransition(ui_button5Menu);
+}
+void handleAux2EnterMenu(void) {
+	uiTransition(ui_button5Menu);
+}
+void handleAux3EnterMenu(void) {
+	uiTransition(ui_button5Menu);
+}
+void handleAux4EnterMenu(void) {
+	uiTransition(ui_button5Menu);
+}
+
 
 void handleButton1Tap(void) {
 	SH_MODE = incrementModeAndStore(SH_MODE, BUTTON1_MASK, numButton1Modes);
@@ -74,8 +124,20 @@ void handleButton6Tap(void) {
 	uiTransition(&ui_newMode);
 }
 
-void handleAux4Tap(void) {
+void handleAux1Tap(void) {
+	uiTransition(ui_button5Menu);
+}
 
+void handleAux2Tap(void) {
+	uiTransition(ui_button5Menu);
+}
+
+void handleAux3Tap(void) {
+	uiTransition(ui_button5Menu);
+}
+
+void handleAux4Tap(void) {
+	uiTransition(ui_button5Menu);
 }
 
 void handleButton1Hold(void) {
@@ -96,9 +158,19 @@ void handleButton5Hold(void) {
 void handleButton6Hold(void) {
 	uiTransition(&ui_default);
 }
-void handleAux4Hold(void) {
-
+void handleAux1Hold(void) {
+	uiTransition(&ui_button5Menu);
 }
+void handleAux2Hold(void) {
+	uiTransition(&ui_newAuxMode);
+}
+void handleAux3Hold(void) {
+	uiTransition(&ui_newAuxMode);
+}
+void handleAux4Hold(void) {
+	uiTransition(&ui_newAuxMode);
+}
+
 
 void handleButton1ModeChange(int mode) {
 

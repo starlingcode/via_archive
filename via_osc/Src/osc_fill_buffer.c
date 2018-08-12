@@ -6,37 +6,31 @@
 #include "../inc/osc_modes.h"
 #include "../inc/osc_tables.h"
 
-extern int handleCoversionSlow(controlRateInputs * controls, audioRateInputs * inputs, uint32_t sequencingSignal);
+extern int handleConversionSlow(controlRateInputs * controls, audioRateInputs * inputs, uint32_t sequencingSignal);
 
 void fillBuffer(viaSignals * signals) {
 
-	q31_t incrementBuffer[BUFFER_SIZE];
-	q31_t phaseModBuffer[BUFFER_SIZE];
-	q31_t morphBuffer[BUFFER_SIZE];
-	q31_t pwmBuffer[BUFFER_SIZE];
-	int phaseEvents[BUFFER_SIZE];
-	static uint32_t slowConversionCounter;
+	q31_t increment;
+	q31_t phaseMod;
+	q31_t morph;
+	q31_t pwm;
+	int phaseEvent;
 
 	// eventually,
 	// static struct viaStateInfoHolder viaStateInfo;
 
-	audioRateInputs * inputRead = signals->inputRead;
-	audioRateOutputs * outputWrite = signals->outputWrite;
+	audioRateInputs * inputs = signals->inputs;
+	audioRateOutputs * outputs = signals->outputs;
 	softwareSignaling * softwareSignals = signals->softwareSignals;
 	controlRateInputs * controls = signals->controls;
 
 
-	(*prepareCV)(inputRead, &controlRateInput, incrementBuffer, phaseModBuffer, morphBuffer, pwmBuffer);
+	(*prepareCV)(inputs, &controlRateInput, increment, phaseMod, morph, pwmBuffer);
 
-	incrementOscillator(incrementBuffer, phaseModBuffer, morphBuffer, pwmBuffer, inputRead->hardSyncInput, inputRead->reverseInput, outputWrite->samples, phaseEvents, outputWrite->dac3Samples);
+	incrementOscillator(incrementBuffer, phaseModBuffer, morphBuffer, pwmBuffer, inputs->hardSyncInput, inputs->reverseInput, outputs);
 
-	(*logicAndFilter)(phaseEvents, outputWrite);
+	(*logicAndFilter)(phaseEvents, outputs);
 
-	calculateDac3Samples(outputWrite->dac3Samples, phaseModBuffer, incrementBuffer);
-
-	slowConversionCounter = handleCoversionSlow(controls, inputRead, slowConversionCounter);
-
-	main_state = main_idle;
-
+	slowConversionCounter = handleConversionSlow(controls, inputs, slowConversionCounter);
 }
 

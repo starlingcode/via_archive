@@ -79,7 +79,7 @@ void fillBuffer(viaSignals * signals) {
 
 	slowConversionCounter++;
 
-	slowConversionCounter = handleCoversionSlow(signals->controls, slowConversionCounter);
+	slowConversionCounter = handleConversionSlow(signals->controls, slowConversionCounter);
 
 }
 

@@ -6,7 +6,7 @@
 #include "../inc/osc_ui_implementation.h"
 #include "signals.h"
 
-int handleCoversionSlow(controlRateInputs * controls, audioRateInputs * inputs, uint32_t sequencingSignal);
+int handleConversionSlow(controlRateInputs * controls, audioRateInputs * inputs, uint32_t sequencingSignal);
 
 void updateRGB(controlRateInputs *, audioRateInputs *);
 
@@ -36,7 +36,7 @@ int readBuffer(buffer* buffer, int Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
 }
 
-int handleCoversionSlow(controlRateInputs * controls, audioRateInputs * inputs, uint32_t sequencingSignal) {
+int handleConversionSlow(controlRateInputs * controls, audioRateInputs * inputs, uint32_t sequencingSignal) {
 
 	// TODO apply SIMD instructions?
 

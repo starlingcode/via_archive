@@ -5,7 +5,7 @@
 #include "trigseq_modes.h"
 #include "trigseq_interrupt_handlers.h"
 
-extern void handleCoversionSlow(controlRateInputs *);
+extern void handleConversionSlow(controlRateInputs *);
 
 void mainRisingEdgeCallback(controlRateInputs * controls, audioRateInputs * inputs, softwareSignaling * softwareSignals) {
 
@@ -48,7 +48,7 @@ void ioProcessCallback(audioRateInputs * inputWrite, controlRateInputs * control
 	inputWrite->cv2Input = __USAT(cv2, 12);
 	inputWrite->cv3Input = __USAT(cv3, 12);
 
-	handleCoversionSlow(controls);
+	handleConversionSlow(controls);
 
 }
 void nextSampleCallback(softwareSignaling * softwareSignals, audioRateOutputs * outputRead) {

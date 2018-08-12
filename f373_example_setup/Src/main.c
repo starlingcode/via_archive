@@ -165,22 +165,24 @@ int main(void)
 //  	}
 
 	 //initialize the timer that is used to detect rising and falling edges at the trigger input
-	HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
+//	HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
 
 
 	HAL_SDADC_Start_DMA(&hsdadc1, cv2, 1);
 	HAL_SDADC_Start_DMA(&hsdadc2, cv3, 1);
 
-  HAL_ADC_Start_DMA(&hadc1, adcReadings, 64);
+  HAL_ADC_Start_DMA(&hadc1, adcReadings, 32);
 
-  TIM18->ARR = 45;
+  TIM18->ARR = 89;
 
   HAL_TIM_Base_Start_IT(&htim18);
-  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer, 64, DAC_ALIGN_12B_R);
+  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer1, 32, DAC_ALIGN_12B_R);
+  //HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, dacBuffer2, 32, DAC_ALIGN_12B_R);
+  //HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, dacBuffer3, 32, DAC_ALIGN_12B_R);
+
   //HAL_DAC_Start(&hdac2, DAC_CHANNEL_1);
 
   //HAL_TIM_Base_Start_IT(&htim13);
-
 
 
 
@@ -261,7 +263,7 @@ void SystemClock_Config(void)
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
   /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 1, 0);
+  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
 /* USER CODE BEGIN 4 */

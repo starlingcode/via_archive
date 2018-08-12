@@ -34,7 +34,7 @@ void oscInit(void) {
 	displayXCVMode = displayXCV_FM;
 	displayMorphMode = displayMorph_Morph;
 
-	signals.softwareSignals->reverseSignal = 1;
+	signals.inputs->mainLogicInput = 1;
 
 	// initialize the main state machine to handle the UI first
 
@@ -44,41 +44,13 @@ void oscInit(void) {
 
 void viaSignalInit(void) {
 
-	// initialize double buffers used for DSP
-	output1.samples = sampleBuffer1;
-	output2.samples = sampleBuffer2;
-
-	output1.dac3Samples = dac3SampleBuffer1;
-	output2.dac3Samples = dac3SampleBuffer2;
-
-	output1.shAHandler = shABuffer1;
-	output2.shAHandler = shABuffer2;
-
-	output1.shBHandler = shBBuffer1;
-	output2.shBHandler = shBBuffer2;
-
-	output1.logicAHandler = logicABuffer1;
-	output2.logicAHandler = logicABuffer2;
-
-	output1.auxLogicHandler = auxLogicBuffer1;
-	output2.auxLogicHandler = auxLogicBuffer2;
-
-	input1.cv2Input = t2CVBuffer1;
-	input1.cv3Input = morphCVBuffer1;
-	input1.hardSyncInput = syncBuffer1;
-	input1.reverseInput = reverseBuffer1;
-
-
-	input2.cv2Input = t2CVBuffer2;
-	input2.cv3Input = morphCVBuffer2;
-	input2.hardSyncInput = syncBuffer2;
-	input2.reverseInput = reverseBuffer2;
+	audioRateOutput.dac1Samples = dac1SampleBuffer;
+	audioRateOutput.dac2Samples = dac2SampleBuffer;
+	audioRateOutput.dac3Samples = dac3SampleBuffer;
 
 	signals.controls = &controlRateInput;
-	signals.inputRead = &input1;
-	signals.inputWrite = &input2;
-	signals.outputRead = &output1;
-	signals.outputWrite = &output2;
+	signals.inputs = &audioRateInput;
+	signals.outputs= &audioRateOutput;
 	signals.softwareSignals = &softwareSignals;
 
 }

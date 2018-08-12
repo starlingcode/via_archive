@@ -8,7 +8,7 @@ extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim5;
 
-void handleCoversionSlow(viaStateVariableSet *, controlRateInputs *, audioRateInputs *, audioRateOutputs * outputs);
+void handleConversionSlow(viaStateVariableSet *, controlRateInputs *, audioRateInputs *, audioRateOutputs * outputs);
 
 
 /**
@@ -33,7 +33,7 @@ int readBuffer(buffer* buffer, int Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
 }
 
-void handleCoversionSlow(viaStateVariableSet * stateVariables, controlRateInputs * controls, audioRateInputs * inputs, audioRateOutputs * outputs) {
+void handleConversionSlow(viaStateVariableSet * stateVariables, controlRateInputs * controls, audioRateInputs * inputs, audioRateOutputs * outputs) {
 
 	// TODO apply SIMD instructions?
 
