@@ -23,7 +23,7 @@ void generateFrequency(controlRateInputs * controls, audioRateInputs * inputs, s
 
 	Scale * scale = softwareSignals->scale;
 
-	noteIndex = __USAT(controls->knob1Value + 2048 - controls->cv1Value, 12) >> 5;
+	noteIndex = __USAT(controls->knob1Value - 2048 + controls->cv1Value, 12) >> 5;
 	if (advancePhase == &advancePhaseRoot) {
 		rootIndex = (__USAT(controls->knob2Value + 2048 - inputs->cv2Input, 12)) >> scale->t2Bitshift;
 	} else {

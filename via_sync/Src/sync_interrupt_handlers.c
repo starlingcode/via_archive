@@ -42,6 +42,7 @@ void mainRisingEdgeCallback(viaSignals * signals) {
 
 void mainFallingEdgeCallback(softwareSignaling * softwareSignals) {
 
+	EXPAND_LOGIC_LOW
 }
 
 void auxRisingEdgeCallback(viaSignals * signals) {

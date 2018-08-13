@@ -16,7 +16,6 @@ uint32_t phase;
 
 uint32_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModPWM_2, phaseModPWM_3, phaseModPWM_4, phaseModPWM_5, phaseModPWM_6, phaseModPWM_7, phaseModPWM_8, phaseModPWM_9, phaseModPWM_10, phaseModPWM_11, phaseModPWM_12, phaseModPWM_13, phaseModPWM_14, phaseModPWM_15, phaseModPWM_16, phaseModPWM_17, phaseModPWM_18, phaseModPWM_19, phaseModPWM_20, phaseModPWM_21, phaseModPWM_22, phaseModPWM_23, phaseModPWM_24, phaseModPWM_25, phaseModPWM_26, phaseModPWM_27, phaseModPWM_28, phaseModPWM_29, phaseModPWM_30, phaseModPWM_31, phaseModPWM_32};
 
-
 void oscillatorInit(void) {
 
 	  for (int i = 0; i < 256; i++) {
@@ -37,6 +36,10 @@ void oscillatorInit(void) {
 		  wavetable2[255 + i] = __USAT(sinwavefold_257_Family0[256 - i] >> 3, 12);
 	  }
 
+//	  for (int i = 0; i < 513; i ++) {
+//		  __PKHBT(wavetable1[i], wavetable2[i] - wavetable1[i], 16);
+//	  }
+
 	  wavetable2[512] = sinwavefold_257_Family0[0];
 
 	  SH_A_TRACK;
@@ -50,38 +53,39 @@ void renderLine1(controlRateInputs * controls) {
 	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 
 	uint32_t increment = (((controls->timeBase1) * (cv2[0])));
-	uint32_t morph = __USAT(controls->morphBase + cv3[0], 16);
+	uint32_t morph = controls->morphBase;
 	uint32_t pwm = controls->timeBase2;
+	//uint32_t pwm = 2000;
 	uint32_t pwmIndex = (pwm >> 7);
 	uint32_t * pwmTable1 = phaseModPWMTables[pwmIndex];
 	uint32_t * pwmTable2 = phaseModPWMTables[pwmIndex + 1];
-	uint32_t pwmFrac = (pwm & 0b00000000000000001111111) << 9;
+	uint32_t pwmFrac = (pwm & 0b00000000000000001111111) << 8;
+
+#define pwmPhaseFrac (phase & 0x3FFFFFF) >> 11
+#define phaseFrac (result & 0xFFFF)
 
 	uint32_t leftSample;
-	uint32_t interp1;
-	uint32_t interp2;
 	uint32_t result;
 
-#define pwmPhaseFrac (phase & 0x3FFFFFF) >> 9
-#define phaseFrac (result & 0x7FFFFF) >> 7
 
+	for (int i = 0; i < 8; i++) {
 
-	for (int i = 0; i < 16; i++) {
 		// wraps at full scale uint32_t
 		phase = (phase + increment);
 		leftSample = phase >> 26;
-		interp1 = fix16_lerp(pwmTable1[leftSample], pwmTable2[leftSample], pwmFrac);
-		interp2 = fix16_lerp(pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac);
-		result = fix16_lerp(interp1, interp2, pwmPhaseFrac) << 7;
-		dacBuffer3[i] = result >> 20;
-		result = phase;
-		leftSample = result >> 23;
-		interp1 = fast_16_16_lerp(wavetable1[leftSample], wavetable2[leftSample], morph);
-		interp2 = fast_16_16_lerp(wavetable1[leftSample + 1], wavetable2[leftSample + 1], morph);
-		result = fast_16_16_lerp(interp1, interp2, phaseFrac);
+		result = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
+					pwmTable1[leftSample + 1], pwmTable2[leftSample + 1],
+						pwmFrac, pwmPhaseFrac);
+		dacBuffer3[i] = result >> 13;
+		leftSample = result >> 16;
+		result = fast_15_16_bilerp(wavetable1[leftSample], wavetable2[leftSample],
+					wavetable1[leftSample + 1], wavetable2[leftSample + 1],
+						morph, phaseFrac);
 		dacBuffer1[i] = 4095 - result;
 		dacBuffer2[i] = result;
 	}
+
+
 	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
 
 
@@ -89,37 +93,38 @@ void renderLine1(controlRateInputs * controls) {
 
 void renderLine2(controlRateInputs * controls) {
 
+	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+
 	uint32_t increment = (((controls->timeBase1) * (cv2[0])));
-	uint32_t morph = __USAT(controls->morphBase + cv3[0], 16);
+	int morph = controls->morphBase;
 	uint32_t pwm = controls->timeBase2;
+	//uint32_t pwm = 2000;
 	uint32_t pwmIndex = (pwm >> 7);
 	uint32_t * pwmTable1 = phaseModPWMTables[pwmIndex];
 	uint32_t * pwmTable2 = phaseModPWMTables[pwmIndex + 1];
-	uint32_t pwmFrac = (pwm & 0b00000000000000001111111) << 9;
+	uint32_t pwmFrac = (pwm & 0b00000000000000001111111) << 8;
 
-	uint32_t leftSample;
-	uint32_t interp1;
-	uint32_t interp2;
-	uint32_t result;
 
-#define pwmPhaseFrac (phase & 0x3FFFFFF) >> 9
-#define phaseFrac (result & 0x7FFFFF) >> 7
 
-	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+#define pwmPhaseFrac (phase & 0x3FFFFFF) >> 11
+#define phaseFrac (result & 0xFFFF)
 
-	for (int i = 16; i < 32; i++) {
+	for (int i = 8; i < 16; i++) {
+
+		uint32_t leftSample;
+		uint32_t result;
+
 		// wraps at full scale uint32_t
 		phase = (phase + increment);
 		leftSample = phase >> 26;
-		interp1 = fix16_lerp(pwmTable1[leftSample], pwmTable2[leftSample], pwmFrac);
-		interp2 = fix16_lerp(pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac);
-		result = fix16_lerp(interp1, interp2, pwmPhaseFrac) << 7;
-		dacBuffer3[i] = result >> 20;
-		result = phase;
-		leftSample = result >> 23;
-		interp1 = fast_16_16_lerp(wavetable1[leftSample], wavetable2[leftSample], morph);
-		interp2 = fast_16_16_lerp(wavetable1[leftSample + 1], wavetable2[leftSample + 1], morph);
-		result = fast_16_16_lerp(interp1, interp2, phaseFrac);
+		result = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
+					pwmTable1[leftSample + 1], pwmTable2[leftSample + 1],
+						pwmFrac, pwmPhaseFrac);
+		dacBuffer3[i] = result >> 13;
+		leftSample = result >> 16;
+		result = fast_15_16_bilerp(wavetable1[leftSample], wavetable2[leftSample],
+					wavetable1[leftSample + 1], wavetable2[leftSample + 1],
+						morph, phaseFrac);
 		dacBuffer1[i] = 4095 - result;
 		dacBuffer2[i] = result;
 	}

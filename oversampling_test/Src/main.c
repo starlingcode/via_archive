@@ -60,8 +60,6 @@
 
 /* USER CODE BEGIN Includes */
 
-
-
 #include "simple_wavetable.h"
 
 /* USER CODE END Includes */
@@ -173,12 +171,12 @@ int main(void)
 
   HAL_ADC_Start_DMA(&hadc1, adcReadings, 32);
 
-  TIM6->ARR = 89;
+  TIM6->ARR = 179;
 
   HAL_TIM_Base_Start_IT(&htim6);
-  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, dacBuffer1, 32, DAC_ALIGN_12B_R);
-  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, dacBuffer2, 32, DAC_ALIGN_12B_R);
-  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer3, 32, DAC_ALIGN_12B_R);
+  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, dacBuffer1, 16, DAC_ALIGN_12B_R);
+  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, dacBuffer2, 16, DAC_ALIGN_12B_R);
+  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer3, 16, DAC_ALIGN_12B_R);
 
   //HAL_DAC_Start(&hdac2, DAC_CHANNEL_1);
 

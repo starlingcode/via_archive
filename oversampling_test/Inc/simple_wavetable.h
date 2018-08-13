@@ -8,16 +8,19 @@
 #ifndef WAVETABLE_H
 #define WAVETABLE_H
 
+
 #include "stm32f3xx.h"
 
-uint32_t wavetable1[513];
-uint32_t wavetable2[513];
 int16_t cv2[1];
 int16_t cv3[1];
 uint32_t adcReadings[64];
 uint32_t dacBuffer1[32];
 uint32_t dacBuffer2[32];
 uint32_t dacBuffer3[32];
+
+uint32_t wavetable1[513];
+uint32_t wavetable2[513];
+
 
 // macros for DMA array (change to array name?)
 
@@ -69,8 +72,58 @@ static inline int fix16_mul(int in0, int in1) {
 
 }
 
-static inline int fix16_lerp(int in0, int in1, int frac) {
-	return in0 + fix16_mul(in1 - in0, frac);
+static inline int fix15_lerp(int in0, int in1, int frac) {
+
+
+	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (in0), [input_2] "r" (32767 - frac)
+	  );
+
+	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (in1), [input_2] "r" (frac), [input_3] "r" (in0)
+	  );
+
+
+	return in0 << 1;
+}
+
+static inline int fix15_bilerp(int in0, int in1, int in2, int in3, int frac0, int frac1) {
+
+	int invFrac = 32767 - frac0;
+
+	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (in0), [input_2] "r" (invFrac)
+	  );
+
+	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (in1), [input_2] "r" (frac0), [input_3] "r" (in0)
+	  );
+
+	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
+	    : [result_1] "=r" (in2)
+	    : [input_1] "r" (in2), [input_2] "r" (invFrac)
+	  );
+
+	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in2)
+	    : [input_1] "r" (in3), [input_2] "r" (frac0), [input_3] "r" (in2)
+	  );
+
+	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (in0 << 1), [input_2] "r" (32767 - frac1)
+	  );
+
+	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (in2 << 1), [input_2] "r" (frac1), [input_3] "r" (in0)
+	  );
+
+	return in0 << 1;
 }
 
 static inline int fix24_lerp(int in0, int in1, int frac) {
@@ -80,12 +133,74 @@ static inline int fix24_lerp(int in0, int in1, int frac) {
 // this is a decent improvement over the above for the case of 16 bit interpolation points
 // no need to cast a 16bit by 16bit multiplication to 64 bit
 
-static inline int fast_16_16_mul(int in0, int in1) {
-	return (in0 * in1) >> 16;
+//static inline int fast_16_16_lerp(int in0, int in1, int frac) {
+//	return in0 + fast_16_16_mul(in1 - in0, frac);
+//}
+
+static inline int fast_15_16_lerp(int in0, int in1, int frac) {
+
+	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (frac), [input_2] "r" (in1 - in0), [input_3] "r" (in0)
+	  );
+
+	return in0;
 }
 
-static inline int fast_16_16_lerp(int in0, int in1, int frac) {
-	return in0 + fast_16_16_mul(in1 - in0, frac);
+static inline int fast_15_16_bilerp(int in0, int in1, int in2, int in3, int frac0, int frac1) {
+
+	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (frac0), [input_2] "r" (in1 - in0), [input_3] "r" (in0)
+	  );
+
+	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in2)
+	    : [input_1] "r" (frac0), [input_2] "r" (in3 - in2), [input_3] "r" (in2)
+	  );
+
+	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (frac1), [input_2] "r" (in2 - in0), [input_3] "r" (in0)
+	  );
+
+	return in0;
 }
+
+static inline int fast_15_16_bilerp_prediff(int in0, int in1, int frac0, int frac1) {
+
+	__asm ("SMLAWT %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (frac0), [input_2] "r" (in0), [input_3] "r" (in0 & 0xFFFF)
+	  );
+
+	__asm ("SMLAWT %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in1)
+	    : [input_1] "r" (frac0), [input_2] "r" (in1), [input_3] "r" (in1 & 0xFFFF)
+	  );
+
+	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (frac1), [input_2] "r" (in1 - in0), [input_3] "r" (in0)
+	  );
+
+	return in0;
+}
+
+//static inline int fast_16_16_lerp(int in0, int in1, int frac) {
+//
+//		int lsb;
+//
+//	  __asm ("ML %[result_1], %[input_1], %[input_2]"
+//	    : [result_1] "=r" (lsb)
+//	    : [input_1] "r" (in1 - in0), [input_2] "r" (frac)
+//	  );
+//
+//	  // reconstruct the result with a left shift by 16
+//	  // pack the bottom halfword of msb into the top halfword of the result
+//	  // top halfword of lsb goes into the bottom halfword of the result
+//
+//	  return in0 + (lsb >> 16);
+//}
 
 #endif
