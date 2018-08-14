@@ -48,10 +48,14 @@ void ioProcessCallback(viaSignals * signals) {
 	setLogicOutputsNoLEDs(outputs->logicAHandler, outputs->auxLogicHandler, outputs->shAHandler, outputs->shBHandler);
 
 }
-void nextSampleCallback(viaSignals * signals) {
+void halfTransferCallback(viaSignals * signals) {
 
+	renderLine1(signals);
 
+}
 
-	// handled with fillBuffer
+void fullTransferCallback(viaSignals * signals) {
+
+	renderLine2(signals);
 
 }

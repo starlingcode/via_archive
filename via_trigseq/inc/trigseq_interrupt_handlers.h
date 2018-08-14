@@ -20,7 +20,7 @@ void buttonPressedCallback(softwareSignaling *);
 void buttonPressedCallback(softwareSignaling *);
 
 void ioProcessCallback(audioRateInputs *, controlRateInputs *, audioRateOutputs *);
-void nextSampleCallback(softwareSignaling *, audioRateOutputs *);
+void generateSample(softwareSignaling *, audioRateOutputs *);
 
 // helper functions
 

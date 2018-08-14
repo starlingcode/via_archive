@@ -18,7 +18,7 @@ void buttonPressedCallback(viaSignals *);
 void buttonPressedCallback(viaSignals *);
 
 void ioProcessCallback(viaSignals *);
-void nextSampleCallback(viaSignals *);
+void generateSample(viaSignals *);
 
 
 #endif

@@ -103,7 +103,7 @@ void ioProcessCallback(viaSignals * signals) {
 	}
 
 }
-void nextSampleCallback(viaSignals * signals) {
+void generateSample(viaSignals * signals) {
 
 	// handled with fillBuffer
 

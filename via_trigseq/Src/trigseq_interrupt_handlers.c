@@ -51,7 +51,7 @@ void ioProcessCallback(audioRateInputs * inputWrite, controlRateInputs * control
 	handleConversionSlow(controls);
 
 }
-void nextSampleCallback(softwareSignaling * softwareSignals, audioRateOutputs * outputRead) {
+void generateSample(softwareSignaling * softwareSignals, audioRateOutputs * outputRead) {
 
 	(*manageADac)(softwareSignals, outputRead);
 	(*manageBDac)(softwareSignals, outputRead);

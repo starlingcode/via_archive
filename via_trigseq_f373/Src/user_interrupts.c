@@ -115,7 +115,7 @@ void TIM6_DAC1_IRQHandler(void)
 {
 
 	ioProcessCallback(&audioRateInput, &controlRateInput, &audioRateOutput);
-	nextSampleCallback(&softwareSignals, &audioRateOutput);
+	generateSample(&softwareSignals, &audioRateOutput);
 
 
 	// clear timer update flag

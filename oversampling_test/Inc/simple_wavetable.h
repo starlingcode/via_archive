@@ -11,12 +11,14 @@
 
 #include "stm32f3xx.h"
 
+#define BUFFER_SIZE 16
+
 int16_t cv2[1];
 int16_t cv3[1];
 uint32_t adcReadings[64];
-uint32_t dacBuffer1[32];
-uint32_t dacBuffer2[32];
-uint32_t dacBuffer3[32];
+uint32_t dacBuffer1[64];
+uint32_t dacBuffer2[64];
+uint32_t dacBuffer3[64];
 
 uint32_t wavetable1[513];
 uint32_t wavetable2[513];
@@ -33,6 +35,7 @@ typedef struct {
 	uint32_t timeBase1;
 	uint32_t timeBase2;
 	uint32_t morphBase;
+	uint32_t writePosition;
 } controlRateInputs;
 
 void handleConversionSlow(controlRateInputs * controls);
@@ -40,8 +43,9 @@ void handleConversionSlow(controlRateInputs * controls);
 controlRateInputs controls;
 
 void oscillatorInit(void);
-void renderLine1(controlRateInputs * controls);
-void renderLine2(controlRateInputs * controls);
+void renderBuffer(controlRateInputs * controls, uint32_t);
+void renderBuffer0(controlRateInputs * controls);
+void renderBuffer1(controlRateInputs * controls);
 
 // Circular buffer
 
@@ -72,22 +76,26 @@ static inline int fix16_mul(int in0, int in1) {
 
 }
 
-static inline int fix15_lerp(int in0, int in1, int frac) {
+static inline int fast_fix15_lerp(int in0, int in1, int frac) {
 
-
-	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
-	    : [result_1] "=r" (in0)
-	    : [input_1] "r" (in0), [input_2] "r" (32767 - frac)
-	  );
 
 	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
 	    : [result_1] "=r" (in0)
-	    : [input_1] "r" (in1), [input_2] "r" (frac), [input_3] "r" (in0)
+	    : [input_1] "r" (in1 - in0), [input_2] "r" (frac), [input_3] "r" (in0 >> 1)
 	  );
 
 
 	return in0 << 1;
 }
+
+// lower quality but faster?
+//static inline int fix15_bilerp(int in0, int in1, int in2, int in3, int frac0, int frac1) {
+//
+//	in0 = fast_fix15_lerp(in0, in1, frac0);
+//	in2 = fast_fix15_lerp(in2, in3, frac0);
+//
+//	return fast_fix15_lerp(in0, in2, frac1);
+//}
 
 static inline int fix15_bilerp(int in0, int in1, int in2, int in3, int frac0, int frac1) {
 

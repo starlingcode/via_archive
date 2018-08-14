@@ -105,7 +105,7 @@ void EXTI1_IRQHandler(void)
 void TIM6_DAC1_IRQHandler(void)
 {
 
-	nextSampleCallback(&signals);
+	generateSample(&signals);
 
 
 	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);

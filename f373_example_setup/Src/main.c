@@ -173,7 +173,7 @@ int main(void)
 
   HAL_ADC_Start_DMA(&hadc1, adcReadings, 32);
 
-  TIM18->ARR = 89;
+  TIM18->ARR = 34;
 
   HAL_TIM_Base_Start_IT(&htim18);
   HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer1, 32, DAC_ALIGN_12B_R);

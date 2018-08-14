@@ -293,13 +293,15 @@ void DMA1_Channel5_IRQHandler(void)
 
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;
-		renderLine1(&controls);
+		//renderBuffer(&controls, 0);
+		renderBuffer0(&controls);
 	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;
 //		DMA1_Channel5->CCR &= ~DMA_CCR_EN;
 //		DMA1_Channel5->CNDTR = 64;
 //		transferComplete = 1;
-		renderLine2(&controls);
+		renderBuffer1(&controls);
+		//renderBuffer(&controls, BUFFER_SIZE);
 
 	}
 
@@ -365,7 +367,7 @@ void TIM12_IRQHandler(void)
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
 
 	if (transferComplete) {
-		renderLine2(&controls);
+		renderBuffer1(&controls);
 		transferComplete = 0;
 	}
 

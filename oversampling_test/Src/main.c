@@ -137,8 +137,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   oscillatorInit();
-  renderLine1(&controls);
-  renderLine2(&controls);
+  renderBuffer(&controls, BUFFER_SIZE);
+  renderBuffer(&controls, BUFFER_SIZE);
 
 //  if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1) != HAL_OK)
 //  	{
@@ -171,12 +171,12 @@ int main(void)
 
   HAL_ADC_Start_DMA(&hadc1, adcReadings, 32);
 
-  TIM6->ARR = 179;
+  TIM6->ARR = 89;
 
   HAL_TIM_Base_Start_IT(&htim6);
-  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, dacBuffer1, 16, DAC_ALIGN_12B_R);
-  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, dacBuffer2, 16, DAC_ALIGN_12B_R);
-  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer3, 16, DAC_ALIGN_12B_R);
+  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, dacBuffer1, 2*BUFFER_SIZE, DAC_ALIGN_12B_R);
+  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, dacBuffer2, 2*BUFFER_SIZE, DAC_ALIGN_12B_R);
+  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer3, 2*BUFFER_SIZE, DAC_ALIGN_12B_R);
 
   //HAL_DAC_Start(&hdac2, DAC_CHANNEL_1);
 

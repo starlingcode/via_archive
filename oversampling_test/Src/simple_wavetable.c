@@ -48,89 +48,191 @@ void oscillatorInit(void) {
 }
 
 
-void renderLine1(controlRateInputs * controls) {
+void renderBuffer(controlRateInputs * controls, uint32_t writePosition) {
 
+	// profiling at A logic high
 	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 
+	/*
+	 * Phase accumulator -> phase distortion -> sample lookup
+	 * Simple waveshape (saw/square) is derived from the phasor
+	 *
+	 */
+
+	// oscillator parameters and calcalculated per buffer
 	uint32_t increment = (((controls->timeBase1) * (cv2[0])));
 	uint32_t morph = controls->morphBase;
 	uint32_t pwm = controls->timeBase2;
 	//uint32_t pwm = 2000;
 	uint32_t pwmIndex = (pwm >> 7);
+	uint32_t pwmFrac = (pwm & 0b00000000000000001111111) << 8;
 	uint32_t * pwmTable1 = phaseModPWMTables[pwmIndex];
 	uint32_t * pwmTable2 = phaseModPWMTables[pwmIndex + 1];
-	uint32_t pwmFrac = (pwm & 0b00000000000000001111111) << 8;
+	// start writing at the start or halfway point of the buffer depending on
+	uint32_t * buffer1 = dacBuffer1 + writePosition;
+	uint32_t * buffer2 = dacBuffer2 + writePosition;
+	uint32_t * buffer3 = dacBuffer3 + writePosition;
 
+	// work registers
+	static uint32_t phase;
+	uint32_t leftSample;
+	uint32_t result;
+
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+		// phase pointer wraps at 32 bits
+		phase = (phase + increment);
+
+		// treat the msb of phase as a 6.15 (tablesize.interpolationbits) fixed point number
+		// divide by right shifting phase size (32 bits) less table size (6 bits) to find the nearest sample to the left
+		leftSample = phase >> 26;
+		// extract the less significant bits as fractional phase
 #define pwmPhaseFrac (phase & 0x3FFFFFF) >> 11
+		// use this with the precalculated pwm to perform bilinear interpolation
+		// this accomplishes the
+		result = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
+					pwmTable1[leftSample + 1], pwmTable2[leftSample + 1],
+						pwmFrac, pwmPhaseFrac);
+		// output of phase distortion is a 9.16 (tablesize.interpolationbits) fixed point number
+		// scale to 12 bits for saw out
+		buffer3[i] = result >> 13;
+		// get the actual wavetable output sample as above
+		// but with the appropriate scaling as phase is now 25 bits and table length is 9 bits
+		leftSample = result >> 16;
 #define phaseFrac (result & 0xFFFF)
+		result = fast_15_16_bilerp(wavetable1[leftSample], wavetable2[leftSample],
+					wavetable1[leftSample + 1], wavetable2[leftSample + 1],
+						morph, phaseFrac);
+		// write crossfader attenuation values
+		buffer1[i] = 4095 - result;
+		buffer2[i] = result;
+	}
+
+	// profiling low
+	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
+
+}
+
+void renderBuffer0(controlRateInputs * controls) {
+
+	// profiling at A logic high
+	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+
+	/*
+	 * Phase accumulator -> phase distortion -> sample lookup
+	 * Simple waveshape (saw/square) is derived from the phasor
+	 *
+	 */
+
+	// oscillator parameters and calcalculated per buffer
+	uint32_t increment = (((controls->timeBase1) * (cv2[0])));
+	uint32_t morph = controls->morphBase;
+	uint32_t pwm = controls->timeBase2;
+	//uint32_t pwm = 2000;
+	uint32_t pwmIndex = (pwm >> 7);
+	uint32_t pwmFrac = (pwm & 0b00000000000000001111111) << 8;
+	uint32_t * pwmTable1 = phaseModPWMTables[pwmIndex];
+	uint32_t * pwmTable2 = phaseModPWMTables[pwmIndex + 1];
+	// start writing at the start or halfway point of the buffer depending on
+	uint32_t * buffer1 = dacBuffer1;
+	uint32_t * buffer2 = dacBuffer2;
+	uint32_t * buffer3 = dacBuffer3;
 
 	uint32_t leftSample;
 	uint32_t result;
 
-
-	for (int i = 0; i < 8; i++) {
-
-		// wraps at full scale uint32_t
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+		// phase pointer wraps at 32 bits
 		phase = (phase + increment);
+		// treat the msb of phase as a 6.15 (tablesize.interpolationbits) fixed point number
+		// divide by right shifting phase size (32 bits) less table size (6 bits) to find the nearest sample to the left
 		leftSample = phase >> 26;
+		// extract the less significant bits as fractional phase
+#define pwmPhaseFrac (phase & 0x3FFFFFF) >> 11
+		// use this with the precalculated pwm to perform bilinear interpolation
+		// this accomplishes the
 		result = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
 					pwmTable1[leftSample + 1], pwmTable2[leftSample + 1],
 						pwmFrac, pwmPhaseFrac);
-		dacBuffer3[i] = result >> 13;
+		// output of phase distortion is a 9.16 (tablesize.interpolationbits) fixed point number
+		// scale to 12 bits for saw out
+		buffer3[i] = result >> 13;
+		// get the actual wavetable output sample as above
+		// but with the appropriate scaling as phase is now 25 bits and table length is 9 bits
 		leftSample = result >> 16;
+#define phaseFrac (result & 0xFFFF)
 		result = fast_15_16_bilerp(wavetable1[leftSample], wavetable2[leftSample],
 					wavetable1[leftSample + 1], wavetable2[leftSample + 1],
 						morph, phaseFrac);
-		dacBuffer1[i] = 4095 - result;
-		dacBuffer2[i] = result;
+		// write crossfader attenuation values
+		buffer1[i] = 4095 - result;
+		buffer2[i] = result;
 	}
 
-
+	// profiling low
 	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
-
 
 }
 
-void renderLine2(controlRateInputs * controls) {
+void renderBuffer1(controlRateInputs * controls) {
 
+	// profiling at A logic high
 	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 
+	/*
+	 * Phase accumulator -> phase distortion -> sample lookup
+	 * Simple waveshape (saw/square) is derived from the phasor
+	 *
+	 */
+
 	uint32_t increment = (((controls->timeBase1) * (cv2[0])));
-	int morph = controls->morphBase;
+	uint32_t morph = controls->morphBase;
 	uint32_t pwm = controls->timeBase2;
-	//uint32_t pwm = 2000;
 	uint32_t pwmIndex = (pwm >> 7);
+	uint32_t pwmFrac = (pwm & 0b00000000000000001111111) << 8;
 	uint32_t * pwmTable1 = phaseModPWMTables[pwmIndex];
 	uint32_t * pwmTable2 = phaseModPWMTables[pwmIndex + 1];
-	uint32_t pwmFrac = (pwm & 0b00000000000000001111111) << 8;
+	// start writing at the start or halfway point of the buffer depending on
+	uint32_t * buffer1 = dacBuffer1;
+	uint32_t * buffer2 = dacBuffer2;
+	uint32_t * buffer3 = dacBuffer3;
 
+	uint32_t leftSample;
+	uint32_t result;
 
-
-#define pwmPhaseFrac (phase & 0x3FFFFFF) >> 11
-#define phaseFrac (result & 0xFFFF)
-
-	for (int i = 8; i < 16; i++) {
-
-		uint32_t leftSample;
-		uint32_t result;
-
-		// wraps at full scale uint32_t
+	for (int i = BUFFER_SIZE; i < 2*BUFFER_SIZE; i++) {
+		// phase pointer wraps at 32 bits
 		phase = (phase + increment);
+
+		// treat the msb of phase as a 6.15 (tablesize.interpolationbits) fixed point number
+		// divide by right shifting phase size (32 bits) less table size (6 bits) to find the nearest sample to the left
 		leftSample = phase >> 26;
+		// extract the less significant bits as fractional phase
+#define pwmPhaseFrac (phase & 0x3FFFFFF) >> 11
+		// use this with the precalculated pwm to perform bilinear interpolation
+		// this accomplishes the
 		result = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
 					pwmTable1[leftSample + 1], pwmTable2[leftSample + 1],
 						pwmFrac, pwmPhaseFrac);
-		dacBuffer3[i] = result >> 13;
+		// output of phase distortion is a 9.16 (tablesize.interpolationbits) fixed point number
+		// scale to 12 bits for saw out
+		buffer3[i] = result >> 13;
+		// get the actual wavetable output sample as above
+		// but with the appropriate scaling as phase is now 25 bits and table length is 9 bits
 		leftSample = result >> 16;
+#define phaseFrac (result & 0xFFFF)
 		result = fast_15_16_bilerp(wavetable1[leftSample], wavetable2[leftSample],
 					wavetable1[leftSample + 1], wavetable2[leftSample + 1],
 						morph, phaseFrac);
-		dacBuffer1[i] = 4095 - result;
-		dacBuffer2[i] = result;
+		// write crossfader attenuation values
+		buffer1[i] = 4095 - result;
+		buffer2[i] = result;
 	}
+
+	// profiling low
 	GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
 
 }
+
 
 
 /**
