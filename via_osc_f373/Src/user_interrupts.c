@@ -87,24 +87,9 @@ void EXTI1_IRQHandler(void)
 
 /*
  *
- *  DAC sample rate
+ * Timer interrputs
  *
  */
-
-// DAC timer interrupt, sample rate callbacks
-
-void TIM6_DAC1_IRQHandler(void)
-{
-
-	ioProcessCallback(&signals);
-	generateSample(&signals);
-
-
-	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
-
-}
-
-// Sample and hold helpers
 
 // SH A
 
@@ -135,11 +120,7 @@ void TIM17_IRQHandler(void)
 
 }
 
-/*
- *
- *  UI interrupts
- *
- */
+// run touch sensor state machine
 
 void TIM13_IRQHandler(void)
 {
@@ -150,6 +131,7 @@ void TIM13_IRQHandler(void)
 
 }
 
+// ui timer
 
 void TIM7_IRQHandler(void)
 {
@@ -159,6 +141,43 @@ void TIM7_IRQHandler(void)
 	HAL_TIM_IRQHandler(&htim7);
 
 }
+
+/*
+ *
+ * DMA transfer complete interrupts
+ *
+ */
+
+// slow ADCs
+
+void DMA1_Channel1_IRQHandler(void)
+{
+
+	//minimal interrupt handler for circular buffer
+
+	if ((DMA1->ISR & (DMA_FLAG_HT1)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1;
+	} else {
+		DMA1->IFCR = DMA_FLAG_TC1;
+		slowConversionCallback(&signals);
+	}
+
+}
+
+void DMA1_Channel5_IRQHandler(void)
+{
+
+
+	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1 << 16;
+		halfTransferCallback(&signals);
+	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
+		DMA1->IFCR = DMA_FLAG_TC1 << 16;
+		transferCompleteCallback(&signals);
+	}
+
+}
+
 
 
 

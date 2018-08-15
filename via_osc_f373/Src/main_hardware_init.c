@@ -12,7 +12,7 @@
 #include "touchsensing.h"
 #include "tsc.h"
 #include "gpio.h"
-
+#include "signals.h"
 
 extern void mainHardwareInit(void);
 
@@ -43,13 +43,6 @@ void mainHardwareInit(void) {
 		LEDB_ON;
 	}
 
-	// set the priority and enable an interrupt line to be used by the trigger button input and aux trigger
-	HAL_NVIC_SetPriority(EXTI1_IRQn, 1, 0);
-	HAL_NVIC_EnableIRQ(EXTI1_IRQn);
-
-	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
-	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
-
 	// initialize RGB led
 	HAL_TIM_Base_Start(&htim3);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
@@ -60,22 +53,23 @@ void mainHardwareInit(void) {
 
 	// initialize the ADCs and their respective DMA arrays
 	HAL_ADC_Start_DMA(&hadc1, slowADCReadings, 4);
-	HAL_SDADC_Start_DMA(&hsdadc1, fastADC1Readings, 1);
-	HAL_SDADC_Start_DMA(&hsdadc2, fastADC2Readings, 1);
 
-	// initialize the DAC
-	HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
-	HAL_DAC_Start(&hdac1, DAC_CHANNEL_2);
-	HAL_DAC_Start(&hdac2, DAC_CHANNEL_1);
+	HAL_SDADC_Start_DMA(&hsdadc1, cv2SampleBuffer, 1);
+	HAL_SDADC_Start_DMA(&hsdadc2, cv3SampleBuffer, 1);
 
-	//start our DAC time base
-	HAL_TIM_Base_Start_IT(&htim6);
+  HAL_ADC_Start_DMA(&hadc1, slowADCReadings, 4);
+
+  TIM6->ARR = 89;
+
+  HAL_TIM_Base_Start(&htim6);
+  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, dac1SampleBuffer, 2*BUFFER_SIZE, DAC_ALIGN_12B_R);
+  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, dac2SampleBuffer, 2*BUFFER_SIZE, DAC_ALIGN_12B_R);
+  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dac3SampleBuffer, 2*BUFFER_SIZE, DAC_ALIGN_12B_R);
 
 
 //	 initialize the timer that is used for touch sensor press timeout
 	__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
 
-	__HAL_TIM_ENABLE(&htim2);
 	 //initialize the timer that is used to detect rising and falling edges at the trigger input
 	HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
 
