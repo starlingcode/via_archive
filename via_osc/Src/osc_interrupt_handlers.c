@@ -13,17 +13,15 @@ void mainRisingEdgeCallback(viaSignals * signals) {
 	if (signals->softwareSignals->syncMode == hard) {
 		// this is reset to 1 at every with every new sample aquisition
 		ALOGIC_HIGH;
-		inputs->mainLogicInput = 0;
+		inputs->syncInput = 0;
 	} else {
 		// toggle increment direction on rising and falling edges
-		inputs->mainLogicInput *= -1;
+		inputs->reverseInput *= -1;
 	}
 
 }
 
 void mainFallingEdgeCallback(viaSignals * signals) {
-
-
 
 }
 
@@ -42,20 +40,19 @@ void buttonReleasedCallback(viaSignals * signals) {
 }
 
 void ioProcessCallback(viaSignals * signals) {
-
 	audioRateOutputs * outputs = signals->outputs;
-
-	setLogicOutputsNoLEDs(outputs->logicAHandler, outputs->auxLogicHandler, outputs->shAHandler, outputs->shBHandler);
-
+	//setLogicOutputsNoLEDs(outputs->logicAHandler, outputs->auxLogicHandler, outputs->shAHandler, outputs->shBHandler);
 }
+
 void halfTransferCallback(viaSignals * signals) {
-
-	renderLine1(signals);
-
+	renderBuffer0(signals);
 }
 
-void fullTransferCallback(viaSignals * signals) {
+void transferCompleteCallback(viaSignals * signals) {
+	renderBuffer1(signals);
+}
 
-	renderLine2(signals);
-
+void slowConversionCallback(viaSignals * signals) {
+	controlRateInputs * controls = signals->controls;
+	calculateControls(controls);
 }

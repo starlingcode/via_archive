@@ -256,7 +256,7 @@ void DMA1_Channel3_IRQHandler(void)
 	}
 
   /* USER CODE END DMA1_Channel3_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_dac1_ch1);
+  //HAL_DMA_IRQHandler(&hdma_dac1_ch1);
   /* USER CODE BEGIN DMA1_Channel3_IRQn 1 */
 
   /* USER CODE END DMA1_Channel3_IRQn 1 */
@@ -293,20 +293,18 @@ void DMA1_Channel5_IRQHandler(void)
 
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;
-		//renderBuffer(&controls, 0);
 		renderBuffer0(&controls);
 	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;
-//		DMA1_Channel5->CCR &= ~DMA_CCR_EN;
-//		DMA1_Channel5->CNDTR = 64;
-//		transferComplete = 1;
-		renderBuffer1(&controls);
-		//renderBuffer(&controls, BUFFER_SIZE);
+		DMA1_Channel5->CCR &= ~DMA_CCR_EN;
+		DMA1_Channel5->CNDTR = 64;
+		transferComplete = 1;
+//		renderBuffer1(&controls);
 
 	}
 
   /* USER CODE END DMA1_Channel5_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_dac2_ch1);
+  //HAL_DMA_IRQHandler(&hdma_dac2_ch1);
   /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
 
   /* USER CODE END DMA1_Channel5_IRQn 1 */
@@ -359,9 +357,10 @@ void EXTI15_10_IRQHandler(void)
 */
 void TIM12_IRQHandler(void)
 {
+
   /* USER CODE BEGIN TIM12_IRQn 0 */
 
-	TIM18->CNT = 0;
+	TIM6->CNT = 0;
 	DMA1_Channel5->CCR |= DMA_CCR_EN;
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);

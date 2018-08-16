@@ -13,21 +13,7 @@
 #define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
 #define AT_B_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
 
-#define BUFFER_SIZE 64
-
-#define NUM_TAPS 24
-
-#define FIR8TAPS1_24 {37653504, 103041591, 262708334, 424417055, 491842679, 424417055, 262708334, 103041591 , 37653504}
-
-#define FIR16TAPS5_24 {-5268880, 20286907, 45192374, -47794798, -227426832, -51762506, 769600018, 1644657365, 1644657365, 769600018, -51762506, -227426832, -47794798, 45192374, 20286907, -5268880}
-
-#define FIR24TAPS6_24 {1499280, 3097718, -6929872, -34955643, -49795015, -9487274, 49070362, 22354339, -80649134, -68021400, 179184179, 459216960, 459216960, 179184179, -68021400, -80649134, 22354339, 49070362, -9487274, -49795015, -34955643, -6929872, 3097718, 1499280}
-
-#define FIR24TAPS5_12 {3016239, 5738308, -1679970, -18021039, -10780765, 37693189, 55436335, -41562717, -155240046, -30053218, 404571402, 824624103, 824624103, 404571402, -30053218, -155240046, -41562717, 55436335, 37693189, -10780765, -18021039, -1679970, 5738308, 3016239}
-
-#define NUM_STAGES 4
-
-#define BIQUAD20K_8STAGE {740135009, 1480270018, 740135009, 1373991412, 512806799, 40135009, 1480270018, 740135009, 1373991412, 512806799, 40135009, 1480270018, 740135009, 1373991412, 512806799, 40135009, 1480270018, 740135009, 1373991412, 512806799}
+#define BUFFER_SIZE 16
 
 // Circular buffer
 
@@ -36,6 +22,7 @@ typedef struct {
     int writeIndex;
 }buffer;
 
+// fixed point math functions
 
 // fixed point math functions
 
@@ -59,37 +46,123 @@ static inline int fix16_mul(int in0, int in1) {
 
 }
 
-#define fix16_square(X) fix16_mul(X,X)
+static inline int fast_fix15_lerp(int in0, int in1, int frac) {
 
-// doubting such an optimization would work here
-// probaby not needed (called once per sample)
 
-static inline int fix24_mul(int in0, int in1) {
-	int64_t result = (uint64_t) in0 * in1;
-	return result >> 24;
+	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (in1 - in0), [input_2] "r" (frac), [input_3] "r" (in0 >> 1)
+	  );
+
+
+	return in0 << 1;
 }
 
+// lower quality but faster?
+static inline int fix15_bilerp(int in0, int in1, int in2, int in3, int frac0, int frac1) {
 
-static inline int fix16_lerp(q31_t in0, q31_t in1, int frac) {
-	return in0 + fix16_mul(in1 - in0, frac);
+	in0 = fast_fix15_lerp(in0, in1, frac0);
+	in2 = fast_fix15_lerp(in2, in3, frac0);
 
+	return fast_fix15_lerp(in0, in2, frac1);
 }
 
-// experimental approach condensing the two lienar interpolations into one function, no performance increase
-//static inline int fast_16_16_bilerp(int inA_0, int inA_1, int inB_0, int inB_1, int fracA, int fracB) {
-//	return inA_0 + fix16_mul(inA_1 - inA_0, fracA)
-//				+ fix16_mul(fracB, (inB_0 - inA_0) + fix16_mul(fracA, inB_1 + inA_0 - inB_0 - inA_1));
+//static inline int fix15_bilerp(int in0, int in1, int in2, int in3, int frac0, int frac1) {
+//
+//	int invFrac = 32767 - frac0;
+//
+//	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
+//	    : [result_1] "=r" (in0)
+//	    : [input_1] "r" (in0), [input_2] "r" (invFrac)
+//	  );
+//
+//	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+//	    : [result_1] "=r" (in0)
+//	    : [input_1] "r" (in1), [input_2] "r" (frac0), [input_3] "r" (in0)
+//	  );
+//
+//	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
+//	    : [result_1] "=r" (in2)
+//	    : [input_1] "r" (in2), [input_2] "r" (invFrac)
+//	  );
+//
+//	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+//	    : [result_1] "=r" (in2)
+//	    : [input_1] "r" (in3), [input_2] "r" (frac0), [input_3] "r" (in2)
+//	  );
+//
+//	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
+//	    : [result_1] "=r" (in0)
+//	    : [input_1] "r" (in0 << 1), [input_2] "r" (32767 - frac1)
+//	  );
+//
+//	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+//	    : [result_1] "=r" (in0)
+//	    : [input_1] "r" (in2 << 1), [input_2] "r" (frac1), [input_3] "r" (in0)
+//	  );
+//
+//	return in0 << 1;
 //}
+
+static inline int fix24_lerp(int in0, int in1, int frac) {
+	return in0 + (((int64_t)(in1 - in0) * frac) >> 24);
+}
 
 // this is a decent improvement over the above for the case of 16 bit interpolation points
 // no need to cast a 16bit by 16bit multiplication to 64 bit
 
-static inline int fast_16_16_mul(int in0, int in1) {
-	return (in0 * in1) >> 16;
+//static inline int fast_16_16_lerp(int in0, int in1, int frac) {
+//	return in0 + fast_16_16_mul(in1 - in0, frac);
+//}
+
+static inline int fast_15_16_lerp(int in0, int in1, int frac) {
+
+	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (frac), [input_2] "r" (in1 - in0), [input_3] "r" (in0)
+	  );
+
+	return in0;
 }
 
-static inline int fast_16_16_lerp(int in0, int in1, int frac) {
-	return in0 + fast_16_16_mul(in1 - in0, frac);
+static inline int fast_15_16_bilerp(int in0, int in1, int in2, int in3, int frac0, int frac1) {
+
+	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (frac0), [input_2] "r" (in1 - in0), [input_3] "r" (in0)
+	  );
+
+	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in2)
+	    : [input_1] "r" (frac0), [input_2] "r" (in3 - in2), [input_3] "r" (in2)
+	  );
+
+	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (frac1), [input_2] "r" (in2 - in0), [input_3] "r" (in0)
+	  );
+
+	return in0;
+}
+
+static inline int fast_15_16_bilerp_prediff(int in0, int in1, int frac0, int frac1) {
+
+	__asm ("SMLAWT %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (frac0), [input_2] "r" (in0), [input_3] "r" (in0 & 0xFFFF)
+	  );
+
+	__asm ("SMLAWT %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in1)
+	    : [input_1] "r" (frac0), [input_2] "r" (in1), [input_3] "r" (in1 & 0xFFFF)
+	  );
+
+	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (frac1), [input_2] "r" (in1 - in0), [input_3] "r" (in0)
+	  );
+
+	return in0;
 }
 
 
