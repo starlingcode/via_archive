@@ -82,7 +82,7 @@ void renderBuffer0(viaSignals * signals) {
 	audioRateOutputs * outputs = signals->outputs;
 
 	// calculate buffer rate parameters
-	uint32_t increment = (((controls->frequency) * ((int)inputs->fm[0] + 16383)) >> 4) * inputs->reverseInput;
+	uint32_t increment = (((controls->frequency) * (-(int)inputs->fm[0] + 16383)) >> 6) * inputs->reverseInput;
 
 	uint32_t pwm = (inputs->pwm[0] >> 4) + 2048;
 	uint32_t pwmIndex = (pwm >> 7);
@@ -91,7 +91,7 @@ void renderBuffer0(viaSignals * signals) {
 	uint32_t * pwmTable2 = phaseModPWMTables[pwmIndex + 1];
 
 	// scale morph to table size in 16.16 fixed point
-	uint32_t morph = __USAT(((controls->morph << 4) - inputs->morphMod[0]), 16) << 2;
+	uint32_t morph = __USAT(((controls->morph << 4) - (int)inputs->morphMod[0]), 16) * softwareSignals->morphMultiplier;
 	uint32_t morphIndex = morph >> 16;
 	uint32_t morphFrac = morph & 0xFFFF;
 	q31_t * wavetable1 = fullTableHoldArray[morphIndex];
@@ -163,16 +163,16 @@ void renderBuffer1(viaSignals * signals) {
 	audioRateOutputs * outputs = signals->outputs;
 
 	// calculate buffer rate parameters
-	uint32_t increment = (((controls->frequency) * ((int)inputs->fm[0] + 16383)) >> 4) * inputs->reverseInput;
+	uint32_t increment = (((controls->frequency) * (-(int)inputs->fm[0] + 16000)) >> 6) * inputs->reverseInput;
 
-	uint32_t pwm = (inputs->pwm[0] >> 4) + 2048;
-	uint32_t pwmIndex = (pwm >> 7);
-	uint32_t pwmFrac = (pwm & 0b00000000000000001111111) << 8;
+	uint32_t pwm = (int)inputs->pwm[0] + 32767;
+	uint32_t pwmIndex = (pwm >> 11);
+	uint32_t pwmFrac = (pwm & 0x7FF) << 4;
 	uint32_t * pwmTable1 = phaseModPWMTables[pwmIndex];
 	uint32_t * pwmTable2 = phaseModPWMTables[pwmIndex + 1];
 
 	// scale morph to table size in 16.16 fixed point
-	uint32_t morph = __USAT(((controls->morph << 4) - inputs->morphMod[0]), 16) << 2;
+	uint32_t morph = __USAT(((controls->morph << 4) - (int)inputs->morphMod[0]), 16) * softwareSignals->morphMultiplier;
 	uint32_t morphIndex = morph >> 16;
 	uint32_t morphFrac = morph & 0xFFFF;
 	q31_t * wavetable1 = fullTableHoldArray[morphIndex];

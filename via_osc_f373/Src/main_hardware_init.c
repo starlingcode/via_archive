@@ -18,6 +18,53 @@ extern void mainHardwareInit(void);
 
 void mainHardwareInit(void) {
 
+	// test write to option bytes
+
+	if (HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA0) == 125) {
+
+		uint16_t bottomHalf = 648 >> 2;
+		uint16_t topHalf = 520 >> 2;
+
+
+		FLASH_OBProgramInitTypeDef pOBInit;
+		HAL_FLASHEx_OBGetConfig(&pOBInit);
+		HAL_StatusTypeDef obStatus;
+
+		pOBInit.OptionType = OPTIONBYTE_WRP;
+		pOBInit.WRPState = OB_WRPSTATE_DISABLE;
+
+		HAL_FLASH_Unlock();
+		HAL_FLASH_OB_Unlock();
+		obStatus = HAL_FLASHEx_OBProgram(&pOBInit);
+
+		pOBInit.OptionType = OPTIONBYTE_DATA;
+		pOBInit.DATAAddress = OB_DATA_ADDRESS_DATA0;
+		pOBInit.DATAData = bottomHalf;
+
+		obStatus = HAL_FLASHEx_OBProgram(&pOBInit);
+
+		pOBInit.DATAAddress = OB_DATA_ADDRESS_DATA1;
+		pOBInit.DATAData = topHalf;
+
+		obStatus = HAL_FLASHEx_OBProgram(&pOBInit);
+		HAL_FLASH_OB_Launch();
+	}
+
+
+
+	int16_t cv2Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA0) << 2;
+	int16_t cv3Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA1) << 2;
+
+
+
+	cv2VirtualGround[0] = cv2Offset;
+	cv2VirtualGround[1] = cv2Offset;
+
+	cv3VirtualGround[0] = cv3Offset;
+	cv3VirtualGround[1] = cv3Offset;
+
+
+
 /* Start Calibration in polling mode */
 
 	if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1) != HAL_OK)
@@ -79,6 +126,7 @@ void mainHardwareInit(void) {
 	__HAL_TIM_ENABLE_IT(&htim16, TIM_IT_UPDATE);
 	// initialize the shB timer
 	__HAL_TIM_ENABLE_IT(&htim17, TIM_IT_UPDATE);
+
 
 
 }

@@ -44,7 +44,7 @@ typedef struct {
 // declare a struct to hold the signals passed between functions
 
 typedef struct {
-	q31_t morphShift;
+	q31_t morphMultiplier;
 	q31_t syncMode;
 	Family * currentFamily;
 } softwareSignaling;
@@ -57,7 +57,12 @@ q31_t dac3SampleBuffer[BUFFER_SIZE*2];
 
 int16_t cv2SampleBuffer[2];
 int16_t cv3SampleBuffer[2];
-int16_t virtualGround[2];
+
+// store ADC error as a "virtual ground" (read from option bytes, written in calibration firmware)
+
+int16_t cv2VirtualGround[2];
+int16_t cv3VirtualGround[2];
+
 
 
 audioRateOutputs audioRateOutput;

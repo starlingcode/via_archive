@@ -30,20 +30,19 @@ void oscInit(void) {
 	displayMorphMode = displayMorph_Morph;
 
 	signals.inputs->fm = cv2SampleBuffer;
-	signals.inputs->pm = virtualGround;
+	signals.inputs->pm = cv2VirtualGround;
 	signals.inputs->morphMod = cv3SampleBuffer;
-	signals.inputs->pwm = virtualGround;
+	signals.inputs->pwm = cv3VirtualGround;
 
 
 	signals.inputs->syncInput = 1;
 	signals.inputs->reverseInput = 1;
 
+	softwareSignals.morphMultiplier = softwareSignals.currentFamily->familySize - 1;
+
 }
 
 void viaSignalInit(void) {
-
-	virtualGround[0] = 0;
-	virtualGround[1] = 0;
 
 	audioRateOutput.dac1Samples = dac1SampleBuffer;
 	audioRateOutput.dac2Samples = dac2SampleBuffer;

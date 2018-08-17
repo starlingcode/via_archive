@@ -192,6 +192,8 @@ void handleButton1ModeChange(int mode) {
 void handleButton2ModeChange(int mode) {
 
 	switchFamily();
+	softwareSignals.morphMultiplier = softwareSignals.currentFamily->familySize - 1;
+
 
 
 }
@@ -201,11 +203,11 @@ void handleButton3ModeChange(int mode) {
 	switch (mode) {
 	case FM:
 		signals.inputs->fm = cv2SampleBuffer;
-		signals.inputs->pm = virtualGround;
+		signals.inputs->pm = cv2VirtualGround;
 		displayXCVMode = &displayXCV_FM;
 		break;
 	case PM:
-		signals.inputs->fm = virtualGround;
+		signals.inputs->fm = cv2VirtualGround;
 		signals.inputs->pm = cv2SampleBuffer;
 		displayXCVMode = &displayXCV_PM;
 		break;
@@ -228,6 +230,7 @@ void handleButton4ModeChange(int mode) {
 void handleButton5ModeChange(int mode) {
 
 	switchFamily();
+	softwareSignals.morphMultiplier = softwareSignals.currentFamily->familySize - 1;
 
 }
 
@@ -236,11 +239,11 @@ void handleButton6ModeChange(int mode) {
 	switch (mode) {
 	case morphCV:
 		signals.inputs->morphMod = cv3SampleBuffer;
-		signals.inputs->pwm = virtualGround;
+		signals.inputs->pwm = cv3VirtualGround;
 		displayMorphMode = &displayMorph_Morph;
 		break;
 	case pwmCV:
-		signals.inputs->morphMod = virtualGround;
+		signals.inputs->morphMod = cv3VirtualGround;
 		signals.inputs->pwm = cv3SampleBuffer;
 		displayMorphMode = &displayMorph_PMW;
 		break;
