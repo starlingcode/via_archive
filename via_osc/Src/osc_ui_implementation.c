@@ -261,6 +261,7 @@ void switchFamily(void) {
 
 	loadSampleArray(familyArray[TABLE]);
 	softwareSignals.currentFamily = familyArray[TABLE];
+	softwareSignals.morphMultiplier = softwareSignals.currentFamily->familySize - 1;
 
 }
 

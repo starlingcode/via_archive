@@ -26,7 +26,7 @@ void mainFallingEdgeCallback(viaSignals * signals) {
 }
 
 void auxRisingEdgeCallback(viaSignals * signals) {
-	;
+	handleButton2Tap();
 }
 void auxFallingEdgeCallback(viaSignals * signals) {
 	;

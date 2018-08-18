@@ -165,6 +165,16 @@ static inline int fast_15_16_bilerp_prediff(int in0, int in1, int frac0, int fra
 	return in0;
 }
 
+static inline int wavetableDelta(int in0, int in1, int frac0) {
+
+	// subtract both the difference and the base sample from the left sample with those of the right sample
+	in0 = __QSUB(in1, in0);
+	// pack a 1 in the bottom 16 bits and the fractional interpolation in the top
+	frac0 = __PKHBT(1, frac0, 16);
+	// multiply halfwords and accumulate
+	return __SMLAD(frac0, in0, 0) >> 31;
+}
+
 
 
 #endif

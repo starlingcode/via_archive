@@ -29,16 +29,6 @@ void oscInit(void) {
 	displayXCVMode = displayXCV_FM;
 	displayMorphMode = displayMorph_Morph;
 
-	signals.inputs->fm = cv2SampleBuffer;
-	signals.inputs->pm = cv2VirtualGround;
-	signals.inputs->morphMod = cv3SampleBuffer;
-	signals.inputs->pwm = cv3VirtualGround;
-
-
-	signals.inputs->syncInput = 1;
-	signals.inputs->reverseInput = 1;
-
-	softwareSignals.morphMultiplier = softwareSignals.currentFamily->familySize - 1;
 
 }
 
@@ -52,6 +42,24 @@ void viaSignalInit(void) {
 	signals.inputs = &audioRateInput;
 	signals.outputs= &audioRateOutput;
 	signals.softwareSignals = &softwareSignals;
+
+	signals.inputs->fm = cv2SampleBuffer;
+	signals.inputs->pm = cv2VirtualGround;
+	signals.inputs->morphMod = cv3SampleBuffer;
+	signals.inputs->pwm = cv3VirtualGround;
+
+	signals.inputs->syncInput = 1;
+	signals.inputs->reverseInput = 1;
+
+	int16_t cv2Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA0) << 2;
+	int16_t cv3Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA1) << 2;
+
+	cv2VirtualGround[0] = cv2Offset;
+	cv2VirtualGround[1] = cv2Offset;
+
+	cv3VirtualGround[0] = cv3Offset;
+	cv3VirtualGround[1] = cv3Offset;
+
 
 }
 

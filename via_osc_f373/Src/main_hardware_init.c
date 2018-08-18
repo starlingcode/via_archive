@@ -18,53 +18,6 @@ extern void mainHardwareInit(void);
 
 void mainHardwareInit(void) {
 
-	// test write to option bytes
-
-	if (HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA0) == 125) {
-
-		uint16_t bottomHalf = 648 >> 2;
-		uint16_t topHalf = 520 >> 2;
-
-
-		FLASH_OBProgramInitTypeDef pOBInit;
-		HAL_FLASHEx_OBGetConfig(&pOBInit);
-		HAL_StatusTypeDef obStatus;
-
-		pOBInit.OptionType = OPTIONBYTE_WRP;
-		pOBInit.WRPState = OB_WRPSTATE_DISABLE;
-
-		HAL_FLASH_Unlock();
-		HAL_FLASH_OB_Unlock();
-		obStatus = HAL_FLASHEx_OBProgram(&pOBInit);
-
-		pOBInit.OptionType = OPTIONBYTE_DATA;
-		pOBInit.DATAAddress = OB_DATA_ADDRESS_DATA0;
-		pOBInit.DATAData = bottomHalf;
-
-		obStatus = HAL_FLASHEx_OBProgram(&pOBInit);
-
-		pOBInit.DATAAddress = OB_DATA_ADDRESS_DATA1;
-		pOBInit.DATAData = topHalf;
-
-		obStatus = HAL_FLASHEx_OBProgram(&pOBInit);
-		HAL_FLASH_OB_Launch();
-	}
-
-
-
-	int16_t cv2Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA0) << 2;
-	int16_t cv3Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA1) << 2;
-
-
-
-	cv2VirtualGround[0] = cv2Offset;
-	cv2VirtualGround[1] = cv2Offset;
-
-	cv3VirtualGround[0] = cv3Offset;
-	cv3VirtualGround[1] = cv3Offset;
-
-
-
 /* Start Calibration in polling mode */
 
 	if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1) != HAL_OK)
@@ -89,6 +42,13 @@ void mainHardwareInit(void) {
 	{
 		LEDB_ON;
 	}
+
+	// set the priority and enable an interrupt line to be used by the trigger button input and aux trigger
+	HAL_NVIC_SetPriority(EXTI1_IRQn, 3, 0);
+	HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+
+	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
+	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 	// initialize RGB led
 	HAL_TIM_Base_Start(&htim3);
@@ -129,4 +89,35 @@ void mainHardwareInit(void) {
 
 
 
+}
+
+// stores the sdadc reading at ground for offset compensation
+
+void sdadcOffsetCalibration(int16_t * cv2SampleBuffer, int16_t * cv3SampleBuffer) {
+
+	uint16_t bottomHalf = cv2SampleBuffer[0] >> 2;
+	uint16_t topHalf = cv3SampleBuffer[0] >> 2;
+
+	FLASH_OBProgramInitTypeDef pOBInit;
+	HAL_FLASHEx_OBGetConfig(&pOBInit);
+	HAL_StatusTypeDef obStatus;
+
+	pOBInit.OptionType = OPTIONBYTE_WRP;
+	pOBInit.WRPState = OB_WRPSTATE_DISABLE;
+
+	HAL_FLASH_Unlock();
+	HAL_FLASH_OB_Unlock();
+	obStatus = HAL_FLASHEx_OBProgram(&pOBInit);
+
+	pOBInit.OptionType = OPTIONBYTE_DATA;
+	pOBInit.DATAAddress = OB_DATA_ADDRESS_DATA0;
+	pOBInit.DATAData = bottomHalf;
+
+	obStatus = HAL_FLASHEx_OBProgram(&pOBInit);
+
+	pOBInit.DATAAddress = OB_DATA_ADDRESS_DATA1;
+	pOBInit.DATAData = topHalf;
+
+	obStatus = HAL_FLASHEx_OBProgram(&pOBInit);
+	HAL_FLASH_OB_Launch();
 }
