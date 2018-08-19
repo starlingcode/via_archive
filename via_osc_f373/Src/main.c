@@ -60,7 +60,7 @@
 
 /* USER CODE BEGIN Includes */
 
-#include "via_rev5_hardware_io.h"
+#include "via_io_binding.h"
 #include "osc_interrupt_handlers.h"
 #include "osc_main_states.h"
 
@@ -138,8 +138,9 @@ int main(void)
   MX_DAC2_Init();
   /* USER CODE BEGIN 2 */
 
-  viaSignalInit();
-  oscInit();
+  //viaAssignCallbacks()
+
+  oscInit(&signals);
   mainHardwareInit();
 
   SH_A_TRACK;

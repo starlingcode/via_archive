@@ -5,7 +5,6 @@
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
 #define ARM_MATH_CM4
-#define ARM_MATH_DSP
 #include "arm_math.h"
 
 
@@ -21,8 +20,6 @@ typedef struct {
     int buff[32];
     int writeIndex;
 }buffer;
-
-// fixed point math functions
 
 // fixed point math functions
 
@@ -67,53 +64,46 @@ static inline int fix15_bilerp(int in0, int in1, int in2, int in3, int frac0, in
 	return fast_fix15_lerp(in0, in2, frac1);
 }
 
-//static inline int fix15_bilerp(int in0, int in1, int in2, int in3, int frac0, int frac1) {
-//
-//	int invFrac = 32767 - frac0;
-//
-//	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
-//	    : [result_1] "=r" (in0)
-//	    : [input_1] "r" (in0), [input_2] "r" (invFrac)
-//	  );
-//
-//	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
-//	    : [result_1] "=r" (in0)
-//	    : [input_1] "r" (in1), [input_2] "r" (frac0), [input_3] "r" (in0)
-//	  );
-//
-//	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
-//	    : [result_1] "=r" (in2)
-//	    : [input_1] "r" (in2), [input_2] "r" (invFrac)
-//	  );
-//
-//	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
-//	    : [result_1] "=r" (in2)
-//	    : [input_1] "r" (in3), [input_2] "r" (frac0), [input_3] "r" (in2)
-//	  );
-//
-//	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
-//	    : [result_1] "=r" (in0)
-//	    : [input_1] "r" (in0 << 1), [input_2] "r" (32767 - frac1)
-//	  );
-//
-//	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
-//	    : [result_1] "=r" (in0)
-//	    : [input_1] "r" (in2 << 1), [input_2] "r" (frac1), [input_3] "r" (in0)
-//	  );
-//
-//	return in0 << 1;
-//}
+static inline int fix15_bilerp_alt(int in0, int in1, int in2, int in3, int frac0, int frac1) {
+
+	int invFrac = 32767 - frac0;
+
+	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (in0), [input_2] "r" (invFrac)
+	  );
+
+	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (in1), [input_2] "r" (frac0), [input_3] "r" (in0)
+	  );
+
+	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
+	    : [result_1] "=r" (in2)
+	    : [input_1] "r" (in2), [input_2] "r" (invFrac)
+	  );
+
+	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in2)
+	    : [input_1] "r" (in3), [input_2] "r" (frac0), [input_3] "r" (in2)
+	  );
+
+	  __asm ("SMULWB %[result_1], %[input_1], %[input_2]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (in0 << 1), [input_2] "r" (32767 - frac1)
+	  );
+
+	  __asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+	    : [result_1] "=r" (in0)
+	    : [input_1] "r" (in2 << 1), [input_2] "r" (frac1), [input_3] "r" (in0)
+	  );
+
+	return in0 << 1;
+}
 
 static inline int fix24_lerp(int in0, int in1, int frac) {
 	return in0 + (((int64_t)(in1 - in0) * frac) >> 24);
 }
-
-// this is a decent improvement over the above for the case of 16 bit interpolation points
-// no need to cast a 16bit by 16bit multiplication to 64 bit
-
-//static inline int fast_16_16_lerp(int in0, int in1, int frac) {
-//	return in0 + fast_16_16_mul(in1 - in0, frac);
-//}
 
 static inline int fast_15_16_lerp(int in0, int in1, int frac) {
 
@@ -173,6 +163,7 @@ static inline int wavetableDelta(int in0, int in1, int frac0) {
 	frac0 = __PKHBT(1, frac0, 16);
 	// multiply halfwords and accumulate
 	return __SMLAD(frac0, in0, 0) >> 31;
+
 }
 
 

@@ -21,7 +21,7 @@ int readBuffer(buffer* buffer, int Xn) {
 }
 
 
-void calculateControls(controlRateInputs * controls) {
+void parseControls(controlRateInputs * controls) {
 
 	// TODO apply SIMD instructions?
 

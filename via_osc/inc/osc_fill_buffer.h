@@ -12,7 +12,7 @@
 
 // function calling subfunctions to fill the sample buffer
 
-void calculateControls(controlRateInputs * controls);
+void parseControls(controlRateInputs * controls);
 void renderBuffer0(viaSignals * signals);
 void renderBuffer1(viaSignals * signals);
 

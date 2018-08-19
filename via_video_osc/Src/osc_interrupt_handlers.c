@@ -54,5 +54,5 @@ void transferCompleteCallback(viaSignals * signals) {
 
 void slowConversionCallback(viaSignals * signals) {
 	controlRateInputs * controls = signals->controls;
-	calculateControls(controls);
+	parseControls(controls);
 }

@@ -2,7 +2,7 @@
 #include "signals.h"
 #include "main.h"
 #include "user_interface.h"
-#include "via_rev5_hardware_io.h"
+#include "via_io_binding.h"
 #include "osc_modes.h"
 #include "osc_interrupt_handlers.h"
 
