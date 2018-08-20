@@ -6,18 +6,17 @@
  */
 
 #ifndef INC_HARDRWARE_IO_H_
+#define INC_HARDRWARE_IO_H_
 
 #define BUILD_F373_REV6
 
-//#ifdef BUILD_F373_REV6
+#ifdef BUILD_F373_REV6
 
 #include "f373_rev6_io.h"
 #include "f373_rev6_signals.h"
 
-//#endif
+#endif
 
-
-#define INC_HARDRWARE_IO_H_
 
 
 

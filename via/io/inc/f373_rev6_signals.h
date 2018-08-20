@@ -32,7 +32,7 @@ int controlRateADCReadings[4];
 #define knob2 controlRateADCReadings[3]
 #define knob3 controlRateADCReadings[1]
 #define knob1 controlRateADCReadings[2]
-#define cv1 controlRateADCReadings[0]
+#define cv1 (4095 - controlRateADCReadings[0])
 
 // declare a struct to point to the audio rate inputs
 

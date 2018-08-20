@@ -40,8 +40,10 @@ void TIM12_IRQHandler(void)
 {
 
 	if (TRIGGER_RISING_EDGE) {
+		// VIA_MAIN_RISING_EDGE_CALLBACK(&signals)
 		mainRisingEdgeCallback(&signals);
 	} else {
+		// VIA_MAIN_FALLING_EDGE_CALLBACK(&signals)
 		mainFallingEdgeCallback(&signals);
 	}
 
@@ -55,8 +57,10 @@ void EXTI15_10_IRQHandler(void)
 {
 
 	if (EXPANDER_RISING_EDGE) {
+		// VIA_AUX_RISING_EDGE_CALLBACK(&signals)
 		auxRisingEdgeCallback(&signals);
-	} else { //falling edge
+	} else {
+		// VIA_AUX_FALLING_EDGE_CALLBACK(&signals)
 		auxFallingEdgeCallback(&signals);
 	}
 
@@ -69,14 +73,12 @@ void EXTI15_10_IRQHandler(void)
 void EXTI1_IRQHandler(void)
 {
 
-	static int buttonPressed;
-
-	buttonPressed = !buttonPressed;
-
-	if (buttonPressed) {
+	if (EXPANDER_BUTTON_PRESSED) {
+		// VIA_EXPANDER_BUTTON_PRESSED_CALLBACK(&signals)
 		uiDispatch(EXPAND_SW_ON_SIG);
 		buttonPressedCallback(&signals);
-	} else { //falling edge
+	} else {
+		// VIA_EXPANDER_BUTTON_RELEASED_CALLBACK(&signals)
 		uiDispatch(EXPAND_SW_OFF_SIG);
 		buttonReleasedCallback(&signals);
 	}
@@ -159,6 +161,7 @@ void DMA1_Channel1_IRQHandler(void)
 		DMA1->IFCR = DMA_FLAG_HT1;
 	} else {
 		DMA1->IFCR = DMA_FLAG_TC1;
+		// VIA_UPDATE_CONTROLS_CALLBACK(&signals)
 		slowConversionCallback(&signals);
 	}
 
@@ -170,6 +173,7 @@ void DMA1_Channel5_IRQHandler(void)
 
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;
+		//
 		halfTransferCallback(&signals);
 	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;

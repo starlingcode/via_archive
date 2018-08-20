@@ -174,16 +174,16 @@ void handleAux4Hold(void) {
 
 void handleButton1ModeChange(int mode) {
 
-//	switch (mode) {
-//	case none:
-//		logicAndFilter = &logicAndFilterSHOff;
-//		displaySHMode = &displaySH_Off;
-//		break;
-//	case decimate:
-//		logicAndFilter = &logicAndFilterSHOn;
-//		displaySHMode = &displaySH_On;
-//		break;
-//	}
+	switch (mode) {
+	case none:
+		signals.parameters->shOn = 0;
+		//displaySHMode = &displaySH_Off;
+		break;
+	case decimate:
+		signals.parameters->shOn = 1;
+		//displaySHMode = &displaySH_On;
+		break;
+	}
 
 	SH_A_TRACK;
 	SH_B_TRACK;
@@ -191,10 +191,7 @@ void handleButton1ModeChange(int mode) {
 
 void handleButton2ModeChange(int mode) {
 
-	switchFamily();
-	softwareSignals.morphMultiplier = softwareSignals.currentFamily->familySize - 1;
-
-
+	osc_switchWavetable(wavetableArray[mode], &signals);
 
 }
 
@@ -202,14 +199,14 @@ void handleButton3ModeChange(int mode) {
 
 	switch (mode) {
 	case FM:
-		signals.softwareSignals->fm = signals.inputs->cv2Samples;
-		signals.softwareSignals->pm = signals.inputs->cv2VirtualGround;
-		displayXCVMode = &displayXCV_FM;
+		signals.parameters->fm = signals.inputs->cv2Samples;
+		signals.parameters->pm = signals.inputs->cv2VirtualGround;
+		//displayXCVMode = &displayXCV_FM;
 		break;
 	case PM:
-		signals.softwareSignals->fm = signals.inputs->cv2VirtualGround;
-		signals.softwareSignals->pm = signals.inputs->cv2Samples;
-		displayXCVMode = &displayXCV_PM;
+		signals.parameters->fm = signals.inputs->cv2VirtualGround;
+		signals.parameters->pm = signals.inputs->cv2Samples;
+		//displayXCVMode = &displayXCV_PM;
 		break;
 	}
 
@@ -217,35 +214,33 @@ void handleButton3ModeChange(int mode) {
 
 void handleButton4ModeChange(int mode) {
 
-	softwareSignals.syncMode = mode;
+	signals.parameters->syncMode = mode;
 	// sync modes handled in IRQ handler
 	if (button4Mode == hard) {
-		displaySyncMode = &displaySync_Hard;
+		//displaySyncMode = &displaySync_Hard;
 	} else {
-		displaySyncMode = &displaySync_Soft;
+		//displaySyncMode = &displaySync_Soft;
 	}
 
 }
 
 void handleButton5ModeChange(int mode) {
 
-	switchFamily();
-	softwareSignals.morphMultiplier = softwareSignals.currentFamily->familySize - 1;
-
+	osc_switchWavetable(wavetableArray[mode], &signals);
 }
 
 void handleButton6ModeChange(int mode) {
 
 	switch (mode) {
 	case morphCV:
-		signals.softwareSignals->morphMod = signals.inputs->cv3Samples;
-		signals.softwareSignals->pwm = signals.inputs->cv3VirtualGround;
-		displayMorphMode = &displayMorph_Morph;
+		signals.parameters->morphMod = signals.inputs->cv3Samples;
+		signals.parameters->pwm = signals.inputs->cv3VirtualGround;
+		//displayMorphMode = &displayMorph_Morph;
 		break;
 	case pwmCV:
-		signals.softwareSignals->morphMod = signals.inputs->cv3VirtualGround;
-		signals.softwareSignals->pwm = signals.inputs->cv3Samples;
-		displayMorphMode = &displayMorph_PMW;
+		signals.parameters->morphMod = signals.inputs->cv3VirtualGround;
+		signals.parameters->pwm = signals.inputs->cv3Samples;
+		//displayMorphMode = &displayMorph_PMW;
 		break;
 	}
 
@@ -254,14 +249,6 @@ void handleButton6ModeChange(int mode) {
 
 void handleAux4ModeChange(int mode) {
 
-
-}
-
-void switchFamily(void) {
-
-	loadSampleArray(familyArray[TABLE]);
-	softwareSignals.currentFamily = familyArray[TABLE];
-	softwareSignals.morphMultiplier = softwareSignals.currentFamily->familySize - 1;
 
 }
 

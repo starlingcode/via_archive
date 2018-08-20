@@ -66,7 +66,7 @@ static inline void updateRGBDisplay(uint32_t red, uint32_t green, uint32_t blue)
 
 // Variable GPIO handling functions
 
-#define SET_A_B_LOGIC(X) GPIOC->BSRR = X;
+#define SET_A_LOGIC(X) GPIOC->BSRR = X;
 
 #define ALOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_13 << 16)
 #define ALOGIC_LOW_MASK (uint32_t)GPIO_PIN_13
@@ -89,7 +89,7 @@ static inline void updateRGBDisplay(uint32_t red, uint32_t green, uint32_t blue)
 
 #define GPIO_NOP 0
 
-static inline void setLogicOutputs(uint32_t logicA, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
+static inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
 
 	// LEDA_HIGH_MASK -> SH_A_SAMPLE_MASK >> 16 >> 1 (pin 8 to pin 7, F)
 	// LEDB_HIGH_MASK -> SH_B_SAMPLE_MASK >> 16 << 5 (pin 9 to pin 14, C)
@@ -99,30 +99,19 @@ static inline void setLogicOutputs(uint32_t logicA, uint32_t logicExpander, uint
 	#define LEDA_MASK (__ROR(shA, 16) >> 1)
 	#define LEDB_MASK (__ROR(shB, 16) << 5)
 	#define LEDC_MASK (__ROR(logicA, 16) >> 11)
-	//#define LEDD_MASK (__ROR(logicB, 16) >> 13)
 
 	//combine the mask variables for a shared GPIO group with a bitwise or
-	SET_A_B_LOGIC(logicA /*| logicB */| LEDB_MASK);
+	SET_A_LOGIC(logicA | LEDB_MASK);
 
 	SET_EXPAND_LOGIC(logicExpander | LEDC_MASK);
 
-	SET_SH(shA | shB /* | LEDD_MASK*/);
+	SET_SH(shA | shB);
 
 	SET_LEDA(LEDA_MASK);
 
 }
 
-static inline void setLogicOutputsNoLEDs(uint32_t logicA, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
-
-	// LEDA_HIGH_MASK -> SH_A_SAMPLE_MASK >> 16 >> 1 (pin 8 to pin 7, F)
-	// LEDB_HIGH_MASK -> SH_B_SAMPLE_MASK >> 16 << 5 (pin 9 to pin 14, C)
-	// LEDC_HIGH_MASK -> ALOGIC_HIGH_MASK >> 16 >> 11 (pin 13 to pin 2, A)
-	// LEDD_HIGH_MASK -> BLOGIC_HIGH_MASK >> 16 >> 13 (pin 15 to pin 2, B)
-
-	#define LEDA_MASK (__ROR(shA, 16) >> 1)
-	#define LEDB_MASK (__ROR(shB, 16) << 5)
-	#define LEDC_MASK (__ROR(logicA, 16) >> 11)
-	#define LEDD_MASK (__ROR(logicB, 16) >> 13)
+static inline void setLogicOutputsLEDOff(uint32_t logicA, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
 
 	//combine the mask variables for a shared GPIO group with a bitwise or
 	SET_A_B_LOGIC(logicA);

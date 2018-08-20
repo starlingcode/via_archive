@@ -19,9 +19,12 @@ void oscInit(viaSignals * signals) {
 	signals->controls = &controlRateInput;
 	signals->inputs = &audioRateInput;
 	signals->outputs = &audioRateOutput;
+	signals->parameters = &oscParameters;
 	signals->softwareSignals = &softwareSignals;
 
 	viaSignalInit(&audioRateInput, &audioRateOutput, BUFFER_SIZE);
+
+	//osc_initPhaseDist();
 
 	initializeUICallbacks();
 
@@ -29,20 +32,22 @@ void oscInit(viaSignals * signals) {
 	tsl_user_Init();
 	uiInitialize();
 
-	fillFamilyArray();
+	osc_fillWavetableArray();
 
-	displaySHMode = displaySH_Off;
-	displaySyncMode = displaySync_Hard;
-	displayXCVMode = displayXCV_FM;
-	displayMorphMode = displayMorph_Morph;
+	osc_switchWavetable(wavetableArray[0], signals);
 
-	signals->softwareSignals->fm = signals->inputs->cv2Samples;
-	signals->softwareSignals->pm = signals->inputs->cv2VirtualGround;
-	signals->softwareSignals->morphMod = signals->inputs->cv3Samples;
-	signals->softwareSignals->pwm = signals->inputs->cv3VirtualGround;
+//	displaySHMode = displaySH_Off;
+//	displaySyncMode = displaySync_Hard;
+//	displayXCVMode = displayXCV_FM;
+//	displayMorphMode = displayMorph_Morph;
 
-	signals->softwareSignals->syncInput = 1;
-	signals->softwareSignals->reverseInput = 1;
+	signals->parameters->fm = signals->inputs->cv2Samples;
+	signals->parameters->pm = signals->inputs->cv2VirtualGround;
+	signals->parameters->morphMod = signals->inputs->cv3Samples;
+	signals->parameters->pwm = signals->inputs->cv3VirtualGround;
+
+	signals->parameters->syncInput = 1;
+	signals->parameters->reverseInput = 1;
 
 
 }

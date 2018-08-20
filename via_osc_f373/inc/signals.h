@@ -8,29 +8,17 @@
 #ifndef SIGNALS_H_
 #define SIGNALS_H_
 
-#include "osc_dsp.h"
-#include "osc_tables.h"
+#include "oscillators.h"
 #include "via_io_binding.h"
 
 // declare a struct to hold the signals passed between functions
 
 typedef struct {
-	int16_t * fm;
-	int16_t * pm;
-	int16_t * pwm;
-	int16_t * morphMod;
-	int syncInput;
-	int reverseInput;
-	int frequencyBase;
-	int pmBase;
-	int pwmBase;
-	int morphBase;
-	int morphMultiplier;
-	int syncMode;
-	Family * currentFamily;
+	Wavetable * selectedTable;
 } softwareSignaling;
 
 softwareSignaling softwareSignals;
+oversampledWavetableParameters oscParameters;
 
 // declare and initialize a struct to contain those
 
@@ -38,9 +26,12 @@ typedef struct {
 	audioRateOutputs * outputs;
 	audioRateInputs * inputs;
 	controlRateInputs * controls;
+	oversampledWavetableParameters * parameters;
 	softwareSignaling * softwareSignals;
 } viaSignals;
 
 viaSignals signals;
+
+#define OSC_BUFFER_SIZE 16
 
 #endif /* INC_SIGNALS_H_ */
