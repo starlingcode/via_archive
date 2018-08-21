@@ -1,7 +1,7 @@
 #include "main.h"
 #include "tsl_user.h"
 #include "user_interface.h"
-#include "via_io_binding.h"
+#include "via_platform_binding.h"
 
 // RGB led timer
 TIM_HandleTypeDef htim3;

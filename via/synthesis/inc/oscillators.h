@@ -8,7 +8,7 @@
 #ifndef INC_OSCILLATORS_H_
 #define INC_OSCILLATORS_H_
 
-#include "via_io_binding.h"
+#include "via_platform_binding.h"
 #include "tables.h"
 
 /*
@@ -30,7 +30,7 @@ typedef struct {
 	int reverseInput;
 	int syncMode;
 	int shOn;
-	int numTables;
+	int tableSize;
 } oversampledWavetableParameters;
 
 void oversampledWavetableParseControls(controlRateInputs * controls, oversampledWavetableParameters * parameters);

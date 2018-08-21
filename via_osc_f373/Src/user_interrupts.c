@@ -1,11 +1,5 @@
 
-#include "signals.h"
-#include "main.h"
-#include "user_interface.h"
-#include "via_io_binding.h"
-#include "osc_modes.h"
-#include "osc_interrupt_handlers.h"
-
+#include "osc.h"
 
 enum
 {	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
@@ -40,11 +34,9 @@ void TIM12_IRQHandler(void)
 {
 
 	if (TRIGGER_RISING_EDGE) {
-		// VIA_MAIN_RISING_EDGE_CALLBACK(&signals)
-		mainRisingEdgeCallback(&signals);
+		osc_mainRisingEdgeCallback(&signals);
 	} else {
-		// VIA_MAIN_FALLING_EDGE_CALLBACK(&signals)
-		mainFallingEdgeCallback(&signals);
+		osc_mainFallingEdgeCallback(&signals);
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
@@ -57,11 +49,9 @@ void EXTI15_10_IRQHandler(void)
 {
 
 	if (EXPANDER_RISING_EDGE) {
-		// VIA_AUX_RISING_EDGE_CALLBACK(&signals)
-		auxRisingEdgeCallback(&signals);
+		osc_auxRisingEdgeCallback(&signals);
 	} else {
-		// VIA_AUX_FALLING_EDGE_CALLBACK(&signals)
-		auxFallingEdgeCallback(&signals);
+		osc_auxFallingEdgeCallback(&signals);
 	}
 
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
@@ -74,13 +64,11 @@ void EXTI1_IRQHandler(void)
 {
 
 	if (EXPANDER_BUTTON_PRESSED) {
-		// VIA_EXPANDER_BUTTON_PRESSED_CALLBACK(&signals)
 		uiDispatch(EXPAND_SW_ON_SIG);
-		buttonPressedCallback(&signals);
+		osc_buttonPressedCallback(&signals);
 	} else {
-		// VIA_EXPANDER_BUTTON_RELEASED_CALLBACK(&signals)
 		uiDispatch(EXPAND_SW_OFF_SIG);
-		buttonReleasedCallback(&signals);
+		osc_buttonReleasedCallback(&signals);
 	}
 
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
@@ -162,7 +150,7 @@ void DMA1_Channel1_IRQHandler(void)
 	} else {
 		DMA1->IFCR = DMA_FLAG_TC1;
 		// VIA_UPDATE_CONTROLS_CALLBACK(&signals)
-		slowConversionCallback(&signals);
+		osc_slowConversionCallback(&signals);
 	}
 
 }
@@ -174,10 +162,10 @@ void DMA1_Channel5_IRQHandler(void)
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;
 		//
-		halfTransferCallback(&signals);
+		osc_halfTransferCallback(&signals);
 	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;
-		transferCompleteCallback(&signals);
+		osc_transferCompleteCallback(&signals);
 	}
 
 }

@@ -10,10 +10,12 @@
 
 
 void oversampledWavetableParseControls(controlRateInputs * controls, oversampledWavetableParameters * parameters) {
+
 	parameters->frequencyBase = fix16_mul(expoTable[controls->cv1Value] >> 6,
 										fix16_mul(expoTable[(controls->knob1Value >> 2) * 3] >> 6,
 												expoTable[(controls->knob2Value >> 4) + 1300] >> 6));
 	parameters->morphBase = controls->knob3Value;
+
 }
 
 uint32_t oversampledWavetableAdvance(oversampledWavetableParameters * parameters, audioRateOutputs * outputs, uint32_t * wavetable, uint32_t * phaseDistTable, uint32_t writePosition, uint32_t bufferSize) {
@@ -33,8 +35,8 @@ uint32_t oversampledWavetableAdvance(oversampledWavetableParameters * parameters
 	uint32_t * pwmTable1 = phaseDistTable + pwmIndex*65;
 	uint32_t * pwmTable2 = pwmTable1 + 65;
 
-	// scale morph to table size in 16.16 fixed point
-	uint32_t morph = __USAT(((parameters->morphBase << 4) - (int)parameters->morphMod[0]), 16) * parameters->numTables;
+	// combine knob and CV then to table size in 16.16 fixed point
+	uint32_t morph = __USAT(((parameters->morphBase << 4) - (int)parameters->morphMod[0]), 16) * parameters->tableSize;
 	uint32_t morphIndex = morph >> 16;
 	uint32_t morphFrac = morph & 0xFFFF;
 	// assuming that each phase distortion lookup table is 517 samples long stored as int
@@ -50,9 +52,9 @@ uint32_t oversampledWavetableAdvance(oversampledWavetableParameters * parameters
 	phase *= parameters->syncInput;
 	parameters->syncInput = 1;
 
-	uint32_t * buffer1 = outputs->dac1Samples;
-	uint32_t * buffer2 = outputs->dac2Samples;
-	uint32_t * buffer3 = outputs->dac3Samples;
+	uint32_t * dac1Buffer = outputs->dac1Samples;
+	uint32_t * dac2Buffer = outputs->dac2Samples;
+	uint32_t * dac3Buffer = outputs->dac3Samples;
 
 	uint32_t leftSample;
 	uint32_t ghostPhase = 0;
@@ -75,14 +77,14 @@ uint32_t oversampledWavetableAdvance(oversampledWavetableParameters * parameters
 						pwmFrac, pwmPhaseFrac);
 		// output of phase distortion is a 9.16 (tablesize.interpolationbits) fixed point number
 		// scale to 12 bits for saw out
-		buffer3[writeIndex] = (ghostPhase) >> 13;
+		dac3Buffer[writeIndex] = (ghostPhase) >> 13;
 		// get the actual wavetable output sample as above
 		// but with the appropriate scaling as phase is now 25 bits and table length is 9 bits
 		leftSample = ghostPhase >> 16;
 #define phaseFrac (ghostPhase & 0xFFFF)
-		buffer2[writeIndex] = fast_15_16_bilerp_prediff(wavetable1[leftSample], wavetable1[leftSample + 1],
+		dac2Buffer[writeIndex] = fast_15_16_bilerp_prediff(wavetable1[leftSample], wavetable1[leftSample + 1],
 													morphFrac, phaseFrac);
-		buffer1[writeIndex] = 4095 - buffer2[writeIndex];
+		dac1Buffer[writeIndex] = 4095 - dac2Buffer[writeIndex];
 
 		writeIndex++;
 		samplesRemaining--;
@@ -95,7 +97,6 @@ uint32_t oversampledWavetableAdvance(oversampledWavetableParameters * parameters
 void oversampledWavetableParsePhase(uint32_t phase, oversampledWavetableParameters * parameters, audioRateOutputs *output) {
 
 	static uint32_t lastPhaseHemisphere;
-	static uint32_t lastPhase;
 
 	// 1 if phase is greater than half, else 0
 	uint32_t phaseHemisphere = phase >> 24;
@@ -124,6 +125,8 @@ void oversampledWavetableParsePhase(uint32_t phase, oversampledWavetableParamete
 		atB = 0;
 	}
 
+	// BIG NO-NO, no hardware specific code in the library
+
 	// generate square wave at A
 	uint32_t aLogicMask = ALOGIC_LOW_MASK << (phaseHemisphere * 16);
 	SET_A_LOGIC(aLogicMask);
@@ -133,8 +136,5 @@ void oversampledWavetableParsePhase(uint32_t phase, oversampledWavetableParamete
 	SET_SH(shMask);
 
 	lastPhaseHemisphere = phaseHemisphere;
-	lastPhase = phase;
-
-
 
 }

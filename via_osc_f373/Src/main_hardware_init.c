@@ -1,7 +1,7 @@
 
 /* USER CODE BEGIN Includes */
 
-#include "via_io_binding.h"
+#include "via_platform_binding.h"
 #include "main.h"
 #include "stm32f3xx_hal.h"
 #include "adc.h"
@@ -12,7 +12,8 @@
 #include "touchsensing.h"
 #include "tsc.h"
 #include "gpio.h"
-#include "signals.h"
+
+#include "osc.h"
 
 extern void mainHardwareInit(void);
 

@@ -62,9 +62,7 @@
 
 #define BUILD_F373_REV6
 
-#include "via_io_binding.h"
-#include "osc_interrupt_handlers.h"
-#include "osc_main_states.h"
+#include "osc.h"
 
 extern void mainHardwareInit(void);
 
@@ -143,7 +141,7 @@ int main(void)
   //viaAssignCallbacks()
 
   // VIA_FIRMWARE_INIT(&signals)
-  oscInit(&signals);
+  osc_init(&signals);
   // VIA_SYSTEM_INIT()
   mainHardwareInit();
 

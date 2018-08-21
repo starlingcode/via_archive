@@ -5,7 +5,7 @@
 #include "scanner_fill_buffer.h"
 #include "scanner_main_states.h"
 
-void mainRisingEdgeCallback(viaSignals * signals) {
+void mainRisingEdgeCallback(osc_signals * signals) {
 
 	signals->softwareSignals->syncSignal = 0;
 
@@ -15,21 +15,21 @@ void mainFallingEdgeCallback(softwareSignaling * softwareSignals) {
 
 }
 
-void auxRisingEdgeCallback(viaSignals * signals) {
+void auxRisingEdgeCallback(osc_signals * signals) {
 	;
 }
-void auxFallingEdgeCallback(viaSignals * signals) {
-	;
-}
-
-void buttonPressedCallback(viaSignals * signals) {
-	;
-}
-void buttonReleasedCallback(viaSignals * signals) {
+void auxFallingEdgeCallback(osc_signals * signals) {
 	;
 }
 
-void ioProcessCallback(viaSignals * signals) {
+void buttonPressedCallback(osc_signals * signals) {
+	;
+}
+void buttonReleasedCallback(osc_signals * signals) {
+	;
+}
+
+void ioProcessCallback(osc_signals * signals) {
 
 	static int readIndex;
 
@@ -87,7 +87,7 @@ void ioProcessCallback(viaSignals * signals) {
 	}
 
 }
-void generateSample(viaSignals * signals) {
+void generateSample(osc_signals * signals) {
 
 	// handled with fillBuffer
 

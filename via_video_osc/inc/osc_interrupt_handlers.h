@@ -9,21 +9,21 @@
 
 void syncInit(void);
 
-void mainRisingEdgeCallback(viaSignals *);
-void mainFallingEdgeCallback(viaSignals *);
+void mainRisingEdgeCallback(osc_signals *);
+void mainFallingEdgeCallback(osc_signals *);
 
-void auxRisingEdgeCallback(viaSignals *);
-void auxFallingEdgeCallback(viaSignals *);
+void auxRisingEdgeCallback(osc_signals *);
+void auxFallingEdgeCallback(osc_signals *);
 
-void buttonPressedCallback(viaSignals *);
-void buttonPressedCallback(viaSignals *);
+void buttonPressedCallback(osc_signals *);
+void buttonPressedCallback(osc_signals *);
 
 // DMA handlers
 
-void ioProcessCallback(viaSignals *);
-void halfTransferCallback(viaSignals *);
-void transferCompleteCallback(viaSignals *);
-void slowConversionCallback(viaSignals *);
+void ioProcessCallback(osc_signals *);
+void halfTransferCallback(osc_signals *);
+void transferCompleteCallback(osc_signals *);
+void slowConversionCallback(osc_signals *);
 
 
 

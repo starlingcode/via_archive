@@ -11,21 +11,13 @@
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "dsp.h"
+#include "via_global_signals.h"
 
 extern ADC_HandleTypeDef hadc1;
 extern DAC_HandleTypeDef hdac1;
 extern DAC_HandleTypeDef hdac2;
 extern SDADC_HandleTypeDef hsdadc1;
 extern SDADC_HandleTypeDef hsdadc2;
-
-// declare a struct to hold the control rate inputs
-
-typedef struct {
-	uint32_t knob1Value;
-	uint32_t knob2Value;
-	uint32_t knob3Value;
-	uint32_t cv1Value;
-} controlRateInputs;
 
 int controlRateADCReadings[4];
 
@@ -34,38 +26,9 @@ int controlRateADCReadings[4];
 #define knob1 controlRateADCReadings[2]
 #define cv1 (4095 - controlRateADCReadings[0])
 
-// declare a struct to point to the audio rate inputs
-
-typedef struct {
-	int16_t * cv2Samples;
-	int16_t * cv3Samples;
-	int16_t * cv2VirtualGround;
-	int16_t * cv3VirtualGround;
-} audioRateInputs;
-
-// declare a struct to point to the audio rate outputs
-
-typedef struct {
-	uint32_t * dac1Samples;
-	uint32_t * dac2Samples;
-	uint32_t * dac3Samples;
-	uint32_t * shA;
-	uint32_t * shB;
-	uint32_t * logicA;
-	uint32_t * auxLogic;
-} audioRateOutputs;
-
-// allocate a DMA buffer for each oversampled output
-
 // initialize a copy of each signal group
 
-audioRateOutputs audioRateOutput;
-audioRateInputs audioRateInput;
-controlRateInputs controlRateInput;
-
-
-
-static inline void viaSignalInit(audioRateInputs * audioRateInput, audioRateOutputs * audioRateOutput, int bufferSize) {
+static inline void via_ioStreamInit(audioRateInputs * audioRateInput, audioRateOutputs * audioRateOutput, int bufferSize) {
 
 	audioRateOutput->dac1Samples = malloc(2*bufferSize*sizeof(int));
 	audioRateOutput->dac2Samples = malloc(2*bufferSize*sizeof(int));
@@ -119,7 +82,7 @@ static inline void viaSignalInit(audioRateInputs * audioRateInput, audioRateOutp
 
 }
 
-static inline void updateControlRateInputs(controlRateInputs * controls) {
+static inline void via_updateControlRateInputs(controlRateInputs * controls) {
 
 	// TODO apply SIMD instructions?
 

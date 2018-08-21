@@ -157,7 +157,7 @@ typedef struct {
 	const uint16_t **attackSlope;
 	const uint16_t **releaseSlope;
 	uint32_t slopeLength;
-	uint32_t numTables;
+	uint32_t numWaveforms;
 } Wavetable;
 
 // helper function to load the above array
@@ -168,151 +168,181 @@ static const Wavetable moogSquare = {
 	.attackSlope = moogSquareShiftAttackFamily,
 	.releaseSlope = moogSquareShiftReleaseFamily,
 	.slopeLength = 256,
-	.numTables = 9};
+	.numWaveforms = 9};
 
 
 static const Wavetable triOdd = {
 	.attackSlope = trioddAttackFamily,
 	.releaseSlope = trioddReleaseFamily,
 	.slopeLength = 256,
-	.numTables = 9};
+	.numWaveforms = 9};
 
 
 static const Wavetable sawBend = {
 	.attackSlope = sawBendAttackFamily,
 	.releaseSlope = sawBendReleaseFamily,
 	.slopeLength = 256,
-	.numTables = 5};
+	.numWaveforms = 5};
 
 
 static const Wavetable exciteBike = {
 	.attackSlope = exciteBikeAttackFamily,
 	.releaseSlope = exciteBikeReleaseFamily,
 	.slopeLength = 256,
-	.numTables = 9};
+	.numWaveforms = 9};
 
 
 static const Wavetable algerian = {
 	.attackSlope = algerianAttackFamily,
 	.releaseSlope = algerianReleaseFamily,
 	.slopeLength = 256,
-	.numTables = 5};
+	.numWaveforms = 5};
 
 
 static const Wavetable impevens = {
 	.attackSlope = impshort,
 	.releaseSlope = impshort,
 	.slopeLength = 256,
-	.numTables = 9};
+	.numWaveforms = 9};
 
 
 static const Wavetable skipSaw = {
 	.attackSlope = skipsaw,
 	.releaseSlope = skipsaw,
 	.slopeLength = 256,
-	.numTables = 5};
+	.numWaveforms = 5};
 
 
 static const Wavetable tenor257 = {
 	.attackSlope = tenor257Atk,
 	.releaseSlope = tenor257Rls,
 	.slopeLength = 256,
-	.numTables = 5};
+	.numWaveforms = 5};
 
 
 static const Wavetable linwavefold_257 = {
 	.attackSlope = linwavefold_257_Family,
 	.releaseSlope = linwavefold_257_Family,
 	.slopeLength = 256,
-	.numTables = 5};
+	.numWaveforms = 5};
 
 
 static const Wavetable sinwavefold_257 = {
 	.attackSlope = sinwavefold_257_Family,
 	.releaseSlope = sinwavefold_257_Family,
 	.slopeLength = 256,
-	.numTables = 9};
+	.numWaveforms = 9};
 
 
 static const Wavetable additive_tri_to_pulse = {
 	.attackSlope = additive_tri_to_pulseFamily,
 	.releaseSlope = additive_tri_to_pulseFamily,
 	.slopeLength = 256,
-	.numTables = 5};
+	.numWaveforms = 5};
 
 
 static const Wavetable newBounce = {
 	.attackSlope = newBounceFamily,
 	.releaseSlope = newBounceFamily,
 	.slopeLength = 256,
-	.numTables = 5};
+	.numWaveforms = 5};
 
 
 static const Wavetable soprano257 = {
 	.attackSlope = soprano257Atk,
 	.releaseSlope = soprano257Rls,
 	.slopeLength = 256,
-	.numTables = 5};
+	.numWaveforms = 5};
 
 
 static const Wavetable testRMS = {
 	.attackSlope = testRMSRMSAtk,
 	.releaseSlope = testRMSRMSRls,
 	.slopeLength = 256,
-	.numTables = 5};
+	.numWaveforms = 5};
 
 
 static const Wavetable gamma257 = {
 	.attackSlope = gamma257Attack,
 	.releaseSlope = gamma257Attack,
 	.slopeLength = 256,
-	.numTables = 9};
+	.numWaveforms = 9};
 
 
 static const Wavetable bounce_257 = {
 	.attackSlope = bounce_257_slopes,
 	.releaseSlope = bounce_257_slopes,
 	.slopeLength = 256,
-	.numTables = 5};
+	.numWaveforms = 5};
 
 
 static const Wavetable circular_257 = {
 	.attackSlope = circular_257_slopes,
 	.releaseSlope = circular_257_slopes,
 	.slopeLength = 256,
-	.numTables = 5};
+	.numWaveforms = 5};
 
 
 static const Wavetable quintic_outin2quintic_inout257 = {
 	.attackSlope = quintic_outin2quintic_inout257_slopes,
 	.releaseSlope = quintic_outin2quintic_inout257_slopes,
 	.slopeLength = 256,
-	.numTables = 9};
+	.numWaveforms = 9};
 
 
 static const Wavetable quintic_out2quintic_in257 = {
 	.attackSlope = quintic_out2quintic_in257_slopes,
 	.releaseSlope = quintic_out2quintic_in257_slopes,
 	.slopeLength = 256,
-	.numTables = 9};
+	.numWaveforms = 9};
 
 
 static const Wavetable quintic_inout2quintic_outin257 = {
 	.attackSlope = quintic_inout2quintic_outin257_slopes,
 	.releaseSlope = quintic_inout2quintic_outin257_slopes,
 	.slopeLength = 256,
-	.numTables = 9};
+	.numWaveforms = 9};
 
 
 static const Wavetable quintic_in2quintic_out257 = {
 	.attackSlope = quintic_in2quintic_out257_slopes,
 	.releaseSlope = quintic_in2quintic_out257_slopes,
 	.slopeLength = 256,
-	.numTables = 9};
+	.numWaveforms = 9};
 
 // load each sample from flash to ram with bitshift by 3 and store in bottom halfword
 // store difference between sample and corresponding sample in adjacent waveform in top halfword
 
+static inline void loadWavetableWithDiff(Wavetable * table, uint32_t * tableRead) {
+
+	uint32_t numSamples = table->slopeLength;
+
+	//for each table in the table
+	for (int i = 0; i < table->numWaveforms; i++) {
+		//include the "last two" samples from release
+		*((tableRead + 517*i) + 0) = *(*(table->releaseSlope + i) + 0) >> 3;
+		*((tableRead + 517*i) + 1) = *(*(table->releaseSlope + i) + 0) >> 3;
+		//fill in a full cycle's worth of samples
+		//the release gets reversed
+		//we drop the last sample from attack and the first from releas
+		for (int j = 0;j < numSamples; j++) {
+			*((tableRead + 517*i) + 2 + j) = *(*(table->attackSlope + i) + j) >> 3;
+			*((tableRead + 517*i) + 2 + numSamples + j) = *(*(table->releaseSlope + i) + numSamples - j) >> 3;
+		}
+		//pad out the "first two" samples from attack
+		*((tableRead + 517*i) + (numSamples << 1) + 2) = *(*(table->attackSlope + i) + 0) >> 3;
+		*((tableRead + 517*i) + (numSamples << 1) + 3) = *(*(table->attackSlope + i) + 0) >> 3;
+		*((tableRead + 517*i) + (numSamples << 1) + 4) = *(*(table->attackSlope + i) + 0) >> 3;
+	}
+
+
+	for (int i = 0; i < table->numWaveforms - 1; i++) {
+		for (int j = 0;j < (numSamples*2 + 5); j++) {
+			*((tableRead + 517*i) + j) |= (*((tableRead + 517*(i+1)) + j) - *((tableRead + 517*i) + j)) << 16;
+		}
+	}
+
+}
 
 /*
  *
@@ -321,8 +351,29 @@ static const Wavetable quintic_in2quintic_out257 = {
  *
  */
 
-//static const uint32_t * phaseDistPWM[33] = {phaseDistPWM_0, phaseDistPWM_1, phaseDistPWM_2, phaseDistPWM_3, phaseDistPWM_4, phaseDistPWM_5, phaseDistPWM_6, phaseDistPWM_7, phaseDistPWM_8, phaseDistPWM_9, phaseDistPWM_10, phaseDistPWM_11, phaseDistPWM_12, phaseDistPWM_13, phaseDistPWM_14, phaseDistPWM_15, phaseDistPWM_16, phaseDistPWM_17, phaseDistPWM_18, phaseDistPWM_19, phaseDistPWM_20, phaseDistPWM_21, phaseDistPWM_22, phaseDistPWM_23, phaseDistPWM_24, phaseDistPWM_25, phaseDistPWM_26, phaseDistPWM_27, phaseDistPWM_28, phaseDistPWM_29, phaseDistPWM_30, phaseDistPWM_31, phaseDistPWM_32};
 
+
+static const uint32_t * phaseDistPWMTable[33] = {phaseDistPWM_0, phaseDistPWM_1, phaseDistPWM_2, phaseDistPWM_3, phaseDistPWM_4, phaseDistPWM_5, phaseDistPWM_6, phaseDistPWM_7, phaseDistPWM_8, phaseDistPWM_9, phaseDistPWM_10, phaseDistPWM_11, phaseDistPWM_12, phaseDistPWM_13, phaseDistPWM_14, phaseDistPWM_15, phaseDistPWM_16, phaseDistPWM_17, phaseDistPWM_18, phaseDistPWM_19, phaseDistPWM_20, phaseDistPWM_21, phaseDistPWM_22, phaseDistPWM_23, phaseDistPWM_24, phaseDistPWM_25, phaseDistPWM_26, phaseDistPWM_27, phaseDistPWM_28, phaseDistPWM_29, phaseDistPWM_30, phaseDistPWM_31, phaseDistPWM_32};
+
+typedef struct {
+	const uint32_t **lookupTable;
+	uint32_t tableLength;
+	uint32_t numWaveforms;
+} PhaseDistTable;
+
+static const PhaseDistTable phaseDistPWM = {
+	.lookupTable = phaseDistPWMTable,
+	.tableLength = 65,
+	.numWaveforms = 33};
+
+static inline void loadPhaseDistTable(PhaseDistTable * table, uint32_t * tableRead) {
+//	memcpy(tableRead, table->lookupTable, 33*65*sizeof(uint32_t));
+	for (int i = 0; i < 33; i++) {
+		for (int j = 0; j < 65; j++) {
+			*((tableRead + i*65) + j) = *(*(table->lookupTable + i) + j);
+		}
+	}
+}
 
 /*
  *

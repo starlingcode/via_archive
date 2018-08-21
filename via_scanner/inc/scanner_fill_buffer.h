@@ -12,7 +12,7 @@
 
 // function calling subfunctions to fill the sample buffer
 
-void fillBuffer(viaSignals *);
+void fillBuffer(osc_signals *);
 
 // pointer to the function that calculates samples and phase events
 

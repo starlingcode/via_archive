@@ -5,7 +5,7 @@
 #include "signals.h"
 #include "via_rev5_hardware_io.h"
 
-void fillBuffer(viaSignals * signals) {
+void fillBuffer(osc_signals * signals) {
 
 	q31_t xIndexBuffer[BUFFER_SIZE];
 	q31_t yIndexBuffer[BUFFER_SIZE];

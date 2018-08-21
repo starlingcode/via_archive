@@ -139,7 +139,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   viaSignalInit();
-  oscInit();
+  osc_init();
   mainHardwareInit();
 
   SH_A_TRACK;

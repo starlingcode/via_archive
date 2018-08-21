@@ -12,7 +12,7 @@
 
 // function calling subfunctions to fill the sample buffer
 
-void fillBuffer(viaSignals *);
+void fillBuffer(osc_signals *);
 
 struct viaStateInfoHolder {
 	q31_t incrementValues1[BUFFER_SIZE];

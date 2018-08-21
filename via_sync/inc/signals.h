@@ -52,7 +52,7 @@ typedef struct {
 	audioRateInputs * inputs;
 	controlRateInputs * controls;
 	softwareSignaling * softwareSignals;
-} viaSignals;
+} osc_signals;
 
 controlRateInputs controlRateInput;
 audioRateInputs audioRateInput;
@@ -64,7 +64,7 @@ audioRateInputs * audioRateInputAddress;
 audioRateOutputs * audioRateOutputAddress;
 softwareSignaling * softwareSignalsAddress;
 
-viaSignals signals;
+osc_signals signals;
 
 static inline void viaSignalInit(void) {
 

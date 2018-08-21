@@ -1,7 +1,7 @@
 #ifndef TEST_H__
 #define TEST_H__
 
-#include "via_io_binding.h"
+#include "via_platform_binding.h"
 #include "tsl_user.h"
 #include "eeprom.h"
 
