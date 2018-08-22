@@ -1,11 +1,5 @@
 
-#include "dsp.h"
-#include "main.h"
-#include "user_interface.h"
-#include "via_rev5_hardware_io.h"
-#include "trigseq_modes.h"
-#include "trigseq_interrupt_handlers.h"
-
+#include "trigseq.h"
 
 enum
 {	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
@@ -28,12 +22,69 @@ extern TIM_HandleTypeDef htim17;
 
 tsl_user_status_t tsl_status;
 
-/**
-* @brief This function handles TIM16 global interrupt.
-*/
+/*
+ *
+ *  Logic input interrupts
+ *
+ */
+
+// Main trigger input
+
+void TIM12_IRQHandler(void)
+{
+
+	if (TRIGGER_RISING_EDGE) {
+		trigseq_mainRisingEdgeCallback(&signals);
+	} else {
+		trigseq_mainFallingEdgeCallback(&signals);
+	}
+
+	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
+
+}
+
+// Aux trigger input
+
+void EXTI15_10_IRQHandler(void)
+{
+
+	if (EXPANDER_RISING_EDGE) {
+		trigseq_auxRisingEdgeCallback(&signals);
+	} else {
+		trigseq_auxFallingEdgeCallback(&signals);
+	}
+
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
+
+}
+
+// Expander button
+
+void EXTI1_IRQHandler(void)
+{
+
+	if (EXPANDER_BUTTON_PRESSED) {
+		uiDispatch(EXPAND_SW_ON_SIG);
+		trigseq_buttonPressedCallback(&signals);
+	} else {
+		uiDispatch(EXPAND_SW_OFF_SIG);
+		trigseq_buttonReleasedCallback(&signals);
+	}
+
+	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
+
+}
+
+/*
+ *
+ * Timer interrputs
+ *
+ */
+
+// SH A
+
 void TIM16_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM16_IRQn 0 */
 
 	SH_A_SAMPLE
 	if (RUNTIME_DISPLAY) {
@@ -43,19 +94,12 @@ void TIM16_IRQHandler(void)
 	__HAL_TIM_CLEAR_FLAG(&htim16, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim16);
 
-  /* USER CODE END TIM16_IRQn 0 */
-  //HAL_TIM_IRQHandler(&htim16);
-  /* USER CODE BEGIN TIM16_IRQn 1 */
-
-  /* USER CODE END TIM16_IRQn 1 */
 }
 
-/**
-* @brief This function handles TIM17 global interrupt.
-*/
+// SH B
+
 void TIM17_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM17_IRQn 0 */
 
 	SH_B_SAMPLE;
 	if (RUNTIME_DISPLAY) {
@@ -64,121 +108,68 @@ void TIM17_IRQHandler(void)
 	__HAL_TIM_CLEAR_FLAG(&htim17, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim17);
 
-  /* USER CODE END TIM17_IRQn 0 */
-  //HAL_TIM_IRQHandler(&htim17);
-  /* USER CODE BEGIN TIM17_IRQn 1 */
-
-  /* USER CODE END TIM17_IRQn 1 */
 }
 
-/**
-* @brief This function handles TIM12 global interrupt.
-*/
-void TIM12_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM12_IRQn 0 */
+// run touch sensor state machine
 
-	if (TRIGGER_RISING_EDGE) {
-		mainRisingEdgeCallback(&controlRateInput, &audioRateInput, &softwareSignals);
-	} else { //falling edge
-		mainFallingEdgeCallback(&softwareSignals);
-	}
-
-	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
-
-  /* USER CODE END TIM12_IRQn 0 */
-  //HAL_TIM_IRQHandler(&htim12);
-  /* USER CODE BEGIN TIM12_IRQn 1 */
-
-  /* USER CODE END TIM12_IRQn 1 */
-}
-
-/**
-* @brief This function handles TIM13 global interrupt.
-*/
 void TIM13_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM13_IRQn 0 */
 
 	// run the state machine from the STM Touch Library
 	tsl_status = tsl_user_Exec();
 	__HAL_TIM_CLEAR_FLAG(&htim13, TIM_FLAG_UPDATE);
 
-
-  /* USER CODE END TIM13_IRQn 1 */
 }
 
-/**
-* @brief This function handles TIM6 global interrupt and DAC1 underrun error interrupts.
-*/
-void TIM6_DAC1_IRQHandler(void)
-{
+// ui timer
 
-	ioProcessCallback(&audioRateInput, &controlRateInput, &audioRateOutput);
-	generateSample(&softwareSignals, &audioRateOutput);
-
-
-	// clear timer update flag
-	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
-
-}
-
-/**
-* @brief This function handles TIM7 global interrupt.
-*/
 void TIM7_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM7_IRQn 0 */
 
 	uiDispatch(TIMEOUT_SIG);
 
-  /* USER CODE END TIM7_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim7);
-  /* USER CODE BEGIN TIM7_IRQn 1 */
+	HAL_TIM_IRQHandler(&htim7);
 
-  /* USER CODE END TIM7_IRQn 1 */
 }
 
-// trigger input interrupt
+/*
+ *
+ * DMA transfer complete interrupts
+ *
+ */
 
-void EXTI15_10_IRQHandler(void)
+// slow ADCs
+
+void DMA1_Channel1_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
 
-	if (EXPANDER_RISING_EDGE) {
-		auxRisingEdgeCallback(&softwareSignals);
-	} else { //falling edge
-		auxFallingEdgeCallback(&softwareSignals);
+	//minimal interrupt handler for circular buffer
+
+	if ((DMA1->ISR & (DMA_FLAG_HT1)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1;
+	} else {
+		DMA1->IFCR = DMA_FLAG_TC1;
+		// VIA_UPDATE_CONTROLS_CALLBACK(&signals)
+		trigseq_slowConversionCallback(&signals);
 	}
 
-  /* USER CODE END EXTI15_10_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
-  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
-
-  /* USER CODE END EXTI15_10_IRQn 1 */
 }
 
-//trigger button interrupt
-
-void EXTI1_IRQHandler(void)
+void DMA1_Channel5_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI1_IRQn 0 */
 
-	static int buttonPressed;
 
-	buttonPressed = !buttonPressed;
-
-	if (buttonPressed) {
-		uiDispatch(EXPAND_SW_ON_SIG);
-		buttonPressedCallback(&softwareSignals);
-	} else { //falling edge
-		uiDispatch(EXPAND_SW_OFF_SIG);
-		buttonReleasedCallback(&softwareSignals);
+	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1 << 16;
+		//
+		trigseq_halfTransferCallback(&signals);
+	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
+		DMA1->IFCR = DMA_FLAG_TC1 << 16;
+		trigseq_transferCompleteCallback(&signals);
 	}
 
-  /* USER CODE END EXTI1_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
-  /* USER CODE BEGIN EXTI1_IRQn 1 */
-
-  /* USER CODE END EXTI1_IRQn 1 */
 }
+
+
+
+

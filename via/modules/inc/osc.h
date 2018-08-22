@@ -151,6 +151,8 @@ void osc_handleAux2Hold(void);
 void osc_handleAux3Hold(void);
 void osc_handleAux4Hold(void);
 
+void osc_initializeUICallbacks(void);
+
 /*
  *
  * Tables

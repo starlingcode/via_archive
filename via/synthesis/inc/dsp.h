@@ -47,6 +47,17 @@ static inline int fix16_mul(int in0, int in1) {
 
 }
 
+static inline int fix16_lerp(int in0, int in1, int frac) {
+	// maybe could do this better by shoving frac up by 16,
+	// loading in0 in the msb of a 64 bit accumulator,
+	// and taking the topword of SMLLA
+	return in0 + fix16_mul(in1 - in0, frac);
+}
+
+static inline int fast16_16_lerp(int in0, int in1, int frac) {
+	return in0 + (((in1 - in0)*frac) >> 16);
+}
+
 static inline int fast_fix15_lerp(int in0, int in1, int frac) {
 
 

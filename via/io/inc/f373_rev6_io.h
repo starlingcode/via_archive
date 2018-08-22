@@ -8,7 +8,9 @@
  * Hardware IO Macros
  */
 
-// Static GPIO handling functions
+// THESE PROVIDE PLATFORM LINKAGE //
+// ONLY USE IN STATIC INLINES OR DEFINES //
+// THESE MAKE COMPILED CODE PLATFORM SPECIFIC //
 
 // LEDs
 
@@ -29,17 +31,35 @@ static inline void updateRGBDisplay(uint32_t red, uint32_t green, uint32_t blue)
 
 }
 
-#define LEDB_ON GPIOC->BSRR = (uint32_t)GPIO_PIN_14;
-#define LEDB_OFF GPIOC->BRR = (uint32_t)GPIO_PIN_14;
-
 #define LEDA_ON GPIOF->BSRR = (uint32_t)GPIO_PIN_7;
 #define LEDA_OFF GPIOF->BRR = (uint32_t)GPIO_PIN_7;
+
+#define LEDB_ON GPIOC->BSRR = (uint32_t)GPIO_PIN_14;
+#define LEDB_OFF GPIOC->BRR = (uint32_t)GPIO_PIN_14;
 
 #define LEDC_ON GPIOA->BSRR = (uint32_t)GPIO_PIN_2;
 #define LEDC_OFF GPIOA->BRR = (uint32_t)GPIO_PIN_2;
 
 #define LEDD_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_2;
 #define LEDD_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_2;
+
+static inline void setLEDA(int setReset) {
+	GPIOF->BSRR = ((uint32_t)GPIO_PIN_7) << (16*(!setReset));
+}
+
+static inline void setLEDB(int setReset) {
+	GPIOC->BSRR = ((uint32_t)GPIO_PIN_14) << (16*(!setReset));
+}
+
+static inline void setLEDC(int setReset) {
+	GPIOA->BSRR = ((uint32_t)GPIO_PIN_2) << (16*(!setReset));
+}
+
+static inline void setLEDD(int setReset) {
+	GPIOB->BSRR = ((uint32_t)GPIO_PIN_2) << (16*(!setReset));
+}
+
+
 
 // Logic outs
 
@@ -64,7 +84,7 @@ static inline void updateRGBDisplay(uint32_t red, uint32_t green, uint32_t blue)
 #define SH_B_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_9;
 #define SH_B_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_9;
 
-// Variable GPIO handling functions
+// Variable GPIO handling functions (legacy)
 
 #define SET_A_LOGIC(X) GPIOC->BSRR = X;
 
@@ -88,6 +108,26 @@ static inline void updateRGBDisplay(uint32_t red, uint32_t green, uint32_t blue)
 #define SET_LEDA(X) GPIOF->BSRR = X;
 
 #define GPIO_NOP 0
+
+static inline void setLogicA(int setReset) {
+	GPIOC->BSRR = ((uint32_t)GPIO_PIN_13) << (16*setReset);
+}
+
+static inline void setAuxLogic(int setReset) {
+	GPIOA->BSRR = ((uint32_t)GPIO_PIN_12) << (16*setReset);
+}
+
+#define SH_SAMPLE 1
+#define SH_TRACK 0
+
+static inline void setSH(int shA, int shB) {
+
+	uint32_t mask = (uint32_t)GPIO_PIN_8 << (16*shA);
+	mask |= (uint32_t)GPIO_PIN_8 << (16*shB);
+
+	GPIOB->BRR = mask;
+}
+
 
 static inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
 
@@ -121,6 +161,8 @@ static inline void setLogicOutputsLEDOff(uint32_t logicA, uint32_t logicExpander
 	SET_SH(shA | shB);
 
 }
+
+
 
 
 // DAC register address

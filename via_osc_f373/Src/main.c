@@ -138,17 +138,8 @@ int main(void)
   MX_DAC2_Init();
   /* USER CODE BEGIN 2 */
 
-  //viaAssignCallbacks()
-
-  // VIA_FIRMWARE_INIT(&signals)
   osc_init(&signals);
-  // VIA_SYSTEM_INIT()
   mainHardwareInit();
-
-  SH_A_TRACK;
-  SH_B_TRACK;
-
-
 
   /* USER CODE END 2 */
 

@@ -33,16 +33,18 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level.916747101" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.c.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.866260234" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.846897944" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_hardware/Middlewares/ST/STM32_TouchSensing_Library/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_hardware/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_trigseq/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_ui/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/stm32f373/Middlewares/ST/STM32_TouchSensing_Library/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/modules/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/synthesis/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/stm32f373/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/io/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="../Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_TouchSensing_Library/inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F3xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/ui/inc}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1317153614" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__weak=&quot;__attribute__((weak))&quot;"/>
@@ -80,16 +82,10 @@
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.625794334" name="MCU GCC Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker">
 								<option id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.script.1123219984" name="Linker Script (-T)" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker.script" useByScannerDiscovery="false" value="../STM32F373CCTx_FLASH.ld" valueType="string"/>
 								<option id="gnu.c.link.option.libs.757667476" name="Libraries (-l)" superClass="gnu.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
-									<listOptionValue builtIn="false" value="via_ui"/>
-									<listOptionValue builtIn="false" value="via_hardware"/>
-									<listOptionValue builtIn="false" value="via_trigseq"/>
-									<listOptionValue builtIn="false" value="arm_cortexM4lf_math"/>
+									<listOptionValue builtIn="false" value="via"/>
 								</option>
 								<option id="gnu.c.link.option.paths.1447018029" name="Library search path (-L)" superClass="gnu.c.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_ui/Release}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_trigseq/Release}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_hardware/Release}&quot;"/>
-									<listOptionValue builtIn="false" value="../Lib/"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/Debug}&quot;"/>
 								</option>
 								<option id="gnu.c.link.option.ldflags.717776311" name="Linker flags" superClass="gnu.c.link.option.ldflags" useByScannerDiscovery="false" value="-specs=nosys.specs -specs=nano.specs" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1204199363" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
@@ -156,12 +152,14 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level.916747101" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.c.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.866260234" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.default" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.846897944" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/stm32f373/Middlewares/ST/STM32_TouchSensing_Library/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/ui/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/modules/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/synthesis/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/stm32f373/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/io/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_TouchSensing_Library/inc"/>
 									<listOptionValue builtIn="false" value="../Inc"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_hardware/Middlewares/ST/STM32_TouchSensing_Library/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_hardware/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_trigseq/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_ui/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F3xx/Include"/>
@@ -207,16 +205,10 @@
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.625794334" name="MCU GCC Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker">
 								<option id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.script.1123219984" name="Linker Script (-T)" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker.script" useByScannerDiscovery="false" value="../STM32F373CCTx_FLASH.ld" valueType="string"/>
 								<option id="gnu.c.link.option.libs.757667476" name="Libraries (-l)" superClass="gnu.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
-									<listOptionValue builtIn="false" value="arm_cortexM4lf_math"/>
-									<listOptionValue builtIn="false" value="via_hardware"/>
-									<listOptionValue builtIn="false" value="via_trigseq"/>
-									<listOptionValue builtIn="false" value="via_ui"/>
+									<listOptionValue builtIn="false" value="via"/>
 								</option>
 								<option id="gnu.c.link.option.paths.1447018029" name="Library search path (-L)" superClass="gnu.c.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
-									<listOptionValue builtIn="false" value="../Lib/"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_ui/Release}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_trigseq/Release}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_hardware/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/Release}&quot;"/>
 								</option>
 								<option id="gnu.c.link.option.ldflags.717776311" name="Linker flags" superClass="gnu.c.link.option.ldflags" useByScannerDiscovery="false" value="-specs=nosys.specs -specs=nano.specs" valueType="string"/>
 								<option id="gnu.c.link.option.strip.792941047" name="Omit all symbol information (-s)" superClass="gnu.c.link.option.strip" useByScannerDiscovery="false" value="false" valueType="boolean"/>
@@ -244,6 +236,10 @@
 								<option id="gnu.both.asm.option.include.paths.1829635808" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.2021347463" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1180622113" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
+							</tool>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release.1966771453" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1117782056" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1273464947" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>

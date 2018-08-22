@@ -1,9 +1,6 @@
 
 #include "osc.h"
 
-
-//uint32_t phaseDistRead[33][65] = {phaseDistPWM_0, phaseDistPWM_1, phaseDistPWM_2, phaseDistPWM_3, phaseDistPWM_4, phaseDistPWM_5, phaseDistPWM_6, phaseDistPWM_7, phaseDistPWM_8, phaseDistPWM_9, phaseDistPWM_10, phaseDistPWM_11, phaseDistPWM_12, phaseDistPWM_13, phaseDistPWM_14, phaseDistPWM_15, phaseDistPWM_16, phaseDistPWM_17, phaseDistPWM_18, phaseDistPWM_19, phaseDistPWM_20, phaseDistPWM_21, phaseDistPWM_22, phaseDistPWM_23, phaseDistPWM_24, phaseDistPWM_25, phaseDistPWM_26, phaseDistPWM_27, phaseDistPWM_28, phaseDistPWM_29, phaseDistPWM_30, phaseDistPWM_31, phaseDistPWM_32};
-
 void osc_mainRisingEdgeCallback(osc_signals * signals) {
 
 	oversampledWavetableParameters * parameters = signals->parameters;
