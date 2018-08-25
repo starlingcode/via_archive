@@ -138,7 +138,7 @@ int main(void)
   MX_DAC2_Init();
   /* USER CODE BEGIN 2 */
 
-  osc_init(&signals);
+  osc_init(&osc_signals);
   mainHardwareInit();
 
   /* USER CODE END 2 */

@@ -1,29 +1,29 @@
 /**
-  ******************************************************************************
-  * @file    tsl_linrot.h
-  * @author  MCD Application Team
-  * @version V2.2.0
-  * @date    01-february-2016
-  * @brief   This file contains external declarations of the tsl_linrot.c file.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file    tsl_linrot.h
+ * @author  MCD Application Team
+ * @version V2.2.0
+ * @date    01-february-2016
+ * @brief   This file contains external declarations of the tsl_linrot.c file.
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+ *
+ * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *        http://www.st.com/software_license_agreement_liberty_v2
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ ******************************************************************************
+ */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __TSL_LINROT_H
@@ -36,86 +36,78 @@
 /* Exported types ------------------------------------------------------------*/
 
 /** Contains all data related to Linear and Rotary sensor.
-  * Variables of this structure type must be placed in RAM only.
-  */
-typedef struct
-{
-  TSL_StateId_enum_T     StateId;              /**< Current state identifier */
-  TSL_tPosition_T        RawPosition;          /**< Raw position */
-  TSL_tPosition_T        Position;             /**< Scaled position */
-  TSL_tCounter_T         CounterDebounce;      /**< Counter for debounce and calibration management */ 
-  unsigned int           CounterDTO       : 6; /**< Counter for DTO management (TSL_tCounter_T) */
-  unsigned int           Change           : 1; /**< The State is different from the previous one (TSL_StateChange_enum_T) */
-  unsigned int           PosChange        : 1; /**< The RawPosition/Position is different from the previous one (TSL_StateChange_enum_T) */
-  unsigned int           CounterDirection : 6; /**< Counter for direction debounce management (TSL_tCounter_T) */
-  unsigned int           DxSLock          : 1; /**< The State is locked by the DxS (TSL_Bool_enum_T) */
-  unsigned int           Direction        : 1; /**< Movement direction (TSL_Bool_enum_T) */
-}
-TSL_LinRotData_T;
+ * Variables of this structure type must be placed in RAM only.
+ */
+typedef struct {
+	TSL_StateId_enum_T StateId; /**< Current state identifier */
+	TSL_tPosition_T RawPosition; /**< Raw position */
+	TSL_tPosition_T Position; /**< Scaled position */
+	TSL_tCounter_T CounterDebounce; /**< Counter for debounce and calibration management */
+	unsigned int CounterDTO :6; /**< Counter for DTO management (TSL_tCounter_T) */
+	unsigned int Change :1; /**< The State is different from the previous one (TSL_StateChange_enum_T) */
+	unsigned int PosChange :1; /**< The RawPosition/Position is different from the previous one (TSL_StateChange_enum_T) */
+	unsigned int CounterDirection :6; /**< Counter for direction debounce management (TSL_tCounter_T) */
+	unsigned int DxSLock :1; /**< The State is locked by the DxS (TSL_Bool_enum_T) */
+	unsigned int Direction :1; /**< Movement direction (TSL_Bool_enum_T) */
+} TSL_LinRotData_T;
 
 /** Contains all parameters related to Linear and Rotary sensor.
-  * Variables of this structure type can be placed in RAM or ROM.
-  */
-typedef struct
-{
-  // Thresholds
+ * Variables of this structure type can be placed in RAM or ROM.
+ */
+typedef struct {
+	// Thresholds
 #if TSLPRM_USE_PROX > 0
-  TSL_tThreshold_T  ProxInTh;            /**< Proximity state in threshold */
-  TSL_tThreshold_T  ProxOutTh;           /**< Proximity state out threshold */
+	TSL_tThreshold_T ProxInTh; /**< Proximity state in threshold */
+	TSL_tThreshold_T ProxOutTh; /**< Proximity state out threshold */
 #endif
-  TSL_tThreshold_T  DetectInTh;          /**< Detection state in threshold */
-  TSL_tThreshold_T  DetectOutTh;         /**< Detection state out threshold */
-  TSL_tThreshold_T  CalibTh;             /**< Calibration state threshold */
-  // Debounce counters
-  TSL_tCounter_T    CounterDebCalib;     /**< Debounce counter to enter in Calibration state */
+	TSL_tThreshold_T DetectInTh; /**< Detection state in threshold */
+	TSL_tThreshold_T DetectOutTh; /**< Detection state out threshold */
+	TSL_tThreshold_T CalibTh; /**< Calibration state threshold */
+	// Debounce counters
+	TSL_tCounter_T CounterDebCalib; /**< Debounce counter to enter in Calibration state */
 #if TSLPRM_USE_PROX > 0
-  TSL_tCounter_T    CounterDebProx;      /**< Debounce counter to enter in Proximity state */
+	TSL_tCounter_T CounterDebProx; /**< Debounce counter to enter in Proximity state */
 #endif
-  TSL_tCounter_T    CounterDebDetect;    /**< Debounce counter to enter in Detect state */
-  TSL_tCounter_T    CounterDebRelease;   /**< Debounce counter to enter in Release state */
-  TSL_tCounter_T    CounterDebError;     /**< Debounce counter to enter in Error state */
-  TSL_tCounter_T    CounterDebDirection; /**< Debounce counter for the direction change */
-  // Other parameters
-  TSL_tCounter_T    Resolution;          /**< Position resolution */
-  TSL_tPosition_T   DirChangePos;        /**< Direction change position threshold */
-}
-TSL_LinRotParam_T;
+	TSL_tCounter_T CounterDebDetect; /**< Debounce counter to enter in Detect state */
+	TSL_tCounter_T CounterDebRelease; /**< Debounce counter to enter in Release state */
+	TSL_tCounter_T CounterDebError; /**< Debounce counter to enter in Error state */
+	TSL_tCounter_T CounterDebDirection; /**< Debounce counter for the direction change */
+	// Other parameters
+	TSL_tCounter_T Resolution; /**< Position resolution */
+	TSL_tPosition_T DirChangePos; /**< Direction change position threshold */
+} TSL_LinRotParam_T;
 
 /** Contains definition of a Linear and Rotary sensor.
-  * Variables of this structure type can be placed in RAM or ROM.
-  */
-typedef struct
-{
-  TSL_LinRotData_T          *p_Data;    /**< Data (state id, counter, flags, ...) */
-  TSL_LinRotParam_T         *p_Param;   /**< Parameters (thresholds, debounce, ...) */
-  TSL_ChannelData_T         *p_ChD;     /**< First Channel Data (Meas, Ref, Delta, ...) */
-  TSL_tNb_T                 NbChannels; /**< Number of channels */
-  CONST uint16_t            *p_DeltaCoeff; /**< Coefficient to apply on Delta */
-  CONST TSL_tsignPosition_T *p_PosOff;  /**< Position offset table */
-  TSL_tNb_T                 SctComp;    /**< Sector Computation */
-  TSL_tNb_T                 PosCorr;    /**< Position Correction */
-  CONST TSL_State_T         *p_SM;      /**< State Machine */
-  CONST TSL_LinRotMethods_T *p_Methods; /**< Methods */
-}
-TSL_LinRot_T;
+ * Variables of this structure type can be placed in RAM or ROM.
+ */
+typedef struct {
+	TSL_LinRotData_T *p_Data; /**< Data (state id, counter, flags, ...) */
+	TSL_LinRotParam_T *p_Param; /**< Parameters (thresholds, debounce, ...) */
+	TSL_ChannelData_T *p_ChD; /**< First Channel Data (Meas, Ref, Delta, ...) */
+	TSL_tNb_T NbChannels; /**< Number of channels */
+	CONST uint16_t *p_DeltaCoeff; /**< Coefficient to apply on Delta */
+	CONST TSL_tsignPosition_T *p_PosOff; /**< Position offset table */
+	TSL_tNb_T SctComp; /**< Sector Computation */
+	TSL_tNb_T PosCorr; /**< Position Correction */
+	CONST TSL_State_T *p_SM; /**< State Machine */
+	CONST TSL_LinRotMethods_T *p_Methods; /**< Methods */
+} TSL_LinRot_T;
 
 /** Contains definition of a Basic Linear and Rotary sensor.
-  * Variables of this structure type can be placed in RAM or ROM.
-  * Basic sensor does not contain its own state machine and methods. It used
-  * default ones instead to gain memory space.
-  */
-typedef struct
-{
-  TSL_LinRotData_T          *p_Data;    /**< Data (state id, counter, flags, ...) */
-  TSL_LinRotParam_T         *p_Param;   /**< Parameters (thresholds, debounce, ...) */
-  TSL_ChannelData_T         *p_ChD;     /**< First Channel Data (Meas, Ref, Delta, ...) */
-  TSL_tNb_T                 NbChannels; /**< Number of channels */
-  CONST uint16_t            *p_DeltaCoeff; /**< Coefficient to apply on Delta */
-  CONST TSL_tsignPosition_T *p_PosOff;  /**< Position offset table */
-  TSL_tNb_T                 SctComp;    /**< Sector Computation */
-  TSL_tNb_T                 PosCorr;    /**< Position Correction */
-}
-TSL_LinRotB_T;
+ * Variables of this structure type can be placed in RAM or ROM.
+ * Basic sensor does not contain its own state machine and methods. It used
+ * default ones instead to gain memory space.
+ */
+typedef struct {
+	TSL_LinRotData_T *p_Data; /**< Data (state id, counter, flags, ...) */
+	TSL_LinRotParam_T *p_Param; /**< Parameters (thresholds, debounce, ...) */
+	TSL_ChannelData_T *p_ChD; /**< First Channel Data (Meas, Ref, Delta, ...) */
+	TSL_tNb_T NbChannels; /**< Number of channels */
+	CONST uint16_t *p_DeltaCoeff; /**< Coefficient to apply on Delta */
+	CONST TSL_tsignPosition_T *p_PosOff; /**< Position offset table */
+	TSL_tNb_T SctComp; /**< Sector Computation */
+	TSL_tNb_T PosCorr; /**< Position Correction */
+} TSL_LinRotB_T;
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/

@@ -1078,9 +1078,9 @@ void TSL_tkey_DebErrorStateProcess(void)
   */
 void TSL_tkey_DTOGetTime(void)
 {
-  disableInterrupts();
-  THIS_COUNTER_DTO = (TSL_tCounter_T)TSL_Globals.Tick_sec;
-  enableInterrupts();
+//  disableInterrupts();
+//  THIS_COUNTER_DTO = (TSL_tCounter_T)TSL_Globals.Tick_sec;
+//  enableInterrupts();
 }
 
 #endif

@@ -1,11 +1,11 @@
-
 #include "trigseq.h"
 
 void trigseq_mainRisingEdgeCallback(trigseq_signals * signals) {
 
 	dualEuclideanParameters *parameters = signals->parameters;
 
-	dualEuclideanProcessClock(signals->controls, signals->inputs, signals->parameters);
+	dualEuclideanProcessClock(signals->controls, signals->inputs,
+			signals->parameters);
 
 	setLogicA(parameters->aOutput);
 	setAuxLogic(parameters->logicOutput);
@@ -13,7 +13,6 @@ void trigseq_mainRisingEdgeCallback(trigseq_signals * signals) {
 	// tricksy, sample only if sample and track mode is enabled
 	uint32_t shASetting = parameters->trackA * parameters->aOutput;
 	uint32_t shBSetting = parameters->trackB * parameters->bOutput;
-
 
 	setSH(shASetting, shBSetting);
 
@@ -25,13 +24,12 @@ void trigseq_mainRisingEdgeCallback(trigseq_signals * signals) {
 //		resampleB();
 //	}
 
-	// similar deal here
+// similar deal here
 	setLEDA(parameters->sampleA | shASetting);
 	setLEDB(parameters->sampleB | shBSetting);
 
 	setLEDC(parameters->aOutput);
 	setLEDD(parameters->bOutput);
-
 
 }
 
@@ -99,7 +97,6 @@ void trigseq_halfTransferCallback(trigseq_signals * signals) {
 
 	outputs->dac3Samples[0] = 2048 + parameters->bOutput * 2047;
 
-
 }
 
 void trigseq_transferCompleteCallback(trigseq_signals * signals) {
@@ -112,8 +109,6 @@ void trigseq_transferCompleteCallback(trigseq_signals * signals) {
 
 	outputs->dac3Samples[1] = 2048 + parameters->bOutput * 2047;
 
-
-
 }
 
 void trigseq_slowConversionCallback(trigseq_signals *signals) {
@@ -124,8 +119,8 @@ void trigseq_slowConversionCallback(trigseq_signals *signals) {
 	via_updateControlRateInputs(controls);
 	// some controls should be parsed here
 	updateRGBDisplay(4095 - !parameters->aOutput * parameters->andA * 4095,
-							parameters->logicOutput * 4095,
-								4095 - !parameters->aOutput * parameters->andA * 4095);
+			parameters->logicOutput * 4095,
+			4095 - !parameters->aOutput * parameters->andA * 4095);
 
 }
 

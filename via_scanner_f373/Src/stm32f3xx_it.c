@@ -40,7 +40,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern DMA_HandleTypeDef hdma_adc1;
+
 extern DMA_HandleTypeDef hdma_sdadc1;
 extern DMA_HandleTypeDef hdma_sdadc2;
 
@@ -181,7 +181,7 @@ void SysTick_Handler(void)
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
-  HAL_SYSTICK_IRQHandler();
+//  HAL_SYSTICK_IRQHandler();
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
@@ -194,68 +194,26 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f3xx.s).                    */
 /******************************************************************************/
 
-/**
-* @brief This function handles DMA1 channel1 global interrupt.
-*/
-void DMA1_Channel1_IRQHandler(void)
+void DMA1_Channel3_IRQHandler(void)
 {
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+	if ((DMA1->ISR & (DMA_FLAG_HT1 << 8)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1 << 8;
+	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 8)) != 0)  {
+		DMA1->IFCR = DMA_FLAG_TC1 << 8;
+	}
+}
 
-	//minimal interrupt handler for circular buffer
-
-	/* Clear the half transfer complete flag */
-	(&hdma_adc1)->DmaBaseAddress->IFCR = DMA_FLAG_HT1 << (&hdma_adc1)->ChannelIndex;
-  	/* Clear the transfer complete flag */
-	(&hdma_adc1)->DmaBaseAddress->IFCR = DMA_FLAG_TC1 << (&hdma_adc1)->ChannelIndex;
-
-
-
-  /* USER CODE END DMA1_Channel1_IRQn 0 */
-  //HAL_DMA_IRQHandler(&hdma_adc1);
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel1_IRQn 1 */
+void DMA1_Channel4_IRQHandler(void)
+{
+	if ((DMA1->ISR & (DMA_FLAG_HT1 << 12)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1 << 12;
+	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 12)) != 0)  {
+		DMA1->IFCR = DMA_FLAG_TC1 << 12;
+	}
 }
 
 
-/**
-* @brief This function handles DMA2 channel3 global interrupt.
-*/
-void DMA2_Channel3_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA2_Channel3_IRQn 0 */
 
-	/* Clear the half transfer complete flag */
-	(&hdma_sdadc1)->DmaBaseAddress->IFCR = DMA_FLAG_HT1 << (&hdma_sdadc1)->ChannelIndex;
-  	/* Clear the transfer complete flag */
-	(&hdma_sdadc1)->DmaBaseAddress->IFCR = DMA_FLAG_TC1 << (&hdma_sdadc1)->ChannelIndex;
-
-
-  /* USER CODE END DMA2_Channel3_IRQn 0 */
-  //HAL_DMA_IRQHandler(&hdma_sdadc1);
-  /* USER CODE BEGIN DMA2_Channel3_IRQn 1 */
-
-  /* USER CODE END DMA2_Channel3_IRQn 1 */
-}
-
-/**
-* @brief This function handles DMA2 channel4 global interrupt.
-*/
-void DMA2_Channel4_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA2_Channel4_IRQn 0 */
-
-	/* Clear the half transfer complete flag */
-	(&hdma_sdadc2)->DmaBaseAddress->IFCR = DMA_FLAG_HT1 << (&hdma_sdadc2)->ChannelIndex;
-  	/* Clear the transfer complete flag */
-	(&hdma_sdadc2)->DmaBaseAddress->IFCR = DMA_FLAG_TC1 << (&hdma_sdadc2)->ChannelIndex;
-
-  /* USER CODE END DMA2_Channel4_IRQn 0 */
-  //HAL_DMA_IRQHandler(&hdma_sdadc2);
-  /* USER CODE BEGIN DMA2_Channel4_IRQn 1 */
-
-  /* USER CODE END DMA2_Channel4_IRQn 1 */
-}
 
 
 

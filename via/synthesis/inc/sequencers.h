@@ -39,11 +39,10 @@ typedef struct {
 	uint32_t bOutput;
 	uint32_t logicOutput;
 
-
 } dualEuclideanParameters;
 
-void dualEuclideanProcessClock(controlRateInputs *, audioRateInputs *, dualEuclideanParameters *);
-
+void dualEuclideanProcessClock(controlRateInputs *, audioRateInputs *,
+		dualEuclideanParameters *);
 
 /*
  *
@@ -52,13 +51,14 @@ void dualEuclideanProcessClock(controlRateInputs *, audioRateInputs *, dualEucli
  */
 
 // Dual soft gate (use crossfader as dual and gate with followed by mixing "or" stage)
-
 #define	SOFT_GATE_HIGH 0
 #define	SOFT_GATE_LOW 1
 #define SOFT_GATE_EXECUTE 2
 
-void (*manageOutputA)(int * signal, int writePosition, audioRateOutputs * outputs);
-void (*manageOutputB)(int * signal, int writePosition, audioRateOutputs * outputs);
+void (*manageOutputA)(int * signal, int writePosition,
+		audioRateOutputs * outputs);
+void (*manageOutputB)(int * signal, int writePosition,
+		audioRateOutputs * outputs);
 
 void outputAHigh(int signal, int writePosition, audioRateOutputs * outputs);
 void outputALow(int signal, int writePosition, audioRateOutputs * outputs);
@@ -71,6 +71,5 @@ void outputBLow(int signal, int writePosition, audioRateOutputs * outputs);
 
 void outputBRise(int signal, int writePosition, audioRateOutputs * outputs);
 void outputBFall(int signal, int writePosition, audioRateOutputs * outputs);
-
 
 #endif /* INC_SEQUENCERS_H_ */

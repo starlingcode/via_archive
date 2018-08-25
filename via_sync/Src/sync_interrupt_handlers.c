@@ -23,7 +23,7 @@ extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim16;
 extern TIM_HandleTypeDef htim17;
 
-void mainRisingEdgeCallback(osc_signals * signals) {
+void mainRisingEdgeCallback(osc_signal_set * signals) {
 
 	// store the length of the last period
 	signals->softwareSignals->periodCount = TIM2->CNT;
@@ -45,18 +45,18 @@ void mainFallingEdgeCallback(softwareSignaling * softwareSignals) {
 	EXPAND_LOGIC_LOW
 }
 
-void auxRisingEdgeCallback(osc_signals * signals) {
+void auxRisingEdgeCallback(osc_signal_set * signals) {
 	// arbitrary big number guaranteed to be greater than the largest gcd value for the scales
 	// see generateFrequency for implementation
 	signals->softwareSignals->pllReset = 65535;
 	// apply the pll if uncommented
 	// generateFrequency(signals->controls, signals->inputs, signals->softwareSignals);
 }
-void auxFallingEdgeCallback(osc_signals * signals) {
+void auxFallingEdgeCallback(osc_signal_set * signals) {
 	;
 }
 
-void buttonPressedCallback(osc_signals * signals) {
+void buttonPressedCallback(osc_signal_set * signals) {
 
 	static int lastTap;
 
@@ -81,11 +81,11 @@ void buttonPressedCallback(osc_signals * signals) {
 	}
 
 }
-void buttonReleasedCallback(osc_signals * signals) {
+void buttonReleasedCallback(osc_signal_set * signals) {
 	uiDispatch(EXPAND_SW_OFF_SIG);
 }
 
-void ioProcessCallback(osc_signals * signals) {
+void ioProcessCallback(osc_signal_set * signals) {
 
 	audioRateOutputs* outputRead = signals->outputs;
 	int outputSample =  signals->outputs->samples;
@@ -109,7 +109,7 @@ void ioProcessCallback(osc_signals * signals) {
 
 
 }
-void generateSample(osc_signals * signals) {
+void generateSample(osc_signal_set * signals) {
 
 	nextSample(signals->controls, signals->inputs, signals->outputs, signals->softwareSignals);
 

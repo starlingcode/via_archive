@@ -34,9 +34,9 @@ void TIM12_IRQHandler(void)
 {
 
 	if (TRIGGER_RISING_EDGE) {
-		osc_mainRisingEdgeCallback(&signals);
+		osc_mainRisingEdgeCallback(&osc_signals);
 	} else {
-		osc_mainFallingEdgeCallback(&signals);
+		osc_mainFallingEdgeCallback(&osc_signals);
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
@@ -49,9 +49,9 @@ void EXTI15_10_IRQHandler(void)
 {
 
 	if (EXPANDER_RISING_EDGE) {
-		osc_auxRisingEdgeCallback(&signals);
+		osc_auxRisingEdgeCallback(&osc_signals);
 	} else {
-		osc_auxFallingEdgeCallback(&signals);
+		osc_auxFallingEdgeCallback(&osc_signals);
 	}
 
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
@@ -65,10 +65,10 @@ void EXTI1_IRQHandler(void)
 
 	if (EXPANDER_BUTTON_PRESSED) {
 		uiDispatch(EXPAND_SW_ON_SIG);
-		osc_buttonPressedCallback(&signals);
+		osc_buttonPressedCallback(&osc_signals);
 	} else {
 		uiDispatch(EXPAND_SW_OFF_SIG);
-		osc_buttonReleasedCallback(&signals);
+		osc_buttonReleasedCallback(&osc_signals);
 	}
 
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
@@ -150,7 +150,7 @@ void DMA1_Channel1_IRQHandler(void)
 	} else {
 		DMA1->IFCR = DMA_FLAG_TC1;
 		// VIA_UPDATE_CONTROLS_CALLBACK(&signals)
-		osc_slowConversionCallback(&signals);
+		osc_slowConversionCallback(&osc_signals);
 	}
 
 }
@@ -162,10 +162,10 @@ void DMA1_Channel5_IRQHandler(void)
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;
 		//
-		osc_halfTransferCallback(&signals);
+		osc_halfTransferCallback(&osc_signals);
 	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;
-		osc_transferCompleteCallback(&signals);
+		osc_transferCompleteCallback(&osc_signals);
 	}
 
 }

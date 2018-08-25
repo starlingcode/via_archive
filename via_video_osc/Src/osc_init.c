@@ -29,14 +29,14 @@ void osc_init(void) {
 	displayXCVMode = displayXCV_FM;
 	displayMorphMode = displayMorph_Morph;
 
-	signals.inputs->fm = cv2SampleBuffer;
-	signals.inputs->pm = virtualGround;
-	signals.inputs->morphMod = cv3SampleBuffer;
-	signals.inputs->pwm = virtualGround;
+	scanner_signals.inputs->fm = cv2SampleBuffer;
+	scanner_signals.inputs->pm = virtualGround;
+	scanner_signals.inputs->morphMod = cv3SampleBuffer;
+	scanner_signals.inputs->pwm = virtualGround;
 
 
-	signals.inputs->syncInput = 1;
-	signals.inputs->reverseInput = 1;
+	scanner_signals.inputs->syncInput = 1;
+	scanner_signals.inputs->reverseInput = 1;
 
 }
 
@@ -49,10 +49,10 @@ void viaSignalInit(void) {
 	audioRateOutput.dac2Samples = dac2SampleBuffer;
 	audioRateOutput.dac3Samples = dac3SampleBuffer;
 
-	signals.controls = &controlRateInput;
-	signals.inputs = &audioRateInput;
-	signals.outputs= &audioRateOutput;
-	signals.softwareSignals = &softwareSignals;
+	scanner_signals.controls = &controlRateInput;
+	scanner_signals.inputs = &audioRateInput;
+	scanner_signals.outputs= &audioRateOutput;
+	scanner_signals.softwareSignals = &softwareSignals;
 
 }
 

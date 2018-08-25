@@ -72,12 +72,12 @@ void viaSignalInit(void) {
 	input2.triggerInput = syncBuffer2;
 	input2.gateInput = reverseBuffer2;
 
-	signals.controls = &controlRateInput;
-	signals.inputRead = &input1;
-	signals.inputWrite = &input2;
-	signals.outputRead = &output1;
-	signals.outputWrite = &output2;
-	signals.softwareSignals = &softwareSignals;
+	scanner_signals.controls = &controlRateInput;
+	scanner_signals.inputRead = &input1;
+	scanner_signals.inputWrite = &input2;
+	scanner_signals.outputRead = &output1;
+	scanner_signals.outputWrite = &output2;
+	scanner_signals.softwareSignals = &softwareSignals;
 
 }
 

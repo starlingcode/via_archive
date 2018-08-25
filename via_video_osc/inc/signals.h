@@ -70,9 +70,9 @@ typedef struct {
 	audioRateInputs * inputs;
 	controlRateInputs * controls;
 	softwareSignaling * softwareSignals;
-} osc_signals;
+} osc_signal_set;
 
-osc_signals signals;
+osc_signal_set scanner_signals;
 
 void viaSignalInit(void);
 

@@ -27,7 +27,7 @@ typedef struct {
 	dualEuclideanParameters * parameters;
 } trigseq_signals;
 
-trigseq_signals signals;
+trigseq_signals scanner_signals;
 
 #define TRIGSEQ_BUFFER_SIZE 1
 
@@ -36,7 +36,6 @@ trigseq_signals signals;
  * Event handlers
  *
  */
-
 
 void trigseq_init(trigseq_signals *);
 
@@ -61,7 +60,6 @@ void trigseq_slowConversionCallback(trigseq_signals *);
  */
 
 // Mode enums and mode variables
-
 #define SH_A_MODE button1Mode
 #define AND_A_MODE button2Mode
 #define A_PATTERN_BANK button3Mode
@@ -83,16 +81,36 @@ void trigseq_slowConversionCallback(trigseq_signals *);
 #define numAux3Modes 0
 #define numAux4Modes 0
 
-enum button1Modes {aNoSH, aResample, aSampleTrack};
-enum button2Modes {andAoff, andAon};
-enum button3Modes {aPatternBankSelections};
-enum button4Modes {bNoSH, bResample, bSampleTrack};
-enum button5Modes {andBoff, andBon};
-enum button6Modes {bPatternBankSelections};
-enum aux1Modes {aux1NotUsed};
-enum aux2Modes {and, or, xor, nand};
-enum aux3Modes {aux3NotUsed};
-enum aux4Modes {aux4NotUsed};
+enum trigseq_button1Modes {
+	aNoSH, aResample, aSampleTrack
+};
+enum trigseq_button2Modes {
+	andAoff, andAon
+};
+enum trigseq_button3Modes {
+	aPatternBankSelections
+};
+enum trigseq_button4Modes {
+	bNoSH, bResample, bSampleTrack
+};
+enum trigseq_button5Modes {
+	andBoff, andBon
+};
+enum trigseq_button6Modes {
+	bPatternBankSelections
+};
+enum trigseq_aux1Modes {
+	trigseq_aux1NotUsed
+};
+enum trigseq_aux2Modes {
+	and, or, xor, nand
+};
+enum trigseq_aux3Modes {
+	trigseq_aux3NotUsed
+};
+enum trigseq_aux4Modes {
+	trigseq_aux4NotUsed
+};
 /*
  *
  * UI implementation

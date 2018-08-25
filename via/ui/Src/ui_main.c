@@ -1,23 +1,22 @@
-
 #include "user_interface.h"
 
-enum
-{	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
-	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
-	EXIT_SIG,	  // Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
-	INIT_SIG,     // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
+enum {
+	NULL_SIG, // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
+	ENTRY_SIG, // Entry signal, a state function should perform its entry actions (if any)
+	EXIT_SIG,// Exit signal, a state function should pEntry signal, a state function should perform its entry actions (if any)erform its exit actions (if any)
+	INIT_SIG, // Just look to global value and initialize, return to default state.  For recalling (presets, memory)
 	TIMEOUT_SIG, // timer timeout
-	SENSOR_EVENT_SIG,  // Sensor state machine not busy, can be queried for events
+	SENSOR_EVENT_SIG, // Sensor state machine not busy, can be queried for events
 	EXPAND_SW_ON_SIG,  // expander button depressed
 	EXPAND_SW_OFF_SIG, // expander button released
 	TSL_ERROR_SIG
 };
 
-
 // Call the current state with a signal
 
-
-void uiDispatch(int sig) {(*ui_State)(sig);}
+void uiDispatch(int sig) {
+	(*ui_State)(sig);
+}
 
 /**
  *
@@ -42,53 +41,53 @@ void uiTransition(void (*func)(int)) {
  *
  */
 
-void ui_default(int sig)
-{
-	switch (sig){
+void ui_default(int sig) {
+	switch (sig) {
 
 	case ENTRY_SIG:
 		SET_RUNTIME_DISPLAY;
 		uiClearLEDs();
 		//uiStaticLEDHandler();
 		uiClearRGB();
-		UI_TIMER_RESET;
-		UI_TIMER_DISABLE;
+		UI_TIMER_RESET
+		;
+		UI_TIMER_DISABLE
+		;
 		break;
 
 	case SENSOR_EVENT_SIG:
 
-		if (BUTTON3SENSOR == PRESSED){
+		if (BUTTON3SENSOR== PRESSED) {
 			uiTransition(&ui_button3Menu);
 
-		} else if (BUTTON1SENSOR == PRESSED){
+		} else if (BUTTON1SENSOR == PRESSED) {
 			uiTransition(&ui_button1Menu);
 
-		} else if (BUTTON4SENSOR == PRESSED){
+		} else if (BUTTON4SENSOR == PRESSED) {
 			uiTransition(&ui_button4Menu);
 
-		} else if (BUTTON6SENSOR == PRESSED){
+		} else if (BUTTON6SENSOR == PRESSED) {
 			uiTransition(&ui_button6Menu);
 
-		} else if (BUTTON2SENSOR == PRESSED){
+		} else if (BUTTON2SENSOR == PRESSED) {
 			uiTransition(&ui_button2Menu);
 
-		} else if (BUTTON5SENSOR == PRESSED){
+		} else if (BUTTON5SENSOR == PRESSED) {
 			uiTransition(&ui_button5Menu);
 		}
 		break;
 
-	case EXPAND_SW_ON_SIG:
+		case EXPAND_SW_ON_SIG:
 		uiTransition(&ui_presetMenu);
 		break;
 
-	case EXIT_SIG:
+		case EXIT_SIG:
 		CLEAR_RUNTIME_DISPLAY;
 		uiClearLEDs();
 		uiClearRGB();
 		break;
 
-
-	default:
+		default:
 		break;
 	}
 }
@@ -102,19 +101,20 @@ void ui_default(int sig)
  *
  */
 
-void ui_newMode(int sig)
-{
-	switch (sig)
-	{
+void ui_newMode(int sig) {
+	switch (sig) {
 	case ENTRY_SIG:
 		CLEAR_RUNTIME_DISPLAY;
 		uiStoreToEEPROM(0);
-		UI_TIMER_RESET;
-		UI_TIMER_SET_OVERFLOW(5000);
-		UI_TIMER_ENABLE;
+		UI_TIMER_RESET
+		;
+		UI_TIMER_SET_OVERFLOW(5000)
+		;
+		UI_TIMER_ENABLE
+		;
 		break;
 
-	// once uiTimerRead() times out, clear display and return to default state
+		// once uiTimerRead() times out, clear display and return to default state
 	case TIMEOUT_SIG:
 		uiTransition(&ui_default);
 		break;
@@ -123,30 +123,30 @@ void ui_newMode(int sig)
 		uiTransition(&ui_presetMenu);
 		break;
 
-	// in case of new events immediately jump to relevant menu
+		// in case of new events immediately jump to relevant menu
 	case SENSOR_EVENT_SIG:
 
-		if (BUTTON3SENSOR == PRESSED){
+		if (BUTTON3SENSOR== PRESSED) {
 			uiTransition( &ui_button3Menu);
 
-		} else if (BUTTON1SENSOR == PRESSED){
+		} else if (BUTTON1SENSOR == PRESSED) {
 			uiTransition( &ui_button1Menu);
 
-		} else if (BUTTON4SENSOR == PRESSED){
+		} else if (BUTTON4SENSOR == PRESSED) {
 			uiTransition( &ui_button4Menu);
 
-		} else if (BUTTON6SENSOR == PRESSED){
+		} else if (BUTTON6SENSOR == PRESSED) {
 			uiTransition( &ui_button6Menu);
 
-		} else if (BUTTON2SENSOR == PRESSED){
+		} else if (BUTTON2SENSOR == PRESSED) {
 			uiTransition( &ui_button2Menu);
 
-		} else if (BUTTON5SENSOR == PRESSED){
+		} else if (BUTTON5SENSOR == PRESSED) {
 			uiTransition( &ui_button5Menu);
 		}
 		break;
 
-	case EXIT_SIG:
+		case EXIT_SIG:
 		//uiClearLEDs();
 		//uiClearRGB();
 		break;
@@ -161,17 +161,16 @@ void ui_newMode(int sig)
  *
  */
 
-void ui_newAuxMode(int sig)
-{
-	switch (sig)
-	{
+void ui_newAuxMode(int sig) {
+	switch (sig) {
 	case ENTRY_SIG:
-		UI_TIMER_RESET;// start count over
+		UI_TIMER_RESET
+		;		// start count over
 		uiStoreToEEPROM(0);  // store in preset 0 (current state)
 		break;
 
 	case SENSOR_EVENT_SIG:
-		if (BUTTON1SENSOR == PRESSED) {
+		if (BUTTON1SENSOR== PRESSED) {
 			uiTransition(&ui_aux1Menu);
 		} else if (BUTTON3SENSOR == PRESSED) {
 			uiTransition(&ui_aux2Menu);
@@ -179,7 +178,7 @@ void ui_newAuxMode(int sig)
 			uiTransition(&ui_aux3Menu);
 		} else if (BUTTON6SENSOR == PRESSED) {
 			uiTransition(&ui_aux4Menu);
-		} else if (BUTTON5SENSOR == RELEASED){
+		} else if (BUTTON5SENSOR == RELEASED) {
 			uiTransition(&ui_default);
 		}
 		break;
@@ -230,15 +229,9 @@ void ui_newAuxMode(int sig)
  *
  */
 
-void ui_error(int sig){
+void ui_error(int sig) {
 
 	// not yet implemented
 
 }
-
-
-
-
-
-
 

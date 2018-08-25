@@ -1,6 +1,5 @@
 #include "osc.h"
 
-
 //void loadPhaseDistTable(PhaseDistTable * table, uint32_t * tableRead);
 //void loadWavetableWithDiff(Wavetable * table, uint32_t * tableRead);
 
@@ -16,7 +15,7 @@ void osc_fillWavetableArray(void) {
 }
 
 // declare functions to set the currently active tables
-void osc_switchWavetable(Wavetable * table, osc_signals * signals) {
+void osc_switchWavetable(Wavetable * table, osc_signal_set * signals) {
 	loadWavetableWithDiff(table, osc_wavetableRead);
 	signals->parameters->tableSize = table->numWaveforms - 1;
 }

@@ -10,7 +10,8 @@
 
 #define RUNTIME_DISPLAY 1
 
-void dualEuclideanProcessClock(controlRateInputs * controls, audioRateInputs * inputs, dualEuclideanParameters * parameters) {
+void dualEuclideanProcessClock(controlRateInputs * controls,
+		audioRateInputs * inputs, dualEuclideanParameters * parameters) {
 
 	uint32_t aLength;
 	uint32_t bLength;
@@ -27,22 +28,25 @@ void dualEuclideanProcessClock(controlRateInputs * controls, audioRateInputs * i
 	//the negative does the same to the maximum value
 
 	if ((4095 - controls->cv1Value) >= 2048) {
-		aPatternMorph = (fix16_lerp(controls->knob1Value, 4095, ((4095 - controls->cv1Value) - 2048) << 5)) >> 9;
-			}
-	else {
-		aPatternMorph = (fix16_lerp(0, controls->knob1Value, (4095 - controls->cv1Value) << 5)) >> 9;
+		aPatternMorph = (fix16_lerp(controls->knob1Value, 4095,
+				((4095 - controls->cv1Value) - 2048) << 5)) >> 9;
+	} else {
+		aPatternMorph = (fix16_lerp(0, controls->knob1Value,
+				(4095 - controls->cv1Value) << 5)) >> 9;
 	}
 	if ((4095 - inputs->cv2Samples[0]) >= 2048) {
-		bPatternMorph = (fix16_lerp(controls->knob2Value, 4095, ((4095 - inputs->cv2Samples[0]) - 2048) << 5)) >> 9;
-			}
-	else {
-		bPatternMorph = (fix16_lerp(0, controls->knob2Value, (4095 - inputs->cv2Samples[0]) << 5)) >> 9;
+		bPatternMorph = (fix16_lerp(controls->knob2Value, 4095,
+				((4095 - inputs->cv2Samples[0]) - 2048) << 5)) >> 9;
+	} else {
+		bPatternMorph = (fix16_lerp(0, controls->knob2Value,
+				(4095 - inputs->cv2Samples[0]) << 5)) >> 9;
 	}
 	if ((4095 - inputs->cv3Samples[0]) >= 2048) {
-		offset = (fix16_lerp(controls->knob3Value, 4095, ((4095 - inputs->cv3Samples[0]) - 2048) << 5)) >> 8;
-			}
-	else {
-		offset = (fix16_lerp(0, controls->knob3Value, (4095 - inputs->cv3Samples[0]) << 5)) >> 8;
+		offset = (fix16_lerp(controls->knob3Value, 4095,
+				((4095 - inputs->cv3Samples[0]) - 2048) << 5)) >> 8;
+	} else {
+		offset = (fix16_lerp(0, controls->knob3Value,
+				(4095 - inputs->cv3Samples[0]) << 5)) >> 8;
 	}
 
 	//get the lengths of the currently indexed patterns
@@ -72,40 +76,39 @@ void dualEuclideanProcessClock(controlRateInputs * controls, audioRateInputs * i
 #define __NAND 3
 
 	switch (parameters->auxLogicMode) {
-		case __OR:
-			if (aPatternValue || bPatternValue) {
-				parameters->logicOutput = 1;
-			} else {
-				parameters->logicOutput = 0;
-			}
-			break;
-		case __AND:
-			if (aPatternValue && bPatternValue) {
-				parameters->logicOutput = 1;
-			} else {
-				parameters->logicOutput = 0;
-			}
-			break;
-		case __XOR:
-			if (aPatternValue ^ bPatternValue) {
-				parameters->logicOutput = 1;
-			} else {
-				parameters->logicOutput = 0;
-			}
-			break;
-		case __NAND:
+	case __OR:
+		if (aPatternValue || bPatternValue) {
+			parameters->logicOutput = 1;
+		} else {
+			parameters->logicOutput = 0;
+		}
+		break;
+	case __AND:
+		if (aPatternValue && bPatternValue) {
+			parameters->logicOutput = 1;
+		} else {
+			parameters->logicOutput = 0;
+		}
+		break;
+	case __XOR:
+		if (aPatternValue ^ bPatternValue) {
+			parameters->logicOutput = 1;
+		} else {
+			parameters->logicOutput = 0;
+		}
+		break;
+	case __NAND:
 
-			if ((!aPatternValue) && (!bPatternValue)) {
-				parameters->logicOutput = 1;
-			} else {
-				parameters->logicOutput = 0;
-			}
-			break;
+		if ((!aPatternValue) && (!bPatternValue)) {
+			parameters->logicOutput = 1;
+		} else {
+			parameters->logicOutput = 0;
+		}
+		break;
 	}
 
 	parameters->aOutput = aPatternValue;
 	parameters->bOutput = bPatternValue;
 
 }
-
 

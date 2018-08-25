@@ -200,13 +200,13 @@ void handleButton3ModeChange(int mode) {
 
 	switch (mode) {
 	case FM:
-		signals.inputs->fm = cv2SampleBuffer;
-		signals.inputs->pm = virtualGround;
+		scanner_signals.inputs->fm = cv2SampleBuffer;
+		scanner_signals.inputs->pm = virtualGround;
 		displayXCVMode = &displayXCV_FM;
 		break;
 	case PM:
-		signals.inputs->fm = virtualGround;
-		signals.inputs->pm = cv2SampleBuffer;
+		scanner_signals.inputs->fm = virtualGround;
+		scanner_signals.inputs->pm = cv2SampleBuffer;
 		displayXCVMode = &displayXCV_PM;
 		break;
 	}
@@ -235,13 +235,13 @@ void handleButton6ModeChange(int mode) {
 
 	switch (mode) {
 	case morphCV:
-		signals.inputs->morphMod = cv3SampleBuffer;
-		signals.inputs->pwm = virtualGround;
+		scanner_signals.inputs->morphMod = cv3SampleBuffer;
+		scanner_signals.inputs->pwm = virtualGround;
 		displayMorphMode = &displayMorph_Morph;
 		break;
 	case pwmCV:
-		signals.inputs->morphMod = virtualGround;
-		signals.inputs->pwm = cv3SampleBuffer;
+		scanner_signals.inputs->morphMod = virtualGround;
+		scanner_signals.inputs->pwm = cv3SampleBuffer;
 		displayMorphMode = &displayMorph_PMW;
 		break;
 	}

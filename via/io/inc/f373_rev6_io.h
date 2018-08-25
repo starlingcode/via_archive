@@ -11,9 +11,7 @@
 // THESE PROVIDE PLATFORM LINKAGE //
 // ONLY USE IN STATIC INLINES OR DEFINES //
 // THESE MAKE COMPILED CODE PLATFORM SPECIFIC //
-
 // LEDs
-
 // RGB PWM timers
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
@@ -44,22 +42,20 @@ static inline void updateRGBDisplay(uint32_t red, uint32_t green, uint32_t blue)
 #define LEDD_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_2;
 
 static inline void setLEDA(int setReset) {
-	GPIOF->BSRR = ((uint32_t)GPIO_PIN_7) << (16*(!setReset));
+	GPIOF->BSRR = ((uint32_t) GPIO_PIN_7) << (16 * (!setReset));
 }
 
 static inline void setLEDB(int setReset) {
-	GPIOC->BSRR = ((uint32_t)GPIO_PIN_14) << (16*(!setReset));
+	GPIOC->BSRR = ((uint32_t) GPIO_PIN_14) << (16 * (!setReset));
 }
 
 static inline void setLEDC(int setReset) {
-	GPIOA->BSRR = ((uint32_t)GPIO_PIN_2) << (16*(!setReset));
+	GPIOA->BSRR = ((uint32_t) GPIO_PIN_2) << (16 * (!setReset));
 }
 
 static inline void setLEDD(int setReset) {
-	GPIOB->BSRR = ((uint32_t)GPIO_PIN_2) << (16*(!setReset));
+	GPIOB->BSRR = ((uint32_t) GPIO_PIN_2) << (16 * (!setReset));
 }
-
-
 
 // Logic outs
 
@@ -74,7 +70,6 @@ static inline void setLEDD(int setReset) {
 
 #define EXPAND_LOGIC_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
 #define EXPAND_LOGIC_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
-
 
 // Sample and holds
 
@@ -110,11 +105,11 @@ static inline void setLEDD(int setReset) {
 #define GPIO_NOP 0
 
 static inline void setLogicA(int setReset) {
-	GPIOC->BSRR = ((uint32_t)GPIO_PIN_13) << (16*setReset);
+	GPIOC->BSRR = ((uint32_t) GPIO_PIN_13) << (16 * setReset);
 }
 
 static inline void setAuxLogic(int setReset) {
-	GPIOA->BSRR = ((uint32_t)GPIO_PIN_12) << (16*setReset);
+	GPIOA->BSRR = ((uint32_t) GPIO_PIN_12) << (16 * setReset);
 }
 
 #define SH_SAMPLE 1
@@ -122,23 +117,23 @@ static inline void setAuxLogic(int setReset) {
 
 static inline void setSH(int shA, int shB) {
 
-	uint32_t mask = (uint32_t)GPIO_PIN_8 << (16*shA);
-	mask |= (uint32_t)GPIO_PIN_8 << (16*shB);
+	uint32_t mask = (uint32_t) GPIO_PIN_8 << (16 * shA);
+	mask |= (uint32_t) GPIO_PIN_8 << (16 * shB);
 
 	GPIOB->BRR = mask;
 }
 
-
-static inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
+static inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t logicExpander,
+		uint32_t shA, uint32_t shB) {
 
 	// LEDA_HIGH_MASK -> SH_A_SAMPLE_MASK >> 16 >> 1 (pin 8 to pin 7, F)
 	// LEDB_HIGH_MASK -> SH_B_SAMPLE_MASK >> 16 << 5 (pin 9 to pin 14, C)
 	// LEDC_HIGH_MASK -> ALOGIC_HIGH_MASK >> 16 >> 11 (pin 13 to pin 2, A)
 	// LEDD_HIGH_MASK -> BLOGIC_HIGH_MASK >> 16 >> 13 (pin 15 to pin 2, B)
 
-	#define LEDA_MASK (__ROR(shA, 16) >> 1)
-	#define LEDB_MASK (__ROR(shB, 16) << 5)
-	#define LEDC_MASK (__ROR(logicA, 16) >> 11)
+#define LEDA_MASK (__ROR(shA, 16) >> 1)
+#define LEDB_MASK (__ROR(shB, 16) << 5)
+#define LEDC_MASK (__ROR(logicA, 16) >> 11)
 
 	//combine the mask variables for a shared GPIO group with a bitwise or
 	SET_A_LOGIC(logicA | LEDB_MASK);
@@ -151,7 +146,8 @@ static inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t logicExpander,
 
 }
 
-static inline void setLogicOutputsLEDOff(uint32_t logicA, uint32_t logicExpander, uint32_t shA, uint32_t shB) {
+static inline void setLogicOutputsLEDOff(uint32_t logicA,
+		uint32_t logicExpander, uint32_t shA, uint32_t shB) {
 
 	//combine the mask variables for a shared GPIO group with a bitwise or
 	SET_A_B_LOGIC(logicA);
@@ -161,9 +157,6 @@ static inline void setLogicOutputsLEDOff(uint32_t logicA, uint32_t logicExpander
 	SET_SH(shA | shB);
 
 }
-
-
-
 
 // DAC register address
 

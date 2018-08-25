@@ -138,7 +138,7 @@ int main(void)
   MX_DAC2_Init();
   /* USER CODE BEGIN 2 */
 
-  trigseq_init(&signals);
+  trigseq_init(&scanner_signals);
   mainHardwareInit();
 
   /* USER CODE END 2 */

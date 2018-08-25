@@ -1,6 +1,4 @@
-
 #include "trigseq.h"
-
 
 void trigseq_initializePatterns() {
 	trigseq_patternBank[0] = &euclidean_simple;

@@ -17,7 +17,4 @@
 
 #endif
 
-
-
-
 #endif /* INC_HARDRWARE_IO_H_ */

@@ -1,4 +1,3 @@
-
 #include "trigseq.h"
 
 void trigseq_initializeUICallbacks(void) {
@@ -76,7 +75,6 @@ void trigseq_handleAux4EnterMenu(void) {
 	uiTransition(ui_button5Menu);
 }
 
-
 void trigseq_handleButton1Tap(void) {
 
 	SH_A_MODE = incrementModeAndStore(SH_A_MODE, BUTTON1_MASK, numButton1Modes);
@@ -86,14 +84,16 @@ void trigseq_handleButton1Tap(void) {
 	uiTransition(&ui_newMode);
 }
 void trigseq_handleButton2Tap(void) {
-	AND_A_MODE = incrementModeAndStore(AND_A_MODE, BUTTON2_MASK, numButton2Modes);
+	AND_A_MODE = incrementModeAndStore(AND_A_MODE, BUTTON2_MASK,
+			numButton2Modes);
 	trigseq_handleButton2ModeChange(AND_A_MODE);
 	uiClearLEDs();
 	uiSetLEDs(AND_A_MODE);
 	uiTransition(&ui_newMode);
 }
 void trigseq_handleButton3Tap(void) {
-	A_PATTERN_BANK = incrementModeAndStore(A_PATTERN_BANK, BUTTON3_MASK, numButton3Modes);
+	A_PATTERN_BANK = incrementModeAndStore(A_PATTERN_BANK, BUTTON3_MASK,
+			numButton3Modes);
 	trigseq_handleButton3ModeChange(A_PATTERN_BANK);
 	uiClearLEDs();
 	uiSetLEDs(A_PATTERN_BANK);
@@ -107,14 +107,16 @@ void trigseq_handleButton4Tap(void) {
 	uiTransition(&ui_newMode);
 }
 void trigseq_handleButton5Tap(void) {
-	AND_B_MODE = incrementModeAndStore(AND_B_MODE, BUTTON5_MASK, numButton5Modes);
+	AND_B_MODE = incrementModeAndStore(AND_B_MODE, BUTTON5_MASK,
+			numButton5Modes);
 	trigseq_handleButton5ModeChange(AND_B_MODE);
 	uiClearLEDs();
 	uiSetLEDs(AND_B_MODE);
 	uiTransition(&ui_newMode);
 }
 void trigseq_handleButton6Tap(void) {
-	B_PATTERN_BANK = incrementModeAndStore(B_PATTERN_BANK, BUTTON6_MASK, numButton6Modes);
+	B_PATTERN_BANK = incrementModeAndStore(B_PATTERN_BANK, BUTTON6_MASK,
+			numButton6Modes);
 	trigseq_handleButton6ModeChange(B_PATTERN_BANK);
 	uiClearLEDs();
 	uiSetLEDs(B_PATTERN_BANK);
@@ -126,7 +128,8 @@ void trigseq_handleAux1Tap(void) {
 }
 
 void trigseq_handleAux2Tap(void) {
-	LOGIC_MODE = incrementModeAndStore(LOGIC_MODE, AUX_MODE2_MASK, numAux2Modes);
+	LOGIC_MODE = incrementModeAndStore(LOGIC_MODE, AUX_MODE2_MASK,
+			numAux2Modes);
 	trigseq_handleAux2ModeChange(LOGIC_MODE);
 	uiClearLEDs();
 	uiSetLEDs(LOGIC_MODE);

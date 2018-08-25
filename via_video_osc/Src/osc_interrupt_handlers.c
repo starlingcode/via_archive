@@ -8,7 +8,7 @@
 
 uint32_t transferComplete;
 
-void mainRisingEdgeCallback(osc_signals * signals) {
+void mainRisingEdgeCallback(osc_signal_set * signals) {
 
 	if (transferComplete) {
 		renderBuffer1(signals);
@@ -18,41 +18,41 @@ void mainRisingEdgeCallback(osc_signals * signals) {
 
 }
 
-void mainFallingEdgeCallback(osc_signals * signals) {
+void mainFallingEdgeCallback(osc_signal_set * signals) {
 
 }
 
-void auxRisingEdgeCallback(osc_signals * signals) {
+void auxRisingEdgeCallback(osc_signal_set * signals) {
 	;
 }
-void auxFallingEdgeCallback(osc_signals * signals) {
-	;
-}
-
-void buttonPressedCallback(osc_signals * signals) {
-	;
-}
-void buttonReleasedCallback(osc_signals * signals) {
+void auxFallingEdgeCallback(osc_signal_set * signals) {
 	;
 }
 
-void ioProcessCallback(osc_signals * signals) {
+void buttonPressedCallback(osc_signal_set * signals) {
+	;
+}
+void buttonReleasedCallback(osc_signal_set * signals) {
+	;
+}
+
+void ioProcessCallback(osc_signal_set * signals) {
 	audioRateOutputs * outputs = signals->outputs;
 	//setLogicOutputsNoLEDs(outputs->logicAHandler, outputs->auxLogicHandler, outputs->shAHandler, outputs->shBHandler);
 }
 
-void halfTransferCallback(osc_signals * signals) {
+void halfTransferCallback(osc_signal_set * signals) {
 	renderBuffer0(signals);
 }
 
-void transferCompleteCallback(osc_signals * signals) {
+void transferCompleteCallback(osc_signal_set * signals) {
 //	renderBuffer1(signals);
 	DMA1_Channel5->CCR &= ~DMA_CCR_EN;
 	DMA1_Channel5->CNDTR = 64;
 	transferComplete = 1;
 }
 
-void slowConversionCallback(osc_signals * signals) {
+void slowConversionCallback(osc_signal_set * signals) {
 	controlRateInputs * controls = signals->controls;
 	parseControls(controls);
 }

@@ -25,9 +25,9 @@ typedef struct {
 	audioRateInputs * inputs;
 	controlRateInputs * controls;
 	oversampledWavetableParameters * parameters;
-} osc_signals;
+} osc_signal_set;
 
-osc_signals signals;
+osc_signal_set osc_signals;
 
 #define OSC_BUFFER_SIZE 16
 
@@ -37,22 +37,21 @@ osc_signals signals;
  *
  */
 
+void osc_init(osc_signal_set *);
 
-void osc_init(osc_signals *);
+void osc_mainRisingEdgeCallback(osc_signal_set *);
+void osc_mainFallingEdgeCallback(osc_signal_set *);
 
-void osc_mainRisingEdgeCallback(osc_signals *);
-void osc_mainFallingEdgeCallback(osc_signals *);
+void osc_auxRisingEdgeCallback(osc_signal_set *);
+void osc_auxFallingEdgeCallback(osc_signal_set *);
 
-void osc_auxRisingEdgeCallback(osc_signals *);
-void osc_auxFallingEdgeCallback(osc_signals *);
+void osc_buttonPressedCallback(osc_signal_set *);
+void osc_buttonPressedCallback(osc_signal_set *);
 
-void osc_buttonPressedCallback(osc_signals *);
-void osc_buttonPressedCallback(osc_signals *);
-
-void osc_ioProcessCallback(osc_signals *);
-void osc_halfTransferCallback(osc_signals *);
-void osc_transferCompleteCallback(osc_signals *);
-void osc_slowConversionCallback(osc_signals *);
+void osc_ioProcessCallback(osc_signal_set *);
+void osc_halfTransferCallback(osc_signal_set *);
+void osc_transferCompleteCallback(osc_signal_set *);
+void osc_slowConversionCallback(osc_signal_set *);
 
 /*
  *
@@ -79,16 +78,36 @@ void osc_slowConversionCallback(osc_signals *);
 #define numAux3Modes 0
 #define numAux4Modes 0
 
-enum button1Modes {none, decimate};
-enum button2Modes {yTables};
-enum button3Modes {FM, PM};
-enum button4Modes {hard, pendulum};
-enum button5Modes {pairedWithButton2};
-enum button6Modes {morphCV, pwmCV};
-enum aux1Modes {aux1NotUsed};
-enum aux2Modes {aux2NotUsed};
-enum aux3Modes {aux3NotUsed};
-enum aux4Modes {aux4NotUsed};
+enum osc_button1Modes {
+	none, decimate
+};
+enum osc_button2Modes {
+	yTables
+};
+enum osc_button3Modes {
+	FM, PM
+};
+enum osc_button4Modes {
+	hard, pendulum
+};
+enum osc_button5Modes {
+	osc_pairedWithButton2
+};
+enum osc_button6Modes {
+	morphCV, pwmCV
+};
+enum osc_aux1Modes {
+	osc_aux1NotUsed
+};
+enum osc_aux2Modes {
+	osc_aux2NotUsed
+};
+enum osc_aux3Modes {
+	osc_aux3NotUsed
+};
+enum osc_aux4Modes {
+	osc_aux4NotUsed
+};
 
 /*
  *
@@ -167,9 +186,9 @@ uint32_t osc_wavetableRead[9][517];
 uint32_t osc_phaseDistRead[33][65];
 
 // declare functions to set the currently active tables
-void osc_switchWavetable(Wavetable *, osc_signals * signals);
+void osc_switchWavetable(Wavetable *, osc_signal_set * signals);
 // phase distortion table is fixed
 void osc_initPhaseDistTable(void);
-
+void osc_fillWavetableArray(void);
 
 #endif /* INC_OSC_H_ */

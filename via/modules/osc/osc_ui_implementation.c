@@ -1,4 +1,3 @@
-
 #include "osc.h"
 
 void osc_initializeUICallbacks(void) {
@@ -75,7 +74,6 @@ void osc_handleAux4EnterMenu(void) {
 	uiTransition(ui_button5Menu);
 }
 
-
 void osc_handleButton1Tap(void) {
 	SH_MODE = incrementModeAndStore(SH_MODE, BUTTON1_MASK, numButton1Modes);
 	osc_handleButton1ModeChange(SH_MODE);
@@ -91,7 +89,8 @@ void osc_handleButton2Tap(void) {
 	uiTransition(&ui_newMode);
 }
 void osc_handleButton3Tap(void) {
-	FM_PM_MODE = decrementModeAndStore(FM_PM_MODE, BUTTON3_MASK, numButton3Modes);
+	FM_PM_MODE = decrementModeAndStore(FM_PM_MODE, BUTTON3_MASK,
+			numButton3Modes);
 	osc_handleButton3ModeChange(FM_PM_MODE);
 	uiClearLEDs();
 	uiSetLEDs(FM_PM_MODE);
@@ -112,7 +111,8 @@ void osc_handleButton5Tap(void) {
 	uiTransition(&ui_newMode);
 }
 void osc_handleButton6Tap(void) {
-	MORPH_PWM_MODE = incrementModeAndStore(MORPH_PWM_MODE, BUTTON6_MASK, numButton6Modes);
+	MORPH_PWM_MODE = incrementModeAndStore(MORPH_PWM_MODE, BUTTON6_MASK,
+			numButton6Modes);
 	osc_handleButton6ModeChange(MORPH_PWM_MODE);
 	uiClearLEDs();
 	uiSetLEDs(MORPH_PWM_MODE);
@@ -165,3 +165,4 @@ void osc_handleAux3Hold(void) {
 void osc_handleAux4Hold(void) {
 	uiTransition(&ui_newAuxMode);
 }
+

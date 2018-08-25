@@ -40,9 +40,9 @@ void TIM12_IRQHandler(void)
 {
 
 	if (TRIGGER_RISING_EDGE) {
-		mainRisingEdgeCallback(&signals);
+		mainRisingEdgeCallback(&scanner_signals);
 	} else {
-		mainFallingEdgeCallback(&signals);
+		mainFallingEdgeCallback(&scanner_signals);
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
@@ -55,9 +55,9 @@ void EXTI15_10_IRQHandler(void)
 {
 
 	if (EXPANDER_RISING_EDGE) {
-		auxRisingEdgeCallback(&signals);
+		auxRisingEdgeCallback(&scanner_signals);
 	} else { //falling edge
-		auxFallingEdgeCallback(&signals);
+		auxFallingEdgeCallback(&scanner_signals);
 	}
 
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
@@ -75,10 +75,10 @@ void EXTI1_IRQHandler(void)
 
 	if (buttonPressed) {
 		uiDispatch(EXPAND_SW_ON_SIG);
-		buttonPressedCallback(&signals);
+		buttonPressedCallback(&scanner_signals);
 	} else { //falling edge
 		uiDispatch(EXPAND_SW_OFF_SIG);
-		buttonReleasedCallback(&signals);
+		buttonReleasedCallback(&scanner_signals);
 	}
 
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
@@ -96,8 +96,8 @@ void EXTI1_IRQHandler(void)
 void TIM6_DAC1_IRQHandler(void)
 {
 
-	ioProcessCallback(&signals);
-	generateSample(&signals);
+	ioProcessCallback(&scanner_signals);
+	generateSample(&scanner_signals);
 
 
 	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);

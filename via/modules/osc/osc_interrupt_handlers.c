@@ -1,7 +1,6 @@
-
 #include "osc.h"
 
-void osc_mainRisingEdgeCallback(osc_signals * signals) {
+void osc_mainRisingEdgeCallback(osc_signal_set * signals) {
 
 	oversampledWavetableParameters * parameters = signals->parameters;
 
@@ -15,56 +14,61 @@ void osc_mainRisingEdgeCallback(osc_signals * signals) {
 
 }
 
-void osc_mainFallingEdgeCallback(osc_signals * signals) {
+void osc_mainFallingEdgeCallback(osc_signal_set * signals) {
 
 }
 
-void osc_auxRisingEdgeCallback(osc_signals * signals) {
+void osc_auxRisingEdgeCallback(osc_signal_set * signals) {
 	osc_handleButton2Tap();
 }
-void osc_auxFallingEdgeCallback(osc_signals * signals) {
+void osc_auxFallingEdgeCallback(osc_signal_set * signals) {
 	;
 }
 
-void osc_buttonPressedCallback(osc_signals * signals) {
+void osc_buttonPressedCallback(osc_signal_set * signals) {
 	;
 }
-void osc_buttonReleasedCallback(osc_signals * signals) {
+void osc_buttonReleasedCallback(osc_signal_set * signals) {
 	;
 }
 
-void osc_ioProcessCallback(osc_signals * signals) {
+void osc_ioProcessCallback(osc_signal_set * signals) {
 }
 
-void osc_halfTransferCallback(osc_signals * signals) {
+void osc_halfTransferCallback(osc_signal_set * signals) {
 
 	EXPAND_LOGIC_HIGH
 
 	oversampledWavetableParameters * parameters = signals->parameters;
 	audioRateOutputs * outputs = signals->outputs;
 
-	uint32_t lastPhase = oversampledWavetableAdvance(parameters, outputs, osc_wavetableRead, osc_phaseDistRead, 0, OSC_BUFFER_SIZE);
+	uint32_t lastPhase = oversampledWavetableAdvance(parameters, outputs,
+			osc_wavetableRead, osc_phaseDistRead, 0, OSC_BUFFER_SIZE);
 	oversampledWavetableParsePhase(lastPhase, parameters, outputs);
 
-	EXPAND_LOGIC_LOW;
+	EXPAND_LOGIC_LOW
+	;
 
 }
 
-void osc_transferCompleteCallback(osc_signals * signals) {
+void osc_transferCompleteCallback(osc_signal_set * signals) {
 
 	EXPAND_LOGIC_HIGH
 
 	oversampledWavetableParameters * parameters = signals->parameters;
 	audioRateOutputs * outputs = signals->outputs;
 
-	uint32_t lastPhase = oversampledWavetableAdvance(parameters, outputs, osc_wavetableRead, osc_phaseDistRead, OSC_BUFFER_SIZE, OSC_BUFFER_SIZE);
+	uint32_t lastPhase = oversampledWavetableAdvance(parameters, outputs,
+			osc_wavetableRead, osc_phaseDistRead, OSC_BUFFER_SIZE,
+			OSC_BUFFER_SIZE);
 	oversampledWavetableParsePhase(lastPhase, parameters, outputs);
 
-	EXPAND_LOGIC_LOW;
+	EXPAND_LOGIC_LOW
+	;
 
 }
 
-void osc_slowConversionCallback(osc_signals * signals) {
+void osc_slowConversionCallback(osc_signal_set * signals) {
 
 	oversampledWavetableParameters * parameters = signals->parameters;
 	controlRateInputs * controls = signals->controls;
@@ -73,10 +77,18 @@ void osc_slowConversionCallback(osc_signals * signals) {
 	oversampledWavetableParseControls(controls, parameters);
 
 	// set LED display
-	uint32_t displayFreq = __USAT(abs((((parameters->frequencyBase) * (-(int)parameters->fm[0] + 16383)) >> 4)) >> 10, 12);
+	uint32_t displayFreq = __USAT(
+			abs(
+					(((parameters->frequencyBase)
+							* (-(int )parameters->fm[0] + 16383)) >> 4)) >> 10,
+			12);
 	uint32_t redLevel = 4095 - displayFreq;
 	uint32_t blueLevel = displayFreq;
-	uint32_t greenLevel = __USAT(((parameters->morphBase << 4) - (int)parameters->morphMod[0]), 16) >> 6;
+	uint32_t greenLevel =
+			__USAT(
+					((parameters->morphBase << 4)
+							- (int )parameters->morphMod[0]), 16)
+					>> 6;
 	updateRGBDisplay(redLevel, greenLevel, blueLevel);
 
 }

@@ -1,11 +1,7 @@
 
-#include "signals.h"
-#include "main.h"
-#include "user_interface.h"
-#include "via_rev5_hardware_io.h"
-#include "scanner_modes.h"
-#include "scanner_interrupt_handlers.h"
 
+#include "via_platform_binding.h"
+#include "scanner.h"
 
 enum
 {	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
@@ -40,9 +36,9 @@ void TIM12_IRQHandler(void)
 {
 
 	if (TRIGGER_RISING_EDGE) {
-		mainRisingEdgeCallback(&signals);
+		scanner_mainRisingEdgeCallback(&scanner_signals);
 	} else {
-		mainFallingEdgeCallback(&signals);
+		scanner_mainFallingEdgeCallback(&scanner_signals);
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
@@ -55,9 +51,9 @@ void EXTI15_10_IRQHandler(void)
 {
 
 	if (EXPANDER_RISING_EDGE) {
-		auxRisingEdgeCallback(&signals);
-	} else { //falling edge
-		auxFallingEdgeCallback(&signals);
+		scanner_auxRisingEdgeCallback(&scanner_signals);
+	} else {
+		scanner_auxFallingEdgeCallback(&scanner_signals);
 	}
 
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
@@ -69,16 +65,12 @@ void EXTI15_10_IRQHandler(void)
 void EXTI1_IRQHandler(void)
 {
 
-	static int buttonPressed;
-
-	buttonPressed = !buttonPressed;
-
-	if (buttonPressed) {
+	if (EXPANDER_BUTTON_PRESSED) {
 		uiDispatch(EXPAND_SW_ON_SIG);
-		buttonPressedCallback(&signals);
-	} else { //falling edge
+		scanner_buttonPressedCallback(&scanner_signals);
+	} else {
 		uiDispatch(EXPAND_SW_OFF_SIG);
-		buttonReleasedCallback(&signals);
+		scanner_buttonReleasedCallback(&scanner_signals);
 	}
 
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
@@ -87,59 +79,40 @@ void EXTI1_IRQHandler(void)
 
 /*
  *
- *  DAC sample rate
+ * Timer interrputs
  *
  */
 
-// DAC timer interrupt, sample rate callbacks
+//// SH A
+//
+//void TIM16_IRQHandler(void)
+//{
+//
+//	SH_A_SAMPLE
+//	if (RUNTIME_DISPLAY) {
+//		LEDA_ON;
+//	}
+//
+//	__HAL_TIM_CLEAR_FLAG(&htim16, TIM_FLAG_UPDATE);
+//	__HAL_TIM_DISABLE(&htim16);
+//
+//}
+//
+//// SH B
+//
+//void TIM17_IRQHandler(void)
+//{
+//
+//	SH_B_SAMPLE;
+//	if (RUNTIME_DISPLAY) {
+//		LEDB_ON;
+//	}
+//	__HAL_TIM_CLEAR_FLAG(&htim17, TIM_FLAG_UPDATE);
+//	__HAL_TIM_DISABLE(&htim17);
+//
+//}
 
-void TIM6_DAC1_IRQHandler(void)
-{
-
-	ioProcessCallback(&signals);
-	generateSample(&signals);
-
-
-	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
-
-}
-
-// Sample and hold helpers
-
-// SH A
-
-void TIM16_IRQHandler(void)
-{
-
-	SH_A_SAMPLE
-	if (RUNTIME_DISPLAY) {
-		LEDA_ON;
-	}
-
-	__HAL_TIM_CLEAR_FLAG(&htim16, TIM_FLAG_UPDATE);
-	__HAL_TIM_DISABLE(&htim16);
-
-}
-
-// SH B
-
-void TIM17_IRQHandler(void)
-{
-
-	SH_B_SAMPLE;
-	if (RUNTIME_DISPLAY) {
-		LEDB_ON;
-	}
-	__HAL_TIM_CLEAR_FLAG(&htim17, TIM_FLAG_UPDATE);
-	__HAL_TIM_DISABLE(&htim17);
-
-}
-
-/*
- *
- *  UI interrupts
- *
- */
+// run touch sensor state machine
 
 void TIM13_IRQHandler(void)
 {
@@ -150,6 +123,7 @@ void TIM13_IRQHandler(void)
 
 }
 
+// ui timer
 
 void TIM7_IRQHandler(void)
 {
@@ -159,6 +133,111 @@ void TIM7_IRQHandler(void)
 	HAL_TIM_IRQHandler(&htim7);
 
 }
+
+/*
+ *
+ * DMA transfer complete interrupts
+ *
+ */
+
+// slow ADCs
+
+void DMA1_Channel1_IRQHandler(void)
+{
+
+	//minimal interrupt handler for circular buffer
+
+	if ((DMA1->ISR & (DMA_FLAG_HT1)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1;
+	} else {
+		DMA1->IFCR = DMA_FLAG_TC1;
+		scanner_slowConversionCallback(&scanner_signals);
+	}
+
+}
+
+void DMA1_Channel5_IRQHandler(void)
+{
+
+
+	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1 << 16;
+		EXPAND_LOGIC_HIGH;
+		scanner_halfTransferCallback(&scanner_signals);
+		EXPAND_LOGIC_LOW;
+	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
+		DMA1->IFCR = DMA_FLAG_TC1 << 16;
+		EXPAND_LOGIC_HIGH;
+		scanner_transferCompleteCallback(&scanner_signals);
+		EXPAND_LOGIC_LOW;
+	}
+
+}
+
+/**
+* @brief This function handles DMA2 channel3 global interrupt.
+*/
+void DMA2_Channel3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Channel3_IRQn 0 */
+
+	if ((DMA2->ISR & (DMA_FLAG_HT1 << 8)) != 0) {
+		DMA2->IFCR = DMA_FLAG_HT1 << 8;
+		uint16_t * cv2ReadIndex = scanner_signals.inputs->cv2Samples;
+		//ALOGIC_HIGH;
+		for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
+			int cv2Sample = cv2ReadIndex[i*2] + 32768;
+			scanner_signals.parameters->xInput[i] = cv2Sample;
+		}
+	} else if ((DMA2->ISR & (DMA_FLAG_TC1 << 8)) != 0)  {
+		DMA2->IFCR = DMA_FLAG_TC1 << 8;
+		uint16_t * cv2ReadIndex = scanner_signals.inputs->cv2Samples + SCANNER_BUFFER_SIZE*2;
+		for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
+			int cv2Sample = cv2ReadIndex[i*2] + 32768;
+			scanner_signals.parameters->xInput[i] = cv2Sample;
+		}
+		//ALOGIC_LOW;
+
+	}
+
+
+  /* USER CODE END DMA2_Channel3_IRQn 0 */
+  //HAL_DMA_IRQHandler(&hdma_sdadc1);
+  /* USER CODE BEGIN DMA2_Channel3_IRQn 1 */
+
+  /* USER CODE END DMA2_Channel3_IRQn 1 */
+}
+
+/**
+* @brief This function handles DMA2 channel4 global interrupt.
+*/
+void DMA2_Channel4_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Channel4_IRQn 0 */
+
+	if ((DMA2->ISR & (DMA_FLAG_HT1 << 12)) != 0) {
+		DMA2->IFCR = DMA_FLAG_HT1 << 12;
+		uint16_t * cv3ReadIndex = scanner_signals.inputs->cv3Samples;
+		for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
+			int cv3Sample = cv3ReadIndex[i*2] + 32768;
+			scanner_signals.parameters->yInput[i] = cv3Sample;
+		}
+	} else if ((DMA2->ISR & (DMA_FLAG_TC1 << 12)) != 0)  {
+		DMA2->IFCR = DMA_FLAG_TC1 << 12;
+		uint16_t * cv3ReadIndex = scanner_signals.inputs->cv3Samples + SCANNER_BUFFER_SIZE*2;
+		for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
+			int cv3Sample = cv3ReadIndex[i*2] + 32768;
+			scanner_signals.parameters->yInput[i] = cv3Sample;
+		}
+	}
+
+  /* USER CODE END DMA2_Channel4_IRQn 0 */
+  //HAL_DMA_IRQHandler(&hdma_sdadc2);
+  /* USER CODE BEGIN DMA2_Channel4_IRQn 1 */
+
+  /* USER CODE END DMA2_Channel4_IRQn 1 */
+}
+
 
 
 

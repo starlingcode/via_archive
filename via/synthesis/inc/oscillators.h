@@ -33,11 +33,16 @@ typedef struct {
 	int tableSize;
 } oversampledWavetableParameters;
 
-void oversampledWavetableParseControls(controlRateInputs * controls, oversampledWavetableParameters * parameters);
+void oversampledWavetableParseControls(controlRateInputs * controls,
+		oversampledWavetableParameters * parameters);
 
-uint32_t oversampledWavetableAdvance(oversampledWavetableParameters * parameters, audioRateOutputs * outputs, uint32_t * wavetable, uint32_t * phaseDistTable, uint32_t writePosition, uint32_t bufferSize);
+uint32_t oversampledWavetableAdvance(
+		oversampledWavetableParameters * parameters, audioRateOutputs * outputs,
+		uint32_t * wavetable, uint32_t * phaseDistTable, uint32_t writePosition,
+		uint32_t bufferSize);
 
-void oversampledWavetableParsePhase(uint32_t phase, oversampledWavetableParameters * parameters, audioRateOutputs *output);
+void oversampledWavetableParsePhase(uint32_t phase,
+		oversampledWavetableParameters * parameters, audioRateOutputs *output);
 
 /*
  *

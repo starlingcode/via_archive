@@ -13,7 +13,7 @@
 // function calling subfunctions to fill the sample buffer
 
 void parseControls(controlRateInputs * controls);
-void renderBuffer0(osc_signals * signals);
-void renderBuffer1(osc_signals * signals);
+void renderBuffer0(osc_signal_set * signals);
+void renderBuffer1(osc_signal_set * signals);
 
 #endif /* INC_OSC_FILL_BUFFER_H_ */

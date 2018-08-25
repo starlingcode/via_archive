@@ -71,7 +71,7 @@ void parseControls(controlRateInputs * controls) {
 
 uint32_t phase;
 
-void renderBuffer0(osc_signals * signals) {
+void renderBuffer0(osc_signal_set * signals) {
 
 //	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 
@@ -128,7 +128,7 @@ void renderBuffer0(osc_signals * signals) {
 
 }
 
-void renderBuffer1(osc_signals * signals) {
+void renderBuffer1(osc_signal_set * signals) {
 
 //	GPIOC->BRR = (uint32_t)GPIO_PIN_13;
 

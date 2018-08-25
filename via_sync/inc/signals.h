@@ -52,7 +52,7 @@ typedef struct {
 	audioRateInputs * inputs;
 	controlRateInputs * controls;
 	softwareSignaling * softwareSignals;
-} osc_signals;
+} osc_signal_set;
 
 controlRateInputs controlRateInput;
 audioRateInputs audioRateInput;
@@ -64,7 +64,7 @@ audioRateInputs * audioRateInputAddress;
 audioRateOutputs * audioRateOutputAddress;
 softwareSignaling * softwareSignalsAddress;
 
-osc_signals signals;
+osc_signal_set scanner_signals;
 
 static inline void viaSignalInit(void) {
 
@@ -73,10 +73,10 @@ static inline void viaSignalInit(void) {
 	audioRateOutputAddress = &audioRateOutput;
 	softwareSignalsAddress = &softwareSignals;
 
-	signals.controls = controlRateInputAddress;
-	signals.inputs = audioRateInputAddress;
-	signals.outputs = audioRateOutputAddress;
-	signals.softwareSignals = softwareSignalsAddress;
+	scanner_signals.controls = controlRateInputAddress;
+	scanner_signals.inputs = audioRateInputAddress;
+	scanner_signals.outputs = audioRateOutputAddress;
+	scanner_signals.softwareSignals = softwareSignalsAddress;
 
 }
 

@@ -10,7 +10,7 @@
 extern TIM_HandleTypeDef htim16;
 extern TIM_HandleTypeDef htim17;
 
-void mainRisingEdgeCallback(osc_signals * signals) {
+void mainRisingEdgeCallback(osc_signal_set * signals) {
 
 	softwareSignaling * softwareSignals = signals->softwareSignals;
 
@@ -26,27 +26,27 @@ void mainRisingEdgeCallback(osc_signals * signals) {
 
 }
 
-void mainFallingEdgeCallback(osc_signals * signals) {
+void mainFallingEdgeCallback(osc_signal_set * signals) {
 
 	signals->softwareSignals->gateSignal = 0;
 
 }
 
-void auxRisingEdgeCallback(osc_signals * signals) {
+void auxRisingEdgeCallback(osc_signal_set * signals) {
 	;
 }
-void auxFallingEdgeCallback(osc_signals * signals) {
-	;
-}
-
-void buttonPressedCallback(osc_signals * signals) {
-	;
-}
-void buttonReleasedCallback(osc_signals * signals) {
+void auxFallingEdgeCallback(osc_signal_set * signals) {
 	;
 }
 
-void ioProcessCallback(osc_signals * signals) {
+void buttonPressedCallback(osc_signal_set * signals) {
+	;
+}
+void buttonReleasedCallback(osc_signal_set * signals) {
+	;
+}
+
+void ioProcessCallback(osc_signal_set * signals) {
 
 	static int readIndex;
 
@@ -103,7 +103,7 @@ void ioProcessCallback(osc_signals * signals) {
 	}
 
 }
-void generateSample(osc_signals * signals) {
+void generateSample(osc_signal_set * signals) {
 
 	// handled with fillBuffer
 

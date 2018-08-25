@@ -8,17 +8,20 @@
 #include "oscillators.h"
 #include "dsp.h"
 
-
-void oversampledWavetableParseControls(controlRateInputs * controls, oversampledWavetableParameters * parameters) {
+void oversampledWavetableParseControls(controlRateInputs * controls,
+		oversampledWavetableParameters * parameters) {
 
 	parameters->frequencyBase = fix16_mul(expoTable[controls->cv1Value] >> 6,
-										fix16_mul(expoTable[(controls->knob1Value >> 2) * 3] >> 6,
-												expoTable[(controls->knob2Value >> 4) + 1300] >> 6));
+			fix16_mul(expoTable[(controls->knob1Value >> 2) * 3] >> 6,
+					expoTable[(controls->knob2Value >> 4) + 1300] >> 6));
 	parameters->morphBase = controls->knob3Value;
 
 }
 
-uint32_t oversampledWavetableAdvance(oversampledWavetableParameters * parameters, audioRateOutputs * outputs, uint32_t * wavetable, uint32_t * phaseDistTable, uint32_t writePosition, uint32_t bufferSize) {
+uint32_t oversampledWavetableAdvance(
+		oversampledWavetableParameters * parameters, audioRateOutputs * outputs,
+		uint32_t * wavetable, uint32_t * phaseDistTable, uint32_t writePosition,
+		uint32_t bufferSize) {
 
 	// these static variables are bad as they prevent multiple instantiations of a wavetable
 	// better to pass in and out of function in struct
@@ -26,24 +29,30 @@ uint32_t oversampledWavetableAdvance(oversampledWavetableParameters * parameters
 	static uint32_t phase;
 
 	// calculate buffer rate parameters
-	uint32_t increment = (((parameters->frequencyBase) * (-(int)parameters->fm[0] + 16383)) >> 4) * parameters->reverseInput;
+	uint32_t increment = (((parameters->frequencyBase)
+			* (-(int) parameters->fm[0] + 16383)) >> 4)
+			* parameters->reverseInput;
 
-	uint32_t pwm = (int)parameters->pwm[0] + 32768;
+	uint32_t pwm = (int) parameters->pwm[0] + 32768;
 	uint32_t pwmIndex = (pwm >> 11);
 	uint32_t pwmFrac = (pwm & 0x7FF) << 4;
 	// assuming that each phase distortion lookup table is 65 samples long stored as int
-	uint32_t * pwmTable1 = phaseDistTable + pwmIndex*65;
+	uint32_t * pwmTable1 = phaseDistTable + pwmIndex * 65;
 	uint32_t * pwmTable2 = pwmTable1 + 65;
 
 	// combine knob and CV then to table size in 16.16 fixed point
-	uint32_t morph = __USAT(((parameters->morphBase << 4) - (int)parameters->morphMod[0]), 16) * parameters->tableSize;
+	uint32_t morph =
+			__USAT(
+					((parameters->morphBase << 4)
+							- (int )parameters->morphMod[0]), 16)
+					* parameters->tableSize;
 	uint32_t morphIndex = morph >> 16;
 	uint32_t morphFrac = morph & 0xFFFF;
 	// assuming that each phase distortion lookup table is 517 samples long stored as int
-	uint32_t * wavetable1 = wavetable + (morphIndex*517) + 2;
+	uint32_t * wavetable1 = wavetable + (morphIndex * 517) + 2;
 
 	static uint32_t lastPhaseMod;
-	uint32_t phaseMod = (int)parameters->pm[0];
+	uint32_t phaseMod = (int) parameters->pm[0];
 	phase += (phaseMod - lastPhaseMod) << 12;
 	lastPhaseMod = phaseMod;
 
@@ -73,8 +82,8 @@ uint32_t oversampledWavetableAdvance(oversampledWavetableParameters * parameters
 		// use this with the precalculated pwm to perform bilinear interpolation
 		// this accomplishes the
 		ghostPhase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
-					pwmTable1[leftSample + 1], pwmTable2[leftSample + 1],
-						pwmFrac, pwmPhaseFrac);
+				pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
+				pwmPhaseFrac);
 		// output of phase distortion is a 9.16 (tablesize.interpolationbits) fixed point number
 		// scale to 12 bits for saw out
 		dac3Buffer[writeIndex] = (ghostPhase) >> 13;
@@ -82,8 +91,9 @@ uint32_t oversampledWavetableAdvance(oversampledWavetableParameters * parameters
 		// but with the appropriate scaling as phase is now 25 bits and table length is 9 bits
 		leftSample = ghostPhase >> 16;
 #define phaseFrac (ghostPhase & 0xFFFF)
-		dac2Buffer[writeIndex] = fast_15_16_bilerp_prediff(wavetable1[leftSample], wavetable1[leftSample + 1],
-													morphFrac, phaseFrac);
+		dac2Buffer[writeIndex] = fast_15_16_bilerp_prediff(
+				wavetable1[leftSample], wavetable1[leftSample + 1], morphFrac,
+				phaseFrac);
 		dac1Buffer[writeIndex] = 4095 - dac2Buffer[writeIndex];
 
 		writeIndex++;
@@ -94,7 +104,8 @@ uint32_t oversampledWavetableAdvance(oversampledWavetableParameters * parameters
 
 }
 
-void oversampledWavetableParsePhase(uint32_t phase, oversampledWavetableParameters * parameters, audioRateOutputs *output) {
+void oversampledWavetableParsePhase(uint32_t phase,
+		oversampledWavetableParameters * parameters, audioRateOutputs *output) {
 
 	static uint32_t lastPhaseHemisphere;
 
@@ -107,7 +118,8 @@ void oversampledWavetableParsePhase(uint32_t phase, oversampledWavetableParamete
 	int transition = phaseHemisphere - lastPhaseHemisphere;
 
 	// 1 if we are moving backwards through the wavetable (negative multiplier), 0 otherwise
-	uint32_t reverse = (uint32_t)((int)parameters->fm[0] * parameters->reverseInput) >> 31;
+	uint32_t reverse = (uint32_t) ((int) parameters->fm[0]
+			* parameters->reverseInput) >> 31;
 
 	uint32_t atA;
 	uint32_t atB;

@@ -228,7 +228,7 @@ void DMA2_Channel3_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Channel3_IRQn 0 */
 
-	ioProcessCallback(&signals);
+	ioProcessCallback(&scanner_signals);
 
 	/* Clear the half transfer complete flag */
 	(&hdma_sdadc1)->DmaBaseAddress->IFCR = DMA_FLAG_HT1 << (&hdma_sdadc1)->ChannelIndex;

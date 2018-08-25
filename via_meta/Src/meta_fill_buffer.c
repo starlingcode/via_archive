@@ -9,7 +9,7 @@
 
 extern int handleConversionSlow(q31_t lastSample, int lastPhaseValue, controlRateInputs * controls, audioRateInputs * inputBuffer, uint32_t sequencingSignal);
 
-void fillBuffer(osc_signals * signals) {
+void fillBuffer(osc_signal_set * signals) {
 
 	static q31_t incrementValues1[BUFFER_SIZE];
 	static q31_t incrementValues2[BUFFER_SIZE];

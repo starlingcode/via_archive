@@ -46,7 +46,6 @@ uint32_t eepromStatus;
 #define AUX_MODE4_MASK		0b00111000000000000000000000000000
 #define AUX_MODE4_SHIFT		27
 
-
 #define DEFAULTPRESET1 0b0000000000000000
 #define DEFAULTPRESET2 0b0000000000000000
 #define DEFAULTPRESET3 0b0000000000000000
@@ -62,7 +61,6 @@ uint16_t EEPROMTemp;
 
 // used by state machine to signal preset to be stored or recalled.
 int presetNumber;
-
 
 typedef struct {
 	int r;
@@ -192,9 +190,11 @@ void uiSetLEDDOff();
 int incrementModeAndStore(int, int, int);
 int decrementModeAndStore(int, int, int);
 static inline void uiResetTimerMenu(void) {
-	UI_TIMER_RESET;
+	UI_TIMER_RESET
+	;
 	UI_TIMER_SET_OVERFLOW(65535);
-	UI_TIMER_ENABLE;
+	UI_TIMER_ENABLE
+	;
 }
 
 // TODO HALF ASSED
@@ -202,8 +202,6 @@ uint32_t runtimeDisplay;
 #define SET_RUNTIME_DISPLAY runtimeDisplay = 1
 #define CLEAR_RUNTIME_DISPLAY runtimeDisplay = 0
 #define RUNTIME_DISPLAY runtimeDisplay
-
-
 
 #endif /* TEST_H__*/
 
