@@ -50,4 +50,34 @@ void oversampledWavetableParsePhase(uint32_t phase,
  *
  */
 
+typedef struct {
+
+	// assigned per mode
+	int16_t * fm;
+	int16_t * pm;
+	int16_t * pwm;
+	int16_t * morphMod;
+	int cv2Offset;
+	uint32_t tableSize;
+
+	// generated externally
+	int phaseReset;
+	int increment;
+	int morphBase;
+
+	// results
+	int phase;
+	int phaseEvent;
+	int delta;
+
+} singleSampleWavetableParameters;
+
+void singleSampleWavetableParseControls(controlRateInputs * controls,
+		singleSampleWavetableParameters * parameters);
+
+uint32_t singleSampleWavetableAdvance(
+		singleSampleWavetableParameters * parameters,
+		uint32_t * wavetable, uint32_t * phaseDistTable);
+
+
 #endif /* INC_OSCILLATORS_H_ */
