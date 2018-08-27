@@ -14,11 +14,10 @@ void sync_init(sync_signal_set * signals) {
 	signals->controls = &controlRateInput;
 	signals->inputs = &audioRateInput;
 	signals->outputs = &audioRateOutput;
-	signals->parameters = &syncParameters;
+	signals->wavetable_parameters = &wavetableParameters;
+	signals->pll_parameters = &pllParameters;
 
-	via_ioStreamInit(&audioRateInput, &audioRateOutput, SYNC_BUFFER_SIZE);
-
-	sync_initPhaseDist();
+	//sync_initPhaseDistTable();
 
 	sync_initializeUICallbacks();
 
@@ -28,20 +27,24 @@ void sync_init(sync_signal_set * signals) {
 
 	sync_fillWavetableArray();
 
-	sync_switchWavetable(sync_wavetableArray[0], signals);
+	sync_switchWavetable(sync_wavetableArray[0][0], signals);
 
-//	displaySHMode = displaySH_Off;
-//	displaySyncMode = displaySync_Hard;
-//	displayXCVMode = displayXCV_FM;
-//	displayMorphMode = displayMorph_Morph;
+	sync_initializeScales();
 
-	signals->parameters->fm = signals->inputs->cv2VirtualGround;
-	signals->parameters->pm = signals->inputs->cv2VirtualGround;
-	signals->parameters->pwm = signals->inputs->cv2VirtualGround;
+	signals->pll_parameters->scale = sync_scaleArray[0][0];
 
-	signals->parameters->morphMod = signals->inputs->cv3Samples;
+	via_ioStreamInit(&audioRateInput, &audioRateOutput, SYNC_BUFFER_SIZE);
 
-	signals->parameters->phaseReset = 1;
+	signals->wavetable_parameters->fm = signals->inputs->cv2VirtualGround;
+	signals->wavetable_parameters->pm = signals->inputs->cv2VirtualGround;
+	signals->wavetable_parameters->pwm = signals->inputs->cv2VirtualGround;
+
+	signals->wavetable_parameters->morphMod = signals->inputs->cv3Samples;
+
+	signals->wavetable_parameters->phaseReset = 1;
+	signals->pll_parameters->phaseReset = 1;
+
+	signals->wavetable_parameters->increment = 10000;
 
 }
 

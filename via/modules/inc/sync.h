@@ -9,16 +9,22 @@
 #define INC_SYNC_H_
 
 #include "via_platform_binding.h"
+#include "user_interface.h"
 #include "oscillators.h"
 
 
-singleSampleWavetableParameters syncParameters;
+singleSampleWavetableParameters wavetableParameters;
+
+pllMultiplierParameters pllParameters;
 
 typedef struct {
+
 	audioRateOutputs * outputs;
 	audioRateInputs * inputs;
 	controlRateInputs * controls;
-	singleSampleWavetableParameters * parameters;
+	singleSampleWavetableParameters * wavetable_parameters;
+	pllMultiplierParameters * pll_parameters;
+
 } sync_signal_set;
 
 sync_signal_set sync_signals;
@@ -53,55 +59,40 @@ void sync_slowConversionCallback(sync_signal_set *);
  *
  */
 
+// Mode enums and mode variables
+
 #define SH_MODE button1Mode
-#define TABLE button2Mode
-#define FM_PM_MODE button3Mode
+#define SCALE_MODE button2Mode
+#define X_MODE button3Mode
 #define SYNC_MODE button4Mode
-#define MORPH_PWM_MODE button6Mode
+#define GROUP_MODE button5Mode
+#define TABLE_MODE button6Mode
+#define QUADRATURE_MODE aux2Mode
+#define LOGIC_A_MODE aux3Mode
+#define TABLE_GROUP_MODE aux4Mode
 
-#define AUX4_MODE_USED
-
-#define numButton1Modes 2
-#define numButton2Modes 8
-#define numButton3Modes 2
-#define numButton4Modes 2
-#define numButton5Modes 8
-#define numButton6Modes 2
+#define numButton1Modes 3
+#define numButton2Modes 4
+#define numButton3Modes 4
+#define numButton4Modes 3
+#define numButton5Modes 4
+#define numButton6Modes 4
 #define numAux1Modes 0
-#define numAux2Modes 0
-#define numAux3Modes 0
-#define numAux4Modes 0
+#define numAux2Modes 2
+#define numAux3Modes 4
+#define numAux4Modes 2
 
-enum sync_button1Modes {
-	none, decimate
-};
-enum sync_button2Modes {
-	yTables
-};
-enum sync_button3Modes {
-	FM, PM
-};
-enum sync_button4Modes {
-	hard, pendulum
-};
-enum sync_button5Modes {
-	sync_pairedWithButton2
-};
-enum sync_button6Modes {
-	morphCV, pwmCV
-};
-enum sync_aux1Modes {
-	sync_aux1NotUsed
-};
-enum sync_aux2Modes {
-	sync_aux2NotUsed
-};
-enum sync_aux3Modes {
-	sync_aux3NotUsed
-};
-enum sync_aux4Modes {
-	sync_aux4NotUsed
-};
+enum sync_button1Modes {noSH, sampletrack, resample};
+enum sync_button2Modes {scale1, scale2, scale3, scale4};
+enum sync_button3Modes {root, pm, fm, pwm};
+enum sync_button4Modes {nosync, true, hardsync};
+enum sync_button5Modes {group1, group2, group3, group4};
+enum sync_button6Modes {table1, table2, table3, table4};
+enum sync_aux1Modes {sync_aux1NotUsed};
+enum sync_aux2Modes {gate, delta};
+enum sync_aux3Modes {noOffset, quarter, half, threeQuarters};
+enum sync_aux4Modes {groupSpecific, global};
+
 
 /*
  *
@@ -173,17 +164,28 @@ void sync_initializeUICallbacks(void);
  */
 
 // declare an array of pointers to wavetables (stored in flash)
-Wavetable * sync_wavetableArray[8];
+Wavetable * sync_wavetableArray[4][4];
+Wavetable * sync_wavetableArrayGlobal[4];
 
 // declare arrays to store the active tables
 uint32_t sync_wavetableRead[9][517];
-uint32_t sync_phaseDistRead[33][65];
+//uint32_t sync_phaseDistRead[33][65];
 
 // declare functions to set the currently active tables
 void sync_switchWavetable(Wavetable *, sync_signal_set * signals);
+void sync_switchWavetableGlobal(Wavetable *, sync_signal_set * signals);
 // phase distortion table is fixed
 void sync_initPhaseDistTable(void);
 void sync_fillWavetableArray(void);
 
+/*
+ *
+ * Scales
+ *
+ */
+
+const Scale *sync_scaleArray[4][4];
+
+void sync_initializeScales(void);
 
 #endif /* INC_SYNC_H_ */

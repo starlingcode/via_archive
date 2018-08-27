@@ -102,14 +102,14 @@ typedef struct {
 	audioRateInputs * inputWrite;
 	controlRateInputs * controls;
 	softwareSignaling * softwareSignals;
-} osc_signal_set;
+} viaSignals;
 
 controlRateInputs controlRateInput;
 audioRateInputs audioRateInput;
 audioRateOutputs audioRateOutput;
 softwareSignaling softwareSignals;
 
-osc_signal_set scanner_signals;
+viaSignals signals;
 
 void viaSignalInit(void);
 

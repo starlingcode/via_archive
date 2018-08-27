@@ -1,12 +1,5 @@
 
-#include "signals.h"
-#include "main.h"
-#include "user_interface.h"
-#include "via_rev5_hardware_io.h"
-#include "sync_modes.h"
-#include "sync_interrupt_handlers.h"
-
-int triggerDebounce;
+#include "sync.h"
 
 enum
 {	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
@@ -41,10 +34,9 @@ void TIM12_IRQHandler(void)
 {
 
 	if (TRIGGER_RISING_EDGE) {
-		mainRisingEdgeCallback(&scanner_signals);
+		sync_mainRisingEdgeCallback(&sync_signals);
 	} else {
-
-		mainFallingEdgeCallback(&scanner_signals);
+		sync_mainFallingEdgeCallback(&sync_signals);
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
@@ -57,9 +49,9 @@ void EXTI15_10_IRQHandler(void)
 {
 
 	if (EXPANDER_RISING_EDGE) {
-		auxRisingEdgeCallback(&scanner_signals);
-	} else { //falling edge
-		auxFallingEdgeCallback(&scanner_signals);
+		sync_auxRisingEdgeCallback(&sync_signals);
+	} else {
+		sync_auxFallingEdgeCallback(&sync_signals);
 	}
 
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
@@ -72,22 +64,11 @@ void EXTI1_IRQHandler(void)
 {
 
 	if (EXPANDER_BUTTON_PRESSED) {
-		if (triggerDebounce) {
-
-		} else {
-			triggerDebounce = 1;
-			__HAL_TIM_ENABLE(&htim16);
-			buttonPressedCallback(&scanner_signals);
-		}
-	} else { //falling edge
-		if (triggerDebounce) {
-
-		} else {
-			uiDispatch(EXPAND_SW_OFF_SIG);
-			triggerDebounce = 1;
-			__HAL_TIM_ENABLE(&htim16);
-			buttonReleasedCallback(&scanner_signals);
-		}
+		uiDispatch(EXPAND_SW_ON_SIG);
+		sync_buttonPressedCallback(&sync_signals);
+	} else {
+		uiDispatch(EXPAND_SW_OFF_SIG);
+		sync_buttonReleasedCallback(&sync_signals);
 	}
 
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
@@ -96,35 +77,19 @@ void EXTI1_IRQHandler(void)
 
 /*
  *
- *  DAC sample rate
+ * Timer interrputs
  *
  */
-
-// DAC timer interrupt, sample rate callbacks
-
-void TIM6_DAC1_IRQHandler(void)
-{
-
-	generateSample(&scanner_signals);
-
-
-	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
-
-}
-
-// Sample and hold helpers
 
 // SH A
 
 void TIM16_IRQHandler(void)
 {
 
-//	SH_A_SAMPLE
-//	if (RUNTIME_DISPLAY) {
-//		LEDA_ON;
-//	}
-
-    triggerDebounce = 0;
+	SH_A_SAMPLE
+	if (RUNTIME_DISPLAY) {
+		LEDA_ON;
+	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim16, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim16);
@@ -145,11 +110,7 @@ void TIM17_IRQHandler(void)
 
 }
 
-/*
- *
- *  UI interrupts
- *
- */
+// run touch sensor state machine
 
 void TIM13_IRQHandler(void)
 {
@@ -160,6 +121,7 @@ void TIM13_IRQHandler(void)
 
 }
 
+// ui timer
 
 void TIM7_IRQHandler(void)
 {
@@ -169,6 +131,45 @@ void TIM7_IRQHandler(void)
 	HAL_TIM_IRQHandler(&htim7);
 
 }
+
+/*
+ *
+ * DMA transfer complete interrupts
+ *
+ */
+
+// slow ADCs
+
+void DMA1_Channel1_IRQHandler(void)
+{
+
+	//minimal interrupt handler for circular buffer
+
+	if ((DMA1->ISR & (DMA_FLAG_HT1)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1;
+	} else {
+		DMA1->IFCR = DMA_FLAG_TC1;
+		// VIA_UPDATE_CONTROLS_CALLBACK(&signals)
+		sync_slowConversionCallback(&sync_signals);
+	}
+
+}
+
+void DMA1_Channel5_IRQHandler(void)
+{
+
+
+	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1 << 16;
+		//
+		sync_halfTransferCallback(&sync_signals);
+	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
+		DMA1->IFCR = DMA_FLAG_TC1 << 16;
+		sync_transferCompleteCallback(&sync_signals);
+	}
+
+}
+
 
 
 

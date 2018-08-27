@@ -1,27 +1,51 @@
-#include "osc.h"
+#include "sync.h"
 
 //void loadPhaseDistTable(PhaseDistTable * table, uint32_t * tableRead);
 //void loadWavetableWithDiff(Wavetable * table, uint32_t * tableRead);
 
-void osc_fillWavetableArray(void) {
-	osc_wavetableArray[0] = &tenor257;
-	osc_wavetableArray[1] = &soprano257;
-	osc_wavetableArray[2] = &impevens;
-	osc_wavetableArray[3] = &linwavefold_257;
-	osc_wavetableArray[4] = &skipSaw;
-	osc_wavetableArray[5] = &sinwavefold_257;
-	osc_wavetableArray[6] = &additive_tri_to_pulse;
-	osc_wavetableArray[7] = &newBounce;
+void sync_fillWavetableArray(void) {
+
+	sync_wavetableArray[0][0] = &tenor257;
+	sync_wavetableArray[0][1] = &soprano257;
+	sync_wavetableArray[0][2] = &impevens;
+	sync_wavetableArray[0][3] = &linwavefold_257;
+
+	sync_wavetableArray[1][0] = &skipSaw;
+	sync_wavetableArray[1][1] = &sinwavefold_257;
+	sync_wavetableArray[1][2] = &additive_tri_to_pulse;
+	sync_wavetableArray[1][3] = &newBounce;
+
+	sync_wavetableArray[2][0] = &triOdd;
+	sync_wavetableArray[2][1] = &moogSquare;
+	sync_wavetableArray[2][2] = &algerian;
+	sync_wavetableArray[2][3] = &exciteBike;
+
+	sync_wavetableArray[3][0] = &testRMS;
+	sync_wavetableArray[3][1] = &gamma257;
+	sync_wavetableArray[3][2] = &bounce_257;
+	sync_wavetableArray[3][3] = &circular_257;
+
+	sync_wavetableArrayGlobal[0] = &linwavefold_257;
+	sync_wavetableArrayGlobal[1] = &sinwavefold_257;
+	sync_wavetableArrayGlobal[2] = &newBounce;
+	sync_wavetableArrayGlobal[3] = &skipSaw;
+
 }
 
 // declare functions to set the currently active tables
-void osc_switchWavetable(Wavetable * table, osc_signal_set * signals) {
-	loadWavetableWithDiff(table, osc_wavetableRead);
-	signals->parameters->tableSize = table->numWaveforms - 1;
+void sync_switchWavetable(Wavetable * table, sync_signal_set * signals) {
+	loadWavetableWithDiff(table, sync_wavetableRead);
+	signals->wavetable_parameters->tableSize = table->numWaveforms - 1;
+}
+
+// declare functions to set the currently active tables
+void sync_switchWavetableGlobal(Wavetable * table, sync_signal_set * signals) {
+	loadWavetableWithDiff(table, sync_wavetableRead);
+	signals->wavetable_parameters->tableSize = table->numWaveforms - 1;
 }
 
 //// declare functions to set the currently active tables
-void osc_initPhaseDist(void) {
-	loadPhaseDistTable(&phaseDistPWM, osc_phaseDistRead);
-}
+//void sync_initPhaseDistTable(void) {
+//	loadPhaseDistTable(&phaseDistPWM, sync_phaseDistRead);
+//}
 

@@ -1,84 +1,144 @@
 /*
- * osc_modes.c
+ * sync_modes.c
  *
  *  Created on: Aug 21, 2018
  *      Author: willmitchell
  */
 
-#include "osc.h"
+#include "sync.h"
 
-void osc_handleButton1ModeChange(int mode) {
+void sync_handleButton1ModeChange(int mode) {
+
+//	switch (mode) {
+//	case noSH:
+//		calculateSH = calculateSHMode1;
+//		break;
+//	case sampletrack:
+//		calculateSH = calculateSHMode2;
+//		break;
+//	case resample:
+//		calculateSH = calculateSHMode3;
+//		break;
+//	default:
+//		break;
+//	}
+
+}
+
+void sync_handleButton2ModeChange(int mode) {
+
+	sync_signals.pll_parameters->scale = sync_scaleArray[GROUP_MODE][mode];
+
+}
+
+void sync_handleButton3ModeChange(int mode) {
 
 	switch (mode) {
-	case none:
-		osc_signals.parameters->shOn = 0;
-		//displaySHMode = &displaySH_Off;
+	case root:
+		sync_signals.wavetable_parameters->fm = sync_signals.inputs->cv2VirtualGround;
+		sync_signals.wavetable_parameters->pm = sync_signals.inputs->cv2VirtualGround;
+		sync_signals.wavetable_parameters->pwm = sync_signals.inputs->cv2VirtualGround;
 		break;
-	case decimate:
-		osc_signals.parameters->shOn = 1;
-		//displaySHMode = &displaySH_On;
+	case pm:
+		sync_signals.wavetable_parameters->fm = sync_signals.inputs->cv2Samples;
+		sync_signals.wavetable_parameters->pm = sync_signals.inputs->cv2VirtualGround;
+		sync_signals.wavetable_parameters->pwm = sync_signals.inputs->cv2VirtualGround;
+		break;
+	case fm:
+		sync_signals.wavetable_parameters->fm = sync_signals.inputs->cv2VirtualGround;
+		sync_signals.wavetable_parameters->pm = sync_signals.inputs->cv2Samples;
+		sync_signals.wavetable_parameters->pwm = sync_signals.inputs->cv2VirtualGround;
+		break;
+	case pwm:
+		sync_signals.wavetable_parameters->fm = sync_signals.inputs->cv2VirtualGround;
+		sync_signals.wavetable_parameters->pm = sync_signals.inputs->cv2VirtualGround;
+		sync_signals.wavetable_parameters->pwm = sync_signals.inputs->cv2Samples;
+		break;
+	default:
 		break;
 	}
 
-	SH_A_TRACK
-	;
-	SH_B_TRACK
-	;
-}
-
-void osc_handleButton2ModeChange(int mode) {
-
-	osc_switchWavetable(osc_wavetableArray[mode], &osc_signals);
 
 }
 
-void osc_handleButton3ModeChange(int mode) {
+void sync_handleButton4ModeChange(int mode) {
 
-	switch (mode) {
-	case FM:
-		osc_signals.parameters->fm = osc_signals.inputs->cv2Samples;
-		osc_signals.parameters->pm = osc_signals.inputs->cv2VirtualGround;
-		//displayXCVMode = &displayXCV_FM;
-		break;
-	case PM:
-		osc_signals.parameters->fm = osc_signals.inputs->cv2VirtualGround;
-		osc_signals.parameters->pm = osc_signals.inputs->cv2Samples;
-		//displayXCVMode = &displayXCV_PM;
-		break;
-	}
+	// see pllMultiplierMeasureFrequency for why this is in range 1, 2, 3
+
+	sync_signals.pll_parameters->syncMode = mode + 1;
 
 }
 
-void osc_handleButton4ModeChange(int mode) {
+void sync_handleButton5ModeChange(int mode) {
 
-	osc_signals.parameters->syncMode = mode;
-	// sync modes osc_handled in IRQ osc_handler
-	if (button4Mode == hard) {
-		//displaySyncMode = &displaySync_Hard;
+	sync_signals.pll_parameters->scale = sync_scaleArray[mode][SCALE_MODE];
+	if (TABLE_GROUP_MODE) {
+		sync_switchWavetable(sync_wavetableArray[SCALE_MODE][mode], &sync_signals);
 	} else {
-		//displaySyncMode = &displaySync_Soft;
+		sync_switchWavetableGlobal(sync_wavetableArrayGlobal[mode], &sync_signals);
 	}
 
 }
 
-void osc_handleButton5ModeChange(int mode) {
+void sync_handleButton6ModeChange(int mode) {
 
-	osc_switchWavetable(osc_wavetableArray[mode], &osc_signals);
+	if (TABLE_GROUP_MODE) {
+		sync_switchWavetable(sync_wavetableArray[SCALE_MODE][mode], &sync_signals);
+	} else {
+		sync_switchWavetableGlobal(sync_wavetableArrayGlobal[mode], &sync_signals);
+	}
+
 }
 
-void osc_handleButton6ModeChange(int mode) {
+void sync_handleAux1ModeChange(int mode) {
+
+
+}
+
+
+void sync_handleAux2ModeChange(int mode) {
+
+//	switch (mode) {
+//	case gate:
+//		calculateLogicA = calculateLogicAGate;
+//		break;
+//	case delta:
+//		calculateLogicA = calculateLogicADelta;
+//		break;
+//	default:
+//		break;
+//	}
+
+}
+
+
+void sync_handleAux3ModeChange(int mode) {
 
 	switch (mode) {
-	case morphCV:
-		osc_signals.parameters->morphMod = osc_signals.inputs->cv3Samples;
-		osc_signals.parameters->pwm = osc_signals.inputs->cv3VirtualGround;
-		//displayMorphMode = &displayMorph_Morph;
+	case noOffset:
+		sync_signals.pll_parameters->phaseOffset = 0;
 		break;
-	case pwmCV:
-		osc_signals.parameters->morphMod = osc_signals.inputs->cv3VirtualGround;
-		osc_signals.parameters->pwm = osc_signals.inputs->cv3Samples;
-		//displayMorphMode = &displayMorph_PMW;
+	case quarter:
+		sync_signals.pll_parameters->phaseOffset = 1 << 23;
 		break;
+	case half:
+		sync_signals.pll_parameters->phaseOffset = 1 << 24;
+		break;
+	case threeQuarters:
+		sync_signals.pll_parameters->phaseOffset = (3 << 23);
+		break;
+	default:
+		break;
+	}
+
+}
+
+void sync_handleAux4ModeChange(int mode) {
+
+	if (TABLE_GROUP_MODE) {
+		sync_switchWavetable(sync_wavetableArray[SCALE_MODE][mode], &sync_signals);
+	} else {
+		sync_switchWavetableGlobal(sync_wavetableArrayGlobal[mode], &sync_signals);
 	}
 
 }

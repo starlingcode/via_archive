@@ -8,17 +8,17 @@
 
 void syncInit(void);
 
-void mainRisingEdgeCallback(osc_signals *);
-void mainFallingEdgeCallback(osc_signals *);
+void mainRisingEdgeCallback(signals *);
+void mainFallingEdgeCallback(signals *);
 
-void auxRisingEdgeCallback(osc_signals *);
-void auxFallingEdgeCallback(osc_signals *);
+void auxRisingEdgeCallback(signals *);
+void auxFallingEdgeCallback(signals *);
 
-void buttonPressedCallback(osc_signals *);
-void buttonPressedCallback(osc_signals *);
+void buttonPressedCallback(signals *);
+void buttonPressedCallback(signals *);
 
-void ioProcessCallback(osc_signals *);
-void generateSample(osc_signals *);
+void ioProcessCallback(signals *);
+void generateSample(signals *);
 
 
 #endif

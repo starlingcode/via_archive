@@ -8,7 +8,11 @@
 #ifndef INC_VIA_DSP_H_
 #define INC_VIA_DSP_H_
 
-// circular buffer
+/*
+ *
+ * Circular buffer
+ *
+ */
 
 typedef struct {
 	int buff[32];
@@ -21,7 +25,17 @@ static inline void writeBuffer(buffer* buffer, int value) {
 
 static inline int readBuffer(buffer* buffer, int Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
-//	return *(buffer->buff + ((buffer->writeIndex + (~Xn)) & 31));
+}
+
+/*
+ *
+ * Absolute value for 32 bit int
+ *
+ */
+
+static inline int abs(int n) {
+  int mask = n >> 31;
+  return ((n + mask) ^ mask);
 }
 
 /*
@@ -35,26 +49,34 @@ static inline int readBuffer(buffer* buffer, int Xn) {
 static inline int fix16_mul(int in0, int in1) {
 
 	int lsb;
-	int msb;
+	  int msb;
 
-	// multiply the inputs, store the top 32 bits in msb and bottom in lsb
+	  // multiply the inputs, store the top 32 bits in msb and bottom in lsb
 
-	__asm ("SMULL %[result_1], %[result_2], %[input_1], %[input_2]"
-			: [result_1] "=r" (lsb), [result_2] "=r" (msb)
-			: [input_1] "r" (in0), [input_2] "r" (in1)
-	);
+	  __asm ("SMULL %[result_1], %[result_2], %[input_1], %[input_2]"
+	    : [result_1] "=r" (lsb), [result_2] "=r" (msb)
+	    : [input_1] "r" (in0), [input_2] "r" (in1)
+	  );
 
-	// reconstruct the result with a left shift by 16
-	// pack the bottom halfword of msb into the top halfword of the result
-	// top halfword of lsb goes into the bottom halfword of the result
+	  // reconstruct the result with a left shift by 16
+	  // pack the bottom halfword of msb into the top halfword of the result
+	  // top halfword of lsb goes into the bottom halfword of the result
 
-	return __ROR(__PKHBT(msb, lsb, 0), 16);
+	  return __ROR(__PKHBT(msb, lsb, 0), 16);
 
 }
 
+// doubting such an optimization would work here
 static inline int fix24_mul(int in0, int in1) {
 	int64_t result = (uint64_t) in0 * in1;
 	return result >> 24;
+}
+
+
+static inline int fix48_mul(uint32_t in0, uint32_t in1) {
+	// taken from the fixmathlib library
+	int64_t result = (uint64_t) in0 * in1;
+	return result >> 48;
 }
 
 /*
@@ -267,8 +289,7 @@ static inline int getSampleQuinticSpline(int phase, uint32_t morph,
 	// a version of the spline forumula from Josh Scholar on the musicdsp mailing list
 	// https://web.archive.org/web/20170705065209/http://www.musicdsp.org/showArchiveComment.php?ArchiveID=60
 
-	int out = (sample2
-			+ fix24_mul(699051, fix16_mul(phaseFrac, ((sample3-sample1)*16 + (sample0-sample4)*2
+	int out = (sample2 + fix24_mul(699051, fix16_mul(phaseFrac, ((sample3-sample1)*16 + (sample0-sample4)*2
 					+ fix16_mul(phaseFrac, ((sample3+sample1)*16 - sample0 - sample2*30 - sample4
 							+ fix16_mul(phaseFrac, (sample3*66 - sample2*70 - sample4*33 + sample1*39 + sample5*7 - sample0*9
 									+ fix16_mul(phaseFrac, ( sample2*126 - sample3*124 + sample4*61 - sample1*64 - sample5*12 + sample0*13
