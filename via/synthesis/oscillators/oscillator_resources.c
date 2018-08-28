@@ -12,11 +12,10 @@ void pllMultiplierParseControls(controlRateInputs * controls, audioRateInputs * 
 
 	Scale * scale = parameters->scale;
 
-	int noteIndex = __USAT(controls->knob1Value + controls->cv1Value, 12) >> 5;
-	int rootMod = (parameters->rootMod[0]) >> 4;
-
-	//int	rootIndex = (__USAT(controls->knob2Value + rootMod, 12)) >> scale->t2Bitshift;
-	int rootIndex = 0;
+	int noteIndex = __USAT(controls->knob1Value + controls->cv1Value - 2048, 12) >> 5;
+	int rootMod = parameters->rootMod[0];
+	rootMod = rootMod >> 4;
+	int	rootIndex = (__USAT(controls->knob2Value + rootMod, 12)) >> scale->t2Bitshift;
 
 	parameters->fracMultiplier = scale->grid[rootIndex][noteIndex]->fractionalPart;
 	parameters->intMultiplier = scale->grid[rootIndex][noteIndex]->integerPart;
@@ -32,6 +31,7 @@ void pllMultiplierDoPLL(pllMultiplierParameters * parameters) {
 
 	pllCounter *= parameters->pllReset;
 	parameters->pllReset = 1;
+	parameters->phaseReset = 1;
 
 	int phase = (parameters->phaseSignal + parameters->phaseOffset) & ((1 << 25) - 1);
 
@@ -69,7 +69,7 @@ void pllMultiplierDoPLL(pllMultiplierParameters * parameters) {
 	int multKey = parameters->fracMultiplier + parameters->intMultiplier;
 
 	if (lastMultiplier != multKey) {
-		EXPAND_LOGIC_HIGH;
+		EXPAND_LOGIC_HIGH
 	}
 
 	lastMultiplier = multKey;
@@ -78,7 +78,7 @@ void pllMultiplierDoPLL(pllMultiplierParameters * parameters) {
 void pllMultiplierGenerateFrequency(pllMultiplierParameters * parameters) {
 
 	uint32_t increment = ((((uint64_t)((uint64_t)WAVETABLE_LENGTH << 18) + parameters->pllNudge)) / (parameters->periodCount));
-	//increment = fix48_mul(increment >> 8, parameters->fracMultiplier) + fix16_mul(increment >> 8, parameters->intMultiplier);
-	parameters->increment = __USAT(increment >> 8, 24);
+	increment = fix48_mul(increment >> 8, parameters->fracMultiplier) + fix16_mul(increment >> 8, parameters->intMultiplier);
+	parameters->increment = __USAT(increment, 24);
 
 }

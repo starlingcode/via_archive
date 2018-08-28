@@ -72,6 +72,7 @@ typedef struct {
 
 	// results
 	int phase;
+	int ghostPhase;
 	int phaseEvent;
 	int delta;
 
@@ -110,7 +111,6 @@ typedef struct {
 
 	uint32_t increment;
 	uint32_t phaseReset;
-
 
 } pllMultiplierParameters;
 

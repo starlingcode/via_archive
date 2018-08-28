@@ -54,8 +54,6 @@ void mainHardwareInit(void) {
 	// initialize the shB timer
 	__HAL_TIM_ENABLE_IT(&htim17, TIM_IT_UPDATE);
 
-
-
 }
 
 // stores the sdadc reading at ground for offset compensation

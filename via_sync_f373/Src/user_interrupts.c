@@ -41,6 +41,7 @@ void TIM12_IRQHandler(void)
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
 
+
 }
 
 // Aux trigger input
@@ -149,15 +150,14 @@ void DMA1_Channel1_IRQHandler(void)
 		DMA1->IFCR = DMA_FLAG_HT1;
 	} else {
 		DMA1->IFCR = DMA_FLAG_TC1;
-		// VIA_UPDATE_CONTROLS_CALLBACK(&signals)
 		sync_slowConversionCallback(&sync_signals);
 	}
+
 
 }
 
 void DMA1_Channel5_IRQHandler(void)
 {
-
 
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;

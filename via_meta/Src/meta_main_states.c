@@ -15,7 +15,7 @@
 void main_nextSample(void) {
 
 	// call the appropriate function to fill the sample buffer per the current mode
-	fillBuffer(&scanner_signals);
+	fillBuffer(&signals);
 
 	// transition to the UI handling state when complete
 	main_state = &main_idle;

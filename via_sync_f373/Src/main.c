@@ -141,6 +141,9 @@ int main(void)
   sync_init(&sync_signals);
   mainHardwareInit();
 
+	SH_A_TRACK
+	SH_B_TRACK
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

@@ -67,7 +67,7 @@ static inline int singleSampleWavetableIncrementPhase(singleSampleWavetableParam
 	uint32_t * pwmTable2 = pwmTable1 + 65;
 	uint32_t leftSample = phase >> 19;
 
-#define pwmPhaseFrac (phase & 0x7FFFF) >> 5
+#define pwmPhaseFrac (phase & 0x7FFFF) >> 4
 		// use this with the precalculated pwm to perform bilinear interpolation
 		// this accomplishes the
 	int	ghostPhase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
@@ -97,6 +97,8 @@ uint32_t singleSampleWavetableAdvance(
 	uint32_t morph = __USAT(parameters->morphMod[0] + parameters->morphBase, 16);
 
 	morph *= parameters->tableSize;
+
+	parameters->ghostPhase = ghostPhase;
 
 	return getSampleQuinticSpline(ghostPhase, morph, wavetable, &(parameters->delta));
 
