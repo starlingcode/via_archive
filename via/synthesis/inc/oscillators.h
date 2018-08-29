@@ -16,11 +16,21 @@
 #define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
 #define AT_B_PHASE 16777216 // wavetable midpoint in 16 bit fixed point (256 << 16)
 
+// phase events
+#define NO_EVENT 0
+#define AT_A_FROM_RELEASE -WAVETABLE_LENGTH + 1
+#define AT_A_FROM_ATTACK WAVETABLE_LENGTH - 1
+#define AT_B_FROM_ATTACK -1
+#define AT_B_FROM_RELEASE 1
+
 /*
  *
  * Oscillators
  *
  */
+
+// oversampled wavetable
+// all controls read (maybe soon interpoated) per buffer
 
 typedef struct {
 	int16_t * fm;
@@ -49,11 +59,8 @@ uint32_t oversampledWavetableAdvance(
 void oversampledWavetableParsePhase(uint32_t phase,
 		oversampledWavetableParameters * parameters, audioRateOutputs *output);
 
-/*
- *
- * Shared resources
- *
- */
+// single sample wavetable
+// no buffering, looks to it's parameters each sample
 
 typedef struct {
 
@@ -85,11 +92,94 @@ uint32_t singleSampleWavetableAdvance(
 		singleSampleWavetableParameters * parameters,
 		uint32_t * wavetable, uint32_t * phaseDistTable);
 
+// simplest wavetable, provide a phase and a morph
+
+typedef struct {
+
+	int morphBase;
+	int16_t * morphMod;
+	int phase;
+	uint32_t tableSize;
+
+	// results
+	int delta;
+
+} simpleWavetableParameters;
+
+uint32_t simpleWavetableAdvance(singleSampleWavetableParameters * parameters, uint32_t * wavetable);
+
 /*
  *
  * Shared resources
  *
  */
+
+// meta oscillator controller
+
+typedef struct {
+
+	int timeBase1;
+	int timeBase2;
+	int dutyCycleBase;
+	int triggerSignal;
+	int gateSignal;
+	uint32_t loopMode;
+
+	int increment1;
+	int increment2;
+	int dutyCycle;
+	int lastPhase;
+	int oscillatorOn;
+
+	int phase;
+	int phaseEvent;
+
+} metaControllerParameters;
+
+void (*metaControllerParseControls)(controlRateInputs * controls, metaControllerParameters * parameters);
+
+void metaControllerParseControlsAudio(controlRateInputs * controls, metaControllerParameters * parameters);
+void metaControllerParseControlsEnv(controlRateInputs * controls, metaControllerParameters * parameters);
+void metaControllerParseControlsSeq(controlRateInputs * controls, metaControllerParameters * parameters);
+
+void (*metaControllerGenerateIncrements)(metaControllerParameters * parameters, audioRateInputs * inputs);
+
+void metaControllerGenerateIncrementsAudio(metaControllerParameters * parameters, audioRateInputs * inputs);
+void metaControllerGenerateIncrementsEnv(metaControllerParameters * parameters, audioRateInputs * inputs);
+void metaControllerGenerateIncrementsSeq(metaControllerParameters * parameters, audioRateInputs * inputs);
+
+int metaControllerAdvancePhase(metaControllerParameters * parameters);
+
+int (*metaControllerIncrementArbiter)(metaControllerParameters * parameters);
+
+int noRetrigAttackState(metaControllerParameters * parameters);
+int noRetrigReleaseState(metaControllerParameters * parameters);
+
+int hardSyncAttackState(metaControllerParameters * parameters);
+int hardSyncReleaseState(metaControllerParameters * parameters);
+
+int envAttackState(metaControllerParameters * parameters);
+int envReleaseState(metaControllerParameters * parameters);
+int envRetriggerState(metaControllerParameters * parameters);
+
+int gateAttackState(metaControllerParameters * parameters);
+int gateReleaseReverseState(metaControllerParameters * parameters);
+int gatedState(metaControllerParameters * parameters);
+int gateReleaseState(metaControllerParameters * parameters);
+int gateRetriggerState(metaControllerParameters * parameters);
+
+int pendulumRestingState(metaControllerParameters * parameters);
+int pendulumForwardAttackState(metaControllerParameters * parameters);
+int pendulumForwardReleaseState(metaControllerParameters * parameters);
+int pendulumReverseAttackState(metaControllerParameters * parameters);
+int pendulumReverseReleaseState(metaControllerParameters * parameters);
+
+int (*metaControllerLoopHandler)(metaControllerParameters * parameters);
+
+int handleLoopOff(metaControllerParameters * parameters);
+int handleLoopOn(metaControllerParameters * parameters);
+
+// pll with multiplier
 
 typedef struct {
 
