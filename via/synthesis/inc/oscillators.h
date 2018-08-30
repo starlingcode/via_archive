@@ -106,7 +106,8 @@ typedef struct {
 
 } simpleWavetableParameters;
 
-uint32_t simpleWavetableAdvance(singleSampleWavetableParameters * parameters, uint32_t * wavetable);
+void simpleWavetableParseControls(controlRateInputs * controls, simpleWavetableParameters * parameters);
+int simpleWavetableAdvance(simpleWavetableParameters * parameters, uint32_t * wavetable);
 
 /*
  *
@@ -132,6 +133,7 @@ typedef struct {
 	int oscillatorOn;
 
 	int phase;
+	int ghostPhase;
 	int phaseEvent;
 
 } metaControllerParameters;

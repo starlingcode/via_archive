@@ -1,11 +1,5 @@
 
-#include <meta_interrupt_handlers.h>
-#include <meta_modes.h>
-#include "signals.h"
-#include "main.h"
-#include "user_interface.h"
-#include "via_rev5_hardware_io.h"
-
+#include "meta.h"
 
 enum
 {	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
@@ -40,9 +34,9 @@ void TIM12_IRQHandler(void)
 {
 
 	if (TRIGGER_RISING_EDGE) {
-		mainRisingEdgeCallback(&signals);
+		meta_mainRisingEdgeCallback(&meta_signals);
 	} else {
-		mainFallingEdgeCallback(&signals);
+		meta_mainFallingEdgeCallback(&meta_signals);
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
@@ -55,9 +49,9 @@ void EXTI15_10_IRQHandler(void)
 {
 
 	if (EXPANDER_RISING_EDGE) {
-		auxRisingEdgeCallback(&signals);
-	} else { //falling edge
-		auxFallingEdgeCallback(&signals);
+		meta_auxRisingEdgeCallback(&meta_signals);
+	} else {
+		meta_auxFallingEdgeCallback(&meta_signals);
 	}
 
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
@@ -69,16 +63,12 @@ void EXTI15_10_IRQHandler(void)
 void EXTI1_IRQHandler(void)
 {
 
-	static int buttonPressed;
-
-	buttonPressed = !buttonPressed;
-
-	if (buttonPressed) {
+	if (EXPANDER_BUTTON_PRESSED) {
 		uiDispatch(EXPAND_SW_ON_SIG);
-		buttonPressedCallback(&signals);
-	} else { //falling edge
+		meta_buttonPressedCallback(&meta_signals);
+	} else {
 		uiDispatch(EXPAND_SW_OFF_SIG);
-		buttonReleasedCallback(&signals);
+		meta_buttonReleasedCallback(&meta_signals);
 	}
 
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
@@ -87,24 +77,9 @@ void EXTI1_IRQHandler(void)
 
 /*
  *
- *  DAC sample rate
+ * Timer interrputs
  *
  */
-
-// DAC timer interrupt, sample rate callbacks
-
-void TIM6_DAC1_IRQHandler(void)
-{
-
-	ioProcessCallback(&signals);
-	generateSample(&signals);
-
-
-	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
-
-}
-
-// Sample and hold helpers
 
 // SH A
 
@@ -135,11 +110,7 @@ void TIM17_IRQHandler(void)
 
 }
 
-/*
- *
- *  UI interrupts
- *
- */
+// run touch sensor state machine
 
 void TIM13_IRQHandler(void)
 {
@@ -150,6 +121,7 @@ void TIM13_IRQHandler(void)
 
 }
 
+// ui timer
 
 void TIM7_IRQHandler(void)
 {
@@ -159,6 +131,43 @@ void TIM7_IRQHandler(void)
 	HAL_TIM_IRQHandler(&htim7);
 
 }
+
+/*
+ *
+ * DMA transfer complete interrupts
+ *
+ */
+
+// slow ADCs
+
+void DMA1_Channel1_IRQHandler(void)
+{
+
+	//minimal interrupt handler for circular buffer
+
+	if ((DMA1->ISR & (DMA_FLAG_HT1)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1;
+	} else {
+		DMA1->IFCR = DMA_FLAG_TC1;
+		meta_slowConversionCallback(&meta_signals);
+	}
+
+}
+
+void DMA1_Channel5_IRQHandler(void)
+{
+
+
+	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
+		DMA1->IFCR = DMA_FLAG_HT1 << 16;
+		meta_halfTransferCallback(&meta_signals);
+	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
+		DMA1->IFCR = DMA_FLAG_TC1 << 16;
+		meta_transferCompleteCallback(&meta_signals);
+	}
+
+}
+
 
 
 

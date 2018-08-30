@@ -36,10 +36,8 @@ void mainHardwareInit(void) {
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 	// set the dac sample rate and start the dac timer
-	TIM6->ARR = 1023;
+	TIM6->ARR = 1439;
 	HAL_TIM_Base_Start(&htim6);
-
-	TIM2->CR1 |= TIM_CR1_CEN;
 
 	 //initialize the timer that is used to detect rising and falling edges at the trigger input
 	HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);

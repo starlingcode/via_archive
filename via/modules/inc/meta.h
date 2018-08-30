@@ -13,24 +13,29 @@
 #include "user_interface.h"
 #include "oscillators.h"
 
+/*
+ *
+ * Signals
+ *
+ */
 
-singleSampleWavetableParameters wavetableParameters;
+simpleWavetableParameters meta_wavetableParameters;
 
-pllMultiplierParameters pllParameters;
+metaControllerParameters metaParameters;
 
 typedef struct {
 
 	audioRateOutputs * outputs;
 	audioRateInputs * inputs;
 	controlRateInputs * controls;
-	singleSampleWavetableParameters * wavetable_parameters;
-	pllMultiplierParameters * pll_parameters;
+	simpleWavetableParameters * wavetable_parameters;
+	metaControllerParameters * meta_parameters;
 
 } meta_signal_set;
 
 meta_signal_set meta_signals;
 
-#define SYNC_BUFFER_SIZE 1
+#define META_BUFFER_SIZE 1
 
 /*
  *
@@ -63,36 +68,36 @@ void meta_slowConversionCallback(meta_signal_set *);
 // Mode enums and mode variables
 
 #define SH_MODE button1Mode
-#define SCALE_MODE button2Mode
-#define X_MODE button3Mode
-#define SYNC_MODE button4Mode
-#define GROUP_MODE button5Mode
-#define TABLE_MODE button6Mode
-#define QUADRATURE_MODE aux2Mode
-#define LOGIC_A_MODE aux3Mode
-#define TABLE_GROUP_MODE aux4Mode
+#define TABLE button2Mode
+#define TRIG_MODE button4Mode
+#define FREQ_MODE button3Mode
+#define LOOP_MODE button6Mode
+#define LOGIC_A_MODE aux2Mode
+#define DRUM_MODE aux3Mode
+#define DAC_3_MODE aux4Mode
 
-#define numButton1Modes 3
-#define numButton2Modes 4
-#define numButton3Modes 4
-#define numButton4Modes 3
-#define numButton5Modes 4
-#define numButton6Modes 4
+
+#define numButton1Modes 6
+#define numButton2Modes 8
+#define numButton3Modes 3
+#define numButton4Modes 5
+#define numButton5Modes 8
+#define numButton6Modes 2
 #define numAux1Modes 0
 #define numAux2Modes 2
-#define numAux3Modes 4
+#define numAux3Modes 6
 #define numAux4Modes 2
 
-enum meta_button1Modes {noSH, sampletrack, resample};
-enum meta_button2Modes {scale1, scale2, scale3, scale4};
-enum meta_button3Modes {root, pm, fm, pwm};
-enum meta_button4Modes {nosync, true, hardsync};
-enum meta_button5Modes {group1, group2, group3, group4};
-enum meta_button6Modes {table1, table2, table3, table4};
-enum meta_aux1Modes {meta_aux1NotUsed};
-enum meta_aux2Modes {gate, delta};
-enum meta_aux3Modes {noOffset, quarter, half, threeQuarters};
-enum meta_aux4Modes {groupSpecific, global};
+enum meta_button1Modes {nosampleandhold, a, b, ab, halfdecimate, meta_decimate};
+enum meta_button2Modes {tables};
+enum meta_button3Modes {audio, env, seq};
+enum meta_button4Modes {noretrigger, meta_hardsync, nongatedretrigger, gated, meta_pendulum};
+enum meta_button5Modes {pairedWithButton2};
+enum meta_button6Modes {noloop, looping};
+enum meta_aux1Modes {aux1NotUsed};
+enum meta_aux2Modes {attackGate, releaseGate};
+enum meta_aux3Modes {pitchMorphAmp, morphAmp, amp, morph, pitch, pitchMorph};
+enum meta_aux4Modes {phasor, contour};
 
 
 /*
@@ -173,9 +178,39 @@ uint32_t meta_wavetableRead[9][517];
 
 // declare functions to set the currently active tables
 void meta_switchWavetable(Wavetable *, meta_signal_set * signals);
-void meta_switchWavetableGlobal(Wavetable *, meta_signal_set * signals);
 // phase distortion table is fixed
 void meta_initPhaseDistTable(void);
 void meta_fillWavetableArray(void);
+
+/*
+ *
+ * Mode functions
+ *
+ */
+
+void (*meta_calculateDac3)(meta_signal_set * signals, int writeIndex);
+
+void meta_calculateDac3Phasor(meta_signal_set * signals, int writeIndex);
+void meta_calculateDac3Contour(meta_signal_set * signals, int writeIndex);
+
+void (*meta_calculateLogicA)(meta_signal_set * signals, int writeIndex);
+
+void meta_calculateLogicAGate(meta_signal_set * signals, int writeIndex);
+void meta_calculateLogicAInverseGate(meta_signal_set * signals, int writeIndex);
+
+void (*meta_calculateSH)(meta_signal_set * signals, int writeIndex);
+// No S&H
+void meta_calculateSHMode1(meta_signal_set * signals, int writeIndex);
+// Sample A from A to B
+void meta_calculateSHMode2(meta_signal_set * signals, int writeIndex);
+// Resample B at A
+void meta_calculateSHMode3(meta_signal_set * signals, int writeIndex);
+// Sample A from A to B and resample B at A
+void meta_calculateSHMode4(meta_signal_set * signals, int writeIndex);
+// Half Decimate (Sample A from A to B sample B from B to A
+void meta_calculateSHMode5(meta_signal_set * signals, int writeIndex);
+// Decimate (Resample A at B, resample B at A
+void meta_calculateSHMode6(meta_signal_set * signals, int writeIndex);
+
 
 #endif /* INC_META_H_ */

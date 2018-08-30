@@ -15,7 +15,6 @@ void osc_init(osc_signal_set * signals) {
 	signals->inputs = &audioRateInput;
 	signals->outputs = &audioRateOutput;
 	signals->parameters = &oscParameters;
-	//signals->softwareSignals = &softwareSignals;
 
 	via_ioStreamInit(&audioRateInput, &audioRateOutput, OSC_BUFFER_SIZE);
 

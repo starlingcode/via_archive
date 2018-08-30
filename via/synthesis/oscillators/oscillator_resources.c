@@ -106,6 +106,7 @@ void metaControllerParseControlsAudio(controlRateInputs * controls, metaControll
 	parameters->timeBase1 = fix16_mul(fix16_mul(expoTable[controls->knob1Value] >> 5,
 			expoTable[(controls->knob2Value >> 3) + 200]),
 			expoTable[controls->cv1Value] >> 2);
+	parameters->timeBase2 = parameters->timeBase1;
 
 	parameters->dutyCycleBase = 32767;
 
@@ -128,6 +129,7 @@ void metaControllerParseControlsSeq(controlRateInputs * controls, metaController
 
 	parameters->timeBase1 = fix16_mul(expoTable[4095 - controls->knob1Value] >> 9,
 			expoTable[4095 - controls->cv1Value] >> 9);
+	parameters->timeBase2 = parameters->timeBase1;
 
 	parameters->dutyCycleBase = controls->knob2Value << 4;
 
@@ -222,6 +224,10 @@ int metaControllerAdvancePhase(metaControllerParameters * parameters) {
 	previousPhaseEvent = phaseWrapper;
 
 	parameters->oscillatorOn = (*metaControllerLoopHandler)(parameters);
+
+	parameters->triggerSignal = 1;
+
+	parameters->phase = phase;
 
 	return phase;
 
