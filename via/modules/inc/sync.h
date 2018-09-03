@@ -67,8 +67,9 @@ void sync_slowConversionCallback(sync_signal_set *);
 #define SYNC_MODE button4Mode
 #define GROUP_MODE button5Mode
 #define TABLE_MODE button6Mode
+#define LOGIC_A_MODE aux1Mode
 #define QUADRATURE_MODE aux2Mode
-#define LOGIC_A_MODE aux3Mode
+#define AUX_OUT_MODE aux3Mode
 #define TABLE_GROUP_MODE aux4Mode
 
 #define numButton1Modes 3
@@ -77,7 +78,7 @@ void sync_slowConversionCallback(sync_signal_set *);
 #define numButton4Modes 3
 #define numButton5Modes 4
 #define numButton6Modes 4
-#define numAux1Modes 0
+#define numAux1Modes 2
 #define numAux2Modes 2
 #define numAux3Modes 4
 #define numAux4Modes 2
@@ -88,8 +89,8 @@ enum sync_button3Modes {root, pm, fm, pwm};
 enum sync_button4Modes {nosync, true, hardsync};
 enum sync_button5Modes {group1, group2, group3, group4};
 enum sync_button6Modes {table1, table2, table3, table4};
-enum sync_aux1Modes {sync_aux1NotUsed};
-enum sync_aux2Modes {gate, delta};
+enum sync_aux1Modes {sync_gate, sync_delta};
+enum sync_aux2Modes {sync_phasor, sync_contour};
 enum sync_aux3Modes {noOffset, quarter, half, threeQuarters};
 enum sync_aux4Modes {groupSpecific, global};
 
@@ -187,5 +188,29 @@ void sync_fillWavetableArray(void);
 const Scale *sync_scaleArray[4][4];
 
 void sync_initializeScales(void);
+
+/*
+ *
+ * Mode functions
+ *
+ */
+
+void (*sync_calculateDac3)(sync_signal_set * signals, int writeIndex);
+
+void sync_calculateDac3Phasor(sync_signal_set * signals, int writeIndex);
+void sync_calculateDac3Contour(sync_signal_set * signals, int writeIndex);
+
+void (*sync_calculateLogicA)(sync_signal_set * signals, int writeIndex);
+
+void sync_calculateLogicAGate(sync_signal_set* signals, int writeIndex);
+void sync_calculateLogicADelta(sync_signal_set * signals, int writeIndex);
+
+void (*sync_calculateSH)(sync_signal_set * signals, int writeIndex);
+// No S&H
+void sync_calculateSHMode1(sync_signal_set * signals, int writeIndex);
+// Sample A from A to B
+void sync_calculateSHMode2(sync_signal_set * signals, int writeIndex);
+// Resample B at A
+void sync_calculateSHMode3(sync_signal_set * signals, int writeIndex);
 
 #endif /* INC_SYNC_H_ */

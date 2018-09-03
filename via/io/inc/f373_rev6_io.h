@@ -79,26 +79,32 @@ static inline void setLEDD(int setReset) {
 #define SH_B_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_9;
 #define SH_B_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_9;
 
-// Variable GPIO handling functions (legacy)
-
-#define SET_A_LOGIC(X) GPIOC->BSRR = X;
+// Variable GPIO handling functions
 
 #define ALOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_13 << 16)
 #define ALOGIC_LOW_MASK (uint32_t)GPIO_PIN_13
-#define BLOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_15 << 16)
-#define BLOGIC_LOW_MASK (uint32_t)GPIO_PIN_15
+//#define BLOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_15 << 16)
+//#define BLOGIC_LOW_MASK (uint32_t)GPIO_PIN_15
 
-#define SET_EXPAND_LOGIC(X) GPIOA->BSRR = X;
+#define GET_ALOGIC_MASK(X) (ALOGIC_LOW_MASK << (16*X))
+//#define GET_BLOGIC_MASK(X) (BLOGIC_LOW_MASK << (16*X))
+#define SET_A_LOGIC(X) GPIOC->BSRR = X;
 
 #define EXPAND_LOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_12 << 16)
 #define EXPAND_LOGIC_LOW_MASK (uint32_t)GPIO_PIN_12
 
-#define SET_SH(X) GPIOB->BSRR = X;
+#define GET_EXPAND_LOGIC_MASK(X) (EXPAND_LOGIC_LOW_MASK << (16*X))
+#define SET_EXPAND_LOGIC(X) GPIOA->BSRR = X;
 
 #define SH_B_SAMPLE_MASK ((uint32_t)GPIO_PIN_9 << 16)
 #define SH_B_TRACK_MASK (uint32_t)GPIO_PIN_9
 #define SH_A_SAMPLE_MASK ((uint32_t)GPIO_PIN_8 << 16)
 #define SH_A_TRACK_MASK (uint32_t)GPIO_PIN_8
+
+#define GET_SH_A_MASK(X) (SH_A_TRACK_MASK << (16*X))
+#define GET_SH_B_MASK(X) (SH_B_TRACK_MASK << (16*X))
+
+#define SET_SH(X) GPIOB->BSRR = X;
 
 #define SET_LEDA(X) GPIOF->BSRR = X;
 
@@ -118,12 +124,12 @@ static inline void setAuxLogic(int setReset) {
 static inline void setSH(int shA, int shB) {
 
 	uint32_t mask = (uint32_t) GPIO_PIN_8 << (16 * shA);
-	mask |= (uint32_t) GPIO_PIN_8 << (16 * shB);
+	mask |= (uint32_t) GPIO_PIN_9 << (16 * shB);
 
-	GPIOB->BRR = mask;
+	GPIOB->BSRR = mask;
 }
 
-static inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t logicExpander,
+static inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t auxLogic,
 		uint32_t shA, uint32_t shB) {
 
 	// LEDA_HIGH_MASK -> SH_A_SAMPLE_MASK >> 16 >> 1 (pin 8 to pin 7, F)
@@ -138,7 +144,7 @@ static inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t logicExpander,
 	//combine the mask variables for a shared GPIO group with a bitwise or
 	SET_A_LOGIC(logicA | LEDB_MASK);
 
-	SET_EXPAND_LOGIC(logicExpander | LEDC_MASK);
+	SET_EXPAND_LOGIC(auxLogic | LEDC_MASK);
 
 	SET_SH(shA | shB);
 
@@ -147,12 +153,12 @@ static inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t logicExpander,
 }
 
 static inline void setLogicOutputsLEDOff(uint32_t logicA,
-		uint32_t logicExpander, uint32_t shA, uint32_t shB) {
+		uint32_t auxLogic, uint32_t shA, uint32_t shB) {
 
 	//combine the mask variables for a shared GPIO group with a bitwise or
-	SET_A_B_LOGIC(logicA);
+	SET_A_LOGIC(logicA);
 
-	SET_EXPAND_LOGIC(logicExpander);
+	SET_EXPAND_LOGIC(auxLogic);
 
 	SET_SH(shA | shB);
 

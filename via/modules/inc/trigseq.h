@@ -25,9 +25,9 @@ typedef struct {
 	audioRateInputs * inputs;
 	controlRateInputs * controls;
 	dualEuclideanParameters * parameters;
-} trigseq_signals;
+} trigseq_signal_set;
 
-trigseq_signals scanner_signals;
+trigseq_signal_set trigseq_signals;
 
 #define TRIGSEQ_BUFFER_SIZE 1
 
@@ -37,21 +37,21 @@ trigseq_signals scanner_signals;
  *
  */
 
-void trigseq_init(trigseq_signals *);
+void trigseq_init(trigseq_signal_set *);
 
-void trigseq_mainRisingEdgeCallback(trigseq_signals *);
-void trigseq_mainFallingEdgeCallback(trigseq_signals *);
+void trigseq_mainRisingEdgeCallback(trigseq_signal_set *);
+void trigseq_mainFallingEdgeCallback(trigseq_signal_set *);
 
-void trigseq_auxRisingEdgeCallback(trigseq_signals *);
-void trigseq_auxFallingEdgeCallback(trigseq_signals *);
+void trigseq_auxRisingEdgeCallback(trigseq_signal_set *);
+void trigseq_auxFallingEdgeCallback(trigseq_signal_set *);
 
-void trigseq_buttonPressedCallback(trigseq_signals *);
-void trigseq_buttonPressedCallback(trigseq_signals *);
+void trigseq_buttonPressedCallback(trigseq_signal_set *);
+void trigseq_buttonPressedCallback(trigseq_signal_set *);
 
-void trigseq_ioProcessCallback(trigseq_signals *);
-void trigseq_halfTransferCallback(trigseq_signals *);
-void trigseq_transferCompleteCallback(trigseq_signals *);
-void trigseq_slowConversionCallback(trigseq_signals *);
+void trigseq_ioProcessCallback(trigseq_signal_set *);
+void trigseq_halfTransferCallback(trigseq_signal_set *);
+void trigseq_transferCompleteCallback(trigseq_signal_set *);
+void trigseq_slowConversionCallback(trigseq_signal_set *);
 
 /*
  *
@@ -67,7 +67,6 @@ void trigseq_slowConversionCallback(trigseq_signals *);
 #define AND_B_MODE button5Mode
 #define B_PATTERN_BANK button6Mode
 
-#define AUX2_MODE_USED
 #define LOGIC_MODE aux2Mode
 
 #define numButton1Modes 3

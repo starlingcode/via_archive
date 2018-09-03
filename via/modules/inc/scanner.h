@@ -59,39 +59,39 @@ void scanner_slowConversionCallback(scanner_signal_set *);
  *
  */
 
-#define X_TABLE button1Mode
+#define X_TABLE button4Mode
 #define Y_TABLE button2Mode
-#define SYNC_MODE button4Mode
-#define TERRAIN button6Mode
+#define SYNC_MODE button1Mode
+#define TERRAIN button3Mode
 
-#define numButton1Modes 8
+#define numButton1Modes 2
 #define numButton2Modes 8
-#define numButton3Modes 8
-#define numButton4Modes 2
+#define numButton3Modes 4
+#define numButton4Modes 8
 #define numButton5Modes 8
-#define numButton6Modes 4
+#define numButton6Modes 8
 #define numAux1Modes 0
 #define numAux2Modes 0
 #define numAux3Modes 3
 #define numAux4Modes 2
 
 enum button1Modes {
-	xTables
+	hardsync, reverse
 };
 enum button2Modes {
 	yTables
 };
 enum button3Modes {
-	pairedWithButton1
+	sum, subtract, product, phaseMod
 };
 enum button4Modes {
-	hardsync, reverse
+	xTables
 };
 enum button5Modes {
 	pairedWithButton2
 };
 enum button6Modes {
-	sum, subtract, product, phaseMod
+	pairedWithButton3
 };
 enum aux1Modes {
 	aux1NotUsed

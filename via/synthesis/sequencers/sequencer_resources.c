@@ -17,7 +17,7 @@
 
 void outputAHigh(int signal, int writePosition, audioRateOutputs * output) {
 
-	uint32_t *outputLevel = output->dac1Samples + writePosition;
+	int *outputLevel = output->dac1Samples + writePosition;
 
 	switch (signal) {
 	case SOFT_GATE_EXECUTE:
@@ -33,7 +33,7 @@ void outputAHigh(int signal, int writePosition, audioRateOutputs * output) {
 }
 void outputALow(int signal, int writePosition, audioRateOutputs * output) {
 
-	uint32_t *outputLevel = output->dac1Samples + writePosition;
+	int *outputLevel = output->dac1Samples + writePosition;
 
 	switch (signal) {
 	case SOFT_GATE_EXECUTE:
@@ -50,7 +50,7 @@ void outputALow(int signal, int writePosition, audioRateOutputs * output) {
 
 void outputBHigh(int signal, int writePosition, audioRateOutputs * output) {
 
-	uint32_t *outputLevel = output->dac2Samples + writePosition;
+	int *outputLevel = output->dac2Samples + writePosition;
 
 	switch (signal) {
 	case SOFT_GATE_EXECUTE:
@@ -66,7 +66,7 @@ void outputBHigh(int signal, int writePosition, audioRateOutputs * output) {
 }
 void outputBLow(int signal, int writePosition, audioRateOutputs * output) {
 
-	uint32_t *outputLevel = output->dac2Samples + writePosition;
+	int *outputLevel = output->dac2Samples + writePosition;
 
 	switch (signal) {
 	case SOFT_GATE_EXECUTE:
@@ -83,11 +83,11 @@ void outputBLow(int signal, int writePosition, audioRateOutputs * output) {
 
 void outputARise(int signal, int writePosition, audioRateOutputs * output) {
 
-	uint32_t *outputLevel = output->dac2Samples + writePosition;
+	int *outputLevel = output->dac1Samples + writePosition;
 
 	switch (signal) {
 	case SOFT_GATE_EXECUTE:
-		*outputLevel += 100;
+		*outputLevel += 50;
 		if (*outputLevel >= 4095) {
 			*outputLevel = 4095;
 			manageOutputA = outputAHigh;
@@ -102,11 +102,11 @@ void outputARise(int signal, int writePosition, audioRateOutputs * output) {
 }
 void outputAFall(int signal, int writePosition, audioRateOutputs * output) {
 
-	uint32_t *outputLevel = output->dac2Samples + writePosition;
+	int *outputLevel = output->dac1Samples + writePosition;
 
 	switch (signal) {
 	case SOFT_GATE_EXECUTE:
-		*outputLevel -= 5;
+		*outputLevel -= 50;
 		if (*outputLevel <= 0) {
 			*outputLevel = 0;
 			manageOutputA = outputALow;
@@ -122,7 +122,7 @@ void outputAFall(int signal, int writePosition, audioRateOutputs * output) {
 
 void outputBRise(int signal, int writePosition, audioRateOutputs * output) {
 
-	uint32_t *outputLevel = output->dac2Samples + writePosition;
+	int *outputLevel = output->dac2Samples + writePosition;
 
 	switch (signal) {
 	case SOFT_GATE_EXECUTE:
@@ -141,11 +141,11 @@ void outputBRise(int signal, int writePosition, audioRateOutputs * output) {
 }
 void outputBFall(int signal, int writePosition, audioRateOutputs * output) {
 
-	uint32_t *outputLevel = output->dac2Samples + writePosition;
+	int *outputLevel = output->dac2Samples + writePosition;
 
 	switch (signal) {
 	case SOFT_GATE_EXECUTE:
-		*outputLevel -= 5;
+		*outputLevel -= 50;
 		if (*outputLevel <= 0) {
 			*outputLevel = 0;
 			manageOutputB = outputBLow;

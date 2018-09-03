@@ -27,14 +27,14 @@ void sync_initializeUICallbacks(void) {
 	button6TapCallback = sync_handleButton6Tap;
 	button6HoldCallback = sync_handleButton6Hold;
 
-	aux1TapCallback = sync_handleButton1Tap;
-	aux1HoldCallback = sync_handleButton1Hold;
-	aux2TapCallback = sync_handleButton2Tap;
-	aux2HoldCallback = sync_handleButton2Hold;
-	aux3TapCallback = sync_handleButton3Tap;
-	aux3HoldCallback = sync_handleButton3Hold;
-	aux4TapCallback = sync_handleButton4Tap;
-	aux4HoldCallback = sync_handleButton4Hold;
+	aux1TapCallback = sync_handleAux1Tap;
+	aux1HoldCallback = sync_handleAux1Hold;
+	aux2TapCallback = sync_handleAux2Tap;
+	aux2HoldCallback = sync_handleAux2Hold;
+	aux3TapCallback = sync_handleAux3Tap;
+	aux3HoldCallback = sync_handleAux3Hold;
+	aux4TapCallback = sync_handleAux4Tap;
+	aux4HoldCallback = sync_handleAux4Hold;
 }
 void sync_handleButton1EnterMenu(void) {
 	uiSetLEDs(SH_MODE);
@@ -61,11 +61,13 @@ void sync_handleButton6EnterMenu(void) {
 	uiResetTimerMenu();
 }
 void sync_handleAux1EnterMenu(void) {
-	uiTransition(ui_button5Menu);
+	uiClearLEDs();
+	uiSetLEDs(LOGIC_A_MODE);
+	uiResetTimerMenu();
 }
 void sync_handleAux2EnterMenu(void) {
 	uiClearLEDs();
-	uiSetLEDs(LOGIC_A_MODE);
+	uiSetLEDs(AUX_OUT_MODE);
 	uiResetTimerMenu();
 }
 void sync_handleAux3EnterMenu(void) {
@@ -123,7 +125,11 @@ void sync_handleButton6Tap(void) {
 }
 
 void sync_handleAux1Tap(void) {
-	uiTransition(ui_button5Menu);
+	AUX_OUT_MODE = incrementModeAndStore(AUX_OUT_MODE, AUX_MODE1_MASK, numAux1Modes);
+	sync_handleAux1ModeChange(AUX_OUT_MODE);
+	uiClearLEDs();
+	uiSetLEDs(AUX_OUT_MODE);
+	uiTransition(&ui_newAuxMode);
 }
 
 void sync_handleAux2Tap(void) {
@@ -169,7 +175,7 @@ void sync_handleButton6Hold(void) {
 	uiTransition(&ui_default);
 }
 void sync_handleAux1Hold(void) {
-	uiTransition(&ui_button5Menu);
+	uiTransition(&ui_newAuxMode);
 }
 void sync_handleAux2Hold(void) {
 	uiTransition(&ui_newAuxMode);

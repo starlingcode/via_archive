@@ -33,8 +33,14 @@ void sync_init(sync_signal_set * signals) {
 
 	signals->pll_parameters->scale = sync_scaleArray[0][0];
 
-	via_ioStreamInit(&audioRateInput, &audioRateOutput, SYNC_BUFFER_SIZE);
+	sync_calculateDac3 = sync_calculateDac3Phasor;
+	sync_calculateLogicA = sync_calculateLogicAGate;
+	sync_calculateSH = sync_calculateSHMode1;
 
+	via_ioStreamInit(&audioRateInput, &audioRateOutput, SYNC_BUFFER_SIZE);
+	via_logicStreamInit(&audioRateInput, &audioRateOutput, SYNC_BUFFER_SIZE);
+
+	signals->pll_parameters->rootMod = signals->inputs->cv2Samples;
 	signals->wavetable_parameters->fm = signals->inputs->cv2VirtualGround;
 	signals->wavetable_parameters->pm = signals->inputs->cv2VirtualGround;
 	signals->wavetable_parameters->pwm = signals->inputs->cv2VirtualGround;
@@ -45,6 +51,7 @@ void sync_init(sync_signal_set * signals) {
 	signals->pll_parameters->phaseReset = 1;
 
 	signals->wavetable_parameters->increment = 10000;
+
 
 }
 

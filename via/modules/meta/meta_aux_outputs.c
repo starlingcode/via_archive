@@ -7,7 +7,43 @@
 
 #include "meta.h"
 
-void meta_calculateLogicAGate(meta_signal_set *signals, int writeIndex) {
+void meta_drumModeOff(meta_signal_set * signals, int writeIndex) {
+	signals->outputs->dac1Samples[writeIndex] = 4095 - signals->outputs->dac2Samples[writeIndex];
+}
+
+void meta_drumModeOn(meta_signal_set * signals, int writeIndex) {
+	(*simpleEnvelopeIncrementArbiter)(signals->drum_parameters);
+	simpleEnvelopeAdvance(signals->drum_parameters, signals->inputs, meta_wavetableReadDrum);
+	uint32_t ampScale = signals->drum_parameters->output[0] << 1;
+	int sample = signals->outputs->dac2Samples[writeIndex];
+	signals->outputs->dac2Samples[writeIndex] = (__USAT(sample - 2048, 12) * ampScale) >> 16;
+	signals->outputs->dac1Samples[writeIndex] = ((4095 - __USAT(sample + 2048, 12)) * ampScale) >> 16;
+}
+
+void meta_calculateLogicAReleaseGate(meta_signal_set *signals, int writeIndex) {
+
+		switch (signals->meta_parameters->phaseEvent) {
+			//no logic events
+			case 0:
+				signals->outputs->logicA[writeIndex] = GPIO_NOP;
+				break;
+			//dummy at a handling
+			case AT_A_FROM_RELEASE:
+			case AT_A_FROM_ATTACK:
+				signals->outputs->logicA[writeIndex] = ALOGIC_LOW_MASK;
+				break;
+			//dummy at b handling
+			case AT_B_FROM_RELEASE:
+			case AT_B_FROM_ATTACK:
+				signals->outputs->logicA[writeIndex] = ALOGIC_HIGH_MASK;
+				break;
+			default:
+				break;
+		}
+
+}
+
+void meta_calculateLogicAAttackGate(meta_signal_set *signals, int writeIndex) {
 
 		switch (signals->meta_parameters->phaseEvent) {
 			//no logic events

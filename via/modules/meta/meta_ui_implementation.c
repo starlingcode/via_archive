@@ -57,8 +57,12 @@ void meta_handleButton3EnterMenu(void) {
 	uiResetTimerMenu();
 }
 void meta_handleButton4EnterMenu(void) {
-	uiSetLEDs(TRIG_MODE);
-	uiResetTimerMenu();
+	if (!LOOP_MODE && !FREQ_MODE) {
+		uiTransition(ui_aux3Menu);
+	} else {
+		uiSetLEDs(TRIG_MODE);
+		uiResetTimerMenu();
+	}
 }
 void meta_handleButton5EnterMenu(void) {
 	uiSetLEDs(TABLE);
@@ -147,7 +151,7 @@ void meta_handleAux3Tap(void) {
 	meta_handleAux3ModeChange(DRUM_MODE);
 	uiClearLEDs();
 	uiSetLEDs(DRUM_MODE);
-	uiTransition(&ui_newAuxMode);
+	uiTransition(&ui_newMode);
 }
 
 void meta_handleAux4Tap(void) {
@@ -182,20 +186,14 @@ void meta_handleAux1Hold(void) {
 }
 
 void meta_handleAux2Hold(void) {
-
 	uiTransition(&ui_default);
-
 }
 
 void meta_handleAux3Hold(void) {
-
 	uiTransition(&ui_default);
-
 }
 
 void meta_handleAux4Hold(void) {
-
 	uiTransition(&ui_default);
-
 }
 

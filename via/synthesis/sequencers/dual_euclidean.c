@@ -35,18 +35,18 @@ void dualEuclideanProcessClock(controlRateInputs * controls,
 				(4095 - controls->cv1Value) << 5)) >> 9;
 	}
 	if ((4095 - inputs->cv2Samples[0]) >= 2048) {
-		bPatternMorph = (fix16_lerp(controls->knob2Value, 4095,
-				((4095 - inputs->cv2Samples[0]) - 2048) << 5)) >> 9;
+		offset = (fix16_lerp(controls->knob2Value, 4095,
+				((4095 - inputs->cv2Samples[0]) - 2048) << 5)) >> 8;
 	} else {
-		bPatternMorph = (fix16_lerp(0, controls->knob2Value,
-				(4095 - inputs->cv2Samples[0]) << 5)) >> 9;
+		offset = (fix16_lerp(0, controls->knob2Value,
+				(4095 - inputs->cv2Samples[0]) << 5)) >> 8;
 	}
 	if ((4095 - inputs->cv3Samples[0]) >= 2048) {
-		offset = (fix16_lerp(controls->knob3Value, 4095,
-				((4095 - inputs->cv3Samples[0]) - 2048) << 5)) >> 8;
+		bPatternMorph = (fix16_lerp(controls->knob3Value, 4095,
+				((4095 - inputs->cv3Samples[0]) - 2048) << 5)) >> 9;
 	} else {
-		offset = (fix16_lerp(0, controls->knob3Value,
-				(4095 - inputs->cv3Samples[0]) << 5)) >> 8;
+		bPatternMorph = (fix16_lerp(0, controls->knob3Value,
+				(4095 - inputs->cv3Samples[0]) << 5)) >> 9;
 	}
 
 	//get the lengths of the currently indexed patterns

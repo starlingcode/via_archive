@@ -27,14 +27,14 @@ void trigseq_initializeUICallbacks(void) {
 	button6TapCallback = trigseq_handleButton6Tap;
 	button6HoldCallback = trigseq_handleButton6Hold;
 
-	aux1TapCallback = trigseq_handleButton1Tap;
-	aux1HoldCallback = trigseq_handleButton1Hold;
-	aux2TapCallback = trigseq_handleButton2Tap;
-	aux2HoldCallback = trigseq_handleButton2Hold;
-	aux3TapCallback = trigseq_handleButton3Tap;
-	aux3HoldCallback = trigseq_handleButton3Hold;
-	aux4TapCallback = trigseq_handleButton4Tap;
-	aux4HoldCallback = trigseq_handleButton4Hold;
+	aux1TapCallback = trigseq_handleAux1Tap;
+	aux1HoldCallback = trigseq_handleAux1Hold;
+	aux2TapCallback = trigseq_handleAux2Tap;
+	aux2HoldCallback = trigseq_handleAux2Hold;
+	aux3TapCallback = trigseq_handleAux3Tap;
+	aux3HoldCallback = trigseq_handleAux3Hold;
+	aux4TapCallback = trigseq_handleAux4Tap;
+	aux4HoldCallback = trigseq_handleAux4Hold;
 }
 
 void trigseq_handleButton1EnterMenu(void) {
@@ -66,7 +66,7 @@ void trigseq_handleAux1EnterMenu(void) {
 }
 void trigseq_handleAux2EnterMenu(void) {
 	uiSetLEDs(LOGIC_MODE);
-	uiTransition(ui_button5Menu);
+	uiResetTimerMenu();
 }
 void trigseq_handleAux3EnterMenu(void) {
 	uiTransition(ui_button5Menu);
@@ -166,7 +166,7 @@ void trigseq_handleAux1Hold(void) {
 	uiTransition(&ui_button5Menu);
 }
 void trigseq_handleAux2Hold(void) {
-	uiTransition(&ui_newAuxMode);
+	uiTransition(&ui_button5Menu);
 }
 void trigseq_handleAux3Hold(void) {
 	uiTransition(&ui_button5Menu);

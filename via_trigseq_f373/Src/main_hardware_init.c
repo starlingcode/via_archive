@@ -47,12 +47,13 @@ void mainHardwareInit(void) {
 	//	 initialize the timer that is used for touch sensor press timeout
 	__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
 
-	// initialize the shA timer
-	__HAL_TIM_ENABLE_IT(&htim16, TIM_IT_UPDATE);
-	// initialize the shB timer
-	__HAL_TIM_ENABLE_IT(&htim17, TIM_IT_UPDATE);
+//	// initialize the shA timer
+//	__HAL_TIM_ENABLE_IT(&htim16, TIM_IT_UPDATE);
+//	// initialize the shB timer
+//	__HAL_TIM_ENABLE_IT(&htim17, TIM_IT_UPDATE);
 
-
+	SH_A_TRACK;
+	SH_B_TRACK;
 
 }
 

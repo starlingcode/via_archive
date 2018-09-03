@@ -44,15 +44,34 @@ void meta_handleButton3ModeChange(int mode) {
 
 	switch (mode) {
 	case audio:
-		metaControllerGenerateIncrements = metaControllerGenerateIncrementsAudio;
-		metaControllerParseControls = metaControllerParseControlsAudio;
+		if (!LOOP_MODE) {
+			metaControllerGenerateIncrements = metaControllerGenerateIncrementsDrum;
+			metaControllerParseControls = metaControllerParseControlsDrum;
+			meta_drumMode = meta_drumModeOn;
+			metaControllerLoopHandler = handleLoopOn;
+			meta_signals.meta_parameters->loopMode = 1;
+			meta_handleButton4ModeChange(0);
+			meta_handleAux3ModeChange(DRUM_MODE);
+		} else {
+			metaControllerParseControls = metaControllerParseControlsAudio;
+			metaControllerGenerateIncrements = metaControllerGenerateIncrementsAudio;
+			meta_drumMode = meta_drumModeOff;
+		}
 		meta_switchWavetable(meta_wavetableArray[mode][TABLE], &meta_signals);
 		//updateRGB = updateRGBAudio;
 		break;
 	case env:
 		metaControllerParseControls = metaControllerParseControlsEnv;
 		metaControllerGenerateIncrements = metaControllerGenerateIncrementsEnv;
-		meta_switchWavetable(meta_wavetableArray[mode][TABLE], &meta_signals);
+		if (!LOOP_MODE) {
+			meta_switchWavetable(meta_wavetableArray[mode][TABLE], &meta_signals);
+			meta_signals.meta_parameters->fm = meta_drumFullScale;
+			meta_signals.wavetable_parameters->morphScale = meta_drumFullScale;
+			meta_drumMode = meta_drumModeOff;
+			metaControllerLoopHandler = handleLoopOff;
+			meta_signals.meta_parameters->loopMode = 0;
+			meta_handleButton4ModeChange(TRIG_MODE);
+		}
 		//updateRGB = updateRGBSubAudio;
 		break;
 	case seq:
@@ -78,9 +97,12 @@ void meta_handleButton4ModeChange(int mode) {
 		break;
 	case gated:
 		metaControllerIncrementArbiter = gateAttackState;
+		meta_signals.meta_parameters->phase = 0;
+		meta_signals.meta_parameters->gateOn = 1;
 		break;
 	case meta_pendulum:
 		metaControllerIncrementArbiter = pendulumForwardAttackState;
+		meta_signals.meta_parameters->gateOn = 0;
 		break;
 	}
 
@@ -96,10 +118,24 @@ void meta_handleButton6ModeChange(int mode) {
 
 	switch (mode) {
 	case noloop:
-		metaControllerLoopHandler = handleLoopOff;
+		if (!FREQ_MODE) {
+			meta_handleAux3ModeChange(DRUM_MODE);
+			meta_handleButton3ModeChange(0);
+			meta_handleButton4ModeChange(0);
+		} else {
+			metaControllerLoopHandler = handleLoopOff;
+			meta_signals.meta_parameters->loopMode = 0;
+		}
 		break;
 	case looping:
+		if (!FREQ_MODE) {
+			meta_signals.meta_parameters->fm = meta_drumFullScale;
+			meta_signals.wavetable_parameters->morphScale = meta_drumFullScale;
+			meta_handleButton3ModeChange(0);
+			meta_handleButton4ModeChange(TRIG_MODE);
+		}
 		metaControllerLoopHandler = handleLoopOn;
+		meta_signals.meta_parameters->loopMode = 1;
 		break;
 	}
 
@@ -112,11 +148,37 @@ void meta_handleAux1ModeChange(int mode) {
 
 void meta_handleAux2ModeChange(int mode) {
 
+	switch (mode) {
+	case releaseGate:
+		meta_calculateLogicA = meta_calculateLogicAReleaseGate;
+		break;
+	case attackGate:
+		meta_calculateLogicA = meta_calculateLogicAAttackGate;
+		break;
+	}
 
 }
 
 void meta_handleAux3ModeChange(int mode) {
 
+	switch (mode) {
+	case pitchMorphAmp:
+		meta_signals.meta_parameters->fm = meta_signals.drum_parameters->output;
+		meta_signals.wavetable_parameters->morphScale = meta_signals.drum_parameters->output;
+		break;
+	case morphAmp:
+		meta_signals.meta_parameters->fm = meta_drumFullScale;
+		meta_signals.wavetable_parameters->morphScale = meta_signals.drum_parameters->output;
+		break;
+	case pitchAmp:
+		meta_signals.meta_parameters->fm = meta_signals.drum_parameters->output;
+		meta_signals.wavetable_parameters->morphScale = meta_drumFullScale;
+		break;
+	case amp:
+		meta_signals.meta_parameters->fm = meta_drumFullScale;
+		meta_signals.wavetable_parameters->morphScale = meta_drumFullScale;
+		break;
+	}
 
 }
 

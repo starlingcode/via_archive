@@ -13,31 +13,41 @@ void meta_mainRisingEdgeCallback(meta_signal_set * signals) {
 
 	signals->meta_parameters->triggerSignal = 0;
 
+	signals->meta_parameters->gateSignal = 1 * signals->meta_parameters->gateOn;
+
+	signals->drum_parameters->trigger = 0;
+
 }
 
 void meta_mainFallingEdgeCallback(meta_signal_set * signals) {
 
-	// gate signal
+	signals->meta_parameters->gateSignal = 0;
 
 }
 
 void meta_auxRisingEdgeCallback(meta_signal_set * signals) {
 
-	// freeze input
+	signals->meta_parameters->freeze = 0;
 
 }
-void meta_auxFallingEdgeCallback(meta_signal_set * signals) {
-	// dead
+void meta_auxFallingEdgeCallback(meta_signal_set * signals)
+{
+	signals->meta_parameters->freeze = 1;
+
 }
 
 void meta_buttonPressedCallback(meta_signal_set * signals) {
 
-	// manual trigger
+	signals->meta_parameters->triggerSignal = 0;
+
+	signals->meta_parameters->gateSignal = 1 * signals->meta_parameters->gateOn;
+
+	signals->drum_parameters->trigger = 0;
 
 }
 void meta_buttonReleasedCallback(meta_signal_set * signals) {
 
-	// manual gate
+	signals->meta_parameters->gateSignal = 0;
 
 }
 
@@ -49,6 +59,7 @@ void meta_ioProcessCallback(meta_signal_set * signals) {
 
 void meta_halfTransferCallback(meta_signal_set * signals) {
 
+	via_setLogicOut(signals->outputs, 0, runtimeDisplay);
 
 	simpleWavetableParameters * wavetable_parameters = signals->wavetable_parameters;
 	metaControllerParameters * meta_parameters = signals->meta_parameters;
@@ -56,29 +67,32 @@ void meta_halfTransferCallback(meta_signal_set * signals) {
 	audioRateOutputs * outputs = signals->outputs;
 
 	(*metaControllerGenerateIncrements)(meta_parameters, signals->inputs);
-	metaControllerAdvancePhase(meta_parameters);
-	wavetable_parameters->phase = meta_parameters->phase;
+	metaControllerAdvancePhase(meta_parameters, &phaseModPWMTables);
+	wavetable_parameters->phase = meta_parameters->ghostPhase;
 	outputs->dac2Samples[0] = simpleWavetableAdvance(wavetable_parameters, meta_wavetableRead);
-	outputs->dac1Samples[0] = 4095 - outputs->dac2Samples[0];
+	(*meta_drumMode)(signals, 0);
+	outputs->auxLogic[0] = EXPAND_LOGIC_LOW_MASK << (16 * wavetable_parameters->delta);
 	(*meta_calculateDac3)(signals, 0);
 	(*meta_calculateLogicA)(signals, 0);
 	(*meta_calculateSH)(signals, 0);
-
 
 }
 
 void meta_transferCompleteCallback(meta_signal_set * signals) {
 
+	via_setLogicOut(signals->outputs, 1, runtimeDisplay);
+
 	simpleWavetableParameters * wavetable_parameters = signals->wavetable_parameters;
 	metaControllerParameters * meta_parameters = signals->meta_parameters;
 	audioRateInputs * inputs = signals->inputs;
 	audioRateOutputs * outputs = signals->outputs;
 
 	(*metaControllerGenerateIncrements)(meta_parameters, signals->inputs);
-	metaControllerAdvancePhase(meta_parameters);
-	wavetable_parameters->phase = meta_parameters->phase;
+	metaControllerAdvancePhase(meta_parameters, &phaseModPWMTables);
+	wavetable_parameters->phase = meta_parameters->ghostPhase;
 	outputs->dac2Samples[1] = simpleWavetableAdvance(wavetable_parameters, meta_wavetableRead);
-	outputs->dac1Samples[1] = 4095 - outputs->dac2Samples[1];
+	(*meta_drumMode)(signals, 1);
+	outputs->auxLogic[1] = EXPAND_LOGIC_LOW_MASK << (16 * wavetable_parameters->delta);
 	(*meta_calculateDac3)(signals, 1);
 	(*meta_calculateLogicA)(signals, 1);
 	(*meta_calculateSH)(signals, 1);
@@ -91,13 +105,16 @@ void meta_slowConversionCallback(meta_signal_set * signals) {
 
 	via_updateControlRateInputs(controls);
 	simpleWavetableParseControls(controls, signals->wavetable_parameters);
-	(*metaControllerParseControls)(controls, signals->meta_parameters);
+	(*metaControllerParseControls)(controls, signals->inputs, signals->meta_parameters);
+	simpleEnvelopeParseControls (controls, signals->inputs, signals->drum_parameters);
 
-	int sample = signals->outputs->dac2Samples[0];
-	int lastPhaseValue = signals->meta_parameters->phase;
-	SET_RED_LED(sample * (lastPhaseValue >> 24));
-	SET_BLUE_LED(sample * (!(lastPhaseValue >> 24)));
-	SET_GREEN_LED(__USAT((signals->inputs->cv3Samples[0] + controls->knob3Value - 2048), 12) * sample >> 12);
+	if (runtimeDisplay) {
+		int sample = signals->outputs->dac2Samples[0];
+		int lastPhaseValue = signals->wavetable_parameters->phase;
+		SET_RED_LED(sample * (lastPhaseValue >> 24));
+		SET_BLUE_LED(sample * (!(lastPhaseValue >> 24)));
+		SET_GREEN_LED(__USAT((signals->inputs->cv3Samples[0] + controls->knob3Value - 2048), 12) * sample >> 12);
+	}
 
 }
 

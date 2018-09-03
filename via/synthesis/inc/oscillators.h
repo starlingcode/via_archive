@@ -98,8 +98,10 @@ typedef struct {
 
 	int morphBase;
 	int16_t * morphMod;
+	int16_t * morphScale;
 	int phase;
 	uint32_t tableSize;
+
 
 	// results
 	int delta;
@@ -109,11 +111,71 @@ typedef struct {
 void simpleWavetableParseControls(controlRateInputs * controls, simpleWavetableParameters * parameters);
 int simpleWavetableAdvance(simpleWavetableParameters * parameters, uint32_t * wavetable);
 
+// cheap version of that with bilinear interpolation
+
+typedef struct {
+
+	int morphBase;
+	int16_t * morphMod;
+	int phase;
+	uint32_t tableSize;
+
+} cheapWavetableParameters;
+
+void cheapWavetableParseControls(controlRateInputs * controls, cheapWavetableParameters * parameters);
+int cheapWavetableAdvance(cheapWavetableParameters * parameters, uint32_t * wavetable);
+
+
 /*
  *
  * Shared resources
  *
  */
+
+
+// pll with multiplier
+
+typedef struct {
+
+	uint32_t periodCount;
+	uint32_t pllNudge;
+
+	uint32_t phaseSignal;
+	uint32_t tapTempo;
+	uint32_t pllReset;
+
+	uint16_t * rootMod;
+	uint32_t phaseOffset;
+	uint32_t syncMode;
+	Scale * scale;
+
+	uint32_t fracMultiplier;
+	uint32_t intMultiplier;
+	uint32_t gcd;
+
+	uint32_t increment;
+	uint32_t phaseReset;
+	uint32_t ratioChange;
+
+} pllMultiplierParameters;
+
+void pllMultiplierParseControls(controlRateInputs * controls, audioRateInputs * input,
+		pllMultiplierParameters * parameters);
+
+static inline void pllMultiplierMeasureFrequency(pllMultiplierParameters * parameters) {
+
+	// store the length of the last period
+	parameters->periodCount = TIM2->CNT;
+
+	// reset the timer value
+	TIM2->CNT = 0;
+
+}
+
+void pllMultiplierDoPLL(pllMultiplierParameters * parameters);
+
+void pllMultiplierGenerateFrequency(pllMultiplierParameters * parameters);
+
 
 // meta oscillator controller
 
@@ -124,6 +186,8 @@ typedef struct {
 	int dutyCycleBase;
 	int triggerSignal;
 	int gateSignal;
+	int freeze;
+	int gateOn;
 	uint32_t loopMode;
 
 	int increment1;
@@ -131,6 +195,7 @@ typedef struct {
 	int dutyCycle;
 	int lastPhase;
 	int oscillatorOn;
+	int16_t * fm;
 
 	int phase;
 	int ghostPhase;
@@ -138,19 +203,26 @@ typedef struct {
 
 } metaControllerParameters;
 
-void (*metaControllerParseControls)(controlRateInputs * controls, metaControllerParameters * parameters);
+void (*metaControllerParseControls)(controlRateInputs * controls, audioRateInputs * inputs,
+		metaControllerParameters * parameters);
 
-void metaControllerParseControlsAudio(controlRateInputs * controls, metaControllerParameters * parameters);
-void metaControllerParseControlsEnv(controlRateInputs * controls, metaControllerParameters * parameters);
-void metaControllerParseControlsSeq(controlRateInputs * controls, metaControllerParameters * parameters);
+void metaControllerParseControlsAudio(controlRateInputs * controls, audioRateInputs * inputs,
+		metaControllerParameters * parameters);
+void metaControllerParseControlsDrum(controlRateInputs * controls, audioRateInputs * inputs,
+		metaControllerParameters * parameters);
+void metaControllerParseControlsEnv(controlRateInputs * controls, audioRateInputs * inputs,
+		metaControllerParameters * parameters);
+void metaControllerParseControlsSeq(controlRateInputs * controls, audioRateInputs * inputs,
+		metaControllerParameters * parameters);
 
 void (*metaControllerGenerateIncrements)(metaControllerParameters * parameters, audioRateInputs * inputs);
 
 void metaControllerGenerateIncrementsAudio(metaControllerParameters * parameters, audioRateInputs * inputs);
+void metaControllerGenerateIncrementsDrum(metaControllerParameters * parameters, audioRateInputs * inputs);
 void metaControllerGenerateIncrementsEnv(metaControllerParameters * parameters, audioRateInputs * inputs);
 void metaControllerGenerateIncrementsSeq(metaControllerParameters * parameters, audioRateInputs * inputs);
 
-int metaControllerAdvancePhase(metaControllerParameters * parameters);
+int metaControllerAdvancePhase(metaControllerParameters * parameters, uint32_t * phaseDistTable);
 
 int (*metaControllerIncrementArbiter)(metaControllerParameters * parameters);
 
@@ -181,47 +253,33 @@ int (*metaControllerLoopHandler)(metaControllerParameters * parameters);
 int handleLoopOff(metaControllerParameters * parameters);
 int handleLoopOn(metaControllerParameters * parameters);
 
-// pll with multiplier
+// just the envelope
 
 typedef struct {
 
-	uint32_t periodCount;
-	uint32_t pllNudge;
-
-	uint32_t phaseSignal;
-	uint32_t tapTempo;
-	uint32_t pllReset;
-
-	uint16_t * rootMod;
-	uint32_t phaseOffset;
-	uint32_t syncMode;
-	Scale * scale;
-
-	uint32_t fracMultiplier;
-	uint32_t intMultiplier;
-	uint32_t gcd;
-
+	uint32_t attack;
+	uint32_t release;
 	uint32_t increment;
-	uint32_t phaseReset;
+	uint32_t morph;
+	uint32_t phase;
+	uint32_t phaseEvent;
+	uint32_t trigger;
 
-} pllMultiplierParameters;
+	uint32_t * output;
 
-void pllMultiplierParseControls(controlRateInputs * controls, audioRateInputs * input,
-		pllMultiplierParameters * parameters);
+} simpleEnvelopeParameters;
 
-static inline void pllMultiplierMeasureFrequency(pllMultiplierParameters * parameters) {
+void simpleEnvelopeParseControls (controlRateInputs * controls, audioRateInputs * inputs,
+		simpleEnvelopeParameters * parameters);
+void simpleEnvelopeAdvance (simpleEnvelopeParameters * parameters, audioRateInputs * inputs,
+		uint32_t * wavetable);
 
-	// store the length of the last period
-	parameters->periodCount = TIM2->CNT;
+int (*simpleEnvelopeIncrementArbiter)(simpleEnvelopeParameters * parameters);
 
-	// reset the timer value
-	TIM2->CNT = 0;
-
-}
-
-void pllMultiplierDoPLL(pllMultiplierParameters * parameters);
-
-void pllMultiplierGenerateFrequency(pllMultiplierParameters * parameters);
+int simpleEnvelopeAttackState(simpleEnvelopeParameters * parameters);
+int simpleEnvelopeReleaseState(simpleEnvelopeParameters * parameters);
+int simpleEnvelopeRetriggerState(simpleEnvelopeParameters * parameters);
+int simpleEnvelopeRestingState(simpleEnvelopeParameters * parameters);
 
 
 

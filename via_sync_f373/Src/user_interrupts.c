@@ -22,6 +22,8 @@ extern TIM_HandleTypeDef htim17;
 
 tsl_user_status_t tsl_status;
 
+int triggerDebounce;
+
 /*
  *
  *  Logic input interrupts
@@ -65,11 +67,19 @@ void EXTI1_IRQHandler(void)
 {
 
 	if (EXPANDER_BUTTON_PRESSED) {
-		uiDispatch(EXPAND_SW_ON_SIG);
-		sync_buttonPressedCallback(&sync_signals);
-	} else {
-		uiDispatch(EXPAND_SW_OFF_SIG);
-		sync_buttonReleasedCallback(&sync_signals);
+		if (!triggerDebounce) {
+			uiDispatch(EXPAND_SW_ON_SIG);
+			triggerDebounce = 1;
+			__HAL_TIM_ENABLE(&htim16);
+			sync_buttonPressedCallback(&sync_signals);
+		}
+	} else { //falling edge
+		if (!triggerDebounce) {
+			uiDispatch(EXPAND_SW_OFF_SIG);
+			triggerDebounce = 1;
+			__HAL_TIM_ENABLE(&htim16);
+			sync_buttonReleasedCallback(&sync_signals);
+		}
 	}
 
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
@@ -87,10 +97,7 @@ void EXTI1_IRQHandler(void)
 void TIM16_IRQHandler(void)
 {
 
-	SH_A_SAMPLE
-	if (RUNTIME_DISPLAY) {
-		LEDA_ON;
-	}
+	triggerDebounce = 0;
 
 	__HAL_TIM_CLEAR_FLAG(&htim16, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim16);
@@ -106,6 +113,7 @@ void TIM17_IRQHandler(void)
 	if (RUNTIME_DISPLAY) {
 		LEDB_ON;
 	}
+
 	__HAL_TIM_CLEAR_FLAG(&htim17, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim17);
 

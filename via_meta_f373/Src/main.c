@@ -138,6 +138,7 @@ int main(void)
   MX_DAC2_Init();
   /* USER CODE BEGIN 2 */
 
+
   meta_init(&meta_signals);
   mainHardwareInit();
 

@@ -9,19 +9,19 @@
 
 void sync_handleButton1ModeChange(int mode) {
 
-//	switch (mode) {
-//	case noSH:
-//		calculateSH = calculateSHMode1;
-//		break;
-//	case sampletrack:
-//		calculateSH = calculateSHMode2;
-//		break;
-//	case resample:
-//		calculateSH = calculateSHMode3;
-//		break;
-//	default:
-//		break;
-//	}
+	switch (mode) {
+	case noSH:
+		sync_calculateSH = sync_calculateSHMode1;
+		break;
+	case sampletrack:
+		sync_calculateSH = sync_calculateSHMode2;
+		break;
+	case resample:
+		sync_calculateSH = sync_calculateSHMode3;
+		break;
+	default:
+		break;
+	}
 
 }
 
@@ -35,21 +35,25 @@ void sync_handleButton3ModeChange(int mode) {
 
 	switch (mode) {
 	case root:
+		sync_signals.pll_parameters->rootMod = sync_signals.inputs->cv2Samples;
 		sync_signals.wavetable_parameters->fm = sync_signals.inputs->cv2VirtualGround;
 		sync_signals.wavetable_parameters->pm = sync_signals.inputs->cv2VirtualGround;
 		sync_signals.wavetable_parameters->pwm = sync_signals.inputs->cv2VirtualGround;
 		break;
 	case pm:
-		sync_signals.wavetable_parameters->fm = sync_signals.inputs->cv2Samples;
-		sync_signals.wavetable_parameters->pm = sync_signals.inputs->cv2VirtualGround;
-		sync_signals.wavetable_parameters->pwm = sync_signals.inputs->cv2VirtualGround;
-		break;
-	case fm:
+		sync_signals.pll_parameters->rootMod = sync_signals.inputs->cv2VirtualGround;
 		sync_signals.wavetable_parameters->fm = sync_signals.inputs->cv2VirtualGround;
 		sync_signals.wavetable_parameters->pm = sync_signals.inputs->cv2Samples;
 		sync_signals.wavetable_parameters->pwm = sync_signals.inputs->cv2VirtualGround;
 		break;
+	case fm:
+		sync_signals.pll_parameters->rootMod = sync_signals.inputs->cv2VirtualGround;
+		sync_signals.wavetable_parameters->fm = sync_signals.inputs->cv2Samples;
+		sync_signals.wavetable_parameters->pm = sync_signals.inputs->cv2VirtualGround;
+		sync_signals.wavetable_parameters->pwm = sync_signals.inputs->cv2VirtualGround;
+		break;
 	case pwm:
+		sync_signals.pll_parameters->rootMod = sync_signals.inputs->cv2VirtualGround;
 		sync_signals.wavetable_parameters->fm = sync_signals.inputs->cv2VirtualGround;
 		sync_signals.wavetable_parameters->pm = sync_signals.inputs->cv2VirtualGround;
 		sync_signals.wavetable_parameters->pwm = sync_signals.inputs->cv2Samples;
@@ -92,22 +96,32 @@ void sync_handleButton6ModeChange(int mode) {
 
 void sync_handleAux1ModeChange(int mode) {
 
+	switch (mode) {
+	case sync_gate:
+		sync_calculateLogicA = sync_calculateLogicAGate;
+		break;
+	case sync_delta:
+		sync_calculateLogicA = sync_calculateLogicADelta;
+		break;
+	default:
+		break;
+	}
 
 }
 
 
 void sync_handleAux2ModeChange(int mode) {
 
-//	switch (mode) {
-//	case gate:
-//		calculateLogicA = calculateLogicAGate;
-//		break;
-//	case delta:
-//		calculateLogicA = calculateLogicADelta;
-//		break;
-//	default:
-//		break;
-//	}
+	switch (mode) {
+	case sync_phasor:
+		sync_calculateDac3 = sync_calculateDac3Phasor;
+		break;
+	case sync_contour:
+		sync_calculateDac3 = sync_calculateDac3Contour;
+		break;
+	default:
+		break;
+	}
 
 }
 

@@ -1,6 +1,6 @@
 #include "trigseq.h"
 
-void trigseq_mainRisingEdgeCallback(trigseq_signals * signals) {
+void trigseq_mainRisingEdgeCallback(trigseq_signal_set * signals) {
 
 	dualEuclideanParameters *parameters = signals->parameters;
 
@@ -11,29 +11,27 @@ void trigseq_mainRisingEdgeCallback(trigseq_signals * signals) {
 	setAuxLogic(parameters->logicOutput);
 
 	// tricksy, sample only if sample and track mode is enabled
-	uint32_t shASetting = parameters->trackA * parameters->aOutput;
-	uint32_t shBSetting = parameters->trackB * parameters->bOutput;
-
-	setSH(shASetting, shBSetting);
-
-//	if (parameters->sampleA) {
-//		resampleA();
-//	}
+	uint32_t shASetting = (parameters->trackA | parameters->sampleA)  * parameters->aOutput;
+	uint32_t shBSetting = (parameters->trackB | parameters->sampleB) * parameters->bOutput;
 //
-//	if (parameters->sampleB) {
-//		resampleB();
-//	}
+	signals->outputs->shA[0] = shASetting;
+	signals->outputs->shB[0] = shBSetting;
 
 // similar deal here
-	setLEDA(parameters->sampleA | shASetting);
-	setLEDB(parameters->sampleB | shBSetting);
+	if (runtimeDisplay) {
+		setLEDA(parameters->sampleA | shASetting);
+		setLEDB(parameters->sampleB | shBSetting);
 
-	setLEDC(parameters->aOutput);
-	setLEDD(parameters->bOutput);
+		setLEDC(parameters->aOutput);
+		setLEDD(parameters->bOutput);
+	}
+
+	parameters->outputAEvent = SOFT_GATE_HIGH * parameters->aOutput;
+	parameters->outputBEvent = SOFT_GATE_HIGH * parameters->bOutput;
 
 }
 
-void trigseq_mainFallingEdgeCallback(trigseq_signals * signals) {
+void trigseq_mainFallingEdgeCallback(trigseq_signal_set * signals) {
 
 	dualEuclideanParameters *parameters = signals->parameters;
 
@@ -44,19 +42,24 @@ void trigseq_mainFallingEdgeCallback(trigseq_signals * signals) {
 	setLogicA(parameters->aOutput);
 	setAuxLogic(parameters->logicOutput);
 
-	// tricksy again, only sample if that channel is in resampling mode, otherwise track
-	setSH(parameters->sampleA, parameters->sampleB);
+	signals->outputs->shA[0] = parameters->sampleA;
+	signals->outputs->shB[0] = parameters->sampleA;
 
 	// similar deal here
-	setLEDA(parameters->sampleA);
-	setLEDB(parameters->sampleB);
+	if (runtimeDisplay) {
+		setLEDA(parameters->sampleA);
+		setLEDB(parameters->sampleB);
 
-	setLEDC(parameters->aOutput);
-	setLEDD(parameters->bOutput);
+		setLEDC(parameters->aOutput);
+		setLEDD(parameters->bOutput);
+	}
+
+	parameters->outputAEvent = SOFT_GATE_LOW * parameters->andA;
+	parameters->outputBEvent = SOFT_GATE_LOW * parameters->andB;
 
 }
 
-void trigseq_auxRisingEdgeCallback(trigseq_signals * signals) {
+void trigseq_auxRisingEdgeCallback(trigseq_signal_set * signals) {
 
 	dualEuclideanParameters *parameters = signals->parameters;
 
@@ -67,11 +70,11 @@ void trigseq_auxRisingEdgeCallback(trigseq_signals * signals) {
 	// this might have to talk to the main trigger in a slightly more elaborate way
 
 }
-void trigseq_auxFallingEdgeCallback(trigseq_signals * signals) {
+void trigseq_auxFallingEdgeCallback(trigseq_signal_set * signals) {
 	;
 }
 
-void trigseq_buttonPressedCallback(trigseq_signals * signals) {
+void trigseq_buttonPressedCallback(trigseq_signal_set * signals) {
 
 	dualEuclideanParameters *parameters = signals->parameters;
 
@@ -79,48 +82,66 @@ void trigseq_buttonPressedCallback(trigseq_signals * signals) {
 	parameters->bCounter = 0;
 
 }
-void trigseq_buttonReleasedCallback(trigseq_signals * signals) {
+void trigseq_buttonReleasedCallback(trigseq_signal_set * signals) {
 	;
 }
 
-void trigseq_ioProcessCallback(trigseq_signals * signals) {
+void trigseq_ioProcessCallback(trigseq_signal_set * signals) {
 	;
 }
 
-void trigseq_halfTransferCallback(trigseq_signals * signals) {
+void trigseq_halfTransferCallback(trigseq_signal_set * signals) {
 
 	dualEuclideanParameters *parameters = signals->parameters;
 	audioRateOutputs *outputs = signals->outputs;
 
-	manageOutputA(parameters->outputAEvent, 0, outputs);
-	manageOutputB(parameters->outputBEvent, 0, outputs);
+	(*manageOutputA)(parameters->outputAEvent, 0, outputs);
+	(*manageOutputB)(parameters->outputBEvent, 0, outputs);
+	outputs->dac3Samples[0] = 2048 - (parameters->bOutput * 2048);
 
-	outputs->dac3Samples[0] = 2048 + parameters->bOutput * 2047;
+	parameters->outputAEvent = SOFT_GATE_EXECUTE;
+	parameters->outputBEvent = SOFT_GATE_EXECUTE;
+
+	setSH(outputs->shA[0], outputs->shB[0]);
+	outputs->shA[0] += parameters->sampleA;
+	outputs->shB[0] += parameters->sampleB;
 
 }
 
-void trigseq_transferCompleteCallback(trigseq_signals * signals) {
+void trigseq_transferCompleteCallback(trigseq_signal_set * signals) {
 
 	dualEuclideanParameters *parameters = signals->parameters;
 	audioRateOutputs *outputs = signals->outputs;
 
-	manageOutputA(parameters->outputAEvent, 1, signals->outputs);
-	manageOutputB(parameters->outputAEvent, 1, signals->outputs);
+	(*manageOutputA)(parameters->outputAEvent, 1, outputs);
+	(*manageOutputB)(parameters->outputBEvent, 1, outputs);
+	outputs->dac3Samples[1] = 2048 - (parameters->bOutput * 2048);
 
-	outputs->dac3Samples[1] = 2048 + parameters->bOutput * 2047;
+	parameters->outputAEvent = SOFT_GATE_EXECUTE;
+	parameters->outputBEvent = SOFT_GATE_EXECUTE;
+
+	setSH(outputs->shA[0], outputs->shB[0]);
+	if (parameters->sampleA) {
+		outputs->shA[0] = 1;
+	}
+	if (parameters->sampleB) {
+		outputs->shB[0] = 1;
+	}
 
 }
 
-void trigseq_slowConversionCallback(trigseq_signals *signals) {
+void trigseq_slowConversionCallback(trigseq_signal_set *signals) {
 
 	controlRateInputs *controls = signals->controls;
 	dualEuclideanParameters *parameters = signals->parameters;
 
 	via_updateControlRateInputs(controls);
 	// some controls should be parsed here
-	updateRGBDisplay(4095 - !parameters->aOutput * parameters->andA * 4095,
-			parameters->logicOutput * 4095,
-			4095 - !parameters->aOutput * parameters->andA * 4095);
+	if (runtimeDisplay) {
+		updateRGBDisplay(4095 - !parameters->aOutput * parameters->andA * 4095,
+				parameters->logicOutput * 1024,
+				4095 - !parameters->bOutput * parameters->andB * 4095);
+	}
 
 }
 

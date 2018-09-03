@@ -64,10 +64,10 @@ void EXTI1_IRQHandler(void)
 {
 
 	if (EXPANDER_BUTTON_PRESSED) {
-		uiDispatch(EXPAND_SW_ON_SIG);
+		//uiDispatch(EXPAND_SW_ON_SIG);
 		meta_buttonPressedCallback(&meta_signals);
 	} else {
-		uiDispatch(EXPAND_SW_OFF_SIG);
+		//uiDispatch(EXPAND_SW_OFF_SIG);
 		meta_buttonReleasedCallback(&meta_signals);
 	}
 

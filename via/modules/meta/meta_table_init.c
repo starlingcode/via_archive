@@ -42,3 +42,11 @@ void meta_switchWavetable(Wavetable * table, meta_signal_set * signals) {
 	loadWavetableWithDiff15Bit(table, meta_wavetableRead);
 	signals->wavetable_parameters->tableSize = table->numWaveforms - 1;
 }
+
+// declare functions to set the currently active tables
+void meta_initDrum(void) {
+	loadSingleTable15Bit(&gamma257, meta_wavetableReadDrum);
+	for (int i = 0; i < 4; i++) {
+		meta_drumFullScale[i] = 32767;
+	}
+}

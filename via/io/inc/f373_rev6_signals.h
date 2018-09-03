@@ -100,6 +100,21 @@ static inline void via_logicStreamInit(audioRateInputs * audioRateInput,
 
 }
 
+// pass a 1 to runtime display to show the state of the logic outs on the leds
+// pass a 0 to just set the outputs
+
+static inline void via_setLogicOut(audioRateOutputs * outputs, int writeIndex, int runtimeDisplay) {
+
+	if (runtimeDisplay) {
+		setLogicOutputsLEDOn(outputs->logicA[writeIndex],
+				outputs->auxLogic[writeIndex], outputs->shA[writeIndex], outputs->shB[writeIndex]);
+	} else {
+		setLogicOutputsLEDOff(outputs->logicA[writeIndex],
+				outputs->auxLogic[writeIndex], outputs->shA[writeIndex], outputs->shB[writeIndex]);
+	}
+
+}
+
 static inline void via_updateControlRateInputs(controlRateInputs * controls) {
 
 	// TODO apply SIMD instructions?

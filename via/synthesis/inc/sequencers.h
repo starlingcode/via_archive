@@ -51,13 +51,14 @@ void dualEuclideanProcessClock(controlRateInputs *, audioRateInputs *,
  */
 
 // Dual soft gate (use crossfader as dual and gate with followed by mixing "or" stage)
-#define	SOFT_GATE_HIGH 0
-#define	SOFT_GATE_LOW 1
-#define SOFT_GATE_EXECUTE 2
+#define SOFT_GATE_EXECUTE 0
+#define	SOFT_GATE_HIGH 1
+#define	SOFT_GATE_LOW 2
 
-void (*manageOutputA)(int * signal, int writePosition,
+
+void (*manageOutputA)(int signal, int writePosition,
 		audioRateOutputs * outputs);
-void (*manageOutputB)(int * signal, int writePosition,
+void (*manageOutputB)(int signal, int writePosition,
 		audioRateOutputs * outputs);
 
 void outputAHigh(int signal, int writePosition, audioRateOutputs * outputs);

@@ -19,14 +19,17 @@ void meta_init(meta_signal_set * signals) {
 	signals->outputs = &audioRateOutput;
 	signals->wavetable_parameters = &meta_wavetableParameters;
 	signals->meta_parameters = &metaParameters;
+	signals->drum_parameters = &drumParameters;
 
-	metaControllerParseControls = metaControllerParseControlsAudio;
-	metaControllerGenerateIncrements = metaControllerGenerateIncrementsAudio;
+	metaControllerParseControls = metaControllerParseControlsDrum;
+	metaControllerGenerateIncrements = metaControllerGenerateIncrementsDrum;
 	metaControllerIncrementArbiter = noRetrigAttackState;
 	metaControllerLoopHandler = handleLoopOn;
+	meta_drumMode = meta_drumModeOn;
 	meta_calculateDac3 = meta_calculateDac3Phasor;
-	meta_calculateLogicA = meta_calculateLogicAGate;
+	meta_calculateLogicA = meta_calculateLogicAReleaseGate;
 	meta_calculateSH = meta_calculateSHMode1;
+	simpleEnvelopeIncrementArbiter = simpleEnvelopeRestingState;
 
 
 	meta_initializeUICallbacks();
@@ -38,14 +41,19 @@ void meta_init(meta_signal_set * signals) {
 	meta_fillWavetableArray();
 
 	meta_switchWavetable(meta_wavetableArray[0][0], signals);
+	meta_initDrum();
+	signals->drum_parameters->output = meta_drumWrite;
 
 	signals->meta_parameters->triggerSignal = 1;
 	signals->meta_parameters->gateSignal = 0;
+	signals->meta_parameters->freeze = 1;
 
 	via_ioStreamInit(&audioRateInput, &audioRateOutput, META_BUFFER_SIZE);
 	via_logicStreamInit(&audioRateInput, &audioRateOutput, META_BUFFER_SIZE);
 
 	signals->wavetable_parameters->morphMod = signals->inputs->cv3Samples;
+	signals->wavetable_parameters->morphScale = signals->drum_parameters->output;
+	signals->meta_parameters->fm = signals->drum_parameters->output;
 
 
 }

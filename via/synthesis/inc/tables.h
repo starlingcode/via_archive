@@ -335,6 +335,35 @@ static inline void loadWavetableWithDiff15Bit(Wavetable * table,
 
 }
 
+static inline void loadSingleTable15Bit(Wavetable * table,
+		uint32_t * tableRead) {
+
+	uint32_t numSamples = table->slopeLength;
+
+	//for each table in the table
+	for (int i = 0; i < 1; i++) {
+		//pad with duplicate samples
+		*((tableRead + 517 * i) + 0) = *(*(table->releaseSlope + i) + 0);
+		*((tableRead + 517 * i) + 1) = *(*(table->releaseSlope + i) + 0);
+		//fill in a full cycle's worth of samples
+		//the release gets reversed
+		//we drop the last sample from attack and the first from releas
+		for (int j = 0; j < numSamples; j++) {
+			*((tableRead + 517 * i) + 2 + j) = *(*(table->attackSlope + i) + j);
+			*((tableRead + 517 * i) + 2 + numSamples + j) =
+					*(*(table->releaseSlope + i) + numSamples - j);
+		}
+		//pad with duplicate samples
+		*((tableRead + 517 * i) + (numSamples << 1) + 2) =
+				*(*(table->attackSlope + i) + 0);
+		*((tableRead + 517 * i) + (numSamples << 1) + 3) =
+				*(*(table->attackSlope + i) + 0);
+		*((tableRead + 517 * i) + (numSamples << 1) + 4) =
+				*(*(table->attackSlope + i) + 0);
+	}
+
+}
+
 /*
  *
  * Link phase distortion waveforms into tables

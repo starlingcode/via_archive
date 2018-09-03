@@ -20,8 +20,8 @@
  */
 
 simpleWavetableParameters meta_wavetableParameters;
-
 metaControllerParameters metaParameters;
+simpleEnvelopeParameters drumParameters;
 
 typedef struct {
 
@@ -30,6 +30,8 @@ typedef struct {
 	controlRateInputs * controls;
 	simpleWavetableParameters * wavetable_parameters;
 	metaControllerParameters * meta_parameters;
+	simpleEnvelopeParameters * drum_parameters;
+
 
 } meta_signal_set;
 
@@ -85,7 +87,7 @@ void meta_slowConversionCallback(meta_signal_set *);
 #define numButton6Modes 2
 #define numAux1Modes 0
 #define numAux2Modes 2
-#define numAux3Modes 6
+#define numAux3Modes 4
 #define numAux4Modes 2
 
 enum meta_button1Modes {nosampleandhold, a, b, ab, halfdecimate, meta_decimate};
@@ -95,8 +97,8 @@ enum meta_button4Modes {noretrigger, meta_hardsync, nongatedretrigger, gated, me
 enum meta_button5Modes {pairedWithButton2};
 enum meta_button6Modes {noloop, looping};
 enum meta_aux1Modes {aux1NotUsed};
-enum meta_aux2Modes {attackGate, releaseGate};
-enum meta_aux3Modes {pitchMorphAmp, morphAmp, amp, morph, pitch, pitchMorph};
+enum meta_aux2Modes {releaseGate, attackGate};
+enum meta_aux3Modes {pitchMorphAmp, morphAmp, pitchAmp, amp};
 enum meta_aux4Modes {phasor, contour};
 
 
@@ -174,6 +176,8 @@ Wavetable * meta_wavetableArray[3][8];
 
 // declare arrays to store the active tables
 uint32_t meta_wavetableRead[9][517];
+uint32_t meta_wavetableReadDrum[517];
+
 //uint32_t meta_phaseDistRead[33][65];
 
 // declare functions to set the currently active tables
@@ -181,12 +185,23 @@ void meta_switchWavetable(Wavetable *, meta_signal_set * signals);
 // phase distortion table is fixed
 void meta_initPhaseDistTable(void);
 void meta_fillWavetableArray(void);
+void meta_initDrum(void);
+int16_t meta_drumWrite[4];
+int16_t meta_drumFullScale[4];
 
 /*
  *
  * Mode functions
  *
  */
+
+void (*meta_drumMode)(meta_signal_set * signals, int writeIndex);
+
+void meta_drumModeOff(meta_signal_set * signals, int writeIndex);
+void meta_drumModeOn(meta_signal_set * signals, int writeIndex);
+
+uint16_t metaVirtualFM[2];
+uint16_t metaVirtualMorph[2];
 
 void (*meta_calculateDac3)(meta_signal_set * signals, int writeIndex);
 
@@ -195,8 +210,8 @@ void meta_calculateDac3Contour(meta_signal_set * signals, int writeIndex);
 
 void (*meta_calculateLogicA)(meta_signal_set * signals, int writeIndex);
 
-void meta_calculateLogicAGate(meta_signal_set * signals, int writeIndex);
-void meta_calculateLogicAInverseGate(meta_signal_set * signals, int writeIndex);
+void meta_calculateLogicAReleaseGate(meta_signal_set* signals, int writeIndex);
+void meta_calculateLogicAAttackGate(meta_signal_set * signals, int writeIndex);
 
 void (*meta_calculateSH)(meta_signal_set * signals, int writeIndex);
 // No S&H

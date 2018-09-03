@@ -77,7 +77,9 @@ void pllMultiplierDoPLL(pllMultiplierParameters * parameters) {
 	int multKey = parameters->fracMultiplier + parameters->intMultiplier;
 
 	if (lastMultiplier != multKey) {
-		EXPAND_LOGIC_HIGH
+		parameters->ratioChange = 1;
+	} else {
+		parameters->ratioChange = 0;
 	}
 
 	lastMultiplier = multKey;
@@ -99,36 +101,55 @@ void pllMultiplierGenerateFrequency(pllMultiplierParameters * parameters) {
  */
 
 
-void metaControllerParseControlsAudio(controlRateInputs * controls, metaControllerParameters * parameters) {
-
+void metaControllerParseControlsAudio(controlRateInputs * controls, audioRateInputs * inputs,
+		metaControllerParameters * parameters) {
 	// time1 is coarse, time2 is fine, release time = attack time
 
 	parameters->timeBase1 = fix16_mul(fix16_mul(expoTable[controls->knob1Value] >> 5,
 			expoTable[(controls->knob2Value >> 3) + 200]),
-			expoTable[controls->cv1Value] >> 2);
+			expoTable[controls->cv1Value] >> 2) >> 2;
 	parameters->timeBase2 = parameters->timeBase1;
 
 	parameters->dutyCycleBase = 32767;
 
 }
 
-void metaControllerParseControlsEnv(controlRateInputs * controls, metaControllerParameters * parameters) {
+void metaControllerParseControlsDrum(controlRateInputs * controls, audioRateInputs * inputs,
+		metaControllerParameters * parameters) {
+	// time1 is coarse, time2 is not used, release time = attack time
 
-	// t1 is attack time (attackIncrements), t2 is release time (releaseIncrements)
-
-	parameters->timeBase1 = expoTable[((4095 - controls->knob1Value) >> 2) * 3] >> 8;
-	parameters->timeBase2 = expoTable[((4095 - controls->knob2Value) >> 2) * 3] >> 10;
+	parameters->timeBase1 = fix16_mul(expoTable[((controls->knob1Value >> 2)*3) + 1024] >> 5,
+			expoTable[controls->cv1Value] >> 2) >> 4;
+	parameters->timeBase2 = parameters->timeBase1;
 
 	parameters->dutyCycleBase = 32767;
 
 }
 
-void metaControllerParseControlsSeq(controlRateInputs * controls, metaControllerParameters * parameters) {
+void metaControllerParseControlsEnv(controlRateInputs * controls, audioRateInputs * inputs,
+		metaControllerParameters * parameters) {
+	// t1 is attack time (attackIncrements), t2 is release time (releaseIncrements)
 
+	int releaseMod = -inputs->cv2Samples[0];
+	releaseMod += 32767;
+
+	releaseMod = releaseMod >> 4;
+
+	parameters->timeBase1 = fix16_mul(expoTable[4095 - controls->knob1Value] >> 6,
+			expoTable[controls->cv1Value >> 2] >> 6);
+	parameters->timeBase2 = fix16_mul(expoTable[((4095 - controls->knob2Value) >> 2) * 3] >> 7,
+			expoTable[releaseMod] >> 10);
+
+	parameters->dutyCycleBase = 32767;
+
+}
+
+void metaControllerParseControlsSeq(controlRateInputs * controls, audioRateInputs * inputs,
+		metaControllerParameters * parameters) {
 	// t1 is cycle time, t2 is used to feed the duty cycle input for getSamples
 
 	parameters->timeBase1 = fix16_mul(expoTable[4095 - controls->knob1Value] >> 9,
-			expoTable[4095 - controls->cv1Value] >> 9);
+			expoTable[controls->cv1Value >> 2] >> 9) >> 4;
 	parameters->timeBase2 = parameters->timeBase1;
 
 	parameters->dutyCycleBase = controls->knob2Value << 4;
@@ -140,7 +161,7 @@ void metaControllerParseControlsSeq(controlRateInputs * controls, metaController
 
 void metaControllerGenerateIncrementsAudio(metaControllerParameters * parameters, audioRateInputs * inputs) {
 
-	int fm = -inputs->cv2Samples[0];
+	int fm = -parameters->fm[0];
 	fm += 16384;
 	parameters->increment1 = fix16_mul(parameters->timeBase1, fm);
 	parameters->increment2 = parameters->increment1;
@@ -149,13 +170,17 @@ void metaControllerGenerateIncrementsAudio(metaControllerParameters * parameters
 
 }
 
-void metaControllerGenerateIncrementsEnv(metaControllerParameters * parameters, audioRateInputs * inputs) {
+void metaControllerGenerateIncrementsDrum(metaControllerParameters * parameters, audioRateInputs * inputs) {
 
-//	int parameters->increment2Multiplier = -inputs->cv2Samples[0];
-//
-//	parameters->increment2Multiplier += 32767;
-//
-//	parameters->increment2Multiplier = expoTable[parameters->increment2Multiplier >> 4] >> 8;
+	int fm = parameters->fm[0];
+	parameters->increment1 = fix16_mul(parameters->timeBase1, fm << 1);
+	parameters->increment2 = parameters->increment1;
+
+	parameters->dutyCycle = parameters->dutyCycleBase;
+
+}
+
+void metaControllerGenerateIncrementsEnv(metaControllerParameters * parameters, audioRateInputs * inputs) {
 
 	parameters->increment1 = parameters->timeBase1;
 	parameters->increment2 = parameters->timeBase2;
@@ -176,13 +201,13 @@ void metaControllerGenerateIncrementsSeq(metaControllerParameters * parameters, 
 
 }
 
-int metaControllerAdvancePhase(metaControllerParameters * parameters) {
+int metaControllerAdvancePhase(metaControllerParameters * parameters, uint32_t * phaseDistTable) {
 
+	static int previousGhostPhase;
 	static int previousPhase;
-	static int previousPhaseEvent;
 	int phaseWrapper;
 
-	int increment = (*metaControllerIncrementArbiter)(parameters);
+	int increment = (*metaControllerIncrementArbiter)(parameters) * parameters->freeze;
 
 	int phase = parameters->phase;
 
@@ -203,31 +228,48 @@ int metaControllerAdvancePhase(metaControllerParameters * parameters) {
 
 	phase += phaseWrapper;
 
-	// log a -1 if the max value index of the wavetable is traversed from the left
-	// log a 1 if traversed from the right
-	// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
-	// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
-
-	int atBIndicator = ((uint32_t)(phase - AT_B_PHASE) >> 31) - ((uint32_t)(previousPhase - AT_B_PHASE) >> 31);
-
-	phaseWrapper += atBIndicator;
-
-	// stick the position to WAVETABLE AT_B_PHASE
-	phase += (AT_B_PHASE - phase) * (abs(atBIndicator) & parameters->gateSignal);
-
-	parameters->phaseEvent = phaseWrapper;
-
 	// TODO rewrite logic parsing function
-
-	// store the current phase
-	previousPhase = phase;
-	previousPhaseEvent = phaseWrapper;
 
 	parameters->oscillatorOn = (*metaControllerLoopHandler)(parameters);
 
 	parameters->triggerSignal = 1;
 
 	parameters->phase = phase;
+
+	uint32_t pwm = parameters->dutyCycle;
+	uint32_t pwmIndex = (pwm >> 11);
+	uint32_t pwmFrac = (pwm & 0x7FF) << 4;
+	// assuming that each phase distortion lookup table is 65 samples long stored as int
+	uint32_t * pwmTable1 = phaseDistTable + pwmIndex * 65;
+	uint32_t * pwmTable2 = pwmTable1 + 65;
+	uint32_t leftSample = phase >> 19;
+
+#define pwmPhaseFrac (phase & 0x7FFFF) >> 4
+		// use this with the precalculated pwm to perform bilinear interpolation
+		// this accomplishes the
+	phase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
+				pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
+				pwmPhaseFrac);
+
+	// log a -1 if the max value index of the wavetable is traversed from the left
+	// log a 1 if traversed from the right
+	// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
+	// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
+
+	int atBIndicator = ((uint32_t)(phase - AT_B_PHASE) >> 31) - ((uint32_t)(previousGhostPhase - AT_B_PHASE) >> 31);
+
+	phaseWrapper += atBIndicator;
+
+//	// stick the position to WAVETABLE AT_B_PHASE
+//	parameters->phase -= (parameters->phase - previousPhase) * (abs(atBIndicator) & parameters->gateSignal);
+
+	parameters->phaseEvent = phaseWrapper;
+
+	// store the current phases
+	previousGhostPhase = phase;
+	previousPhase = parameters->phase;
+
+	parameters->ghostPhase = phase;
 
 	return phase;
 
@@ -293,6 +335,8 @@ int noRetrigReleaseState(metaControllerParameters * parameters) {
 
 int hardSyncAttackState(metaControllerParameters * parameters) {
 
+	parameters->phase *= parameters->triggerSignal;
+
 	switch (parameters->phaseEvent) {
 
 	case (AT_B_FROM_ATTACK):
@@ -306,6 +350,8 @@ int hardSyncAttackState(metaControllerParameters * parameters) {
 }
 
 int hardSyncReleaseState(metaControllerParameters * parameters) {
+
+	parameters->phase *= parameters->triggerSignal;
 
 	if (parameters->triggerSignal == 0) {
 		metaControllerIncrementArbiter = hardSyncAttackState;
@@ -405,7 +451,7 @@ int gateAttackState(metaControllerParameters * parameters) {
 
 int gateReleaseReverseState(metaControllerParameters * parameters) {
 
-	if (parameters->gateSignal == 1) {
+	if (parameters->gateSignal) {
 		metaControllerIncrementArbiter = gateAttackState;
 		return parameters->increment1;
 	}
@@ -435,7 +481,7 @@ int gatedState(metaControllerParameters * parameters) {
 
 int gateReleaseState(metaControllerParameters * parameters) {
 
-	if (parameters->gateSignal == 1) {
+	if (parameters->gateSignal) {
 		metaControllerIncrementArbiter = gateRetriggerState;
 		return -parameters->increment1;
 	}
@@ -569,4 +615,122 @@ int pendulumReverseReleaseState(metaControllerParameters * parameters) {
 
 }
 
+void simpleEnvelopeParseControls (controlRateInputs * controls, audioRateInputs * inputs,
+		simpleEnvelopeParameters * parameters) {
+
+	int releaseMod = -inputs->cv2Samples[0];
+	releaseMod += 32767;
+
+	releaseMod = releaseMod >> 4;
+
+	parameters->attack = 2400000;
+	parameters->release = fix16_mul(expoTable[((4095 - controls->knob2Value) >> 2) * 3] >> 8,
+			expoTable[releaseMod] >> 7);
+
+}
+void simpleEnvelopeAdvance (simpleEnvelopeParameters * parameters, audioRateInputs * inputs,
+		uint32_t * wavetable) {
+	static int previousPhase;
+	int phaseWrapper;
+
+	int increment = (*simpleEnvelopeIncrementArbiter)(parameters);
+
+	parameters->trigger = 1;
+
+	int phase = parameters->phase;
+
+	phase = (phase + __SSAT(increment, 24));
+
+	phaseWrapper = 0;
+
+	// add wavetable length if phase < 0
+
+	phaseWrapper += ((uint32_t)(phase) >> 31) * WAVETABLE_LENGTH;
+
+	// subtract wavetable length if phase > wavetable length
+
+	phaseWrapper -= ((uint32_t)(WAVETABLE_LENGTH - phase) >> 31) * WAVETABLE_LENGTH;
+
+	// apply the wrapping
+	// no effect if the phase is in bounds
+
+	phase += phaseWrapper;
+
+	// log a -1 if the max value index of the wavetable is traversed from the left
+	// log a 1 if traversed from the right
+	// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
+	// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
+
+	int atBIndicator = ((uint32_t)(phase - AT_B_PHASE) >> 31) - ((uint32_t)(previousPhase - AT_B_PHASE) >> 31);
+
+	phaseWrapper += atBIndicator;
+
+	parameters->phaseEvent = phaseWrapper;
+
+	previousPhase = phase;
+
+	parameters->phase = phase;
+
+	uint32_t leftSample = phase >> 16;
+#define phaseFrac (phase & 0xFFFF)
+	parameters->output[0] = fast_15_16_lerp(wavetable[leftSample], wavetable[leftSample + 1], phaseFrac);
+
+}
+
+int simpleEnvelopeAttackState(simpleEnvelopeParameters * parameters) {
+
+	switch (parameters->phaseEvent) {
+
+	case (AT_B_FROM_ATTACK):
+		simpleEnvelopeIncrementArbiter = simpleEnvelopeReleaseState;
+		return parameters->release;
+
+	default:
+		return parameters->attack;
+
+	}
+}
+
+int simpleEnvelopeReleaseState(simpleEnvelopeParameters * parameters) {
+
+	if (parameters->trigger == 0) {
+		simpleEnvelopeIncrementArbiter = simpleEnvelopeRetriggerState;
+		return -parameters->attack;
+	}
+
+	switch (parameters->phaseEvent) {
+
+	case (AT_A_FROM_RELEASE):
+		simpleEnvelopeIncrementArbiter = simpleEnvelopeRestingState;
+		parameters->phase = 1;
+		return 0;
+	default:
+		return parameters->release;
+
+	};
+}
+
+int simpleEnvelopeRetriggerState(simpleEnvelopeParameters * parameters) {
+
+	switch (parameters->phaseEvent) {
+
+	case (AT_B_FROM_RELEASE):
+		simpleEnvelopeIncrementArbiter = simpleEnvelopeReleaseState;
+		return parameters->release;
+
+	default:
+		return -parameters->attack;
+
+	}
+}
+
+int simpleEnvelopeRestingState(simpleEnvelopeParameters * parameters) {
+
+	if (parameters->trigger == 0) {
+		simpleEnvelopeIncrementArbiter = simpleEnvelopeAttackState;
+		return parameters->attack;
+	} else {
+		return 0;
+	}
+}
 

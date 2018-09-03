@@ -17,24 +17,67 @@ void sync_mainRisingEdgeCallback(sync_signal_set * signals) {
 	wavetable_parameters->increment = pll_parameters->increment;
 	wavetable_parameters->phaseReset = pll_parameters->phaseReset;
 
+	signals->outputs->auxLogic[0] = GET_EXPAND_LOGIC_MASK(signals->pll_parameters->ratioChange);
+	signals->pll_parameters->tapTempo = 0;
 
 }
 
 void sync_mainFallingEdgeCallback(sync_signal_set * signals) {
 
-
+	signals->pll_parameters->ratioChange = 0;
+	signals->outputs->auxLogic[0] = GET_EXPAND_LOGIC_MASK(signals->pll_parameters->ratioChange);
 
 }
 
 void sync_auxRisingEdgeCallback(sync_signal_set * signals) {
-	sync_handleButton2Tap();
+
+	signals->wavetable_parameters->phase = 0;
+
 }
 void sync_auxFallingEdgeCallback(sync_signal_set * signals) {
 	;
 }
 
 void sync_buttonPressedCallback(sync_signal_set * signals) {
-	;
+
+	static int lastTap;
+	static buffer tapStore;
+	static int tapSum;
+
+	pllMultiplierParameters * pll_parameters = signals->pll_parameters;
+
+	if (signals->pll_parameters->tapTempo) {
+		// store the length of the last period
+		// average against the current length
+
+		int tap = TIM2->CNT;
+
+		writeBuffer(&tapStore, tap);
+		tapSum += tap - readBuffer(&tapStore, 3);
+
+		pll_parameters->periodCount = tapSum >> 2;
+
+		lastTap = tap;
+
+		// reset the timer value
+		TIM2->CNT = 0;
+
+		pllMultiplierDoPLL(pll_parameters);
+		pllMultiplierGenerateFrequency(pll_parameters);
+
+		singleSampleWavetableParameters * wavetable_parameters = signals->wavetable_parameters;
+
+		// should these be initialized to point to the same address?
+
+		wavetable_parameters->increment = pll_parameters->increment;
+		wavetable_parameters->phaseReset = pll_parameters->phaseReset;
+
+		signals->outputs->auxLogic[0] = GET_EXPAND_LOGIC_MASK(signals->pll_parameters->ratioChange);
+
+	} else {
+		pll_parameters->tapTempo = 1;
+	}
+
 }
 void sync_buttonReleasedCallback(sync_signal_set * signals) {
 	;
@@ -45,53 +88,52 @@ void sync_ioProcessCallback(sync_signal_set * signals) {
 
 void sync_halfTransferCallback(sync_signal_set * signals) {
 
+	via_setLogicOut(signals->outputs, 0, runtimeDisplay);
 
-	singleSampleWavetableParameters * parameters = signals->wavetable_parameters;
+	singleSampleWavetableParameters * wavetable_parameters = signals->wavetable_parameters;
 	audioRateOutputs * outputs = signals->outputs;
+	pllMultiplierParameters * pll_parameters = signals->wavetable_parameters;
 
-	outputs->dac2Samples[0] = __USAT(singleSampleWavetableAdvance(parameters,
+
+	outputs->dac2Samples[0] = __USAT(singleSampleWavetableAdvance(wavetable_parameters,
 			sync_wavetableRead, phaseModPWMTables), 12);
 	outputs->dac1Samples[0] = 4095 - outputs->dac2Samples[0];
-	outputs->dac3Samples[0] = parameters->ghostPhase >> 13;
-//	uint32_t ghostPhase = parameters->ghostPhase >> 12;
-//	if (ghostPhase >> 12) {
-//		outputs->dac3Samples[0] = 8191 - ghostPhase;
-//	} else {
-//		outputs->dac3Samples[0] = ghostPhase;
-//	}
-
-
+	(*sync_calculateDac3)(signals, 0);
+	(*sync_calculateLogicA)(signals, 0);
+	(*sync_calculateSH)(signals, 0);
 
 }
 
 void sync_transferCompleteCallback(sync_signal_set * signals) {
 
+	via_setLogicOut(signals->outputs, 0, runtimeDisplay);
 
-	singleSampleWavetableParameters * parameters = signals->wavetable_parameters;
+	singleSampleWavetableParameters * wavetable_parameters = signals->wavetable_parameters;
+	pllMultiplierParameters * pll_parameters = signals->wavetable_parameters;
 	audioRateOutputs * outputs = signals->outputs;
 
-	outputs->dac2Samples[1] = __USAT(singleSampleWavetableAdvance(parameters,
+	outputs->dac2Samples[1] = __USAT(singleSampleWavetableAdvance(wavetable_parameters,
 			sync_wavetableRead, phaseModPWMTables), 12);
 	outputs->dac1Samples[1] = 4095 - outputs->dac2Samples[1];
-	outputs->dac3Samples[1] = parameters->ghostPhase >> 13;
-//	if (ghostPhase >> 12) {
-//		outputs->dac3Samples[1] = 8191 - ghostPhase;
-//	} else {
-//		outputs->dac3Samples[1] = ghostPhase;
-//	}
-
-
-
+	(*sync_calculateDac3)(signals, 0);
+	(*sync_calculateLogicA)(signals, 0);
+	(*sync_calculateSH)(signals, 0);
 
 }
 
 void sync_slowConversionCallback(sync_signal_set * signals) {
 
 	controlRateInputs * controls = signals->controls;
+	pllMultiplierParameters * pll_parameters = signals->pll_parameters;
 
 	via_updateControlRateInputs(controls);
 	singleSampleWavetableParseControls(controls, signals->wavetable_parameters);
-	pllMultiplierParseControls(controls, signals->inputs, signals->pll_parameters);
+	pllMultiplierParseControls(controls, signals->inputs, pll_parameters);
+
+	if (pll_parameters->tapTempo) {
+		pllMultiplierGenerateFrequency(pll_parameters);
+		signals->wavetable_parameters->increment = pll_parameters->increment;
+	}
 
 	int sample = signals->outputs->dac1Samples[0];
 	int lastPhaseValue = signals->wavetable_parameters->ghostPhase;
