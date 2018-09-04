@@ -44,9 +44,10 @@ void meta_handleButton3ModeChange(int mode) {
 
 	switch (mode) {
 	case audio:
-		if (!LOOP_MODE) {
+		if (LOOP_MODE == noloop) {
 			metaControllerGenerateIncrements = metaControllerGenerateIncrementsDrum;
 			metaControllerParseControls = metaControllerParseControlsDrum;
+			meta_signals.meta_parameters->fm = meta_drumFullScale;
 			meta_drumMode = meta_drumModeOn;
 			metaControllerLoopHandler = handleLoopOn;
 			meta_signals.meta_parameters->loopMode = 1;
@@ -55,6 +56,7 @@ void meta_handleButton3ModeChange(int mode) {
 		} else {
 			metaControllerParseControls = metaControllerParseControlsAudio;
 			metaControllerGenerateIncrements = metaControllerGenerateIncrementsAudio;
+			meta_signals.meta_parameters->fm = meta_signals.inputs->cv2Samples;
 			meta_drumMode = meta_drumModeOff;
 		}
 		meta_switchWavetable(meta_wavetableArray[mode][TABLE], &meta_signals);
@@ -63,10 +65,10 @@ void meta_handleButton3ModeChange(int mode) {
 	case env:
 		metaControllerParseControls = metaControllerParseControlsEnv;
 		metaControllerGenerateIncrements = metaControllerGenerateIncrementsEnv;
-		if (!LOOP_MODE) {
+		if (LOOP_MODE == noloop) {
 			meta_switchWavetable(meta_wavetableArray[mode][TABLE], &meta_signals);
-			meta_signals.meta_parameters->fm = meta_drumFullScale;
-			meta_signals.wavetable_parameters->morphScale = meta_drumFullScale;
+			meta_signals.meta_parameters->fm = meta_signals.inputs->cv2Samples;
+			meta_signals.wavetable_parameters->morphMod = meta_signals.inputs->cv3Samples;
 			meta_drumMode = meta_drumModeOff;
 			metaControllerLoopHandler = handleLoopOff;
 			meta_signals.meta_parameters->loopMode = 0;
@@ -118,7 +120,7 @@ void meta_handleButton6ModeChange(int mode) {
 
 	switch (mode) {
 	case noloop:
-		if (!FREQ_MODE) {
+		if (FREQ_MODE == audio) {
 			meta_handleAux3ModeChange(DRUM_MODE);
 			meta_handleButton3ModeChange(0);
 			meta_handleButton4ModeChange(0);
@@ -128,9 +130,7 @@ void meta_handleButton6ModeChange(int mode) {
 		}
 		break;
 	case looping:
-		if (!FREQ_MODE) {
-			meta_signals.meta_parameters->fm = meta_drumFullScale;
-			meta_signals.wavetable_parameters->morphScale = meta_drumFullScale;
+		if (FREQ_MODE == audio) {
 			meta_handleButton3ModeChange(0);
 			meta_handleButton4ModeChange(TRIG_MODE);
 		}

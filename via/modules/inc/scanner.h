@@ -76,7 +76,7 @@ void scanner_slowConversionCallback(scanner_signal_set *);
 #define numAux4Modes 2
 
 enum button1Modes {
-	hardsync, reverse
+	reverse, hardsync
 };
 enum button2Modes {
 	yTables
@@ -190,5 +190,8 @@ void scanner_switchWavetableY(Wavetable *, scanner_signal_set * signals);
 
 // phase distortion table is fixed
 void scanner_initPhaseDistTable(void);
+
+int scanner_reverseBuffer[SCANNER_BUFFER_SIZE*2];
+int scanner_reverseSignal;
 
 #endif /* INC_SCANNER_H_ */

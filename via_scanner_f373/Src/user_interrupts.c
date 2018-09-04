@@ -162,14 +162,10 @@ void DMA1_Channel5_IRQHandler(void)
 
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;
-		EXPAND_LOGIC_HIGH;
 		scanner_halfTransferCallback(&scanner_signals);
-		EXPAND_LOGIC_LOW;
 	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;
-		EXPAND_LOGIC_HIGH;
 		scanner_transferCompleteCallback(&scanner_signals);
-		EXPAND_LOGIC_LOW;
 	}
 
 }
@@ -184,7 +180,6 @@ void DMA2_Channel3_IRQHandler(void)
 	if ((DMA2->ISR & (DMA_FLAG_HT1 << 8)) != 0) {
 		DMA2->IFCR = DMA_FLAG_HT1 << 8;
 		uint16_t * cv2ReadIndex = scanner_signals.inputs->cv2Samples;
-		//ALOGIC_HIGH;
 		for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
 			int cv2Sample = cv2ReadIndex[i*2] + 32768;
 			scanner_signals.parameters->xInput[i] = cv2Sample;
@@ -196,7 +191,6 @@ void DMA2_Channel3_IRQHandler(void)
 			int cv2Sample = cv2ReadIndex[i*2] + 32768;
 			scanner_signals.parameters->xInput[i] = cv2Sample;
 		}
-		//ALOGIC_LOW;
 
 	}
 
@@ -236,6 +230,15 @@ void DMA2_Channel4_IRQHandler(void)
   /* USER CODE BEGIN DMA2_Channel4_IRQn 1 */
 
   /* USER CODE END DMA2_Channel4_IRQn 1 */
+}
+
+void TIM6_DAC1_IRQHandler(void) {
+
+	scanner_ioProcessCallback(&scanner_signals);
+
+
+	// clear timer update flag
+	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
 }
 
 

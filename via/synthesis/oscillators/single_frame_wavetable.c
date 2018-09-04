@@ -19,18 +19,27 @@ static inline int singleSampleWavetableIncrementPhase(singleSampleWavetableParam
 
 	int phase = parameters->phase;
 	static int previousPhase;
+	static int previousPhaseMod;
 
 	// apply FM, which should be 1 at ground (offset is comensated for here)
 
-//	int fmAmount = (parameters->fm[0] - parameters->cv2Offset) + 65535;
-//
-//	int increment = fix16_mul(parameters->increment, fmAmount);
-//
-//	// apply phase modulation
-//
-//	phase += increment + ((parameters->pm[0] - previousPhase) << 6);
+	int fmAmount = parameters->fm[0];
 
-	phase += parameters->increment;
+	fmAmount += 65535 - parameters->cv2Offset;
+
+	int increment = fix16_mul(parameters->increment, fmAmount);
+
+	// apply phase modulation
+
+	int pm = parameters->pm[0];
+
+	pm += 32767;
+
+	phase += increment + ((pm - previousPhaseMod) << 9);
+
+	previousPhaseMod = pm;
+
+	//phase += parameters->increment;
 
 	// a zero will resync
 

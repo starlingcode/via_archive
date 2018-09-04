@@ -36,7 +36,7 @@ void mainHardwareInit(void) {
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 	TIM6->ARR = 1439;
-	TIM6->CR1 |= TIM_CR1_CEN;
+	HAL_TIM_Base_Start_IT(&htim6);
 
 	 //initialize the timer that is used to detect rising and falling edges at the trigger input
 	HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);

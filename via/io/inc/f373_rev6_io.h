@@ -86,14 +86,14 @@ static inline void setLEDD(int setReset) {
 //#define BLOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_15 << 16)
 //#define BLOGIC_LOW_MASK (uint32_t)GPIO_PIN_15
 
-#define GET_ALOGIC_MASK(X) (ALOGIC_LOW_MASK << (16*X))
+#define GET_ALOGIC_MASK(X) (ALOGIC_LOW_MASK << (16*(X)))
 //#define GET_BLOGIC_MASK(X) (BLOGIC_LOW_MASK << (16*X))
 #define SET_A_LOGIC(X) GPIOC->BSRR = X;
 
 #define EXPAND_LOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_12 << 16)
 #define EXPAND_LOGIC_LOW_MASK (uint32_t)GPIO_PIN_12
 
-#define GET_EXPAND_LOGIC_MASK(X) (EXPAND_LOGIC_LOW_MASK << (16*X))
+#define GET_EXPAND_LOGIC_MASK(X) (EXPAND_LOGIC_LOW_MASK << (16*(X)))
 #define SET_EXPAND_LOGIC(X) GPIOA->BSRR = X;
 
 #define SH_B_SAMPLE_MASK ((uint32_t)GPIO_PIN_9 << 16)
@@ -101,8 +101,8 @@ static inline void setLEDD(int setReset) {
 #define SH_A_SAMPLE_MASK ((uint32_t)GPIO_PIN_8 << 16)
 #define SH_A_TRACK_MASK (uint32_t)GPIO_PIN_8
 
-#define GET_SH_A_MASK(X) (SH_A_TRACK_MASK << (16*X))
-#define GET_SH_B_MASK(X) (SH_B_TRACK_MASK << (16*X))
+#define GET_SH_A_MASK(X) (SH_A_TRACK_MASK << (16*(X)))
+#define GET_SH_B_MASK(X) (SH_B_TRACK_MASK << (16*(X)))
 
 #define SET_SH(X) GPIOB->BSRR = X;
 

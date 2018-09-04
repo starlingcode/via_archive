@@ -22,10 +22,9 @@ typedef struct {
 
 	int xInput[8];
 	int yInput[8];
-
-	// logic input
-	uint32_t syncInput;
-	uint32_t auxTrigInput;
+	int * hardSync;
+	int * reverse;
+	int * sh;
 
 	//control rate input
 	uint32_t zIndex;
@@ -36,12 +35,19 @@ typedef struct {
 	uint32_t xTableSize;
 	uint32_t yTableSize;
 
+	// outputs
+	int xIndexBuffer[8];
+	int yIndexBuffer[8];
+	int xDeltaBuffer[8];
+	int yDeltaBuffer[8];
+	int altitude[8];
+
 } threeAxisScannerParameters;
 
 void threeAxisScannerFillBuffer(audioRateInputs * inputs,
 		controlRateInputs * controls, threeAxisScannerParameters * parameters,
 		int * xTable, int * yTable,
-		audioRateOutputs * outputs, uint32_t writePosition, uint32_t bufferSize);
+		uint32_t writePosition, uint32_t bufferSize);
 
 void threeAxisScannerParseControls(controlRateInputs * controls,
 		threeAxisScannerParameters * parameters);
@@ -58,7 +64,11 @@ void threeAxisScannerParseControls(controlRateInputs * controls,
  *
  */
 
+void extractDeltas(int * input, int * output, int initialValue, uint32_t bufferSize);
+void incrementFromDeltas(int * input, int * output, int * hardSync, int * reverse,
+		int initialPhase, uint32_t bufferSize);
 void foldBuffer(int * input, int offset, int * output, uint32_t bufferSize);
 void wrapBuffer(int * input, int offset, int * output, uint32_t bufferSize);
+
 
 #endif /* INC_SIGNAL_PROCESSORS_H_ */

@@ -24,8 +24,10 @@ typedef struct {
 	int16_t * cv3Samples;
 	int16_t * cv2VirtualGround;
 	int16_t * cv3VirtualGround;
-	uint32_t * trigSamples;
-	uint32_t * auxTrigSamples;
+	int * trigSamples;
+	int trigInput;
+	int * auxTrigSamples;
+	int auxTrigInput;
 } audioRateInputs;
 
 // declare a struct to point to the audio rate outputs

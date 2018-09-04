@@ -159,52 +159,58 @@ void scanTerrainPM(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
 void threeAxisScannerFillBuffer(audioRateInputs * inputs,
 		controlRateInputs * controls, threeAxisScannerParameters * parameters,
 		int * xTable, int * yTable,
-		audioRateOutputs * outputs, uint32_t writePosition, uint32_t bufferSize) {
+		uint32_t writePosition, uint32_t bufferSize) {
 
-	static int xIndexBuffer[8];
-	static int yIndexBuffer[8];
-	static int xDeltaBuffer[8];
-	static int yDeltaBuffer[8];
+	static int lastXInput;
+	static int lastYInput;
+	static int lastXIndex;
+	static int lastYIndex;
 
-	int cv2Sample;
-	int cv3Sample;
+	extractDeltas(parameters->xInput, parameters->xIndexBuffer, lastXInput, bufferSize);
+	extractDeltas(parameters->yInput, parameters->yIndexBuffer, lastYInput, bufferSize);
 
-	foldBuffer(parameters->xInput, controls->knob2Value, xIndexBuffer,
+	lastXInput = parameters->xInput[bufferSize - 1];
+	lastYInput = parameters->yInput[bufferSize - 1];
+
+	incrementFromDeltas(parameters->xIndexBuffer, parameters->xIndexBuffer, parameters->hardSync, parameters->reverse,
+			lastXIndex, bufferSize);
+	incrementFromDeltas(parameters->yIndexBuffer, parameters->yIndexBuffer, parameters->hardSync, parameters->reverse,
+			lastYIndex, bufferSize);
+
+	lastXIndex = parameters->xIndexBuffer[bufferSize - 1];
+	lastYIndex = parameters->yIndexBuffer[bufferSize - 1];
+
+	foldBuffer(parameters->xIndexBuffer, controls->knob2Value, parameters->xIndexBuffer,
 			bufferSize);
-	foldBuffer(parameters->yInput, controls->knob3Value, yIndexBuffer,
+	foldBuffer(parameters->yIndexBuffer, controls->knob3Value, parameters->yIndexBuffer,
 			bufferSize);
 
 	switch (parameters->terrainType) {
 
 	case THREE_AXIS_SCANNER_SUM:
-		scanTerrainSum(xIndexBuffer, yIndexBuffer, parameters->zIndex,
-				xTable, yTable, xDeltaBuffer, yDeltaBuffer, outputs->dac3Samples,
-				writePosition, bufferSize);
+		scanTerrainSum(parameters->xIndexBuffer, parameters->yIndexBuffer, parameters->zIndex,
+				xTable, yTable, parameters->xDeltaBuffer, parameters->yDeltaBuffer, parameters->altitude,
+				0, bufferSize);
 		break;
 
 	case THREE_AXIS_SCANNER_PRODUCT:
-		scanTerrainSubtract(xIndexBuffer, yIndexBuffer, parameters->zIndex,
-				xTable, yTable, xDeltaBuffer, yDeltaBuffer, outputs->dac3Samples,
-				writePosition, bufferSize);
+		scanTerrainSubtract(parameters->xIndexBuffer, parameters->yIndexBuffer, parameters->zIndex,
+				xTable, yTable, parameters->xDeltaBuffer, parameters->yDeltaBuffer, parameters->altitude,
+				0, bufferSize);
 		break;
 
 	case THREE_AXIS_SCANNER_DIFFERENCE:
-		scanTerrainProduct(xIndexBuffer, yIndexBuffer, parameters->zIndex,
-				xTable, yTable, xDeltaBuffer, yDeltaBuffer, outputs->dac3Samples,
-				writePosition, bufferSize);
+		scanTerrainProduct(parameters->xIndexBuffer, parameters->yIndexBuffer, parameters->zIndex,
+				xTable, yTable, parameters->xDeltaBuffer, parameters->yDeltaBuffer, parameters->altitude,
+				0, bufferSize);
 		break;
 
 	case THREE_AXIS_SCANNER_PHASE_MOD:
-		scanTerrainPM(xIndexBuffer, yIndexBuffer, parameters->zIndex,
-				xTable, yTable, xDeltaBuffer, yDeltaBuffer, outputs->dac3Samples,
-				writePosition, bufferSize);
+		scanTerrainPM(parameters->xIndexBuffer, parameters->yIndexBuffer, parameters->zIndex,
+				xTable, yTable, parameters->xDeltaBuffer, parameters->yDeltaBuffer, parameters->altitude,
+				0, bufferSize);
 		break;
 
 	}
-
-//	for (int i = 0; i < bufferSize; i++) {
-//		outputs->dac3Samples[i + writePosition] = xIndexBuffer[i] >> 4;
-//		outputs->dac1Samples[i + writePosition] = 4095 - (outputs->dac2Samples[i + writePosition]);
-//	}
 
 }
