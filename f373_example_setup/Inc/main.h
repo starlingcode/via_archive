@@ -97,10 +97,6 @@
 #define A_LED_GPIO_Port GPIOF
 #define RED_LED_Pin GPIO_PIN_5
 #define RED_LED_GPIO_Port GPIOB
-#define SH_A_Pin GPIO_PIN_8
-#define SH_A_GPIO_Port GPIOB
-#define SH_B_Pin GPIO_PIN_9
-#define SH_B_GPIO_Port GPIOB
 
 /* ########################## Assert Selection ############################## */
 /**

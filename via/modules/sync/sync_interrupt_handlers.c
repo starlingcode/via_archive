@@ -115,7 +115,7 @@ void sync_transferCompleteCallback(sync_signal_set * signals) {
 	outputs->dac2Samples[1] = __USAT(singleSampleWavetableAdvance(wavetable_parameters,
 			sync_wavetableRead, phaseModPWMTables), 12);
 	outputs->dac1Samples[1] = 4095 - outputs->dac2Samples[1];
-	(*sync_calculateDac3)(signals, 0);
+	(*sync_calculateDac3)(signals, 1);
 	(*sync_calculateLogicA)(signals, 0);
 	(*sync_calculateSH)(signals, 0);
 

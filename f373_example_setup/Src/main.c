@@ -60,9 +60,12 @@
 
 /* USER CODE BEGIN Includes */
 
+uint32_t tsl_status;
 
+extern TSL_LinRotData_T * MyLinRots;
 
 #include "simple_wavetable.h"
+#include "via_rev5_hardware_io.h"
 
 /* USER CODE END Includes */
 
@@ -138,52 +141,14 @@ int main(void)
   MX_TIM12_Init();
   /* USER CODE BEGIN 2 */
 
-  oscillatorInit();
-  renderLine1(&controls);
-  renderLine2(&controls);
+	tsl_user_Init();
 
-//  if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1) != HAL_OK)
-//  	{
-//
-//  	}
-//
-//  	/* Pool for the end of calibration */
-//  	if (HAL_SDADC_PollForCalibEvent(&hsdadc1, 100) != HAL_OK)
-//  	{
-//
-//  	}
-
-
-//  	if (HAL_SDADC_CalibrationStart(&hsdadc2, SDADC_CALIBRATION_SEQ_1) != HAL_OK)
-//  	{
-//	}
-//
-//  	/* Pool for the end of calibration */
-//  	if (HAL_SDADC_PollForCalibEvent(&hsdadc2, 100) != HAL_OK)
-//  	{
-//
-//  	}
-
-	 //initialize the timer that is used to detect rising and falling edges at the trigger input
-//	HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
-
-
-	HAL_SDADC_Start_DMA(&hsdadc1, cv2, 1);
-	HAL_SDADC_Start_DMA(&hsdadc2, cv3, 1);
-
-  HAL_ADC_Start_DMA(&hadc1, adcReadings, 32);
-
-  TIM18->ARR = 34;
-
-  HAL_TIM_Base_Start_IT(&htim18);
-  HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, dacBuffer1, 32, DAC_ALIGN_12B_R);
-  //HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, dacBuffer2, 32, DAC_ALIGN_12B_R);
-  //HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, dacBuffer3, 32, DAC_ALIGN_12B_R);
-
-  //HAL_DAC_Start(&hdac2, DAC_CHANNEL_1);
-
-  //HAL_TIM_Base_Start_IT(&htim13);
-
+	HAL_TIM_Base_Start(&htim3);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+	HAL_TIM_Base_Start(&htim4);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+	HAL_TIM_Base_Start(&htim5);
+	HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
 
 
   /* USER CODE END 2 */
@@ -194,6 +159,13 @@ int main(void)
   {
 
   /* USER CODE END WHILE */
+
+	  tsl_status = tsl_user_Exec();
+
+	if (tsl_status != TSL_USER_STATUS_BUSY) {
+		SET_RED_LED(MyLinRots->Position << 4);
+	} else {
+	}
 
   /* USER CODE BEGIN 3 */
 

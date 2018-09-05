@@ -32,7 +32,6 @@ typedef struct {
 	metaControllerParameters * meta_parameters;
 	simpleEnvelopeParameters * drum_parameters;
 
-
 } meta_signal_set;
 
 meta_signal_set meta_signals;

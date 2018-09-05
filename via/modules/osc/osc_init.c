@@ -23,7 +23,7 @@ void osc_init(osc_signal_set * signals) {
 	osc_initializeUICallbacks();
 
 	// initialize our touch sensors
-	tsl_user_Init();
+	//tsl_user_Init();
 	uiInitialize();
 
 	osc_fillWavetableArray();

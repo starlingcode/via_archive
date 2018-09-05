@@ -71,11 +71,11 @@
 /** Total number of banks in application (range=1..255)
 */
 
-#define TSLPRM_TOTAL_BANKS (4)
+#define TSLPRM_TOTAL_BANKS (5)
 
 /** Total number of "Extended" TouchKeys in application (range=0..255)
 */
-#define TSLPRM_TOTAL_TOUCHKEYS (6)
+#define TSLPRM_TOTAL_TOUCHKEYS (3)
 
 /** Total number of "Basic" TouchKeys in application (range=0..255)
 */
@@ -84,7 +84,7 @@
 /** Total number of "Extended" Linear and Rotary sensors in application (range=0..255)
   - Count also the 1-channel linear sensor used as TouchKey
 */
-#define TSLPRM_TOTAL_LINROTS (0)
+#define TSLPRM_TOTAL_LINROTS (1)
 
 /** Total number of "Basic" Linear and Rotary sensors in application (range=0..255)
   - Count also the 1-channel linear sensor used as TouchKey
@@ -94,12 +94,12 @@
 /** Total number of "Extended & Basic" Linear and Rotary sensors in application (range=0..255)
   - Count also the 1-channel linear sensor used as TouchKey
 */
-#define TSLPRM_TOTAL_ALL_LINROTS (0)
+#define TSLPRM_TOTAL_ALL_LINROTS (1)
 
 /** Total number of sensors/objects in application (range=1..255)
   - Count all TouchKeys, Linear and Rotary sensors
 */
-#define TSLPRM_TOTAL_OBJECTS (6)
+#define TSLPRM_TOTAL_OBJECTS (4)
 
 /** @} Common_Parameters_Number_Of_Elements */
 
@@ -117,7 +117,7 @@
 
 /** Proximity detection usage (0=No, 1=Yes)
 */
-#define TSLPRM_USE_PROX (1)
+#define TSLPRM_USE_PROX (0)
 
  /** Zone management usage (0=No, 1=Yes)
 */
@@ -232,12 +232,12 @@
 /** Linear/Rotary Detect state input threshold (range=0..255)
   - Enter Detect state if delta is above
 */
-#define TSLPRM_LINROT_DETECT_IN_TH (80)
+#define TSLPRM_LINROT_DETECT_IN_TH (100)
 
 /** Linear/Rotary Detect state output threshold (range=0..255)
   - Exit Detect state if delta is below
 */
-#define TSLPRM_LINROT_DETECT_OUT_TH (75)
+#define TSLPRM_LINROT_DETECT_OUT_TH (50)
 
 /** Linear/Rotary re-Calibration threshold (range=0..255)
   - @warning The value is inverted in the sensor state machine
@@ -245,7 +245,7 @@
   - A low absolute value will result in a higher sensitivity and thus some spurious
     recalibration may be issued.
 */
-#define TSLPRM_LINROT_CALIB_TH (80)
+#define TSLPRM_LINROT_CALIB_TH (250)
 
 /** Linear/Rotary Delta normalization (0=No, 1=Yes)
   - When this parameter is set, a coefficient is applied on all Delta of all sensors
@@ -287,7 +287,7 @@
 */
 #define TSLPRM_USE_3CH_LIN_M1 (0)
 #define TSLPRM_USE_3CH_LIN_M2 (0)
-#define TSLPRM_USE_3CH_LIN_H  (0)
+#define TSLPRM_USE_3CH_LIN_H  (1)
 #define TSLPRM_USE_3CH_ROT_M  (0)
 
 #define TSLPRM_USE_4CH_LIN_M1 (0)
@@ -319,7 +319,7 @@
   - A Low value will result in a low resolution and will be less subject to noise.
   - A High value will result in a high resolution and will be more subject to noise.
 */
-#define TSLPRM_LINROT_RESOLUTION (4)
+#define TSLPRM_LINROT_RESOLUTION (8)
 
 /** Direction change threshold in position unit (range=0..255)
   - Defines the default threshold used during the change direction process.
