@@ -48,6 +48,8 @@ typedef struct {
 	int syncMode;
 	int shOn;
 	int tableSize;
+
+	int delta;
 } oversampledWavetableParameters;
 
 void oversampledWavetableParseControls(controlRateInputs * controls,

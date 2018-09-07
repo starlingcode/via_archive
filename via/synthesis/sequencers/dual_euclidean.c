@@ -99,11 +99,22 @@ void dualEuclideanProcessClock(controlRateInputs * controls,
 		break;
 	case __NAND:
 
-		if ((!aPatternValue) && (!bPatternValue)) {
-			parameters->logicOutput = 1;
+//		if ((!aPatternValue) && (!bPatternValue)) {
+//			parameters->logicOutput = 1;
+//		} else {
+//			parameters->logicOutput = 0;
+//		}
+
+		// set/reset
+
+		if (parameters->logicOutput) {
+			parameters->logicOutput = aPatternValue;
 		} else {
-			parameters->logicOutput = 0;
+			parameters->logicOutput = bPatternValue;
 		}
+
+
+
 		break;
 	}
 

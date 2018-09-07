@@ -17,6 +17,8 @@ void osc_init(osc_signal_set * signals) {
 	signals->parameters = &oscParameters;
 
 	via_ioStreamInit(&audioRateInput, &audioRateOutput, OSC_BUFFER_SIZE);
+	via_logicStreamInit(&audioRateInput, &audioRateOutput, OSC_BUFFER_SIZE);
+
 
 	osc_initPhaseDist();
 

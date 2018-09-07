@@ -16,6 +16,12 @@
  *
  */
 
+static const uint16_t *allLinear[5] = {allLinear_Samples, allLinear_Samples, allLinear_Samples,
+		allLinear_Samples, allLinear_Samples};
+
+static const uint16_t *allExpo[5] = {sharpExpo, sharpExpo, sharpExpo,
+		sharpExpo, sharpExpo};
+
 static const uint16_t *skipsaw[5] = { skipsaw0, skipsaw1, skipsaw2, skipsaw3,
 		skipsaw4 };
 
@@ -75,6 +81,9 @@ static const uint16_t *algerianAttackFamily[5] = { algerianAttackFamily0,
 
 static const uint16_t *impshort[9] = { impshort0, impshort1, impshort2,
 		impshort3, impshort4, impshort5, impshort6, impshort7, impshort8 };
+
+static const uint16_t *impshort_5[9] = { impshort0, impshort1, impshort2,
+		impshort3, impshort4};
 
 static const uint16_t *moogSquareShiftReleaseFamily[9] = {
 		moogSquareShiftReleaseFamily0, moogSquareShiftReleaseFamily1,
@@ -200,6 +209,9 @@ static const Wavetable algerian = { .attackSlope = algerianAttackFamily,
 static const Wavetable impevens = { .attackSlope = impshort, .releaseSlope =
 		impshort, .slopeLength = 256, .numWaveforms = 9 };
 
+static const Wavetable imp_5 = { .attackSlope = impshort_5, .releaseSlope =
+		impshort, .slopeLength = 256, .numWaveforms = 5 };
+
 static const Wavetable skipSaw = { .attackSlope = skipsaw, .releaseSlope =
 		skipsaw, .slopeLength = 256, .numWaveforms = 5 };
 
@@ -258,6 +270,11 @@ static const Wavetable quintic_in2quintic_out257 =
 		{ .attackSlope = quintic_in2quintic_out257_slopes, .releaseSlope =
 				quintic_in2quintic_out257_slopes, .slopeLength = 256,
 				.numWaveforms = 9 };
+
+static const Wavetable drum =
+		{ .attackSlope = allLinear, .releaseSlope =
+				allExpo, .slopeLength = 256,
+				.numWaveforms = 5 };
 
 // load each sample from flash to ram with bitshift by 3 and store in bottom halfword
 // store difference between sample and corresponding sample in adjacent waveform in top halfword

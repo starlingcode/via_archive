@@ -1,6 +1,8 @@
 
 #include "meta.h"
 
+int triggerDebounce;
+
 enum
 {	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
 	ENTRY_SIG,    // Entry signal, a state function should perform its entry actions (if any)
@@ -64,11 +66,19 @@ void EXTI1_IRQHandler(void)
 {
 
 	if (EXPANDER_BUTTON_PRESSED) {
-		//uiDispatch(EXPAND_SW_ON_SIG);
-		meta_buttonPressedCallback(&meta_signals);
-	} else {
-		//uiDispatch(EXPAND_SW_OFF_SIG);
-		meta_buttonReleasedCallback(&meta_signals);
+		if (!triggerDebounce) {
+			//uiDispatch(EXPAND_SW_ON_SIG);
+			triggerDebounce = 1;
+			__HAL_TIM_ENABLE(&htim16);
+			meta_buttonPressedCallback(&meta_signals);
+		}
+	} else { //falling edge
+		if (!triggerDebounce) {
+			//uiDispatch(EXPAND_SW_OFF_SIG);
+			triggerDebounce = 1;
+			__HAL_TIM_ENABLE(&htim16);
+			meta_buttonReleasedCallback(&meta_signals);
+		}
 	}
 
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
@@ -86,10 +96,7 @@ void EXTI1_IRQHandler(void)
 void TIM16_IRQHandler(void)
 {
 
-	SH_A_SAMPLE
-	if (RUNTIME_DISPLAY) {
-		LEDA_ON;
-	}
+	triggerDebounce = 0;
 
 	__HAL_TIM_CLEAR_FLAG(&htim16, TIM_FLAG_UPDATE);
 	__HAL_TIM_DISABLE(&htim16);

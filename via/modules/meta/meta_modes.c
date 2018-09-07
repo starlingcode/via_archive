@@ -57,6 +57,7 @@ void meta_handleButton3ModeChange(int mode) {
 			metaControllerParseControls = metaControllerParseControlsAudio;
 			metaControllerGenerateIncrements = metaControllerGenerateIncrementsAudio;
 			meta_signals.meta_parameters->fm = meta_signals.inputs->cv2Samples;
+			meta_signals.wavetable_parameters->morphScale = meta_drumFullScale;
 			meta_drumMode = meta_drumModeOff;
 		}
 		meta_switchWavetable(meta_wavetableArray[mode][TABLE], &meta_signals);
@@ -68,7 +69,7 @@ void meta_handleButton3ModeChange(int mode) {
 		if (LOOP_MODE == noloop) {
 			meta_switchWavetable(meta_wavetableArray[mode][TABLE], &meta_signals);
 			meta_signals.meta_parameters->fm = meta_signals.inputs->cv2Samples;
-			meta_signals.wavetable_parameters->morphMod = meta_signals.inputs->cv3Samples;
+			meta_signals.wavetable_parameters->morphScale = meta_drumFullScale;
 			meta_drumMode = meta_drumModeOff;
 			metaControllerLoopHandler = handleLoopOff;
 			meta_signals.meta_parameters->loopMode = 0;

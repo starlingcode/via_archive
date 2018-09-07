@@ -87,7 +87,7 @@ void outputARise(int signal, int writePosition, audioRateOutputs * output) {
 
 	switch (signal) {
 	case SOFT_GATE_EXECUTE:
-		*outputLevel += 50;
+		*outputLevel += 500;
 		if (*outputLevel >= 4095) {
 			*outputLevel = 4095;
 			manageOutputA = outputAHigh;
@@ -106,7 +106,7 @@ void outputAFall(int signal, int writePosition, audioRateOutputs * output) {
 
 	switch (signal) {
 	case SOFT_GATE_EXECUTE:
-		*outputLevel -= 50;
+		*outputLevel -= 100;
 		if (*outputLevel <= 0) {
 			*outputLevel = 0;
 			manageOutputA = outputALow;
@@ -126,7 +126,7 @@ void outputBRise(int signal, int writePosition, audioRateOutputs * output) {
 
 	switch (signal) {
 	case SOFT_GATE_EXECUTE:
-		*outputLevel += 50;
+		*outputLevel += 500;
 		if (*outputLevel >= 4095) {
 			*outputLevel = 4095;
 			manageOutputB = outputBHigh;
@@ -145,7 +145,7 @@ void outputBFall(int signal, int writePosition, audioRateOutputs * output) {
 
 	switch (signal) {
 	case SOFT_GATE_EXECUTE:
-		*outputLevel -= 50;
+		*outputLevel -= 100;
 		if (*outputLevel <= 0) {
 			*outputLevel = 0;
 			manageOutputB = outputBLow;

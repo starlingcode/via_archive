@@ -104,7 +104,7 @@ void osc_handleButton4Tap(void) {
 	uiTransition(&ui_newMode);
 }
 void osc_handleButton5Tap(void) {
-	TABLE = decrementModeAndStore(TABLE, BUTTON5_MASK, numButton5Modes);
+	TABLE = incrementModeAndStore(TABLE, BUTTON5_MASK, numButton5Modes);
 	osc_handleButton5ModeChange(TABLE);
 	uiClearLEDs();
 	uiSetLEDs(TABLE);

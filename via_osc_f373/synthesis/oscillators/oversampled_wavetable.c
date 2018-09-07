@@ -116,6 +116,7 @@ void oversampledWavetableParsePhase(uint32_t phase,
 		oversampledWavetableParameters * parameters, audioRateOutputs *output) {
 
 	static uint32_t lastPhaseHemisphere;
+	static int lastSample;
 
 	// 1 if phase is greater than half, else 0
 	uint32_t phaseHemisphere = phase >> 24;
@@ -131,30 +132,30 @@ void oversampledWavetableParsePhase(uint32_t phase,
 
 	uint32_t atA;
 	uint32_t atB;
-	if (transition > 0) {
-		atA = reverse;
-		atB = !reverse;
-	} else if (transition < 0) {
+	if (parameters->shOn == 0) {
+			atA = 0;
+			atB = 0;
+	} else if (transition > 0) {
 		atA = !reverse;
 		atB = reverse;
-	} else if (parameters->shOn == 0) {
+	} else if (transition < 0) {
+		atA = reverse;
+		atB = !reverse;
+	} else {
 		atA = 1;
 		atB = 1;
-	} else {
-		atA = 0;
-		atB = 0;
 	}
 
-	// BIG NO-NO, no hardware specific code in the library
+	// generate square wave at A
+	output->logicA[0] = ALOGIC_LOW_MASK << (phaseHemisphere * 16);
 
-//	 generate square wave at A
-	uint32_t aLogicMask = ALOGIC_LOW_MASK << (phaseHemisphere * 16);
-	SET_A_LOGIC(aLogicMask);
+	int delta = ((uint32_t) (output->dac2Samples[0] - lastSample)) >> 31;
+	output->auxLogic[0] = GET_EXPAND_LOGIC_MASK(delta);
 
-	uint32_t shMask = SH_A_SAMPLE_MASK >> (atB * 16);
-	shMask |= SH_B_SAMPLE_MASK >> (atA * 16);
-	SET_SH(shMask);
+	output->shA[0] = SH_A_TRACK_MASK << (atB * 16);
+	output->shB[0] = SH_B_TRACK_MASK << (atA * 16);
 
+	lastSample = output->dac2Samples[0];
 	lastPhaseHemisphere = phaseHemisphere;
 
 }

@@ -45,7 +45,7 @@ void meta_switchWavetable(Wavetable * table, meta_signal_set * signals) {
 
 // declare functions to set the currently active tables
 void meta_initDrum(void) {
-	loadSingleTable15Bit(&gamma257, meta_wavetableReadDrum);
+	loadSingleTable15Bit(&drum, meta_wavetableReadDrum);
 	for (int i = 0; i < 4; i++) {
 		meta_drumFullScale[i] = 32767;
 	}

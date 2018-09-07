@@ -37,34 +37,35 @@ void osc_ioProcessCallback(osc_signal_set * signals) {
 
 void osc_halfTransferCallback(osc_signal_set * signals) {
 
-	EXPAND_LOGIC_HIGH
+	//EXPAND_LOGIC_HIGH
 
 	oversampledWavetableParameters * parameters = signals->parameters;
 	audioRateOutputs * outputs = signals->outputs;
 
+	via_setLogicOut(outputs, 0, runtimeDisplay);
 	uint32_t lastPhase = oversampledWavetableAdvance(parameters, outputs,
 			osc_wavetableRead, osc_phaseDistRead, 0, OSC_BUFFER_SIZE);
 	oversampledWavetableParsePhase(lastPhase, parameters, outputs);
 
-	EXPAND_LOGIC_LOW
-	;
+	//EXPAND_LOGIC_LOW
 
 }
 
 void osc_transferCompleteCallback(osc_signal_set * signals) {
 
-	EXPAND_LOGIC_HIGH
+	//EXPAND_LOGIC_HIGH
 
 	oversampledWavetableParameters * parameters = signals->parameters;
 	audioRateOutputs * outputs = signals->outputs;
 
+	via_setLogicOut(outputs, 0, runtimeDisplay);
 	uint32_t lastPhase = oversampledWavetableAdvance(parameters, outputs,
 			osc_wavetableRead, osc_phaseDistRead, OSC_BUFFER_SIZE,
 			OSC_BUFFER_SIZE);
 	oversampledWavetableParsePhase(lastPhase, parameters, outputs);
 
-	EXPAND_LOGIC_LOW
-	;
+	//EXPAND_LOGIC_LOW
+
 
 }
 

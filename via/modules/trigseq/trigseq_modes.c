@@ -30,6 +30,12 @@ void trigseq_handleButton2ModeChange(int mode) {
 
 	trigseq_signals.parameters->andA = mode;
 
+	if (mode) {
+		trigseq_signals.parameters->outputAEvent = SOFT_GATE_LOW;
+	} else {
+		trigseq_signals.parameters->outputAEvent = SOFT_GATE_HIGH;
+	}
+
 }
 
 void trigseq_handleButton3ModeChange(int mode) {
@@ -60,6 +66,11 @@ void trigseq_handleButton4ModeChange(int mode) {
 void trigseq_handleButton5ModeChange(int mode) {
 
 	trigseq_signals.parameters->andB = mode;
+	if (mode) {
+		trigseq_signals.parameters->outputBEvent = SOFT_GATE_LOW;
+	} else {
+		trigseq_signals.parameters->outputBEvent = SOFT_GATE_HIGH;
+	}
 
 }
 

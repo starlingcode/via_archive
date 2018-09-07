@@ -23,11 +23,13 @@ static inline int singleSampleWavetableIncrementPhase(singleSampleWavetableParam
 
 	// apply FM, which should be 1 at ground (offset is comensated for here)
 
-	int fmAmount = parameters->fm[0];
+	int fmAmount = -parameters->fm[0];
 
 	fmAmount += 65535 - parameters->cv2Offset;
 
-	int increment = fix16_mul(parameters->increment, fmAmount);
+	//int increment = fix16_mul(parameters->increment, fmAmount);
+
+	int increment = parameters->increment;
 
 	// apply phase modulation
 

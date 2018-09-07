@@ -63,10 +63,9 @@ void scanner_halfTransferCallback(scanner_signal_set * signals) {
 		outputs->dac1Samples[i] = 4095 - parameters->altitude[i];
 		outputs->dac3Samples[i] = fix16_mul(parameters->xIndexBuffer[i],
 				parameters->yIndexBuffer[i]) >> 4;
-		outputs->logicA[i] = GET_ALOGIC_MASK(parameters->xDeltaBuffer[i]) |
-				(parameters->yDeltaBuffer[i]);
-		outputs->auxLogic[i] = GET_EXPAND_LOGIC_MASK(parameters->xDeltaBuffer[i] &
+		outputs->logicA[i] = GET_ALOGIC_MASK(parameters->xDeltaBuffer[i] &
 				parameters->yDeltaBuffer[i]);
+		outputs->auxLogic[i] = GET_EXPAND_LOGIC_MASK(outputs->dac3Samples[i] >> 11);
 		outputs->shA[i] = GET_SH_A_MASK(
 				signals->inputs->auxTrigSamples[i]);
 		outputs->shB[i] = GET_SH_B_MASK(
@@ -94,10 +93,10 @@ void scanner_transferCompleteCallback(scanner_signal_set * signals) {
 		outputs->dac1Samples[i + SCANNER_BUFFER_SIZE] = 4095 - parameters->altitude[i];
 		outputs->dac3Samples[i + SCANNER_BUFFER_SIZE] = fix16_mul(parameters->xIndexBuffer[i],
 				parameters->yIndexBuffer[i]) >> 4;
-		outputs->logicA[i + SCANNER_BUFFER_SIZE] = GET_ALOGIC_MASK(parameters->xDeltaBuffer[i] |
+		outputs->logicA[i + SCANNER_BUFFER_SIZE] = GET_ALOGIC_MASK(parameters->xDeltaBuffer[i] &
 				parameters->yDeltaBuffer[i]);
-		outputs->auxLogic[i + SCANNER_BUFFER_SIZE] = GET_EXPAND_LOGIC_MASK(parameters->xDeltaBuffer[i] &
-				parameters->yDeltaBuffer[i]);
+		outputs->auxLogic[i + SCANNER_BUFFER_SIZE] = GET_EXPAND_LOGIC_MASK(
+				outputs->dac3Samples[i + SCANNER_BUFFER_SIZE] >> 11);
 		outputs->shA[i + SCANNER_BUFFER_SIZE] = GET_SH_A_MASK(signals->inputs->auxTrigSamples[i + SCANNER_BUFFER_SIZE]);
 		outputs->shB[i + SCANNER_BUFFER_SIZE] = GET_SH_B_MASK(signals->inputs->auxTrigSamples[i + SCANNER_BUFFER_SIZE]);
 	}
@@ -110,6 +109,13 @@ void scanner_slowConversionCallback(scanner_signal_set * signals) {
 
 	via_updateControlRateInputs(signals->controls);
 	threeAxisScannerParseControls(signals->controls, signals->parameters);
+
+	uint32_t redLevel = abs(signals->parameters->xInput[0] - 32767) >> 4;
+	uint32_t greenLevel = signals->parameters->zIndex >> 7;
+	uint32_t blueLevel = abs(signals->parameters->yInput[0] - 32767) >> 4;
+
+
+	updateRGBDisplay(redLevel, greenLevel, blueLevel);
 
 }
 

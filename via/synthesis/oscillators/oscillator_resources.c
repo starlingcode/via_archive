@@ -149,7 +149,7 @@ void metaControllerParseControlsSeq(controlRateInputs * controls, audioRateInput
 	// t1 is cycle time, t2 is used to feed the duty cycle input for getSamples
 
 	parameters->timeBase1 = fix16_mul(expoTable[4095 - controls->knob1Value] >> 9,
-			expoTable[controls->cv1Value >> 2] >> 9) >> 4;
+			expoTable[controls->cv1Value >> 2] >> 9);
 	parameters->timeBase2 = parameters->timeBase1;
 
 	parameters->dutyCycleBase = controls->knob2Value << 4;
@@ -623,7 +623,7 @@ void simpleEnvelopeParseControls (controlRateInputs * controls, audioRateInputs 
 
 	releaseMod = releaseMod >> 4;
 
-	parameters->attack = 2400000;
+	parameters->attack = 500000;
 	parameters->release = fix16_mul(expoTable[((4095 - controls->knob2Value) >> 2) * 3] >> 8,
 			expoTable[releaseMod] >> 7);
 

@@ -7,7 +7,7 @@
 
 #include "osc.h"
 
-void osc_handleButton1ModeChange(int mode) {
+void osc_handleButton6ModeChange(int mode) {
 
 	switch (mode) {
 	case none:
@@ -66,7 +66,7 @@ void osc_handleButton5ModeChange(int mode) {
 	osc_switchWavetable(osc_wavetableArray[mode], &osc_signals);
 }
 
-void osc_handleButton6ModeChange(int mode) {
+void osc_handleButton1ModeChange(int mode) {
 
 	switch (mode) {
 	case morphCV:

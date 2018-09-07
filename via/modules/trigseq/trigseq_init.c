@@ -28,14 +28,14 @@ void trigseq_init(trigseq_signal_set * signals) {
 
 	trigseq_initializePatterns();
 
-	manageOutputA = outputARise;
-	manageOutputB = outputBRise;
+	manageOutputA = outputAHigh;
+	manageOutputB = outputBHigh;
 
 	signals->parameters->currentABank = trigseq_patternBank[0];
 	signals->parameters->currentBBank = trigseq_patternBank[0];
 
-//	signals->parameters->outputAEvent = SOFT_GATE_HIGH;
-//	signals->parameters->outputBEvent = SOFT_GATE_HIGH;
+	signals->parameters->outputAEvent = SOFT_GATE_EXECUTE;
+	signals->parameters->outputBEvent = SOFT_GATE_EXECUTE;
 
 }
 
