@@ -1,6 +1,7 @@
-23:01:19 **** Clean-only build of configuration Release for project sync ****
+23:42:45 **** Clean-only build of configuration Debug for project sync ****
 make clean 
-make: *** No rule to make target `clean'.  Stop.
+rm -rf *
+ 
 
-23:01:19 Build Finished (took 67ms)
+23:42:45 Build Finished (took 82ms)
 

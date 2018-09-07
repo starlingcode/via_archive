@@ -1,0 +1,6 @@
+02:59:45 **** Incremental Build of configuration Release for project via_hardware ****
+make all 
+make: Nothing to be done for `all'.
+
+02:59:45 Build Finished (took 77ms)
+

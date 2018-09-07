@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;via_trigseq_f373/trigseq_rev5_dismembered.xml&apos; to &apos;via_trigsync_rev5.xml&apos;" description="Rename resource &apos;trigseq_rev5_dismembered.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="trigseq_rev5_dismembered.xml" name="via_trigsync_rev5.xml" stamp="1533104419228" updateReferences="true"/>
+</session>

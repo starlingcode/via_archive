@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<item value="&quot;${workspace_loc:/via_osc_f373/synthesis/inc}&quot;" key="org.eclipse.cdt.utils.ui.controls.FileListControl"/>
+	<item value="Default C source template" key="LastUsedSourceTemplate"/>
+	<item value="Default C header template" key="LastUsedHeaderTemplate"/>
 	<section name="org.eclipse.cdt.ui.OPEN_ACTION_SELECTION_DIALOG_SECTION">
 		<item value="623" key="DIALOG_WIDTH"/>
 		<item value="1|.SF NS Text|11.0|0|COCOA|1|.SFNSText-Regular" key="DIALOG_FONT_NAME"/>
@@ -25,6 +28,36 @@
 		<item value="false" key="caseSensitive"/>
 		<item value="227191" key="searchFlags"/>
 		<list key="previousPatterns">
+			<item value="attack"/>
+			<item value="p_LinRotMT"/>
+			<item value="setSH"/>
+			<item value="LEDC_ON"/>
+			<item value="LEDC_MASK"/>
+			<item value="LEDA_OFF"/>
+			<item value="viaSignalInit"/>
+			<item value="knob2"/>
+			<item value="ARM_MATH_DSP"/>
+			<item value="__FPU_PRESENT"/>
+			<item value="FLASH_OBProgramInitTypeDef"/>
+			<item value="GPIOC"/>
+			<item value="EXPAND_LOGIC_HIGH"/>
+			<item value="hdma_dac1_ch1"/>
+			<item value="DMA1_Channel3"/>
+			<item value="ALOGIC_HIGH"/>
+			<item value="Prefetch_Enable"/>
+			<item value="HAL_NVIC_SetPriority"/>
+			<item value="DMA_TypeDef"/>
+			<item value="initializeVirtualGround"/>
+			<item value="VirtAddVarTab"/>
+			<item value="htim16"/>
+			<item value="aResample"/>
+			<item value="button1Modes"/>
+			<item value="handleButton1Tap"/>
+			<item value="handleButton1ModeChange"/>
+			<item value="button1Mode"/>
+			<item value="SH_A_MODE"/>
+			<item value="SET_GREEN_LED"/>
+			<item value="htim2"/>
 			<item value="SET_SAMPLE_A"/>
 			<item value="shAMode"/>
 			<item value="GPIOC_BASE"/>
@@ -57,6 +90,9 @@
 		<item value="false" key="comment"/>
 		<item value="false" key="exhausiveFileSearch"/>
 		<item value="false" key="macroDefinition"/>
+	</section>
+	<section name="OptionalMessageDialog.hide.">
+		<item value="0" key="askReindex.detail"/>
 	</section>
 	<section name="completion_proposal_size">
 	</section>

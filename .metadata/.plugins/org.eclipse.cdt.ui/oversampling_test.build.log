@@ -1,0 +1,447 @@
+05:17:55 **** Incremental Build of configuration Release for project oversampling_test ****
+make all 
+Building file: ../startup/startup_stm32f373xc.s
+Invoking: MCU GCC Assembler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-as -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -o "startup/startup_stm32f373xc.o" "../startup/startup_stm32f373xc.s"
+Finished building: ../startup/startup_stm32f373xc.s
+ 
+Building file: ../Src/adc.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/adc.d" -MT"Src/adc.o" -o "Src/adc.o" "../Src/adc.c"
+Finished building: ../Src/adc.c
+ 
+Building file: ../Src/dac.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/dac.d" -MT"Src/dac.o" -o "Src/dac.o" "../Src/dac.c"
+Finished building: ../Src/dac.c
+ 
+Building file: ../Src/dma.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/dma.d" -MT"Src/dma.o" -o "Src/dma.o" "../Src/dma.c"
+Finished building: ../Src/dma.c
+ 
+Building file: ../Src/gpio.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/gpio.d" -MT"Src/gpio.o" -o "Src/gpio.o" "../Src/gpio.c"
+Finished building: ../Src/gpio.c
+ 
+Building file: ../Src/main.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
+../Src/main.c: In function 'main':
+../Src/main.c:169:32: warning: passing argument 2 of 'HAL_SDADC_Start_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_SDADC_Start_DMA(&hsdadc1, cv2, 16);
+                                ^~~
+In file included from /Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/stm32f3xx_hal_conf.h:292:0,
+                 from /Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:46,
+                 from ../Src/main.c:51:
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_sdadc.h:630:19: note: expected 'uint32_t * {aka long unsigned int *}' but argument is of type 'int16_t * {aka short int *}'
+ HAL_StatusTypeDef HAL_SDADC_Start_DMA(SDADC_HandleTypeDef *hsdadc, uint32_t *pData, uint32_t Length);
+                   ^~~~~~~~~~~~~~~~~~~
+../Src/main.c:170:32: warning: passing argument 2 of 'HAL_SDADC_Start_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_SDADC_Start_DMA(&hsdadc2, cv3, 16);
+                                ^~~
+In file included from /Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/stm32f3xx_hal_conf.h:292:0,
+                 from /Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:46,
+                 from ../Src/main.c:51:
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_sdadc.h:630:19: note: expected 'uint32_t * {aka long unsigned int *}' but argument is of type 'int16_t * {aka short int *}'
+ HAL_StatusTypeDef HAL_SDADC_Start_DMA(SDADC_HandleTypeDef *hsdadc, uint32_t *pData, uint32_t Length);
+                   ^~~~~~~~~~~~~~~~~~~
+Finished building: ../Src/main.c
+ 
+Building file: ../Src/sdadc.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/sdadc.d" -MT"Src/sdadc.o" -o "Src/sdadc.o" "../Src/sdadc.c"
+Finished building: ../Src/sdadc.c
+ 
+Building file: ../Src/simple_wavetable.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/simple_wavetable.d" -MT"Src/simple_wavetable.o" -o "Src/simple_wavetable.o" "../Src/simple_wavetable.c"
+../Src/simple_wavetable.c: In function 'renderBuffer0':
+../Src/simple_wavetable.c:74:13: warning: unused variable 'buffer2' [-Wunused-variable]
+  uint32_t * buffer2 = dacBuffer2;
+             ^~~~~~~
+../Src/simple_wavetable.c:73:13: warning: unused variable 'buffer1' [-Wunused-variable]
+  uint32_t * buffer1 = dacBuffer1;
+             ^~~~~~~
+../Src/simple_wavetable.c:71:13: warning: unused variable 'pwmTable2' [-Wunused-variable]
+  uint32_t * pwmTable2 = phaseModPWMTables[pwmIndex + 1];
+             ^~~~~~~~~
+../Src/simple_wavetable.c:70:13: warning: unused variable 'pwmTable1' [-Wunused-variable]
+  uint32_t * pwmTable1 = phaseModPWMTables[pwmIndex];
+             ^~~~~~~~~
+../Src/simple_wavetable.c:69:11: warning: unused variable 'pwmFrac' [-Wunused-variable]
+  uint32_t pwmFrac = (pwm & 0b00000000000000001111111) << 8;
+           ^~~~~~~
+../Src/simple_wavetable.c: In function 'renderBuffer1':
+../Src/simple_wavetable.c:136:13: warning: unused variable 'buffer2' [-Wunused-variable]
+  uint32_t * buffer2 = dacBuffer2;
+             ^~~~~~~
+../Src/simple_wavetable.c:135:13: warning: unused variable 'buffer1' [-Wunused-variable]
+  uint32_t * buffer1 = dacBuffer1;
+             ^~~~~~~
+../Src/simple_wavetable.c:133:13: warning: unused variable 'pwmTable2' [-Wunused-variable]
+  uint32_t * pwmTable2 = phaseModPWMTables[pwmIndex + 1];
+             ^~~~~~~~~
+../Src/simple_wavetable.c:132:13: warning: unused variable 'pwmTable1' [-Wunused-variable]
+  uint32_t * pwmTable1 = phaseModPWMTables[pwmIndex];
+             ^~~~~~~~~
+../Src/simple_wavetable.c:131:11: warning: unused variable 'pwmFrac' [-Wunused-variable]
+  uint32_t pwmFrac = (pwm & 0b00000000000000001111111) << 8;
+           ^~~~~~~
+../Src/simple_wavetable.c: In function 'handleConversionSlow':
+../Src/simple_wavetable.c:208:11: warning: variable 'cv1Value' set but not used [-Wunused-but-set-variable]
+  uint32_t cv1Value;
+           ^~~~~~~~
+../Src/simple_wavetable.c: In function 'sdadcOffsetCalibration':
+../Src/simple_wavetable.c:248:20: warning: variable 'obStatus' set but not used [-Wunused-but-set-variable]
+  HAL_StatusTypeDef obStatus;
+                    ^~~~~~~~
+In file included from ../Src/simple_wavetable.c:10:0:
+At top level:
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7175:24: warning: 'quintic_inout2quintic_outin257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7171:24: warning: 'tenor257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Rls[5] = {
+                        ^~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7167:24: warning: 'soprano257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Atk[5] = {
+                        ^~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7162:24: warning: 'exciteBikeAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeAttackFamily[9] = {
+                        ^~~~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7157:24: warning: 'sinwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *sinwavefold_257_Family[9] = {
+                        ^~~~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7152:24: warning: 'trioddAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddAttackFamily[9] = {
+                        ^~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7148:24: warning: 'testRMSRMSAtk' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSAtk[5] = {
+                        ^~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7143:24: warning: 'exciteBikeReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *exciteBikeReleaseFamily[9] = {
+                        ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7139:24: warning: 'linwavefold_257_Family' defined but not used [-Wunused-variable]
+ static const uint16_t *linwavefold_257_Family[5] = {
+                        ^~~~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7135:24: warning: 'soprano257Rls' defined but not used [-Wunused-variable]
+ static const uint16_t *soprano257Rls[5] = {
+                        ^~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7131:24: warning: 'sawBendAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendAttackFamily[5] = {
+                        ^~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7127:24: warning: 'sawBendReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *sawBendReleaseFamily[5] = {
+                        ^~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7123:24: warning: 'testRMSRMSRls' defined but not used [-Wunused-variable]
+ static const uint16_t *testRMSRMSRls[5] = {
+                        ^~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7118:24: warning: 'quintic_in2quintic_out257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_in2quintic_out257_slopes[9] = {
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7113:24: warning: 'moogSquareShiftAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftAttackFamily[9] = {
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7108:24: warning: 'moogSquareShiftReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7103:24: warning: 'impshort' defined but not used [-Wunused-variable]
+ static const uint16_t *impshort[9] = {
+                        ^~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7099:24: warning: 'algerianAttackFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianAttackFamily[5] = {
+                        ^~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7094:24: warning: 'quintic_outin2quintic_inout257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_outin2quintic_inout257_slopes[9] = {
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7090:24: warning: 'circular_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *circular_257_slopes[5] = {
+                        ^~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7085:24: warning: 'quintic_out2quintic_in257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7080:24: warning: 'trioddReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *trioddReleaseFamily[9] = {
+                        ^~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7076:24: warning: 'algerianReleaseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *algerianReleaseFamily[5] = {
+                        ^~~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7071:24: warning: 'gamma257Attack' defined but not used [-Wunused-variable]
+ static const uint16_t *gamma257Attack[9] = {
+                        ^~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7067:24: warning: 'additive_tri_to_pulseFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *additive_tri_to_pulseFamily[5] = {
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7063:24: warning: 'newBounceFamily' defined but not used [-Wunused-variable]
+ static const uint16_t *newBounceFamily[5] = {
+                        ^~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7059:24: warning: 'bounce_257_slopes' defined but not used [-Wunused-variable]
+ static const uint16_t *bounce_257_slopes[5] = {
+                        ^~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7055:24: warning: 'tenor257Atk' defined but not used [-Wunused-variable]
+ static const uint16_t *tenor257Atk[5] = {
+                        ^~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc/tables.h:7051:24: warning: 'skipsaw' defined but not used [-Wunused-variable]
+ static const uint16_t *skipsaw[5] = {
+                        ^~~~~~~
+Finished building: ../Src/simple_wavetable.c
+ 
+Building file: ../Src/stm32f3xx_hal_msp.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/stm32f3xx_hal_msp.d" -MT"Src/stm32f3xx_hal_msp.o" -o "Src/stm32f3xx_hal_msp.o" "../Src/stm32f3xx_hal_msp.c"
+Finished building: ../Src/stm32f3xx_hal_msp.c
+ 
+Building file: ../Src/stm32f3xx_it.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/stm32f3xx_it.d" -MT"Src/stm32f3xx_it.o" -o "Src/stm32f3xx_it.o" "../Src/stm32f3xx_it.c"
+Finished building: ../Src/stm32f3xx_it.c
+ 
+Building file: ../Src/stmCriticalSection.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/stmCriticalSection.d" -MT"Src/stmCriticalSection.o" -o "Src/stmCriticalSection.o" "../Src/stmCriticalSection.c"
+Finished building: ../Src/stmCriticalSection.c
+ 
+Building file: ../Src/system_stm32f3xx.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/system_stm32f3xx.d" -MT"Src/system_stm32f3xx.o" -o "Src/system_stm32f3xx.o" "../Src/system_stm32f3xx.c"
+Finished building: ../Src/system_stm32f3xx.c
+ 
+Building file: ../Src/tim.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/tim.d" -MT"Src/tim.o" -o "Src/tim.o" "../Src/tim.c"
+Finished building: ../Src/tim.c
+ 
+Building file: ../Src/touchsensing.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/touchsensing.d" -MT"Src/touchsensing.o" -o "Src/touchsensing.o" "../Src/touchsensing.c"
+Finished building: ../Src/touchsensing.c
+ 
+Building file: ../Src/tsc.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/tsc.d" -MT"Src/tsc.o" -o "Src/tsc.o" "../Src/tsc.c"
+Finished building: ../Src/tsc.c
+ 
+Building file: ../Src/tsl_user.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Src/tsl_user.d" -MT"Src/tsl_user.o" -o "Src/tsl_user.o" "../Src/tsl_user.c"
+Finished building: ../Src/tsl_user.c
+ 
+Building file: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Middlewares/ST/STM32_TouchSensing_Library/src/tsl.d" -MT"Middlewares/ST/STM32_TouchSensing_Library/src/tsl.o" -o "Middlewares/ST/STM32_TouchSensing_Library/src/tsl.o" "../Middlewares/ST/STM32_TouchSensing_Library/src/tsl.c"
+Finished building: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl.c
+ 
+Building file: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_acq.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_acq.d" -MT"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_acq.o" -o "Middlewares/ST/STM32_TouchSensing_Library/src/tsl_acq.o" "../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_acq.c"
+Finished building: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_acq.c
+ 
+Building file: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_acq_tsc.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_acq_tsc.d" -MT"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_acq_tsc.o" -o "Middlewares/ST/STM32_TouchSensing_Library/src/tsl_acq_tsc.o" "../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_acq_tsc.c"
+Finished building: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_acq_tsc.c
+ 
+Building file: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_dxs.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_dxs.d" -MT"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_dxs.o" -o "Middlewares/ST/STM32_TouchSensing_Library/src/tsl_dxs.o" "../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_dxs.c"
+Finished building: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_dxs.c
+ 
+Building file: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_ecs.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_ecs.d" -MT"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_ecs.o" -o "Middlewares/ST/STM32_TouchSensing_Library/src/tsl_ecs.o" "../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_ecs.c"
+Finished building: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_ecs.c
+ 
+Building file: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_filter.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_filter.d" -MT"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_filter.o" -o "Middlewares/ST/STM32_TouchSensing_Library/src/tsl_filter.o" "../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_filter.c"
+Finished building: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_filter.c
+ 
+Building file: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_globals.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_globals.d" -MT"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_globals.o" -o "Middlewares/ST/STM32_TouchSensing_Library/src/tsl_globals.o" "../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_globals.c"
+Finished building: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_globals.c
+ 
+Building file: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_linrot.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_linrot.d" -MT"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_linrot.o" -o "Middlewares/ST/STM32_TouchSensing_Library/src/tsl_linrot.o" "../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_linrot.c"
+Finished building: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_linrot.c
+ 
+Building file: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_object.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_object.d" -MT"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_object.o" -o "Middlewares/ST/STM32_TouchSensing_Library/src/tsl_object.o" "../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_object.c"
+Finished building: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_object.c
+ 
+Building file: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_time.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_time.d" -MT"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_time.o" -o "Middlewares/ST/STM32_TouchSensing_Library/src/tsl_time.o" "../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_time.c"
+Finished building: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_time.c
+ 
+Building file: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_touchkey.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_touchkey.d" -MT"Middlewares/ST/STM32_TouchSensing_Library/src/tsl_touchkey.o" -o "Middlewares/ST/STM32_TouchSensing_Library/src/tsl_touchkey.o" "../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_touchkey.c"
+Finished building: ../Middlewares/ST/STM32_TouchSensing_Library/src/tsl_touchkey.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc_ex.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc_ex.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc_ex.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc_ex.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc_ex.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc_ex.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_cortex.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_cortex.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_cortex.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_cortex.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_cortex.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_cortex.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac_ex.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac_ex.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac_ex.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac_ex.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac_ex.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac_ex.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dma.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dma.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dma.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dma.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dma.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dma.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash_ex.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash_ex.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash_ex.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash_ex.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash_ex.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash_ex.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_gpio.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_gpio.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_gpio.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_gpio.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_gpio.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_gpio.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c_ex.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c_ex.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c_ex.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c_ex.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c_ex.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c_ex.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc_ex.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc_ex.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc_ex.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc_ex.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc_ex.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc_ex.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_sdadc.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_sdadc.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_sdadc.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_sdadc.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_sdadc.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_sdadc.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim_ex.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim_ex.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim_ex.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim_ex.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim_ex.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim_ex.c
+ 
+Building file: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tsc.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/oversampling_test/Drivers/CMSIS/Include"  -O3 -funroll-loops -g3 -Wall -fmessage-length=0 -ffunction-sections -fdata-sections -c -fmessage-length=0 -MMD -MP -MF"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tsc.d" -MT"Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tsc.o" -o "Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tsc.o" "../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tsc.c"
+Finished building: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tsc.c
+ 
+Building target: oversampling_test.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F373CCTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "oversampling_test.elf" @"objects.list"   -lm
+Finished building target: oversampling_test.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "oversampling_test.elf" "oversampling_test.bin"
+arm-none-eabi-size "oversampling_test.elf"
+   text	   data	    bss	    dec	    hex	filename
+  20760	     48	   9208	  30016	   7540	oversampling_test.elf
+ 
+
+05:18:06 Build Finished (took 10s.887ms)
+

@@ -1,0 +1,200 @@
+#ifndef REV5_HARDWARE_IO
+#define REV5_HARDWARE_IO
+
+#include "main.h"
+#include "stm32f3xx_hal.h"
+
+/**
+ * Hardware IO Macros
+ */
+
+// THESE PROVIDE PLATFORM LINKAGE //
+// ONLY USE IN STATIC INLINES OR DEFINES //
+// THESE MAKE COMPILED CODE PLATFORM SPECIFIC //
+// LEDs
+// RGB PWM timers
+extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim5;
+
+#define SET_RED_LED(X) __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, X);
+#define SET_GREEN_LED(X) __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, X);
+#define SET_BLUE_LED(X) __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, X);
+
+static inline void updateRGBDisplay(uint32_t red, uint32_t green, uint32_t blue) {
+
+	SET_RED_LED(red);
+	SET_GREEN_LED(green);
+	SET_BLUE_LED(blue);
+
+}
+
+#define LEDA_ON GPIOF->BSRR = (uint32_t)GPIO_PIN_7;
+#define LEDA_OFF GPIOF->BRR = (uint32_t)GPIO_PIN_7;
+
+#define LEDB_ON GPIOC->BSRR = (uint32_t)GPIO_PIN_14;
+#define LEDB_OFF GPIOC->BRR = (uint32_t)GPIO_PIN_14;
+
+#define LEDC_ON GPIOA->BSRR = (uint32_t)GPIO_PIN_2;
+#define LEDC_OFF GPIOA->BRR = (uint32_t)GPIO_PIN_2;
+
+#define LEDD_ON GPIOB->BSRR = (uint32_t)GPIO_PIN_2;
+#define LEDD_OFF GPIOB->BRR = (uint32_t)GPIO_PIN_2;
+
+static inline void setLEDA(int setReset) {
+	GPIOF->BSRR = ((uint32_t) GPIO_PIN_7) << (16 * (!setReset));
+}
+
+static inline void setLEDB(int setReset) {
+	GPIOC->BSRR = ((uint32_t) GPIO_PIN_14) << (16 * (!setReset));
+}
+
+static inline void setLEDC(int setReset) {
+	GPIOA->BSRR = ((uint32_t) GPIO_PIN_2) << (16 * (!setReset));
+}
+
+static inline void setLEDD(int setReset) {
+	GPIOB->BSRR = ((uint32_t) GPIO_PIN_2) << (16 * (!setReset));
+}
+
+// Logic outs
+
+#define ALOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+#define ALOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
+
+#define BLOGIC_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_15;
+#define BLOGIC_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_15;
+
+#define REV2_GATE_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_11;
+#define REV2_GATE_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_11;
+
+#define EXPAND_LOGIC_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
+#define EXPAND_LOGIC_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
+
+// Sample and holds
+
+#define SH_A_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_8;
+#define SH_A_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_8;
+
+#define SH_B_SAMPLE GPIOB->BRR = (uint32_t)GPIO_PIN_9;
+#define SH_B_TRACK GPIOB->BSRR = (uint32_t)GPIO_PIN_9;
+
+// Variable GPIO handling functions
+
+#define ALOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_13 << 16)
+#define ALOGIC_LOW_MASK (uint32_t)GPIO_PIN_13
+//#define BLOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_15 << 16)
+//#define BLOGIC_LOW_MASK (uint32_t)GPIO_PIN_15
+
+#define GET_ALOGIC_MASK(X) (ALOGIC_LOW_MASK << (16*(X)))
+//#define GET_BLOGIC_MASK(X) (BLOGIC_LOW_MASK << (16*X))
+#define SET_A_LOGIC(X) GPIOC->BSRR = X;
+
+#define EXPAND_LOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_12 << 16)
+#define EXPAND_LOGIC_LOW_MASK (uint32_t)GPIO_PIN_12
+
+#define GET_EXPAND_LOGIC_MASK(X) (EXPAND_LOGIC_LOW_MASK << (16*(X)))
+#define SET_EXPAND_LOGIC(X) GPIOA->BSRR = X;
+
+#define SH_B_SAMPLE_MASK ((uint32_t)GPIO_PIN_9 << 16)
+#define SH_B_TRACK_MASK (uint32_t)GPIO_PIN_9
+#define SH_A_SAMPLE_MASK ((uint32_t)GPIO_PIN_8 << 16)
+#define SH_A_TRACK_MASK (uint32_t)GPIO_PIN_8
+
+#define GET_SH_A_MASK(X) (SH_A_TRACK_MASK << (16*(X)))
+#define GET_SH_B_MASK(X) (SH_B_TRACK_MASK << (16*(X)))
+
+#define SET_SH(X) GPIOB->BSRR = X;
+
+#define SET_LEDA(X) GPIOF->BSRR = X;
+
+#define GPIO_NOP 0
+
+static inline void setLogicA(int setReset) {
+	GPIOC->BSRR = ((uint32_t) GPIO_PIN_13) << (16 * setReset);
+}
+
+static inline void setAuxLogic(int setReset) {
+	GPIOA->BSRR = ((uint32_t) GPIO_PIN_12) << (16 * setReset);
+}
+
+#define SH_SAMPLE 1
+#define SH_TRACK 0
+
+static inline void setSH(int shA, int shB) {
+
+	uint32_t mask = (uint32_t) GPIO_PIN_8 << (16 * shA);
+	mask |= (uint32_t) GPIO_PIN_9 << (16 * shB);
+
+	GPIOB->BSRR = mask;
+}
+
+static inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t auxLogic,
+		uint32_t shA, uint32_t shB) {
+
+	// LEDA_HIGH_MASK -> SH_A_SAMPLE_MASK >> 16 >> 1 (pin 8 to pin 7, F)
+	// LEDB_HIGH_MASK -> SH_B_SAMPLE_MASK >> 16 << 5 (pin 9 to pin 14, C)
+	// LEDC_HIGH_MASK -> ALOGIC_HIGH_MASK >> 16 >> 11 (pin 13 to pin 2, A)
+	// LEDD_HIGH_MASK -> BLOGIC_HIGH_MASK >> 16 >> 13 (pin 15 to pin 2, B)
+
+#define LEDA_MASK (__ROR(shA, 16) >> 1)
+#define LEDB_MASK (__ROR(shB, 16) << 5)
+#define LEDC_MASK (__ROR(logicA, 16) >> 11)
+
+	//combine the mask variables for a shared GPIO group with a bitwise or
+	SET_A_LOGIC(logicA | LEDB_MASK);
+
+	SET_EXPAND_LOGIC(auxLogic | LEDC_MASK);
+
+	SET_SH(shA | shB);
+
+	SET_LEDA(LEDA_MASK);
+
+}
+
+static inline void setLogicOutputsLEDOff(uint32_t logicA,
+		uint32_t auxLogic, uint32_t shA, uint32_t shB) {
+
+	//combine the mask variables for a shared GPIO group with a bitwise or
+	SET_A_LOGIC(logicA);
+
+	SET_EXPAND_LOGIC(auxLogic);
+
+	SET_SH(shA | shB);
+
+}
+
+// DAC register address
+
+#define DAC1_ADDR     1073771528
+#define DAC2_ADDR     1073771540
+#define DAC3_ADDR     1073780744
+
+#define WRITE_DAC1(X) ((*(volatile uint32_t *) DAC1_ADDR) = X);
+#define WRITE_DAC2(X) ((*(volatile uint32_t *) DAC2_ADDR) = X);
+#define WRITE_DAC3(X) ((*(volatile uint32_t *) DAC3_ADDR) = X);
+
+// Trigger input and button "high" (inverted in hardware)
+
+#define TRIGGER_RISING_EDGE ((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET)
+#define EXPANDER_RISING_EDGE ((GPIOA->IDR & GPIO_PIN_11) == (uint32_t) GPIO_PIN_RESET)
+#define EXPANDER_BUTTON_PRESSED ((GPIOB->IDR & GPIO_PIN_1) == (uint32_t) GPIO_PIN_RESET)
+
+/*
+ * Touch sensors
+ */
+
+#define BUTTON2SENSOR MyTKeys[0].p_Data->StateId
+#define BUTTON1SENSOR MyTKeys[1].p_Data->StateId
+#define BUTTON3SENSOR MyTKeys[2].p_Data->StateId
+#define BUTTON4SENSOR MyTKeys[0].p_Data->StateId
+#define BUTTON6SENSOR MyTKeys[1].p_Data->StateId
+#define BUTTON5SENSOR MyTKeys[2].p_Data->StateId
+
+#define PRESSED TSL_STATEID_DETECT
+#define RELEASED TSL_STATEID_RELEASE
+
+// UI timer
+extern TIM_HandleTypeDef htim7;
+
+#endif

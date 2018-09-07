@@ -1,0 +1,7 @@
+01:18:07 **** Clean-only build of configuration Debug for project via_video_sync ****
+make clean 
+rm -rf *
+ 
+
+01:18:08 Build Finished (took 109ms)
+

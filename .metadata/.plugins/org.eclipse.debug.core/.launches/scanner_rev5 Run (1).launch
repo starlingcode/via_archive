@@ -15,8 +15,8 @@
 <stringAttribute key="fr.ac6.mcu.ide.OPENOCD_SCRIPT_CHOICE" value="automated"/>
 <stringAttribute key="fr.ac6.mcu.ide.OPENOCD_SCRIPT_IS_LEGACY" value="false"/>
 <intAttribute key="org.eclipse.cdt.debug.gdbjtag.core.delay" value="3"/>
-<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doHalt" value="true"/>
-<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doReset" value="true"/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doHalt" value="false"/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doReset" value="false"/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value=""/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageOffset" value=""/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.initCommands" value="monitor reset halt"/>
@@ -41,6 +41,7 @@
 <stringAttribute key="org.eclipse.cdt.dsf.gdb.DEBUG_NAME" value="${openstm32_compiler_path}/arm-none-eabi-gdb"/>
 <intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="2"/>
 <stringAttribute key="org.eclipse.cdt.launch.COREFILE_PATH" value=""/>
+<stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_REGISTER_GROUPS" value=""/>
 <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="Debug/scanner_rev5.elf"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="scanner_rev5"/>
 <booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="true"/>
@@ -51,5 +52,6 @@
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="4"/>
 </listAttribute>
+<stringAttribute key="org.eclipse.dsf.launch.MEMORY_BLOCKS" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;memoryBlockExpressionList context=&quot;reserved-for-future-use&quot;/&gt;&#10;"/>
 <stringAttribute key="process_factory_id" value="fr.ac6.mcu.debug.launching.MCUGdbProcessFactory"/>
 </launchConfiguration>

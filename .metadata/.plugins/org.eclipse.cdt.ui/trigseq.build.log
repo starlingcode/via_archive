@@ -1,7 +1,6 @@
-23:01:19 **** Clean-only build of configuration Release for project trigseq ****
+23:42:45 **** Clean-only build of configuration Release for project trigseq ****
 make clean 
-rm -rf *
- 
+make: *** No rule to make target `clean'.  Stop.
 
-23:01:19 Build Finished (took 69ms)
+23:42:45 Build Finished (took 84ms)
 

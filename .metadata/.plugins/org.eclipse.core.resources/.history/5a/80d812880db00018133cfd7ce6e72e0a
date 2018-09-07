@@ -1,0 +1,95 @@
+#include "scanner.h"
+
+void scanner_mainRisingEdgeCallback(scanner_signal_set * signals) {
+
+
+
+}
+
+void scanner_mainFallingEdgeCallback(scanner_signal_set * signals) {
+
+}
+
+void scanner_auxRisingEdgeCallback(scanner_signal_set * signals) {
+	;
+}
+void scanner_auxFallingEdgeCallback(scanner_signal_set * signals) {
+	;
+}
+
+void scanner_buttonPressedCallback(scanner_signal_set * signals) {
+	;
+}
+void scanner_buttonReleasedCallback(scanner_signal_set * signals) {
+	;
+}
+
+void scanner_ioProcessCallback(scanner_signal_set * signals) {
+
+	static int readIndex;
+
+	via_setLogicOut(signals->outputs, readIndex, runtimeDisplay);
+
+	readIndex++;
+
+	readIndex &= SCANNER_BUFFER_SIZE*2 - 1;
+
+}
+
+void scanner_halfTransferCallback(scanner_signal_set * signals) {
+
+	audioRateOutputs * outputs = signals->outputs;
+	threeAxisScannerParameters * parameters = signals->parameters;
+
+	threeAxisScannerFillBuffer(signals->inputs, signals->controls, parameters,
+			&scanner_wavetableXRead, &scanner_wavetableYRead,
+			0, SCANNER_BUFFER_SIZE);
+
+	for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
+		outputs->dac2Samples[i] = parameters->altitude[i];
+		outputs->dac1Samples[i] = 4095 - parameters->altitude[i];
+		outputs->dac3Samples[i] = fix16_mul(parameters->xIndexBuffer[i],
+				parameters->yIndexBuffer[i]) >> 4;
+		outputs->logicA[i] = GET_ALOGIC_MASK(parameters->xDeltaBuffer[i]) |
+				(parameters->yDeltaBuffer[i]);
+		outputs->auxLogic[i] = GET_EXPAND_LOGIC_MASK(parameters->xDeltaBuffer[i] &
+				parameters->yDeltaBuffer[i]);
+		outputs->shA[i] = GET_SH_A_MASK(parameters->xIndexBuffer[i] >> 15);
+		outputs->shB[i] = GET_SH_B_MASK(parameters->xIndexBuffer[i] >> 15);
+	}
+
+}
+
+void scanner_transferCompleteCallback(scanner_signal_set * signals) {
+
+	audioRateOutputs * outputs = signals->outputs;
+	threeAxisScannerParameters * parameters = signals->parameters;
+
+	threeAxisScannerFillBuffer(signals->inputs, signals->controls, parameters,
+			&scanner_wavetableXRead, &scanner_wavetableYRead,
+			SCANNER_BUFFER_SIZE, SCANNER_BUFFER_SIZE);
+
+	for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
+		outputs->dac2Samples[i + SCANNER_BUFFER_SIZE] = parameters->altitude[i];
+		outputs->dac1Samples[i + SCANNER_BUFFER_SIZE] = 4095 - parameters->altitude[i];
+		outputs->dac3Samples[i + SCANNER_BUFFER_SIZE] = fix16_mul(parameters->xIndexBuffer[i],
+				parameters->yIndexBuffer[i]) >> 4;
+		outputs->logicA[i + SCANNER_BUFFER_SIZE] = GET_ALOGIC_MASK(parameters->xDeltaBuffer[i] |
+				parameters->yDeltaBuffer[i]);
+		outputs->auxLogic[i + SCANNER_BUFFER_SIZE] = GET_EXPAND_LOGIC_MASK(parameters->xDeltaBuffer[i] &
+				parameters->yDeltaBuffer[i]);
+		outputs->shA[i + SCANNER_BUFFER_SIZE] = GET_SH_A_MASK(parameters->xIndexBuffer[i] >> 15);
+		outputs->shB[i + SCANNER_BUFFER_SIZE] = GET_SH_B_MASK(parameters->xIndexBuffer[i] >> 15);
+	}
+
+
+
+}
+
+void scanner_slowConversionCallback(scanner_signal_set * signals) {
+
+	via_updateControlRateInputs(signals->controls);
+	threeAxisScannerParseControls(signals->controls, signals->parameters);
+
+}
+

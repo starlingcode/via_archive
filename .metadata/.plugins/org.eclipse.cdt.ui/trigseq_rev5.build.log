@@ -1,0 +1,7 @@
+02:48:59 **** Clean-only build of configuration Release for project trigseq_rev5 ****
+make clean 
+rm -rf *
+ 
+
+02:48:59 Build Finished (took 87ms)
+

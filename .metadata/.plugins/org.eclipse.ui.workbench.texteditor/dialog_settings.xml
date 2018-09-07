@@ -2,37 +2,37 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="Slope" key="selection"/>
+		<item value="int xIndex, int yIndex, int zIndex, int * xTable,&#x0A;&#x09;&#x09;int*yTable, " key="selection"/>
 		<item value="true" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="true" key="wholeword"/>
 		<list key="findhistory">
-			<item value="Family"/>
-			<item value="EXTI15_10_IRQHandler"/>
-			<item value="_HIGH_"/>
-			<item value="int *, logicHandler *"/>
-			<item value="incrementValues2"/>
-			<item value="incrementValues1"/>
-			<item value="int i"/>
-			<item value="(gateValues[i], previousPhaseEvent, incrementValues1[i], incrementValues2[i])"/>
+			<item value="int xIndex, int yIndex, int zIndex, int * xTable,&#x0A;&#x09;&#x09;int*yTable, int * xDelta, int * yDelta"/>
+			<item value="int * xIndexBuffer, int * yIndexBuffer, int zIndex,&#x0A;&#x09;&#x09;int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,&#x0A;&#x09;&#x09;uint32_t writePosition, uint32_t samplesRemaining"/>
+			<item value="int * xIndexBuffer, int * yIndexBuffer, int zIndex,"/>
+			<item value="!FREQ_MODE"/>
+			<item value="!LOOP_MODE"/>
+			<item value="parameters"/>
+			<item value="Button"/>
+			<item value="//&#x09;switch (mode) {"/>
 		</list>
 		<list key="replacehistory">
-			<item value="Slope"/>
-			<item value=""/>
-			<item value="_ON_"/>
-			<item value="_LOW_"/>
-			<item value="q31_t * phaseEvents, audioRateOutputs * output"/>
-			<item value="releaseIncrements"/>
-			<item value="attackIncrements"/>
-			<item value="int i = 0"/>
+			<item value="int xIndex, int yIndex, int zIndex, int * xTable,&#x0A;&#x09;&#x09;int*yTable, "/>
+			<item value="int * xIndexBuffer, int * yIndexBuffer, int zIndex,&#x0A;&#x09;&#x09;int * xTable, int * yTable, uint32_t * output,&#x0A;&#x09;&#x09;uint32_t writePosition, uint32_t samplesRemaining"/>
+			<item value="FREQ_MODE == audio"/>
+			<item value="LOOP_MODE == noloop"/>
+			<item value="LOOP_MODE == noLoop"/>
+			<item value="wavetable_parameters"/>
+			<item value="Aux"/>
+			<item value="sync"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="583" key="DIALOG_WIDTH"/>
+		<item value="624" key="DIALOG_WIDTH"/>
 		<item value="1|.SF NS Text|11.0|0|COCOA|1|.SFNSText-Regular" key="DIALOG_FONT_NAME"/>
-		<item value="610" key="DIALOG_HEIGHT"/>
-		<item value="828" key="DIALOG_X_ORIGIN"/>
-		<item value="228" key="DIALOG_Y_ORIGIN"/>
+		<item value="405" key="DIALOG_HEIGHT"/>
+		<item value="963" key="DIALOG_X_ORIGIN"/>
+		<item value="226" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

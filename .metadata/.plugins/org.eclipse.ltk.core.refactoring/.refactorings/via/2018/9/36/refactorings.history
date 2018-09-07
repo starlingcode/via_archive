@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;via/modules/sync/meta_aux_outputs.c&apos; to &apos;sync_aux_outputs.c&apos;" description="Rename resource &apos;meta_aux_outputs.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="modules/sync/meta_aux_outputs.c" name="sync_aux_outputs.c" stamp="1535970768602" updateReferences="true"/>
+</session>

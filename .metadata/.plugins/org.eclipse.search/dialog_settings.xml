@@ -7,20 +7,44 @@
 		<item value="1000" key="org.eclipse.search.resultpage.limit"/>
 	</section>
 	<section name="TextSearchPage">
-		<item value="1" key="HISTORY_SIZE"/>
+		<item value="3" key="HISTORY_SIZE"/>
 		<item value="false" key="CASE_SENSITIVE"/>
-		<item value="false" key="REG_EX_SEARCH"/>
+		<item value="true" key="REG_EX_SEARCH"/>
 		<item value="false" key="WHOLE_WORD"/>
 		<item value="false" key="SEARCH_DERIVED"/>
 		<item value="false" key="SEARCH_IN_BINARIES"/>
 		<section name="EXTENSIONS">
 			<item value="*" key="0"/>
 		</section>
-		<section name="HISTORY0">
+		<section name="HISTORY2">
 			<item value="true" key="ignoreCase"/>
 			<item value="0" key="scope"/>
 			<item value="false" key="isWholeWord"/>
 			<item value="CLEAR_TRIGGER_BUTTON" key="textPattern"/>
+			<item value="false" key="isRegExSearch"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY0">
+			<item value="true" key="ignoreCase"/>
+			<item value="0" key="scope"/>
+			<item value="false" key="isWholeWord"/>
+			<item value="VirdAddVarTab" key="textPattern"/>
+			<item value="true" key="isRegExSearch"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY1">
+			<item value="true" key="ignoreCase"/>
+			<item value="0" key="scope"/>
+			<item value="false" key="isWholeWord"/>
+			<item value="button1Modes" key="textPattern"/>
 			<item value="false" key="isRegExSearch"/>
 			<list key="fileNamePatterns">
 				<item value="*"/>
@@ -58,7 +82,7 @@
 		<item value="583" key="DIALOG_WIDTH"/>
 		<item value="1|.SF NS Text|11.0|0|COCOA|1|.SFNSText-Regular" key="DIALOG_FONT_NAME"/>
 		<item value="455" key="DIALOG_HEIGHT"/>
-		<item value="221" key="DIALOG_X_ORIGIN"/>
-		<item value="81" key="DIALOG_Y_ORIGIN"/>
+		<item value="759" key="DIALOG_X_ORIGIN"/>
+		<item value="0" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

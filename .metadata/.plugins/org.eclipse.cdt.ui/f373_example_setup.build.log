@@ -1,0 +1,6 @@
+22:29:01 **** Incremental Build of configuration Release for project f373_example_setup ****
+make all 
+make: Nothing to be done for `all'.
+
+22:29:01 Build Finished (took 93ms)
+

@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;trigseq_rev5/sync_rev5.xml&apos; to &apos;trigseq_rev5.xml&apos;" description="Rename resource &apos;sync_rev5.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="sync_rev5.xml" name="trigseq_rev5.xml" stamp="1532912867635" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;trigseq_rev5/Src/sequence_functions.c&apos; to &apos;main_sequence_functions.c&apos;" description="Rename resource &apos;sequence_functions.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Src/sequence_functions.c" name="main_sequence_functions.c" stamp="1532913017699" updateReferences="true"/>
+</session>

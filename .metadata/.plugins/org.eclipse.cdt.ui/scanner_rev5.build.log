@@ -1,6 +1,6 @@
-23:01:19 **** Clean-only build of configuration Release for project scanner_rev5 ****
-make clean 
-make: *** No rule to make target `clean'.  Stop.
+01:01:24 **** Incremental Build of configuration Debug for project scanner_rev5 ****
+make all 
+make: Nothing to be done for `all'.
 
-23:01:19 Build Finished (took 68ms)
+01:01:24 Build Finished (took 142ms)
 

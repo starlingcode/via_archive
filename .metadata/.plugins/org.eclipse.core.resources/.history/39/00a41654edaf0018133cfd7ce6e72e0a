@@ -1,0 +1,219 @@
+/*
+ * three_axis_scanner.c
+ *
+ *  Created on: Aug 22, 2018
+ *      Author: willmitchell
+ */
+
+#include "signal_processors.h"
+
+
+void threeAxisScannerParseControls(controlRateInputs * controls,
+		threeAxisScannerParameters * parameters) {
+
+	parameters->zIndex = __USAT(controls->knob1Value + 2200 - controls->cv1Value, 12) << 6;
+
+}
+
+static inline int getSampleProduct(int xIndex, int yIndex, int zIndex,
+		int * xTable, int * yTable, int * xDelta, int * yDelta) {
+
+	// waveterrain = wavetable(x, z) * wavetable(y, z)
+
+	int xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
+			xTable, xDelta);
+	int ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
+			yTable, yDelta);
+
+	return (xSample * ySample) >> 18; //15 bit fixed point multiply and right shift by 3
+
+}
+
+static inline int getSamplePM(int xIndex, int yIndex, int zIndex, int * xTable,
+		int*yTable, int * xDelta, int * yDelta) {
+
+	// waveterrain = wavetable(x + wavetable(y, z), z)
+
+	int xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
+			xTable, xDelta);
+	int ySample = getSampleQuinticSpline(
+			((yIndex << 9) + (xSample << 4)) & ((1 << 25) - 1), zIndex,
+			yTable, yDelta);
+
+	return ySample >> 3; //right shift by 3 tp scale 15bit to 12bit
+
+}
+
+static inline int getSampleSum(int xIndex, int yIndex, int zIndex, int * xTable,
+		int*yTable, int * xDelta, int * yDelta) {
+
+	// waveterrain = wavetable(x, z) + wavetable(y, z)
+
+	int xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
+			xTable, xDelta);
+	int ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
+			yTable, yDelta);
+
+	return (xSample + ySample) >> 4; // scale from 15bit to 12 bit and divide by two to normalize the space (max value = 1+1)
+
+}
+
+static inline int getSampleSubtract(int xIndex, int yIndex, int zIndex, int * xTable,
+		int*yTable, int * xDelta, int * yDelta) {
+
+	// waveterrain = wavetable(x, z) + wavetable(y, z)
+
+	int xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
+			xTable, xDelta);
+	int ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
+			yTable, yDelta);
+
+	return ((xSample - ySample) >> 4) + 2048; // scale from 15bit to 12 bit and divide by two to normalize the space (max value = 1+1)
+
+}
+
+void scanTerrainProduct(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
+		int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
+		uint32_t writePosition, uint32_t samplesRemaining) {
+
+	uint32_t writeIndex = 0;
+
+	output = output + writePosition;
+
+	while (samplesRemaining) {
+
+		output[writeIndex] = getSampleProduct(xIndexBuffer[writeIndex],
+				yIndexBuffer[writeIndex], zIndex, xTable, yTable,
+				xDelta + writeIndex, yDelta + writeIndex);
+
+		writeIndex++;
+		samplesRemaining--;
+
+	}
+
+}
+
+void scanTerrainSum(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
+		int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
+		uint32_t writePosition, uint32_t samplesRemaining) {
+
+	uint32_t writeIndex = 0;
+
+	output = output + writePosition;
+
+	while (samplesRemaining) {
+
+		output[writeIndex] = getSampleSum(xIndexBuffer[writeIndex],
+				yIndexBuffer[writeIndex], zIndex, xTable, yTable,
+				xDelta + writeIndex, yDelta + writeIndex);
+
+		writeIndex++;
+		samplesRemaining--;
+
+	}
+
+}
+
+void scanTerrainSubtract(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
+		int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
+		uint32_t writePosition, uint32_t samplesRemaining) {
+
+	uint32_t writeIndex = 0;
+
+	output = output + writePosition;
+
+	while (samplesRemaining) {
+
+		output[writeIndex] = getSampleSubtract(xIndexBuffer[writeIndex],
+				yIndexBuffer[writeIndex], zIndex, xTable, yTable,
+				xDelta + writeIndex, yDelta + writeIndex);
+
+		writeIndex++;
+		samplesRemaining--;
+
+	}
+
+}
+
+void scanTerrainPM(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
+		int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
+		uint32_t writePosition, uint32_t samplesRemaining) {
+
+	uint32_t writeIndex = 0;
+
+	output = output + writePosition;
+
+	while (samplesRemaining) {
+
+		output[writeIndex] = getSamplePM(xIndexBuffer[writeIndex],
+				yIndexBuffer[writeIndex], zIndex, xTable, yTable,
+				xDelta + writeIndex, yDelta + writeIndex);
+
+		writeIndex++;
+		samplesRemaining--;
+
+	}
+
+}
+
+void threeAxisScannerFillBuffer(audioRateInputs * inputs,
+		controlRateInputs * controls, threeAxisScannerParameters * parameters,
+		int * xTable, int * yTable,
+		audioRateOutputs * outputs, uint32_t writePosition, uint32_t bufferSize) {
+
+	static int xIndexBuffer[8];
+	static int yIndexBuffer[8];
+	static int lastXInput;
+	static int lastYInput;
+	static int lastXIndex;
+	static int lastYIndex;
+
+	extractDeltas(parameters->xInput, xIndexBuffer, lastXInput, bufferSize);
+	extractDeltas(parameters->yInput, yIndexBuffer, lastYInput, bufferSize);
+
+	lastXInput = parameters->xInput[bufferSize - 1];
+	lastYInput = parameters->yInput[bufferSize - 1];
+
+	foldBuffer(parameters->xInput, controls->knob2Value, xIndexBuffer,
+			bufferSize);
+	foldBuffer(parameters->yInput, controls->knob3Value, yIndexBuffer,
+			bufferSize);
+
+
+
+	//scanBuffer
+
+	switch (parameters->terrainType) {
+
+	case THREE_AXIS_SCANNER_SUM:
+		scanTerrainSum(xIndexBuffer, yIndexBuffer, parameters->zIndex,
+				xTable, yTable, xDeltaBuffer, yDeltaBuffer, outputs->dac3Samples,
+				writePosition, bufferSize);
+		break;
+
+	case THREE_AXIS_SCANNER_PRODUCT:
+		scanTerrainSubtract(xIndexBuffer, yIndexBuffer, parameters->zIndex,
+				xTable, yTable, xDeltaBuffer, yDeltaBuffer, outputs->dac3Samples,
+				writePosition, bufferSize);
+		break;
+
+	case THREE_AXIS_SCANNER_DIFFERENCE:
+		scanTerrainProduct(xIndexBuffer, yIndexBuffer, parameters->zIndex,
+				xTable, yTable, xDeltaBuffer, yDeltaBuffer, outputs->dac3Samples,
+				writePosition, bufferSize);
+		break;
+
+	case THREE_AXIS_SCANNER_PHASE_MOD:
+		scanTerrainPM(xIndexBuffer, yIndexBuffer, parameters->zIndex,
+				xTable, yTable, xDeltaBuffer, yDeltaBuffer, outputs->dac3Samples,
+				writePosition, bufferSize);
+		break;
+
+	}
+
+//	for (int i = 0; i < bufferSize; i++) {
+//		outputs->dac3Samples[i + writePosition] = xIndexBuffer[i] >> 4;
+//		outputs->dac1Samples[i + writePosition] = 4095 - (outputs->dac2Samples[i + writePosition]);
+//	}
+
+}

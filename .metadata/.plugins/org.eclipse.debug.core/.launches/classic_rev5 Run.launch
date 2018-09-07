@@ -15,8 +15,8 @@
 <stringAttribute key="fr.ac6.mcu.ide.OPENOCD_SCRIPT_CHOICE" value="automated"/>
 <stringAttribute key="fr.ac6.mcu.ide.OPENOCD_SCRIPT_IS_LEGACY" value="false"/>
 <intAttribute key="org.eclipse.cdt.debug.gdbjtag.core.delay" value="3"/>
-<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doHalt" value="true"/>
-<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doReset" value="true"/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doHalt" value="false"/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doReset" value="false"/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value=""/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageOffset" value=""/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.initCommands" value="monitor reset halt"/>

@@ -1,0 +1,47 @@
+05:40:55 **** Build of configuration Debug for project via_scanner ****
+make all 
+Building file: ../Src/scanner_fill_buffer.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/via_scanner/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_ui/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_scanner/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_scanner/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_scanner/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I../Middlewares/ST/STM32_TouchSensing_Library/inc -I"/Users/willmitchell/Documents/stm32_workspace/via_scanner/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_scanner/Drivers/CMSIS/Include"  -O1 -g3 -w -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"Src/scanner_fill_buffer.d" -MT"Src/scanner_fill_buffer.o" -o "Src/scanner_fill_buffer.o" "../Src/scanner_fill_buffer.c"
+Finished building: ../Src/scanner_fill_buffer.c
+ 
+Building file: ../Src/scanner_hardware_io.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/via_scanner/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_ui/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_scanner/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_scanner/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_scanner/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I../Middlewares/ST/STM32_TouchSensing_Library/inc -I"/Users/willmitchell/Documents/stm32_workspace/via_scanner/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_scanner/Drivers/CMSIS/Include"  -O1 -g3 -w -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"Src/scanner_hardware_io.d" -MT"Src/scanner_hardware_io.o" -o "Src/scanner_hardware_io.o" "../Src/scanner_hardware_io.c"
+In file included from ../Src/scanner_hardware_io.c:5:0:
+/Users/willmitchell/Documents/stm32_workspace/via_scanner/Inc/scanner_ui_implementation.h:35:19: error: unknown type name 'controlRateInputs'
+ void (*updateRGB)(controlRateInputs *, audioRateInputs *, int, int);
+                   ^~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/via_scanner/Inc/scanner_ui_implementation.h:35:40: error: unknown type name 'audioRateInputs'
+ void (*updateRGB)(controlRateInputs *, audioRateInputs *, int, int);
+                                        ^~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/via_scanner/Inc/scanner_ui_implementation.h:36:21: error: unknown type name 'controlRateInputs'
+ void updateRGBAudio(controlRateInputs *, audioRateInputs *, int, int);
+                     ^~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/via_scanner/Inc/scanner_ui_implementation.h:36:42: error: unknown type name 'audioRateInputs'
+ void updateRGBAudio(controlRateInputs *, audioRateInputs *, int, int);
+                                          ^~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/via_scanner/Inc/scanner_ui_implementation.h:37:24: error: unknown type name 'controlRateInputs'
+ void updateRGBSubAudio(controlRateInputs *, audioRateInputs *, int, int);
+                        ^~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/via_scanner/Inc/scanner_ui_implementation.h:37:45: error: unknown type name 'audioRateInputs'
+ void updateRGBSubAudio(controlRateInputs *, audioRateInputs *, int, int);
+                                             ^~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/via_scanner/Inc/scanner_ui_implementation.h:38:23: error: unknown type name 'controlRateInputs'
+ void updateRGBTrigger(controlRateInputs *, audioRateInputs *, int, int);
+                       ^~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/via_scanner/Inc/scanner_ui_implementation.h:38:44: error: unknown type name 'audioRateInputs'
+ void updateRGBTrigger(controlRateInputs *, audioRateInputs *, int, int);
+                                            ^~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/via_scanner/Inc/scanner_ui_implementation.h:39:21: error: unknown type name 'controlRateInputs'
+ void updateRGBBlank(controlRateInputs *, audioRateInputs *, int, int);
+                     ^~~~~~~~~~~~~~~~~
+/Users/willmitchell/Documents/stm32_workspace/via_scanner/Inc/scanner_ui_implementation.h:39:42: error: unknown type name 'audioRateInputs'
+ void updateRGBBlank(controlRateInputs *, audioRateInputs *, int, int);
+                                          ^~~~~~~~~~~~~~~
+make: *** [Src/scanner_hardware_io.o] Error 1
+
+05:40:56 Build Finished (took 676ms)
+

@@ -1,6 +1,6 @@
-23:01:19 **** Clean-only build of configuration Debug for project osc_touch_rev5 ****
+23:42:44 **** Clean-only build of configuration Debug for project osc_touch_rev5 ****
 make clean 
 make: *** No rule to make target `clean'.  Stop.
 
-23:01:19 Build Finished (took 68ms)
+23:42:44 Build Finished (took 86ms)
 

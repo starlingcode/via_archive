@@ -1,0 +1,65 @@
+/*
+ * signal_processor_resources.c
+ *
+ *  Created on: Aug 22, 2018
+ *      Author: willmitchell
+ */
+
+#include "signal_processors.h"
+#include "dsp.h"
+#include "cmsis_dsp.h"
+
+/**
+ *
+ * Helper functions for filling the sample buffer
+ *
+ */
+
+void extractDeltas(int * input, int * output, int initialValue, uint32_t bufferSize) {
+
+	output[0] = input[0] - initialValue;
+	for (int i = 1; i< bufferSize; i++) {
+		output[i] = input[i] - input[i-1];
+	}
+
+}
+void incrementFromDeltas(int * input, int * output, int * hardSync, int * reverse,
+		int initialPhase, uint32_t bufferSize) {
+
+	output[0] = (initialPhase + (input[0] * reverse[0])) * hardSync[0];
+	for (int i = 1; i< bufferSize; i++) {
+		output[i] = (output[i-1] + (input[i] * reverse[i])) * hardSync[i];
+	}
+
+}
+
+void foldBuffer(int * input, int offset, int * output, uint32_t bufferSize) {
+
+	// scale the CVs by the knob value cast from 0 to full scale int, then shift left by 3
+
+	arm_scale_q31(input, 1 << 31, 2, output, bufferSize);
+	arm_offset_q31(output, (offset - 2048) << 5, output, bufferSize);
+
+	for (int i = 0; i < (bufferSize); i++) {
+
+		output[i] = foldSignal16Bit(output[i]);
+
+	}
+
+}
+
+void wrapBuffer(int * input, int offset, int * output, uint32_t bufferSize) {
+
+	// scale the CVs by the knob value cast from 0 to full scale int, then shift left by 3
+
+	arm_scale_q31(input, 1 << 31, 6, output, bufferSize);
+	arm_offset_q31(output, (offset - 2048) << 3, output, bufferSize);
+
+	for (int i = 0; i < (bufferSize); i++) {
+
+		output[i] = wrapSignal16Bit(output[i]);
+
+	}
+
+}
+

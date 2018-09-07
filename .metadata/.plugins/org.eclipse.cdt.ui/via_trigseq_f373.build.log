@@ -1,0 +1,17 @@
+22:23:13 **** Incremental Build of configuration Debug for project via_trigseq_f373 ****
+make all 
+Building target: via_trigseq_f373.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -L"/Users/willmitchell/Documents/stm32_workspace/via/Debug" -specs=nosys.specs -specs=nano.specs -T"../STM32F373CCTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "via_trigseq_f373.elf" @"objects.list"  -lvia -lm
+Finished building target: via_trigseq_f373.elf
+ 
+/Applications/Xcode.app/Contents/Developer/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "via_trigseq_f373.elf" "via_trigseq_f373.bin"
+arm-none-eabi-size "via_trigseq_f373.elf"
+   text	   data	    bss	    dec	    hex	filename
+  38820	    700	   4176	  43696	   aab0	via_trigseq_f373.elf
+ 
+
+22:23:13 Build Finished (took 458ms)
+

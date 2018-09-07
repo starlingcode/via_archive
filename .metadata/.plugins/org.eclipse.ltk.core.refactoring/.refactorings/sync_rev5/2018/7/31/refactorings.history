@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;sync_rev5/Src/ui_helpers.c&apos; to &apos;ui_implementation.c&apos;" description="Rename resource &apos;ui_helpers.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Src/ui_helpers.c" name="ui_implementation.c" stamp="1532827323546" updateReferences="true"/>
+</session>

@@ -1,0 +1,56 @@
+22:17:29 **** Incremental Build of configuration Release for project via_ui_library ****
+make all 
+Building file: ../Src/ui_helpers.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware_library/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware_library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/CMSIS/Include"  -O3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"Src/ui_helpers.d" -MT"Src/ui_helpers.o" -o "Src/ui_helpers.o" "../Src/ui_helpers.c"
+Finished building: ../Src/ui_helpers.c
+ 
+Building file: ../Src/ui_main.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware_library/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware_library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/CMSIS/Include"  -O3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"Src/ui_main.d" -MT"Src/ui_main.o" -o "Src/ui_main.o" "../Src/ui_main.c"
+Finished building: ../Src/ui_main.c
+ 
+Building file: ../Src/ui_menus.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware_library/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware_library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/CMSIS/Include"  -O3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"Src/ui_menus.d" -MT"Src/ui_menus.o" -o "Src/ui_menus.o" "../Src/ui_menus.c"
+../Src/ui_menus.c: In function 'ui_button5Menu':
+../Src/ui_menus.c:153:4: warning: implicit declaration of function 'uiTransition' [-Wimplicit-function-declaration]
+    uiTransition(&ui_aux2Menu);
+    ^
+Finished building: ../Src/ui_menus.c
+ 
+Building file: ../Src/ui_presets.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware_library/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware_library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/CMSIS/Include"  -O3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"Src/ui_presets.d" -MT"Src/ui_presets.o" -o "Src/ui_presets.o" "../Src/ui_presets.c"
+../Src/ui_presets.c: In function 'ui_presetMenu':
+../Src/ui_presets.c:42:4: warning: implicit declaration of function 'uiTransition' [-Wimplicit-function-declaration]
+    uiTransition(&ui_presetPressedMenu);
+    ^
+Finished building: ../Src/ui_presets.c
+ 
+Building file: ../Src/ui_save_recall.c
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Release
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware_library/Middlewares/ST/STM32_TouchSensing_Library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_hardware_library/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_ui_library/Drivers/CMSIS/Include"  -O3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"Src/ui_save_recall.d" -MT"Src/ui_save_recall.o" -o "Src/ui_save_recall.o" "../Src/ui_save_recall.c"
+../Src/ui_save_recall.c: In function 'uiInitialize':
+../Src/ui_save_recall.c:37:3: warning: implicit declaration of function 'uiTransition' [-Wimplicit-function-declaration]
+   uiTransition(&ui_error);
+   ^
+../Src/ui_save_recall.c: In function 'ui_factoryReset':
+../Src/ui_save_recall.c:85:18: warning: unused variable 'tempData' [-Wunused-variable]
+  static uint16_t tempData;
+                  ^
+Finished building: ../Src/ui_save_recall.c
+ 
+Building target: libvia_ui_library.a
+Invoking: MCU GCC Archiver
+arm-none-eabi-ar -r  "libvia_ui_library.a" @"objects.list"  
+Finished building target: libvia_ui_library.a
+ 
+
+22:17:29 Build Finished (took 612ms)
+

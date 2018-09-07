@@ -1,0 +1,215 @@
+/*
+ * sync.h
+ *
+ *  Created on: Aug 26, 2018
+ *      Author: willmitchell
+ */
+
+#ifndef INC_SYNC_H_
+#define INC_SYNC_H_
+
+#include "via_platform_binding.h"
+#include "user_interface.h"
+#include "oscillators.h"
+
+
+singleSampleWavetableParameters wavetableParameters;
+
+pllMultiplierParameters pllParameters;
+
+typedef struct {
+
+	audioRateOutputs * outputs;
+	audioRateInputs * inputs;
+	controlRateInputs * controls;
+	singleSampleWavetableParameters * wavetable_parameters;
+	pllMultiplierParameters * pll_parameters;
+
+} sync_signal_set;
+
+sync_signal_set sync_signals;
+
+#define SYNC_BUFFER_SIZE 1
+
+/*
+ *
+ * Event handlers
+ *
+ */
+
+void sync_init(sync_signal_set *);
+
+void sync_mainRisingEdgeCallback(sync_signal_set *);
+void sync_mainFallingEdgeCallback(sync_signal_set *);
+
+void sync_auxRisingEdgeCallback(sync_signal_set *);
+void sync_auxFallingEdgeCallback(sync_signal_set *);
+
+void sync_buttonPressedCallback(sync_signal_set *);
+void sync_buttonPressedCallback(sync_signal_set *);
+
+void sync_ioProcessCallback(sync_signal_set *);
+void sync_halfTransferCallback(sync_signal_set *);
+void sync_transferCompleteCallback(sync_signal_set *);
+void sync_slowConversionCallback(sync_signal_set *);
+
+/*
+ *
+ * Modes
+ *
+ */
+
+// Mode enums and mode variables
+
+#define SH_MODE button1Mode
+#define SCALE_MODE button2Mode
+#define X_MODE button3Mode
+#define SYNC_MODE button4Mode
+#define GROUP_MODE button5Mode
+#define TABLE_MODE button6Mode
+#define QUADRATURE_MODE aux2Mode
+#define LOGIC_A_MODE aux3Mode
+#define TABLE_GROUP_MODE aux4Mode
+
+#define numButton1Modes 3
+#define numButton2Modes 4
+#define numButton3Modes 4
+#define numButton4Modes 3
+#define numButton5Modes 4
+#define numButton6Modes 4
+#define numAux1Modes 2
+#define numAux2Modes 2
+#define numAux3Modes 4
+#define numAux4Modes 2
+
+enum sync_button1Modes {noSH, sampletrack, resample};
+enum sync_button2Modes {scale1, scale2, scale3, scale4};
+enum sync_button3Modes {root, pm, fm, pwm};
+enum sync_button4Modes {nosync, true, hardsync};
+enum sync_button5Modes {group1, group2, group3, group4};
+enum sync_button6Modes {table1, table2, table3, table4};
+enum sync_aux1Modes {sync_aux1NotUsed};
+enum sync_aux2Modes {gate, delta};
+enum sync_aux3Modes {noOffset, quarter, half, threeQuarters};
+enum sync_aux4Modes {groupSpecific, global};
+
+
+/*
+ *
+ * UI implementation
+ *
+ */
+
+void sync_handleButton1ModeChange(int);
+void sync_handleButton2ModeChange(int);
+void sync_handleButton3ModeChange(int);
+void sync_handleButton4ModeChange(int);
+void sync_handleButton5ModeChange(int);
+void sync_handleButton6ModeChange(int);
+void sync_handleAux1ModeChange(int);
+void sync_handleAux2ModeChange(int);
+void sync_handleAux3ModeChange(int);
+void sync_handleAux4ModeChange(int);
+
+void sync_handleButton1Tap(void);
+void sync_handleButton2Tap(void);
+void sync_handleButton3Tap(void);
+void sync_handleButton4Tap(void);
+void sync_handleButton5Tap(void);
+void sync_handleButton6Tap(void);
+void sync_handleAux1Tap(void);
+void sync_handleAux2Tap(void);
+void sync_handleAux3Tap(void);
+void sync_handleAux4Tap(void);
+
+void sync_handleButton1EnterMenu(void);
+void sync_handleButton2EnterMenu(void);
+void sync_handleButton3EnterMenu(void);
+void sync_handleButton4EnterMenu(void);
+void sync_handleButton5EnterMenu(void);
+void sync_handleButton6EnterMenu(void);
+void sync_handleAux1EnterMenu(void);
+void sync_handleAux2EnterMenu(void);
+void sync_handleAux3EnterMenu(void);
+void sync_handleAux4EnterMenu(void);
+
+void sync_handleButton1Tap(void);
+void sync_handleButton2Tap(void);
+void sync_handleButton3Tap(void);
+void sync_handleButton4Tap(void);
+void sync_handleButton5Tap(void);
+void sync_handleButton6Tap(void);
+void sync_handleAux1Tap(void);
+void sync_handleAux2Tap(void);
+void sync_handleAux3Tap(void);
+void sync_handleAux4Tap(void);
+
+void sync_handleButton1Hold(void);
+void sync_handleButton2Hold(void);
+void sync_handleButton3Hold(void);
+void sync_handleButton4Hold(void);
+void sync_handleButton5Hold(void);
+void sync_handleButton6Hold(void);
+void sync_handleAux1Hold(void);
+void sync_handleAux2Hold(void);
+void sync_handleAux3Hold(void);
+void sync_handleAux4Hold(void);
+
+void sync_initializeUICallbacks(void);
+
+/*
+ *
+ * Tables
+ *
+ */
+
+// declare an array of pointers to wavetables (stored in flash)
+Wavetable * sync_wavetableArray[4][4];
+Wavetable * sync_wavetableArrayGlobal[4];
+
+// declare arrays to store the active tables
+uint32_t sync_wavetableRead[9][517];
+//uint32_t sync_phaseDistRead[33][65];
+
+// declare functions to set the currently active tables
+void sync_switchWavetable(Wavetable *, sync_signal_set * signals);
+void sync_switchWavetableGlobal(Wavetable *, sync_signal_set * signals);
+// phase distortion table is fixed
+void sync_initPhaseDistTable(void);
+void sync_fillWavetableArray(void);
+
+/*
+ *
+ * Scales
+ *
+ */
+
+const Scale *sync_scaleArray[4][4];
+
+void sync_initializeScales(void);
+
+/*
+ *
+ * Mode functions
+ *
+ */
+
+void (*sync_calculateDac3)(sync_signal_set * signals, int writeIndex);
+
+void sync_calculateDac3Phasor(sync_signal_set * signals, int writeIndex);
+void sync_calculateDac3Contour(sync_signal_set * signals, int writeIndex);
+
+void (*sync_calculateLogicA)(sync_signal_set * signals, int writeIndex);
+
+void sync_calculateLogicAGate(sync_signal_set* signals, int writeIndex);
+void sync_calculateLogicADelta(sync_signal_set * signals, int writeIndex);
+
+void (*sync_calculateSH)(sync_signal_set * signals, int writeIndex);
+// No S&H
+void sync_calculateSHMode1(sync_signal_set * signals, int writeIndex);
+// Sample A from A to B
+void sync_calculateSHMode2(sync_signal_set * signals, int writeIndex);
+// Resample B at A
+void sync_calculateSHMode3(sync_signal_set * signals, int writeIndex);
+
+#endif /* INC_SYNC_H_ */

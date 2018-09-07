@@ -1,0 +1,52 @@
+/*
+ * meta_table_init.c
+ *
+ *  Created on: Aug 29, 2018
+ *      Author: willmitchell
+ */
+
+#include "meta.h"
+
+
+void meta_fillWavetableArray(void) {
+
+	meta_wavetableArray[audio][0] = &tenor257;
+	meta_wavetableArray[audio][1] = &soprano257;
+	meta_wavetableArray[audio][2] = &impevens;
+	meta_wavetableArray[audio][3] = &linwavefold_257;
+	meta_wavetableArray[audio][4] = &skipSaw;
+	meta_wavetableArray[audio][5] = &sinwavefold_257;
+	meta_wavetableArray[audio][6] = &additive_tri_to_pulse;
+	meta_wavetableArray[audio][7] = &newBounce;
+	meta_wavetableArray[env][0] = &testRMS;
+	meta_wavetableArray[env][1] = &gamma257;
+	meta_wavetableArray[env][2] = &bounce_257;
+	meta_wavetableArray[env][3] = &circular_257;
+	meta_wavetableArray[env][4] = &quintic_outin2quintic_inout257;
+	meta_wavetableArray[env][5] = &quintic_out2quintic_in257;
+	meta_wavetableArray[env][6] = &quintic_inout2quintic_outin257;
+	meta_wavetableArray[env][7] = &quintic_in2quintic_out257;
+	meta_wavetableArray[seq][0] = &bounce_257;
+	meta_wavetableArray[seq][1] = &exciteBike;
+	meta_wavetableArray[seq][2] = &newBounce;
+	meta_wavetableArray[seq][3] = &sawBend;
+	meta_wavetableArray[seq][4] = &triOdd;
+	meta_wavetableArray[seq][5] = &moogSquare;
+	meta_wavetableArray[seq][6] = &algerian;
+	meta_wavetableArray[seq][7] = &exciteBike;
+
+}
+
+// declare functions to set the currently active tables
+void meta_switchWavetable(Wavetable * table, meta_signal_set * signals) {
+	loadWavetableWithDiff15Bit(table, meta_wavetableRead);
+	signals->wavetable_parameters->tableSize = table->numWaveforms - 1;
+}
+
+// declare functions to set the currently active tables
+void meta_initDrum(void) {
+	loadSingleTable15Bit(&gamma257, meta_wavetableReadDrum);
+	for (int i = 0; i < 4; i++) {
+		meta_drumFullScale[i] = 32767;
+	}
+}
