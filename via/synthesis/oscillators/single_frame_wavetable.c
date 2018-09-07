@@ -105,7 +105,9 @@ uint32_t singleSampleWavetableAdvance(
 
 	uint32_t ghostPhase = singleSampleWavetableIncrementPhase(parameters, phaseDistTable);
 
-	uint32_t morph = __USAT(parameters->morphMod[0] + parameters->morphBase, 16);
+	int morph = -parameters->morphMod[0];
+
+	morph = __USAT(morph + parameters->morphBase, 16);
 
 	morph *= parameters->tableSize;
 
