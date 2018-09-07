@@ -1,1 +1,2 @@
-oldstuff/
+$ cat .gitignore
+old_stuff/
