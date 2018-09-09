@@ -39,7 +39,8 @@ typedef struct {
 	int16_t * morphMod;
 	int fmAmount;
 	int pmAmount;
-	int frequencyBase;
+	int frequencyBase1;
+	int frequencyBase2;
 	int pmBase;
 	int pwmBase;
 	int morphBase;
@@ -55,14 +56,9 @@ typedef struct {
 void oversampledWavetableParseControls(controlRateInputs * controls,
 		oversampledWavetableParameters * parameters);
 
-uint32_t oversampledWavetableAdvance0(
+uint32_t oversampledWavetableAdvance(
 		oversampledWavetableParameters * parameters, audioRateOutputs * outputs,
-		uint32_t * wavetable, uint32_t writePosition,
-		uint32_t bufferSize);
-
-uint32_t oversampledWavetableAdvance1(
-		oversampledWavetableParameters * parameters, audioRateOutputs * outputs,
-		uint32_t * wavetable, uint32_t writePosition,
+		uint32_t * wavetable, uint32_t * phaseDistTable, uint32_t writePosition,
 		uint32_t bufferSize);
 
 void oversampledWavetableParsePhase(uint32_t phase,

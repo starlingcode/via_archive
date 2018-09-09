@@ -60,9 +60,9 @@
 
 /* USER CODE BEGIN Includes */
 
-#include "via_rev5_hardware_io.h"
-#include "osc_interrupt_handlers.h"
-#include "osc_main_states.h"
+#define BUILD_F373_REV6
+
+#include <video_osc.h>
 
 extern void mainHardwareInit(void);
 
@@ -138,14 +138,8 @@ int main(void)
   MX_DAC2_Init();
   /* USER CODE BEGIN 2 */
 
-  viaSignalInit();
-  osc_init();
+  video_osc_init(&video_osc_signals);
   mainHardwareInit();
-
-  SH_A_TRACK;
-  SH_B_TRACK;
-
-
 
   /* USER CODE END 2 */
 

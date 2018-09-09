@@ -25,11 +25,11 @@ extern SDADC_HandleTypeDef hsdadc2;
 
 int controlRateADCReadings[4];
 
-#define knob2 controlRateADCReadings[3]
-#define knob3 controlRateADCReadings[1]
-#define knob1 controlRateADCReadings[2]
-#define cv1 (4095 - controlRateADCReadings[0])
-#define linSensor (MyLinRots->Position << 8)
+#define knob2 (controlRateADCReadings[3] & 0b111111110000)
+#define knob3 (controlRateADCReadings[1] & 0b111111110000)
+#define knob1 (controlRateADCReadings[2] & 0b111111110000)
+#define cv1 ((4095 - controlRateADCReadings[0]) & 0b111111110000)
+#define linSensor (MyLinRots->Position << 4)
 
 // initialize a copy of each signal group
 
@@ -54,7 +54,7 @@ static inline void via_ioStreamInit(audioRateInputs * audioRateInput,
 	}
 
 	// initialize the ADCs and their respective DMA arrays
-	HAL_ADC_Start_DMA(&hadc1, controlRateADCReadings, 2);
+	HAL_ADC_Start_DMA(&hadc1, controlRateADCReadings, 4);
 
 	if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1)
 			!= HAL_OK) {
@@ -76,10 +76,10 @@ static inline void via_ioStreamInit(audioRateInputs * audioRateInput,
 		LEDB_ON;
 	}
 
-	HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, audioRateOutput->dac1Samples,
-			2 * bufferSize, DAC_ALIGN_12B_R);
-	HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, audioRateOutput->dac2Samples,
-			2 * bufferSize, DAC_ALIGN_12B_R);
+//	HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, audioRateOutput->dac1Samples,
+//			2 * bufferSize, DAC_ALIGN_12B_R);
+//	HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, audioRateOutput->dac2Samples,
+//			2 * bufferSize, DAC_ALIGN_12B_R);
 	HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, audioRateOutput->dac3Samples,
 			2 * bufferSize, DAC_ALIGN_12B_R);
 

@@ -1,11 +1,5 @@
 
-#include "signals.h"
-#include "main.h"
-#include "user_interface.h"
-#include "via_rev5_hardware_io.h"
-#include "osc_modes.h"
-#include "osc_interrupt_handlers.h"
-
+#include <video_osc.h>
 
 enum
 {	NULL_SIG,     // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
@@ -44,12 +38,11 @@ void TIM12_IRQHandler(void)
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
 
 	if (TRIGGER_RISING_EDGE) {
-//		EXPAND_LOGIC_HIGH;
-		mainRisingEdgeCallback(&scanner_signals);
+		video_osc_mainRisingEdgeCallback(&video_osc_signals);
 	} else {
-//		EXPAND_LOGIC_LOW;
-		mainFallingEdgeCallback(&scanner_signals);
+		video_osc_mainFallingEdgeCallback(&video_osc_signals);
 	}
+
 
 }
 
@@ -59,9 +52,9 @@ void EXTI15_10_IRQHandler(void)
 {
 
 	if (EXPANDER_RISING_EDGE) {
-		auxRisingEdgeCallback(&scanner_signals);
-	} else { //falling edge
-		auxFallingEdgeCallback(&scanner_signals);
+		video_osc_auxRisingEdgeCallback(&video_osc_signals);
+	} else {
+		video_osc_auxFallingEdgeCallback(&video_osc_signals);
 	}
 
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
@@ -73,16 +66,12 @@ void EXTI15_10_IRQHandler(void)
 void EXTI1_IRQHandler(void)
 {
 
-	static int buttonPressed;
-
-	buttonPressed = !buttonPressed;
-
-	if (buttonPressed) {
+	if (EXPANDER_BUTTON_PRESSED) {
 		uiDispatch(EXPAND_SW_ON_SIG);
-		buttonPressedCallback(&scanner_signals);
-	} else { //falling edge
+		video_osc_buttonPressedCallback(&video_osc_signals);
+	} else {
 		uiDispatch(EXPAND_SW_OFF_SIG);
-		buttonReleasedCallback(&scanner_signals);
+		video_osc_buttonReleasedCallback(&video_osc_signals);
 	}
 
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
@@ -163,7 +152,8 @@ void DMA1_Channel1_IRQHandler(void)
 		DMA1->IFCR = DMA_FLAG_HT1;
 	} else {
 		DMA1->IFCR = DMA_FLAG_TC1;
-		slowConversionCallback(&scanner_signals);
+		// VIA_UPDATE_CONTROLS_CALLBACK(&signals)
+		video_osc_slowConversionCallback(&video_osc_signals);
 	}
 
 }
@@ -174,10 +164,11 @@ void DMA1_Channel5_IRQHandler(void)
 
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;
-		halfTransferCallback(&scanner_signals);
+		//
+		video_osc_halfTransferCallback(&video_osc_signals);
 	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;
-		transferCompleteCallback(&scanner_signals);
+		video_osc_transferCompleteCallback(&video_osc_signals);
 	}
 
 }
