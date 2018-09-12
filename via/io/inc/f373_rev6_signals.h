@@ -13,6 +13,8 @@
 #include "dsp.h"
 #include "via_global_signals.h"
 #include <stdio.h>
+#include <stdlib.h>
+
 
 extern ADC_HandleTypeDef hadc1;
 extern DAC_HandleTypeDef hdac1;
@@ -119,32 +121,23 @@ static inline void via_updateControlRateInputs(controlRateInputs * controls) {
 
 	// TODO apply SIMD instructions?
 
-	static int knob1Sum;
-	static int knob2Sum;
-	static int knob3Sum;
-	static int cv1Sum;
-	static buffer knob1Buffer;
-	static buffer knob2Buffer;
-	static buffer knob3Buffer;
-	static buffer cv1Buffer;
-
 	// store the newest value in a ring buffer
-	writeBuffer(&cv1Buffer, cv1);
-	writeBuffer(&knob1Buffer, knob1);
-	writeBuffer(&knob2Buffer, knob2);
-	writeBuffer(&knob3Buffer, knob3);
+	writeBuffer(&controls->cv1Buffer, cv1);
+	writeBuffer(&controls->knob1Buffer, knob1);
+	writeBuffer(&controls->knob2Buffer, knob2);
+	writeBuffer(&controls->knob3Buffer, knob3);
 
 	// implement a running average on the control rate CV controls
-	cv1Sum = cv1 + cv1Sum - readBuffer(&cv1Buffer, 31);
-	knob1Sum = knob1+ knob1Sum - readBuffer(&knob1Buffer, 31);
-	knob2Sum = knob2+ knob2Sum - readBuffer(&knob2Buffer, 31);
-	knob3Sum = knob3+ knob3Sum - readBuffer(&knob3Buffer, 31);
+	controls->cv1Sum = cv1 + controls->cv1Sum - readBuffer(&controls->cv1Buffer, 31);
+	controls->knob1Sum = knob1 + controls->knob1Sum - readBuffer(&controls->knob1Buffer, 31);
+	controls->knob2Sum = knob2 + controls->knob2Sum - readBuffer(&controls->knob2Buffer, 31);
+	controls->knob3Sum = knob3 + controls->knob3Sum - readBuffer(&controls->knob3Buffer, 31);
 
 	// write the averaged controls to the holding struct
-	controls->cv1Value = cv1Sum >> 5;
-	controls->knob1Value = knob1Sum >> 5;
-	controls->knob2Value = knob2Sum >> 5;
-	controls->knob3Value = knob3Sum >> 5;
+	controls->cv1Value = controls->cv1Sum >> 5;
+	controls->knob1Value = controls->knob1Sum >> 5;
+	controls->knob2Value = controls->knob2Sum >> 5;
+	controls->knob3Value = controls->knob3Sum >> 5;
 
 }
 

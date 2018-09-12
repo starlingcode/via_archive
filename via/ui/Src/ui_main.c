@@ -185,43 +185,6 @@ void ui_newAuxMode(int sig) {
 	}
 }
 
-//void ui_auxReferenced(int sig)
-//{
-//	switch (sig)
-//	{
-//	case ENTRY_SIG:
-//		UI_TIMER_RESET;// start count over
-//		uiStoreToEEPROM(0);  // store in preset 0 (current state)
-//		break;
-//
-//	case SENSOR_EVENT_SIG:
-//#ifdef AUX1_MODE_USED
-//		if (BUTTON1SENSOR == PRESSED) {
-//			uiTransition(&ui_aux1Menu);
-//		}
-//#endif
-//#ifdef AUX2_MODE_USED
-//		if (BUTTON3SENSOR == PRESSED) {
-//			uiTransition(&ui_aux2Menu);
-//		}
-//#endif
-//#ifdef AUX3_MODE_USED
-//		if (BUTTON4SENSOR == PRESSED) {
-//			uiTransition(&ui_aux3Menu);
-//		}
-//#endif
-//#ifdef AUX4_MODE_USED
-//		if (BUTTON6SENSOR == PRESSED) {
-//			uiTransition(&ui_aux4Menu);
-//		}
-//#endif
-//		if (BUTTON5SENSOR == RELEASED){
-//			uiTransition(&ui_default);
-//		}
-//		break;
-//	}
-//}
-
 /**
  *
  * UI error state
