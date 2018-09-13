@@ -60,10 +60,6 @@ typedef struct {
 	uint32_t * auxLogic;
 } audioRateOutputs;
 
-controlRateInputs controlRateInput;
-audioRateInputs audioRateInput;
-audioRateOutputs audioRateOutput;
-
 #ifdef __cplusplus
 }
 #endif

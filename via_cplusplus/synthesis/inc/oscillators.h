@@ -222,7 +222,7 @@ void metaControllerGenerateIncrementsDrum(metaControllerParameters * parameters,
 void metaControllerGenerateIncrementsEnv(metaControllerParameters * parameters, audioRateInputs * inputs);
 void metaControllerGenerateIncrementsSeq(metaControllerParameters * parameters, audioRateInputs * inputs);
 
-int metaControllerAdvancePhase(metaControllerParameters * parameters, uint32_t * phaseDistTable);
+int metaControllerAdvancePhase(metaControllerParameters * parameters, uint32_t *);
 
 int (*metaControllerIncrementArbiter)(metaControllerParameters * parameters);
 

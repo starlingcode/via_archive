@@ -7,26 +7,26 @@
 
 #include "meta.hpp"
 
-void ViaMeta::ViaMetaUI::handleButton1ModeChange(int mode) {
+void ViaMeta::handleButton1ModeChange(int mode) {
 
 	switch (mode) {
 	case nosampleandhold:
-		calculateSH = calculateSHMode1;
+		calculateSH = &ViaMeta::calculateSHMode1;
 		break;
 	case a:
-		calculateSH = calculateSHMode2;
+		calculateSH = &ViaMeta::calculateSHMode2;
 		break;
 	case b:
-		calculateSH = calculateSHMode3;
+		calculateSH = &ViaMeta::calculateSHMode3;
 		break;
 	case ab:
-		calculateSH = calculateSHMode4;
+		calculateSH = &ViaMeta::calculateSHMode4;
 		break;
 	case halfdecimate:
-		calculateSH = calculateSHMode5;
+		calculateSH = &ViaMeta::calculateSHMode5;
 		break;
 	case meta_decimate:
-		calculateSH = calculateSHMode6;
+		calculateSH = &ViaMeta::calculateSHMode6;
 		break;
 	}
 
@@ -34,59 +34,59 @@ void ViaMeta::ViaMetaUI::handleButton1ModeChange(int mode) {
 	SH_B_TRACK;
 }
 
-void ViaMeta::ViaMetaUI::handleButton2ModeChange(int mode) {
+void ViaMeta::handleButton2ModeChange(int mode) {
 
-	switchWavetable(wavetableArray[FREQ_MODE][mode]);
+	switchWavetable(wavetableArray[metaUI.FREQ_MODE][mode]);
 
 }
 
-void ViaMeta::ViaMetaUI::handleButton3ModeChange(int mode) {
+void ViaMeta::handleButton3ModeChange(int mode) {
 
 	switch (mode) {
 	case audio:
-		if (LOOP_MODE == noloop) {
+		if (metaUI.LOOP_MODE == noloop) {
 			metaControllerGenerateIncrements = metaControllerGenerateIncrementsDrum;
 			metaControllerParseControls = metaControllerParseControlsDrum;
 			signals.meta_parameters->fm = drumFullScale;
-			drumMode = drumModeOn;
+			drumMode = &ViaMeta::drumModeOn;
 			metaControllerLoopHandler = handleLoopOn;
 			signals.meta_parameters->loopMode = 1;
 			handleButton4ModeChange(0);
-			handleAux3ModeChange(DRUM_MODE);
+			handleAux3ModeChange(metaUI.DRUM_MODE);
 		} else {
 			metaControllerParseControls = metaControllerParseControlsAudio;
 			metaControllerGenerateIncrements = metaControllerGenerateIncrementsAudio;
 			signals.meta_parameters->fm = signals.inputs->cv2Samples;
 			signals.wavetable_parameters->morphScale = drumFullScale;
-			drumMode = drumModeOff;
+			drumMode = &ViaMeta::drumModeOff;
 		}
-		switchWavetable(wavetableArray[mode][TABLE]);
+		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
 		//updateRGB = updateRGBAudio;
 		break;
 	case env:
 		metaControllerParseControls = metaControllerParseControlsEnv;
 		metaControllerGenerateIncrements = metaControllerGenerateIncrementsEnv;
-		if (LOOP_MODE == noloop) {
-			switchWavetable(wavetableArray[mode][TABLE]);
+		if (metaUI.LOOP_MODE == noloop) {
+			switchWavetable(wavetableArray[mode][metaUI.TABLE]);
 			signals.meta_parameters->fm = signals.inputs->cv2Samples;
 			signals.wavetable_parameters->morphScale = drumFullScale;
-			drumMode = drumModeOff;
+			drumMode = &ViaMeta::drumModeOff;
 			metaControllerLoopHandler = handleLoopOff;
 			signals.meta_parameters->loopMode = 0;
-			handleButton4ModeChange(TRIG_MODE);
+			handleButton4ModeChange(metaUI.TRIG_MODE);
 		}
 		//updateRGB = updateRGBSubAudio;
 		break;
 	case seq:
 		metaControllerParseControls = metaControllerParseControlsSeq;
 		metaControllerGenerateIncrements = metaControllerGenerateIncrementsSeq;
-		switchWavetable(wavetableArray[mode][TABLE]);
+		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
 		break;
 	}
 
 }
 
-void ViaMeta::ViaMetaUI::handleButton4ModeChange(int mode) {
+void ViaMeta::handleButton4ModeChange(int mode) {
 
 	switch (mode) {
 	case noretrigger:
@@ -111,18 +111,18 @@ void ViaMeta::ViaMetaUI::handleButton4ModeChange(int mode) {
 
 }
 
-void ViaMeta::ViaMetaUI::handleButton5ModeChange(int mode) {
+void ViaMeta::handleButton5ModeChange(int mode) {
 
-	switchWavetable(wavetableArray[FREQ_MODE][mode]);
+	switchWavetable(wavetableArray[metaUI.FREQ_MODE][mode]);
 
 }
 
-void ViaMeta::ViaMetaUI::handleButton6ModeChange(int mode) {
+void ViaMeta::handleButton6ModeChange(int mode) {
 
 	switch (mode) {
 	case noloop:
-		if (FREQ_MODE == audio) {
-			handleAux3ModeChange(DRUM_MODE);
+		if (metaUI.FREQ_MODE == audio) {
+			handleAux3ModeChange(metaUI.DRUM_MODE);
 			handleButton3ModeChange(0);
 			handleButton4ModeChange(0);
 		} else {
@@ -131,9 +131,9 @@ void ViaMeta::ViaMetaUI::handleButton6ModeChange(int mode) {
 		}
 		break;
 	case looping:
-		if (FREQ_MODE == audio) {
+		if (metaUI.FREQ_MODE == audio) {
 			handleButton3ModeChange(0);
-			handleButton4ModeChange(TRIG_MODE);
+			handleButton4ModeChange(metaUI.TRIG_MODE);
 		}
 		metaControllerLoopHandler = handleLoopOn;
 		signals.meta_parameters->loopMode = 1;
@@ -142,37 +142,37 @@ void ViaMeta::ViaMetaUI::handleButton6ModeChange(int mode) {
 
 }
 
-void ViaMeta::ViaMetaUI::handleAux1ModeChange(int mode) {
+void ViaMeta::handleAux1ModeChange(int mode) {
 
 
 }
 
-void ViaMeta::ViaMetaUI::handleAux2ModeChange(int mode) {
+void ViaMeta::handleAux2ModeChange(int mode) {
 
 	switch (mode) {
 	case releaseGate:
-		calculateLogicA = calculateLogicAReleaseGate;
+		calculateLogicA = &ViaMeta::calculateLogicAReleaseGate;
 		break;
 	case attackGate:
-		calculateLogicA = calculateLogicAAttackGate;
+		calculateLogicA = &ViaMeta::calculateLogicAAttackGate;
 		break;
 	}
 
 }
 
-void ViaMeta::ViaMetaUI::handleAux3ModeChange(int mode) {
+void ViaMeta::handleAux3ModeChange(int mode) {
 
 	switch (mode) {
 	case pitchMorphAmp:
-		signals.meta_parameters->fm = signals.drum_parameters->output;
-		signals.wavetable_parameters->morphScale = signals.drum_parameters->output;
+		signals.meta_parameters->fm = (int16_t*) signals.drum_parameters->output;
+		signals.wavetable_parameters->morphScale = (int16_t*) signals.drum_parameters->output;
 		break;
 	case morphAmp:
 		signals.meta_parameters->fm = drumFullScale;
-		signals.wavetable_parameters->morphScale = signals.drum_parameters->output;
+		signals.wavetable_parameters->morphScale = (int16_t*) signals.drum_parameters->output;
 		break;
 	case pitchAmp:
-		signals.meta_parameters->fm = signals.drum_parameters->output;
+		signals.meta_parameters->fm = (int16_t*) signals.drum_parameters->output;
 		signals.wavetable_parameters->morphScale = drumFullScale;
 		break;
 	case amp:
@@ -183,14 +183,14 @@ void ViaMeta::ViaMetaUI::handleAux3ModeChange(int mode) {
 
 }
 
-void ViaMeta::ViaMetaUI::handleAux4ModeChange(int mode) {
+void ViaMeta::handleAux4ModeChange(int mode) {
 
 	switch (mode) {
 	case phasor:
-		calculateDac3 = calculateDac3Phasor;
+		calculateDac3 = &ViaMeta::calculateDac3Phasor;
 		break;
 	case contour:
-		calculateDac3 = calculateDac3Contour;
+		calculateDac3 = &ViaMeta::calculateDac3Contour;
 		break;
 	}
 

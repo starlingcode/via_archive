@@ -1,6 +1,10 @@
 #ifndef REV5_HARDWARE_IO
 #define REV5_HARDWARE_IO
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "main.h"
 #include "stm32f3xx_hal.h"
 
@@ -13,9 +17,13 @@
 // THESE MAKE COMPILED CODE PLATFORM SPECIFIC //
 // LEDs
 // RGB PWM timers
+
+
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim5;
+
+
 
 #define SET_RED_LED(X) __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, X);
 #define SET_GREEN_LED(X) __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, X);
@@ -196,5 +204,9 @@ static inline void setLogicOutputsLEDOff(uint32_t logicA,
 
 // UI timer
 extern TIM_HandleTypeDef htim7;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

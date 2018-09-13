@@ -62,7 +62,9 @@
 
 #define BUILD_F373_REV6
 
-#include "meta.h"
+#include "meta.hpp"
+
+ViaMeta module;
 
 extern void mainHardwareInit(void);
 
@@ -139,7 +141,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-  meta_init(&meta_signals);
+  module.init();
   mainHardwareInit();
 
   SH_A_TRACK

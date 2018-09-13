@@ -8,6 +8,11 @@
 #ifndef INC_VIA_DSP_H_
 #define INC_VIA_DSP_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 /*
  *
  * Circular buffer
@@ -348,5 +353,9 @@ static inline int wavetableDelta(int in0, int in1, int frac0) {
 	return __SMLAD(frac0, in0, 0) >> 31;
 
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* INC_DSP_INLINES_H_ */

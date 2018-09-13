@@ -1,11 +1,17 @@
-#ifndef TEST_H__
-#define TEST_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifndef USER_INTERFACE_H__
+#define USER_INTERFACE_H__
+
 
 #include "via_platform_binding.h"
 #include "tsl_user.h"
 #include "eeprom.h"
 
-CONST TSL_TouchKey_T MyTKeys[6];
+//TSL_TouchKey_T MyTKeys[6];
 tsl_user_status_t tsl_status;
 
 uint32_t eepromStatus;
@@ -203,5 +209,9 @@ uint32_t runtimeDisplay;
 #define CLEAR_RUNTIME_DISPLAY runtimeDisplay = 0
 #define RUNTIME_DISPLAY runtimeDisplay
 
-#endif /* TEST_H__*/
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* USER_INTERFACE_H__*/
 

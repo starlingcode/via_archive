@@ -173,6 +173,11 @@ static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
  *
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 //
 typedef struct {
 	const uint16_t **attackSlope;
@@ -180,6 +185,10 @@ typedef struct {
 	uint32_t slopeLength;
 	uint32_t numWaveforms;
 } Wavetable;
+
+#ifdef __cplusplus
+}
+#endif
 
 // helper function to load the above array
 
@@ -316,7 +325,7 @@ static inline void loadWavetableWithDiff(Wavetable * table,
 
 }
 
-static inline void loadWavetableWithDiff15Bit(Wavetable * table,
+static inline void loadWavetableWithDiff15Bit(const Wavetable * table,
 		uint32_t * tableRead) {
 
 	uint32_t numSamples = table->slopeLength;
@@ -352,7 +361,7 @@ static inline void loadWavetableWithDiff15Bit(Wavetable * table,
 
 }
 
-static inline void loadSingleTable15Bit(Wavetable * table,
+static inline void loadSingleTable15Bit(const Wavetable * table,
 		uint32_t * tableRead) {
 
 	uint32_t numSamples = table->slopeLength;

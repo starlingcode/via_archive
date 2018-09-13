@@ -24,14 +24,11 @@ void ViaMeta::init() {
 	metaControllerGenerateIncrements = metaControllerGenerateIncrementsDrum;
 	metaControllerIncrementArbiter = noRetrigAttackState;
 	metaControllerLoopHandler = handleLoopOn;
-	drumMode = drumModeOn;
-	calculateDac3 = calculateDac3Phasor;
-	calculateLogicA = calculateLogicAReleaseGate;
-	calculateSH = calculateSHMode1;
+	drumMode = &ViaMeta::drumModeOn;
+	calculateDac3 = &ViaMeta::calculateDac3Phasor;
+	calculateLogicA = &ViaMeta::calculateLogicAReleaseGate;
+	calculateSH = &ViaMeta::calculateSHMode1;
 	simpleEnvelopeIncrementArbiter = simpleEnvelopeRestingState;
-
-
-	initializeUICallbacks();
 
 	// initialize our touch sensors
 	tsl_user_Init();
@@ -41,7 +38,7 @@ void ViaMeta::init() {
 
 	switchWavetable(wavetableArray[0][0]);
 	initDrum();
-	signals.drum_parameters->output = drumWrite;
+	signals.drum_parameters->output = (uint32_t*) drumWrite;
 
 	signals.meta_parameters->triggerSignal = 1;
 	signals.meta_parameters->gateSignal = 0;
@@ -51,8 +48,8 @@ void ViaMeta::init() {
 	via_logicStreamInit(&audioRateInput, &audioRateOutput, META_BUFFER_SIZE);
 
 	signals.wavetable_parameters->morphMod = signals.inputs->cv3Samples;
-	signals.wavetable_parameters->morphScale = signals.drum_parameters->output;
-	signals.meta_parameters->fm = signals.drum_parameters->output;
+	signals.wavetable_parameters->morphScale = (int16_t*) signals.drum_parameters->output;
+	signals.meta_parameters->fm = (int16_t*) signals.drum_parameters->output;
 
 
 }

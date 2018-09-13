@@ -23,43 +23,43 @@ typedef struct {
 
 
 typedef struct {
-	const ScaleNote ***grid;
+	const ScaleNote* const** grid;
 	const uint32_t t2Bitshift;
 	const uint32_t oneVoltOct;
 } Scale;
 
 
-//static const ScaleNote **integerRatiosGrid[8];
+//static const ScaleNote* const* integerRatiosGrid[8];
 //Scale integerRatios;
-//static const ScaleNote **pentamodal5primefullspanGrid[8];
+//static const ScaleNote* const* pentamodal5primefullspanGrid[8];
 //Scale pentamodal5primefullspan;
-//static const ScaleNote **harmSubharmfullspanGrid[8];
+//static const ScaleNote* const* harmSubharmfullspanGrid[8];
 //Scale harmSubharmfullspan;
-//static const ScaleNote **modal5primefullspanGrid[8];
+//static const ScaleNote* const* modal5primefullspanGrid[8];
 //Scale modal5primefullspan;
-//static const ScaleNote **harmSubharmGrid[8];
+//static const ScaleNote* const* harmSubharmGrid[8];
 //Scale harmSubharm;
-//static const ScaleNote **harmFolded4Grid[4];
+//static const ScaleNote* const* harmFolded4Grid[4];
 //Scale harmFolded4;
-//static const ScaleNote **pentamodal5primeGrid[8];
+//static const ScaleNote* const* pentamodal5primeGrid[8];
 //Scale pentamodal5prime;
-//static const ScaleNote **triadsGrid[8];
+//static const ScaleNote* const* triadsGrid[8];
 //Scale triads;
-//static const ScaleNote **seventhTetradsMinimalProgressionGrid[16];
+//static const ScaleNote* const* seventhTetradsMinimalProgressionGrid[16];
 //Scale seventhTetradsMinimalProgression;
-//static const ScaleNote **seventhTetradsGrid[16];
+//static const ScaleNote* const* seventhTetradsGrid[16];
 //Scale seventhTetrads;
-//static const ScaleNote **modesOfLimitedTranspositionGrid[16];
+//static const ScaleNote* const* modesOfLimitedTranspositionGrid[16];
 //Scale modesOfLimitedTransposition;
-//static const ScaleNote **majMin9thPentStarlingGrid[16];
+//static const ScaleNote* const* majMin9thPentStarlingGrid[16];
 //Scale majMin9thPentStarling;
-//static const ScaleNote **simpleRhythmsGrid[8];
+//static const ScaleNote* const* simpleRhythmsGrid[8];
 //Scale simpleRhythms;
-//static const ScaleNote **simpleRhythms16Grid[8];
+//static const ScaleNote* const* simpleRhythms16Grid[8];
 //Scale simpleRhythms16;
-//static const ScaleNote **rhythmDivisionsResetGrid[8];
+//static const ScaleNote* const* rhythmDivisionsResetGrid[8];
 //Scale rhythmDivisionsReset;
-//static const ScaleNote **polyResetsGrid[16];
+//static const ScaleNote* const* polyResetsGrid[16];
 //Scale polyResets;
 
 
@@ -2478,37 +2478,37 @@ static const ScaleNote * const polyResets16[128] = {&ratio1_4_16, &ratio1_4_16, 
 
 
 
-static const ScaleNote **integerRatiosGrid[8] = {integerRatios1, integerRatios2, integerRatios3, integerRatios4, integerRatios5, integerRatios6, integerRatios7, integerRatios8};
+static const ScaleNote* const* integerRatiosGrid[8] = {integerRatios1, integerRatios2, integerRatios3, integerRatios4, integerRatios5, integerRatios6, integerRatios7, integerRatios8};
 
-static const ScaleNote **pentamodal5primefullspanGrid[8] = {majpenta5primefullspan, maj2min75primefullspan, maj3dom75primefullspan, subdompenta5primefullspan, dompenta5primefullspan, relmin75primefullspan, dim75primefullspan, majmaj75primefullspan};
+static const ScaleNote* const* pentamodal5primefullspanGrid[8] = {majpenta5primefullspan, maj2min75primefullspan, maj3dom75primefullspan, subdompenta5primefullspan, dompenta5primefullspan, relmin75primefullspan, dim75primefullspan, majmaj75primefullspan};
 
-static const ScaleNote **harmSubharmfullspanGrid[8] = {harmSubharmfullspan1, harmSubharmfullspan2, harmSubharmfullspan3, harmSubharmfullspan4, harmSubharmfullspan5, harmSubharmfullspan6, harmSubharmfullspan7, harmSubharmfullspan8};
+static const ScaleNote* const* harmSubharmfullspanGrid[8] = {harmSubharmfullspan1, harmSubharmfullspan2, harmSubharmfullspan3, harmSubharmfullspan4, harmSubharmfullspan5, harmSubharmfullspan6, harmSubharmfullspan7, harmSubharmfullspan8};
 
-static const ScaleNote **modal5primefullspanGrid[8] = {dominant5primefullspan, major5primefullspan, dorian5primefullspan, phrygian5primefullspan, lydian5primefullspan, mixolydian5primefullspan, aeolian5primefullspan, locrian5primefullspan};
+static const ScaleNote* const* modal5primefullspanGrid[8] = {dominant5primefullspan, major5primefullspan, dorian5primefullspan, phrygian5primefullspan, lydian5primefullspan, mixolydian5primefullspan, aeolian5primefullspan, locrian5primefullspan};
 
-static const ScaleNote **harmSubharmGrid[8] = {harmSubharm1, harmSubharm2, harmSubharm3, harmSubharm4, harmSubharm5, harmSubharm6, harmSubharm7, harmSubharm8};
+static const ScaleNote* const* harmSubharmGrid[8] = {harmSubharm1, harmSubharm2, harmSubharm3, harmSubharm4, harmSubharm5, harmSubharm6, harmSubharm7, harmSubharm8};
 
-static const ScaleNote **harmFolded4Grid[4] = {harmFolded8_2oct, harmFolded12_2oct, HarmFolded12_3oct, HarmFolded16_4oct};
+static const ScaleNote* const* harmFolded4Grid[4] = {harmFolded8_2oct, harmFolded12_2oct, HarmFolded12_3oct, HarmFolded16_4oct};
 
-static const ScaleNote **pentamodal5primeGrid[8] = {majpenta5prime, maj2min75prime, maj3dom75prime, subdompenta5prime, dompenta5prime, relmin75prime, dim75prime, majmaj75prime};
+static const ScaleNote* const* pentamodal5primeGrid[8] = {majpenta5prime, maj2min75prime, maj3dom75prime, subdompenta5prime, dompenta5prime, relmin75prime, dim75prime, majmaj75prime};
 
-static const ScaleNote **triadsGrid[8] = {majTriad, majTriad1stInv, majTriad2ndInv, minTriad, minTriad2ndInv, MinTriad1stInv, quartalTriad, quartalTriad1stInv};
+static const ScaleNote* const* triadsGrid[8] = {majTriad, majTriad1stInv, majTriad2ndInv, minTriad, minTriad2ndInv, MinTriad1stInv, quartalTriad, quartalTriad1stInv};
 
-static const ScaleNote **seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv};
+static const ScaleNote* const* seventhTetradsMinimalProgressionGrid[16] = {subDom7thRotate, min7th, dom7thRotate, min7th2ndInv, maj7th1stInv, maj7th, dom7th, harmDom7th, min7th1stInv, maj7th2ndInv, harmDom7th2ndInv, min7th3rdInv, maj7th3rdInv, harmDom7th1stInv, subDom7th, harmDom7th3rdInv};
 
-static const ScaleNote **seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate};
+static const ScaleNote* const* seventhTetradsGrid[16] = {maj7th, maj7th2ndInv, maj7th1stInv, maj7th3rdInv, min7th, min7th2ndInv, min7th1stInv, min7th3rdInv, harmDom7th, harmDom7th1stInv, harmDom7th2ndInv, harmDom7th3rdInv, dom7th, subDom7th, dom7thRotate, subDom7thRotate};
 
-static const ScaleNote **modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4};
+static const ScaleNote* const* modesOfLimitedTranspositionGrid[16] = {messiaenOctatonic1, messiaenOctatonic2, messiaenModeIII1, messiaenModeIII2, messiaenModeIII3, messiaenModeIV1, messiaenModeIV2, messiaenModeIV3, messiaenModeIV4, messiaenModeV1, messiaenModeV2, messiaenModeV3, messiaenModeVI1, messiaenModeVI2, messiaenModeVI3, messiaenModeVI4};
 
-static const ScaleNote **majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th};
+static const ScaleNote* const* majMin9thPentStarlingGrid[16] = {maj9thPent, min9thPent, maj9thPent1stInv, min9thPent1stInv, maj9thPent2ndInv, min9thPent2ndInv, maj9thPent3rdInv, Min9thPent3rdInv, Maj9thPent4thInv, Min9thPent4thInv, starling, starling1stInv, starling2ndInv, starling3rdInv, Starling4thInv, tridecimalSubminor9th};
 
-static const ScaleNote **simpleRhythmsGrid[8] = {simpleRhythms1, simpleRhythms2, simpleRhythms3, simpleRhythms4, simpleRhythms5, simpleRhythms6, simpleRhythms7, simpleRhythms8};
+static const ScaleNote* const* simpleRhythmsGrid[8] = {simpleRhythms1, simpleRhythms2, simpleRhythms3, simpleRhythms4, simpleRhythms5, simpleRhythms6, simpleRhythms7, simpleRhythms8};
 
-static const ScaleNote **simpleRhythms16Grid[8] = {SimpleRhythms1_16, SimpleRhythms2_16, SimpleRhythms3_16, SimpleRhythms4_16, SimpleRhythms5_16, SimpleRhythms6_16, SimpleRhythms7_16, SimpleRhythms8_16};
+static const ScaleNote* const* simpleRhythms16Grid[8] = {SimpleRhythms1_16, SimpleRhythms2_16, SimpleRhythms3_16, SimpleRhythms4_16, SimpleRhythms5_16, SimpleRhythms6_16, SimpleRhythms7_16, SimpleRhythms8_16};
 
-static const ScaleNote **rhythmDivisionsResetGrid[8] = {rhythmDivisionsReset1, rhythmDivisionsReset2, rhythmDivisionsReset3, rhythmDivisionsReset4, rhythmDivisionsReset5, rhythmDivisionsReset6, rhythmDivisionsReset7, rhythmDivisionsReset8};
+static const ScaleNote* const* rhythmDivisionsResetGrid[8] = {rhythmDivisionsReset1, rhythmDivisionsReset2, rhythmDivisionsReset3, rhythmDivisionsReset4, rhythmDivisionsReset5, rhythmDivisionsReset6, rhythmDivisionsReset7, rhythmDivisionsReset8};
 
-static const ScaleNote **polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16};
+static const ScaleNote* const* polyResetsGrid[16] = {polyResets1, polyResets2, polyResets3, polyResets4, polyResets5, polyResets6, polyResets7, polyResets8, polyResets9, polyResets10, polyResets11, polyResets12, polyResets13, polyResets14, polyResets15, polyResets16};
 
 static const Scale integerRatios = {
    .grid = integerRatiosGrid,

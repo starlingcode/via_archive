@@ -5,14 +5,20 @@
  *      Author: willmitchell
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef INC_PLATFORM_SIGNALS_H_
 #define INC_PLATFORM_SIGNALS_H_
+
 
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "dsp.h"
 #include "via_global_signals.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 extern ADC_HandleTypeDef hadc1;
 extern DAC_HandleTypeDef hdac1;
@@ -20,7 +26,7 @@ extern DAC_HandleTypeDef hdac2;
 extern SDADC_HandleTypeDef hsdadc1;
 extern SDADC_HandleTypeDef hsdadc2;
 
-int controlRateADCReadings[4];
+uint32_t controlRateADCReadings[4];
 
 #define knob2 controlRateADCReadings[3]
 #define knob3 controlRateADCReadings[1]
@@ -32,14 +38,14 @@ int controlRateADCReadings[4];
 static inline void via_ioStreamInit(audioRateInputs * audioRateInput,
 		audioRateOutputs * audioRateOutput, int bufferSize) {
 
-	audioRateOutput->dac1Samples = malloc(2 * bufferSize * sizeof(int));
-	audioRateOutput->dac2Samples = malloc(2 * bufferSize * sizeof(int));
-	audioRateOutput->dac3Samples = malloc(2 * bufferSize * sizeof(int));
+	audioRateOutput->dac1Samples = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
+	audioRateOutput->dac2Samples = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
+	audioRateOutput->dac3Samples = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
 
-	audioRateInput->cv2Samples = malloc(2 * bufferSize * sizeof(int));
-	audioRateInput->cv3Samples = malloc(2 * bufferSize * sizeof(int));
-	audioRateInput->cv2VirtualGround = malloc(2 * bufferSize * sizeof(int));
-	audioRateInput->cv3VirtualGround = malloc(2 * bufferSize * sizeof(int));
+	audioRateInput->cv2Samples = (int16_t*) malloc(2 * bufferSize * sizeof(int));
+	audioRateInput->cv3Samples = (int16_t*) malloc(2 * bufferSize * sizeof(int));
+	audioRateInput->cv2VirtualGround = (int16_t*) malloc(2 * bufferSize * sizeof(int));
+	audioRateInput->cv3VirtualGround = (int16_t*) malloc(2 * bufferSize * sizeof(int));
 
 	int16_t cv2Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA0) << 2;
 	int16_t cv3Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA1) << 2;
@@ -80,8 +86,8 @@ static inline void via_ioStreamInit(audioRateInputs * audioRateInput,
 			2 * bufferSize, DAC_ALIGN_12B_R);
 
 	// set the dac sample rate and start the dac timer
-	HAL_SDADC_Start_DMA(&hsdadc1, audioRateInput->cv2Samples, 2 * bufferSize);
-	HAL_SDADC_Start_DMA(&hsdadc2, audioRateInput->cv3Samples, 2 * bufferSize);
+	HAL_SDADC_Start_DMA(&hsdadc1, (uint32_t *) audioRateInput->cv2Samples, 2 * bufferSize);
+	HAL_SDADC_Start_DMA(&hsdadc2, (uint32_t *) audioRateInput->cv3Samples, 2 * bufferSize);
 //	TIM6->ARR = 1439;
 //	TIM6->CR1 |= TIM_CR1_CEN;
 
@@ -90,13 +96,13 @@ static inline void via_ioStreamInit(audioRateInputs * audioRateInput,
 static inline void via_logicStreamInit(audioRateInputs * audioRateInput,
 		audioRateOutputs * audioRateOutput, int bufferSize) {
 
-	audioRateOutput->shA = malloc(2 * bufferSize * sizeof(int));
-	audioRateOutput->shB = malloc(2 * bufferSize * sizeof(int));
-	audioRateOutput->logicA = malloc(2 * bufferSize * sizeof(int));
-	audioRateOutput->auxLogic = malloc(2 * bufferSize * sizeof(int));
+	audioRateOutput->shA = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
+	audioRateOutput->shB = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
+	audioRateOutput->logicA = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
+	audioRateOutput->auxLogic = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
 
-	audioRateInput->trigSamples = malloc(2 * bufferSize * sizeof(int));
-	audioRateInput->auxTrigSamples = malloc(2 * bufferSize * sizeof(int));
+	audioRateInput->trigSamples = (int*) malloc(2 * bufferSize * sizeof(int));
+	audioRateInput->auxTrigSamples = (int*) malloc(2 * bufferSize * sizeof(int));
 
 }
 
@@ -138,5 +144,9 @@ static inline void via_updateControlRateInputs(controlRateInputs * controls) {
 	controls->knob3Value = controls->knob3Sum >> 5;
 
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* INC_PLATFORM_SIGNALS_H_ */

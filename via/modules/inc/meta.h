@@ -5,23 +5,14 @@
  *      Author: willmitchell
  */
 
+
+
 #ifndef INC_META_H_
 #define INC_META_H_
 
-
-#include "via_platform_binding.h"
-#include "user_interface.h"
-#include "oscillators.h"
-
-/*
- *
- * Signals
- *
- */
-
-simpleWavetableParameters meta_wavetableParameters;
-metaControllerParameters metaParameters;
-simpleEnvelopeParameters drumParameters;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
 
@@ -33,10 +24,6 @@ typedef struct {
 	simpleEnvelopeParameters * drum_parameters;
 
 } meta_signal_set;
-
-meta_signal_set meta_signals;
-
-#define META_BUFFER_SIZE 1
 
 /*
  *
@@ -53,12 +40,32 @@ void meta_auxRisingEdgeCallback(meta_signal_set *);
 void meta_auxFallingEdgeCallback(meta_signal_set *);
 
 void meta_buttonPressedCallback(meta_signal_set *);
-void meta_buttonPressedCallback(meta_signal_set *);
+void meta_buttonReleasedCallback(meta_signal_set *);
 
 void meta_ioProcessCallback(meta_signal_set *);
 void meta_halfTransferCallback(meta_signal_set *);
 void meta_transferCompleteCallback(meta_signal_set *);
 void meta_slowConversionCallback(meta_signal_set *);
+
+#ifdef __cplusplus
+}
+#endif
+
+
+/*
+ *
+ * Signals
+ *
+ */
+
+simpleWavetableParameters meta_wavetableParameters;
+metaControllerParameters metaParameters;
+simpleEnvelopeParameters drumParameters;
+
+meta_signal_set meta_signals;
+
+#define META_BUFFER_SIZE 1
+
 
 /*
  *

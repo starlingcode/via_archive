@@ -67,7 +67,7 @@ void ViaMeta::ioProcessCallback(void) {
 
 void ViaMeta::halfTransferCallback(void) {
 
-	via_setLogicOut(signals.outputs, 0, runtimeDisplay);
+	via_setLogicOut(signals.outputs, 0, metaUI.runtimeDisplay);
 
 	simpleWavetableParameters * wavetable_parameters = signals.wavetable_parameters;
 	metaControllerParameters * meta_parameters = signals.meta_parameters;
@@ -75,20 +75,20 @@ void ViaMeta::halfTransferCallback(void) {
 	audioRateOutputs * outputs = signals.outputs;
 
 	(*metaControllerGenerateIncrements)(meta_parameters, signals.inputs);
-	metaControllerAdvancePhase(meta_parameters, &phaseModPWMTables);
+	metaControllerAdvancePhase(meta_parameters, (uint32_t *) phaseModPWMTables);
 	wavetable_parameters->phase = meta_parameters->ghostPhase;
-	outputs->dac2Samples[0] = simpleWavetableAdvance(wavetable_parameters, wavetableRead);
-	(*meta_drumMode)(signals, 0);
+	outputs->dac2Samples[0] = simpleWavetableAdvance(wavetable_parameters, (uint32_t *) wavetableRead);
+	(this->*drumMode)(0);
 	outputs->auxLogic[0] = EXPAND_LOGIC_LOW_MASK << (16 * wavetable_parameters->delta);
-	(*meta_calculateDac3)(signals, 0);
-	(*meta_calculateLogicA)(signals, 0);
-	(*meta_calculateSH)(signals, 0);
+	(this->*calculateDac3)(0);
+	(this->*calculateLogicA)(0);
+	(this->*calculateSH)(0);
 
 }
 
 void ViaMeta::transferCompleteCallback(void) {
 
-	via_setLogicOut(signals.outputs, 1, runtimeDisplay);
+	via_setLogicOut(signals.outputs, 1, metaUI.runtimeDisplay);
 
 	simpleWavetableParameters * wavetable_parameters = signals.wavetable_parameters;
 	metaControllerParameters * meta_parameters = signals.meta_parameters;
@@ -96,14 +96,14 @@ void ViaMeta::transferCompleteCallback(void) {
 	audioRateOutputs * outputs = signals.outputs;
 
 	(*metaControllerGenerateIncrements)(meta_parameters, signals.inputs);
-	metaControllerAdvancePhase(meta_parameters, &phaseModPWMTables);
+	metaControllerAdvancePhase(meta_parameters, (uint32_t *) phaseModPWMTables);
 	wavetable_parameters->phase = meta_parameters->ghostPhase;
-	outputs->dac2Samples[1] = simpleWavetableAdvance(wavetable_parameters, wavetableRead);
-	(*meta_drumMode)(1);
+	outputs->dac2Samples[1] = simpleWavetableAdvance(wavetable_parameters, (uint32_t *) wavetableRead);
+	(this->*drumMode)(1);
 	outputs->auxLogic[1] = EXPAND_LOGIC_LOW_MASK << (16 * wavetable_parameters->delta);
-	(*meta_calculateDac3)(1);
-	(*meta_calculateLogicA)(1);
-	(*meta_calculateSH)(1);
+	(this->*calculateDac3)(1);
+	(this->*calculateLogicA)(1);
+	(this->*calculateSH)(1);
 
 }
 
@@ -116,7 +116,7 @@ void ViaMeta::slowConversionCallback(void) {
 	(*metaControllerParseControls)(controls, signals.inputs, signals.meta_parameters);
 	simpleEnvelopeParseControls (controls, signals.inputs, signals.drum_parameters);
 
-	if (runtimeDisplay) {
+	if (metaUI.runtimeDisplay) {
 		int sample = signals.outputs->dac2Samples[0];
 		int lastPhaseValue = signals.wavetable_parameters->phase;
 		SET_RED_LED(sample * (lastPhaseValue >> 24));

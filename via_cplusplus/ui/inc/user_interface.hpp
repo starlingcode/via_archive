@@ -36,6 +36,17 @@ public:
 
 	int presetNumber;
 
+	int button1Mode;
+	int button2Mode;
+	int button3Mode;
+	int button4Mode;
+	int button5Mode;
+	int button6Mode;
+	int aux1Mode;
+	int aux2Mode;
+	int aux3Mode;
+	int aux4Mode;
+
 	// initial setup of UI
 	void initialize(void);
 	void loadFromEEPROM(int);

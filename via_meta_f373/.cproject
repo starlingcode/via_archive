@@ -33,13 +33,13 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level.916747101" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.c.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.866260234" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.846897944" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/synthesis/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/modules/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="../inc"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/stm32f373/Middlewares/ST/STM32_TouchSensing_Library/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/stm32f373/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/ui/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/io/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via/synthesis/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="../inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F3xx/Include"/>

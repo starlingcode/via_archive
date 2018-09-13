@@ -76,18 +76,11 @@ public:
 	 *
 	 */
 
+	ViaMeta() = default;
+
 	class ViaMetaUI: public ViaUI {
 
-		void handleButton1ModeChange(int);
-		void handleButton2ModeChange(int);
-		void handleButton3ModeChange(int);
-		void handleButton4ModeChange(int);
-		void handleButton5ModeChange(int);
-		void handleButton6ModeChange(int);
-		void handleAux1ModeChange(int);
-		void handleAux2ModeChange(int);
-		void handleAux3ModeChange(int);
-		void handleAux4ModeChange(int);
+		ViaMeta& this_module;
 
 		void button1TapCallback(void);
 		void button1HoldCallback(void);
@@ -128,9 +121,29 @@ public:
 		void aux3EnterMenuCallback(void);
 		void aux4EnterMenuCallback(void);
 
+	public:
+		ViaMetaUI(ViaMeta& outer) : this_module(outer) {}
+
 	};
 
+	void handleButton1ModeChange(int);
+	void handleButton2ModeChange(int);
+	void handleButton3ModeChange(int);
+	void handleButton4ModeChange(int);
+	void handleButton5ModeChange(int);
+	void handleButton6ModeChange(int);
+	void handleAux1ModeChange(int);
+	void handleAux2ModeChange(int);
+	void handleAux3ModeChange(int);
+	void handleAux4ModeChange(int);
+
+	ViaMetaUI metaUI;
+
 	meta_signal_set signals;
+
+	controlRateInputs controlRateInput;
+	audioRateInputs audioRateInput;
+	audioRateOutputs audioRateOutput;
 
 	simpleWavetableParameters meta_wavetableParameters;
 	metaControllerParameters metaParameters;
@@ -166,7 +179,7 @@ public:
 	 */
 
 	// declare an array of pointers to wavetables (stored in flash)
-	Wavetable * wavetableArray[3][8];
+	const Wavetable * wavetableArray[3][8];
 
 	// declare arrays to store the active tables
 	uint32_t wavetableRead[9][517];
@@ -175,7 +188,7 @@ public:
 	//uint32_t meta_phaseDistRead[33][65];
 
 	// declare functions to set the currently active tables
-	void switchWavetable(Wavetable *);
+	void switchWavetable(const Wavetable *);
 	// phase distortion table is fixed
 	void initPhaseDistTable(void);
 	void fillWavetableArray(void);
@@ -221,7 +234,7 @@ public:
 	// Decimate (Resample A at B, resample B at A
 	void calculateSHMode6(int writeIndex);
 
-} metaModule;
+};
 
 
 #endif /* INC_META_HPP_ */

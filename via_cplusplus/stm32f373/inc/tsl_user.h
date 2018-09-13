@@ -130,7 +130,17 @@ extern CONST TSL_Object_T MyObjects[];
 extern TSL_ObjectGroup_T MyObjGroup;
 
 void tsl_user_Init(void);
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 tsl_user_status_t tsl_user_Exec(void);
+
+#ifdef __cplusplus
+}
+#endif
+
 void tsl_user_SetThresholds(void);
 
 #endif /* __TSL_USER_H */

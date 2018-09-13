@@ -41,8 +41,6 @@
 
 /* External variables --------------------------------------------------------*/
 
-extern DMA_HandleTypeDef hdma_sdadc1;
-extern DMA_HandleTypeDef hdma_sdadc2;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
