@@ -64,9 +64,9 @@
 
 #include "meta.hpp"
 
-ViaMeta module;
-
 extern void mainHardwareInit(void);
+
+extern void linkInterrupts(ViaMeta *);
 
 /* USER CODE END Includes */
 
@@ -140,8 +140,9 @@ int main(void)
   MX_DAC2_Init();
   /* USER CODE BEGIN 2 */
 
-
-  module.init();
+  ViaMeta module;
+  ViaMeta * moduleAddress = &module;
+  linkInterrupts(moduleAddress);
   mainHardwareInit();
 
   SH_A_TRACK
@@ -153,7 +154,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
 
 
   }

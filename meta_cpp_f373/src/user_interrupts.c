@@ -1,12 +1,15 @@
 
-#include "meta.hpp"
+#include "tsl_user.h"
+#include "stm32f3xx_it.h"
+#include "interrupt_link.hpp"
+#include "f373_rev6_io.hpp"
 
-extern ViaMeta module;
 
 int triggerDebounce;
 
+#ifdef __cplusplus
 extern "C" {
-
+#endif
 
 extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim7;
@@ -15,7 +18,6 @@ extern TIM_HandleTypeDef htim13;
 extern TIM_HandleTypeDef htim16;
 extern TIM_HandleTypeDef htim17;
 
-}
 
 /*
  *
@@ -29,9 +31,9 @@ void TIM12_IRQHandler(void)
 {
 
 	if (TRIGGER_RISING_EDGE) {
-		module.mainRisingEdgeCallback();
+		(*mainRisingEdgeCallback)(modulePointer);
 	} else {
-		module.mainFallingEdgeCallback();
+		(*mainFallingEdgeCallback)(modulePointer);
 	}
 
 	__HAL_TIM_CLEAR_FLAG(&htim12, TIM_FLAG_CC2);
@@ -44,9 +46,9 @@ void EXTI15_10_IRQHandler(void)
 {
 
 	if (EXPANDER_RISING_EDGE) {
-		module.auxRisingEdgeCallback();
+		(*auxRisingEdgeCallback)(modulePointer);
 	} else {
-		module.auxFallingEdgeCallback();
+		(*auxFallingEdgeCallback)(modulePointer);
 	}
 
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
@@ -63,14 +65,14 @@ void EXTI1_IRQHandler(void)
 			//uiDispatch(EXPAND_SW_ON_SIG);
 			triggerDebounce = 1;
 			__HAL_TIM_ENABLE(&htim16);
-			module.buttonPressedCallback();
+			(*buttonPressedCallback)(modulePointer);
 		}
 	} else { //falling edge
 		if (!triggerDebounce) {
 			//uiDispatch(EXPAND_SW_OFF_SIG);
 			triggerDebounce = 1;
 			__HAL_TIM_ENABLE(&htim16);
-			module.buttonReleasedCallback();
+			(*buttonReleasedCallback)(modulePointer);
 		}
 	}
 
@@ -105,8 +107,8 @@ void TIM17_IRQHandler(void)
 //	if (RUNTIME_DISPLAY) {
 //		LEDB_ON;
 //	}
-//	__HAL_TIM_CLEAR_FLAG(&htim17, TIM_FLAG_UPDATE);
-//	__HAL_TIM_DISABLE(&htim17);
+	__HAL_TIM_CLEAR_FLAG(&htim17, TIM_FLAG_UPDATE);
+	__HAL_TIM_DISABLE(&htim17);
 
 }
 
@@ -127,7 +129,8 @@ void TIM13_IRQHandler(void)
 void TIM7_IRQHandler(void)
 {
 
-	module.metaUI.dispatch(TIMEOUT_SIG);
+
+	(*uiTimerCallback)(modulePointer);
 
 	HAL_TIM_IRQHandler(&htim7);
 
@@ -150,7 +153,7 @@ void DMA1_Channel1_IRQHandler(void)
 		DMA1->IFCR = DMA_FLAG_HT1;
 	} else {
 		DMA1->IFCR = DMA_FLAG_TC1;
-		module.slowConversionCallback();
+		(*adcConversionCompleteCallback)(modulePointer);
 	}
 
 }
@@ -161,13 +164,17 @@ void DMA1_Channel5_IRQHandler(void)
 
 	if ((DMA1->ISR & (DMA_FLAG_HT1 << 16)) != 0) {
 		DMA1->IFCR = DMA_FLAG_HT1 << 16;
-		module.halfTransferCallback();
+		(*dacHalfTransferCallback)(modulePointer);
 	} else if ((DMA1->ISR & (DMA_FLAG_TC1 << 16)) != 0)  {
 		DMA1->IFCR = DMA_FLAG_TC1 << 16;
-		module.transferCompleteCallback();
+		(*dacTransferCompleteCallback)(modulePointer);
 	}
 
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 
 

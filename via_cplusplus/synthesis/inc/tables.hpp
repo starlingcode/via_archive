@@ -8,7 +8,7 @@
 #ifndef INC_TABLES_H_
 #define INC_TABLES_H_
 
-#include "sample_data.h"
+#include <sample_data.hpp>
 
 /*
  *

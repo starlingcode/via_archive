@@ -14,6 +14,12 @@
 extern "C" {
 #endif
 
+
+#include "via_platform_binding.h"
+#include "user_interface.h"
+#include "oscillators.h"
+
+
 typedef struct {
 
 	audioRateOutputs * outputs;

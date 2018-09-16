@@ -8,8 +8,7 @@
 #ifndef INC_HARDRWARE_IO_H_
 #define INC_HARDRWARE_IO_H_
 
-#include "f373_rev6_io.h"
-#include "f373_rev6_signals.h"
+#include "via_global_signals.hpp"
 
 
 #endif /* INC_HARDRWARE_IO_H_ */

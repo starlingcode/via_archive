@@ -19,43 +19,43 @@ const uint32_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseM
 
 void ViaMeta::mainRisingEdgeCallback(void) {
 
-	signals.meta_parameters->triggerSignal = 0;
+	metaController.triggerSignal = 0;
 
-	signals.meta_parameters->gateSignal = 1 * signals.meta_parameters->gateOn;
+	metaController.gateSignal = 1 * metaController.gateOn;
 
-	signals.drum_parameters->trigger = 0;
+	drumEnvelope.trigger = 0;
 
 }
 
 void ViaMeta::mainFallingEdgeCallback(void) {
 
-	signals.meta_parameters->gateSignal = 0;
+	metaController.gateSignal = 0;
 
 }
 
 void ViaMeta::auxRisingEdgeCallback(void) {
 
-	signals.meta_parameters->freeze = 0;
+	metaController.freeze = 0;
 
 }
 void ViaMeta::auxFallingEdgeCallback(void)
 {
-	signals.meta_parameters->freeze = 1;
+	metaController.freeze = 1;
 
 }
 
 void ViaMeta::buttonPressedCallback(void) {
 
-	signals.meta_parameters->triggerSignal = 0;
+	metaController.triggerSignal = 0;
 
-	signals.meta_parameters->gateSignal = 1 * signals.meta_parameters->gateOn;
+	metaController.gateSignal = 1 * metaController.gateOn;
 
-	signals.drum_parameters->trigger = 0;
+	drumEnvelope.trigger = 0;
 
 }
 void ViaMeta::buttonReleasedCallback(void) {
 
-	signals.meta_parameters->gateSignal = 0;
+	metaController.gateSignal = 0;
 
 }
 
@@ -67,19 +67,15 @@ void ViaMeta::ioProcessCallback(void) {
 
 void ViaMeta::halfTransferCallback(void) {
 
-	via_setLogicOut(signals.outputs, 0, metaUI.runtimeDisplay);
+	system.setLogicOut(0, runtimeDisplay);
 
-	simpleWavetableParameters * wavetable_parameters = signals.wavetable_parameters;
-	metaControllerParameters * meta_parameters = signals.meta_parameters;
-	audioRateInputs * inputs = signals.inputs;
-	audioRateOutputs * outputs = signals.outputs;
 
-	(*metaControllerGenerateIncrements)(meta_parameters, signals.inputs);
-	metaControllerAdvancePhase(meta_parameters, (uint32_t *) phaseModPWMTables);
-	wavetable_parameters->phase = meta_parameters->ghostPhase;
-	outputs->dac2Samples[0] = simpleWavetableAdvance(wavetable_parameters, (uint32_t *) wavetableRead);
+	metaController.generateIncrementsExternal(&system.inputs);
+	metaController.advancePhase((uint32_t *) phaseModPWMTables);
+	metaWavetable.phase = metaController.ghostPhase;
+	system.outputs.dac2Samples[0] = metaWavetable.advance((uint32_t *) wavetableRead);
 	(this->*drumMode)(0);
-	outputs->auxLogic[0] = EXPAND_LOGIC_LOW_MASK << (16 * wavetable_parameters->delta);
+	system.outputs.auxLogic[0] = EXPAND_LOGIC_LOW_MASK << (16 * metaWavetable.delta);
 	(this->*calculateDac3)(0);
 	(this->*calculateLogicA)(0);
 	(this->*calculateSH)(0);
@@ -88,19 +84,14 @@ void ViaMeta::halfTransferCallback(void) {
 
 void ViaMeta::transferCompleteCallback(void) {
 
-	via_setLogicOut(signals.outputs, 1, metaUI.runtimeDisplay);
+	system.setLogicOut(1, runtimeDisplay);
 
-	simpleWavetableParameters * wavetable_parameters = signals.wavetable_parameters;
-	metaControllerParameters * meta_parameters = signals.meta_parameters;
-	audioRateInputs * inputs = signals.inputs;
-	audioRateOutputs * outputs = signals.outputs;
-
-	(*metaControllerGenerateIncrements)(meta_parameters, signals.inputs);
-	metaControllerAdvancePhase(meta_parameters, (uint32_t *) phaseModPWMTables);
-	wavetable_parameters->phase = meta_parameters->ghostPhase;
-	outputs->dac2Samples[1] = simpleWavetableAdvance(wavetable_parameters, (uint32_t *) wavetableRead);
+	metaController.generateIncrementsExternal(&system.inputs);
+	metaController.advancePhase((uint32_t *) phaseModPWMTables);
+	metaWavetable.phase = metaController.ghostPhase;
+	system.outputs.dac2Samples[1] = metaWavetable.advance((uint32_t *) wavetableRead);
 	(this->*drumMode)(1);
-	outputs->auxLogic[1] = EXPAND_LOGIC_LOW_MASK << (16 * wavetable_parameters->delta);
+	system.outputs.auxLogic[1] = EXPAND_LOGIC_LOW_MASK << (16 * metaWavetable.delta);
 	(this->*calculateDac3)(1);
 	(this->*calculateLogicA)(1);
 	(this->*calculateSH)(1);
@@ -109,19 +100,19 @@ void ViaMeta::transferCompleteCallback(void) {
 
 void ViaMeta::slowConversionCallback(void) {
 
-	controlRateInputs * controls = signals.controls;
 
-	via_updateControlRateInputs(controls);
-	simpleWavetableParseControls(controls, signals.wavetable_parameters);
-	(*metaControllerParseControls)(controls, signals.inputs, signals.meta_parameters);
-	simpleEnvelopeParseControls (controls, signals.inputs, signals.drum_parameters);
+	system.controls.update();
+	metaWavetable.parseControls(&system.controls);
+	metaController.parseControlsExternal(&system.controls, &system.inputs);
+	drumEnvelope.parseControls(&system.controls, &system.inputs);
 
-	if (metaUI.runtimeDisplay) {
-		int sample = signals.outputs->dac2Samples[0];
-		int lastPhaseValue = signals.wavetable_parameters->phase;
+	if (runtimeDisplay) {
+		int sample = system.outputs.dac2Samples[0];
+		int lastPhaseValue = metaWavetable.phase;
 		SET_RED_LED(sample * (lastPhaseValue >> 24));
 		SET_BLUE_LED(sample * (!(lastPhaseValue >> 24)));
-		SET_GREEN_LED(__USAT((signals.inputs->cv3Samples[0] + controls->knob3Value - 2048), 12) * sample >> 12);
+		SET_GREEN_LED((__USAT((system.inputs.cv3Samples[0] + system.controls.knob3Value - 2048), 12)
+				* sample) >> 12);
 	}
 
 }

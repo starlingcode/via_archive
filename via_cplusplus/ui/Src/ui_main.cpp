@@ -42,6 +42,10 @@ void ViaUI::defaultMenu(int sig) {
 
 	case ENTRY_SIG:
 		defaultEnterMenuCallback();
+		timerReset();
+		timerDisable();
+		clearLEDs();
+		clearRGB();
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -71,7 +75,8 @@ void ViaUI::defaultMenu(int sig) {
 		break;
 
 		case EXIT_SIG:
-
+			clearLEDs();
+			clearRGB();
 		break;
 
 		default:
@@ -92,6 +97,10 @@ void ViaUI::newModeMenu(int sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		newModeEnterMenuCallback();
+		//storeToEEPROM(0);
+		timerReset();
+		timerSetOverflow(5000);
+		timerEnable();
 		break;
 
 		// once timerRead() times out, clear display and return to default state

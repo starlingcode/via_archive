@@ -8,6 +8,14 @@
 #ifndef INC_VIA_DSP_H_
 #define INC_VIA_DSP_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "stm32f3xx.h"
+
+#include <stdint.h>
+
 /*
  *
  * Circular buffer
@@ -241,8 +249,8 @@ static inline int fast_15_16_bilerp_prediff(int in0, int in1, int frac0,
 // this is fortunately the default table load
 // morph should have a max value of the table size
 
-static inline int getSampleQuinticSpline(int phase, uint32_t morph,
-		int *fullTableHoldArray, int *delta) {
+static inline int getSampleQuinticSpline(uint32_t phase, uint32_t morph,
+		uint32_t *fullTableHoldArray, int *delta) {
 
 	/* in this function, we use our phase position to get the sample to give to our dacs using a quintic spline interpolation technique
 	 essentially, we need to get 6 pairs of sample values and two "fractional arguments" (where are we at in between those sample values)
@@ -254,8 +262,7 @@ static inline int getSampleQuinticSpline(int phase, uint32_t morph,
 	uint32_t LnFamily; // indicates the nearest neighbor (wavetable) to our morph value in the family
 	uint32_t phaseFrac; // indicates the fractional distance between the nearest sample values in terms of phase
 	uint32_t morphFrac; // indicates the fractional distance between our nearest neighbors in the family
-	int * leftIndex;
-	int * rightIndex;
+	uint32_t * leftIndex;
 
 	// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
 	// truncate phase then add two to find the left neighboring sample of the phase pointer
@@ -348,5 +355,9 @@ static inline int wavetableDelta(int in0, int in1, int frac0) {
 	return __SMLAD(frac0, in0, 0) >> 31;
 
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* INC_DSP_INLINES_H_ */

@@ -18,7 +18,7 @@
 
 void ViaUI::initialize(void) {
 
-	state = defaultMenu;
+	state = &ViaUI::defaultMenu;
 	transition(&ViaUI::defaultMenu);
 
 }

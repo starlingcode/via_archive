@@ -8,9 +8,21 @@
 #ifndef INC_USER_INTERFACE_HPP_
 #define INC_USER_INTERFACE_HPP_
 
-#include "via_platform_binding.h"
+#include <via_platform_binding.hpp>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "tsl_user.h"
 #include "eeprom.h"
+
+void linkUI(void *, void *);
+
+#ifdef __cplusplus
+}
+#endif
+
+
 
 enum uiSignals {
 	NULL_SIG, // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
@@ -24,39 +36,28 @@ enum uiSignals {
 	TSL_ERROR_SIG
 };
 
-enum uiSignals uiSignalCopy;
+typedef struct {
+	int r;
+	int b;
+	int g;
+} rgb;
+
+// shortcuts for commonly used colors as macro defines of rgb struct values
+#define red {4095, 0, 0};
+#define green {0, 4095, 0};
+#define blue {0, 0, 4095};
+#define orange {4095, 4095, 0};
+#define magenta {4095, 0, 4095};
+#define cyan {0, 4095, 4095};
 
 class ViaUI {
-public:
-	// holds the mode state as a EEPROM-formatted value.
-	int modeStateBuffer;
 
-	// TODO HALF ASSED
-	int runtimeDisplay;
-
-	int presetNumber;
-
-	int button1Mode;
-	int button2Mode;
-	int button3Mode;
-	int button4Mode;
-	int button5Mode;
-	int button6Mode;
-	int aux1Mode;
-	int aux2Mode;
-	int aux3Mode;
-	int aux4Mode;
-
-	// initial setup of UI
-	void initialize(void);
-	void loadFromEEPROM(int);
-	void storeToEEPROM(int);
-
+protected:
 	// UI States
 	void (ViaUI::*state)(int);
 
-	// dispatch a signal to current state
-	void dispatch(int);  // dispatch signal to state
+public:
+
 	void transition(void (ViaUI::*func)(int));
 
 	// Main
@@ -124,16 +125,126 @@ public:
 	virtual void aux3EnterMenuCallback(void);
 	virtual void aux4EnterMenuCallback(void);
 
-	void (*timerReset)(void);
-	void (*timerEnable)(void);
-	void (*timerDisable)(void);
-	void (*timerSetOverflow)(int);
-	int (*timerRead)(void);
+	void timerReset(void) {
+		TIM7->CNT = 1;
+	}
+	void timerEnable(void) {
+		TIM7->CR1 |= TIM_CR1_CEN;
+	}
+	void timerDisable(void) {
+		TIM7->CR1 &= ~TIM_CR1_CEN;
+	}
+	void timerSetOverflow(int arr) {
+		TIM7->ARR = arr;
+	}
+	int timerRead(void) {
+		return TIM7->CNT;
+	}
 
-	void initializeUICallbacks(void);
+	void setRGB(rgb color) {
+		SET_RED_LED(color.r);
+		SET_GREEN_LED(color.g);
+		SET_BLUE_LED(color.b);
+	}
+
+	void clearRGB() {
+		SET_RED_LED(0);
+		SET_GREEN_LED(0);
+		SET_BLUE_LED(0);
+	}
+
+	void setLEDs(int digit) {
+		switch (digit) {
+		case 0:
+			LEDA_ON;
+			LEDB_OFF;
+			LEDC_OFF;
+			LEDD_OFF;
+			break;
+		case 1:
+			LEDA_OFF;
+			LEDB_OFF;
+			LEDC_ON;
+			LEDD_OFF;
+			break;
+		case 2:
+			LEDA_OFF;
+			LEDB_ON;
+			LEDC_OFF;
+			LEDD_OFF;
+			break;
+		case 3:
+			LEDA_OFF;
+			LEDB_OFF;
+			LEDC_OFF;
+			LEDD_ON;
+			break;
+		case 4:
+			LEDA_ON;
+			LEDB_OFF;
+			LEDC_ON;
+			LEDD_OFF;
+			break;
+		case 5:
+			LEDA_OFF;
+			LEDB_ON;
+			LEDC_OFF;
+			LEDD_ON;
+			break;
+		case 6:
+			LEDA_ON;
+			LEDB_ON;
+			LEDC_OFF;
+			LEDD_OFF;
+			break;
+		case 7:
+			LEDA_OFF;
+			LEDB_OFF;
+			LEDC_ON;
+			LEDD_ON;
+			break;
+		}
+	}
+
+	void clearLEDs() {
+		LEDA_OFF;
+		LEDB_OFF;
+		LEDC_OFF;
+		LEDD_OFF;
+	}
+
+	void resetTimerMenu(void) {
+		timerReset();
+		timerSetOverflow(65535);
+		timerEnable();
+	}
+
+	// holds the mode state as a EEPROM-formatted value.
+	int modeStateBuffer;
+	int presetNumber;
+
+	void loadFromEEPROM(int);
+	void storeToEEPROM(int);
 
 	int incrementModeAndStore(int, int, int);
 	int decrementModeAndStore(int, int, int);
+
+	int button1Mode = 0;
+	int button2Mode = 0;
+	int button3Mode = 0;
+	int button4Mode = 0;
+	int button5Mode = 0;
+	int button6Mode = 0;
+	int aux1Mode = 0;
+	int aux2Mode = 0;
+	int aux3Mode = 0;
+	int aux4Mode = 0;
+
+	// initial setup of UI
+	void initialize(void);
+
+	// dispatch a signal to current state
+	void dispatch(int);  // dispatch signal to state
 
 };
 

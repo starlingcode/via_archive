@@ -32,7 +32,7 @@ void ViaMeta::fillWavetableArray(void) {
 // declare functions to set the currently active tables
 void ViaMeta::switchWavetable(const Wavetable * table) {
 	loadWavetableWithDiff15Bit(table, (uint32_t *) wavetableRead);
-	signals.wavetable_parameters->tableSize = table->numWaveforms - 1;
+	metaWavetable.tableSize = table->numWaveforms - 1;
 }
 
 // declare functions to set the currently active tables

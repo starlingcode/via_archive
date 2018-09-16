@@ -1,9 +1,6 @@
 #ifndef REV5_HARDWARE_IO
 #define REV5_HARDWARE_IO
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #include "main.h"
 #include "stm32f3xx_hal.h"
@@ -18,12 +15,17 @@ extern "C" {
 // LEDs
 // RGB PWM timers
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim5;
 
-
+#ifdef __cplusplus
+}
+#endif
 
 #define SET_RED_LED(X) __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, X);
 #define SET_GREEN_LED(X) __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, X);
@@ -182,6 +184,20 @@ static inline void setLogicOutputsLEDOff(uint32_t logicA,
 #define WRITE_DAC2(X) ((*(volatile uint32_t *) DAC2_ADDR) = X);
 #define WRITE_DAC3(X) ((*(volatile uint32_t *) DAC3_ADDR) = X);
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern ADC_HandleTypeDef hadc1;
+extern DAC_HandleTypeDef hdac1;
+extern DAC_HandleTypeDef hdac2;
+extern SDADC_HandleTypeDef hsdadc1;
+extern SDADC_HandleTypeDef hsdadc2;
+
+#ifdef __cplusplus
+}
+#endif
+
 // Trigger input and button "high" (inverted in hardware)
 
 #define TRIGGER_RISING_EDGE ((GPIOA->IDR & GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET)
@@ -201,6 +217,10 @@ static inline void setLogicOutputsLEDOff(uint32_t logicA,
 
 #define PRESSED TSL_STATEID_DETECT
 #define RELEASED TSL_STATEID_RELEASE
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // UI timer
 extern TIM_HandleTypeDef htim7;

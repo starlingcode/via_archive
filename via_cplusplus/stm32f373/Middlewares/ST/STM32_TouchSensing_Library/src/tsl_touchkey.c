@@ -26,7 +26,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include <user_interface.h>
+#include <touch_lib_link.hpp>
 #include "tsl_touchkey.h"
 #include "tsl_globals.h"
 
@@ -162,7 +162,25 @@ void TSL_tkey_Process(void)
     }
     else
     {
-    	uiDispatch(5); //SENSOR_EVENT_SIGNAL
+
+    	/*
+    	 *
+    	 *
+    	 *
+    	 *
+    	 *
+    	 *
+    	 * CALLBACK HERE
+    	 *
+    	 *
+    	 *
+    	 *
+    	 *
+    	 *
+    	 */
+
+    	(*touchStateChangeCallback)(thisUI);
+
       THIS_CHANGE = TSL_STATE_CHANGED;
     }
 

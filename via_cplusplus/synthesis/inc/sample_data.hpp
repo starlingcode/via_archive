@@ -5,8 +5,8 @@
  *      Author: willmitchell
  */
 
-#ifndef INC_SAMPLE_DATA_H_
-#define INC_SAMPLE_DATA_H_
+#ifndef INC_SAMPLE_DATA_HPP_
+#define INC_SAMPLE_DATA_HPP_
 
 #include <stdio.h>
 
@@ -5647,4 +5647,4 @@ static const uint32_t phaseDistPWM_32[65] = { 0, 327679, 655359, 983039,
 
 
 
-#endif /* INC_SAMPLE_DATA_H_ */
+#endif /* INC_SAMPLE_DATA_HPP_ */

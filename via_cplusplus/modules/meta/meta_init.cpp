@@ -13,22 +13,17 @@ extern uint16_t VirtAddVarTab[NB_OF_VAR] = { 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
 
 void ViaMeta::init() {
 
-	signals.controls = &controlRateInput;
-	signals.inputs = &audioRateInput;
-	signals.outputs = &audioRateOutput;
-	signals.wavetable_parameters = &meta_wavetableParameters;
-	signals.meta_parameters = &metaParameters;
-	signals.drum_parameters = &drumParameters;
-
-	metaControllerParseControls = metaControllerParseControlsDrum;
-	metaControllerGenerateIncrements = metaControllerGenerateIncrementsDrum;
-	metaControllerIncrementArbiter = noRetrigAttackState;
-	metaControllerLoopHandler = handleLoopOn;
 	drumMode = &ViaMeta::drumModeOn;
 	calculateDac3 = &ViaMeta::calculateDac3Phasor;
 	calculateLogicA = &ViaMeta::calculateLogicAReleaseGate;
 	calculateSH = &ViaMeta::calculateSHMode1;
-	simpleEnvelopeIncrementArbiter = simpleEnvelopeRestingState;
+
+	metaController.parseControls = &MetaController::parseControlsDrum;
+	metaController.generateIncrements = &MetaController::generateIncrementsDrum;
+	metaController.incrementArbiter = &MetaController::noRetrigAttackState;
+	metaController.loopHandler = &MetaController::handleLoopOn;
+
+	drumEnvelope.incrementArbiter = &SimpleEnvelope::restingState;
 
 	// initialize our touch sensors
 	tsl_user_Init();
@@ -38,18 +33,20 @@ void ViaMeta::init() {
 
 	switchWavetable(wavetableArray[0][0]);
 	initDrum();
-	signals.drum_parameters->output = (uint32_t*) drumWrite;
+	drumEnvelope.output = (uint32_t*) drumWrite;
 
-	signals.meta_parameters->triggerSignal = 1;
-	signals.meta_parameters->gateSignal = 0;
-	signals.meta_parameters->freeze = 1;
+	metaController.triggerSignal = 1;
+	metaController.gateSignal = 0;
+	metaController.freeze = 1;
 
-	via_ioStreamInit(&audioRateInput, &audioRateOutput, META_BUFFER_SIZE);
-	via_logicStreamInit(&audioRateInput, &audioRateOutput, META_BUFFER_SIZE);
+	system.inputs.init(META_BUFFER_SIZE);
+	system.outputs.init(META_BUFFER_SIZE);
+	system.bufferSize = META_BUFFER_SIZE;
+	system.ioStreamInit();
 
-	signals.wavetable_parameters->morphMod = signals.inputs->cv3Samples;
-	signals.wavetable_parameters->morphScale = (int16_t*) signals.drum_parameters->output;
-	signals.meta_parameters->fm = (int16_t*) signals.drum_parameters->output;
+	metaWavetable.morphMod = system.inputs.cv3Samples;
+	metaWavetable.morphScale = (int16_t*) drumEnvelope.output;
+	metaController.fm = (int16_t*) drumEnvelope.output;
 
 
 }

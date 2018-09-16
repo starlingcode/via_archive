@@ -8,20 +8,17 @@
 #ifndef INC_META_HPP_
 #define INC_META_HPP_
 
-#include "../../ui/inc/user_interface.hpp"
-#include "via_platform_binding.h"
-#include "oscillators.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-typedef struct {
+#include "user_interface.hpp"
+#include <via_platform_binding.hpp>
+#include <oscillators.hpp>
 
-	audioRateOutputs * outputs;
-	audioRateInputs * inputs;
-	controlRateInputs * controls;
-	simpleWavetableParameters * wavetable_parameters;
-	metaControllerParameters * meta_parameters;
-	simpleEnvelopeParameters * drum_parameters;
-
-} meta_signal_set;
+#ifdef __cplusplus
+}
+#endif
 
 #define META_BUFFER_SIZE 1
 
@@ -65,20 +62,15 @@ enum meta_aux2Modes {releaseGate, attackGate};
 enum meta_aux3Modes {pitchMorphAmp, morphAmp, pitchAmp, amp};
 enum meta_aux4Modes {phasor, contour};
 
+void metaTouchLink (void *);
 
 class ViaMeta {
 
 public:
 
-	/*
-	 *
-	 * UI implementation
-	 *
-	 */
-
-	ViaMeta() = default;
-
 	class ViaMetaUI: public ViaUI {
+
+	public:
 
 		ViaMeta& this_module;
 
@@ -121,8 +113,9 @@ public:
 		void aux3EnterMenuCallback(void);
 		void aux4EnterMenuCallback(void);
 
-	public:
-		ViaMetaUI(ViaMeta& outer) : this_module(outer) {}
+		ViaMetaUI(ViaMeta& x): this_module(x) {
+			linkUI((void *) &metaTouchLink, (void *) this);
+		}
 
 	};
 
@@ -136,41 +129,6 @@ public:
 	void handleAux2ModeChange(int);
 	void handleAux3ModeChange(int);
 	void handleAux4ModeChange(int);
-
-	ViaMetaUI metaUI;
-
-	meta_signal_set signals;
-
-	controlRateInputs controlRateInput;
-	audioRateInputs audioRateInput;
-	audioRateOutputs audioRateOutput;
-
-	simpleWavetableParameters meta_wavetableParameters;
-	metaControllerParameters metaParameters;
-	simpleEnvelopeParameters drumParameters;
-
-	/*
-	 *
-	 * Event meta_handlers
-	 *
-	 */
-
-	void init(void);
-
-	void mainRisingEdgeCallback(void);
-	void mainFallingEdgeCallback(void);
-
-	void auxRisingEdgeCallback(void);
-	void auxFallingEdgeCallback(void);
-
-	void buttonPressedCallback(void);
-	void buttonReleasedCallback(void);
-
-	void ioProcessCallback(void);
-	void halfTransferCallback(void);
-	void transferCompleteCallback(void);
-	void slowConversionCallback(void);
-
 
 	/*
 	 *
@@ -234,7 +192,48 @@ public:
 	// Decimate (Resample A at B, resample B at A
 	void calculateSHMode6(int writeIndex);
 
+	void init(void);
+
+	ViaMetaUI metaUI;
+
+	int runtimeDisplay;
+
+	ViaModule system;
+
+	SimpleWavetable metaWavetable;
+	MetaController metaController;
+	SimpleEnvelope drumEnvelope;
+
+	/*
+	 *
+	 * Event meta_handlers
+	 *
+	 */
+
+	ViaMeta() : metaUI(*this) {
+		init();
+	}
+
+	void mainRisingEdgeCallback(void);
+	void mainFallingEdgeCallback(void);
+
+	void auxRisingEdgeCallback(void);
+	void auxFallingEdgeCallback(void);
+
+	void buttonPressedCallback(void);
+	void buttonReleasedCallback(void);
+
+	void ioProcessCallback(void);
+	void halfTransferCallback(void);
+	void transferCompleteCallback(void);
+	void slowConversionCallback(void);
+
+	void ui_dispatch(int sig) {
+		metaUI.dispatch(sig);
+	};
+
 };
+
 
 
 #endif /* INC_META_HPP_ */

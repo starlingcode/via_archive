@@ -43,6 +43,9 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* ###########################  Core Function Access  ########################### */
 /** \ingroup  CMSIS_Core_FunctionInterface
@@ -1364,6 +1367,10 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __SMMLA (int32_t op1
 
 #endif /* (__CORTEX_M >= 0x04) */
 /*@} end of group CMSIS_SIMD_intrinsics */
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #if defined ( __GNUC__ )

@@ -45,41 +45,41 @@ void ViaMeta::handleButton3ModeChange(int mode) {
 	switch (mode) {
 	case audio:
 		if (metaUI.LOOP_MODE == noloop) {
-			metaControllerGenerateIncrements = metaControllerGenerateIncrementsDrum;
-			metaControllerParseControls = metaControllerParseControlsDrum;
-			signals.meta_parameters->fm = drumFullScale;
+			metaController.generateIncrements = &MetaController::generateIncrementsDrum;
+			metaController.parseControls = &MetaController::parseControlsDrum;
+			metaController.fm = drumFullScale;
 			drumMode = &ViaMeta::drumModeOn;
-			metaControllerLoopHandler = handleLoopOn;
-			signals.meta_parameters->loopMode = 1;
+			metaController.loopHandler = &MetaController::handleLoopOn;
+			metaController.loopMode = 1;
 			handleButton4ModeChange(0);
 			handleAux3ModeChange(metaUI.DRUM_MODE);
 		} else {
-			metaControllerParseControls = metaControllerParseControlsAudio;
-			metaControllerGenerateIncrements = metaControllerGenerateIncrementsAudio;
-			signals.meta_parameters->fm = signals.inputs->cv2Samples;
-			signals.wavetable_parameters->morphScale = drumFullScale;
+			metaController.parseControls = &MetaController::parseControlsAudio;
+			metaController.generateIncrements = &MetaController::generateIncrementsAudio;
+			metaController.fm = system.inputs.cv2Samples;
+			metaWavetable.morphScale = drumFullScale;
 			drumMode = &ViaMeta::drumModeOff;
 		}
 		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
 		//updateRGB = updateRGBAudio;
 		break;
 	case env:
-		metaControllerParseControls = metaControllerParseControlsEnv;
-		metaControllerGenerateIncrements = metaControllerGenerateIncrementsEnv;
+		metaController.parseControls = &MetaController::parseControlsEnv;
+		metaController.generateIncrements = &MetaController::generateIncrementsEnv;
 		if (metaUI.LOOP_MODE == noloop) {
 			switchWavetable(wavetableArray[mode][metaUI.TABLE]);
-			signals.meta_parameters->fm = signals.inputs->cv2Samples;
-			signals.wavetable_parameters->morphScale = drumFullScale;
+			metaController.fm = system.inputs.cv2Samples;
+			metaWavetable.morphScale = drumFullScale;
 			drumMode = &ViaMeta::drumModeOff;
-			metaControllerLoopHandler = handleLoopOff;
-			signals.meta_parameters->loopMode = 0;
+			metaController.loopHandler = &MetaController::handleLoopOff;
+			metaController.loopMode = 0;
 			handleButton4ModeChange(metaUI.TRIG_MODE);
 		}
 		//updateRGB = updateRGBSubAudio;
 		break;
 	case seq:
-		metaControllerParseControls = metaControllerParseControlsSeq;
-		metaControllerGenerateIncrements = metaControllerGenerateIncrementsSeq;
+		metaController.parseControls = &MetaController::parseControlsSeq;
+		metaController.generateIncrements = &MetaController::generateIncrementsSeq;
 		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
 		break;
 	}
@@ -90,22 +90,22 @@ void ViaMeta::handleButton4ModeChange(int mode) {
 
 	switch (mode) {
 	case noretrigger:
-		metaControllerIncrementArbiter = noRetrigAttackState;
+		metaController.incrementArbiter = &MetaController::noRetrigAttackState;
 		break;
 	case meta_hardsync:
-		metaControllerIncrementArbiter = hardSyncAttackState;
+		metaController.incrementArbiter = &MetaController::hardSyncAttackState;
 		break;
 	case nongatedretrigger:
-		metaControllerIncrementArbiter = envAttackState;
+		metaController.incrementArbiter = &MetaController::envAttackState;
 		break;
 	case gated:
-		metaControllerIncrementArbiter = gateAttackState;
-		signals.meta_parameters->phase = 0;
-		signals.meta_parameters->gateOn = 1;
+		metaController.incrementArbiter = &MetaController::gateAttackState;
+		metaController.phase = 0;
+		metaController.gateOn = 1;
 		break;
 	case meta_pendulum:
-		metaControllerIncrementArbiter = pendulumForwardAttackState;
-		signals.meta_parameters->gateOn = 0;
+		metaController.incrementArbiter = &MetaController::pendulumForwardAttackState;
+		metaController.gateOn = 0;
 		break;
 	}
 
@@ -126,8 +126,8 @@ void ViaMeta::handleButton6ModeChange(int mode) {
 			handleButton3ModeChange(0);
 			handleButton4ModeChange(0);
 		} else {
-			metaControllerLoopHandler = handleLoopOff;
-			signals.meta_parameters->loopMode = 0;
+			metaController.loopHandler = &MetaController::handleLoopOff;
+			metaController.loopMode = 0;
 		}
 		break;
 	case looping:
@@ -135,8 +135,8 @@ void ViaMeta::handleButton6ModeChange(int mode) {
 			handleButton3ModeChange(0);
 			handleButton4ModeChange(metaUI.TRIG_MODE);
 		}
-		metaControllerLoopHandler = handleLoopOn;
-		signals.meta_parameters->loopMode = 1;
+		metaController.loopHandler = &MetaController::handleLoopOn;
+		metaController.loopMode = 1;
 		break;
 	}
 
@@ -164,20 +164,20 @@ void ViaMeta::handleAux3ModeChange(int mode) {
 
 	switch (mode) {
 	case pitchMorphAmp:
-		signals.meta_parameters->fm = (int16_t*) signals.drum_parameters->output;
-		signals.wavetable_parameters->morphScale = (int16_t*) signals.drum_parameters->output;
+		metaController.fm = (int16_t*) drumEnvelope.output;
+		metaWavetable.morphScale = (int16_t*) drumEnvelope.output;
 		break;
 	case morphAmp:
-		signals.meta_parameters->fm = drumFullScale;
-		signals.wavetable_parameters->morphScale = (int16_t*) signals.drum_parameters->output;
+		metaController.fm = drumFullScale;
+		metaWavetable.morphScale = (int16_t*) drumEnvelope.output;
 		break;
 	case pitchAmp:
-		signals.meta_parameters->fm = (int16_t*) signals.drum_parameters->output;
-		signals.wavetable_parameters->morphScale = drumFullScale;
+		metaController.fm = (int16_t*) drumEnvelope.output;
+		metaWavetable.morphScale = drumFullScale;
 		break;
 	case amp:
-		signals.meta_parameters->fm = drumFullScale;
-		signals.wavetable_parameters->morphScale = drumFullScale;
+		metaController.fm = drumFullScale;
+		metaWavetable.morphScale = drumFullScale;
 		break;
 	}
 

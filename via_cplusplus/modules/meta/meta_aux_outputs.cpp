@@ -9,34 +9,33 @@
 #include "meta.hpp"
 
 void ViaMeta::drumModeOff(int writeIndex) {
-	signals.outputs->dac1Samples[writeIndex] = 4095 - signals.outputs->dac2Samples[writeIndex];
+	system.outputs.dac1Samples[writeIndex] = 4095 - system.outputs.dac2Samples[writeIndex];
 }
 
 void ViaMeta::drumModeOn(int writeIndex) {
-	(*simpleEnvelopeIncrementArbiter)(signals.drum_parameters);
-	simpleEnvelopeAdvance(signals.drum_parameters, signals.inputs, wavetableReadDrum);
-	uint32_t ampScale = signals.drum_parameters->output[0] << 1;
-	int sample = signals.outputs->dac2Samples[writeIndex];
-	signals.outputs->dac2Samples[writeIndex] = (__USAT(sample - 2048, 12) * ampScale) >> 16;
-	signals.outputs->dac1Samples[writeIndex] = ((4095 - __USAT(sample + 2048, 12)) * ampScale) >> 16;
+	drumEnvelope.advance(&system.inputs, wavetableReadDrum);
+	uint32_t ampScale = drumEnvelope.output[0] << 1;
+	int sample = system.outputs.dac2Samples[writeIndex];
+	system.outputs.dac2Samples[writeIndex] = (__USAT(sample - 2048, 12) * ampScale) >> 16;
+	system.outputs.dac1Samples[writeIndex] = ((4095 - __USAT(sample + 2048, 12)) * ampScale) >> 16;
 }
 
 void ViaMeta::calculateLogicAReleaseGate(int writeIndex) {
 
-		switch (signals.meta_parameters->phaseEvent) {
+		switch (metaController.phaseEvent) {
 			//no logic events
 			case 0:
-				signals.outputs->logicA[writeIndex] = GPIO_NOP;
+				system.outputs.logicA[writeIndex] = GPIO_NOP;
 				break;
 			//dummy at a handling
 			case AT_A_FROM_RELEASE:
 			case AT_A_FROM_ATTACK:
-				signals.outputs->logicA[writeIndex] = ALOGIC_LOW_MASK;
+				system.outputs.logicA[writeIndex] = ALOGIC_LOW_MASK;
 				break;
 			//dummy at b handling
 			case AT_B_FROM_RELEASE:
 			case AT_B_FROM_ATTACK:
-				signals.outputs->logicA[writeIndex] = ALOGIC_HIGH_MASK;
+				system.outputs.logicA[writeIndex] = ALOGIC_HIGH_MASK;
 				break;
 			default:
 				break;
@@ -46,20 +45,20 @@ void ViaMeta::calculateLogicAReleaseGate(int writeIndex) {
 
 void ViaMeta::calculateLogicAAttackGate(int writeIndex) {
 
-		switch (signals.meta_parameters->phaseEvent) {
+		switch (metaController.phaseEvent) {
 			//no logic events
 			case 0:
-				signals.outputs->logicA[writeIndex] = GPIO_NOP;
+				system.outputs.logicA[writeIndex] = GPIO_NOP;
 				break;
 			//dummy at a handling
 			case AT_A_FROM_RELEASE:
 			case AT_A_FROM_ATTACK:
-				signals.outputs->logicA[writeIndex] = ALOGIC_HIGH_MASK;
+				system.outputs.logicA[writeIndex] = ALOGIC_HIGH_MASK;
 				break;
 			//dummy at b handling
 			case AT_B_FROM_RELEASE:
 			case AT_B_FROM_ATTACK:
-				signals.outputs->logicA[writeIndex] = ALOGIC_LOW_MASK;
+				system.outputs.logicA[writeIndex] = ALOGIC_LOW_MASK;
 				break;
 			default:
 				break;
@@ -69,18 +68,18 @@ void ViaMeta::calculateLogicAAttackGate(int writeIndex) {
 
 void ViaMeta::calculateDac3Phasor(int writeIndex) {
 
-	int phase = signals.wavetable_parameters->phase;
+	int phase = metaWavetable.phase;
 
 	if (phase >> 24) {
-		signals.outputs->dac3Samples[writeIndex] = 8191 - (phase >> 12);
+		system.outputs.dac3Samples[writeIndex] = 8191 - (phase >> 12);
 	} else {
-		signals.outputs->dac3Samples[writeIndex] = phase >> 12;
+		system.outputs.dac3Samples[writeIndex] = phase >> 12;
 	}
 }
 
 void ViaMeta::calculateDac3Contour(int writeIndex) {
 
-	signals.outputs->dac3Samples[writeIndex] = signals.outputs->dac2Samples[writeIndex];
+	system.outputs.dac3Samples[writeIndex] = system.outputs.dac2Samples[writeIndex];
 
 }
 
@@ -88,23 +87,23 @@ void ViaMeta::calculateDac3Contour(int writeIndex) {
 
 void ViaMeta::calculateSHMode1(int writeIndex) {
 
-	switch (signals.meta_parameters->phaseEvent) {
+	switch (metaController.phaseEvent) {
 		//no logic events
 		case 0:
-			signals.outputs->shA[writeIndex] = SH_A_TRACK_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_TRACK_MASK;
+			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		//dummy at a handling
 		case AT_A_FROM_RELEASE:
 		case AT_A_FROM_ATTACK:
-			signals.outputs->shA[writeIndex] = SH_A_TRACK_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_TRACK_MASK;
+			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		//dummy at b handling
 		case AT_B_FROM_RELEASE:
 		case AT_B_FROM_ATTACK:
-			signals.outputs->shA[writeIndex] = SH_A_TRACK_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_TRACK_MASK;
+			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		default:
 			break;
@@ -116,23 +115,23 @@ void ViaMeta::calculateSHMode1(int writeIndex) {
 
 void ViaMeta::calculateSHMode2(int writeIndex) {
 
-	switch (signals.meta_parameters->phaseEvent) {
+	switch (metaController.phaseEvent) {
 		//no logic events
 		case 0:
-			signals.outputs->shA[writeIndex] = GPIO_NOP;
-			signals.outputs->shB[writeIndex] = SH_B_TRACK_MASK;
+			system.outputs.shA[writeIndex] = GPIO_NOP;
+			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		//dummy at a handling
 		case AT_A_FROM_RELEASE:
 		case AT_A_FROM_ATTACK:
-			signals.outputs->shA[writeIndex] = SH_A_SAMPLE_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_TRACK_MASK;
+			system.outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
+			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		//dummy at b handling
 		case AT_B_FROM_RELEASE:
 		case AT_B_FROM_ATTACK:
-			signals.outputs->shA[writeIndex] = SH_A_TRACK_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_TRACK_MASK;
+			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		default:
 			break;
@@ -145,23 +144,23 @@ void ViaMeta::calculateSHMode2(int writeIndex) {
 void ViaMeta::calculateSHMode3(int writeIndex) {
 
 
-	switch (signals.meta_parameters->phaseEvent) {
+	switch (metaController.phaseEvent) {
 		//no logic events
 		case 0:
-			signals.outputs->shA[writeIndex] = SH_A_TRACK_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_SAMPLE_MASK;
+			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			system.outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
 			break;
 		//dummy at a handling
 		case AT_A_FROM_RELEASE:
 		case AT_A_FROM_ATTACK:
-			signals.outputs->shA[writeIndex] = SH_A_SAMPLE_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_TRACK_MASK;
+			system.outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
+			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		//dummy at b handling
 		case AT_B_FROM_RELEASE:
 		case AT_B_FROM_ATTACK:
-			signals.outputs->shA[writeIndex] = SH_A_TRACK_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_SAMPLE_MASK;
+			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			system.outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
 			break;
 		default:
 			break;
@@ -174,23 +173,23 @@ void ViaMeta::calculateSHMode3(int writeIndex) {
 
 void ViaMeta::calculateSHMode4(int writeIndex) {
 
-	switch (signals.meta_parameters->phaseEvent) {
+	switch (metaController.phaseEvent) {
 		//no logic events
 		case 0:
-			signals.outputs->shA[writeIndex] = GPIO_NOP;
-			signals.outputs->shB[writeIndex] = SH_B_SAMPLE_MASK;
+			system.outputs.shA[writeIndex] = GPIO_NOP;
+			system.outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
 			break;
 		//dummy at a handling
 		case AT_A_FROM_RELEASE:
 		case AT_A_FROM_ATTACK:
-			signals.outputs->shA[writeIndex] = SH_A_SAMPLE_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_TRACK_MASK;
+			system.outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
+			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		//dummy at b handling
 		case AT_B_FROM_RELEASE:
 		case AT_B_FROM_ATTACK:
-			signals.outputs->shA[writeIndex] = SH_A_TRACK_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_SAMPLE_MASK;
+			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			system.outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
 			break;
 		default:
 			break;
@@ -202,23 +201,23 @@ void ViaMeta::calculateSHMode4(int writeIndex) {
 
 void ViaMeta::calculateSHMode5(int writeIndex) {
 
-	switch (signals.meta_parameters->phaseEvent) {
+	switch (metaController.phaseEvent) {
 		//no logic events
 		case 0:
-			signals.outputs->shA[writeIndex] = GPIO_NOP;
-			signals.outputs->shB[writeIndex] = GPIO_NOP;
+			system.outputs.shA[writeIndex] = GPIO_NOP;
+			system.outputs.shB[writeIndex] = GPIO_NOP;
 			break;
 		//dummy at a handling
 		case AT_A_FROM_RELEASE:
 		case AT_A_FROM_ATTACK:
-			signals.outputs->shA[writeIndex] = SH_A_SAMPLE_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_TRACK_MASK;
+			system.outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
+			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		//dummy at b handling
 		case AT_B_FROM_RELEASE:
 		case AT_B_FROM_ATTACK:
-			signals.outputs->shA[writeIndex] = SH_A_TRACK_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_SAMPLE_MASK;
+			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			system.outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
 			break;
 		default:
 			break;
@@ -231,23 +230,23 @@ void ViaMeta::calculateSHMode5(int writeIndex) {
 void ViaMeta::calculateSHMode6(int writeIndex) {
 
 
-	switch (signals.meta_parameters->phaseEvent) {
+	switch (metaController.phaseEvent) {
 		//no logic events
 		case 0:
-			signals.outputs->shA[writeIndex] = SH_A_SAMPLE_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_SAMPLE_MASK;
+			system.outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
+			system.outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
 			break;
 		//dummy at a handling
 		case AT_A_FROM_RELEASE:
 		case AT_A_FROM_ATTACK:
-			signals.outputs->shA[writeIndex] = SH_A_SAMPLE_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_TRACK_MASK;
+			system.outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
+			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		//dummy at b handling
 		case AT_B_FROM_RELEASE:
 		case AT_B_FROM_ATTACK:
-			signals.outputs->shA[writeIndex] = SH_A_TRACK_MASK;
-			signals.outputs->shB[writeIndex] = SH_B_SAMPLE_MASK;
+			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			system.outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
 			break;
 		default:
 			break;
