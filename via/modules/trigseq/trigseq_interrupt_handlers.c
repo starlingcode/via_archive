@@ -43,7 +43,7 @@ void trigseq_mainFallingEdgeCallback(trigseq_signal_set * signals) {
 	setAuxLogic(parameters->logicOutput);
 
 	signals->outputs->shA[0] = parameters->sampleA;
-	signals->outputs->shB[0] = parameters->sampleA;
+	signals->outputs->shB[0] = parameters->sampleB;
 
 	// similar deal here
 	if (runtimeDisplay) {
