@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------
  * Project:      CMSIS DSP Library
- * Title:        arm_offset_q31.c
- * Description:  Q31 vector offset
+ * Title:        arm_sub_q31.c
+ * Description:  Q31 vector subtraction
  *
  * $Date:        27. January 2017
  * $Revision:    V.1.5.1
@@ -26,39 +26,41 @@
  * limitations under the License.
  */
 
-#include <cmsis_dsp.h>
+#include "cmsis_dsp.hpp"
+
+extern "C" {
 
 /**
  * @ingroup groupMath
  */
 
 /**
- * @addtogroup offset
+ * @addtogroup BasicSub
  * @{
  */
 
 /**
- * @brief  Adds a constant offset to a Q31 vector.
- * @param[in]  *pSrc points to the input vector
- * @param[in]  offset is the offset to be added
- * @param[out]  *pDst points to the output vector
- * @param[in]  blockSize number of samples in the vector
+ * @brief Q31 vector subtraction.
+ * @param[in]       *pSrcA points to the first input vector
+ * @param[in]       *pSrcB points to the second input vector
+ * @param[out]      *pDst points to the output vector
+ * @param[in]       blockSize number of samples in each vector
  * @return none.
  *
  * <b>Scaling and Overflow Behavior:</b>
  * \par
  * The function uses saturating arithmetic.
- * Results outside of the allowable Q31 range [0x80000000 0x7FFFFFFF] are saturated.
+ * Results outside of the allowable Q31 range [0x80000000 0x7FFFFFFF] will be saturated.
  */
 
-void arm_offset_q31(q31_t * pSrc, q31_t offset, q31_t * pDst,
-		uint32_t blockSize) {
+void arm_sub_q31(q31_t * pSrcA, q31_t * pSrcB, q31_t * pDst, uint32_t blockSize) {
 	uint32_t blkCnt; /* loop counter */
 
 #if defined (ARM_MATH_DSP)
 
 	/* Run the below code for Cortex-M4 and Cortex-M3 */
-	q31_t in1, in2, in3, in4;
+	q31_t inA1, inA2, inA3, inA4;
+	q31_t inB1, inB2, inB3, inB4;
 
 	/*loop Unrolling */
 	blkCnt = blockSize >> 2U;
@@ -67,35 +69,40 @@ void arm_offset_q31(q31_t * pSrc, q31_t offset, q31_t * pDst,
 	 ** a second loop below computes the remaining 1 to 3 samples. */
 	while (blkCnt > 0U)
 	{
-		/* C = A + offset */
-		/* Add offset and then store the results in the destination buffer. */
-		in1 = *pSrc++;
-		in2 = *pSrc++;
-		in3 = *pSrc++;
-		in4 = *pSrc++;
+		/* C = A - B */
+		/* Subtract and then store the results in the destination buffer. */
+		inA1 = *pSrcA++;
+		inA2 = *pSrcA++;
+		inB1 = *pSrcB++;
+		inB2 = *pSrcB++;
 
-		*pDst++ = __QADD(in1, offset);
-		*pDst++ = __QADD(in2, offset);
-		*pDst++ = __QADD(in3, offset);
-		*pDst++ = __QADD(in4, offset);
+		inA3 = *pSrcA++;
+		inA4 = *pSrcA++;
+		inB3 = *pSrcB++;
+		inB4 = *pSrcB++;
 
-		/* Decrement the loop counter */
-		blkCnt--;
-	}
-
-	/* If the blockSize is not a multiple of 4, compute any remaining output samples here.
-	 ** No loop unrolling is used. */
-	blkCnt = blockSize % 0x4U;
-
-	while (blkCnt > 0U)
-	{
-		/* C = A + offset */
-		/* Add offset and then store the result in the destination buffer. */
-		*pDst++ = __QADD(*pSrc++, offset);
+		*pDst++ = __QSUB(inA1, inB1);
+		*pDst++ = __QSUB(inA2, inB2);
+		*pDst++ = __QSUB(inA3, inB3);
+		*pDst++ = __QSUB(inA4, inB4);
 
 		/* Decrement the loop counter */
 		blkCnt--;
 	}
+
+//  /* If the blockSize is not a multiple of 4, compute any remaining output samples here.
+//   ** No loop unrolling is used. */
+//  blkCnt = blockSize % 0x4U;
+//
+//  while (blkCnt > 0U)
+//  {
+//    /* C = A - B */
+//    /* Subtract and then store the result in the destination buffer. */
+//    *pDst++ = __QSUB(*pSrcA++, *pSrcB++);
+//
+//    /* Decrement the loop counter */
+//    blkCnt--;
+//  }
 
 #else
 
@@ -105,9 +112,9 @@ void arm_offset_q31(q31_t * pSrc, q31_t offset, q31_t * pDst,
 	blkCnt = blockSize;
 
 	while (blkCnt > 0U) {
-		/* C = A + offset */
-		/* Add offset and then store the result in the destination buffer. */
-		*pDst++ = (q31_t) clip_q63_to_q31((q63_t) *pSrc++ + offset);
+		/* C = A - B */
+		/* Subtract and then store the result in the destination buffer. */
+		*pDst++ = (q31_t) clip_q63_to_q31((q63_t) *pSrcA++ - *pSrcB++);
 
 		/* Decrement the loop counter */
 		blkCnt--;
@@ -117,6 +124,8 @@ void arm_offset_q31(q31_t * pSrc, q31_t offset, q31_t * pDst,
 
 }
 
+}
+
 /**
- * @} end of offset group
+ * @} end of BasicSub group
  */

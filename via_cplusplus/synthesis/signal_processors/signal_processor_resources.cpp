@@ -5,9 +5,11 @@
  *      Author: willmitchell
  */
 
-#include "signal_processors.h"
-#include "dsp.h"
-#include "cmsis_dsp.h"
+#include <cmsis_dsp.hpp>
+#include "signal_processors.hpp"
+
+extern "C" {
+
 
 /**
  *
@@ -37,8 +39,8 @@ void foldBuffer(int * input, int offset, int * output, uint32_t bufferSize) {
 
 	// scale the CVs by the knob value cast from 0 to full scale int, then shift left by 3
 
-	arm_scale_q31(input, 1 << 31, 1, output, bufferSize);
-	arm_offset_q31(output, (offset - 2048) << 4, output, bufferSize);
+	arm_scale_q31((q31_t *) input, 1 << 31, 1, (q31_t *) output, bufferSize);
+	arm_offset_q31((q31_t *) output, (offset - 2048) << 4, (q31_t *) output, bufferSize);
 
 	for (int i = 0; i < (bufferSize); i++) {
 
@@ -52,14 +54,16 @@ void wrapBuffer(int * input, int offset, int * output, uint32_t bufferSize) {
 
 	// scale the CVs by the knob value cast from 0 to full scale int, then shift left by 3
 
-	arm_scale_q31(input, 1 << 31, 6, output, bufferSize);
-	arm_offset_q31(output, (offset - 2048) << 3, output, bufferSize);
+	arm_scale_q31((q31_t *) input, 1 << 31, 6, (q31_t *) output, bufferSize);
+	arm_offset_q31((q31_t *) output, (offset - 2048) << 3, (q31_t *) output, bufferSize);
 
 	for (int i = 0; i < (bufferSize); i++) {
 
 		output[i] = wrapSignal16Bit(output[i]);
 
 	}
+
+}
 
 }
 

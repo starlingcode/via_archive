@@ -34,8 +34,8 @@ void ViaControls::update(void) {
 // hard coded for stm32f373
 void ViaModule::ioStreamInit() {
 
-	inputs.init(bufferSize);
-	outputs.init(bufferSize);
+	//inputs.init(bufferSize);
+	//outputs.init(bufferSize);
 
 	int16_t cv2Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA0) << 2;
 	int16_t cv3Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA1) << 2;

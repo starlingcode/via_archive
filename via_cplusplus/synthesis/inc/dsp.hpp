@@ -41,7 +41,7 @@ static inline int readBuffer(buffer* buffer, int Xn) {
  *
  */
 
-static inline int abs(int n) {
+inline int abs(int n) {
   int mask = n >> 31;
   return ((n + mask) ^ mask);
 }

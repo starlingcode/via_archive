@@ -10,6 +10,7 @@
 
 #include <via_platform_binding.hpp>
 #include "tables.hpp"
+#include "scales.hpp"
 
 #define WAVETABLE_LENGTH 33554432
 #define NEGATIVE_WAVETABLE_LENGTH -33554432 // wavetable length in 16 bit fixed point (512 << 16)
@@ -27,6 +28,48 @@
  * Oscillators
  *
  */
+
+// single sample wavetable
+// no buffering, looks to it's parameters each sample
+
+class SingleSampleWavetable {
+
+	int previousPhase = 0;
+	int previousPhaseMod = 0;
+
+public:
+
+	// assigned per mode
+	int16_t * fm;
+	int16_t * pm;
+	int16_t * pwm;
+	int16_t * morphMod;
+	int cv2Offset = 0;
+	uint32_t tableSize = 0;
+
+	// generated externally
+	int phaseReset = 1;
+	int increment = 0;
+	int morphBase = 0;
+
+	// results
+	int phase = 0;
+	int ghostPhase = 0;
+	int phaseEvent = 0;
+	int delta = 0;
+
+	void parseControls(ViaControls * controls);
+
+	inline int incrementPhase(uint32_t * phaseDistTable);
+
+	uint32_t advance(uint32_t * wavetable,
+			uint32_t * phaseDistTable);
+
+};
+
+
+
+
 
 // simplest wavetable, provide a phase and a morph
 
@@ -70,6 +113,53 @@ public:
  * Shared resources
  *
  */
+
+// pll with multiplier
+
+class PllController {
+
+	int pllCounter;
+	int lastMultiplier;
+
+public:
+
+	uint32_t periodCount = 100000;
+	uint32_t pllNudge = 0;
+
+	uint32_t phaseSignal = 0;
+	uint32_t tapTempo = 0;
+	uint32_t pllReset = 0;
+
+	int16_t * rootMod;
+	uint32_t phaseOffset = 0;
+	uint32_t syncMode = 0;
+	Scale * scale;
+
+	uint32_t fracMultiplier = 0;
+	uint32_t intMultiplier = 0;
+	uint32_t gcd = 0;
+
+	uint32_t increment = 0;
+	uint32_t phaseReset = 0;
+	uint32_t ratioChange = 0;
+
+	void parseControls(ViaControls * controls, ViaInputStreams * input);
+
+	void measureFrequency(void) {
+
+		// store the length of the last period
+		periodCount = TIM2->CNT;
+
+		// reset the timer value
+		TIM2->CNT = 0;
+
+	}
+
+	void doPLL(void);
+
+	void generateFrequency(void);
+
+};
 
 // meta oscillator controller
 

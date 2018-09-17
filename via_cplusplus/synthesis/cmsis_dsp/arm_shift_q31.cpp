@@ -26,7 +26,9 @@
  * limitations under the License.
  */
 
-#include <cmsis_dsp.h>
+#include "cmsis_dsp.hpp"
+
+extern "C" {
 
 /**
  * @ingroup groupMath
@@ -175,6 +177,8 @@ void arm_shift_q31(q31_t * pSrc, int8_t shiftBits, q31_t * pDst,
 		/* Decrement the loop counter */
 		blkCnt--;
 	}
+
+}
 
 }
 

@@ -5,74 +5,73 @@
  *      Author: willmitchell
  */
 
-#include "signal_processors.h"
+#include "signal_processors.hpp"
 
 
-void threeAxisScannerParseControls(controlRateInputs * controls,
-		threeAxisScannerParameters * parameters) {
+void ThreeAxisScanner::parseControls(ViaControls * controls) {
 
-	parameters->zIndex = __USAT(controls->knob1Value + 2200 - controls->cv1Value, 12) << 6;
+	zIndex = __USAT(controls->knob1Value + 2200 - controls->cv1Value, 12) << 6;
 
 }
 
-static inline int getSampleProduct(int xIndex, int yIndex, int zIndex,
+inline int ThreeAxisScanner::getSampleProduct(int xIndex, int yIndex, int zIndex,
 		int * xTable, int * yTable, int * xDelta, int * yDelta) {
 
 	// waveterrain = wavetable(x, z) * wavetable(y, z)
 
 	int xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
-			xTable, xDelta);
+			(uint32_t *) xTable, xDelta);
 	int ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
-			yTable, yDelta);
+			(uint32_t *) yTable, yDelta);
 
 	return (xSample * ySample) >> 18; //15 bit fixed point multiply and right shift by 3
 
 }
 
-static inline int getSamplePM(int xIndex, int yIndex, int zIndex, int * xTable,
+inline int ThreeAxisScanner::getSamplePM(int xIndex, int yIndex, int zIndex, int * xTable,
 		int*yTable, int * xDelta, int * yDelta) {
 
 	// waveterrain = wavetable(x + wavetable(y, z), z)
 
 	int xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
-			xTable, xDelta);
+			(uint32_t *) xTable, xDelta);
 	int ySample = getSampleQuinticSpline(
 			((yIndex << 9) + (xSample << 4)) & ((1 << 25) - 1), zIndex,
-			yTable, yDelta);
+			(uint32_t *) yTable, yDelta);
 
 	return ySample >> 3; //right shift by 3 tp scale 15bit to 12bit
 
 }
 
-static inline int getSampleSum(int xIndex, int yIndex, int zIndex, int * xTable,
+inline int ThreeAxisScanner::getSampleSum(int xIndex, int yIndex, int zIndex, int * xTable,
 		int*yTable, int * xDelta, int * yDelta) {
 
 	// waveterrain = wavetable(x, z) + wavetable(y, z)
 
 	int xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
-			xTable, xDelta);
+			(uint32_t *) xTable, xDelta);
 	int ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
-			yTable, yDelta);
+			(uint32_t *) yTable, yDelta);
 
 	return (xSample + ySample) >> 4; // scale from 15bit to 12 bit and divide by two to normalize the space (max value = 1+1)
 
 }
 
-static inline int getSampleSubtract(int xIndex, int yIndex, int zIndex, int * xTable,
+inline int ThreeAxisScanner::getSampleSubtract(int xIndex, int yIndex, int zIndex, int * xTable,
 		int*yTable, int * xDelta, int * yDelta) {
 
 	// waveterrain = wavetable(x, z) + wavetable(y, z)
 
 	int xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
-			xTable, xDelta);
+			(uint32_t *) xTable, xDelta);
 	int ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
-			yTable, yDelta);
+			(uint32_t *) yTable, yDelta);
 
 	return ((xSample - ySample) >> 4) + 2048; // scale from 15bit to 12 bit and divide by two to normalize the space (max value = 1+1)
 
 }
 
-void scanTerrainProduct(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
+void ThreeAxisScanner::scanTerrainProduct(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
 		int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
 		uint32_t writePosition, uint32_t samplesRemaining) {
 
@@ -93,7 +92,7 @@ void scanTerrainProduct(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
 
 }
 
-void scanTerrainSum(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
+void ThreeAxisScanner::scanTerrainSum(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
 		int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
 		uint32_t writePosition, uint32_t samplesRemaining) {
 
@@ -114,7 +113,7 @@ void scanTerrainSum(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
 
 }
 
-void scanTerrainSubtract(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
+void ThreeAxisScanner::scanTerrainSubtract(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
 		int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
 		uint32_t writePosition, uint32_t samplesRemaining) {
 
@@ -135,7 +134,7 @@ void scanTerrainSubtract(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
 
 }
 
-void scanTerrainPM(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
+void ThreeAxisScanner::scanTerrainPM(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
 		int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
 		uint32_t writePosition, uint32_t samplesRemaining) {
 
@@ -156,58 +155,53 @@ void scanTerrainPM(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
 
 }
 
-void threeAxisScannerFillBuffer(audioRateInputs * inputs,
-		controlRateInputs * controls, threeAxisScannerParameters * parameters,
+void ThreeAxisScanner::fillBuffer(ViaInputStreams * inputs,
+		ViaControls * controls,
 		int * xTable, int * yTable,
 		uint32_t writePosition, uint32_t bufferSize) {
 
-	static int lastXInput;
-	static int lastYInput;
-	static int lastXIndex;
-	static int lastYIndex;
+	extractDeltas(xInput, xIndexBuffer, lastXInput, bufferSize);
+	extractDeltas(yInput, yIndexBuffer, lastYInput, bufferSize);
 
-	extractDeltas(parameters->xInput, parameters->xIndexBuffer, lastXInput, bufferSize);
-	extractDeltas(parameters->yInput, parameters->yIndexBuffer, lastYInput, bufferSize);
+	lastXInput = xInput[bufferSize - 1];
+	lastYInput = yInput[bufferSize - 1];
 
-	lastXInput = parameters->xInput[bufferSize - 1];
-	lastYInput = parameters->yInput[bufferSize - 1];
-
-	incrementFromDeltas(parameters->xIndexBuffer, parameters->xIndexBuffer, parameters->hardSync, parameters->reverse,
+	incrementFromDeltas(xIndexBuffer, xIndexBuffer, hardSync, reverse,
 			lastXIndex, bufferSize);
-	incrementFromDeltas(parameters->yIndexBuffer, parameters->yIndexBuffer, parameters->hardSync, parameters->reverse,
+	incrementFromDeltas(yIndexBuffer, yIndexBuffer, hardSync, reverse,
 			lastYIndex, bufferSize);
 
-	lastXIndex = parameters->xIndexBuffer[bufferSize - 1];
-	lastYIndex = parameters->yIndexBuffer[bufferSize - 1];
+	lastXIndex = xIndexBuffer[bufferSize - 1];
+	lastYIndex = yIndexBuffer[bufferSize - 1];
 
-	foldBuffer(parameters->xIndexBuffer, controls->knob2Value, parameters->xIndexBuffer,
+	foldBuffer(xIndexBuffer, controls->knob2Value, xIndexBuffer,
 			bufferSize);
-	foldBuffer(parameters->yIndexBuffer, controls->knob3Value, parameters->yIndexBuffer,
+	foldBuffer(yIndexBuffer, controls->knob3Value, yIndexBuffer,
 			bufferSize);
 
-	switch (parameters->terrainType) {
+	switch (terrainType) {
 
 	case THREE_AXIS_SCANNER_SUM:
-		scanTerrainSum(parameters->xIndexBuffer, parameters->yIndexBuffer, parameters->zIndex,
-				xTable, yTable, parameters->xDeltaBuffer, parameters->yDeltaBuffer, parameters->altitude,
+		scanTerrainSum(xIndexBuffer, yIndexBuffer, zIndex,
+				xTable, yTable, xDeltaBuffer, yDeltaBuffer, (uint32_t *) altitude,
 				0, bufferSize);
 		break;
 
 	case THREE_AXIS_SCANNER_PRODUCT:
-		scanTerrainSubtract(parameters->xIndexBuffer, parameters->yIndexBuffer, parameters->zIndex,
-				xTable, yTable, parameters->xDeltaBuffer, parameters->yDeltaBuffer, parameters->altitude,
+		scanTerrainSubtract(xIndexBuffer, yIndexBuffer, zIndex,
+				xTable, yTable, xDeltaBuffer, yDeltaBuffer, (uint32_t *) altitude,
 				0, bufferSize);
 		break;
 
 	case THREE_AXIS_SCANNER_DIFFERENCE:
-		scanTerrainProduct(parameters->xIndexBuffer, parameters->yIndexBuffer, parameters->zIndex,
-				xTable, yTable, parameters->xDeltaBuffer, parameters->yDeltaBuffer, parameters->altitude,
+		scanTerrainProduct(xIndexBuffer, yIndexBuffer, zIndex,
+				xTable, yTable, xDeltaBuffer, yDeltaBuffer, (uint32_t *) altitude,
 				0, bufferSize);
 		break;
 
 	case THREE_AXIS_SCANNER_PHASE_MOD:
-		scanTerrainPM(parameters->xIndexBuffer, parameters->yIndexBuffer, parameters->zIndex,
-				xTable, yTable, parameters->xDeltaBuffer, parameters->yDeltaBuffer, parameters->altitude,
+		scanTerrainPM(xIndexBuffer, yIndexBuffer, zIndex,
+				xTable, yTable, xDeltaBuffer, yDeltaBuffer, (uint32_t *) altitude,
 				0, bufferSize);
 		break;
 

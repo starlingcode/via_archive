@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------
  * Project:      CMSIS DSP Library
- * Title:        arm_abs_q31.c
- * Description:  Q31 vector absolute value
+ * Title:        arm_offset_q31.c
+ * Description:  Q31 vector offset
  *
  * $Date:        27. January 2017
  * $Revision:    V.1.5.1
@@ -26,33 +26,36 @@
  * limitations under the License.
  */
 
-#include "cmsis_dsp.h"
+#include "cmsis_dsp.hpp"
+
+extern "C" {
 
 /**
  * @ingroup groupMath
  */
 
 /**
- * @addtogroup BasicAbs
+ * @addtogroup offset
  * @{
  */
 
 /**
- * @brief Q31 vector absolute value.
- * @param[in]       *pSrc points to the input buffer
- * @param[out]      *pDst points to the output buffer
- * @param[in]       blockSize number of samples in each vector
+ * @brief  Adds a constant offset to a Q31 vector.
+ * @param[in]  *pSrc points to the input vector
+ * @param[in]  offset is the offset to be added
+ * @param[out]  *pDst points to the output vector
+ * @param[in]  blockSize number of samples in the vector
  * @return none.
  *
  * <b>Scaling and Overflow Behavior:</b>
  * \par
  * The function uses saturating arithmetic.
- * The Q31 value -1 (0x80000000) will be saturated to the maximum allowable positive value 0x7FFFFFFF.
+ * Results outside of the allowable Q31 range [0x80000000 0x7FFFFFFF] are saturated.
  */
 
-void arm_abs_q31(q31_t * pSrc, q31_t * pDst, uint32_t blockSize) {
+void arm_offset_q31(q31_t * pSrc, q31_t offset, q31_t * pDst,
+		uint32_t blockSize) {
 	uint32_t blkCnt; /* loop counter */
-	q31_t in; /* Input value */
 
 #if defined (ARM_MATH_DSP)
 
@@ -66,17 +69,17 @@ void arm_abs_q31(q31_t * pSrc, q31_t * pDst, uint32_t blockSize) {
 	 ** a second loop below computes the remaining 1 to 3 samples. */
 	while (blkCnt > 0U)
 	{
-		/* C = |A| */
-		/* Calculate absolute of input (if -1 then saturated to 0x7fffffff) and then store the results in the destination buffer. */
+		/* C = A + offset */
+		/* Add offset and then store the results in the destination buffer. */
 		in1 = *pSrc++;
 		in2 = *pSrc++;
 		in3 = *pSrc++;
 		in4 = *pSrc++;
 
-		*pDst++ = (in1 > 0) ? in1 : (q31_t)__QSUB(0, in1);
-		*pDst++ = (in2 > 0) ? in2 : (q31_t)__QSUB(0, in2);
-		*pDst++ = (in3 > 0) ? in3 : (q31_t)__QSUB(0, in3);
-		*pDst++ = (in4 > 0) ? in4 : (q31_t)__QSUB(0, in4);
+		*pDst++ = __QADD(in1, offset);
+		*pDst++ = __QADD(in2, offset);
+		*pDst++ = __QADD(in3, offset);
+		*pDst++ = __QADD(in4, offset);
 
 		/* Decrement the loop counter */
 		blkCnt--;
@@ -86,6 +89,16 @@ void arm_abs_q31(q31_t * pSrc, q31_t * pDst, uint32_t blockSize) {
 	 ** No loop unrolling is used. */
 	blkCnt = blockSize % 0x4U;
 
+	while (blkCnt > 0U)
+	{
+		/* C = A + offset */
+		/* Add offset and then store the result in the destination buffer. */
+		*pDst++ = __QADD(*pSrc++, offset);
+
+		/* Decrement the loop counter */
+		blkCnt--;
+	}
+
 #else
 
 	/* Run the below code for Cortex-M0 */
@@ -93,20 +106,21 @@ void arm_abs_q31(q31_t * pSrc, q31_t * pDst, uint32_t blockSize) {
 	/* Initialize blkCnt with number of samples */
 	blkCnt = blockSize;
 
-#endif /*   #if defined (ARM_MATH_DSP)   */
-
 	while (blkCnt > 0U) {
-		/* C = |A| */
-		/* Calculate absolute value of the input (if -1 then saturated to 0x7fffffff) and then store the results in the destination buffer. */
-		in = *pSrc++;
-		*pDst++ = (in > 0) ? in : ((in == INT32_MIN) ? INT32_MAX : -in);
+		/* C = A + offset */
+		/* Add offset and then store the result in the destination buffer. */
+		*pDst++ = (q31_t) clip_q63_to_q31((q63_t) *pSrc++ + offset);
 
 		/* Decrement the loop counter */
 		blkCnt--;
 	}
 
+#endif /* #if defined (ARM_MATH_DSP) */
+
+}
+
 }
 
 /**
- * @} end of BasicAbs group
+ * @} end of offset group
  */

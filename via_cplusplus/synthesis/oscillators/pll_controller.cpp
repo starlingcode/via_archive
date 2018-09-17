@@ -1,0 +1,89 @@
+/*
+ * oscillator_resources.c
+ *
+ *  Created on: Aug 26, 2018
+ *      Author: willmitchell
+ */
+
+#include <oscillators.hpp>
+
+
+/*
+ *
+ * Pll with scale grid multiplier
+ *
+ */
+
+
+void PllController::parseControls(ViaControls * controls, ViaInputStreams * input) {
+
+	int noteIndex = __USAT(controls->knob1Value + controls->cv1Value - 2048, 12) >> 5;
+	int rootModLocal = rootMod[0];
+	rootModLocal = rootModLocal >> 4;
+	int	rootIndex = (__USAT(controls->knob2Value + rootModLocal, 12)) >> scale->t2Bitshift;
+
+	fracMultiplier = scale->grid[rootIndex][noteIndex]->fractionalPart;
+	intMultiplier = scale->grid[rootIndex][noteIndex]->integerPart;
+	gcd = scale->grid[rootIndex][noteIndex]->fundamentalDivision;
+
+}
+void PllController::doPLL(void) {
+
+	pllCounter++;
+
+	pllCounter *= pllReset;
+	pllReset = 1;
+	phaseReset = 1;
+
+	int phase = (phaseSignal + phaseOffset) & ((1 << 25) - 1);
+
+	// this switch is always 0 unless pllCounter is 0, in which case its sync mode
+
+#define IGNORE 0
+#define PLL_OFF 1
+#define TRUE_PLL 2
+#define HARD_RESET 3
+
+	if (pllCounter >= gcd) {
+
+		switch (syncMode) {
+			case IGNORE:
+				break;
+			case PLL_OFF:
+				pllNudge = 0;
+				pllCounter = 0;
+				break;
+			case TRUE_PLL:
+				pllNudge = (((phase >> 24)*WAVETABLE_LENGTH - phase) << 16);
+				pllCounter = gcd;
+				break;
+			case HARD_RESET:
+				phaseReset = 0;
+				pllCounter = 0;
+				break;
+			default:
+				pllCounter = 0;
+				break;
+
+		}
+	}
+
+	int multKey = fracMultiplier + intMultiplier;
+
+	if (lastMultiplier != multKey) {
+		ratioChange = 1;
+	} else {
+		ratioChange = 0;
+	}
+
+	lastMultiplier = multKey;
+
+}
+
+void PllController::generateFrequency(void) {
+
+	uint32_t incrementCalc = ((((uint64_t)((uint64_t)WAVETABLE_LENGTH << 18) + pllNudge)) / (periodCount));
+	incrementCalc = fix48_mul(incrementCalc >> 8, fracMultiplier) + fix16_mul(incrementCalc >> 8, intMultiplier);
+	increment = __USAT(incrementCalc, 24);
+
+}

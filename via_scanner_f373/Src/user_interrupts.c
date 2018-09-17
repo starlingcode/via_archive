@@ -236,7 +236,6 @@ void TIM6_DAC1_IRQHandler(void) {
 
 	scanner_ioProcessCallback(&scanner_signals);
 
-
 	// clear timer update flag
 	__HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
 }

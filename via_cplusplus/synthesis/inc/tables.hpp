@@ -288,7 +288,7 @@ static const Wavetable drum =
 // load each sample from flash to ram with bitshift by 3 and store in bottom halfword
 // store difference between sample and corresponding sample in adjacent waveform in top halfword
 
-static inline void loadWavetableWithDiff(Wavetable * table,
+static inline void loadWavetableWithDiff(const Wavetable * table,
 		uint32_t * tableRead) {
 
 	uint32_t numSamples = table->slopeLength;

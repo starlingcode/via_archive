@@ -26,7 +26,9 @@
  * limitations under the License.
  */
 
-#include <cmsis_dsp.h>
+#include "cmsis_dsp.hpp"
+
+extern "C" {
 
 /**
  * @ingroup groupMath
@@ -209,6 +211,8 @@ void arm_scale_q31(q31_t * pSrc, q31_t scaleFract, int8_t shift, q31_t * pDst,
 		}
 
 	}
+}
+
 }
 
 /**

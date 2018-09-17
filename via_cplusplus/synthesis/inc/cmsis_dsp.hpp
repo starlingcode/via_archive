@@ -5,8 +5,10 @@
  *      Author: willmitchell
  */
 
-#ifndef INC_CMSIS_DSP_H_
-#define INC_CMSIS_DSP_H_
+#ifndef INC_CMSIS_DSP_HPP_
+#define INC_CMSIS_DSP_HPP_
+
+extern "C" {
 
 // link to system defines for cmsis library functions
 #include "stm32f3xx.h"
@@ -15,4 +17,6 @@
 #define ARM_MATH_CM4
 #include "arm_math.h"
 
-#endif /* INC_CMSIS_DSP_H_ */
+}
+
+#endif /* INC_CMSIS_DSP_HPP_ */

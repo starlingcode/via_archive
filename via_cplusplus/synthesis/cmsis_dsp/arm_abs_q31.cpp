@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------
  * Project:      CMSIS DSP Library
- * Title:        arm_sub_q31.c
- * Description:  Q31 vector subtraction
+ * Title:        arm_abs_q31.c
+ * Description:  Q31 vector absolute value
  *
  * $Date:        27. January 2017
  * $Revision:    V.1.5.1
@@ -26,39 +26,40 @@
  * limitations under the License.
  */
 
-#include <cmsis_dsp.h>
+#include "cmsis_dsp.hpp"
+
+extern "C" {
 
 /**
  * @ingroup groupMath
  */
 
 /**
- * @addtogroup BasicSub
+ * @addtogroup BasicAbs
  * @{
  */
 
 /**
- * @brief Q31 vector subtraction.
- * @param[in]       *pSrcA points to the first input vector
- * @param[in]       *pSrcB points to the second input vector
- * @param[out]      *pDst points to the output vector
+ * @brief Q31 vector absolute value.
+ * @param[in]       *pSrc points to the input buffer
+ * @param[out]      *pDst points to the output buffer
  * @param[in]       blockSize number of samples in each vector
  * @return none.
  *
  * <b>Scaling and Overflow Behavior:</b>
  * \par
  * The function uses saturating arithmetic.
- * Results outside of the allowable Q31 range [0x80000000 0x7FFFFFFF] will be saturated.
+ * The Q31 value -1 (0x80000000) will be saturated to the maximum allowable positive value 0x7FFFFFFF.
  */
 
-void arm_sub_q31(q31_t * pSrcA, q31_t * pSrcB, q31_t * pDst, uint32_t blockSize) {
+void arm_abs_q31(q31_t * pSrc, q31_t * pDst, uint32_t blockSize) {
 	uint32_t blkCnt; /* loop counter */
+	q31_t in; /* Input value */
 
 #if defined (ARM_MATH_DSP)
 
 	/* Run the below code for Cortex-M4 and Cortex-M3 */
-	q31_t inA1, inA2, inA3, inA4;
-	q31_t inB1, inB2, inB3, inB4;
+	q31_t in1, in2, in3, in4;
 
 	/*loop Unrolling */
 	blkCnt = blockSize >> 2U;
@@ -67,40 +68,25 @@ void arm_sub_q31(q31_t * pSrcA, q31_t * pSrcB, q31_t * pDst, uint32_t blockSize)
 	 ** a second loop below computes the remaining 1 to 3 samples. */
 	while (blkCnt > 0U)
 	{
-		/* C = A - B */
-		/* Subtract and then store the results in the destination buffer. */
-		inA1 = *pSrcA++;
-		inA2 = *pSrcA++;
-		inB1 = *pSrcB++;
-		inB2 = *pSrcB++;
+		/* C = |A| */
+		/* Calculate absolute of input (if -1 then saturated to 0x7fffffff) and then store the results in the destination buffer. */
+		in1 = *pSrc++;
+		in2 = *pSrc++;
+		in3 = *pSrc++;
+		in4 = *pSrc++;
 
-		inA3 = *pSrcA++;
-		inA4 = *pSrcA++;
-		inB3 = *pSrcB++;
-		inB4 = *pSrcB++;
-
-		*pDst++ = __QSUB(inA1, inB1);
-		*pDst++ = __QSUB(inA2, inB2);
-		*pDst++ = __QSUB(inA3, inB3);
-		*pDst++ = __QSUB(inA4, inB4);
+		*pDst++ = (in1 > 0) ? in1 : (q31_t)__QSUB(0, in1);
+		*pDst++ = (in2 > 0) ? in2 : (q31_t)__QSUB(0, in2);
+		*pDst++ = (in3 > 0) ? in3 : (q31_t)__QSUB(0, in3);
+		*pDst++ = (in4 > 0) ? in4 : (q31_t)__QSUB(0, in4);
 
 		/* Decrement the loop counter */
 		blkCnt--;
 	}
 
-//  /* If the blockSize is not a multiple of 4, compute any remaining output samples here.
-//   ** No loop unrolling is used. */
-//  blkCnt = blockSize % 0x4U;
-//
-//  while (blkCnt > 0U)
-//  {
-//    /* C = A - B */
-//    /* Subtract and then store the result in the destination buffer. */
-//    *pDst++ = __QSUB(*pSrcA++, *pSrcB++);
-//
-//    /* Decrement the loop counter */
-//    blkCnt--;
-//  }
+	/* If the blockSize is not a multiple of 4, compute any remaining output samples here.
+	 ** No loop unrolling is used. */
+	blkCnt = blockSize % 0x4U;
 
 #else
 
@@ -109,19 +95,22 @@ void arm_sub_q31(q31_t * pSrcA, q31_t * pSrcB, q31_t * pDst, uint32_t blockSize)
 	/* Initialize blkCnt with number of samples */
 	blkCnt = blockSize;
 
+#endif /*   #if defined (ARM_MATH_DSP)   */
+
 	while (blkCnt > 0U) {
-		/* C = A - B */
-		/* Subtract and then store the result in the destination buffer. */
-		*pDst++ = (q31_t) clip_q63_to_q31((q63_t) *pSrcA++ - *pSrcB++);
+		/* C = |A| */
+		/* Calculate absolute value of the input (if -1 then saturated to 0x7fffffff) and then store the results in the destination buffer. */
+		in = *pSrc++;
+		*pDst++ = (in > 0) ? in : ((in == INT32_MIN) ? INT32_MAX : -in);
 
 		/* Decrement the loop counter */
 		blkCnt--;
 	}
 
-#endif /* #if defined (ARM_MATH_DSP) */
+}
 
 }
 
 /**
- * @} end of BasicSub group
+ * @} end of BasicAbs group
  */

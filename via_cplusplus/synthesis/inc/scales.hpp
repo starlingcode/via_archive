@@ -5,8 +5,8 @@
  *      Author: willmitchell
  */
 
-#ifndef INC_SCALES_H_
-#define INC_SCALES_H_
+#ifndef INC_SCALES_HPP_
+#define INC_SCALES_HPP_
 
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
@@ -2591,4 +2591,4 @@ static const Scale polyResets = {
    .oneVoltOct = 0};
 
 
-#endif /* INC_SCALES_H_ */
+#endif /* INC_SCALES_HPP_ */

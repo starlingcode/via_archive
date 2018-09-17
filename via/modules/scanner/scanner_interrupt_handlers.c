@@ -101,8 +101,6 @@ void scanner_transferCompleteCallback(scanner_signal_set * signals) {
 		outputs->shB[i + SCANNER_BUFFER_SIZE] = GET_SH_B_MASK(signals->inputs->auxTrigSamples[i + SCANNER_BUFFER_SIZE]);
 	}
 
-
-
 }
 
 void scanner_slowConversionCallback(scanner_signal_set * signals) {
