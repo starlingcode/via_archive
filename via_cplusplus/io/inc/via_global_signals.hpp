@@ -79,10 +79,10 @@ public:
 		trigInput = 1;
 		auxTrigInput = 1;
 
-		cv2Samples = (int16_t*) malloc(2 * bufferSize * sizeof(int16_t));
-		cv3Samples = (int16_t*) malloc(2 * bufferSize * sizeof(int16_t));
-		cv2VirtualGround = (int16_t*) malloc(2 * bufferSize * sizeof(int16_t));
-		cv3VirtualGround = (int16_t*) malloc(2 * bufferSize * sizeof(int16_t));
+		cv2Samples = (int16_t*) malloc(2 * bufferSize * sizeof(int));
+		cv3Samples = (int16_t*) malloc(2 * bufferSize * sizeof(int));
+		cv2VirtualGround = (int16_t*) malloc(2 * bufferSize * sizeof(int));
+		cv3VirtualGround = (int16_t*) malloc(2 * bufferSize * sizeof(int));
 
 		trigSamples = (int*) malloc(2 * bufferSize * sizeof(int));
 		auxTrigSamples = (int*) malloc(2 * bufferSize * sizeof(int));

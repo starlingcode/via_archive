@@ -1,4 +1,5 @@
 #include "scanner.hpp"
+#include "cmsis_dsp.hpp"
 
 void ViaScanner::mainRisingEdgeCallback(void) {
 
@@ -47,16 +48,17 @@ void ViaScanner::halfTransferCallback(void) {
 	scanner.hardSync = system.inputs.trigSamples;
 	scanner.reverse = reverseBuffer;
 
-
 	scanner.fillBuffer(&system.inputs, &system.controls,
 			(int *) wavetableXRead, (int *) wavetableYRead,
 			0, SCANNER_BUFFER_SIZE);
 
+	arm_shift_q31((q31_t *) scanner.xIndexBuffer, -4, (q31_t *) system.outputs.dac3Samples, 8);
+
 	for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
 		system.outputs.dac2Samples[i] = scanner.altitude[i];
 		system.outputs.dac1Samples[i] = 4095 - scanner.altitude[i];
-		system.outputs.dac3Samples[i] = fix16_mul(scanner.xInput[i],
-				scanner.yInput[i]) >> 4;
+		system.outputs.dac3Samples[i] = (fix16_mul(scanner.xIndexBuffer[i],
+				scanner.yIndexBuffer[i] - 32767) >> 4) + 2048;
 		system.outputs.logicA[i] = GET_ALOGIC_MASK(scanner.xDeltaBuffer[i] &
 				scanner.yDeltaBuffer[i]);
 		system.outputs.auxLogic[i] = GET_EXPAND_LOGIC_MASK(system.outputs.dac3Samples[i] >> 11);
@@ -73,17 +75,15 @@ void ViaScanner::transferCompleteCallback(void) {
 	scanner.hardSync = system.inputs.trigSamples + SCANNER_BUFFER_SIZE;
 	scanner.reverse = reverseBuffer + SCANNER_BUFFER_SIZE;
 
-
 	scanner.fillBuffer(&system.inputs, &system.controls,
 			(int *) wavetableXRead, (int *) wavetableYRead,
 			SCANNER_BUFFER_SIZE, SCANNER_BUFFER_SIZE);
 
-
 	for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
 		system.outputs.dac2Samples[i + SCANNER_BUFFER_SIZE] = scanner.altitude[i];
 		system.outputs.dac1Samples[i + SCANNER_BUFFER_SIZE] = 4095 - scanner.altitude[i];
-		system.outputs.dac3Samples[i + SCANNER_BUFFER_SIZE] = fix16_mul(scanner.xInput[i],
-				scanner.yInput[i]) >> 4;
+		system.outputs.dac3Samples[i + SCANNER_BUFFER_SIZE] = (fix16_mul(scanner.xIndexBuffer[i],
+				scanner.yIndexBuffer[i] - 32767) >> 4) + 2048;
 		system.outputs.logicA[i + SCANNER_BUFFER_SIZE] = GET_ALOGIC_MASK(scanner.xDeltaBuffer[i] &
 				scanner.yDeltaBuffer[i]);
 		system.outputs.auxLogic[i + SCANNER_BUFFER_SIZE] = GET_EXPAND_LOGIC_MASK(
@@ -96,46 +96,25 @@ void ViaScanner::transferCompleteCallback(void) {
 
 void ViaScanner::cv2HalfTransferCallback(void) {
 
-	int16_t * cv2ReadIndex = system.inputs.cv2Samples;
-	int * cv2WriteIndex = scanner.xInput;
-	for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
-		int cv2Sample = (int) cv2ReadIndex[i*2];
-		cv2Sample += 32768;
-		cv2WriteIndex[i] = cv2Sample;
-	}
+	arm_offset_q31(((q31_t *) system.inputs.cv2Samples), 32767, (q31_t *) scanner.xInput, SCANNER_BUFFER_SIZE);
+
 }
 
 void ViaScanner::cv2TransferCompleteCallback(void) {
 
-	int16_t * cv2ReadIndex = system.inputs.cv2Samples + SCANNER_BUFFER_SIZE*2;
-	int * cv2WriteIndex = scanner.xInput;
-	for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
-		int cv2Sample = (int) cv2ReadIndex[i*2];
-		cv2Sample += 32768;
-		cv2WriteIndex[i] = cv2Sample;
-	}
+	arm_offset_q31(((q31_t *) system.inputs.cv2Samples) + SCANNER_BUFFER_SIZE, 32767, (q31_t *) scanner.xInput, SCANNER_BUFFER_SIZE);
+
 }
 
 void ViaScanner::cv3HalfTransferCallback(void) {
 
-	int16_t * cv3ReadIndex = system.inputs.cv3Samples;
-	int * cv3WriteIndex = scanner.yInput;
-	for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
-		int cv3Sample = (int) cv3ReadIndex[i*2];
-		cv3Sample += 32768;
-		cv3WriteIndex[i] = cv3Sample;
-	}
+	arm_offset_q31(((q31_t *) system.inputs.cv3Samples), 32767, (q31_t *) scanner.yInput, SCANNER_BUFFER_SIZE);
+
 }
 
 void ViaScanner::cv3TransferCompleteCallback(void) {
 
-	int16_t * cv3ReadIndex = system.inputs.cv3Samples + SCANNER_BUFFER_SIZE*2;
-	int * cv3WriteIndex = scanner.yInput;
-	for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
-		int cv3Sample = (int) cv3ReadIndex[i*2];
-		cv3Sample += 32768;
-		cv3WriteIndex[i] = cv3Sample;
-	}
+	arm_offset_q31(((q31_t *) system.inputs.cv3Samples)  + SCANNER_BUFFER_SIZE, 32767, (q31_t *) scanner.yInput, SCANNER_BUFFER_SIZE);
 }
 
 void ViaScanner::slowConversionCallback(void) {
