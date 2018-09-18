@@ -35,28 +35,28 @@ void ViaSync::handleButton3ModeChange(int mode) {
 
 	switch (mode) {
 	case root:
-		pllController.rootMod = system.inputs.cv2Samples;
-		syncWavetable.fm = system.inputs.cv2VirtualGround;
-		syncWavetable.pm = system.inputs.cv2VirtualGround;
-		syncWavetable.pwm = system.inputs.cv2VirtualGround;
+		pllController.rootMod = inputs.cv2Samples;
+		syncWavetable.fm = inputs.cv2VirtualGround;
+		syncWavetable.pm = inputs.cv2VirtualGround;
+		syncWavetable.pwm = inputs.cv2VirtualGround;
 		break;
 	case pm:
-		pllController.rootMod = system.inputs.cv2VirtualGround;
-		syncWavetable.fm = system.inputs.cv2VirtualGround;
-		syncWavetable.pm = system.inputs.cv2Samples;
-		syncWavetable.pwm = system.inputs.cv2VirtualGround;
+		pllController.rootMod = inputs.cv2VirtualGround;
+		syncWavetable.fm = inputs.cv2VirtualGround;
+		syncWavetable.pm = inputs.cv2Samples;
+		syncWavetable.pwm = inputs.cv2VirtualGround;
 		break;
 	case fm:
-		pllController.rootMod = system.inputs.cv2VirtualGround;
-		syncWavetable.fm = system.inputs.cv2Samples;
-		syncWavetable.pm = system.inputs.cv2VirtualGround;
-		syncWavetable.pwm = system.inputs.cv2VirtualGround;
+		pllController.rootMod = inputs.cv2VirtualGround;
+		syncWavetable.fm = inputs.cv2Samples;
+		syncWavetable.pm = inputs.cv2VirtualGround;
+		syncWavetable.pwm = inputs.cv2VirtualGround;
 		break;
 	case pwm:
-		pllController.rootMod = system.inputs.cv2VirtualGround;
-		syncWavetable.fm = system.inputs.cv2VirtualGround;
-		syncWavetable.pm = system.inputs.cv2VirtualGround;
-		syncWavetable.pwm = system.inputs.cv2Samples;
+		pllController.rootMod = inputs.cv2VirtualGround;
+		syncWavetable.fm = inputs.cv2VirtualGround;
+		syncWavetable.pm = inputs.cv2VirtualGround;
+		syncWavetable.pwm = inputs.cv2Samples;
 		break;
 	default:
 		break;

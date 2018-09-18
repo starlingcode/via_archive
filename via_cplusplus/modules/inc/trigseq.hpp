@@ -82,7 +82,7 @@ enum trigseq_aux4Modes {
 
 void trigseqTouchLink (void *);
 
-class ViaTrigseq {
+class ViaTrigseq : public ViaModule {
 
 public:
 
@@ -169,8 +169,6 @@ public:
 	ViaTrigseqUI trigseqUI;
 
 	int runtimeDisplay;
-
-	ViaModule system;
 
 	DualEuclidean sequencer;
 

@@ -8,9 +8,8 @@
 #ifndef INC_VIA_GLOBAL_SIGNALS_HPP_
 #define INC_VIA_GLOBAL_SIGNALS_HPP_
 
-#include "dsp.hpp"
-#include "f373_rev6_io.hpp"
 #include <stdlib.h>
+#include "dsp.hpp"
 
 // declare a struct to hold the control rate inputs
 
@@ -120,34 +119,20 @@ public:
 
 	}
 
-
-
 };
 
-class ViaModule {
-public:
-	ViaControls controls;
+typedef struct {
+	int r;
+	int b;
+	int g;
+} rgb;
 
-	int bufferSize;
-
-	ViaInputStreams inputs;
-	ViaOutputStreams outputs;
-
-	void ioStreamInit(void);
-
-	void setLogicOut(int writeIndex, int runtimeDisplay) {
-
-		if (runtimeDisplay) {
-			setLogicOutputsLEDOn(outputs.logicA[writeIndex],
-					outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
-		} else {
-			setLogicOutputsLEDOff(outputs.logicA[writeIndex],
-					outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
-		}
-
-	}
-
-};
-
+// shortcuts for commonly used colors as macro defines of rgb struct values
+#define __RED {4095, 0, 0}
+#define __GREEN {0, 4095, 0}
+#define __BLUE {0, 0, 4095}
+#define __ORANGE {4095, 4095, 0}
+#define __MAGENTA {4095, 0, 4095}
+#define __CYAN {0, 4095, 4095}
 
 #endif /* INC_VIA_GLOBAL_SIGNALS_HPP_ */

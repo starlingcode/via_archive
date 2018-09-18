@@ -28,22 +28,22 @@ void ViaUI::presetMenu(int sig) {
 
 	case SENSOR_EVENT_SIG:
 
-		if (BUTTON3SENSOR== PRESSED) {
+		if (*button3 == pressedState) {
 			transition(&ViaUI::presetPressedMenu);
 			presetNumber = 3;
-		} else if (BUTTON1SENSOR == PRESSED) {
+		} else if (*button1 == pressedState) {
 			transition(&ViaUI::presetPressedMenu);
 			presetNumber = 1;
-		} else if (BUTTON4SENSOR == PRESSED) {
+		} else if (*button4 == pressedState) {
 			transition(&ViaUI::presetPressedMenu);
 			presetNumber = 4;
-		} else if (BUTTON6SENSOR == PRESSED) {
+		} else if (*button6 == pressedState) {
 			transition(&ViaUI::presetPressedMenu);
 			presetNumber = 6;
-		} else if (BUTTON2SENSOR == PRESSED) {
+		} else if (*button2 == pressedState) {
 			transition(&ViaUI::presetPressedMenu);
 			presetNumber = 2;
-		} else if (BUTTON5SENSOR == PRESSED) {
+		} else if (*button5 == pressedState) {
 			transition(&ViaUI::presetPressedMenu);
 			presetNumber = 5;
 		}
@@ -83,37 +83,37 @@ void ViaUI::presetPressedMenu(int sig) {
 	case SENSOR_EVENT_SIG:
 		switch (presetNumber) {
 		case 1:
-			if (BUTTON1SENSOR== RELEASED) {
+			if (*button1 == RELEASED) {
 				loadFromEEPROM(presetNumber);
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 2:
-			if (BUTTON4SENSOR == RELEASED) {
+			if (*button4 == RELEASED) {
 				loadFromEEPROM(presetNumber);
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 3:
-			if (BUTTON3SENSOR == RELEASED) {
+			if (*button3 == RELEASED) {
 				loadFromEEPROM(presetNumber);
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 4:
-			if (BUTTON4SENSOR == RELEASED) {
+			if (*button4 == RELEASED) {
 				loadFromEEPROM(presetNumber);
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 5:
-			if (BUTTON5SENSOR == RELEASED) {
+			if (*button5 == RELEASED) {
 				loadFromEEPROM(presetNumber);
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 6:
-			if (BUTTON6SENSOR == RELEASED) {
+			if (*button6 == RELEASED) {
 				loadFromEEPROM(presetNumber);
 				transition(&ViaUI::switchPreset);
 			}

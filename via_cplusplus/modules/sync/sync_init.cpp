@@ -7,6 +7,7 @@ extern uint16_t VirtAddVarTab[NB_OF_VAR] = { 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
 
 void ViaSync::init(void) {
 
+	initializeAuxOutputs();
 
 	// initialize our touch sensors
 	tsl_user_Init();
@@ -24,17 +25,17 @@ void ViaSync::init(void) {
 	calculateLogicA = &ViaSync::calculateLogicAGate;
 	calculateSH = &ViaSync::calculateSHMode1;
 
-	system.inputs.init(SYNC_BUFFER_SIZE);
-	system.outputs.init(SYNC_BUFFER_SIZE);
-	system.bufferSize = SYNC_BUFFER_SIZE;
-	system.ioStreamInit();
+	inputs.init(SYNC_BUFFER_SIZE);
+	outputs.init(SYNC_BUFFER_SIZE);
+	bufferSize = SYNC_BUFFER_SIZE;
+	ioStreamInit();
 
-	pllController.rootMod = system.inputs.cv2Samples;
-	syncWavetable.fm = system.inputs.cv2VirtualGround;
-	syncWavetable.pm = system.inputs.cv2VirtualGround;
-	syncWavetable.pwm = system.inputs.cv2VirtualGround;
+	pllController.rootMod = inputs.cv2Samples;
+	syncWavetable.fm = inputs.cv2VirtualGround;
+	syncWavetable.pm = inputs.cv2VirtualGround;
+	syncWavetable.pwm = inputs.cv2VirtualGround;
 
-	syncWavetable.morphMod = system.inputs.cv3Samples;
+	syncWavetable.morphMod = inputs.cv3Samples;
 
 	syncWavetable.phaseReset = 1;
 	pllController.phaseReset = 1;

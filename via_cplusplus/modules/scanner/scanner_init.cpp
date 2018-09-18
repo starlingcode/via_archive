@@ -7,16 +7,18 @@ extern uint16_t VirtAddVarTab[NB_OF_VAR] = { 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
 
 void ViaScanner::init(void) {
 
+	initializeAuxOutputs();
+
 	scanner.bufferSize = SCANNER_BUFFER_SIZE;
 	scanner.init();
 
-	system.inputs.init(SCANNER_BUFFER_SIZE);
-	system.outputs.init(SCANNER_BUFFER_SIZE);
-	system.bufferSize = SCANNER_BUFFER_SIZE;
+	inputs.init(SCANNER_BUFFER_SIZE);
+	outputs.init(SCANNER_BUFFER_SIZE);
+	bufferSize = SCANNER_BUFFER_SIZE;
 
-	scanner.hardSync = system.inputs.trigSamples;
+	scanner.hardSync = inputs.trigSamples;
 	scanner.reverse = reverseBuffer;
-	scanner.sh = system.inputs.auxTrigSamples;
+	scanner.sh = inputs.auxTrigSamples;
 
 	// initialize our touch sensors
 	tsl_user_Init();
@@ -27,17 +29,16 @@ void ViaScanner::init(void) {
 	switchWavetableX(wavetableArray[0]);
 	switchWavetableY(wavetableArray[0]);
 
-	system.inputs.trigInput = 1;
-	system.inputs.auxTrigInput = 0;
+	inputs.trigInput = 1;
+	inputs.auxTrigInput = 0;
 	reverseSignal = 1;
 
 	for (int i = 0; i < (SCANNER_BUFFER_SIZE * 2); i++) {
-		system.inputs.trigSamples[i] = 1;
-		system.inputs.auxTrigSamples[i] = 1;
+		inputs.auxTrigSamples[i] = 1;
 		reverseBuffer[i] = 1;
 	}
 
-	system.ioStreamInit();
+	ioStreamInit();
 
 }
 

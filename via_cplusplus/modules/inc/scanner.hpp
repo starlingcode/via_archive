@@ -86,7 +86,7 @@ enum aux4Modes {
 
 void scannerTouchLink (void *);
 
-class ViaScanner {
+class ViaScanner : public ViaModule {
 
 	int readIndex = 0;
 
@@ -191,8 +191,6 @@ public:
 	ViaScannerUI scannerUI;
 
 	int runtimeDisplay;
-
-	ViaModule system;
 
 	ThreeAxisScanner scanner;
 

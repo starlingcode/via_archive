@@ -12,17 +12,17 @@ void ViaSync::calculateLogicAGate(int writeIndex) {
 		switch (syncWavetable.phaseEvent) {
 			//no logic events
 			case 0:
-				system.outputs.logicA[writeIndex] = GPIO_NOP;
+				outputs.logicA[writeIndex] = GPIO_NOP;
 				break;
 			//dummy at a handling
 			case AT_A_FROM_RELEASE:
 			case AT_A_FROM_ATTACK:
-				system.outputs.logicA[writeIndex] = ALOGIC_HIGH_MASK;
+				outputs.logicA[writeIndex] = ALOGIC_HIGH_MASK;
 				break;
 			//dummy at b handling
 			case AT_B_FROM_RELEASE:
 			case AT_B_FROM_ATTACK:
-				system.outputs.logicA[writeIndex] = ALOGIC_LOW_MASK;
+				outputs.logicA[writeIndex] = ALOGIC_LOW_MASK;
 				break;
 			default:
 				break;
@@ -32,7 +32,7 @@ void ViaSync::calculateLogicAGate(int writeIndex) {
 
 void ViaSync::calculateLogicADelta(int writeIndex) {
 
-	system.outputs.logicA[writeIndex] = GET_ALOGIC_MASK(syncWavetable.delta);
+	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(syncWavetable.delta);
 
 }
 
@@ -41,15 +41,15 @@ void ViaSync::calculateDac3Phasor(int writeIndex) {
 	int phase = syncWavetable.phase;
 
 	if (phase >> 24) {
-		system.outputs.dac3Samples[writeIndex] = 8191 - (phase >> 12);
+		outputs.dac3Samples[writeIndex] = 8191 - (phase >> 12);
 	} else {
-		system.outputs.dac3Samples[writeIndex] = phase >> 12;
+		outputs.dac3Samples[writeIndex] = phase >> 12;
 	}
 }
 
 void ViaSync::calculateDac3Contour(int writeIndex) {
 
-	system.outputs.dac3Samples[writeIndex] = system.outputs.dac2Samples[writeIndex];
+	outputs.dac3Samples[writeIndex] = outputs.dac2Samples[writeIndex];
 
 }
 
@@ -60,20 +60,20 @@ void ViaSync::calculateSHMode1(int writeIndex) {
 	switch (syncWavetable.phaseEvent) {
 		//no logic events
 		case 0:
-			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
+			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		//dummy at a handling
 		case AT_A_FROM_RELEASE:
 		case AT_A_FROM_ATTACK:
-			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
+			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		//dummy at b handling
 		case AT_B_FROM_RELEASE:
 		case AT_B_FROM_ATTACK:
-			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
+			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		default:
 			break;
@@ -88,20 +88,20 @@ void ViaSync::calculateSHMode2(int writeIndex) {
 	switch (syncWavetable.phaseEvent) {
 		//no logic events
 		case 0:
-			system.outputs.shA[writeIndex] = GPIO_NOP;
-			system.outputs.shB[writeIndex] = GPIO_NOP;
+			outputs.shA[writeIndex] = GPIO_NOP;
+			outputs.shB[writeIndex] = GPIO_NOP;
 			break;
 		//dummy at a handling
 		case AT_A_FROM_RELEASE:
 		case AT_A_FROM_ATTACK:
-			system.outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
-			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
+			outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
+			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		//dummy at b handling
 		case AT_B_FROM_RELEASE:
 		case AT_B_FROM_ATTACK:
-			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			system.outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
+			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
 			break;
 		default:
 			break;
@@ -117,20 +117,20 @@ void ViaSync::calculateSHMode3(int writeIndex) {
 	switch (syncWavetable.phaseEvent) {
 		//no logic events
 		case 0:
-			system.outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
-			system.outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
+			outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
+			outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
 			break;
 		//dummy at a handling
 		case AT_A_FROM_RELEASE:
 		case AT_A_FROM_ATTACK:
-			system.outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
-			system.outputs.shB[writeIndex] = SH_B_TRACK_MASK;
+			outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
+			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 			break;
 		//dummy at b handling
 		case AT_B_FROM_RELEASE:
 		case AT_B_FROM_ATTACK:
-			system.outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			system.outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
+			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+			outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
 			break;
 		default:
 			break;

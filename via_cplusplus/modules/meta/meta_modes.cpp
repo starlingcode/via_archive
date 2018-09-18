@@ -30,8 +30,7 @@ void ViaMeta::handleButton1ModeChange(int mode) {
 		break;
 	}
 
-	SH_A_TRACK;
-	SH_B_TRACK;
+	setSH(0, 0);
 }
 
 void ViaMeta::handleButton2ModeChange(int mode) {
@@ -56,7 +55,7 @@ void ViaMeta::handleButton3ModeChange(int mode) {
 		} else {
 			metaController.parseControls = &MetaController::parseControlsAudio;
 			metaController.generateIncrements = &MetaController::generateIncrementsAudio;
-			metaController.fm = system.inputs.cv2Samples;
+			metaController.fm = inputs.cv2Samples;
 			metaWavetable.morphScale = drumFullScale;
 			drumMode = &ViaMeta::drumModeOff;
 		}
@@ -68,7 +67,7 @@ void ViaMeta::handleButton3ModeChange(int mode) {
 		metaController.generateIncrements = &MetaController::generateIncrementsEnv;
 		if (metaUI.LOOP_MODE == noloop) {
 			switchWavetable(wavetableArray[mode][metaUI.TABLE]);
-			metaController.fm = system.inputs.cv2Samples;
+			metaController.fm = inputs.cv2Samples;
 			metaWavetable.morphScale = drumFullScale;
 			drumMode = &ViaMeta::drumModeOff;
 			metaController.loopHandler = &MetaController::handleLoopOff;

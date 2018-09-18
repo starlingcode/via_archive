@@ -145,8 +145,7 @@ int main(void)
   linkInterrupts(moduleAddress);
   mainHardwareInit();
 
-  SH_A_TRACK
-  SH_B_TRACK
+  module.setSH(0, 0);
 
   /* USER CODE END 2 */
 

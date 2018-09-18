@@ -67,15 +67,15 @@ void ViaMeta::ioProcessCallback(void) {
 
 void ViaMeta::halfTransferCallback(void) {
 
-	system.setLogicOut(0, runtimeDisplay);
+	setLogicOut(0, runtimeDisplay);
 
 
-	metaController.generateIncrementsExternal(&system.inputs);
+	metaController.generateIncrementsExternal(&inputs);
 	metaController.advancePhase((uint32_t *) phaseModPWMTables);
 	metaWavetable.phase = metaController.ghostPhase;
-	system.outputs.dac2Samples[0] = metaWavetable.advance((uint32_t *) wavetableRead);
+	outputs.dac2Samples[0] = metaWavetable.advance((uint32_t *) wavetableRead);
 	(this->*drumMode)(0);
-	system.outputs.auxLogic[0] = EXPAND_LOGIC_LOW_MASK << (16 * metaWavetable.delta);
+	outputs.auxLogic[0] = EXPAND_LOGIC_LOW_MASK << (16 * metaWavetable.delta);
 	(this->*calculateDac3)(0);
 	(this->*calculateLogicA)(0);
 	(this->*calculateSH)(0);
@@ -84,14 +84,14 @@ void ViaMeta::halfTransferCallback(void) {
 
 void ViaMeta::transferCompleteCallback(void) {
 
-	system.setLogicOut(1, runtimeDisplay);
+	setLogicOut(1, runtimeDisplay);
 
-	metaController.generateIncrementsExternal(&system.inputs);
+	metaController.generateIncrementsExternal(&inputs);
 	metaController.advancePhase((uint32_t *) phaseModPWMTables);
 	metaWavetable.phase = metaController.ghostPhase;
-	system.outputs.dac2Samples[1] = metaWavetable.advance((uint32_t *) wavetableRead);
+	outputs.dac2Samples[1] = metaWavetable.advance((uint32_t *) wavetableRead);
 	(this->*drumMode)(1);
-	system.outputs.auxLogic[1] = EXPAND_LOGIC_LOW_MASK << (16 * metaWavetable.delta);
+	outputs.auxLogic[1] = EXPAND_LOGIC_LOW_MASK << (16 * metaWavetable.delta);
 	(this->*calculateDac3)(1);
 	(this->*calculateLogicA)(1);
 	(this->*calculateSH)(1);
@@ -101,19 +101,20 @@ void ViaMeta::transferCompleteCallback(void) {
 void ViaMeta::slowConversionCallback(void) {
 
 
-	system.controls.update();
-	metaWavetable.parseControls(&system.controls);
-	metaController.parseControlsExternal(&system.controls, &system.inputs);
-	drumEnvelope.parseControls(&system.controls, &system.inputs);
+	controls.update();
+	metaWavetable.parseControls(&controls);
+	metaController.parseControlsExternal(&controls, &inputs);
+	drumEnvelope.parseControls(&controls, &inputs);
 
-	if (runtimeDisplay) {
-		int sample = system.outputs.dac2Samples[0];
-		int lastPhaseValue = metaWavetable.phase;
-		SET_RED_LED(sample * (lastPhaseValue >> 24));
-		SET_BLUE_LED(sample * (!(lastPhaseValue >> 24)));
-		SET_GREEN_LED((__USAT((system.inputs.cv3Samples[0] + system.controls.knob3Value - 2048), 12)
-				* sample) >> 12);
-	}
+	int sample = outputs.dac2Samples[0];
+	int lastPhaseValue = metaWavetable.phase;
+
+	int redSignal = sample * (lastPhaseValue >> 24);
+	int blueSignal = sample * (!(lastPhaseValue >> 24));
+	int greenSignal = (__USAT((inputs.cv3Samples[0] + controls.knob3Value - 2048), 12)
+				* sample) >> 12;
+
+	updateRGBDisplay(redSignal, blueSignal, greenSignal, runtimeDisplay);
 
 }
 

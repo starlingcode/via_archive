@@ -13,6 +13,8 @@ extern uint16_t VirtAddVarTab[NB_OF_VAR] = { 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
 
 void ViaMeta::init() {
 
+	initializeAuxOutputs();
+
 	drumMode = &ViaMeta::drumModeOn;
 	calculateDac3 = &ViaMeta::calculateDac3Phasor;
 	calculateLogicA = &ViaMeta::calculateLogicAReleaseGate;
@@ -39,12 +41,12 @@ void ViaMeta::init() {
 	metaController.gateSignal = 0;
 	metaController.freeze = 1;
 
-	system.inputs.init(META_BUFFER_SIZE);
-	system.outputs.init(META_BUFFER_SIZE);
-	system.bufferSize = META_BUFFER_SIZE;
-	system.ioStreamInit();
+	inputs.init(META_BUFFER_SIZE);
+	outputs.init(META_BUFFER_SIZE);
+	bufferSize = META_BUFFER_SIZE;
+	ioStreamInit();
 
-	metaWavetable.morphMod = system.inputs.cv3Samples;
+	metaWavetable.morphMod = inputs.cv3Samples;
 	metaWavetable.morphScale = (int16_t*) drumEnvelope.output;
 	metaController.fm = (int16_t*) drumEnvelope.output;
 

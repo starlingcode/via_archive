@@ -67,7 +67,7 @@ enum sync_aux4Modes {groupSpecific, global};
 
 void syncTouchLink (void *);
 
-class ViaSync {
+class ViaSync : public ViaModule {
 
 public:
 
@@ -193,8 +193,6 @@ public:
 	ViaSyncUI syncUI;
 
 	int runtimeDisplay;
-
-	ViaModule system;
 
 	SingleSampleWavetable syncWavetable;
 	PllController pllController;

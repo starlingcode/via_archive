@@ -83,9 +83,9 @@ void ViaTrigseq::ioProcessCallback() {
 
 void ViaTrigseq::halfTransferCallback() {
 
-	system.outputs.dac1Samples[0] = gateController.updateGateA(sequencer.gateAEvent);
-	system.outputs.dac2Samples[0] = gateController.updateGateB(sequencer.gateBEvent);
-	system.outputs.dac3Samples[0] = 2048 - (sequencer.bOutput * 2048);
+	outputs.dac1Samples[0] = gateController.updateGateA(sequencer.gateAEvent);
+	outputs.dac2Samples[0] = gateController.updateGateB(sequencer.gateBEvent);
+	outputs.dac3Samples[0] = 2048 - (sequencer.bOutput * 2048);
 
 
 	sequencer.gateAEvent = SOFT_GATE_EXECUTE;
@@ -99,9 +99,9 @@ void ViaTrigseq::halfTransferCallback() {
 
 void ViaTrigseq::transferCompleteCallback() {
 
-	system.outputs.dac1Samples[1] = gateController.updateGateA(sequencer.gateAEvent);
-	system.outputs.dac2Samples[1] = gateController.updateGateB(sequencer.gateBEvent);
-	system.outputs.dac3Samples[1] = 2048 - (sequencer.bOutput * 2048);
+	outputs.dac1Samples[1] = gateController.updateGateA(sequencer.gateAEvent);
+	outputs.dac2Samples[1] = gateController.updateGateB(sequencer.gateBEvent);
+	outputs.dac3Samples[1] = 2048 - (sequencer.bOutput * 2048);
 
 	sequencer.gateAEvent = SOFT_GATE_EXECUTE;
 	sequencer.gateBEvent = SOFT_GATE_EXECUTE;
@@ -118,14 +118,13 @@ void ViaTrigseq::transferCompleteCallback() {
 
 void ViaTrigseq::slowConversionCallback() {
 
-	system.controls.update();
+	controls.update();
 
-	sequencer.parseControls(&system.controls, &system.inputs);
-	if (runtimeDisplay) {
-		updateRGBDisplay(system.outputs.dac1Samples[0],
-				sequencer.logicOutput * 4095,
-				system.outputs.dac2Samples[0]);
-	}
+	sequencer.parseControls(&controls, &inputs);
+
+	updateRGBDisplay(outputs.dac1Samples[0],
+			sequencer.logicOutput * 4095,
+			outputs.dac2Samples[0], runtimeDisplay);
 
 }
 

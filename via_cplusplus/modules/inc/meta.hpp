@@ -64,7 +64,7 @@ enum meta_aux4Modes {phasor, contour};
 
 void metaTouchLink (void *);
 
-class ViaMeta {
+class ViaMeta : public ViaModule {
 
 public:
 
@@ -197,8 +197,6 @@ public:
 	ViaMetaUI metaUI;
 
 	int runtimeDisplay;
-
-	ViaModule system;
 
 	SimpleWavetable metaWavetable;
 	MetaController metaController;

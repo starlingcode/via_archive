@@ -6,6 +6,8 @@ extern uint16_t VirtAddVarTab[NB_OF_VAR] = { 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
 
 void ViaTrigseq::init(void) {
 
+	initializeAuxOutputs();
+
 	// initialize our touch sensors
 	tsl_user_Init();
 	trigseqUI.initialize();
@@ -21,10 +23,10 @@ void ViaTrigseq::init(void) {
 	sequencer.gateAEvent = SOFT_GATE_EXECUTE;
 	sequencer.gateBEvent = SOFT_GATE_EXECUTE;
 
-	system.inputs.init(TRIGSEQ_BUFFER_SIZE);
-	system.outputs.init(TRIGSEQ_BUFFER_SIZE);
-	system.bufferSize = TRIGSEQ_BUFFER_SIZE;
-	system.ioStreamInit();
+	inputs.init(TRIGSEQ_BUFFER_SIZE);
+	outputs.init(TRIGSEQ_BUFFER_SIZE);
+	bufferSize = TRIGSEQ_BUFFER_SIZE;
+	ioStreamInit();
 
 }
 

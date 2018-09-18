@@ -36,20 +36,6 @@ enum uiSignals {
 	TSL_ERROR_SIG
 };
 
-typedef struct {
-	int r;
-	int b;
-	int g;
-} rgb;
-
-// shortcuts for commonly used colors as macro defines of rgb struct values
-#define red {4095, 0, 0};
-#define green {0, 4095, 0};
-#define blue {0, 0, 4095};
-#define orange {4095, 4095, 0};
-#define magenta {4095, 0, 4095};
-#define cyan {0, 4095, 4095};
-
 class ViaUI {
 
 protected:
@@ -57,6 +43,16 @@ protected:
 	void (ViaUI::*state)(int);
 
 public:
+
+	int32_t * button1;
+	int32_t * button2;
+	int32_t * button3;
+	int32_t * button4;
+	int32_t * button5;
+	int32_t * button6;
+
+	int32_t pressedState = PRESSED;
+	int32_t releasedState = RELEASED;
 
 	void transition(void (ViaUI::*func)(int));
 
@@ -125,92 +121,20 @@ public:
 	virtual void aux3EnterMenuCallback(void);
 	virtual void aux4EnterMenuCallback(void);
 
-	void timerReset(void) {
+	inline void timerReset(void) {
 		TIM7->CNT = 1;
 	}
-	void timerEnable(void) {
+	inline void timerEnable(void) {
 		TIM7->CR1 |= TIM_CR1_CEN;
 	}
-	void timerDisable(void) {
+	inline void timerDisable(void) {
 		TIM7->CR1 &= ~TIM_CR1_CEN;
 	}
-	void timerSetOverflow(int arr) {
+	inline void timerSetOverflow(int arr) {
 		TIM7->ARR = arr;
 	}
-	int timerRead(void) {
+	inline int timerRead(void) {
 		return TIM7->CNT;
-	}
-
-	void setRGB(rgb color) {
-		SET_RED_LED(color.r);
-		SET_GREEN_LED(color.g);
-		SET_BLUE_LED(color.b);
-	}
-
-	void clearRGB() {
-		SET_RED_LED(0);
-		SET_GREEN_LED(0);
-		SET_BLUE_LED(0);
-	}
-
-	void setLEDs(int digit) {
-		switch (digit) {
-		case 0:
-			LEDA_ON;
-			LEDB_OFF;
-			LEDC_OFF;
-			LEDD_OFF;
-			break;
-		case 1:
-			LEDA_OFF;
-			LEDB_OFF;
-			LEDC_ON;
-			LEDD_OFF;
-			break;
-		case 2:
-			LEDA_OFF;
-			LEDB_ON;
-			LEDC_OFF;
-			LEDD_OFF;
-			break;
-		case 3:
-			LEDA_OFF;
-			LEDB_OFF;
-			LEDC_OFF;
-			LEDD_ON;
-			break;
-		case 4:
-			LEDA_ON;
-			LEDB_OFF;
-			LEDC_ON;
-			LEDD_OFF;
-			break;
-		case 5:
-			LEDA_OFF;
-			LEDB_ON;
-			LEDC_OFF;
-			LEDD_ON;
-			break;
-		case 6:
-			LEDA_ON;
-			LEDB_ON;
-			LEDC_OFF;
-			LEDD_OFF;
-			break;
-		case 7:
-			LEDA_OFF;
-			LEDB_OFF;
-			LEDC_ON;
-			LEDD_ON;
-			break;
-		}
-	}
-
-	void clearLEDs() {
-		LEDA_OFF;
-		LEDB_OFF;
-		LEDC_OFF;
-		LEDD_OFF;
 	}
 
 	void resetTimerMenu(void) {
@@ -220,8 +144,8 @@ public:
 	}
 
 	// holds the mode state as a EEPROM-formatted value.
-	int modeStateBuffer;
-	int presetNumber;
+	int modeStateBuffer = 0;
+	int presetNumber = 0;
 
 	void loadFromEEPROM(int);
 	void storeToEEPROM(int);

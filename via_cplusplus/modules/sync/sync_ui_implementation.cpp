@@ -29,127 +29,127 @@ void ViaSync::ViaSyncUI::presetEnterMenuCallback(void) {;
 
 void ViaSync::ViaSyncUI::button1EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
-	setLEDs(SH_MODE);
+	this_module.setLEDs(SH_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::button2EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
-	setLEDs(SCALE_MODE);
+	this_module.setLEDs(SCALE_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::button3EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
-	setLEDs(X_MODE);
+	this_module.setLEDs(X_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::button4EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
-	setLEDs(SYNC_MODE);
+	this_module.setLEDs(SYNC_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::button5EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
-	setLEDs(GROUP_MODE);
+	this_module.setLEDs(GROUP_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::button6EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
-	setLEDs(TABLE_MODE);
+	this_module.setLEDs(TABLE_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::aux1EnterMenuCallback(void) {
-	clearLEDs();
-	setLEDs(LOGIC_A_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(LOGIC_A_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::aux2EnterMenuCallback(void) {
-	clearLEDs();
-	setLEDs(QUADRATURE_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(QUADRATURE_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::aux3EnterMenuCallback(void) {
-	clearLEDs();
-	setLEDs(AUX_OUT_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(AUX_OUT_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::aux4EnterMenuCallback(void) {
-	clearLEDs();
-	setLEDs(TABLE_GROUP_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(TABLE_GROUP_MODE);
 	resetTimerMenu();
 }
 
 void ViaSync::ViaSyncUI::button1TapCallback(void) {
 	SH_MODE = incrementModeAndStore(SH_MODE, BUTTON1_MASK, numButton1Modes);
 	this_module.handleButton1ModeChange(SH_MODE);
-	clearLEDs();
-	setLEDs(SH_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(SH_MODE);
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 void ViaSync::ViaSyncUI::button2TapCallback(void) {
 	SCALE_MODE = incrementModeAndStore(SCALE_MODE, BUTTON2_MASK, numButton2Modes);
 	this_module.handleButton2ModeChange(SCALE_MODE);
-	clearLEDs();
-	setLEDs(SCALE_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(SCALE_MODE);
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 void ViaSync::ViaSyncUI::button3TapCallback(void) {
 	X_MODE = incrementModeAndStore(X_MODE, BUTTON3_MASK, numButton3Modes);
 	this_module.handleButton3ModeChange(X_MODE);
-	clearLEDs();
-	setLEDs(X_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(X_MODE);
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 void ViaSync::ViaSyncUI::button4TapCallback(void) {
 	SYNC_MODE = incrementModeAndStore(SYNC_MODE, BUTTON4_MASK, numButton4Modes);
 	this_module.handleButton4ModeChange(SYNC_MODE);
-	clearLEDs();
-	setLEDs(SYNC_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(SYNC_MODE);
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 void ViaSync::ViaSyncUI::button5TapCallback(void) {
 	GROUP_MODE = decrementModeAndStore(GROUP_MODE, BUTTON5_MASK, numButton5Modes);
 	this_module.handleButton5ModeChange(GROUP_MODE);
-	clearLEDs();
-	setLEDs(GROUP_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(GROUP_MODE);
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 void ViaSync::ViaSyncUI::button6TapCallback(void) {
 	TABLE_MODE = incrementModeAndStore(TABLE_MODE, BUTTON6_MASK, numButton6Modes);
 	this_module.handleButton6ModeChange(TABLE_MODE);
-	clearLEDs();
-	setLEDs(TABLE_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(TABLE_MODE);
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 
 void ViaSync::ViaSyncUI::aux1TapCallback(void) {
 	LOGIC_A_MODE = incrementModeAndStore(LOGIC_A_MODE, AUX_MODE2_MASK, numAux2Modes);
 	this_module.handleAux2ModeChange(LOGIC_A_MODE);
-	clearLEDs();
-	setLEDs(LOGIC_A_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(LOGIC_A_MODE);
 	transition(&ViaSync::ViaSyncUI::newAuxModeMenu);
 }
 
 void ViaSync::ViaSyncUI::aux2TapCallback(void) {
 	QUADRATURE_MODE = incrementModeAndStore(QUADRATURE_MODE, AUX_MODE2_MASK, numAux2Modes);
 	this_module.handleAux2ModeChange(QUADRATURE_MODE);
-	clearLEDs();
-	setLEDs(QUADRATURE_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(QUADRATURE_MODE);
 	transition(&ViaSync::ViaSyncUI::newAuxModeMenu);
 }
 
 void ViaSync::ViaSyncUI::aux3TapCallback(void) {
 	AUX_OUT_MODE = incrementModeAndStore(AUX_OUT_MODE, AUX_MODE3_MASK, numAux3Modes);
 	this_module.handleAux3ModeChange(AUX_OUT_MODE);
-	clearLEDs();
-	setLEDs(AUX_OUT_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(AUX_OUT_MODE);
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 
 void ViaSync::ViaSyncUI::aux4TapCallback(void) {
 	TABLE_GROUP_MODE = incrementModeAndStore(TABLE_GROUP_MODE, AUX_MODE4_MASK, numAux4Modes);
 	this_module.handleAux4ModeChange(TABLE_GROUP_MODE);
-	clearLEDs();
-	setLEDs(TABLE_GROUP_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(TABLE_GROUP_MODE);
 	transition(&ViaSync::ViaSyncUI::newAuxModeMenu);
 }
 

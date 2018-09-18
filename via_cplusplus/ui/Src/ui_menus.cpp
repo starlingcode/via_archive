@@ -14,11 +14,10 @@ void ViaUI::button1Menu(int sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		button1EnterMenuCallback();
-
 		break;
 
 	case SENSOR_EVENT_SIG:
-		if (BUTTON1SENSOR== RELEASED) {
+		if (*button1 == releasedState) {
 			if(timerRead() < 3000) {
 				button1TapCallback();
 			} else {
@@ -33,11 +32,10 @@ void ViaUI::button2Menu(int sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		button2EnterMenuCallback();
-
 		break;
 
 	case SENSOR_EVENT_SIG:
-		if (BUTTON2SENSOR== RELEASED) {
+		if (*button2 == releasedState) {
 			if(timerRead() < 3000) {
 				button2TapCallback();
 			} else {
@@ -56,7 +54,7 @@ void ViaUI::button3Menu(int sig) {
 		break;
 
 	case SENSOR_EVENT_SIG:
-		if (BUTTON3SENSOR== RELEASED) {
+		if (*button3 == releasedState) {
 			if(timerRead() < 3000) {
 				button3TapCallback();
 			} else {
@@ -74,12 +72,11 @@ void ViaUI::button4Menu(int sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		button4EnterMenuCallback();
-
 		break;
 
 	case SENSOR_EVENT_SIG:
 
-		if (BUTTON4SENSOR== RELEASED) {
+		if (*button4 == releasedState) {
 			if(timerRead() < 3000) {
 				button4TapCallback();
 			} else {
@@ -106,15 +103,15 @@ void ViaUI::button5Menu(int sig) {
 	case SENSOR_EVENT_SIG:
 
 		// Check for entry into an aux mode
-		if (BUTTON1SENSOR== PRESSED) {
+		if (*button1 == pressedState) {
 			transition(&ViaUI::aux1Menu);
-		} else if (BUTTON3SENSOR == PRESSED) {
+		} else if (*button3 == pressedState) {
 			transition(&ViaUI::aux2Menu);
-		} else if (BUTTON4SENSOR == PRESSED) {
+		} else if (*button4 == pressedState) {
 			transition(&ViaUI::aux3Menu);
-		} else if (BUTTON6SENSOR == PRESSED) {
+		} else if (*button6 == pressedState) {
 			transition(&ViaUI::aux4Menu);
-		} else if (BUTTON5SENSOR == RELEASED) {
+		} else if (*button5 == releasedState) {
 			if(timerRead() < 3000) {
 				button5TapCallback();
 			} else {
@@ -133,7 +130,7 @@ void ViaUI::button6Menu(int sig) {
 		break;
 
 	case SENSOR_EVENT_SIG:
-		if (BUTTON6SENSOR== RELEASED) {
+		if (*button6 == releasedState) {
 			if(timerRead() < 3000) {
 				button6TapCallback();
 			} else {
@@ -155,7 +152,7 @@ void ViaUI::aux1Menu(int sig) {
 		break;
 
 	case SENSOR_EVENT_SIG:
-		if (BUTTON1SENSOR== RELEASED) {
+		if (*button1 == releasedState) {
 			if(timerRead() < 3000) {
 				aux1TapCallback();
 			} else {
@@ -177,7 +174,7 @@ void ViaUI::aux2Menu(int sig) {
 		break;
 
 	case SENSOR_EVENT_SIG:
-		if (BUTTON3SENSOR== RELEASED) {
+		if (*button3 == releasedState) {
 			if(timerRead() < 3000) {
 				aux2TapCallback();
 			} else {
@@ -199,7 +196,7 @@ void ViaUI::aux3Menu(int sig) {
 		break;
 
 	case SENSOR_EVENT_SIG:
-		if (BUTTON4SENSOR== RELEASED) {
+		if (*button4 == releasedState) {
 			if(timerRead() < 3000) {
 				aux3TapCallback();
 			} else {
@@ -221,7 +218,7 @@ void ViaUI::aux4Menu(int sig) {
 		break;
 
 	case SENSOR_EVENT_SIG:
-		if (BUTTON6SENSOR== RELEASED) {
+		if (*button6 == releasedState) {
 			if(timerRead() < 3000) {
 				aux4TapCallback();
 			} else {

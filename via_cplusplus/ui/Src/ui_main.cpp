@@ -44,28 +44,26 @@ void ViaUI::defaultMenu(int sig) {
 		defaultEnterMenuCallback();
 		timerReset();
 		timerDisable();
-		clearLEDs();
-		clearRGB();
 		break;
 
 	case SENSOR_EVENT_SIG:
 
-		if (BUTTON3SENSOR== PRESSED) {
+		if (*button3 == pressedState) {
 			transition(&ViaUI::button3Menu);
 
-		} else if (BUTTON1SENSOR == PRESSED) {
+		} else if (*button1 == pressedState) {
 			transition(&ViaUI::button1Menu);
 
-		} else if (BUTTON4SENSOR == PRESSED) {
+		} else if (*button4 == pressedState) {
 			transition(&ViaUI::button4Menu);
 
-		} else if (BUTTON6SENSOR == PRESSED) {
+		} else if (*button6 == pressedState) {
 			transition(&ViaUI::button6Menu);
 
-		} else if (BUTTON2SENSOR == PRESSED) {
+		} else if (*button2 == pressedState) {
 			transition(&ViaUI::button2Menu);
 
-		} else if (BUTTON5SENSOR == PRESSED) {
+		} else if (*button5 == pressedState) {
 			transition(&ViaUI::button5Menu);
 		}
 		break;
@@ -75,8 +73,7 @@ void ViaUI::defaultMenu(int sig) {
 		break;
 
 		case EXIT_SIG:
-			clearLEDs();
-			clearRGB();
+
 		break;
 
 		default:
@@ -115,22 +112,22 @@ void ViaUI::newModeMenu(int sig) {
 		// in case of new events immediately jump to relevant menu
 	case SENSOR_EVENT_SIG:
 
-		if (BUTTON3SENSOR== PRESSED) {
+		if (*button3== pressedState) {
 			transition(&ViaUI::button3Menu);
 
-		} else if (BUTTON1SENSOR == PRESSED) {
+		} else if (*button1 == pressedState) {
 			transition(&ViaUI::button1Menu);
 
-		} else if (BUTTON4SENSOR == PRESSED) {
+		} else if (*button4 == pressedState) {
 			transition(&ViaUI::button4Menu);
 
-		} else if (BUTTON6SENSOR == PRESSED) {
+		} else if (*button6 == pressedState) {
 			transition(&ViaUI::button6Menu);
 
-		} else if (BUTTON2SENSOR == PRESSED) {
+		} else if (*button2 == pressedState) {
 			transition(&ViaUI::button2Menu);
 
-		} else if (BUTTON5SENSOR == PRESSED) {
+		} else if (*button5 == pressedState) {
 			transition(&ViaUI::button5Menu);
 		}
 		break;
@@ -156,15 +153,15 @@ void ViaUI::newAuxModeMenu(int sig) {
 		break;
 
 	case SENSOR_EVENT_SIG:
-		if (BUTTON1SENSOR== PRESSED) {
+		if (*button1 == pressedState) {
 			transition(&ViaUI::aux1Menu);
-		} else if (BUTTON3SENSOR == PRESSED) {
+		} else if (*button3 == pressedState) {
 			transition(&ViaUI::aux2Menu);
-		} else if (BUTTON4SENSOR == PRESSED) {
+		} else if (*button4 == pressedState) {
 			transition(&ViaUI::aux3Menu);
-		} else if (BUTTON6SENSOR == PRESSED) {
+		} else if (*button6 == pressedState) {
 			transition(&ViaUI::aux4Menu);
-		} else if (BUTTON5SENSOR == RELEASED) {
+		} else if (*button5 == releasedState) {
 			transition(&ViaUI::defaultMenu);
 		}
 		break;

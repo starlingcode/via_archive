@@ -8,7 +8,7 @@
 #ifndef INC_HARDRWARE_IO_H_
 #define INC_HARDRWARE_IO_H_
 
-#include "via_global_signals.hpp"
+#include "via_f373_module.hpp"
 
 
 #endif /* INC_HARDRWARE_IO_H_ */
