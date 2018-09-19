@@ -15,6 +15,7 @@ void syncTouchLink (void * uiVoid) {
 }
 
 void ViaSync::ViaSyncUI::defaultEnterMenuCallback(void) {
+	this_module.clearLEDs();
 	this_module.runtimeDisplay = 1;
 }
 void ViaSync::ViaSyncUI::newModeEnterMenuCallback(void) {
@@ -29,31 +30,43 @@ void ViaSync::ViaSyncUI::presetEnterMenuCallback(void) {;
 
 void ViaSync::ViaSyncUI::button1EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(SH_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::button2EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(SCALE_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::button3EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(X_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::button4EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(SYNC_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::button5EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(GROUP_MODE);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::button6EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(TABLE_MODE);
 	resetTimerMenu();
 }

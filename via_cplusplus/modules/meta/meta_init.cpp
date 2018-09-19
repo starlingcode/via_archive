@@ -44,7 +44,6 @@ void ViaMeta::init() {
 	inputs.init(META_BUFFER_SIZE);
 	outputs.init(META_BUFFER_SIZE);
 	bufferSize = META_BUFFER_SIZE;
-	ioStreamInit();
 
 	metaWavetable.morphMod = inputs.cv3Samples;
 	metaWavetable.morphScale = (int16_t*) drumEnvelope.output;

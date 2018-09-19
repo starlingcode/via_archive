@@ -16,9 +16,15 @@ void ViaScanner::mainFallingEdgeCallback(void) {
 }
 
 void ViaScanner::auxRisingEdgeCallback(void) {
+	setSH(1, 1);
+	setLEDA(1);
+	setLEDB(1);
 	inputs.auxTrigInput = 1;
 }
 void ViaScanner::auxFallingEdgeCallback(void) {
+	setSH(0, 0);
+	setLEDA(0);
+	setLEDB(0);
 	inputs.auxTrigInput = 0;
 }
 
@@ -52,7 +58,7 @@ void ViaScanner::halfTransferCallback(void) {
 			(int *) wavetableXRead, (int *) wavetableYRead,
 			0, SCANNER_BUFFER_SIZE);
 
-	arm_shift_q31((q31_t *) scanner.xIndexBuffer, -4, (q31_t *) outputs.dac3Samples, 8);
+	arm_shift_q31((q31_t *) scanner.xInput, -4, (q31_t *) outputs.dac3Samples, 8);
 
 	for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
 		outputs.dac2Samples[i] = scanner.altitude[i];
@@ -62,10 +68,8 @@ void ViaScanner::halfTransferCallback(void) {
 		outputs.logicA[i] = GET_ALOGIC_MASK(scanner.xDeltaBuffer[i] &
 				scanner.yDeltaBuffer[i]);
 		outputs.auxLogic[i] = GET_EXPAND_LOGIC_MASK(outputs.dac3Samples[i] >> 11);
-		outputs.shA[i] = GET_SH_A_MASK(
-				inputs.auxTrigSamples[i]);
-		outputs.shB[i] = GET_SH_B_MASK(
-				inputs.auxTrigSamples[i]);
+		outputs.shA[i] = GPIO_NOP;
+		outputs.shB[i] = GPIO_NOP;
 	}
 
 }
@@ -79,6 +83,8 @@ void ViaScanner::transferCompleteCallback(void) {
 			(int *) wavetableXRead, (int *) wavetableYRead,
 			SCANNER_BUFFER_SIZE, SCANNER_BUFFER_SIZE);
 
+	arm_shift_q31((q31_t *) scanner.xInput, -4, ((q31_t *) outputs.dac3Samples) + 8, 8);
+
 	for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
 		outputs.dac2Samples[i + SCANNER_BUFFER_SIZE] = scanner.altitude[i];
 		outputs.dac1Samples[i + SCANNER_BUFFER_SIZE] = 4095 - scanner.altitude[i];
@@ -88,8 +94,11 @@ void ViaScanner::transferCompleteCallback(void) {
 				scanner.yDeltaBuffer[i]);
 		outputs.auxLogic[i + SCANNER_BUFFER_SIZE] = GET_EXPAND_LOGIC_MASK(
 				outputs.dac3Samples[i + SCANNER_BUFFER_SIZE] >> 11);
-		outputs.shA[i + SCANNER_BUFFER_SIZE] = GET_SH_A_MASK(inputs.auxTrigSamples[i + SCANNER_BUFFER_SIZE]);
-		outputs.shB[i + SCANNER_BUFFER_SIZE] = GET_SH_B_MASK(inputs.auxTrigSamples[i + SCANNER_BUFFER_SIZE]);
+//		outputs.shA[i + SCANNER_BUFFER_SIZE] = GET_SH_A_MASK(inputs.auxTrigSamples[i + SCANNER_BUFFER_SIZE]);
+//		outputs.shB[i + SCANNER_BUFFER_SIZE] = GET_SH_B_MASK(inputs.auxTrigSamples[i + SCANNER_BUFFER_SIZE]);
+		outputs.shA[i + SCANNER_BUFFER_SIZE] = GPIO_NOP;
+		outputs.shB[i + SCANNER_BUFFER_SIZE] = GPIO_NOP;
+
 	}
 
 }

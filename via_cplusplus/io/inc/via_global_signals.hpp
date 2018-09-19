@@ -86,6 +86,18 @@ public:
 		trigSamples = (int*) malloc(2 * bufferSize * sizeof(int));
 		auxTrigSamples = (int*) malloc(2 * bufferSize * sizeof(int));
 
+		for (int i = 0; i < bufferSize; i++) {
+
+			cv2Samples[i] = 0;
+			cv3Samples[i] = 0;
+			cv2VirtualGround[i] = 0;
+			cv3VirtualGround[i] = 0;
+
+			trigSamples[i] = 0;
+			auxTrigSamples[i] = 0;
+
+		}
+
 	}
 
 };
@@ -116,6 +128,17 @@ public:
 		shB = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
 		logicA = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
 		auxLogic = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
+
+		for (int i = 0; i < bufferSize; i++) {
+			dac1Samples[i] = 0;
+			dac2Samples[i] = 0;
+			dac3Samples[i] = 0;
+
+			shA[i] = 0;
+			shB[i] = 0;
+			logicA[i] = 0;
+			auxLogic[i] = 0;
+		}
 
 	}
 

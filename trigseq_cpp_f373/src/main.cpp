@@ -144,6 +144,8 @@ int main(void)
   ViaTrigseq * moduleAddress = &module;
   linkInterrupts(moduleAddress);
   mainHardwareInit();
+  module.ioStreamInit();
+
 
   module.setSH(0, 0);
 

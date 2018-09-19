@@ -38,7 +38,7 @@ void ViaScanner::init(void) {
 		reverseBuffer[i] = 1;
 	}
 
-	ioStreamInit();
+	//ioStreamInit();
 
 }
 

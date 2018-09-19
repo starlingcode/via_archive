@@ -29,21 +29,29 @@ void ViaTrigseq::ViaTrigseqUI::presetEnterMenuCallback(void) {;
 
 void ViaTrigseq::ViaTrigseqUI::button1EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(SH_A_MODE);
 	resetTimerMenu();
 }
 void ViaTrigseq::ViaTrigseqUI::button2EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(AND_A_MODE);
 	resetTimerMenu();
 }
 void ViaTrigseq::ViaTrigseqUI::button3EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(A_PATTERN_BANK);
 	resetTimerMenu();
 }
 void ViaTrigseq::ViaTrigseqUI::button4EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	if (!B_PATTERN_BANK && !A_PATTERN_BANK) {
 		this->transition(&ViaTrigseq::ViaTrigseqUI::aux3Menu);
 	} else {
@@ -53,11 +61,15 @@ void ViaTrigseq::ViaTrigseqUI::button4EnterMenuCallback(void) {
 }
 void ViaTrigseq::ViaTrigseqUI::button5EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(AND_B_MODE);
 	resetTimerMenu();
 }
 void ViaTrigseq::ViaTrigseqUI::button6EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(B_PATTERN_BANK);
 	resetTimerMenu();
 }

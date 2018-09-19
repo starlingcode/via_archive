@@ -7,6 +7,7 @@ void scannerTouchLink (void * uiVoid) {
 }
 
 void ViaScanner::ViaScannerUI::defaultEnterMenuCallback(void) {
+	this_module.clearLEDs();
 	this_module.runtimeDisplay = 1;
 }
 void ViaScanner::ViaScannerUI::newModeEnterMenuCallback(void) {

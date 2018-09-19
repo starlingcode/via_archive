@@ -28,7 +28,6 @@ void ViaSync::init(void) {
 	inputs.init(SYNC_BUFFER_SIZE);
 	outputs.init(SYNC_BUFFER_SIZE);
 	bufferSize = SYNC_BUFFER_SIZE;
-	ioStreamInit();
 
 	pllController.rootMod = inputs.cv2Samples;
 	syncWavetable.fm = inputs.cv2VirtualGround;

@@ -104,6 +104,21 @@ public:
 		hardSync = (int *) malloc(bufferSize * sizeof(int));
 		reverse = (int *) malloc(bufferSize * sizeof(int));
 		sh = (int *) malloc(bufferSize * sizeof(int));
+
+		for (int i = 0; i < bufferSize; i++) {
+			xIndexBuffer[i] = 0;
+			yIndexBuffer[i] = 0;
+			xDeltaBuffer[i] = 0;
+			yDeltaBuffer[i] = 0;
+			altitude[i] = 0;
+
+			xInput[i] = 0;
+			yInput[i] = 0;
+			hardSync[i] = 0;
+			reverse[i] = 0;
+			sh[i] = 0;
+		}
+
 	}
 
 

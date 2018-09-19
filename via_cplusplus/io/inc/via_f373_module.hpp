@@ -37,36 +37,32 @@ public:
 
 	void ioStreamInit() {
 
-		int16_t cv2Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA0) << 2;
-		int16_t cv3Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA1) << 2;
+//		int16_t cv2Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA0) << 2;
+//		int16_t cv3Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA1) << 2;
 
-		for (int i = 0; i < 2 * bufferSize; i++) {
-			inputs.cv2VirtualGround[i] = cv2Offset;
-			inputs.cv3VirtualGround[i] = cv3Offset;
-		}
+//		for (int i = 0; i < 2 * bufferSize; i++) {
+//			inputs.cv2VirtualGround[i] = cv2Offset;
+//			inputs.cv3VirtualGround[i] = cv3Offset;
+//		}
 
 		// initialize the ADCs and their respective DMA arrays
 		HAL_ADC_Start_DMA(&hadc1, controls.controlRateInputs, 4);
 
-	//	if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1)
-	//			!= HAL_OK) {
-	//		LEDA_ON;
-	//	}
-	//
-	//	/* Pool for the end of calibration */
-	//	if (HAL_SDADC_PollForCalibEvent(&hsdadc1, 100) != HAL_OK) {
-	//		LEDB_ON;
-	//	}
-	//
-	//	if (HAL_SDADC_CalibrationStart(&hsdadc2, SDADC_CALIBRATION_SEQ_1)
-	//			!= HAL_OK) {
-	//		LEDA_ON;
-	//	}
-	//
-	//	/* Pool for the end of calibration */
-	//	if (HAL_SDADC_PollForCalibEvent(&hsdadc2, 100) != HAL_OK) {
-	//		LEDB_ON;
-	//	}
+		if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1)
+				!= HAL_OK) {
+		}
+
+		/* Pool for the end of calibration */
+		if (HAL_SDADC_PollForCalibEvent(&hsdadc1, 1000) != HAL_OK) {
+		}
+
+		if (HAL_SDADC_CalibrationStart(&hsdadc2, SDADC_CALIBRATION_SEQ_1)
+				!= HAL_OK) {
+		}
+
+		/* Pool for the end of calibration */
+		if (HAL_SDADC_PollForCalibEvent(&hsdadc2, 1000) != HAL_OK) {
+		}
 
 		HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, outputs.dac1Samples,
 				2 * bufferSize, DAC_ALIGN_12B_R);
@@ -119,7 +115,7 @@ public:
 	inline void setSH(int sampleA, int sampleB) {
 
 		uint32_t mask = GET_SH_A_MASK(sampleA);
-		mask |= GET_SH_A_MASK(sampleB);
+		mask |= GET_SH_B_MASK(sampleB);
 
 		*shAOutput = mask;
 
@@ -140,7 +136,7 @@ public:
 		//combine the mask variables for a shared GPIO group with a bitwise or
 		*aLogicOutput = (logicA | LEDB_MASK);
 
-		*auxLogicOutput = (logicA | LEDB_MASK);
+		*auxLogicOutput = (auxLogic | LEDC_MASK);
 
 		*shAOutput = (shA | shB);
 
@@ -154,7 +150,7 @@ public:
 		//combine the mask variables for a shared GPIO group with a bitwise or
 		*aLogicOutput = (logicA);
 
-		*auxLogicOutput = (logicA);
+		*auxLogicOutput = (auxLogic);
 
 		*shAOutput = (shA | shB);
 
@@ -162,10 +158,10 @@ public:
 
 	inline void setLogicOut(int writeIndex, int runtimeDisplay) {
 
-		int logicA = GET_ALOGIC_MASK(outputs.logicA[writeIndex]);
-		int auxLogic = GET_EXPAND_LOGIC_MASK(outputs.auxLogic[writeIndex]);
-		int shA = GET_SH_A_MASK(outputs.shA[writeIndex]);
-		int shB = GET_SH_B_MASK(outputs.shB[writeIndex]);
+		int logicA = outputs.logicA[writeIndex];
+		int auxLogic = outputs.auxLogic[writeIndex];
+		int shA = outputs.shA[writeIndex];
+		int shB = outputs.shB[writeIndex];
 
 		if (runtimeDisplay) {
 			setLogicOutputsLEDOn(logicA, auxLogic, shA, shB);

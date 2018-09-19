@@ -15,6 +15,7 @@ void metaTouchLink (void * uiVoid) {
 }
 
 void ViaMeta::ViaMetaUI::defaultEnterMenuCallback(void) {
+	this_module.clearLEDs();
 	this_module.runtimeDisplay = 1;
 }
 void ViaMeta::ViaMetaUI::newModeEnterMenuCallback(void) {
@@ -29,21 +30,29 @@ void ViaMeta::ViaMetaUI::presetEnterMenuCallback(void) {;
 
 void ViaMeta::ViaMetaUI::button1EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(SH_MODE);
 	resetTimerMenu();
 }
 void ViaMeta::ViaMetaUI::button2EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(TABLE);
 	resetTimerMenu();
 }
 void ViaMeta::ViaMetaUI::button3EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(FREQ_MODE);
 	resetTimerMenu();
 }
 void ViaMeta::ViaMetaUI::button4EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	if (!LOOP_MODE && !FREQ_MODE) {
 		this->transition(&ViaMeta::ViaMetaUI::aux3Menu);
 	} else {
@@ -53,11 +62,15 @@ void ViaMeta::ViaMetaUI::button4EnterMenuCallback(void) {
 }
 void ViaMeta::ViaMetaUI::button5EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(TABLE);
 	resetTimerMenu();
 }
 void ViaMeta::ViaMetaUI::button6EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 	this_module.setLEDs(LOOP_MODE);
 	resetTimerMenu();
 }

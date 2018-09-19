@@ -26,7 +26,6 @@ void ViaTrigseq::init(void) {
 	inputs.init(TRIGSEQ_BUFFER_SIZE);
 	outputs.init(TRIGSEQ_BUFFER_SIZE);
 	bufferSize = TRIGSEQ_BUFFER_SIZE;
-	ioStreamInit();
 
 }
 

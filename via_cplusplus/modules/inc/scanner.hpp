@@ -177,7 +177,8 @@ public:
 	void initPhaseDistTable(void);
 
 	int reverseBuffer[SCANNER_BUFFER_SIZE*2];
-	int reverseSignal;
+
+	int reverseSignal = 1;
 
 	/*
 	 *
