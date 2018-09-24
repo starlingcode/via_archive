@@ -48,6 +48,13 @@ void ViaSync::buttonPressedCallback(void) {
 		TIM2->CNT = 0;
 #endif
 
+#ifdef BUILD_VIRTUAL
+
+		int32_t tap = pllController.virtualTimer;
+		// reset the timer value
+		pllController.virtualTimer = 0;
+#endif
+
 		writeBuffer(&tapStore, tap);
 		tapSum += tap - readBuffer(&tapStore, 3);
 

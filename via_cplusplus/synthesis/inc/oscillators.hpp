@@ -123,6 +123,8 @@ class PllController {
 
 public:
 
+	uint32_t virtualTimer;
+
 	uint32_t periodCount = 100000;
 	uint32_t pllNudge = 0;
 
@@ -154,6 +156,13 @@ public:
 
 		// reset the timer value
 		TIM2->CNT = 0;
+#endif
+
+#ifdef BUILD_VIRTUAL
+
+		periodCount = virtualTimer;
+		virtualTimer = 0;
+
 #endif
 
 	}

@@ -15,26 +15,26 @@
 class ViaModule {
 public:
 
-	volatile uint32_t * aLogicOutput;
-	volatile uint32_t * auxLogicOutput;
-	volatile uint32_t * shAOutput;
-	volatile uint32_t * shBOutput;
+	uint32_t aLogicOutput = 0;
+	uint32_t auxLogicOutput = 0;
+	uint32_t shAOutput = 0;
+	uint32_t shBOutput = 0;
 
-	volatile uint32_t * redLevel;
-	volatile uint32_t * greenLevel;
-	volatile uint32_t * blueLevel;
+	uint32_t redLevel = 0;
+	uint32_t greenLevel = 0;
+	uint32_t blueLevel = 0;
 
-	volatile uint32_t * ledAOutput;
-	volatile uint32_t * ledBOutput;
-	volatile uint32_t * ledCOutput;
-	volatile uint32_t * ledDOutput;
+	uint32_t ledAOutput = 0;
+	uint32_t ledBOutput = 0;
+	uint32_t ledCOutput = 0;
+	uint32_t ledDOutput = 0;
 
-	int32_t * button1Input;
-	int32_t * button2Input;
-	int32_t * button3Input;
-	int32_t * button4Input;
-	int32_t * button5Input;
-	int32_t * button6Input;
+	int32_t button1Input = 0;
+	int32_t button2Input = 0;
+	int32_t button3Input = 0;
+	int32_t button4Input = 0;
+	int32_t button5Input = 0;
+	int32_t button6Input = 0;
 
 	ViaControls controls;
 
@@ -78,35 +78,35 @@ public:
 	 */
 
 	inline void setLogicA(int32_t high) {
-		*aLogicOutput = high;
+		aLogicOutput = high;
 	}
 
 	inline void setAuxLogic(int32_t high) {
-		*auxLogicOutput = high;
+		auxLogicOutput = high;
 	}
 
 	inline void setSH(int32_t sampleA, int32_t sampleB) {
 
-		*shAOutput = sampleA;
-		*shBOutput = sampleB;
+		shAOutput = sampleA;
+		shBOutput = sampleB;
 
 
 	}
 
 	inline void setLEDA(int32_t on) {
-		*ledAOutput = on;
+		ledAOutput = on;
 	}
 
 	inline void setLEDB(int32_t on) {
-		*ledBOutput = on;
+		ledBOutput = on;
 	}
 
 	inline void setLEDC(int32_t on) {
-		*ledCOutput = on;
+		ledCOutput = on;
 	}
 
 	inline void setLEDD(int32_t on) {
-		*ledDOutput = on;
+		ledDOutput = on;
 	}
 
 	inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t auxLogic,
@@ -127,13 +127,13 @@ public:
 		setLEDC(logicA);
 
 		//combine the mask variables for a shared GPIO group with a bitwise or
-		*aLogicOutput = (logicA);
+		aLogicOutput = (logicA);
 
-		*auxLogicOutput = (auxLogic);
+		auxLogicOutput = (auxLogic);
 
-		*shAOutput = (shA);
+		shAOutput = (shA);
 
-		*shBOutput = (shB);
+		shBOutput = (shB);
 
 	}
 
@@ -141,11 +141,11 @@ public:
 			uint32_t shA, uint32_t shB) {
 
 		//combine the mask variables for a shared GPIO group with a bitwise or
-		*aLogicOutput = (logicA);
+		aLogicOutput = (logicA);
 
-		*auxLogicOutput = (auxLogic);
+		auxLogicOutput = (auxLogic);
 
-		*shAOutput = (shA | shB);
+		shAOutput = (shA | shB);
 
 	}
 
@@ -186,15 +186,15 @@ public:
 	 */
 
 	inline void setRedLED(int32_t level) {
-		*redLevel = level;
+		redLevel = level;
 	}
 
 	inline void setGreenLED(int32_t level) {
-		*greenLevel = level;
+		greenLevel = level;
 	}
 
 	inline void setBlueLED(int32_t level) {
-		*blueLevel = level;
+		blueLevel = level;
 	}
 
 	inline void updateRGBDisplay(int32_t red, int32_t green, int32_t blue, int32_t runtimeDisplay) {

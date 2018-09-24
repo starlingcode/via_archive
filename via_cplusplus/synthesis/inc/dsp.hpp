@@ -407,6 +407,10 @@ static inline int32_t __SSAT(int32_t X, int32_t Y) {
 
 }
 
+inline int32_t int32_abs(int32_t n) {
+  int32_t mask = n >> 31;
+  return ((n + mask) ^ mask);
+}
 
 static inline int32_t fix16_mul(int32_t in0, int32_t in1) {
 	int64_t result = (uint64_t) in0 * in1;

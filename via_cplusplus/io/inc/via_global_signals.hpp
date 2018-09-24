@@ -158,4 +158,30 @@ typedef struct {
 #define __MAGENTA {4095, 0, 4095}
 #define __CYAN {0, 4095, 4095}
 
+// used for software implementations
+
+class ViaVirtualHardware {
+public:
+	uint32_t aLogic = 0;
+	uint32_t auxLogic = 0;
+	uint32_t shA = 0;
+	uint32_t shB = 0;
+
+	uint32_t red = 0;
+	uint32_t green = 0;
+	uint32_t blue = 0;
+
+	uint32_t ledA = 0;
+	uint32_t ledB = 0;
+	uint32_t ledC = 0;
+	uint32_t ledD = 0;
+
+	int32_t button1 = 0;
+	int32_t button2 = 0;
+	int32_t button3 = 0;
+	int32_t button4 = 0;
+	int32_t button5 = 0;
+	int32_t button6 = 0;
+};
+
 #endif /* INC_VIA_GLOBAL_SIGNALS_HPP_ */

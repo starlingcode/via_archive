@@ -217,18 +217,6 @@ public:
 		init();
 	}
 
-	ViaMeta(ViaVirtualButtons virtualButtons) : metaUI(*this) {
-		button1Input = &virtualButtons.button1;
-		button2Input = &virtualButtons.button2;
-		button3Input = &virtualButtons.button3;
-		button4Input = &virtualButtons.button4;
-		button5Input = &virtualButtons.button5;
-		button6Input = &virtualButtons.button6;
-		init();
-		metaUI.initialize();
-
-	}
-
 	void mainRisingEdgeCallback(void);
 	void mainFallingEdgeCallback(void);
 
@@ -244,7 +232,7 @@ public:
 	void slowConversionCallback(void);
 
 	void ui_dispatch(int32_t sig) {
-		metaUI.dispatch(sig);
+		this->metaUI.dispatch(sig);
 	};
 
 };

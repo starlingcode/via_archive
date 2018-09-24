@@ -19,12 +19,16 @@ void ViaUI::initialize(void) {
 
 	// link to virtual module buttons at class initialization
 
+#ifdef BUILD_F373
+
 	button1 = (int32_t *) &BUTTON1SENSOR;
 	button2 = (int32_t *) &BUTTON2SENSOR;
 	button3 = (int32_t *) &BUTTON3SENSOR;
 	button4 = (int32_t *) &BUTTON4SENSOR;
 	button5 = (int32_t *) &BUTTON5SENSOR;
 	button6 = (int32_t *) &BUTTON6SENSOR;
+
+#endif
 
 	state = &ViaUI::defaultMenu;
 	transition(&ViaUI::defaultMenu);

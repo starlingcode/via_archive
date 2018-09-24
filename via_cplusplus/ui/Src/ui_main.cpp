@@ -68,15 +68,15 @@ void ViaUI::defaultMenu(int32_t sig) {
 		}
 		break;
 
-		case EXPAND_SW_ON_SIG:
+	case EXPAND_SW_ON_SIG:
 		transition(&ViaUI::presetMenu);
 		break;
 
-		case EXIT_SIG:
+	case EXIT_SIG:
 
 		break;
 
-		default:
+	default:
 		break;
 	}
 }

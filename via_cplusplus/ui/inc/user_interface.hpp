@@ -28,12 +28,12 @@ void linkUI(void *, void *);
 
 class ViaVirtualButtons {
 public:
-	int32_t button1;
-	int32_t button2;
-	int32_t button3;
-	int32_t button4;
-	int32_t button5;
-	int32_t button6;
+	int32_t button1 = 0;
+	int32_t button2 = 0;
+	int32_t button3 = 0;
+	int32_t button4 = 0;
+	int32_t button5 = 0;
+	int32_t button6 = 0;
 };
 
 enum uiSignals {
@@ -50,11 +50,10 @@ enum uiSignals {
 
 class ViaUI {
 
-protected:
+public:
+
 	// UI States
 	void (ViaUI::*state)(int32_t);
-
-public:
 
 	int32_t virtualTimer;
 	int32_t virtualTimerEnable;
@@ -67,8 +66,15 @@ public:
 	int32_t * button5;
 	int32_t * button6;
 
+#ifdef BUILD_F373
 	int32_t pressedState = PRESSED;
 	int32_t releasedState = RELEASED;
+#endif
+
+#ifdef BUILD_VIRTUAL
+	int32_t pressedState = 1;
+	int32_t releasedState = 0;
+#endif
 
 	void transition(void (ViaUI::*func)(int32_t));
 

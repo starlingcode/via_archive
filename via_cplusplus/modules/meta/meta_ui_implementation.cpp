@@ -13,12 +13,12 @@ void ViaMeta::ViaMetaUI::initialize(void) {
 
 #ifdef BUILD_VIRTUAL
 
-	button1 = this_module.button1Input;
-	button2 = this_module.button2Input;
-	button3 = this_module.button3Input;
-	button4 = this_module.button4Input;
-	button5 = this_module.button5Input;
-	button6 = this_module.button6Input;
+	button1 = (int32_t *) &this_module.button1Input;
+	button2 = (int32_t *) &this_module.button2Input;
+	button3 = (int32_t *) &this_module.button3Input;
+	button4 = (int32_t *) &this_module.button4Input;
+	button5 = (int32_t *) &this_module.button5Input;
+	button6 = (int32_t *) &this_module.button6Input;
 
 #endif
 
@@ -46,7 +46,7 @@ void metaTouchLink (void * uiVoid) {
 }
 
 void ViaMeta::ViaMetaUI::defaultEnterMenuCallback(void) {
-	this_module.clearLEDs();
+	//this_module.clearLEDs();
 	this_module.runtimeDisplay = 1;
 }
 void ViaMeta::ViaMetaUI::newModeEnterMenuCallback(void) {
