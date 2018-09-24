@@ -9,6 +9,36 @@
 #include "trigseq.hpp"
 #include "user_interface.hpp"
 
+void ViaTrigseq::ViaTrigseqUI::initialize(void) {
+
+#ifdef BUILD_VIRTUAL
+
+	button1 = this_module.button1Input;
+	button2 = this_module.button2Input;
+	button3 = this_module.button3Input;
+	button4 = this_module.button4Input;
+	button5 = this_module.button5Input;
+	button6 = this_module.button6Input;
+
+#endif
+
+#ifdef BUILD_F373
+
+	tsl_user_Init();
+
+	button1 = (int32_t *) &BUTTON1SENSOR;
+	button2 = (int32_t *) &BUTTON2SENSOR;
+	button3 = (int32_t *) &BUTTON3SENSOR;
+	button4 = (int32_t *) &BUTTON4SENSOR;
+	button5 = (int32_t *) &BUTTON5SENSOR;
+	button6 = (int32_t *) &BUTTON6SENSOR;
+
+#endif
+
+	state = &ViaUI::defaultMenu;
+	transition(&ViaUI::defaultMenu);
+}
+
 void trigseqTouchLink (void * uiVoid) {
 	ViaTrigseq::ViaTrigseqUI * ui = (ViaTrigseq::ViaTrigseqUI *) uiVoid;
 	ui->dispatch(SENSOR_EVENT_SIG);

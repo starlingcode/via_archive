@@ -131,22 +131,24 @@ public:
 		void aux3EnterMenuCallback(void);
 		void aux4EnterMenuCallback(void);
 
+		void initialize(void);
+
 		ViaTrigseqUI(ViaTrigseq& x): this_module(x) {
 			linkUI((void *) &trigseqTouchLink, (void *) this);
 		}
 
 	};
 
-	void handleButton1ModeChange(int);
-	void handleButton2ModeChange(int);
-	void handleButton3ModeChange(int);
-	void handleButton4ModeChange(int);
-	void handleButton5ModeChange(int);
-	void handleButton6ModeChange(int);
-	void handleAux1ModeChange(int);
-	void handleAux2ModeChange(int);
-	void handleAux3ModeChange(int);
-	void handleAux4ModeChange(int);
+	void handleButton1ModeChange(int32_t);
+	void handleButton2ModeChange(int32_t);
+	void handleButton3ModeChange(int32_t);
+	void handleButton4ModeChange(int32_t);
+	void handleButton5ModeChange(int32_t);
+	void handleButton6ModeChange(int32_t);
+	void handleAux1ModeChange(int32_t);
+	void handleAux2ModeChange(int32_t);
+	void handleAux3ModeChange(int32_t);
+	void handleAux4ModeChange(int32_t);
 
 	/*
 	 *
@@ -168,7 +170,7 @@ public:
 
 	ViaTrigseqUI trigseqUI;
 
-	int runtimeDisplay;
+	int32_t runtimeDisplay;
 
 	DualEuclidean sequencer;
 
@@ -198,7 +200,7 @@ public:
 	void transferCompleteCallback(void);
 	void slowConversionCallback(void);
 
-	void ui_dispatch(int sig) {
+	void ui_dispatch(int32_t sig) {
 		trigseqUI.dispatch(sig);
 	};
 

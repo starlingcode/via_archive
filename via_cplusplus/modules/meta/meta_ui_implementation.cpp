@@ -9,6 +9,37 @@
 #include "meta.hpp"
 #include "user_interface.hpp"
 
+void ViaMeta::ViaMetaUI::initialize(void) {
+
+#ifdef BUILD_VIRTUAL
+
+	button1 = this_module.button1Input;
+	button2 = this_module.button2Input;
+	button3 = this_module.button3Input;
+	button4 = this_module.button4Input;
+	button5 = this_module.button5Input;
+	button6 = this_module.button6Input;
+
+#endif
+
+#ifdef BUILD_F373
+
+	tsl_user_Init();
+
+	button1 = (int32_t *) &BUTTON1SENSOR;
+	button2 = (int32_t *) &BUTTON2SENSOR;
+	button3 = (int32_t *) &BUTTON3SENSOR;
+	button4 = (int32_t *) &BUTTON4SENSOR;
+	button5 = (int32_t *) &BUTTON5SENSOR;
+	button6 = (int32_t *) &BUTTON6SENSOR;
+
+#endif
+
+	state = &ViaUI::defaultMenu;
+	transition(&ViaUI::defaultMenu);
+
+}
+
 void metaTouchLink (void * uiVoid) {
 	ViaMeta::ViaMetaUI * ui = (ViaMeta::ViaMetaUI *) uiVoid;
 	ui->dispatch(SENSOR_EVENT_SIG);
@@ -19,13 +50,13 @@ void ViaMeta::ViaMetaUI::defaultEnterMenuCallback(void) {
 	this_module.runtimeDisplay = 1;
 }
 void ViaMeta::ViaMetaUI::newModeEnterMenuCallback(void) {
-	;
+	this_module.runtimeDisplay = 0;
 }
 void ViaMeta::ViaMetaUI::newAuxModeEnterMenuCallback(void) {
-	;
+	this_module.runtimeDisplay = 0;
 }
-void ViaMeta::ViaMetaUI::presetEnterMenuCallback(void) {;
-
+void ViaMeta::ViaMetaUI::presetEnterMenuCallback(void) {
+	this_module.runtimeDisplay = 0;
 }
 
 void ViaMeta::ViaMetaUI::button1EnterMenuCallback(void) {

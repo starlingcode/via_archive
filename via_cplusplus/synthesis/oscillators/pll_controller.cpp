@@ -17,10 +17,12 @@
 
 void PllController::parseControls(ViaControls * controls, ViaInputStreams * input) {
 
-	int noteIndex = __USAT(controls->knob1Value + controls->cv1Value - 2048, 12) >> 5;
-	int rootModLocal = rootMod[0];
+	int32_t tempNote = controls->knob1Value + controls->cv1Value - 2048;
+	int32_t noteIndex = __USAT(tempNote, 12) >> 5;
+	int32_t rootModLocal = rootMod[0];
 	rootModLocal = rootModLocal >> 4;
-	int	rootIndex = (__USAT(controls->knob2Value + rootModLocal, 12)) >> scale->t2Bitshift;
+	rootModLocal += controls->knob2Value;
+	int32_t	rootIndex = (__USAT(rootModLocal, 12)) >> scale->t2Bitshift;
 
 	fracMultiplier = scale->grid[rootIndex][noteIndex]->fractionalPart;
 	intMultiplier = scale->grid[rootIndex][noteIndex]->integerPart;
@@ -35,7 +37,7 @@ void PllController::doPLL(void) {
 	pllReset = 1;
 	phaseReset = 1;
 
-	int phase = (phaseSignal + phaseOffset) & ((1 << 25) - 1);
+	int32_t phase = (phaseSignal + phaseOffset) & ((1 << 25) - 1);
 
 	// this switch is always 0 unless pllCounter is 0, in which case its sync mode
 
@@ -68,7 +70,7 @@ void PllController::doPLL(void) {
 		}
 	}
 
-	int multKey = fracMultiplier + intMultiplier;
+	int32_t multKey = fracMultiplier + intMultiplier;
 
 	if (lastMultiplier != multKey) {
 		ratioChange = 1;
@@ -82,7 +84,7 @@ void PllController::doPLL(void) {
 
 void PllController::generateFrequency(void) {
 
-	uint32_t incrementCalc = ((((uint64_t)((uint64_t)WAVETABLE_LENGTH << 18) + pllNudge)) / (periodCount));
+	int32_t incrementCalc = ((((uint64_t)((uint64_t)WAVETABLE_LENGTH << 18) + pllNudge)) / (periodCount));
 	incrementCalc = fix48_mul(incrementCalc >> 8, fracMultiplier) + fix16_mul(incrementCalc >> 8, intMultiplier);
 	increment = __USAT(incrementCalc, 24);
 

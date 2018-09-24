@@ -30,6 +30,8 @@
 
 extern "C" {
 
+#ifdef BUILD_F373
+
 /**
  * @ingroup groupMath
  */
@@ -119,7 +121,29 @@ void arm_offset_q31(q31_t * pSrc, q31_t offset, q31_t * pDst,
 
 }
 
+#endif
+
 }
+
+#ifdef BUILD_VIRTUAL
+
+// NOT SATURATING
+void not_arm_offset_q31(q31_t * pSrc, int32_t offset, q31_t * pDst,
+		uint32_t blockSize) {
+
+	while (blockSize) {
+
+		*pDst = *pSrc + offset;
+
+		*pSrc++;
+		*pDst++;
+		blockSize--;
+	}
+
+}
+
+
+#endif
 
 /**
  * @} end of offset group

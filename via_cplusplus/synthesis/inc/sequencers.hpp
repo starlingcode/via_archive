@@ -89,22 +89,22 @@ class SoftGate {
 	void (SoftGate::*manageGateA)(void);
 	void (SoftGate::*manageGateB)(void);
 
-	int gateA = 0;
-	int gateB = 0;
+	int32_t gateA = 0;
+	int32_t gateB = 0;
 
 public:
 
-	int attackTimeA = 500;
-	int releaseTimeA = 100;
-	int attackTimeB = 500;
-	int releaseTimeB = 100;
+	int32_t attackTimeA = 500;
+	int32_t releaseTimeA = 100;
+	int32_t attackTimeB = 500;
+	int32_t releaseTimeB = 100;
 
-	int aSignal = 0;
-	int bSignal = 0;
+	int32_t aSignal = 0;
+	int32_t bSignal = 0;
 
-	int updateGateA(int signal);
+	int32_t updateGateA(int32_t signal);
 
-	int updateGateB(int signal);
+	int32_t updateGateB(int32_t signal);
 
 	SoftGate(void) {
 		manageGateA = &SoftGate::gateALow;

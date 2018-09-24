@@ -106,15 +106,15 @@ void ViaMeta::slowConversionCallback(void) {
 	metaController.parseControlsExternal(&controls, &inputs);
 	drumEnvelope.parseControls(&controls, &inputs);
 
-	int sample = outputs.dac2Samples[0];
-	int lastPhaseValue = metaWavetable.phase;
+	int32_t sample = outputs.dac2Samples[0];
+	int32_t lastPhaseValue = metaWavetable.phase;
 
-	int redSignal = sample * (lastPhaseValue >> 24);
-	int blueSignal = sample * (!(lastPhaseValue >> 24));
-	int greenSignal = (__USAT((inputs.cv3Samples[0] + controls.knob3Value - 2048), 12)
+	int32_t redSignal = sample * (lastPhaseValue >> 24);
+	int32_t blueSignal = sample * (!(lastPhaseValue >> 24));
+	int32_t greenSignal = (__USAT((inputs.cv3Samples[0] + controls.knob3Value - 2048), 12)
 				* sample) >> 12;
 
-	updateRGBDisplay(redSignal, blueSignal, greenSignal, runtimeDisplay);
+	updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
 
 }
 

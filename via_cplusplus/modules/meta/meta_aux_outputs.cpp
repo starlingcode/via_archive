@@ -8,19 +8,19 @@
 
 #include "meta.hpp"
 
-void ViaMeta::drumModeOff(int writeIndex) {
+void ViaMeta::drumModeOff(int32_t writeIndex) {
 	outputs.dac1Samples[writeIndex] = 4095 - outputs.dac2Samples[writeIndex];
 }
 
-void ViaMeta::drumModeOn(int writeIndex) {
+void ViaMeta::drumModeOn(int32_t writeIndex) {
 	drumEnvelope.advance(&inputs, wavetableReadDrum);
 	uint32_t ampScale = drumEnvelope.output[0] << 1;
-	int sample = outputs.dac2Samples[writeIndex];
+	int32_t sample = outputs.dac2Samples[writeIndex];
 	outputs.dac2Samples[writeIndex] = (__USAT(sample - 2048, 12) * ampScale) >> 16;
 	outputs.dac1Samples[writeIndex] = ((4095 - __USAT(sample + 2048, 12)) * ampScale) >> 16;
 }
 
-void ViaMeta::calculateLogicAReleaseGate(int writeIndex) {
+void ViaMeta::calculateLogicAReleaseGate(int32_t writeIndex) {
 
 		switch (metaController.phaseEvent) {
 			//no logic events
@@ -43,7 +43,7 @@ void ViaMeta::calculateLogicAReleaseGate(int writeIndex) {
 
 }
 
-void ViaMeta::calculateLogicAAttackGate(int writeIndex) {
+void ViaMeta::calculateLogicAAttackGate(int32_t writeIndex) {
 
 		switch (metaController.phaseEvent) {
 			//no logic events
@@ -66,9 +66,9 @@ void ViaMeta::calculateLogicAAttackGate(int writeIndex) {
 
 }
 
-void ViaMeta::calculateDac3Phasor(int writeIndex) {
+void ViaMeta::calculateDac3Phasor(int32_t writeIndex) {
 
-	int phase = metaWavetable.phase;
+	int32_t phase = metaWavetable.phase;
 
 	if (phase >> 24) {
 		outputs.dac3Samples[writeIndex] = 8191 - (phase >> 12);
@@ -77,7 +77,7 @@ void ViaMeta::calculateDac3Phasor(int writeIndex) {
 	}
 }
 
-void ViaMeta::calculateDac3Contour(int writeIndex) {
+void ViaMeta::calculateDac3Contour(int32_t writeIndex) {
 
 	outputs.dac3Samples[writeIndex] = outputs.dac2Samples[writeIndex];
 
@@ -85,7 +85,7 @@ void ViaMeta::calculateDac3Contour(int writeIndex) {
 
 // No S&H
 
-void ViaMeta::calculateSHMode1(int writeIndex) {
+void ViaMeta::calculateSHMode1(int32_t writeIndex) {
 
 	switch (metaController.phaseEvent) {
 		//no logic events
@@ -113,7 +113,7 @@ void ViaMeta::calculateSHMode1(int writeIndex) {
 
 // Sample A from A to B
 
-void ViaMeta::calculateSHMode2(int writeIndex) {
+void ViaMeta::calculateSHMode2(int32_t writeIndex) {
 
 	switch (metaController.phaseEvent) {
 		//no logic events
@@ -141,7 +141,7 @@ void ViaMeta::calculateSHMode2(int writeIndex) {
 
 // Resample B at A
 
-void ViaMeta::calculateSHMode3(int writeIndex) {
+void ViaMeta::calculateSHMode3(int32_t writeIndex) {
 
 
 	switch (metaController.phaseEvent) {
@@ -171,7 +171,7 @@ void ViaMeta::calculateSHMode3(int writeIndex) {
 
 // Sample A from A to B and resample B at A
 
-void ViaMeta::calculateSHMode4(int writeIndex) {
+void ViaMeta::calculateSHMode4(int32_t writeIndex) {
 
 	switch (metaController.phaseEvent) {
 		//no logic events
@@ -199,7 +199,7 @@ void ViaMeta::calculateSHMode4(int writeIndex) {
 
 // Half Decimate (Sample A from A to B sample B from B to A
 
-void ViaMeta::calculateSHMode5(int writeIndex) {
+void ViaMeta::calculateSHMode5(int32_t writeIndex) {
 
 	switch (metaController.phaseEvent) {
 		//no logic events
@@ -227,7 +227,7 @@ void ViaMeta::calculateSHMode5(int writeIndex) {
 
 // Decimate (Resample A at B, resample B at A
 
-void ViaMeta::calculateSHMode6(int writeIndex) {
+void ViaMeta::calculateSHMode6(int32_t writeIndex) {
 
 
 	switch (metaController.phaseEvent) {

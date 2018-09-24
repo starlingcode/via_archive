@@ -13,11 +13,11 @@ void SimpleWavetable::parseControls(ViaControls * controls) {
 
 };
 
-int SimpleWavetable::advance(uint32_t * wavetable) {
+int32_t SimpleWavetable::advance(uint32_t * wavetable) {
 
-	int morphScaleLocal = (int) morphScale[0];
+	int32_t morphScaleLocal = (int32_t) morphScale[0];
 	morphScaleLocal = fix16_mul(morphBase, morphScaleLocal);
-	int morphModLocal = (int) -morphMod[0];
+	int32_t morphModLocal = (int32_t) -morphMod[0];
 	morphModLocal = __USAT(morphScaleLocal + morphModLocal, 16) * tableSize;
 
 	return getSampleQuinticSpline(phase, (uint32_t) morphModLocal,

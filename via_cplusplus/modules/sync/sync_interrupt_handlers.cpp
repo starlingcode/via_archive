@@ -1,10 +1,11 @@
 #include "sync.hpp"
 
-const int phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModPWM_2, phaseModPWM_3, phaseModPWM_4, phaseModPWM_5, phaseModPWM_6, phaseModPWM_7, phaseModPWM_8, phaseModPWM_9, phaseModPWM_10, phaseModPWM_11, phaseModPWM_12, phaseModPWM_13, phaseModPWM_14, phaseModPWM_15, phaseModPWM_16, phaseModPWM_17, phaseModPWM_18, phaseModPWM_19, phaseModPWM_20, phaseModPWM_21, phaseModPWM_22, phaseModPWM_23, phaseModPWM_24, phaseModPWM_25, phaseModPWM_26, phaseModPWM_27, phaseModPWM_28, phaseModPWM_29, phaseModPWM_30, phaseModPWM_31, phaseModPWM_32};
+const int32_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModPWM_2, phaseModPWM_3, phaseModPWM_4, phaseModPWM_5, phaseModPWM_6, phaseModPWM_7, phaseModPWM_8, phaseModPWM_9, phaseModPWM_10, phaseModPWM_11, phaseModPWM_12, phaseModPWM_13, phaseModPWM_14, phaseModPWM_15, phaseModPWM_16, phaseModPWM_17, phaseModPWM_18, phaseModPWM_19, phaseModPWM_20, phaseModPWM_21, phaseModPWM_22, phaseModPWM_23, phaseModPWM_24, phaseModPWM_25, phaseModPWM_26, phaseModPWM_27, phaseModPWM_28, phaseModPWM_29, phaseModPWM_30, phaseModPWM_31, phaseModPWM_32};
 
 void ViaSync::mainRisingEdgeCallback(void) {
 
 	pllController.measureFrequency();
+	pllController.phaseSignal = syncWavetable.phase;
 	pllController.doPLL();
 	pllController.generateFrequency();
 
@@ -40,7 +41,12 @@ void ViaSync::buttonPressedCallback(void) {
 		// store the length of the last period
 		// average against the current length
 
-		int tap = TIM2->CNT;
+#ifdef BUILD_F373
+
+		int32_t tap = TIM2->CNT;
+		// reset the timer value
+		TIM2->CNT = 0;
+#endif
 
 		writeBuffer(&tapStore, tap);
 		tapSum += tap - readBuffer(&tapStore, 3);
@@ -48,9 +54,6 @@ void ViaSync::buttonPressedCallback(void) {
 		pllController.periodCount = tapSum >> 2;
 
 		lastTap = tap;
-
-		// reset the timer value
-		TIM2->CNT = 0;
 
 		pllController.doPLL();
 		pllController.generateFrequency();
@@ -110,12 +113,12 @@ void ViaSync::slowConversionCallback(void) {
 		syncWavetable.increment = pllController.increment;
 	}
 
-	int sample = outputs.dac1Samples[0];
-	int lastPhaseValue = syncWavetable.ghostPhase;
+	int32_t sample = outputs.dac1Samples[0];
+	int32_t lastPhaseValue = syncWavetable.ghostPhase;
 
-	int redSignal = sample * (lastPhaseValue >> 24);
-	int blueSignal = sample * (!(lastPhaseValue >> 24));
-	int greenSignal = __USAT((inputs.cv3Samples[0] + controls.knob3Value - 2048), 12) * sample >> 12;
+	int32_t redSignal = sample * (lastPhaseValue >> 24);
+	int32_t blueSignal = sample * (!(lastPhaseValue >> 24));
+	int32_t greenSignal = __USAT((inputs.cv3Samples[0] + controls.knob3Value - 2048), 12) * sample >> 12;
 
 	updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
 

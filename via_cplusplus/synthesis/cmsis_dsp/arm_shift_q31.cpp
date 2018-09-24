@@ -30,6 +30,8 @@
 
 extern "C" {
 
+#ifdef BUILD_F373
+
 /**
  * @ingroup groupMath
  */
@@ -180,7 +182,45 @@ void arm_shift_q31(q31_t * pSrc, int8_t shiftBits, q31_t * pDst,
 
 }
 
+#endif
+
+
 }
+
+#ifdef BUILD_VIRTUAL
+
+void not_arm_shift_q31(q31_t * pSrc, int32_t shiftBits, q31_t * pDst,
+		uint32_t blockSize) {
+
+	if (shiftBits < 0) {
+
+		shiftBits = -shiftBits;
+
+		while (blockSize) {
+
+			*pDst = *pSrc >> shiftBits;
+
+			*pSrc++;
+			*pDst++;
+			blockSize--;
+		}
+	} else {
+
+		while (blockSize) {
+
+			*pDst = *pSrc << shiftBits;
+
+			*pSrc++;
+			*pDst++;
+			blockSize--;
+		}
+
+	}
+
+}
+
+#endif
+
 
 /**
  * @} end of shift group

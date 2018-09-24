@@ -1,0 +1,50 @@
+/*
+ * via_virtual_system.hpp
+ *
+ *  Created on: Sep 22, 2018
+ *      Author: willmitchell
+ */
+
+#ifndef IO_INC_VIA_VIRTUAL_SYSTEM_HPP_
+#define IO_INC_VIA_VIRTUAL_SYSTEM_HPP_
+
+
+
+#define GPIO_NOP 0
+
+#define GPIO_PIN_13 (1 << 13)
+#define GPIO_PIN_12 (1 << 12)
+#define GPIO_PIN_8 (1 << 8)
+#define GPIO_PIN_9 (1 << 9)
+
+#define ALOGIC_LOW_MASK (uint32_t)GPIO_PIN_13
+#define EXPAND_LOGIC_LOW_MASK (uint32_t)GPIO_PIN_12
+#define SH_A_TRACK_MASK (uint32_t)GPIO_PIN_8
+#define SH_B_TRACK_MASK (uint32_t)GPIO_PIN_9
+
+#define ALOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_13 << 16)
+#define EXPAND_LOGIC_HIGH_MASK ((uint32_t)GPIO_PIN_12 << 16)
+#define SH_A_SAMPLE_MASK ((uint32_t)GPIO_PIN_8 << 16)
+#define SH_B_SAMPLE_MASK ((uint32_t)GPIO_PIN_9 << 16)
+
+#define GET_ALOGIC_MASK(X) (ALOGIC_LOW_MASK << (16*(X)))
+#define GET_EXPAND_LOGIC_MASK(X) (EXPAND_LOGIC_LOW_MASK << (16*(X)))
+#define GET_SH_A_MASK(X) (SH_A_TRACK_MASK << (16*(X)))
+#define GET_SH_B_MASK(X) (SH_B_TRACK_MASK << (16*(X)))
+
+/*
+ * Touch sensors
+ */
+
+#define BUTTON2SENSOR MyTKeys[0].p_Data->StateId
+#define BUTTON1SENSOR MyTKeys[1].p_Data->StateId
+#define BUTTON3SENSOR MyTKeys[2].p_Data->StateId
+#define BUTTON4SENSOR MyTKeys[3].p_Data->StateId
+#define BUTTON6SENSOR MyTKeys[4].p_Data->StateId
+#define BUTTON5SENSOR MyTKeys[5].p_Data->StateId
+
+#define PRESSED 1
+#define RELEASED 0
+
+
+#endif /* IO_INC_VIA_VIRTUAL_SYSTEM_HPP_ */

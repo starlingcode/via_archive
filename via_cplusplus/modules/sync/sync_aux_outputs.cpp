@@ -7,7 +7,7 @@
 
 #include "sync.hpp"
 
-void ViaSync::calculateLogicAGate(int writeIndex) {
+void ViaSync::calculateLogicAGate(int32_t writeIndex) {
 
 		switch (syncWavetable.phaseEvent) {
 			//no logic events
@@ -30,15 +30,15 @@ void ViaSync::calculateLogicAGate(int writeIndex) {
 
 }
 
-void ViaSync::calculateLogicADelta(int writeIndex) {
+void ViaSync::calculateLogicADelta(int32_t writeIndex) {
 
 	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(syncWavetable.delta);
 
 }
 
-void ViaSync::calculateDac3Phasor(int writeIndex) {
+void ViaSync::calculateDac3Phasor(int32_t writeIndex) {
 
-	int phase = syncWavetable.phase;
+	int32_t phase = syncWavetable.phase;
 
 	if (phase >> 24) {
 		outputs.dac3Samples[writeIndex] = 8191 - (phase >> 12);
@@ -47,7 +47,7 @@ void ViaSync::calculateDac3Phasor(int writeIndex) {
 	}
 }
 
-void ViaSync::calculateDac3Contour(int writeIndex) {
+void ViaSync::calculateDac3Contour(int32_t writeIndex) {
 
 	outputs.dac3Samples[writeIndex] = outputs.dac2Samples[writeIndex];
 
@@ -55,7 +55,7 @@ void ViaSync::calculateDac3Contour(int writeIndex) {
 
 // No S&H
 
-void ViaSync::calculateSHMode1(int writeIndex) {
+void ViaSync::calculateSHMode1(int32_t writeIndex) {
 
 	switch (syncWavetable.phaseEvent) {
 		//no logic events
@@ -83,7 +83,7 @@ void ViaSync::calculateSHMode1(int writeIndex) {
 
 // Sample A from A to B
 
-void ViaSync::calculateSHMode2(int writeIndex) {
+void ViaSync::calculateSHMode2(int32_t writeIndex) {
 
 	switch (syncWavetable.phaseEvent) {
 		//no logic events
@@ -111,7 +111,7 @@ void ViaSync::calculateSHMode2(int writeIndex) {
 
 // Resample B at A
 
-void ViaSync::calculateSHMode3(int writeIndex) {
+void ViaSync::calculateSHMode3(int32_t writeIndex) {
 
 
 	switch (syncWavetable.phaseEvent) {

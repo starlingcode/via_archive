@@ -14,13 +14,13 @@
  */
 
 
-int SoftGate::updateGateA(int signal) {
+int32_t SoftGate::updateGateA(int32_t signal) {
 	aSignal = signal;
 	(this->*manageGateA)();
 	return gateA;
 }
 
-int SoftGate::updateGateB(int signal) {
+int32_t SoftGate::updateGateB(int32_t signal) {
 	bSignal = signal;
 	(this->*manageGateB)();
 	return gateB;

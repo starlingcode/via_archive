@@ -7,7 +7,7 @@
 
 #include <trigseq.hpp>
 
-void ViaTrigseq::handleButton1ModeChange(int mode) {
+void ViaTrigseq::handleButton1ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case 0:
@@ -26,7 +26,7 @@ void ViaTrigseq::handleButton1ModeChange(int mode) {
 
 }
 
-void ViaTrigseq::handleButton2ModeChange(int mode) {
+void ViaTrigseq::handleButton2ModeChange(int32_t mode) {
 
 	sequencer.andA = mode;
 
@@ -38,13 +38,13 @@ void ViaTrigseq::handleButton2ModeChange(int mode) {
 
 }
 
-void ViaTrigseq::handleButton3ModeChange(int mode) {
+void ViaTrigseq::handleButton3ModeChange(int32_t mode) {
 
 	sequencer.currentABank = patternBank[mode];
 
 }
 
-void ViaTrigseq::handleButton4ModeChange(int mode) {
+void ViaTrigseq::handleButton4ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case 0:
@@ -63,7 +63,7 @@ void ViaTrigseq::handleButton4ModeChange(int mode) {
 
 }
 
-void ViaTrigseq::handleButton5ModeChange(int mode) {
+void ViaTrigseq::handleButton5ModeChange(int32_t mode) {
 
 	sequencer.andB = mode;
 	if (mode) {
@@ -74,13 +74,13 @@ void ViaTrigseq::handleButton5ModeChange(int mode) {
 
 }
 
-void ViaTrigseq::handleButton6ModeChange(int mode) {
+void ViaTrigseq::handleButton6ModeChange(int32_t mode) {
 
 	sequencer.currentBBank = patternBank[mode];
 
 }
 
-void ViaTrigseq::handleAux2ModeChange(int mode) {
+void ViaTrigseq::handleAux2ModeChange(int32_t mode) {
 
 	sequencer.auxLogicMode = mode;
 

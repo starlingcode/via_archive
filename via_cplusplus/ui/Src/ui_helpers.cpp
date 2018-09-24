@@ -17,7 +17,7 @@ void linkUI(void * callback, void * ui) {
 }
 
 
-int ViaUI::incrementModeAndStore(int mode, int mask, int numModes) {
+int32_t ViaUI::incrementModeAndStore(int32_t mode, int32_t mask, int32_t numModes) {
 
 	mode = (mode + 1) % numModes;
 	modeStateBuffer = (modeStateBuffer & ~(mask)) | mode;
@@ -25,7 +25,7 @@ int ViaUI::incrementModeAndStore(int mode, int mask, int numModes) {
 
 }
 
-int ViaUI::decrementModeAndStore(int mode, int mask, int numModes) {
+int32_t ViaUI::decrementModeAndStore(int32_t mode, int32_t mask, int32_t numModes) {
 
 	mode = (mode - 1);
 	if (mode < 0) {

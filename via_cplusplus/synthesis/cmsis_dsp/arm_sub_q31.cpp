@@ -30,6 +30,8 @@
 
 extern "C" {
 
+#ifdef BUILD_F373
+
 /**
  * @ingroup groupMath
  */
@@ -123,6 +125,14 @@ void arm_sub_q31(q31_t * pSrcA, q31_t * pSrcB, q31_t * pDst, uint32_t blockSize)
 #endif /* #if defined (ARM_MATH_DSP) */
 
 }
+
+#endif
+
+#ifdef BUILD_VIRTUAL
+
+
+
+#endif
 
 }
 

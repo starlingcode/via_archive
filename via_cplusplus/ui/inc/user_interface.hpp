@@ -10,11 +10,15 @@
 
 #include <via_platform_binding.hpp>
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifdef BUILD_F373
 #include "tsl_user.h"
 #include "eeprom.h"
+#endif
 
 void linkUI(void *, void *);
 
@@ -22,7 +26,15 @@ void linkUI(void *, void *);
 }
 #endif
 
-
+class ViaVirtualButtons {
+public:
+	int32_t button1;
+	int32_t button2;
+	int32_t button3;
+	int32_t button4;
+	int32_t button5;
+	int32_t button6;
+};
 
 enum uiSignals {
 	NULL_SIG, // Null signal, all state functions should ignore this signal and return their parent state or NONE if it's the top level state
@@ -40,9 +52,13 @@ class ViaUI {
 
 protected:
 	// UI States
-	void (ViaUI::*state)(int);
+	void (ViaUI::*state)(int32_t);
 
 public:
+
+	int32_t virtualTimer;
+	int32_t virtualTimerEnable;
+	int32_t virtualTimerOverflow;
 
 	int32_t * button1;
 	int32_t * button2;
@@ -54,72 +70,77 @@ public:
 	int32_t pressedState = PRESSED;
 	int32_t releasedState = RELEASED;
 
-	void transition(void (ViaUI::*func)(int));
+	void transition(void (ViaUI::*func)(int32_t));
 
 	// Main
-	void defaultMenu(int sig);
-	void newModeMenu(int sig);
-	void newAuxModeMenu(int sig);
+	void defaultMenu(int32_t sig);
+	void newModeMenu(int32_t sig);
+	void newAuxModeMenu(int32_t sig);
 
 	// Button menus
-	void button4Menu(int sig);
-	void button1Menu(int sig);
-	void button2Menu(int sig);
-	void button5Menu(int sig);
-	void button3Menu(int sig);
-	void button6Menu(int sig);
-	void aux1Menu(int sig);
-	void aux2Menu(int sig);
-	void aux3Menu(int sig);
-	void aux4Menu(int sig);
+	void button4Menu(int32_t sig);
+	void button1Menu(int32_t sig);
+	void button2Menu(int32_t sig);
+	void button5Menu(int32_t sig);
+	void button3Menu(int32_t sig);
+	void button6Menu(int32_t sig);
+	void aux1Menu(int32_t sig);
+	void aux2Menu(int32_t sig);
+	void aux3Menu(int32_t sig);
+	void aux4Menu(int32_t sig);
 
 	// Preset menus
-	void presetMenu(int sig);
-	void presetPressedMenu(int sig);
-	void newPreset(int sig);
-	void switchPreset(int sig);
+	void presetMenu(int32_t sig);
+	void presetPressedMenu(int32_t sig);
+	void newPreset(int32_t sig);
+	void switchPreset(int32_t sig);
 
 	// Factory reset
-	void factoryReset(int sig);
+	void factoryReset(int32_t sig);
 
-	virtual void button1TapCallback(void);
-	virtual void button1HoldCallback(void);
-	virtual void button2TapCallback(void);
-	virtual void button2HoldCallback(void);
-	virtual void button3TapCallback(void);
-	virtual void button3HoldCallback(void);
-	virtual void button4TapCallback(void);
-	virtual void button4HoldCallback(void);
-	virtual void button5TapCallback(void);
-	virtual void button5HoldCallback(void);
-	virtual void button6TapCallback(void);
-	virtual void button6HoldCallback(void);
+	virtual void button1TapCallback(void) = 0;
+	virtual void button1HoldCallback(void) = 0;
+	virtual void button2TapCallback(void) = 0;
+	virtual void button2HoldCallback(void) = 0;
+	virtual void button3TapCallback(void) = 0;
+	virtual void button3HoldCallback(void) = 0;
+	virtual void button4TapCallback(void) = 0;
+	virtual void button4HoldCallback(void) = 0;
+	virtual void button5TapCallback(void) = 0;
+	virtual void button5HoldCallback(void) = 0;
+	virtual void button6TapCallback(void) = 0;
+	virtual void button6HoldCallback(void) = 0;
 
-	virtual void aux1TapCallback(void);
-	virtual void aux1HoldCallback(void);
-	virtual void aux2TapCallback(void);
-	virtual void aux2HoldCallback(void);
-	virtual void aux3TapCallback(void);
-	virtual void aux3HoldCallback(void);
-	virtual void aux4TapCallback(void);
-	virtual void aux4HoldCallback(void);
+	virtual void aux1TapCallback(void) = 0;
+	virtual void aux1HoldCallback(void) = 0;
+	virtual void aux2TapCallback(void) = 0;
+	virtual void aux2HoldCallback(void) = 0;
+	virtual void aux3TapCallback(void) = 0;
+	virtual void aux3HoldCallback(void) = 0;
+	virtual void aux4TapCallback(void) = 0;
+	virtual void aux4HoldCallback(void) = 0;
 
-	virtual void defaultEnterMenuCallback(void);
-	virtual void newModeEnterMenuCallback(void);
-	virtual void newAuxModeEnterMenuCallback(void);
-	virtual void presetEnterMenuCallback(void);
+	virtual void defaultEnterMenuCallback(void) = 0;
+	virtual void newModeEnterMenuCallback(void) = 0;
+	virtual void newAuxModeEnterMenuCallback(void) = 0;
+	virtual void presetEnterMenuCallback(void) = 0;
 
-	virtual void button1EnterMenuCallback(void);
-	virtual void button2EnterMenuCallback(void);
-	virtual void button3EnterMenuCallback(void);
-	virtual void button4EnterMenuCallback(void);
-	virtual void button5EnterMenuCallback(void);
-	virtual void button6EnterMenuCallback(void);
+	virtual void button1EnterMenuCallback(void) = 0;
+	virtual void button2EnterMenuCallback(void) = 0;
+	virtual void button3EnterMenuCallback(void) = 0;
+	virtual void button4EnterMenuCallback(void) = 0;
+	virtual void button5EnterMenuCallback(void) = 0;
+	virtual void button6EnterMenuCallback(void) = 0;
 
-	virtual void aux1EnterMenuCallback(void);
-	virtual void aux2EnterMenuCallback(void);
-	virtual void aux3EnterMenuCallback(void);
-	virtual void aux4EnterMenuCallback(void);
+	virtual void aux1EnterMenuCallback(void) = 0;
+	virtual void aux2EnterMenuCallback(void) = 0;
+	virtual void aux3EnterMenuCallback(void) = 0;
+	virtual void aux4EnterMenuCallback(void) = 0;
+
+	// initial setup of UI
+	virtual void initialize(void) = 0;
+
+#ifdef BUILD_F373
 
 	inline void timerReset(void) {
 		TIM7->CNT = 1;
@@ -130,12 +151,33 @@ public:
 	inline void timerDisable(void) {
 		TIM7->CR1 &= ~TIM_CR1_CEN;
 	}
-	inline void timerSetOverflow(int arr) {
+	inline void timerSetOverflow(int32_t arr) {
 		TIM7->ARR = arr;
 	}
-	inline int timerRead(void) {
+	inline int32_t timerRead(void) {
 		return TIM7->CNT;
 	}
+
+#endif
+
+#ifdef BUILD_VIRTUAL
+
+	inline void timerReset(void) {
+		virtualTimer = 1;
+	}
+	inline void timerEnable(void) {
+		virtualTimerEnable = 1;
+	}
+	inline void timerDisable(void) {
+		virtualTimerEnable = 0;
+	}
+	inline void timerSetOverflow(int32_t arr) {
+		virtualTimerOverflow = arr;
+	}
+	inline int32_t timerRead(void) {
+		return virtualTimer;
+	}
+#endif
 
 	void resetTimerMenu(void) {
 		timerReset();
@@ -144,31 +186,28 @@ public:
 	}
 
 	// holds the mode state as a EEPROM-formatted value.
-	int modeStateBuffer = 0;
-	int presetNumber = 0;
+	int32_t modeStateBuffer = 0;
+	int32_t presetNumber = 0;
 
-	void loadFromEEPROM(int);
-	void storeToEEPROM(int);
+	void loadFromEEPROM(int32_t);
+	void storeToEEPROM(int32_t);
 
-	int incrementModeAndStore(int, int, int);
-	int decrementModeAndStore(int, int, int);
+	int32_t incrementModeAndStore(int32_t, int32_t, int32_t);
+	int32_t decrementModeAndStore(int32_t, int32_t, int32_t);
 
-	int button1Mode = 0;
-	int button2Mode = 0;
-	int button3Mode = 0;
-	int button4Mode = 0;
-	int button5Mode = 0;
-	int button6Mode = 0;
-	int aux1Mode = 0;
-	int aux2Mode = 0;
-	int aux3Mode = 0;
-	int aux4Mode = 0;
-
-	// initial setup of UI
-	void initialize(void);
+	int32_t button1Mode = 0;
+	int32_t button2Mode = 0;
+	int32_t button3Mode = 0;
+	int32_t button4Mode = 0;
+	int32_t button5Mode = 0;
+	int32_t button6Mode = 0;
+	int32_t aux1Mode = 0;
+	int32_t aux2Mode = 0;
+	int32_t aux3Mode = 0;
+	int32_t aux4Mode = 0;
 
 	// dispatch a signal to current state
-	void dispatch(int);  // dispatch signal to state
+	void dispatch(int32_t);  // dispatch signal to state
 
 };
 

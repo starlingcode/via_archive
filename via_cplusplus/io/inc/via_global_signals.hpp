@@ -34,7 +34,7 @@ public:
 
 	ViaControls() {
 
-		for (int i = 0; i < 32; i++) {
+		for (int32_t i = 0; i < 32; i++) {
 			writeBuffer(&cv1Buffer, 0);
 			writeBuffer(&knob1Buffer, 0);
 			writeBuffer(&knob2Buffer, 0);
@@ -64,29 +64,29 @@ public:
 	int16_t * cv3Samples;
 	int16_t * cv2VirtualGround;
 	int16_t * cv3VirtualGround;
-	int * trigSamples;
-	int trigInput;
-	int * auxTrigSamples;
-	int auxTrigInput;
+	int32_t * trigSamples;
+	int32_t trigInput;
+	int32_t * auxTrigSamples;
+	int32_t auxTrigInput;
 
-	int bufferSize;
+	int32_t bufferSize;
 
-	void init(int size) {
+	void init(int32_t size) {
 
 		bufferSize = size;
 
 		trigInput = 1;
 		auxTrigInput = 1;
 
-		cv2Samples = (int16_t*) malloc(2 * bufferSize * sizeof(int));
-		cv3Samples = (int16_t*) malloc(2 * bufferSize * sizeof(int));
-		cv2VirtualGround = (int16_t*) malloc(2 * bufferSize * sizeof(int));
-		cv3VirtualGround = (int16_t*) malloc(2 * bufferSize * sizeof(int));
+		cv2Samples = (int16_t*) malloc(2 * bufferSize * sizeof(int32_t));
+		cv3Samples = (int16_t*) malloc(2 * bufferSize * sizeof(int32_t));
+		cv2VirtualGround = (int16_t*) malloc(2 * bufferSize * sizeof(int32_t));
+		cv3VirtualGround = (int16_t*) malloc(2 * bufferSize * sizeof(int32_t));
 
-		trigSamples = (int*) malloc(2 * bufferSize * sizeof(int));
-		auxTrigSamples = (int*) malloc(2 * bufferSize * sizeof(int));
+		trigSamples = (int32_t*) malloc(2 * bufferSize * sizeof(int32_t));
+		auxTrigSamples = (int32_t*) malloc(2 * bufferSize * sizeof(int32_t));
 
-		for (int i = 0; i < bufferSize; i++) {
+		for (int32_t i = 0; i < bufferSize; i++) {
 
 			cv2Samples[i] = 0;
 			cv3Samples[i] = 0;
@@ -114,22 +114,22 @@ public:
 	uint32_t * logicA;
 	uint32_t * auxLogic;
 
-	int bufferSize;
+	int32_t bufferSize;
 
-	void init(int size) {
+	void init(int32_t size) {
 
 		bufferSize = size;
 
-		dac1Samples = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
-		dac2Samples = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
-		dac3Samples = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
+		dac1Samples = (uint32_t*) malloc(2 * bufferSize * sizeof(int32_t));
+		dac2Samples = (uint32_t*) malloc(2 * bufferSize * sizeof(int32_t));
+		dac3Samples = (uint32_t*) malloc(2 * bufferSize * sizeof(int32_t));
 
-		shA = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
-		shB = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
-		logicA = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
-		auxLogic = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
+		shA = (uint32_t*) malloc(2 * bufferSize * sizeof(int32_t));
+		shB = (uint32_t*) malloc(2 * bufferSize * sizeof(int32_t));
+		logicA = (uint32_t*) malloc(2 * bufferSize * sizeof(int32_t));
+		auxLogic = (uint32_t*) malloc(2 * bufferSize * sizeof(int32_t));
 
-		for (int i = 0; i < bufferSize; i++) {
+		for (int32_t i = 0; i < bufferSize; i++) {
 			dac1Samples[i] = 0;
 			dac2Samples[i] = 0;
 			dac3Samples[i] = 0;
@@ -145,9 +145,9 @@ public:
 };
 
 typedef struct {
-	int r;
-	int b;
-	int g;
+	int32_t r;
+	int32_t b;
+	int32_t g;
 } rgb;
 
 // shortcuts for commonly used colors as macro defines of rgb struct values

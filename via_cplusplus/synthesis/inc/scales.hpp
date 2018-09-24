@@ -8,11 +8,6 @@
 #ifndef INC_SCALES_HPP_
 #define INC_SCALES_HPP_
 
-#include "stm32f3xx_hal.h"
-#include "stm32f3xx.h"
-#include "stm32f3xx_it.h"
-
-
 
 typedef struct {
 	const uint32_t integerPart;

@@ -34,8 +34,8 @@
 
 class SingleSampleWavetable {
 
-	int previousPhase = 0;
-	int previousPhaseMod = 0;
+	int32_t previousPhase = 0;
+	int32_t previousPhaseMod = 0;
 
 public:
 
@@ -44,23 +44,23 @@ public:
 	int16_t * pm;
 	int16_t * pwm;
 	int16_t * morphMod;
-	int cv2Offset = 0;
+	int32_t cv2Offset = 0;
 	uint32_t tableSize = 0;
 
 	// generated externally
-	int phaseReset = 1;
-	int increment = 0;
-	int morphBase = 0;
+	int32_t phaseReset = 1;
+	int32_t increment = 0;
+	int32_t morphBase = 0;
 
 	// results
-	int phase = 0;
-	int ghostPhase = 0;
-	int phaseEvent = 0;
-	int delta = 0;
+	int32_t phase = 0;
+	int32_t ghostPhase = 0;
+	int32_t phaseEvent = 0;
+	int32_t delta = 0;
 
 	void parseControls(ViaControls * controls);
 
-	inline int incrementPhase(uint32_t * phaseDistTable);
+	inline int32_t incrementPhase(uint32_t * phaseDistTable);
 
 	uint32_t advance(uint32_t * wavetable,
 			uint32_t * phaseDistTable);
@@ -77,17 +77,17 @@ class SimpleWavetable {
 
 public:
 
-	int morphBase = 0;
+	int32_t morphBase = 0;
 	int16_t * morphMod;
 	int16_t * morphScale;
-	int phase = 0;
+	int32_t phase = 0;
 	uint32_t tableSize = 0;
 
 	// results
-	int delta = 0;
+	int32_t delta = 0;
 
 	void parseControls(ViaControls * controls);
-	int advance(uint32_t * wavetable);
+	int32_t advance(uint32_t * wavetable);
 
 };
 
@@ -97,13 +97,13 @@ class CheapWavetable {
 
 public:
 
-	int morphBase = 0;
+	int32_t morphBase = 0;
 	int16_t * morphMod;
-	int phase = 0;
+	int32_t phase = 0;
 	uint32_t tableSize = 0;
 
 	void parseControls(ViaControls * controls);
-	int advance(uint32_t * wavetable);
+	int32_t advance(uint32_t * wavetable);
 
 };
 
@@ -118,8 +118,8 @@ public:
 
 class PllController {
 
-	int pllCounter;
-	int lastMultiplier;
+	uint32_t pllCounter;
+	int32_t lastMultiplier;
 
 public:
 
@@ -147,11 +147,14 @@ public:
 
 	void measureFrequency(void) {
 
+#ifdef BUILD_F373
+
 		// store the length of the last period
 		periodCount = TIM2->CNT;
 
 		// reset the timer value
 		TIM2->CNT = 0;
+#endif
 
 	}
 
@@ -165,30 +168,30 @@ public:
 
 class MetaController {
 
-	int previousGhostPhase = 0;
-	int previousPhase = 0;
+	int32_t previousGhostPhase = 0;
+	int32_t previousPhase = 0;
 
 public:
 
-	int timeBase1 = 0;
-	int timeBase2 = 0;
-	int dutyCycleBase = 0;
-	int triggerSignal = 0;
-	int gateSignal = 0;
-	int freeze = 0;
-	int gateOn = 0;
+	int32_t timeBase1 = 0;
+	int32_t timeBase2 = 0;
+	int32_t dutyCycleBase = 0;
+	int32_t triggerSignal = 0;
+	int32_t gateSignal = 0;
+	int32_t freeze = 0;
+	int32_t gateOn = 0;
 	uint32_t loopMode = 0;
 
-	int increment1 = 0;
-	int increment2 = 0;
-	int dutyCycle = 0;
-	int lastPhase = 0;
-	int oscillatorOn = 0;
+	int32_t increment1 = 0;
+	int32_t increment2 = 0;
+	int32_t dutyCycle = 0;
+	int32_t lastPhase = 0;
+	int32_t oscillatorOn = 0;
 	int16_t * fm;
 
-	int phase = 0;
-	int ghostPhase = 0;
-	int phaseEvent = 0;
+	int32_t phase = 0;
+	int32_t ghostPhase = 0;
+	int32_t phaseEvent = 0;
 
 	void parseControlsExternal(ViaControls * controls, ViaInputStreams * inputs);
 
@@ -208,31 +211,31 @@ public:
 	void generateIncrementsEnv(ViaInputStreams * inputs);
 	void generateIncrementsSeq(ViaInputStreams * inputs);
 
-	int advancePhase(uint32_t * phaseDistTable);
+	int32_t advancePhase(uint32_t * phaseDistTable);
 
-	int (MetaController::*incrementArbiter)(void);
+	int32_t (MetaController::*incrementArbiter)(void);
 
-	int noRetrigAttackState(void);
-	int noRetrigReleaseState(void);
+	int32_t noRetrigAttackState(void);
+	int32_t noRetrigReleaseState(void);
 
-	int hardSyncAttackState(void);
-	int hardSyncReleaseState(void);
+	int32_t hardSyncAttackState(void);
+	int32_t hardSyncReleaseState(void);
 
-	int envAttackState(void);
-	int envReleaseState(void);
-	int envRetriggerState(void);
+	int32_t envAttackState(void);
+	int32_t envReleaseState(void);
+	int32_t envRetriggerState(void);
 
-	int gateAttackState(void);
-	int gateReleaseReverseState(void);
-	int gatedState(void);
-	int gateReleaseState(void);
-	int gateRetriggerState(void);
+	int32_t gateAttackState(void);
+	int32_t gateReleaseReverseState(void);
+	int32_t gatedState(void);
+	int32_t gateReleaseState(void);
+	int32_t gateRetriggerState(void);
 
-	int pendulumRestingState(void);
-	int pendulumForwardAttackState(void);
-	int pendulumForwardReleaseState(void);
-	int pendulumReverseAttackState(void);
-	int pendulumReverseReleaseState(void);
+	int32_t pendulumRestingState(void);
+	int32_t pendulumForwardAttackState(void);
+	int32_t pendulumForwardReleaseState(void);
+	int32_t pendulumReverseAttackState(void);
+	int32_t pendulumReverseReleaseState(void);
 
 	void (MetaController::*loopHandler)(void);
 
@@ -246,7 +249,7 @@ public:
 
 class SimpleEnvelope {
 
-	int previousPhase;
+	int32_t previousPhase;
 
 public:
 
@@ -255,7 +258,7 @@ public:
 	uint32_t increment = 0;
 	uint32_t morph = 0;
 	uint32_t phase = 0;
-	int phaseEvent = 0;
+	int32_t phaseEvent = 0;
 	uint32_t trigger;
 
 	uint32_t * output;
@@ -263,12 +266,12 @@ public:
 	void parseControls (ViaControls * controls, ViaInputStreams * inputs);
 	void advance (ViaInputStreams * inputs, uint32_t * wavetable);
 
-	int (SimpleEnvelope::*incrementArbiter)(void);
+	int32_t (SimpleEnvelope::*incrementArbiter)(void);
 
-	int attackState(void);
-	int releaseState(void);
-	int retriggerState(void);
-	int restingState(void);
+	int32_t attackState(void);
+	int32_t releaseState(void);
+	int32_t retriggerState(void);
+	int32_t restingState(void);
 
 };
 

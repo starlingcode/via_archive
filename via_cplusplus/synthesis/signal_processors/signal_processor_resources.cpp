@@ -17,32 +17,32 @@ extern "C" {
  *
  */
 
-void extractDeltas(int * input, int * output, int initialValue, uint32_t bufferSize) {
+void extractDeltas(int32_t * input, int32_t * output, int32_t initialValue, uint32_t bufferSize) {
 
 	output[0] = input[0] - initialValue;
-	for (int i = 1; i< bufferSize; i++) {
+	for (uint32_t i = 1; i< bufferSize; i++) {
 		output[i] = input[i] - input[i-1];
 	}
 
 }
-void incrementFromDeltas(int * input, int * output, int * hardSync, int * reverse,
-		int initialPhase, uint32_t bufferSize) {
+void incrementFromDeltas(int32_t * input, int32_t * output, int32_t * hardSync, int32_t * reverse,
+		int32_t initialPhase, uint32_t bufferSize) {
 
 	output[0] = (initialPhase + (input[0] * reverse[0])) * hardSync[0];
-	for (int i = 1; i< bufferSize; i++) {
+	for (uint32_t i = 1; i< bufferSize; i++) {
 		output[i] = (output[i-1] + (input[i] * reverse[i])) * hardSync[i];
 	}
 
 }
 
-void foldBuffer(int * input, int offset, int * output, uint32_t bufferSize) {
+void foldBuffer(int32_t * input, int32_t offset, int32_t * output, uint32_t bufferSize) {
 
-	// scale the CVs by the knob value cast from 0 to full scale int, then shift left by 3
+	// scale the CVs by the knob value cast from 0 to full scale int32_t, then shift left by 3
 
-	arm_scale_q31((q31_t *) input, 1 << 31, 1, (q31_t *) output, bufferSize);
-	arm_offset_q31((q31_t *) output, (offset - 2048) << 4, (q31_t *) output, bufferSize);
+	VIA_SCALE_Q31((q31_t *) input, 1 << 31, 1, (q31_t *) output, bufferSize);
+	VIA_OFFSET_Q31((q31_t *) output, (offset - 2048) << 4, (q31_t *) output, bufferSize);
 
-	for (int i = 0; i < (bufferSize); i++) {
+	for (uint32_t i = 0; i < (bufferSize); i++) {
 
 		output[i] = foldSignal16Bit(output[i]);
 
@@ -50,14 +50,14 @@ void foldBuffer(int * input, int offset, int * output, uint32_t bufferSize) {
 
 }
 
-void wrapBuffer(int * input, int offset, int * output, uint32_t bufferSize) {
+void wrapBuffer(int32_t * input, int32_t offset, int32_t * output, uint32_t bufferSize) {
 
-	// scale the CVs by the knob value cast from 0 to full scale int, then shift left by 3
+	// scale the CVs by the knob value cast from 0 to full scale int32_t, then shift left by 3
 
-	arm_scale_q31((q31_t *) input, 1 << 31, 6, (q31_t *) output, bufferSize);
-	arm_offset_q31((q31_t *) output, (offset - 2048) << 3, (q31_t *) output, bufferSize);
+	VIA_SCALE_Q31((q31_t *) input, 1 << 31, 6, (q31_t *) output, bufferSize);
+	VIA_OFFSET_Q31((q31_t *) output, (offset - 2048) << 3, (q31_t *) output, bufferSize);
 
-	for (int i = 0; i < (bufferSize); i++) {
+	for (uint32_t i = 0; i < (bufferSize); i++) {
 
 		output[i] = wrapSignal16Bit(output[i]);
 

@@ -14,7 +14,7 @@
  *
  */
 
-void ViaUI::presetMenu(int sig) {
+void ViaUI::presetMenu(int32_t sig) {
 
 	switch (sig) {
 
@@ -72,7 +72,7 @@ void ViaUI::presetMenu(int sig) {
  *
  */
 
-void ViaUI::presetPressedMenu(int sig) {
+void ViaUI::presetPressedMenu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		timerReset();
@@ -143,8 +143,8 @@ void ViaUI::presetPressedMenu(int sig) {
  *
  */
 
-void ViaUI::newPreset(int sig) {
-	static int flashCounter = 0;
+void ViaUI::newPreset(int32_t sig) {
+	static int32_t flashCounter = 0;
 	switch (sig) {
 	case ENTRY_SIG:
 		timerReset();
@@ -172,8 +172,8 @@ void ViaUI::newPreset(int sig) {
  *
  */
 
-void ViaUI::switchPreset(int sig) {
-	static int flashCounter = 0;
+void ViaUI::switchPreset(int32_t sig) {
+	static int32_t flashCounter = 0;
 	switch (sig) {
 	case ENTRY_SIG:
 		timerReset();

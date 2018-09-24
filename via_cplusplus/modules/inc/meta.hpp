@@ -8,13 +8,15 @@
 #ifndef INC_META_HPP_
 #define INC_META_HPP_
 
+#include "user_interface.hpp"
+#include <via_platform_binding.hpp>
+#include <oscillators.hpp>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "user_interface.hpp"
-#include <via_platform_binding.hpp>
-#include <oscillators.hpp>
+
 
 #ifdef __cplusplus
 }
@@ -113,22 +115,24 @@ public:
 		void aux3EnterMenuCallback(void);
 		void aux4EnterMenuCallback(void);
 
+		void initialize(void);
+
 		ViaMetaUI(ViaMeta& x): this_module(x) {
 			linkUI((void *) &metaTouchLink, (void *) this);
 		}
 
 	};
 
-	void handleButton1ModeChange(int);
-	void handleButton2ModeChange(int);
-	void handleButton3ModeChange(int);
-	void handleButton4ModeChange(int);
-	void handleButton5ModeChange(int);
-	void handleButton6ModeChange(int);
-	void handleAux1ModeChange(int);
-	void handleAux2ModeChange(int);
-	void handleAux3ModeChange(int);
-	void handleAux4ModeChange(int);
+	void handleButton1ModeChange(int32_t);
+	void handleButton2ModeChange(int32_t);
+	void handleButton3ModeChange(int32_t);
+	void handleButton4ModeChange(int32_t);
+	void handleButton5ModeChange(int32_t);
+	void handleButton6ModeChange(int32_t);
+	void handleAux1ModeChange(int32_t);
+	void handleAux2ModeChange(int32_t);
+	void handleAux3ModeChange(int32_t);
+	void handleAux4ModeChange(int32_t);
 
 	/*
 	 *
@@ -160,43 +164,43 @@ public:
 	 *
 	 */
 
-	void (ViaMeta::*drumMode)(int writeIndex);
+	void (ViaMeta::*drumMode)(int32_t writeIndex);
 
-	void drumModeOff(int writeIndex);
-	void drumModeOn(int writeIndex);
+	void drumModeOff(int32_t writeIndex);
+	void drumModeOn(int32_t writeIndex);
 
 	uint16_t virtualFM[2];
 	uint16_t virtualMorph[2];
 
-	void (ViaMeta::*calculateDac3)(int writeIndex);
+	void (ViaMeta::*calculateDac3)(int32_t writeIndex);
 
-	void calculateDac3Phasor(int writeIndex);
-	void calculateDac3Contour(int writeIndex);
+	void calculateDac3Phasor(int32_t writeIndex);
+	void calculateDac3Contour(int32_t writeIndex);
 
-	void (ViaMeta::*calculateLogicA)(int writeIndex);
+	void (ViaMeta::*calculateLogicA)(int32_t writeIndex);
 
-	void calculateLogicAReleaseGate(int writeIndex);
-	void calculateLogicAAttackGate(int writeIndex);
+	void calculateLogicAReleaseGate(int32_t writeIndex);
+	void calculateLogicAAttackGate(int32_t writeIndex);
 
-	void (ViaMeta::*calculateSH)(int writeIndex);
+	void (ViaMeta::*calculateSH)(int32_t writeIndex);
 	// No S&H
-	void calculateSHMode1(int writeIndex);
+	void calculateSHMode1(int32_t writeIndex);
 	// Sample A from A to B
-	void calculateSHMode2(int writeIndex);
+	void calculateSHMode2(int32_t writeIndex);
 	// Resample B at A
-	void calculateSHMode3(int writeIndex);
+	void calculateSHMode3(int32_t writeIndex);
 	// Sample A from A to B and resample B at A
-	void calculateSHMode4(int writeIndex);
+	void calculateSHMode4(int32_t writeIndex);
 	// Half Decimate (Sample A from A to B sample B from B to A
-	void calculateSHMode5(int writeIndex);
+	void calculateSHMode5(int32_t writeIndex);
 	// Decimate (Resample A at B, resample B at A
-	void calculateSHMode6(int writeIndex);
+	void calculateSHMode6(int32_t writeIndex);
 
 	void init(void);
 
 	ViaMetaUI metaUI;
 
-	int runtimeDisplay;
+	int32_t runtimeDisplay;
 
 	SimpleWavetable metaWavetable;
 	MetaController metaController;
@@ -209,7 +213,20 @@ public:
 	 */
 
 	ViaMeta() : metaUI(*this) {
+
 		init();
+	}
+
+	ViaMeta(ViaVirtualButtons virtualButtons) : metaUI(*this) {
+		button1Input = &virtualButtons.button1;
+		button2Input = &virtualButtons.button2;
+		button3Input = &virtualButtons.button3;
+		button4Input = &virtualButtons.button4;
+		button5Input = &virtualButtons.button5;
+		button6Input = &virtualButtons.button6;
+		init();
+		metaUI.initialize();
+
 	}
 
 	void mainRisingEdgeCallback(void);
@@ -226,7 +243,7 @@ public:
 	void transferCompleteCallback(void);
 	void slowConversionCallback(void);
 
-	void ui_dispatch(int sig) {
+	void ui_dispatch(int32_t sig) {
 		metaUI.dispatch(sig);
 	};
 

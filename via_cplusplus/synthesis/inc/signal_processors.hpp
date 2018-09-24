@@ -10,7 +10,6 @@
 
 #include "via_platform_binding.hpp"
 #include "tables.hpp"
-#include "dsp.hpp"
 
 /*
  *
@@ -20,37 +19,37 @@
 
 class ThreeAxisScanner {
 
-	int lastXInput = 0;
-	int lastYInput = 0;
-	int lastXIndex = 0;
-	int lastYIndex = 0;
+	int32_t lastXInput = 0;
+	int32_t lastYInput = 0;
+	int32_t lastXIndex = 0;
+	int32_t lastYIndex = 0;
 
-	inline int getSampleProduct(int xIndex, int yIndex, int zIndex,
-    		int * xTable, int * yTable, int * xDelta, int * yDelta);
+	inline int32_t getSampleProduct(int32_t xIndex, int32_t yIndex, int32_t zIndex,
+    		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta);
 
-	inline int getSamplePM(int xIndex, int yIndex, int zIndex,
-    		int * xTable, int * yTable, int * xDelta, int * yDelta);
+	inline int32_t getSamplePM(int32_t xIndex, int32_t yIndex, int32_t zIndex,
+    		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta);
 
-	inline int getSampleSum(int xIndex, int yIndex, int zIndex,
-    		int * xTable, int * yTable, int * xDelta, int * yDelta);
+	inline int32_t getSampleSum(int32_t xIndex, int32_t yIndex, int32_t zIndex,
+    		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta);
 
-	inline int getSampleSubtract(int xIndex, int yIndex, int zIndex,
-    		int * xTable, int * yTable, int * xDelta, int * yDelta);
+	inline int32_t getSampleSubtract(int32_t xIndex, int32_t yIndex, int32_t zIndex,
+    		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta);
 
-	void scanTerrainProduct(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
-			int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
+	void scanTerrainProduct(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
+			int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
-	void scanTerrainPM(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
-			int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
+	void scanTerrainPM(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
+			int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
-	void scanTerrainSum(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
-			int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
+	void scanTerrainSum(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
+			int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
-	void scanTerrainSubtract(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
-			int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
+	void scanTerrainSubtract(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
+			int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
 public:
@@ -60,11 +59,11 @@ public:
 #define THREE_AXIS_SCANNER_DIFFERENCE 2
 #define THREE_AXIS_SCANNER_PHASE_MOD 3
 
-	int * xInput;
-	int * yInput;
-	int * hardSync;
-	int * reverse;
-	int * sh;
+	int32_t * xInput;
+	int32_t * yInput;
+	int32_t * hardSync;
+	int32_t * reverse;
+	int32_t * sh;
 
 	//control rate input
 	uint32_t zIndex = 0;
@@ -76,36 +75,36 @@ public:
 	uint32_t yTableSize = 0;
 
 	// outputs
-	int * xIndexBuffer;
-	int * yIndexBuffer;
-	int * xDeltaBuffer;
-	int * yDeltaBuffer;
-	int * altitude;
+	int32_t * xIndexBuffer;
+	int32_t * yIndexBuffer;
+	int32_t * xDeltaBuffer;
+	int32_t * yDeltaBuffer;
+	int32_t * altitude;
 
 	void fillBuffer(ViaInputStreams * inputs,
 			ViaControls * controls,
-			int * xTable, int * yTable,
+			int32_t * xTable, int32_t * yTable,
 			uint32_t writePosition, uint32_t bufferSize);
 
 	void parseControls(ViaControls * controls);
 
-	int bufferSize = 8;
+	int32_t bufferSize = 8;
 
 	void init(void) {
 
-		xIndexBuffer = (int *) malloc(bufferSize * sizeof(int));
-		yIndexBuffer = (int *) malloc(bufferSize * sizeof(int));
-		xDeltaBuffer = (int *) malloc(bufferSize * sizeof(int));
-		yDeltaBuffer = (int *) malloc(bufferSize * sizeof(int));
-		altitude = (int *) malloc(bufferSize * sizeof(int));
+		xIndexBuffer = (int32_t *) malloc(bufferSize * sizeof(int32_t));
+		yIndexBuffer = (int32_t *) malloc(bufferSize * sizeof(int32_t));
+		xDeltaBuffer = (int32_t *) malloc(bufferSize * sizeof(int32_t));
+		yDeltaBuffer = (int32_t *) malloc(bufferSize * sizeof(int32_t));
+		altitude = (int32_t *) malloc(bufferSize * sizeof(int32_t));
 
-		xInput = (int *) malloc(bufferSize * sizeof(int));
-		yInput = (int *) malloc(bufferSize * sizeof(int));
-		hardSync = (int *) malloc(bufferSize * sizeof(int));
-		reverse = (int *) malloc(bufferSize * sizeof(int));
-		sh = (int *) malloc(bufferSize * sizeof(int));
+		xInput = (int32_t *) malloc(bufferSize * sizeof(int32_t));
+		yInput = (int32_t *) malloc(bufferSize * sizeof(int32_t));
+		hardSync = (int32_t *) malloc(bufferSize * sizeof(int32_t));
+		reverse = (int32_t *) malloc(bufferSize * sizeof(int32_t));
+		sh = (int32_t *) malloc(bufferSize * sizeof(int32_t));
 
-		for (int i = 0; i < bufferSize; i++) {
+		for (int32_t i = 0; i < bufferSize; i++) {
 			xIndexBuffer[i] = 0;
 			yIndexBuffer[i] = 0;
 			xDeltaBuffer[i] = 0;
@@ -133,11 +132,11 @@ public:
 
 extern "C" {
 
-void extractDeltas(int * input, int * output, int initialValue, uint32_t bufferSize);
-void incrementFromDeltas(int * input, int * output, int * hardSync, int * reverse,
-		int initialPhase, uint32_t bufferSize);
-void foldBuffer(int * input, int offset, int * output, uint32_t bufferSize);
-void wrapBuffer(int * input, int offset, int * output, uint32_t bufferSize);
+void extractDeltas(int32_t * input, int32_t * output, int32_t initialValue, uint32_t bufferSize);
+void incrementFromDeltas(int32_t * input, int32_t * output, int32_t * hardSync, int32_t * reverse,
+		int32_t initialPhase, uint32_t bufferSize);
+void foldBuffer(int32_t * input, int32_t offset, int32_t * output, uint32_t bufferSize);
+void wrapBuffer(int32_t * input, int32_t offset, int32_t * output, uint32_t bufferSize);
 
 }
 

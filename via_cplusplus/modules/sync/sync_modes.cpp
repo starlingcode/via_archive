@@ -7,7 +7,7 @@
 
 #include "sync.hpp"
 
-void ViaSync::handleButton1ModeChange(int mode) {
+void ViaSync::handleButton1ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case noSH:
@@ -25,13 +25,13 @@ void ViaSync::handleButton1ModeChange(int mode) {
 
 }
 
-void ViaSync::handleButton2ModeChange(int mode) {
+void ViaSync::handleButton2ModeChange(int32_t mode) {
 
 	pllController.scale = (Scale *) scaleArray[syncUI.GROUP_MODE][mode];
 
 }
 
-void ViaSync::handleButton3ModeChange(int mode) {
+void ViaSync::handleButton3ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case root:
@@ -65,7 +65,7 @@ void ViaSync::handleButton3ModeChange(int mode) {
 
 }
 
-void ViaSync::handleButton4ModeChange(int mode) {
+void ViaSync::handleButton4ModeChange(int32_t mode) {
 
 	// see pllMultiplierMeasureFrequency for why this is in range 1, 2, 3
 
@@ -73,7 +73,7 @@ void ViaSync::handleButton4ModeChange(int mode) {
 
 }
 
-void ViaSync::handleButton5ModeChange(int mode) {
+void ViaSync::handleButton5ModeChange(int32_t mode) {
 
 	pllController.scale = (Scale *) scaleArray[mode][syncUI.SCALE_MODE];
 	if (syncUI.TABLE_GROUP_MODE) {
@@ -84,7 +84,7 @@ void ViaSync::handleButton5ModeChange(int mode) {
 
 }
 
-void ViaSync::handleButton6ModeChange(int mode) {
+void ViaSync::handleButton6ModeChange(int32_t mode) {
 
 	if (syncUI.TABLE_GROUP_MODE) {
 		switchWavetable(wavetableArray[syncUI.SCALE_MODE][mode]);
@@ -94,7 +94,7 @@ void ViaSync::handleButton6ModeChange(int mode) {
 
 }
 
-void ViaSync::handleAux1ModeChange(int mode) {
+void ViaSync::handleAux1ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case sync_gate:
@@ -110,7 +110,7 @@ void ViaSync::handleAux1ModeChange(int mode) {
 }
 
 
-void ViaSync::handleAux2ModeChange(int mode) {
+void ViaSync::handleAux2ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case sync_phasor:
@@ -126,7 +126,7 @@ void ViaSync::handleAux2ModeChange(int mode) {
 }
 
 
-void ViaSync::handleAux3ModeChange(int mode) {
+void ViaSync::handleAux3ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case noOffset:
@@ -147,7 +147,7 @@ void ViaSync::handleAux3ModeChange(int mode) {
 
 }
 
-void ViaSync::handleAux4ModeChange(int mode) {
+void ViaSync::handleAux4ModeChange(int32_t mode) {
 
 	if (syncUI.TABLE_GROUP_MODE) {
 		switchWavetable(wavetableArray[syncUI.SCALE_MODE][mode]);

@@ -1,15 +1,15 @@
 /*
- * via_f373_module.hpp
+ * via_virtual_module.hpp
  *
- *  Created on: Sep 18, 2018
+ *  Created on: Sep 22, 2018
  *      Author: willmitchell
  */
 
-#ifndef INC_VIA_F373_MODULE_HPP_
-#define INC_VIA_F373_MODULE_HPP_
+#ifndef IO_INC_VIA_VIRTUAL_MODULE_HPP_
+#define IO_INC_VIA_VIRTUAL_MODULE_HPP_
 
 #include "dsp.hpp"
-#include "f373_rev6_io.hpp"
+#include "via_virtual_system.hpp"
 #include "via_global_signals.hpp"
 
 class ViaModule {
@@ -44,64 +44,30 @@ public:
 
 	void ioStreamInit() {
 
-//		int16_t cv2Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA0) << 2;
-//		int16_t cv3Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA1) << 2;
-
-//		for (int32_t i = 0; i < 2 * bufferSize; i++) {
-//			inputs.cv2VirtualGround[i] = cv2Offset;
-//			inputs.cv3VirtualGround[i] = cv3Offset;
-//		}
-
-		// initialize the ADCs and their respective DMA arrays
-		HAL_ADC_Start_DMA(&hadc1, controls.controlRateInputs, 4);
-
-		if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1)
-				!= HAL_OK) {
-		}
-
-		/* Pool for the end of calibration */
-		if (HAL_SDADC_PollForCalibEvent(&hsdadc1, 1000) != HAL_OK) {
-		}
-
-		if (HAL_SDADC_CalibrationStart(&hsdadc2, SDADC_CALIBRATION_SEQ_1)
-				!= HAL_OK) {
-		}
-
-		/* Pool for the end of calibration */
-		if (HAL_SDADC_PollForCalibEvent(&hsdadc2, 1000) != HAL_OK) {
-		}
-
-		HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, outputs.dac1Samples,
-				2 * bufferSize, DAC_ALIGN_12B_R);
-		HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, outputs.dac2Samples,
-				2 * bufferSize, DAC_ALIGN_12B_R);
-		HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, outputs.dac3Samples,
-				2 * bufferSize, DAC_ALIGN_12B_R);
-
-		// set the dac sample rate and start the dac timer
-		HAL_SDADC_Start_DMA(&hsdadc1, (uint32_t *) inputs.cv2Samples, 2 * bufferSize);
-		HAL_SDADC_Start_DMA(&hsdadc2, (uint32_t *) inputs.cv3Samples, 2 * bufferSize);
+		// assign module IO streams to virtual hook
 
 	}
 
 	void initializeAuxOutputs(void) {
 
-		aLogicOutput = &(GPIOC->BSRR);
-		auxLogicOutput = &(GPIOA->BSRR);
-		shAOutput = &(GPIOB->BSRR);
-		shBOutput = &(GPIOB->BSRR);
+		// assign GPIO and LED to virtual module write location
 
-		// tim3 channel 2
-		redLevel = &TIM3->CCR1 + 1;
-		// tim4 channel 4
-		greenLevel = &TIM4->CCR1 + 3;
-		// tim5 channel 1
-		blueLevel = &TIM5->CCR1;
-
-		ledAOutput = &(GPIOF->BSRR);
-		ledBOutput = &(GPIOC->BSRR);
-		ledCOutput = &(GPIOA->BSRR);
-		ledDOutput = &(GPIOB->BSRR);
+//		aLogicOutput = &(GPIOC->BSRR);
+//		auxLogicOutput = &(GPIOA->BSRR);
+//		shAOutput = &(GPIOB->BSRR);
+//		shBOutput = &(GPIOB->BSRR);
+//
+//		// tim3 channel 2
+//		redLevel = &TIM3->CCR1 + 1;
+//		// tim4 channel 4
+//		greenLevel = &TIM4->CCR1 + 3;
+//		// tim5 channel 1
+//		blueLevel = &TIM5->CCR1;
+//
+//		ledAOutput = &(GPIOF->BSRR);
+//		ledBOutput = &(GPIOC->BSRR);
+//		ledCOutput = &(GPIOA->BSRR);
+//		ledDOutput = &(GPIOB->BSRR);
 
 	}
 
@@ -112,20 +78,35 @@ public:
 	 */
 
 	inline void setLogicA(int32_t high) {
-		*aLogicOutput = GET_ALOGIC_MASK(high);
+		*aLogicOutput = high;
 	}
 
 	inline void setAuxLogic(int32_t high) {
-		*auxLogicOutput = GET_EXPAND_LOGIC_MASK(high);
+		*auxLogicOutput = high;
 	}
 
 	inline void setSH(int32_t sampleA, int32_t sampleB) {
 
-		uint32_t mask = GET_SH_A_MASK(sampleA);
-		mask |= GET_SH_B_MASK(sampleB);
+		*shAOutput = sampleA;
+		*shBOutput = sampleB;
 
-		*shAOutput = mask;
 
+	}
+
+	inline void setLEDA(int32_t on) {
+		*ledAOutput = on;
+	}
+
+	inline void setLEDB(int32_t on) {
+		*ledBOutput = on;
+	}
+
+	inline void setLEDC(int32_t on) {
+		*ledCOutput = on;
+	}
+
+	inline void setLEDD(int32_t on) {
+		*ledDOutput = on;
 	}
 
 	inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t auxLogic,
@@ -136,18 +117,23 @@ public:
 		// LEDC_HIGH_MASK -> ALOGIC_HIGH_MASK >> 16 >> 11 (pin 13 to pin 2, A)
 		// LEDD_HIGH_MASK -> BLOGIC_HIGH_MASK >> 16 >> 13 (pin 15 to pin 2, B)
 
-	#define LEDA_MASK (__ROR(shA, 16) >> 1)
-	#define LEDB_MASK (__ROR(shB, 16) << 5)
-	#define LEDC_MASK (__ROR(logicA, 16) >> 11)
+		shA = !((shA >> 7) & 1);
+		shB = !((shB >> 8) & 1);
+		logicA = !((logicA >> 12) & 1);
+
+
+		setLEDA(shA);
+		setLEDB(shB);
+		setLEDC(logicA);
 
 		//combine the mask variables for a shared GPIO group with a bitwise or
-		*aLogicOutput = (logicA | LEDB_MASK);
+		*aLogicOutput = (logicA);
 
-		*auxLogicOutput = (auxLogic | LEDC_MASK);
+		*auxLogicOutput = (auxLogic);
 
-		*shAOutput = (shA | shB);
+		*shAOutput = (shA);
 
-		*ledAOutput = LEDA_MASK;
+		*shBOutput = (shB);
 
 	}
 
@@ -199,22 +185,6 @@ public:
 	 *
 	 */
 
-	inline void setLEDA(int32_t on) {
-		*ledAOutput = ((uint32_t) GPIO_PIN_7) << (16 * (!on));
-	}
-
-	inline void setLEDB(int32_t on) {
-		*ledBOutput = ((uint32_t) GPIO_PIN_14) << (16 * (!on));
-	}
-
-	inline void setLEDC(int32_t on) {
-		*ledCOutput = ((uint32_t) GPIO_PIN_2) << (16 * (!on));
-	}
-
-	inline void setLEDD(int32_t on) {
-		*ledDOutput = ((uint32_t) GPIO_PIN_2) << (16 * (!on));
-	}
-
 	inline void setRedLED(int32_t level) {
 		*redLevel = level;
 	}
@@ -248,7 +218,9 @@ public:
 	}
 
 	void clearRGB() {
-		setRGB({0, 0, 0});
+		setRedLED(0);
+		setGreenLED(0);
+		setBlueLED(0);
 	}
 
 	void setLEDs(int32_t digit) {
@@ -314,5 +286,4 @@ public:
 };
 
 
-
-#endif /* INC_VIA_F373_MODULE_HPP_ */
+#endif /* IO_INC_VIA_VIRTUAL_MODULE_HPP_ */

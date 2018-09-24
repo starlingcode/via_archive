@@ -294,14 +294,14 @@ static inline void loadWavetableWithDiff(const Wavetable * table,
 	uint32_t numSamples = table->slopeLength;
 
 	//for each table in the table
-	for (int i = 0; i < table->numWaveforms; i++) {
+	for (uint32_t i = 0; i < table->numWaveforms; i++) {
 		//include the "last two" samples from release
 		*((tableRead + 517 * i) + 0) = *(*(table->releaseSlope + i) + 0) >> 3;
 		*((tableRead + 517 * i) + 1) = *(*(table->releaseSlope + i) + 0) >> 3;
 		//fill in a full cycle's worth of samples
 		//the release gets reversed
 		//we drop the last sample from attack and the first from releas
-		for (int j = 0; j < numSamples; j++) {
+		for (uint32_t j = 0; j < numSamples; j++) {
 			*((tableRead + 517 * i) + 2 + j) = *(*(table->attackSlope + i) + j)
 					>> 3;
 			*((tableRead + 517 * i) + 2 + numSamples + j) =
@@ -316,8 +316,8 @@ static inline void loadWavetableWithDiff(const Wavetable * table,
 				*(*(table->attackSlope + i) + 0) >> 3;
 	}
 
-	for (int i = 0; i < table->numWaveforms - 1; i++) {
-		for (int j = 0; j < (numSamples * 2 + 5); j++) {
+	for (uint32_t i = 0; i < table->numWaveforms - 1; i++) {
+		for (uint32_t j = 0; j < (numSamples * 2 + 5); j++) {
 			*((tableRead + 517 * i) + j) |= (*((tableRead + 517 * (i + 1)) + j)
 					- *((tableRead + 517 * i) + j)) << 16;
 		}
@@ -331,14 +331,14 @@ static inline void loadWavetableWithDiff15Bit(const Wavetable * table,
 	uint32_t numSamples = table->slopeLength;
 
 	//for each table in the table
-	for (int i = 0; i < table->numWaveforms; i++) {
+	for (uint32_t i = 0; i < table->numWaveforms; i++) {
 		//pad with duplicate samples
 		*((tableRead + 517 * i) + 0) = *(*(table->releaseSlope + i) + 0);
 		*((tableRead + 517 * i) + 1) = *(*(table->releaseSlope + i) + 0);
 		//fill in a full cycle's worth of samples
 		//the release gets reversed
 		//we drop the last sample from attack and the first from releas
-		for (int j = 0; j < numSamples; j++) {
+		for (uint32_t j = 0; j < numSamples; j++) {
 			*((tableRead + 517 * i) + 2 + j) = *(*(table->attackSlope + i) + j);
 			*((tableRead + 517 * i) + 2 + numSamples + j) =
 					*(*(table->releaseSlope + i) + numSamples - j);
@@ -352,8 +352,8 @@ static inline void loadWavetableWithDiff15Bit(const Wavetable * table,
 				*(*(table->attackSlope + i) + 0);
 	}
 
-	for (int i = 0; i < table->numWaveforms - 1; i++) {
-		for (int j = 0; j < (numSamples * 2 + 5); j++) {
+	for (uint32_t i = 0; i < table->numWaveforms - 1; i++) {
+		for (uint32_t j = 0; j < (numSamples * 2 + 5); j++) {
 			*((tableRead + 517 * i) + j) |= (*((tableRead + 517 * (i + 1)) + j)
 					- *((tableRead + 517 * i) + j)) << 16;
 		}
@@ -367,14 +367,14 @@ static inline void loadSingleTable15Bit(const Wavetable * table,
 	uint32_t numSamples = table->slopeLength;
 
 	//for each table in the table
-	for (int i = 0; i < 1; i++) {
+	for (uint32_t i = 0; i < 1; i++) {
 		//pad with duplicate samples
 		*((tableRead + 517 * i) + 0) = *(*(table->releaseSlope + i) + 0);
 		*((tableRead + 517 * i) + 1) = *(*(table->releaseSlope + i) + 0);
 		//fill in a full cycle's worth of samples
 		//the release gets reversed
 		//we drop the last sample from attack and the first from releas
-		for (int j = 0; j < numSamples; j++) {
+		for (uint32_t j = 0; j < numSamples; j++) {
 			*((tableRead + 517 * i) + 2 + j) = *(*(table->attackSlope + i) + j);
 			*((tableRead + 517 * i) + 2 + numSamples + j) =
 					*(*(table->releaseSlope + i) + numSamples - j);
@@ -419,8 +419,8 @@ static const PhaseDistTable phaseDistPWM = { .lookupTable = phaseDistPWMTable,
 static inline void loadPhaseDistTable(PhaseDistTable * table,
 		uint32_t * tableRead) {
 //	memcpy(tableRead, table->lookupTable, 33*65*sizeof(uint32_t));
-	for (int i = 0; i < 33; i++) {
-		for (int j = 0; j < 65; j++) {
+	for (int32_t i = 0; i < 33; i++) {
+		for (int32_t j = 0; j < 65; j++) {
 			*((tableRead + i * 65) + j) = *(*(table->lookupTable + i) + j);
 		}
 	}

@@ -116,22 +116,24 @@ public:
 		void aux3EnterMenuCallback(void);
 		void aux4EnterMenuCallback(void);
 
+		void initialize(void);
+
 		ViaSyncUI(ViaSync& x): this_module(x) {
 			linkUI((void *) &syncTouchLink, (void *) this);
 		}
 
 	};
 
-	void handleButton1ModeChange(int);
-	void handleButton2ModeChange(int);
-	void handleButton3ModeChange(int);
-	void handleButton4ModeChange(int);
-	void handleButton5ModeChange(int);
-	void handleButton6ModeChange(int);
-	void handleAux1ModeChange(int);
-	void handleAux2ModeChange(int);
-	void handleAux3ModeChange(int);
-	void handleAux4ModeChange(int);
+	void handleButton1ModeChange(int32_t);
+	void handleButton2ModeChange(int32_t);
+	void handleButton3ModeChange(int32_t);
+	void handleButton4ModeChange(int32_t);
+	void handleButton5ModeChange(int32_t);
+	void handleButton6ModeChange(int32_t);
+	void handleAux1ModeChange(int32_t);
+	void handleAux2ModeChange(int32_t);
+	void handleAux3ModeChange(int32_t);
+	void handleAux4ModeChange(int32_t);
 
 	/*
 	 *
@@ -170,37 +172,37 @@ public:
 	uint16_t virtualFM[2];
 	uint16_t virtualMorph[2];
 
-	void (ViaSync::*calculateDac3)(int writeIndex);
+	void (ViaSync::*calculateDac3)(int32_t writeIndex);
 
-	void calculateDac3Phasor(int writeIndex);
-	void calculateDac3Contour(int writeIndex);
+	void calculateDac3Phasor(int32_t writeIndex);
+	void calculateDac3Contour(int32_t writeIndex);
 
-	void (ViaSync::*calculateLogicA)(int writeIndex);
+	void (ViaSync::*calculateLogicA)(int32_t writeIndex);
 
-	void calculateLogicAGate(int writeIndex);
-	void calculateLogicADelta(int writeIndex);
+	void calculateLogicAGate(int32_t writeIndex);
+	void calculateLogicADelta(int32_t writeIndex);
 
-	void (ViaSync::*calculateSH)(int writeIndex);
+	void (ViaSync::*calculateSH)(int32_t writeIndex);
 	// No S&H
-	void calculateSHMode1(int writeIndex);
+	void calculateSHMode1(int32_t writeIndex);
 	// Track and hold
-	void calculateSHMode2(int writeIndex);
+	void calculateSHMode2(int32_t writeIndex);
 	// Decimate
-	void calculateSHMode3(int writeIndex);
+	void calculateSHMode3(int32_t writeIndex);
 
 	void init(void);
 
 	ViaSyncUI syncUI;
 
-	int runtimeDisplay;
+	int32_t runtimeDisplay;
 
 	SingleSampleWavetable syncWavetable;
 	PllController pllController;
 
 	// average tap tempo
-	int lastTap = 0;
+	int32_t lastTap = 0;
 	buffer tapStore;
-	int tapSum = 0;
+	int32_t tapSum = 0;
 
 	/*
 	 *
@@ -210,7 +212,7 @@ public:
 
 	ViaSync() : syncUI(*this) {
 		init();
-		for (int i = 0; i < 32; i++) {
+		for (int32_t i = 0; i < 32; i++) {
 			writeBuffer(&tapStore, 0);
 		}
 	}
@@ -229,7 +231,7 @@ public:
 	void transferCompleteCallback(void);
 	void slowConversionCallback(void);
 
-	void ui_dispatch(int sig) {
+	void ui_dispatch(int32_t sig) {
 		syncUI.dispatch(sig);
 	};
 

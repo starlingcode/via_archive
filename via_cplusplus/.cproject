@@ -36,6 +36,7 @@
 									<listOptionValue builtIn="false" value="__packed=&quot;__attribute__((__packed__))&quot;"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F373xC"/>
+									<listOptionValue builtIn="false" value="BUILD_F373"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.1359543505" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/synthesis/inc}&quot;"/>
@@ -44,7 +45,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/stm32f373/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/ui/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/io/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="../inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F3xx/Include"/>
@@ -58,6 +58,7 @@
 								<option id="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level.1533925487" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.cpp.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.1881525788" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.529067049" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="BUILD_F373"/>
 									<listOptionValue builtIn="false" value="__weak=&quot;__attribute__((weak))&quot;"/>
 									<listOptionValue builtIn="false" value="__packed=&quot;__attribute__((__packed__))&quot;"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
@@ -70,7 +71,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/stm32f373/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/ui/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/io/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="../inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F3xx/Include"/>
@@ -133,6 +133,7 @@
 								<option id="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level.1627369170" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.c.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.24244081" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1928233216" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="BUILD_F373"/>
 									<listOptionValue builtIn="false" value="__weak=&quot;__attribute__((weak))&quot;"/>
 									<listOptionValue builtIn="false" value="__packed=&quot;__attribute__((__packed__))&quot;"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
@@ -145,7 +146,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/stm32f373/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/ui/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/io/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="../inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F3xx/Include"/>
@@ -159,6 +159,7 @@
 								<option id="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level.1995607248" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.cpp.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.54656914" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1534629926" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="BUILD_F373"/>
 									<listOptionValue builtIn="false" value="__weak=&quot;__attribute__((weak))&quot;"/>
 									<listOptionValue builtIn="false" value="__packed=&quot;__attribute__((__packed__))&quot;"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
@@ -171,7 +172,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/stm32f373/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/ui/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/via_cplusplus/io/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="../inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F3xx/Include"/>
@@ -185,7 +185,7 @@
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.733824106" name="MCU G++ Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker"/>
 							<tool errorParsers="" id="fr.ac6.managedbuild.tool.gnu.archiver.1429897128" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver"/>
 							<tool errorParsers="org.eclipse.cdt.core.GASErrorParser" id="fr.ac6.managedbuild.tool.gnu.cross.assembler.lib.release.70458573" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.lib.release">
-								<option id="fr.ac6.managedbuild.tool.gnu.cross.lib.release.asm.gendebug.677550299" name="Generate debugging information (-g)" superClass="fr.ac6.managedbuild.tool.gnu.cross.lib.release.asm.gendebug" value="true" valueType="boolean"/>
+								<option id="fr.ac6.managedbuild.tool.gnu.cross.lib.release.asm.gendebug.677550299" name="Generate debugging information (-g)" superClass="fr.ac6.managedbuild.tool.gnu.cross.lib.release.asm.gendebug" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1665451372" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1572452779" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
 							</tool>
@@ -224,6 +224,13 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/via_cplusplus"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/via_cplusplus"/>
+		</configuration>
+	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>

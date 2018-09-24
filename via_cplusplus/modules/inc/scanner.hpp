@@ -88,7 +88,7 @@ void scannerTouchLink (void *);
 
 class ViaScanner : public ViaModule {
 
-	int readIndex = 0;
+	int32_t readIndex = 0;
 
 public:
 
@@ -137,22 +137,24 @@ public:
 		void aux3EnterMenuCallback(void);
 		void aux4EnterMenuCallback(void);
 
+		void initialize(void);
+
 		ViaScannerUI(ViaScanner& x): this_module(x) {
 			linkUI((void *) &scannerTouchLink, (void *) this);
 		}
 
 	};
 
-	void handleButton1ModeChange(int);
-	void handleButton2ModeChange(int);
-	void handleButton3ModeChange(int);
-	void handleButton4ModeChange(int);
-	void handleButton5ModeChange(int);
-	void handleButton6ModeChange(int);
-	void handleAux1ModeChange(int);
-	void handleAux2ModeChange(int);
-	void handleAux3ModeChange(int);
-	void handleAux4ModeChange(int);
+	void handleButton1ModeChange(int32_t);
+	void handleButton2ModeChange(int32_t);
+	void handleButton3ModeChange(int32_t);
+	void handleButton4ModeChange(int32_t);
+	void handleButton5ModeChange(int32_t);
+	void handleButton6ModeChange(int32_t);
+	void handleAux1ModeChange(int32_t);
+	void handleAux2ModeChange(int32_t);
+	void handleAux3ModeChange(int32_t);
+	void handleAux4ModeChange(int32_t);
 
 	/*
 	 *
@@ -176,9 +178,9 @@ public:
 	// phase distortion table is fixed
 	void initPhaseDistTable(void);
 
-	int reverseBuffer[SCANNER_BUFFER_SIZE*2];
+	int32_t reverseBuffer[SCANNER_BUFFER_SIZE*2];
 
-	int reverseSignal = 1;
+	int32_t reverseSignal = 1;
 
 	/*
 	 *
@@ -191,7 +193,7 @@ public:
 
 	ViaScannerUI scannerUI;
 
-	int runtimeDisplay;
+	int32_t runtimeDisplay;
 
 	ThreeAxisScanner scanner;
 
@@ -223,7 +225,7 @@ public:
 	void cv3TransferCompleteCallback(void);
 	void slowConversionCallback(void);
 
-	void ui_dispatch(int sig) {
+	void ui_dispatch(int32_t sig) {
 		scannerUI.dispatch(sig);
 	};
 

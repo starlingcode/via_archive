@@ -10,7 +10,7 @@
 
 // Call the current state with a signal
 
-void ViaUI::dispatch(int sig) {
+void ViaUI::dispatch(int32_t sig) {
 	(this->*state)(sig);
 }
 
@@ -23,7 +23,7 @@ void ViaUI::dispatch(int sig) {
  *
  */
 
-void ViaUI::transition(void (ViaUI::*func)(int)) {
+void ViaUI::transition(void (ViaUI::*func)(int32_t)) {
 	dispatch(EXIT_SIG);
 	state = func;
 	dispatch(ENTRY_SIG);
@@ -37,7 +37,7 @@ void ViaUI::transition(void (ViaUI::*func)(int)) {
  *
  */
 
-void ViaUI::defaultMenu(int sig) {
+void ViaUI::defaultMenu(int32_t sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
@@ -90,7 +90,7 @@ void ViaUI::defaultMenu(int sig) {
  *
  */
 
-void ViaUI::newModeMenu(int sig) {
+void ViaUI::newModeMenu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		newModeEnterMenuCallback();
@@ -146,7 +146,7 @@ void ViaUI::newModeMenu(int sig) {
  *
  */
 
-void ViaUI::newAuxModeMenu(int sig) {
+void ViaUI::newAuxModeMenu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		newAuxModeEnterMenuCallback();

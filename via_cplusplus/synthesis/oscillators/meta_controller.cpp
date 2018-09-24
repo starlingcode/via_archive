@@ -44,7 +44,7 @@ void MetaController::parseControlsDrum(ViaControls * controls, ViaInputStreams *
 void MetaController::parseControlsEnv(ViaControls * controls, ViaInputStreams * inputs) {
 	// t1 is attack time (attackIncrements), t2 is release time (releaseIncrements)
 
-	int releaseMod = -inputs->cv2Samples[0];
+	int32_t releaseMod = -inputs->cv2Samples[0];
 	releaseMod += 32767;
 
 	releaseMod = releaseMod >> 4;
@@ -77,7 +77,7 @@ void MetaController::generateIncrementsExternal(ViaInputStreams * inputs) {
 
 void MetaController::generateIncrementsAudio(ViaInputStreams * inputs) {
 
-	int localFm = (int) -fm[0];
+	int32_t localFm = (int32_t) -fm[0];
 	localFm += 16384;
 	increment1 = fix16_mul(timeBase1, localFm);
 	increment2 = increment1;
@@ -88,7 +88,7 @@ void MetaController::generateIncrementsAudio(ViaInputStreams * inputs) {
 
 void MetaController::generateIncrementsDrum(ViaInputStreams * inputs) {
 
-	int localFm = (int) fm[0];
+	int32_t localFm = (int32_t) fm[0];
 	increment1 = fix16_mul(timeBase1, localFm << 1);
 	increment2 = increment1;
 
@@ -111,19 +111,19 @@ void MetaController::generateIncrementsSeq(ViaInputStreams * inputs) {
 	increment1 = timeBase1;
 	increment2 = timeBase2;
 
-	int dutyCycleMod = -inputs->cv2Samples[0];
+	int32_t dutyCycleMod = -inputs->cv2Samples[0];
 
 	dutyCycle = __USAT(dutyCycleBase + dutyCycleMod, 16);
 
 }
 
-int MetaController::advancePhase(uint32_t * phaseDistTable) {
+int32_t MetaController::advancePhase(uint32_t * phaseDistTable) {
 
-	int phaseWrapper;
+	int32_t phaseWrapper;
 
-	int increment = (this->*incrementArbiter)() * freeze;
+	int32_t increment = (this->*incrementArbiter)() * freeze;
 
-	int localPhase = phase;
+	int32_t localPhase = phase;
 
 	localPhase = (localPhase + __SSAT(increment, 24)) * (oscillatorOn);
 
@@ -153,7 +153,7 @@ int MetaController::advancePhase(uint32_t * phaseDistTable) {
 	uint32_t pwm = dutyCycle;
 	uint32_t pwmIndex = (pwm >> 11);
 	uint32_t pwmFrac = (pwm & 0x7FF) << 4;
-	// assuming that each phase distortion lookup table is 65 samples long stored as int
+	// assuming that each phase distortion lookup table is 65 samples long stored as int32_t
 	uint32_t * pwmTable1 = phaseDistTable + pwmIndex * 65;
 	uint32_t * pwmTable2 = pwmTable1 + 65;
 	uint32_t leftSample = localPhase >> 19;
@@ -170,7 +170,7 @@ int MetaController::advancePhase(uint32_t * phaseDistTable) {
 	// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
 	// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
 
-	int atBIndicator = ((uint32_t)(localPhase - AT_B_PHASE) >> 31) - ((uint32_t)(previousGhostPhase - AT_B_PHASE) >> 31);
+	int32_t atBIndicator = ((uint32_t)(localPhase - AT_B_PHASE) >> 31) - ((uint32_t)(previousGhostPhase - AT_B_PHASE) >> 31);
 
 	phaseWrapper += atBIndicator;
 
@@ -198,7 +198,7 @@ void MetaController::handleLoopOff(void) {
 
 	oscillatorOn |= !(triggerSignal);
 
-	oscillatorOn &= !(abs(phaseEvent) >> 24);
+	oscillatorOn &= !(int32_abs(phaseEvent) >> 24);
 
 }
 
@@ -209,7 +209,7 @@ void MetaController::handleLoopOff(void) {
  *
  */
 
-int MetaController::noRetrigAttackState(void) {
+int32_t MetaController::noRetrigAttackState(void) {
 
 	switch (phaseEvent) {
 
@@ -223,7 +223,7 @@ int MetaController::noRetrigAttackState(void) {
 	}
 }
 
-int MetaController::noRetrigReleaseState(void) {
+int32_t MetaController::noRetrigReleaseState(void) {
 
 	switch (phaseEvent) {
 
@@ -243,7 +243,7 @@ int MetaController::noRetrigReleaseState(void) {
  *
  */
 
-int MetaController::hardSyncAttackState(void) {
+int32_t MetaController::hardSyncAttackState(void) {
 
 	phase *= triggerSignal;
 
@@ -259,7 +259,7 @@ int MetaController::hardSyncAttackState(void) {
 	}
 }
 
-int MetaController::hardSyncReleaseState(void) {
+int32_t MetaController::hardSyncReleaseState(void) {
 
 	phase *= triggerSignal;
 
@@ -285,7 +285,7 @@ int MetaController::hardSyncReleaseState(void) {
  *
  */
 
-int MetaController::envAttackState(void) {
+int32_t MetaController::envAttackState(void) {
 
 	switch (phaseEvent) {
 
@@ -299,7 +299,7 @@ int MetaController::envAttackState(void) {
 	}
 }
 
-int MetaController::envReleaseState(void) {
+int32_t MetaController::envReleaseState(void) {
 
 	if (triggerSignal == 0) {
 		incrementArbiter = &MetaController::envRetriggerState;
@@ -318,7 +318,7 @@ int MetaController::envReleaseState(void) {
 	};
 }
 
-int MetaController::envRetriggerState(void) {
+int32_t MetaController::envRetriggerState(void) {
 
 	switch (phaseEvent) {
 
@@ -338,9 +338,9 @@ int MetaController::envRetriggerState(void) {
  *
  */
 
-int MetaController::gateAttackState(void) {
+int32_t MetaController::gateAttackState(void) {
 
-	int gateWLoopProtection = gateSignal | loopMode;
+	int32_t gateWLoopProtection = gateSignal | loopMode;
 
 	if (gateWLoopProtection == 0) {
 		incrementArbiter = &MetaController::gateReleaseReverseState;
@@ -359,7 +359,7 @@ int MetaController::gateAttackState(void) {
 	}
 }
 
-int MetaController::gateReleaseReverseState(void) {
+int32_t MetaController::gateReleaseReverseState(void) {
 
 	if (gateSignal) {
 		incrementArbiter = &MetaController::gateAttackState;
@@ -378,7 +378,7 @@ int MetaController::gateReleaseReverseState(void) {
 	};
 }
 
-int MetaController::gatedState(void) {
+int32_t MetaController::gatedState(void) {
 
 	if (gateSignal == 0) {
 		incrementArbiter = &MetaController::gateReleaseState;
@@ -389,7 +389,7 @@ int MetaController::gatedState(void) {
 
 }
 
-int MetaController::gateReleaseState(void) {
+int32_t MetaController::gateReleaseState(void) {
 
 	if (gateSignal) {
 		incrementArbiter = &MetaController::gateRetriggerState;
@@ -408,9 +408,9 @@ int MetaController::gateReleaseState(void) {
 	};
 }
 
-int MetaController::gateRetriggerState(void) {
+int32_t MetaController::gateRetriggerState(void) {
 
-	int gateWLoopProtection = gateSignal | loopMode;
+	int32_t gateWLoopProtection = gateSignal | loopMode;
 
 	if (gateWLoopProtection == 0) {
 		incrementArbiter = &MetaController::gateReleaseState;
@@ -435,7 +435,7 @@ int MetaController::gateRetriggerState(void) {
  *
  */
 
-int MetaController::pendulumRestingState(void) {
+int32_t MetaController::pendulumRestingState(void) {
 	if (triggerSignal == 0) {
 		incrementArbiter = &MetaController::pendulumForwardAttackState;
 		return increment1;
@@ -444,7 +444,7 @@ int MetaController::pendulumRestingState(void) {
 	}
 }
 
-int MetaController::pendulumForwardAttackState(void) {
+int32_t MetaController::pendulumForwardAttackState(void) {
 
 	if (triggerSignal == 0 && oscillatorOn) {
 		incrementArbiter = &MetaController::pendulumReverseAttackState;
@@ -464,7 +464,7 @@ int MetaController::pendulumForwardAttackState(void) {
 
 }
 
-int MetaController::pendulumReverseAttackState(void) {
+int32_t MetaController::pendulumReverseAttackState(void) {
 
 
 	if (triggerSignal == 0) {
@@ -485,7 +485,7 @@ int MetaController::pendulumReverseAttackState(void) {
 
 }
 
-int MetaController::pendulumForwardReleaseState(void) {
+int32_t MetaController::pendulumForwardReleaseState(void) {
 
 	if (triggerSignal == 0) {
 		incrementArbiter = &MetaController::pendulumReverseReleaseState;
@@ -505,7 +505,7 @@ int MetaController::pendulumForwardReleaseState(void) {
 
 }
 
-int MetaController::pendulumReverseReleaseState(void) {
+int32_t MetaController::pendulumReverseReleaseState(void) {
 
 	if (triggerSignal == 0) {
 		incrementArbiter = &MetaController::pendulumForwardReleaseState;

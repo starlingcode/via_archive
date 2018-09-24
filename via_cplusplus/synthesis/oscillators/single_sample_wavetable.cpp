@@ -13,23 +13,23 @@ void SingleSampleWavetable::parseControls(ViaControls * controls) {
 
 }
 
-inline int SingleSampleWavetable::incrementPhase(uint32_t * phaseDistTable) {
+inline int32_t SingleSampleWavetable::incrementPhase(uint32_t * phaseDistTable) {
 
-	int localPhase = phase;
+	int32_t localPhase = phase;
 
 	// apply FM, which should be 1 at ground (offset is comensated for here)
 
-	int fmAmount = (int) -fm[0];
+	int32_t fmAmount = (int32_t) -fm[0];
 
 	fmAmount += 65535 - cv2Offset;
 
-	//int increment = fix16_mul(parameters->increment, fmAmount);
+	//int32_t increment = fix16_mul(parameters->increment, fmAmount);
 
-	int localIncrement = increment;
+	int32_t localIncrement = increment;
 
 	// apply phase modulation
 
-	int pmAmount = (int) -pm[0];
+	int32_t pmAmount = (int32_t) -pm[0];
 
 	pmAmount += 32767;
 
@@ -44,7 +44,7 @@ inline int SingleSampleWavetable::incrementPhase(uint32_t * phaseDistTable) {
 	localPhase *= phaseReset;
 	phaseReset = 1;
 
-	int phaseEventCalculator = 0;
+	int32_t phaseEventCalculator = 0;
 
 	// add wavetable length if phase < 0
 
@@ -66,11 +66,11 @@ inline int SingleSampleWavetable::incrementPhase(uint32_t * phaseDistTable) {
 
 	phase = localPhase;
 
-	int localPWM = (int) pwm[0];
+	int32_t localPWM = (int32_t) pwm[0];
 	localPWM += 32768;
 	uint32_t pwmIndex = (localPWM >> 11);
 	uint32_t pwmFrac = (localPWM & 0x7FF) << 4;
-	// assuming that each phase distortion lookup table is 65 samples long stored as int
+	// assuming that each phase distortion lookup table is 65 samples long stored as int32_t
 	uint32_t * pwmTable1 = phaseDistTable + pwmIndex * 65;
 	uint32_t * pwmTable2 = pwmTable1 + 65;
 	uint32_t leftSample = localPhase >> 19;
@@ -78,11 +78,11 @@ inline int SingleSampleWavetable::incrementPhase(uint32_t * phaseDistTable) {
 #define pwmPhaseFrac (phase & 0x7FFFF) >> 4
 		// use this with the precalculated pwm to perform bilinear interpolation
 		// this accomplishes the
-	int	localGhostPhase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
+	int32_t	localGhostPhase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
 				pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
 				pwmPhaseFrac);
 
-	int atBIndicator = ((uint32_t)(localGhostPhase - AT_B_PHASE) >> 31) - ((uint32_t)(previousPhase - AT_B_PHASE) >> 31);
+	int32_t atBIndicator = ((uint32_t)(localGhostPhase - AT_B_PHASE) >> 31) - ((uint32_t)(previousPhase - AT_B_PHASE) >> 31);
 
 	phaseEventCalculator += atBIndicator;
 
@@ -100,7 +100,7 @@ uint32_t SingleSampleWavetable::advance(uint32_t * wavetable, uint32_t * phaseDi
 
 	uint32_t localGhostPhase = incrementPhase(phaseDistTable);
 
-	int morph = (int) -morphMod[0];
+	int32_t morph = (int32_t) -morphMod[0];
 
 	morph = __USAT(morph + morphBase, 16);
 

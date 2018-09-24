@@ -7,10 +7,8 @@
 
 #include "user_interface.hpp"
 
-// UI timer
-TIM_HandleTypeDef htim7;
 
-void ViaUI::button1Menu(int sig) {
+void ViaUI::button1Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		button1EnterMenuCallback();
@@ -28,7 +26,7 @@ void ViaUI::button1Menu(int sig) {
 	}
 }
 
-void ViaUI::button2Menu(int sig) {
+void ViaUI::button2Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		button2EnterMenuCallback();
@@ -46,7 +44,7 @@ void ViaUI::button2Menu(int sig) {
 	}
 }
 
-void ViaUI::button3Menu(int sig) {
+void ViaUI::button3Menu(int32_t sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
@@ -68,7 +66,7 @@ void ViaUI::button3Menu(int sig) {
 	}
 }
 
-void ViaUI::button4Menu(int sig) {
+void ViaUI::button4Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		button4EnterMenuCallback();
@@ -94,7 +92,7 @@ void ViaUI::button4Menu(int sig) {
 
 }
 
-void ViaUI::button5Menu(int sig) {
+void ViaUI::button5Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		button5EnterMenuCallback();
@@ -122,7 +120,7 @@ void ViaUI::button5Menu(int sig) {
 	}
 }
 
-void ViaUI::button6Menu(int sig) {
+void ViaUI::button6Menu(int32_t sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
@@ -144,7 +142,7 @@ void ViaUI::button6Menu(int sig) {
 	}
 }
 
-void ViaUI::aux1Menu(int sig) {
+void ViaUI::aux1Menu(int32_t sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
@@ -166,7 +164,7 @@ void ViaUI::aux1Menu(int sig) {
 	}
 }
 
-void ViaUI::aux2Menu(int sig) {
+void ViaUI::aux2Menu(int32_t sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
@@ -188,7 +186,7 @@ void ViaUI::aux2Menu(int sig) {
 	}
 }
 
-void ViaUI::aux3Menu(int sig) {
+void ViaUI::aux3Menu(int32_t sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
@@ -210,7 +208,7 @@ void ViaUI::aux3Menu(int sig) {
 	}
 }
 
-void ViaUI::aux4Menu(int sig) {
+void ViaUI::aux4Menu(int32_t sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:

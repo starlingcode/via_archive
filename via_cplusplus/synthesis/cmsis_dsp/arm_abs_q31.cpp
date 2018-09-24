@@ -30,6 +30,8 @@
 
 extern "C" {
 
+#ifdef BUILD_F373
+
 /**
  * @ingroup groupMath
  */
@@ -108,6 +110,14 @@ void arm_abs_q31(q31_t * pSrc, q31_t * pDst, uint32_t blockSize) {
 	}
 
 }
+
+#endif
+
+#ifdef BUILD_VIRTUAL
+
+
+
+#endif
 
 }
 

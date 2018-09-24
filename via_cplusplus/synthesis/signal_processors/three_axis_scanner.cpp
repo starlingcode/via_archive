@@ -10,32 +10,33 @@
 
 void ThreeAxisScanner::parseControls(ViaControls * controls) {
 
-	zIndex = __USAT(controls->knob1Value + 2200 - controls->cv1Value, 12) << 6;
+	int32_t zKnobCV = controls->knob1Value + 2200 - controls->cv1Value;
+	zIndex = __USAT(zKnobCV, 12) << 6;
 
 }
 
-inline int ThreeAxisScanner::getSampleProduct(int xIndex, int yIndex, int zIndex,
-		int * xTable, int * yTable, int * xDelta, int * yDelta) {
+inline int32_t ThreeAxisScanner::getSampleProduct(int32_t xIndex, int32_t yIndex, int32_t zIndex,
+		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta) {
 
 	// waveterrain = wavetable(x, z) * wavetable(y, z)
 
-	int xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
+	int32_t xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
 			(uint32_t *) xTable, xDelta);
-	int ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
+	int32_t ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
 			(uint32_t *) yTable, yDelta);
 
 	return (xSample * ySample) >> 18; //15 bit fixed point multiply and right shift by 3
 
 }
 
-inline int ThreeAxisScanner::getSamplePM(int xIndex, int yIndex, int zIndex, int * xTable,
-		int*yTable, int * xDelta, int * yDelta) {
+inline int32_t ThreeAxisScanner::getSamplePM(int32_t xIndex, int32_t yIndex, int32_t zIndex, int32_t * xTable,
+		int32_t*yTable, int32_t * xDelta, int32_t * yDelta) {
 
 	// waveterrain = wavetable(x + wavetable(y, z), z)
 
-	int xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
+	int32_t xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
 			(uint32_t *) xTable, xDelta);
-	int ySample = getSampleQuinticSpline(
+	int32_t ySample = getSampleQuinticSpline(
 			((yIndex << 9) + (xSample << 4)) & ((1 << 25) - 1), zIndex,
 			(uint32_t *) yTable, yDelta);
 
@@ -43,36 +44,36 @@ inline int ThreeAxisScanner::getSamplePM(int xIndex, int yIndex, int zIndex, int
 
 }
 
-inline int ThreeAxisScanner::getSampleSum(int xIndex, int yIndex, int zIndex, int * xTable,
-		int*yTable, int * xDelta, int * yDelta) {
+inline int32_t ThreeAxisScanner::getSampleSum(int32_t xIndex, int32_t yIndex, int32_t zIndex, int32_t * xTable,
+		int32_t*yTable, int32_t * xDelta, int32_t * yDelta) {
 
 	// waveterrain = wavetable(x, z) + wavetable(y, z)
 
-	int xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
+	int32_t xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
 			(uint32_t *) xTable, xDelta);
-	int ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
+	int32_t ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
 			(uint32_t *) yTable, yDelta);
 
 	return (xSample + ySample) >> 4; // scale from 15bit to 12 bit and divide by two to normalize the space (max value = 1+1)
 
 }
 
-inline int ThreeAxisScanner::getSampleSubtract(int xIndex, int yIndex, int zIndex, int * xTable,
-		int*yTable, int * xDelta, int * yDelta) {
+inline int32_t ThreeAxisScanner::getSampleSubtract(int32_t xIndex, int32_t yIndex, int32_t zIndex, int32_t * xTable,
+		int32_t*yTable, int32_t * xDelta, int32_t * yDelta) {
 
 	// waveterrain = wavetable(x, z) + wavetable(y, z)
 
-	int xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
+	int32_t xSample = getSampleQuinticSpline(xIndex << 9, zIndex,
 			(uint32_t *) xTable, xDelta);
-	int ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
+	int32_t ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
 			(uint32_t *) yTable, yDelta);
 
 	return ((xSample - ySample) >> 4) + 2048; // scale from 15bit to 12 bit and divide by two to normalize the space (max value = 1+1)
 
 }
 
-void ThreeAxisScanner::scanTerrainProduct(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
-		int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
+void ThreeAxisScanner::scanTerrainProduct(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
+		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta, uint32_t * output,
 		uint32_t writePosition, uint32_t samplesRemaining) {
 
 	uint32_t writeIndex = 0;
@@ -92,8 +93,8 @@ void ThreeAxisScanner::scanTerrainProduct(int * xIndexBuffer, int * yIndexBuffer
 
 }
 
-void ThreeAxisScanner::scanTerrainSum(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
-		int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
+void ThreeAxisScanner::scanTerrainSum(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
+		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta, uint32_t * output,
 		uint32_t writePosition, uint32_t samplesRemaining) {
 
 	uint32_t writeIndex = 0;
@@ -113,8 +114,8 @@ void ThreeAxisScanner::scanTerrainSum(int * xIndexBuffer, int * yIndexBuffer, in
 
 }
 
-void ThreeAxisScanner::scanTerrainSubtract(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
-		int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
+void ThreeAxisScanner::scanTerrainSubtract(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
+		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta, uint32_t * output,
 		uint32_t writePosition, uint32_t samplesRemaining) {
 
 	uint32_t writeIndex = 0;
@@ -134,8 +135,8 @@ void ThreeAxisScanner::scanTerrainSubtract(int * xIndexBuffer, int * yIndexBuffe
 
 }
 
-void ThreeAxisScanner::scanTerrainPM(int * xIndexBuffer, int * yIndexBuffer, int zIndex,
-		int * xTable, int * yTable, int * xDelta, int * yDelta, uint32_t * output,
+void ThreeAxisScanner::scanTerrainPM(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
+		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta, uint32_t * output,
 		uint32_t writePosition, uint32_t samplesRemaining) {
 
 	uint32_t writeIndex = 0;
@@ -157,7 +158,7 @@ void ThreeAxisScanner::scanTerrainPM(int * xIndexBuffer, int * yIndexBuffer, int
 
 void ThreeAxisScanner::fillBuffer(ViaInputStreams * inputs,
 		ViaControls * controls,
-		int * xTable, int * yTable,
+		int32_t * xTable, int32_t * yTable,
 		uint32_t writePosition, uint32_t bufferSize) {
 
 	extractDeltas(xInput, xIndexBuffer, lastXInput, bufferSize);

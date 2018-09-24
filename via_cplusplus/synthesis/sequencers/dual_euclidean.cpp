@@ -18,10 +18,10 @@ void DualEuclidean::parseControls(ViaControls * controls,
 	//the positve going excursion of the cv scales all the way to the maximum value
 	//the negative does the same to the maximum value
 
-	int cv2Sample = (int) -inputs->cv2Samples[0];
+	int32_t cv2Sample = (int32_t) -inputs->cv2Samples[0];
 	cv2Sample = cv2Sample >> 4;
 	cv2Sample += 2048;
-	int cv3Sample = (int) -inputs->cv3Samples[0];
+	int32_t cv3Sample = (int32_t) -inputs->cv3Samples[0];
 	cv3Sample = cv3Sample >> 4;
 	cv3Sample += 2048;
 

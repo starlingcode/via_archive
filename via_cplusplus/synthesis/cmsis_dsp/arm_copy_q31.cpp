@@ -30,6 +30,8 @@
 
 extern "C" {
 
+#ifdef BUILD_F373
+
 /**
  * @ingroup groupSupport
  */
@@ -108,7 +110,16 @@ void arm_copy_q31(
   }
 }
 
+#endif
+
+#ifdef BUILD_VIRTUAL
+
+
+
+#endif
+
 }
+
 /**
  * @} end of BasicCopy group
  */

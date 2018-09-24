@@ -15,8 +15,9 @@
  * Set the UI state default
  *
  */
-
 void ViaUI::initialize(void) {
+
+	// link to virtual module buttons at class initialization
 
 	button1 = (int32_t *) &BUTTON1SENSOR;
 	button2 = (int32_t *) &BUTTON2SENSOR;
@@ -30,7 +31,7 @@ void ViaUI::initialize(void) {
 
 }
 
-void ViaUI::loadFromEEPROM(int position) {
+void ViaUI::loadFromEEPROM(int32_t position) {
 
 //	eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &EEPROMTemp);
 //	modeStateBuffer = EEPROMTemp;  // load bottom 16 bits
@@ -53,7 +54,7 @@ void ViaUI::loadFromEEPROM(int position) {
 }
 
 // writes 2 16-bit values representing modeState to EEPROM per position,  1 runtime + 6 presets + calibration word
-void ViaUI::storeToEEPROM(int position) {
+void ViaUI::storeToEEPROM(int32_t position) {
 //	// store lower 16 bits
 //	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2],
 //			(uint16_t) modeStateBuffer);
@@ -67,7 +68,7 @@ void ViaUI::storeToEEPROM(int position) {
 }
 
 //// calibration and default preset initialization
-//void ViaUI::factoryReset(int sig) {
+//void ViaUI::factoryReset(int32_t sig) {
 //	switch (sig) {
 //	case ENTRY_SIG:
 //		UI_TIMER_RESET

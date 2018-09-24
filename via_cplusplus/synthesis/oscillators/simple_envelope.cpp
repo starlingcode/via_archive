@@ -9,7 +9,7 @@
 
 void SimpleEnvelope::parseControls(ViaControls * controls, ViaInputStreams * inputs) {
 
-	int releaseMod = -inputs->cv2Samples[0];
+	int32_t releaseMod = -inputs->cv2Samples[0];
 	releaseMod += 32767;
 
 	releaseMod = releaseMod >> 4;
@@ -22,13 +22,13 @@ void SimpleEnvelope::parseControls(ViaControls * controls, ViaInputStreams * inp
 void SimpleEnvelope::advance(ViaInputStreams * inputs,
 		uint32_t * wavetable) {
 
-	int phaseWrapper;
+	int32_t phaseWrapper;
 
 	increment = (this->*incrementArbiter)();
 
 	trigger = 1;
 
-	int localPhase = phase;
+	int32_t localPhase = phase;
 
 	localPhase = (localPhase + increment);
 
@@ -52,7 +52,7 @@ void SimpleEnvelope::advance(ViaInputStreams * inputs,
 	// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
 	// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
 
-	int atBIndicator = ((uint32_t)(localPhase - AT_B_PHASE) >> 31) - ((uint32_t)(previousPhase - AT_B_PHASE) >> 31);
+	int32_t atBIndicator = ((uint32_t)(localPhase - AT_B_PHASE) >> 31) - ((uint32_t)(previousPhase - AT_B_PHASE) >> 31);
 
 	phaseWrapper += atBIndicator;
 
@@ -68,7 +68,7 @@ void SimpleEnvelope::advance(ViaInputStreams * inputs,
 
 }
 
-int SimpleEnvelope::attackState(void) {
+int32_t SimpleEnvelope::attackState(void) {
 
 	switch (phaseEvent) {
 
@@ -82,7 +82,7 @@ int SimpleEnvelope::attackState(void) {
 	}
 }
 
-int SimpleEnvelope::releaseState(void) {
+int32_t SimpleEnvelope::releaseState(void) {
 
 	if (trigger == 0) {
 		incrementArbiter = &SimpleEnvelope::retriggerState;
@@ -101,7 +101,7 @@ int SimpleEnvelope::releaseState(void) {
 	};
 }
 
-int SimpleEnvelope::retriggerState(void) {
+int32_t SimpleEnvelope::retriggerState(void) {
 
 	switch (phaseEvent) {
 
@@ -115,7 +115,7 @@ int SimpleEnvelope::retriggerState(void) {
 	}
 }
 
-int SimpleEnvelope::restingState(void) {
+int32_t SimpleEnvelope::restingState(void) {
 
 	if (trigger == 0) {
 		incrementArbiter = &SimpleEnvelope::attackState;

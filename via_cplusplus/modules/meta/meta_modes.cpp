@@ -7,7 +7,7 @@
 
 #include "meta.hpp"
 
-void ViaMeta::handleButton1ModeChange(int mode) {
+void ViaMeta::handleButton1ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case nosampleandhold:
@@ -33,13 +33,13 @@ void ViaMeta::handleButton1ModeChange(int mode) {
 	setSH(0, 0);
 }
 
-void ViaMeta::handleButton2ModeChange(int mode) {
+void ViaMeta::handleButton2ModeChange(int32_t mode) {
 
 	switchWavetable(wavetableArray[metaUI.FREQ_MODE][mode]);
 
 }
 
-void ViaMeta::handleButton3ModeChange(int mode) {
+void ViaMeta::handleButton3ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case audio:
@@ -85,7 +85,7 @@ void ViaMeta::handleButton3ModeChange(int mode) {
 
 }
 
-void ViaMeta::handleButton4ModeChange(int mode) {
+void ViaMeta::handleButton4ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case noretrigger:
@@ -110,13 +110,13 @@ void ViaMeta::handleButton4ModeChange(int mode) {
 
 }
 
-void ViaMeta::handleButton5ModeChange(int mode) {
+void ViaMeta::handleButton5ModeChange(int32_t mode) {
 
 	switchWavetable(wavetableArray[metaUI.FREQ_MODE][mode]);
 
 }
 
-void ViaMeta::handleButton6ModeChange(int mode) {
+void ViaMeta::handleButton6ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case noloop:
@@ -141,12 +141,12 @@ void ViaMeta::handleButton6ModeChange(int mode) {
 
 }
 
-void ViaMeta::handleAux1ModeChange(int mode) {
+void ViaMeta::handleAux1ModeChange(int32_t mode) {
 
 
 }
 
-void ViaMeta::handleAux2ModeChange(int mode) {
+void ViaMeta::handleAux2ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case releaseGate:
@@ -159,7 +159,7 @@ void ViaMeta::handleAux2ModeChange(int mode) {
 
 }
 
-void ViaMeta::handleAux3ModeChange(int mode) {
+void ViaMeta::handleAux3ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case pitchMorphAmp:
@@ -182,7 +182,7 @@ void ViaMeta::handleAux3ModeChange(int mode) {
 
 }
 
-void ViaMeta::handleAux4ModeChange(int mode) {
+void ViaMeta::handleAux4ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case phasor:

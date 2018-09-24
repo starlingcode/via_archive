@@ -55,12 +55,12 @@ void ViaScanner::halfTransferCallback(void) {
 	scanner.reverse = reverseBuffer;
 
 	scanner.fillBuffer(&inputs, &controls,
-			(int *) wavetableXRead, (int *) wavetableYRead,
+			(int32_t *) wavetableXRead, (int32_t *) wavetableYRead,
 			0, SCANNER_BUFFER_SIZE);
 
-	arm_shift_q31((q31_t *) scanner.xInput, -4, (q31_t *) outputs.dac3Samples, 8);
+	VIA_SHIFT_Q31((q31_t *) scanner.xInput, -4, (q31_t *) outputs.dac3Samples, 8);
 
-	for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
+	for (int32_t i = 0; i < SCANNER_BUFFER_SIZE; i++) {
 		outputs.dac2Samples[i] = scanner.altitude[i];
 		outputs.dac1Samples[i] = 4095 - scanner.altitude[i];
 		outputs.dac3Samples[i] = (fix16_mul(scanner.xIndexBuffer[i],
@@ -80,12 +80,12 @@ void ViaScanner::transferCompleteCallback(void) {
 	scanner.reverse = reverseBuffer + SCANNER_BUFFER_SIZE;
 
 	scanner.fillBuffer(&inputs, &controls,
-			(int *) wavetableXRead, (int *) wavetableYRead,
+			(int32_t *) wavetableXRead, (int32_t *) wavetableYRead,
 			SCANNER_BUFFER_SIZE, SCANNER_BUFFER_SIZE);
 
-	arm_shift_q31((q31_t *) scanner.xInput, -4, ((q31_t *) outputs.dac3Samples) + 8, 8);
+	VIA_SHIFT_Q31((q31_t *) scanner.xInput, -4, ((q31_t *) outputs.dac3Samples) + 8, 8);
 
-	for (int i = 0; i < SCANNER_BUFFER_SIZE; i++) {
+	for (int32_t i = 0; i < SCANNER_BUFFER_SIZE; i++) {
 		outputs.dac2Samples[i + SCANNER_BUFFER_SIZE] = scanner.altitude[i];
 		outputs.dac1Samples[i + SCANNER_BUFFER_SIZE] = 4095 - scanner.altitude[i];
 		outputs.dac3Samples[i + SCANNER_BUFFER_SIZE] = (fix16_mul(scanner.xIndexBuffer[i],
@@ -105,25 +105,25 @@ void ViaScanner::transferCompleteCallback(void) {
 
 void ViaScanner::cv2HalfTransferCallback(void) {
 
-	arm_offset_q31(((q31_t *) inputs.cv2Samples), 32767, (q31_t *) scanner.xInput, SCANNER_BUFFER_SIZE);
+	VIA_OFFSET_Q31(((q31_t *) inputs.cv2Samples), 32767, (q31_t *) scanner.xInput, SCANNER_BUFFER_SIZE);
 
 }
 
 void ViaScanner::cv2TransferCompleteCallback(void) {
 
-	arm_offset_q31(((q31_t *) inputs.cv2Samples) + SCANNER_BUFFER_SIZE, 32767, (q31_t *) scanner.xInput, SCANNER_BUFFER_SIZE);
+	VIA_OFFSET_Q31(((q31_t *) inputs.cv2Samples) + SCANNER_BUFFER_SIZE, 32767, (q31_t *) scanner.xInput, SCANNER_BUFFER_SIZE);
 
 }
 
 void ViaScanner::cv3HalfTransferCallback(void) {
 
-	arm_offset_q31(((q31_t *) inputs.cv3Samples), 32767, (q31_t *) scanner.yInput, SCANNER_BUFFER_SIZE);
+	VIA_OFFSET_Q31(((q31_t *) inputs.cv3Samples), 32767, (q31_t *) scanner.yInput, SCANNER_BUFFER_SIZE);
 
 }
 
 void ViaScanner::cv3TransferCompleteCallback(void) {
 
-	arm_offset_q31(((q31_t *) inputs.cv3Samples)  + SCANNER_BUFFER_SIZE, 32767, (q31_t *) scanner.yInput, SCANNER_BUFFER_SIZE);
+	VIA_OFFSET_Q31(((q31_t *) inputs.cv3Samples)  + SCANNER_BUFFER_SIZE, 32767, (q31_t *) scanner.yInput, SCANNER_BUFFER_SIZE);
 }
 
 void ViaScanner::slowConversionCallback(void) {
