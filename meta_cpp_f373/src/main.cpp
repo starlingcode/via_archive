@@ -146,7 +146,6 @@ int main(void)
   mainHardwareInit();
   module.ioStreamInit();
 
-
   module.setSH(0, 0);
 
   /* USER CODE END 2 */
