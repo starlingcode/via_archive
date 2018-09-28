@@ -386,7 +386,7 @@ static inline int32_t readBuffer(buffer* buffer, int32_t Xn) {
 
 static inline int32_t __USAT(int32_t X, int32_t Y) {
 
-	if (X > Y) {
+	if (X > ((1 << Y) - 1)) {
 		return Y;
 	} else if (X < 0) {
 		return 0;
@@ -397,9 +397,9 @@ static inline int32_t __USAT(int32_t X, int32_t Y) {
 }
 
 static inline int32_t __SSAT(int32_t X, int32_t Y) {
-	if (X > Y) {
+	if (X > ((1 << Y) - 1)) {
 		return Y;
-	} else if (X < -Y) {
+	} else if (X < (-(1 << Y) + 1)) {
 		return -Y;
 	} else {
 		return X;
@@ -525,7 +525,7 @@ static inline int32_t getSampleQuinticSpline(uint32_t phase, uint32_t morph,
 
 	*delta = ((uint32_t) (sample3 - sample2)) >> 31;
 
-	return __USAT(out, 12);
+	return __USAT(out, 15);
 }
 
 /*

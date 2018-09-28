@@ -46,7 +46,7 @@ void metaTouchLink (void * uiVoid) {
 }
 
 void ViaMeta::ViaMetaUI::defaultEnterMenuCallback(void) {
-	//this_module.clearLEDs();
+	this_module.clearLEDs();
 	this_module.runtimeDisplay = 1;
 }
 void ViaMeta::ViaMetaUI::newModeEnterMenuCallback(void) {

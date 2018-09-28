@@ -41,7 +41,7 @@ typedef int64_t q63_t;
 #define VIA_OFFSET_Q31 not_arm_offset_q31
 #define VIA_SHIFT_Q31 not_arm_shift_q31
 
-void not_arm_scale_q31(q31_t *, int32_t, int32_t, q31_t *, uint32_t);
+void not_arm_scale_q31(q31_t *, q31_t, int8_t, q31_t *, uint32_t);
 void not_arm_offset_q31(q31_t *, int32_t, q31_t *, uint32_t);
 void not_arm_shift_q31(q31_t *, int32_t, q31_t *, uint32_t);
 

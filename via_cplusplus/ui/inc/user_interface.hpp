@@ -55,9 +55,9 @@ public:
 	// UI States
 	void (ViaUI::*state)(int32_t);
 
-	int32_t virtualTimer;
-	int32_t virtualTimerEnable;
-	int32_t virtualTimerOverflow;
+	int32_t virtualTimer = 0;
+	int32_t virtualTimerEnable = 0;
+	int32_t virtualTimerOverflow = 0;
 
 	int32_t * button1;
 	int32_t * button2;
@@ -168,21 +168,32 @@ public:
 
 #ifdef BUILD_VIRTUAL
 
-	inline void timerReset(void) {
-		virtualTimer = 1;
+
+
+	void timerReset(void) {
+		virtualTimer = 0;
 	}
-	inline void timerEnable(void) {
+	void timerEnable(void) {
 		virtualTimerEnable = 1;
 	}
-	inline void timerDisable(void) {
+	void timerDisable(void) {
 		virtualTimerEnable = 0;
 	}
-	inline void timerSetOverflow(int32_t arr) {
+	void timerSetOverflow(int32_t arr) {
 		virtualTimerOverflow = arr;
 	}
-	inline int32_t timerRead(void) {
+	int32_t timerRead(void) {
 		return virtualTimer;
 	}
+
+	void incrementTimer(void) {
+		virtualTimer += virtualTimerEnable;
+		if (virtualTimer >= virtualTimerOverflow) {
+            virtualTimer = 0;
+            dispatch(TIMEOUT_SIG);
+        }
+	}
+
 #endif
 
 	void resetTimerMenu(void) {

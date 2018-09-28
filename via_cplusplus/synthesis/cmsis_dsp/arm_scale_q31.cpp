@@ -28,9 +28,9 @@
 
 #include "cmsis_dsp.hpp"
 
-extern "C" {
-
 #ifdef BUILD_F373
+
+extern "C" {
 
 /**
  * @ingroup groupMath
@@ -215,6 +215,8 @@ void arm_scale_q31(q31_t * pSrc, q31_t scaleFract, int8_t shift, q31_t * pDst,
 	}
 }
 
+}
+
 #endif
 
 #ifdef BUILD_VIRTUAL
@@ -290,7 +292,7 @@ if (sign == 0U)
 }
 else
 {
-	/* First part of the processing with loop unrolling.  Compute 4 outputs at a time.
+	 /*First part of the processing with loop unrolling.  Compute 4 outputs at a time.
 	 ** a second loop below computes the remaining 1 to 3 samples. */
 	while (blkCnt > 0U)
 	{
@@ -370,8 +372,6 @@ if (sign == 0) {
 
 
 #endif
-
-}
 
 /**
  * @} end of scale group

@@ -9,14 +9,6 @@
 
 void ViaControls::update(void) {
 
-	// TODO apply SIMD instructions?
-
-	// store the newest value in a ring buffer
-	writeBuffer(&cv1Buffer, cv1);
-	writeBuffer(&knob1Buffer, knob1);
-	writeBuffer(&knob2Buffer, knob2);
-	writeBuffer(&knob3Buffer, knob3);
-
 	// implement a running average on the control rate CV controls
 	cv1Sum = cv1 + cv1Sum - readBuffer(&cv1Buffer, 31);
 	knob1Sum = knob1 + knob1Sum - readBuffer(&knob1Buffer, 31);
@@ -28,6 +20,12 @@ void ViaControls::update(void) {
 	knob1Value = knob1Sum >> 5;
 	knob2Value = knob2Sum >> 5;
 	knob3Value = knob3Sum >> 5;
+
+	// store the newest value in a ring buffer
+	writeBuffer(&cv1Buffer, cv1);
+	writeBuffer(&knob1Buffer, knob1);
+	writeBuffer(&knob2Buffer, knob2);
+	writeBuffer(&knob3Buffer, knob3);
 
 }
 

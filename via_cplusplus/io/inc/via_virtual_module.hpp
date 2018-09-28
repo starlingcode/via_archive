@@ -36,6 +36,8 @@ public:
 	int32_t button5Input = 0;
 	int32_t button6Input = 0;
 
+
+
 	ViaControls controls;
 
 	int32_t bufferSize;
@@ -44,11 +46,14 @@ public:
 
 	void ioStreamInit() {
 
-		// assign module IO streams to virtual hook
+		// // assign module IO streams to virtual hook
+		// int
 
 	}
 
 	void initializeAuxOutputs(void) {
+
+		// not needed
 
 		// assign GPIO and LED to virtual module write location
 
