@@ -83,53 +83,54 @@ public:
 	 */
 
 	inline void setLogicA(int32_t high) {
-		aLogicOutput = high;
+		aLogicOutput = 1 + high;
 	}
 
 	inline void setAuxLogic(int32_t high) {
-		auxLogicOutput = high;
+		auxLogicOutput = 1 + high;
 	}
 
 	inline void setSH(int32_t sampleA, int32_t sampleB) {
 
-		shAOutput = sampleA;
-		shBOutput = sampleB;
+		shAOutput = 1 + sampleA;
+		shBOutput = 1 + sampleB;
 
 
 	}
 
 	inline void setLEDA(int32_t on) {
-		ledAOutput = on;
+		ledAOutput = 1 + on;
 	}
 
 	inline void setLEDB(int32_t on) {
-		ledBOutput = on;
+		ledBOutput = 1 + on;
 	}
 
 	inline void setLEDC(int32_t on) {
-		ledCOutput = on;
+		ledCOutput = 1 + on;
 	}
 
 	inline void setLEDD(int32_t on) {
-		ledDOutput = on;
+		ledDOutput = 1 + on;
 	}
+
+	enum ViaVirtualGPIO {
+		VIA_GPIO_NOP,
+		VIA_GPIO_LOW,
+		VIA_GPIO_HIGH
+	};
 
 	inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t auxLogic,
 			uint32_t shA, uint32_t shB) {
 
-		// LEDA_HIGH_MASK -> SH_A_SAMPLE_MASK >> 16 >> 1 (pin 8 to pin 7, F)
-		// LEDB_HIGH_MASK -> SH_B_SAMPLE_MASK >> 16 << 5 (pin 9 to pin 14, C)
-		// LEDC_HIGH_MASK -> ALOGIC_HIGH_MASK >> 16 >> 11 (pin 13 to pin 2, A)
-		// LEDD_HIGH_MASK -> BLOGIC_HIGH_MASK >> 16 >> 13 (pin 15 to pin 2, B)
+		logicA = GET_ALOGIC_VIRTUAL_MASK(logicA);
+		auxLogic = GET_EXPAND_LOGIC_VIRTUAL_MASK(auxLogic);
+		shA = GET_SH_A_VIRTUAL_MASK(shA);
+		shB = GET_SH_B_VIRTUAL_MASK(shB);
 
-		shA = !((shA >> 7) & 1);
-		shB = !((shB >> 8) & 1);
-		logicA = !((logicA >> 12) & 1);
-
-
-		setLEDA(shA);
-		setLEDB(shB);
-		setLEDC(logicA);
+		setLEDA(shA - 1);
+		setLEDB(shB - 1);
+		setLEDC(logicA - 1);
 
 		//combine the mask variables for a shared GPIO group with a bitwise or
 		aLogicOutput = (logicA);
@@ -144,6 +145,11 @@ public:
 
 	inline void setLogicOutputsLEDOff(uint32_t logicA, uint32_t auxLogic,
 			uint32_t shA, uint32_t shB) {
+
+		logicA = GET_ALOGIC_VIRTUAL_MASK(logicA);
+		auxLogic = GET_EXPAND_LOGIC_VIRTUAL_MASK(auxLogic);
+		shA = GET_SH_A_VIRTUAL_MASK(shA);
+		shB = GET_SH_B_VIRTUAL_MASK(shB);
 
 		//combine the mask variables for a shared GPIO group with a bitwise or
 		aLogicOutput = (logicA);

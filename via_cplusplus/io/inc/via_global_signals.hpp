@@ -15,23 +15,6 @@
 
 class ViaControls {
 
-	// uint32_t knob1Sum = 0;
-	// uint32_t knob2Sum = 0;
-	// uint32_t knob3Sum = 0;
-	// uint32_t cv1Sum = 0;
-
-	// buffer knob1Buffer;
-	// buffer knob2Buffer;
-	// buffer knob3Buffer;
-	// buffer cv1Buffer;
-
-#define knob2 controlRateInputs[3]
-#define knob3 controlRateInputs[1]
-#define knob1 controlRateInputs[2]
-#define cv1 (4095 - controlRateInputs[0])
-
-public:
-
 	uint32_t knob1Sum = 0;
 	uint32_t knob2Sum = 0;
 	uint32_t knob3Sum = 0;
@@ -41,6 +24,13 @@ public:
 	buffer knob2Buffer;
 	buffer knob3Buffer;
 	buffer cv1Buffer;
+
+#define knob2 controlRateInputs[3]
+#define knob3 controlRateInputs[1]
+#define knob1 controlRateInputs[2]
+#define cv1 (4095 - controlRateInputs[0])
+
+public:
 
 	ViaControls() {
 

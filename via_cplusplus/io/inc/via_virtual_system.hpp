@@ -32,6 +32,12 @@
 #define GET_SH_A_MASK(X) (SH_A_TRACK_MASK << (16*(X)))
 #define GET_SH_B_MASK(X) (SH_B_TRACK_MASK << (16*(X)))
 
+// should return 0 for no-op, 1 for set low, 2 for set high
+#define GET_ALOGIC_VIRTUAL_MASK(X) (((X >> 13) | (X >> 28)) & 0b11)
+#define GET_EXPAND_LOGIC_VIRTUAL_MASK(X) (((X >> 12) | (X >> 27)) & 0b11)
+#define GET_SH_A_VIRTUAL_MASK(X) (((X >> 8) | (X >> 23)) & 0b11)
+#define GET_SH_B_VIRTUAL_MASK(X) (((X >> 9) | (X >> 24)) & 0b11)
+
 /*
  * Touch sensors
  */
