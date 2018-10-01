@@ -84,8 +84,20 @@ void PllController::doPLL(void) {
 
 void PllController::generateFrequency(void) {
 
+#ifdef BUILD_F373
+
 	int32_t incrementCalc = ((((uint64_t)((uint64_t)WAVETABLE_LENGTH << 18) + pllNudge)) / (periodCount));
 	incrementCalc = fix48_mul(incrementCalc >> 8, fracMultiplier) + fix16_mul(incrementCalc >> 8, intMultiplier);
 	increment = __USAT(incrementCalc, 24);
+
+#endif
+
+#ifdef BUILD_VIRTUAL
+
+	int32_t incrementCalc = WAVETABLE_LENGTH / periodCount;
+	incrementCalc = fix48_mul(incrementCalc, fracMultiplier) + fix16_mul(incrementCalc, intMultiplier);
+	increment = __USAT(incrementCalc, 24);
+
+#endif
 
 }

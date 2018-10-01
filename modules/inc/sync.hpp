@@ -235,6 +235,10 @@ public:
 		syncUI.dispatch(sig);
 	};
 
+	void incrementVirtualTimer(void) {
+		pllController.virtualTimer++;
+	}
+
 };
 
 
