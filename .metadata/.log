@@ -7078,3 +7078,18 @@ Caused by: java.io.IOException: error=2, No such file or directory
 
 !ENTRY fr.ac6.mcu.ide 1 1 2018-09-07 01:05:49.779
 !MESSAGE Started RMI Server, listening on port 21112
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1000 2018-09-29 17:42:32.963
+!MESSAGE No repository found at http://download.eclipse.org/tools/gef/updates/releases/site.xml.
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1000 2018-09-29 17:42:35.983
+!MESSAGE No repository found at http://download.gna.org/eclox/update.
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1000 2018-09-29 17:42:36.772
+!MESSAGE No repository found at http://download.eclipse.org/tools/gef/update-site/releases/site.xml.
+
+!ENTRY org.eclipse.launchbar.core 2 0 2018-09-29 17:44:33.290
+!MESSAGE Enablement expression is missing for descriptor type org.eclipse.cdt.debug.core.coreBuildDescriptorType
+
+!ENTRY org.eclipse.launchbar.core 2 0 2018-09-29 17:44:33.292
+!MESSAGE Enablement expression is missing for config provider for org.eclipse.cdt.debug.core.coreBuildDescriptorType

@@ -1,0 +1,17 @@
+22:35:01 **** Incremental Build of configuration Debug for project testcpp ****
+make -j7 all 
+Building file: ../test.cpp
+Invoking: MCU G++ Compiler
+/Users/willmitchell/Documents/stm32_workspace/testcpp/Debug
+arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -DSTM32 -DSTM32F3 -DSTM32F37 -DSTM32F373CCTx -DDEBUG -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fno-exceptions -fno-rtti -MMD -MP -MF"test.d" -MT"test.o" -o "test.o" "../test.cpp"
+Finished building: ../test.cpp
+ 
+arm-none-eabi-ar: creating libtestcpp.a
+Building target: libtestcpp.a
+Invoking: MCU GCC Archiver
+arm-none-eabi-ar -r  "libtestcpp.a" @"objects.list"  
+Finished building target: libtestcpp.a
+ 
+
+22:35:01 Build Finished (took 91ms)
+

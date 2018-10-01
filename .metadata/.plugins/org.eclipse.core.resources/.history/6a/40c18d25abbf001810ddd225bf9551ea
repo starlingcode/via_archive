@@ -1,0 +1,117 @@
+/*
+ * dual_euclidean.c
+ *
+ *  Created on: Aug 21, 2018
+ *      Author: willmitchell
+ */
+
+#include <sequencers.hpp>
+
+#include "dsp.hpp"
+
+#define RUNTIME_DISPLAY 1
+
+void DualEuclidean::parseControls(ViaControls * controls,
+		ViaInputStreams * inputs) {
+
+	//determine a pattern index for the a and b grids and the offset
+	//the positve going excursion of the cv scales all the way to the maximum value
+	//the negative does the same to the maximum value
+
+	int cv2Sample = (int) -inputs->cv2Samples[0];
+	cv2Sample = cv2Sample >> 4;
+	cv2Sample += 2048;
+	int cv3Sample = (int) -inputs->cv3Samples[0];
+	cv3Sample = cv3Sample >> 4;
+	cv3Sample += 2048;
+
+	if ((4095 - controls->cv1Value) >= 2048) {
+		aPatternMorph = (fix16_lerp(controls->knob1Value, 4095,
+				((4095 - controls->cv1Value) - 2048) << 5)) >> 9;
+	} else {
+		aPatternMorph = (fix16_lerp(0, controls->knob1Value,
+				(4095 - controls->cv1Value) << 5)) >> 9;
+	}
+	if ((4095 - cv2Sample) >= 2048) {
+		offset = (fix16_lerp(controls->knob2Value, 4095,
+				((4095 - cv2Sample) - 2048) << 5)) >> 8;
+	} else {
+		offset = (fix16_lerp(0, controls->knob2Value,
+				(4095 - cv2Sample) << 5)) >> 8;
+	}
+	if ((4095 - cv3Sample) >= 2048) {
+		bPatternMorph = (fix16_lerp(controls->knob3Value, 4095,
+				((4095 - cv3Sample) - 2048) << 5)) >> 9;
+	} else {
+		bPatternMorph = (fix16_lerp(0, controls->knob3Value,
+				(4095 - cv3Sample) << 5)) >> 9;
+	}
+
+	//get the lengths of the currently indexed patterns
+
+	aLength = currentABank->aLengths[aPatternMorph];
+	bLength = currentBBank->bLengths[bPatternMorph];
+
+}
+
+void DualEuclidean::processClock(void) {
+
+	uint32_t aPatternValue;
+	uint32_t bPatternValue;
+
+	//TODO relate offset to scale lengths
+	aPatternIndex = (aCounter) % aLength;
+	bPatternIndex = (bCounter + offset) % bLength;
+
+	//lookup the logic values
+	aPatternValue = currentABank->aPatternBank[aPatternMorph][aPatternIndex];
+	bPatternValue = currentBBank->bPatternBank[bPatternMorph][bPatternIndex];
+
+	//increment the sequence counter
+	aCounter = (aCounter + 1) % aLength;
+	bCounter = (bCounter + 1) % bLength;
+
+	// jump to the conditional check appropriate for the currently selected logic operation
+
+#define __OR 0
+#define __AND 1
+#define __XOR 2
+#define __SR 3
+
+	switch (auxLogicMode) {
+	case __OR:
+		if (aPatternValue || bPatternValue) {
+			logicOutput = 1;
+		} else {
+			logicOutput = 0;
+		}
+		break;
+	case __AND:
+		if (aPatternValue && bPatternValue) {
+			logicOutput = 1;
+		} else {
+			logicOutput = 0;
+		}
+		break;
+	case __XOR:
+		if (aPatternValue ^ bPatternValue) {
+			logicOutput = 1;
+		} else {
+			logicOutput = 0;
+		}
+		break;
+	case __SR:
+		// nand instead?
+		if (logicOutput) {
+			logicOutput = aPatternValue;
+		} else {
+			logicOutput = bPatternValue;
+		}
+		break;
+	}
+
+	aOutput = aPatternValue;
+	bOutput = bPatternValue;
+
+}
+

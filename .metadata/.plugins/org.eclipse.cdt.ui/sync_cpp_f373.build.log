@@ -1,0 +1,6 @@
+23:02:02 **** Incremental Build of configuration Debug for project sync_cpp_f373 ****
+make -j7 all 
+make: Nothing to be done for `all'.
+
+23:02:02 Build Finished (took 89ms)
+
