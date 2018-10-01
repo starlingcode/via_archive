@@ -26,6 +26,10 @@ void ViaScanner::ViaScannerUI::initialize(void) {
 	button6 = (int32_t *) &BUTTON6SENSOR;
 
 #endif
+
+	state = &ViaUI::defaultMenu;
+	transition(&ViaUI::defaultMenu);
+
 }
 
 void scannerTouchLink (void * uiVoid) {
