@@ -1,0 +1,69 @@
+23:42:06 **** Build of configuration Debug for project via_c ****
+make -j7 all 
+Building file: ../ui/Src/ui_helpers.c
+Building file: ../ui/Src/ui_main.c
+Building file: ../ui/Src/ui_menus.c
+Building file: ../ui/Src/ui_presets.c
+Building file: ../ui/Src/ui_save_recall.c
+Building file: ../synthesis/signal_processors/signal_processor_resources.c
+Building file: ../synthesis/signal_processors/three_axis_scanner.c
+Invoking: MCU GCC Compiler
+Invoking: MCU GCC Compiler
+Invoking: MCU GCC Compiler
+Invoking: MCU GCC Compiler
+Invoking: MCU GCC Compiler
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/via_c/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_c/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Include"  -O3 -g3 -w -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"ui/Src/ui_main.d" -MT"ui/Src/ui_main.o" -o "ui/Src/ui_main.o" "../ui/Src/ui_main.c"
+/Users/willmitchell/Documents/stm32_workspace/via_c/Debug
+/Users/willmitchell/Documents/stm32_workspace/via_c/Debug
+/Users/willmitchell/Documents/stm32_workspace/via_c/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_c/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Include"  -O3 -g3 -w -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"ui/Src/ui_menus.d" -MT"ui/Src/ui_menus.o" -o "ui/Src/ui_menus.o" "../ui/Src/ui_menus.c"
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_c/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Include"  -O3 -g3 -w -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"ui/Src/ui_save_recall.d" -MT"ui/Src/ui_save_recall.o" -o "ui/Src/ui_save_recall.o" "../ui/Src/ui_save_recall.c"
+/Users/willmitchell/Documents/stm32_workspace/via_c/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_c/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Include"  -O3 -g3 -w -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"ui/Src/ui_presets.d" -MT"ui/Src/ui_presets.o" -o "ui/Src/ui_presets.o" "../ui/Src/ui_presets.c"
+/Users/willmitchell/Documents/stm32_workspace/via_c/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_c/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Include"  -O3 -g3 -w -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"synthesis/signal_processors/signal_processor_resources.d" -MT"synthesis/signal_processors/signal_processor_resources.o" -o "synthesis/signal_processors/signal_processor_resources.o" "../synthesis/signal_processors/signal_processor_resources.c"
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_c/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Include"  -O3 -g3 -w -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"synthesis/signal_processors/three_axis_scanner.d" -MT"synthesis/signal_processors/three_axis_scanner.o" -o "synthesis/signal_processors/three_axis_scanner.o" "../synthesis/signal_processors/three_axis_scanner.c"
+Invoking: MCU GCC Compiler
+/Users/willmitchell/Documents/stm32_workspace/via_c/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F373xC -I"/Users/willmitchell/Documents/stm32_workspace/via_c/inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Device/ST/STM32F3xx/Include" -I"/Users/willmitchell/Documents/stm32_workspace/via_c/Drivers/CMSIS/Include"  -O3 -g3 -w -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"ui/Src/ui_helpers.d" -MT"ui/Src/ui_helpers.o" -o "ui/Src/ui_helpers.o" "../ui/Src/ui_helpers.c"
+../ui/Src/ui_presets.c:1:10: fatal error: user_interface.h: No such file or directory
+ #include "user_interface.h"
+          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+../ui/Src/ui_menus.c:1:10: fatal error: user_interface.h: No such file or directory
+ #include "user_interface.h"
+          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+../synthesis/signal_processors/signal_processor_resources.c:8:10: fatal error: signal_processors.h: No such file or directory
+ #include "signal_processors.h"
+          ^~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+../ui/Src/ui_main.c:1:10: fatal error: user_interface.h: No such file or directory
+ #include "user_interface.h"
+          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+../synthesis/signal_processors/three_axis_scanner.c:8:10: fatal error: signal_processors.h: No such file or directory
+ #include "signal_processors.h"
+          ^~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+../ui/Src/ui_save_recall.c:1:10: fatal error: user_interface.h: No such file or directory
+ #include "user_interface.h"
+          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+make: *** [synthesis/signal_processors/signal_processor_resources.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [ui/Src/ui_presets.o] Error 1
+make: *** [ui/Src/ui_menus.o] Error 1
+make: *** [ui/Src/ui_main.o] Error 1
+make: *** [synthesis/signal_processors/three_axis_scanner.o] Error 1
+make: *** [ui/Src/ui_save_recall.o] Error 1
+../ui/Src/ui_helpers.c:1:10: fatal error: user_interface.h: No such file or directory
+ #include "user_interface.h"
+          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+make: *** [ui/Src/ui_helpers.o] Error 1
+
+23:42:06 Build Finished (took 149ms)
+

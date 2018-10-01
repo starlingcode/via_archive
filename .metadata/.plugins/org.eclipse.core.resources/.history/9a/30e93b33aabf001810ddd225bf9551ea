@@ -1,0 +1,209 @@
+/*
+ * trigseq.h
+ *
+ *  Created on: Aug 21, 2018
+ *      Author: willmitchell
+ */
+
+#ifndef INC_TRIGSEQ_HPP_
+#define INC_TRIGSEQ_HPP_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "sequencers.hpp"
+#include <via_platform_binding.hpp>
+#include <user_interface.hpp>
+
+#ifdef __cplusplus
+}
+#endif
+
+/*
+ *
+ * Modes
+ *
+ */
+
+// Mode enums and mode variables
+#define SH_A_MODE button1Mode
+#define AND_A_MODE button2Mode
+#define A_PATTERN_BANK button3Mode
+#define SH_B_MODE button4Mode
+#define AND_B_MODE button5Mode
+#define B_PATTERN_BANK button6Mode
+
+#define LOGIC_MODE aux2Mode
+
+#define numButton1Modes 3
+#define numButton2Modes 2
+#define numButton3Modes 8
+#define numButton4Modes 3
+#define numButton5Modes 2
+#define numButton6Modes 8
+#define numAux1Modes 0
+#define numAux2Modes 4
+#define numAux3Modes 0
+#define numAux4Modes 0
+
+enum trigseq_button1Modes {
+	aNoSH, aResample, aSampleTrack
+};
+enum trigseq_button2Modes {
+	andAoff, andAon
+};
+enum trigseq_button3Modes {
+	aPatternBankSelections
+};
+enum trigseq_button4Modes {
+	bNoSH, bResample, bSampleTrack
+};
+enum trigseq_button5Modes {
+	andBoff, andBon
+};
+enum trigseq_button6Modes {
+	bPatternBankSelections
+};
+enum trigseq_aux1Modes {
+	trigseq_aux1NotUsed
+};
+enum trigseq_aux2Modes {
+	_and, _or, _xor, _sr
+};
+enum trigseq_aux3Modes {
+	trigseq_aux3NotUsed
+};
+enum trigseq_aux4Modes {
+	trigseq_aux4NotUsed
+};
+
+#define TRIGSEQ_BUFFER_SIZE 1
+
+void trigseqTouchLink (void *);
+
+class ViaTrigseq : public ViaModule {
+
+public:
+
+	class ViaTrigseqUI: public ViaUI {
+
+	public:
+
+		ViaTrigseq& this_module;
+
+		void button1TapCallback(void);
+		void button1HoldCallback(void);
+		void button2TapCallback(void);
+		void button2HoldCallback(void);
+		void button3TapCallback(void);
+		void button3HoldCallback(void);
+		void button4TapCallback(void);
+		void button4HoldCallback(void);
+		void button5TapCallback(void);
+		void button5HoldCallback(void);
+		void button6TapCallback(void);
+		void button6HoldCallback(void);
+
+		void aux1TapCallback(void);
+		void aux1HoldCallback(void);
+		void aux2TapCallback(void);
+		void aux2HoldCallback(void);
+		void aux3TapCallback(void);
+		void aux3HoldCallback(void);
+		void aux4TapCallback(void);
+		void aux4HoldCallback(void);
+
+		void defaultEnterMenuCallback(void);
+		void newModeEnterMenuCallback(void);
+		void newAuxModeEnterMenuCallback(void);
+		void presetEnterMenuCallback(void);
+
+		void button1EnterMenuCallback(void);
+		void button2EnterMenuCallback(void);
+		void button3EnterMenuCallback(void);
+		void button4EnterMenuCallback(void);
+		void button5EnterMenuCallback(void);
+		void button6EnterMenuCallback(void);
+
+		void aux1EnterMenuCallback(void);
+		void aux2EnterMenuCallback(void);
+		void aux3EnterMenuCallback(void);
+		void aux4EnterMenuCallback(void);
+
+		void initialize(void);
+
+		ViaTrigseqUI(ViaTrigseq& x): this_module(x) {
+			linkUI((void *) &trigseqTouchLink, (void *) this);
+		}
+
+	};
+
+	void handleButton1ModeChange(int);
+	void handleButton2ModeChange(int);
+	void handleButton3ModeChange(int);
+	void handleButton4ModeChange(int);
+	void handleButton5ModeChange(int);
+	void handleButton6ModeChange(int);
+	void handleAux1ModeChange(int);
+	void handleAux2ModeChange(int);
+	void handleAux3ModeChange(int);
+	void handleAux4ModeChange(int);
+
+	/*
+	 *
+	 * Tables
+	 *
+	 */
+
+	const dualBooleanSequence *patternBank[8];
+
+	void initializePatterns(void);
+
+	/*
+	 *
+	 * Mode functions
+	 *
+	 */
+
+	void init(void);
+
+	ViaTrigseqUI trigseqUI;
+
+	int runtimeDisplay;
+
+	DualEuclidean sequencer;
+
+	SoftGate gateController;
+
+	/*
+	 *
+	 * Event meta_handlers
+	 *
+	 */
+
+	ViaTrigseq() : trigseqUI(*this) {
+		init();
+	}
+
+	void mainRisingEdgeCallback(void);
+	void mainFallingEdgeCallback(void);
+
+	void auxRisingEdgeCallback(void);
+	void auxFallingEdgeCallback(void);
+
+	void buttonPressedCallback(void);
+	void buttonReleasedCallback(void);
+
+	void ioProcessCallback(void);
+	void halfTransferCallback(void);
+	void transferCompleteCallback(void);
+	void slowConversionCallback(void);
+
+	void ui_dispatch(int sig) {
+		trigseqUI.dispatch(sig);
+	};
+
+};
+
+#endif /* INC_TRIGSEQ_HPP_ */
