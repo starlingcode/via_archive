@@ -146,6 +146,8 @@ public:
 	// initial setup of UI
 	virtual void initialize(void) = 0;
 
+	virtual ~ViaUI(void) {};
+
 #ifdef BUILD_F373
 
 	inline void timerReset(void) {
