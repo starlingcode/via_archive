@@ -98,46 +98,46 @@ public:
 
 		ViaScanner& this_module;
 
-		void button1TapCallback(void);
-		void button1HoldCallback(void);
-		void button2TapCallback(void);
-		void button2HoldCallback(void);
-		void button3TapCallback(void);
-		void button3HoldCallback(void);
-		void button4TapCallback(void);
-		void button4HoldCallback(void);
-		void button5TapCallback(void);
-		void button5HoldCallback(void);
-		void button6TapCallback(void);
-		void button6HoldCallback(void);
+		void button1TapCallback(void) override;
+		void button1HoldCallback(void) override;
+		void button2TapCallback(void) override;
+		void button2HoldCallback(void) override;
+		void button3TapCallback(void) override;
+		void button3HoldCallback(void) override;
+		void button4TapCallback(void) override;
+		void button4HoldCallback(void) override;
+		void button5TapCallback(void) override;
+		void button5HoldCallback(void) override;
+		void button6TapCallback(void) override;
+		void button6HoldCallback(void) override;
 
-		void aux1TapCallback(void);
-		void aux1HoldCallback(void);
-		void aux2TapCallback(void);
-		void aux2HoldCallback(void);
-		void aux3TapCallback(void);
-		void aux3HoldCallback(void);
-		void aux4TapCallback(void);
-		void aux4HoldCallback(void);
+		void aux1TapCallback(void) override;
+		void aux1HoldCallback(void) override;
+		void aux2TapCallback(void) override;
+		void aux2HoldCallback(void) override;
+		void aux3TapCallback(void) override;
+		void aux3HoldCallback(void) override;
+		void aux4TapCallback(void) override;
+		void aux4HoldCallback(void) override;
 
-		void defaultEnterMenuCallback(void);
-		void newModeEnterMenuCallback(void);
-		void newAuxModeEnterMenuCallback(void);
-		void presetEnterMenuCallback(void);
+		void defaultEnterMenuCallback(void) override;
+		void newModeEnterMenuCallback(void) override;
+		void newAuxModeEnterMenuCallback(void) override;
+		void presetEnterMenuCallback(void) override;
 
-		void button1EnterMenuCallback(void);
-		void button2EnterMenuCallback(void);
-		void button3EnterMenuCallback(void);
-		void button4EnterMenuCallback(void);
-		void button5EnterMenuCallback(void);
-		void button6EnterMenuCallback(void);
+		void button1EnterMenuCallback(void) override;
+		void button2EnterMenuCallback(void) override;
+		void button3EnterMenuCallback(void) override;
+		void button4EnterMenuCallback(void) override;
+		void button5EnterMenuCallback(void) override;
+		void button6EnterMenuCallback(void) override;
 
-		void aux1EnterMenuCallback(void);
-		void aux2EnterMenuCallback(void);
-		void aux3EnterMenuCallback(void);
-		void aux4EnterMenuCallback(void);
+		void aux1EnterMenuCallback(void) override;
+		void aux2EnterMenuCallback(void) override;
+		void aux3EnterMenuCallback(void) override;
+		void aux4EnterMenuCallback(void) override;
 
-		void initialize(void);
+		void initialize(void) override;
 
 		ViaScannerUI(ViaScanner& x): this_module(x) {
 			linkUI((void *) &scannerTouchLink, (void *) this);
