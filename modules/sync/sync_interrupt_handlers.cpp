@@ -12,7 +12,7 @@ void ViaSync::mainRisingEdgeCallback(void) {
 	// should these be initialized to point to the same address?
 
 	syncWavetable.increment = pllController.increment;
-	syncWavetable.phaseReset = pllController.phaseReset;
+	syncWavetable.phase = pllController.phaseSignal;
 
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(pllController.ratioChange);
 	pllController.tapTempo = 0;

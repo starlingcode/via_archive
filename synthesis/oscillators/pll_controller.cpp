@@ -58,8 +58,8 @@ void PllController::doPLL(void) {
 			case TRUE_PLL:
 				pllNudge = 0;
 				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
-				pllNudge -= phase * !(phase >> 24);
-				pllNudge = pllNudge/(intMultiplier >> 15);
+				//pllNudge -= phase * !(phase >> 24);
+				pllNudge = pllNudge/(intMultiplier >> 16);
 				if (pllNudge > 65535) {
 					pllNudge = 65535;
 				} else if (pllNudge < -65535) {
@@ -69,8 +69,9 @@ void PllController::doPLL(void) {
 				break;
 			case HARD_RESET:
 				pllNudge = 0;
-				phaseReset = 0;
+				//phaseReset = 0;
 				pllCounter = 0;
+				phaseSignal = phaseOffset;
 				break;
 			default:
 				pllCounter = 0;
@@ -95,8 +96,8 @@ void PllController::generateFrequency(void) {
 
 #ifdef BUILD_F373
 
-	int32_t incrementCalc = ((((uint64_t)((uint64_t)WAVETABLE_LENGTH << 18) + pllNudge)) / (periodCount));
-	incrementCalc = fix48_mul(incrementCalc >> 8, fracMultiplier) + fix16_mul(incrementCalc >> 8, intMultiplier);
+	int32_t incrementCalc = ((((uint64_t)((uint64_t)(WAVETABLE_LENGTH  + pllNudge) * 720))) / (periodCount));
+	incrementCalc = fix48_mul(incrementCalc, fracMultiplier) + fix16_mul(incrementCalc, intMultiplier);
 	increment = __USAT(incrementCalc, 24);
 
 #endif
