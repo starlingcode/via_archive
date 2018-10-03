@@ -60,7 +60,7 @@ void PllController::doPLL(void) {
 			case TRUE_PLL:
 				pllNudge = 0;
 				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
-				//pllNudge -= phase * !(phase >> 24);
+				pllNudge -= phase * !(phase >> 24);
 				pllNudge = ((int64_t)pllNudge << 16) / intMultiplier;
 				pllCounter = gcd;
 				break;
