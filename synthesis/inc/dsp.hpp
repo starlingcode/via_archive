@@ -399,8 +399,8 @@ static inline int32_t __USAT(int32_t X, int32_t Y) {
 static inline int32_t __SSAT(int32_t X, int32_t Y) {
 	if (X > ((1 << Y) - 1)) {
 		return ((1 << Y) - 1);
-	} else if (X < (-(1 << Y) + 1)) {
-		return (-(1 << Y) + 1);
+	} else if (X < ((-1 << Y) + 1)) {
+		return ((-1 << Y) + 1);
 	} else {
 		return X;
 	}

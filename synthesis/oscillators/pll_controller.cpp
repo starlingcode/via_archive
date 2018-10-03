@@ -39,7 +39,7 @@ void PllController::doPLL(void) {
 
 	int32_t localPhaseOffset = fix48_mul(phaseOffset, fracMultiplier) + fix16_mul(phaseOffset, intMultiplier);
 
-	int32_t phase = (phaseSignal + localPhaseOffset) & ((1 << 25) - 1);
+	int32_t phase = (phaseSignal - phaseModSignal + localPhaseOffset) & ((1 << 25) - 1);
 
 	// this switch is always 0 unless pllCounter is 0, in which case its sync mode
 
@@ -61,14 +61,15 @@ void PllController::doPLL(void) {
 				pllNudge = 0;
 				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
 				pllNudge -= phase * !(phase >> 24);
-				pllNudge = ((int64_t)pllNudge << 16) / intMultiplier;
+				pllNudge = __SSAT(pllNudge, 16);
+
 				pllCounter = gcd;
 				break;
 			case HARD_RESET:
 				pllNudge = 0;
 				//phaseReset = 0;
 				pllCounter = 0;
-				phaseSignal = localPhaseOffset;
+				phaseSignal = localPhaseOffset + phaseModSignal;
 				break;
 			default:
 				pllCounter = 0;

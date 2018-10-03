@@ -53,6 +53,7 @@ public:
 	int32_t morphBase = 0;
 
 	// results
+	int32_t phaseMod = 0;
 	int32_t phase = 0;
 	int32_t ghostPhase = 0;
 	int32_t phaseEvent = 0;
@@ -129,6 +130,7 @@ public:
 	int32_t pllNudge = 0;
 
 	uint32_t phaseSignal = 0;
+	uint32_t phaseModSignal = 0;
 	uint32_t tapTempo = 0;
 	uint32_t pllReset = 0;
 

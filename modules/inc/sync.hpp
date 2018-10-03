@@ -45,7 +45,7 @@ extern "C" {
 
 #define numButton1Modes 3
 #define numButton2Modes 4
-#define numButton3Modes 4
+#define numButton3Modes 3
 #define numButton4Modes 3
 #define numButton5Modes 4
 #define numButton6Modes 4
@@ -56,7 +56,7 @@ extern "C" {
 
 enum sync_button1Modes {noSH, sampletrack, resample};
 enum sync_button2Modes {scale1, scale2, scale3, scale4};
-enum sync_button3Modes {root, pm, fm, pwm};
+enum sync_button3Modes {root, pm, pwm};
 enum sync_button4Modes {nosync, truePLL, hardsync};
 enum sync_button5Modes {group1, group2, group3, group4};
 enum sync_button6Modes {table1, table2, table3, table4};

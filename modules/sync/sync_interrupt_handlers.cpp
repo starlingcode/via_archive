@@ -6,6 +6,7 @@ void ViaSync::mainRisingEdgeCallback(void) {
 
 	pllController.measureFrequency();
 	pllController.phaseSignal = syncWavetable.phase;
+	pllController.phaseModSignal = syncWavetable.phaseMod;
 	pllController.doPLL();
 	pllController.generateFrequency();
 
@@ -13,6 +14,7 @@ void ViaSync::mainRisingEdgeCallback(void) {
 
 	syncWavetable.increment = pllController.increment;
 	syncWavetable.phase = pllController.phaseSignal;
+
 
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(pllController.ratioChange);
 	pllController.tapTempo = 0;

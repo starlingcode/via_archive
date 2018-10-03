@@ -35,6 +35,8 @@ inline int32_t SingleSampleWavetable::incrementPhase(uint32_t * phaseDistTable) 
 
 	localPhase += localIncrement + ((pmAmount - previousPhaseMod) << 9);
 
+	phaseMod += (pmAmount - previousPhaseMod) << 9;
+
 	previousPhaseMod = pmAmount;
 
 	//phase += parameters->increment;

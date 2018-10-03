@@ -151,7 +151,7 @@ void ViaSync::ViaSyncUI::button4TapCallback(void) {
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 void ViaSync::ViaSyncUI::button5TapCallback(void) {
-	GROUP_MODE = decrementModeAndStore(GROUP_MODE, BUTTON5_MASK, numButton5Modes);
+	GROUP_MODE = incrementModeAndStore(GROUP_MODE, BUTTON5_MASK, numButton5Modes);
 	this_module.handleButton5ModeChange(GROUP_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(GROUP_MODE);
