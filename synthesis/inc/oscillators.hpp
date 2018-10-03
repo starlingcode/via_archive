@@ -126,7 +126,7 @@ public:
 	uint32_t virtualTimer;
 
 	uint32_t periodCount = 100000;
-	uint32_t pllNudge = 0;
+	int32_t pllNudge = 0;
 
 	uint32_t phaseSignal = 0;
 	uint32_t tapTempo = 0;
