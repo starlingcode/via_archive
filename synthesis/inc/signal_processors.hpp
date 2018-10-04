@@ -24,40 +24,40 @@ class ThreeAxisScanner {
 	int32_t lastXIndex = 0;
 	int32_t lastYIndex = 0;
 
-	inline int32_t getSampleProduct(int32_t xIndex, int32_t yIndex, int32_t zIndex,
-    		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta);
+	inline int32_t getSampleMultiply(int32_t xIndex, int32_t yIndex, int32_t zIndex,
+    		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend);
 
-	inline int32_t getSamplePM(int32_t xIndex, int32_t yIndex, int32_t zIndex,
-    		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta);
+	inline int32_t getSampleLighten(int32_t xIndex, int32_t yIndex, int32_t zIndex,
+    		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend);
 
 	inline int32_t getSampleSum(int32_t xIndex, int32_t yIndex, int32_t zIndex,
-    		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta);
+    		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend);
 
-	inline int32_t getSampleSubtract(int32_t xIndex, int32_t yIndex, int32_t zIndex,
-    		int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta);
+	inline int32_t getSampleDifference(int32_t xIndex, int32_t yIndex, int32_t zIndex,
+    		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend);
 
-	void scanTerrainProduct(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
-			int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta, uint32_t * output,
+	void scanTerrainMultiply(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
+			int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
-	void scanTerrainPM(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
-			int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta, uint32_t * output,
+	void scanTerrainLighten(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
+			int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
 	void scanTerrainSum(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
-			int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta, uint32_t * output,
+			int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
-	void scanTerrainSubtract(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
-			int32_t * xTable, int32_t * yTable, int32_t * xDelta, int32_t * yDelta, uint32_t * output,
+	void scanTerrainDifference(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
+			int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
 public:
 
 #define THREE_AXIS_SCANNER_SUM 0
-#define THREE_AXIS_SCANNER_PRODUCT 1
+#define THREE_AXIS_SCANNER_Multiply 1
 #define THREE_AXIS_SCANNER_DIFFERENCE 2
-#define THREE_AXIS_SCANNER_PHASE_MOD 3
+#define THREE_AXIS_SCANNER_LIGHTEN 3
 
 	int32_t * xInput;
 	int32_t * yInput;
@@ -77,8 +77,8 @@ public:
 	// outputs
 	int32_t * xIndexBuffer;
 	int32_t * yIndexBuffer;
-	int32_t * xDeltaBuffer;
-	int32_t * yDeltaBuffer;
+	int32_t * mainLogicBlend;
+	int32_t * auxLogicBlend;
 	int32_t * altitude;
 
 	void fillBuffer(ViaInputStreams * inputs,
@@ -94,8 +94,8 @@ public:
 
 		xIndexBuffer = (int32_t *) malloc(bufferSize * sizeof(int32_t));
 		yIndexBuffer = (int32_t *) malloc(bufferSize * sizeof(int32_t));
-		xDeltaBuffer = (int32_t *) malloc(bufferSize * sizeof(int32_t));
-		yDeltaBuffer = (int32_t *) malloc(bufferSize * sizeof(int32_t));
+		mainLogicBlend = (int32_t *) malloc(bufferSize * sizeof(int32_t));
+		auxLogicBlend = (int32_t *) malloc(bufferSize * sizeof(int32_t));
 		altitude = (int32_t *) malloc(bufferSize * sizeof(int32_t));
 
 		xInput = (int32_t *) malloc(bufferSize * sizeof(int32_t));
@@ -107,8 +107,8 @@ public:
 		for (int32_t i = 0; i < bufferSize; i++) {
 			xIndexBuffer[i] = 0;
 			yIndexBuffer[i] = 0;
-			xDeltaBuffer[i] = 0;
-			yDeltaBuffer[i] = 0;
+			mainLogicBlend[i] = 0;
+			auxLogicBlend[i] = 0;
 			altitude[i] = 0;
 
 			xInput[i] = 0;
