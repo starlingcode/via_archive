@@ -63,8 +63,7 @@ void ViaScanner::halfTransferCallback(void) {
 	for (int32_t i = 0; i < SCANNER_BUFFER_SIZE; i++) {
 		outputs.dac2Samples[i] = scanner.altitude[i];
 		outputs.dac1Samples[i] = 4095 - scanner.altitude[i];
-		outputs.dac3Samples[i] = (fix16_mul(scanner.xIndexBuffer[i],
-				scanner.yIndexBuffer[i] - 32767) >> 4) + 2048;
+		outputs.dac3Samples[i] = scanner.locationBlend[i];
 		outputs.logicA[i] = GET_ALOGIC_MASK(scanner.mainLogicBlend[i]);
 		outputs.auxLogic[i] = GET_EXPAND_LOGIC_MASK(scanner.auxLogicBlend[i]);
 		outputs.shA[i] = GPIO_NOP;
@@ -87,8 +86,7 @@ void ViaScanner::transferCompleteCallback(void) {
 	for (int32_t i = 0; i < SCANNER_BUFFER_SIZE; i++) {
 		outputs.dac2Samples[i + SCANNER_BUFFER_SIZE] = scanner.altitude[i];
 		outputs.dac1Samples[i + SCANNER_BUFFER_SIZE] = 4095 - scanner.altitude[i];
-		outputs.dac3Samples[i + SCANNER_BUFFER_SIZE] = (fix16_mul(scanner.xIndexBuffer[i],
-				scanner.yIndexBuffer[i] - 32767) >> 4) + 2048;
+		outputs.dac3Samples[i + SCANNER_BUFFER_SIZE] = scanner.locationBlend[i];
 		outputs.logicA[i + SCANNER_BUFFER_SIZE] = GET_ALOGIC_MASK(scanner.mainLogicBlend[i]);
 		outputs.auxLogic[i + SCANNER_BUFFER_SIZE] = GET_EXPAND_LOGIC_MASK(scanner.auxLogicBlend[i]);
 		outputs.shA[i + SCANNER_BUFFER_SIZE] = GPIO_NOP;

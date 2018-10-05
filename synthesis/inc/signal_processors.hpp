@@ -25,31 +25,31 @@ class ThreeAxisScanner {
 	int32_t lastYIndex = 0;
 
 	inline int32_t getSampleMultiply(int32_t xIndex, int32_t yIndex, int32_t zIndex,
-    		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend);
+    		int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend);
 
 	inline int32_t getSampleLighten(int32_t xIndex, int32_t yIndex, int32_t zIndex,
-    		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend);
+    		int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend);
 
 	inline int32_t getSampleSum(int32_t xIndex, int32_t yIndex, int32_t zIndex,
-    		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend);
+    		int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend);
 
 	inline int32_t getSampleDifference(int32_t xIndex, int32_t yIndex, int32_t zIndex,
-    		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend);
+    		int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend);
 
 	void scanTerrainMultiply(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
-			int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
+			int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
 	void scanTerrainLighten(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
-			int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
+			int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
 	void scanTerrainSum(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
-			int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
+			int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
 	void scanTerrainDifference(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
-			int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
+			int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
 public:
@@ -77,6 +77,7 @@ public:
 	// outputs
 	int32_t * xIndexBuffer;
 	int32_t * yIndexBuffer;
+	int32_t * locationBlend;
 	int32_t * mainLogicBlend;
 	int32_t * auxLogicBlend;
 	int32_t * altitude;
@@ -94,6 +95,7 @@ public:
 
 		xIndexBuffer = (int32_t *) malloc(bufferSize * sizeof(int32_t));
 		yIndexBuffer = (int32_t *) malloc(bufferSize * sizeof(int32_t));
+		locationBlend = (int32_t *) malloc(bufferSize * sizeof(int32_t));
 		mainLogicBlend = (int32_t *) malloc(bufferSize * sizeof(int32_t));
 		auxLogicBlend = (int32_t *) malloc(bufferSize * sizeof(int32_t));
 		altitude = (int32_t *) malloc(bufferSize * sizeof(int32_t));

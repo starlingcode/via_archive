@@ -16,7 +16,7 @@ void ThreeAxisScanner::parseControls(ViaControls * controls) {
 }
 
 inline int32_t ThreeAxisScanner::getSampleMultiply(int32_t xIndex, int32_t yIndex, int32_t zIndex,
-		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend) {
+		int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend) {
 
 	// waveterrain = wavetable(x, z) * wavetable(y, z)
 
@@ -30,13 +30,14 @@ inline int32_t ThreeAxisScanner::getSampleMultiply(int32_t xIndex, int32_t yInde
 
 	*hemisphereBlend = (xSample >> 14) & (ySample >> 14);
 	*deltaBlend = xDelta & yDelta;
+	*locationBlend = fix16_mul(xIndex, yIndex) >> 4;
 
 	return (xSample * ySample) >> 18; //15 bit fixed point multiply and right shift by 3
 
 }
 
 inline int32_t ThreeAxisScanner::getSampleLighten(int32_t xIndex, int32_t yIndex, int32_t zIndex, int32_t * xTable,
-		int32_t*yTable, int32_t * hemisphereBlend, int32_t * deltaBlend) {
+		int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend) {
 
 	// waveterrain = wavetable(x + wavetable(y, z), z)
 
@@ -49,16 +50,16 @@ inline int32_t ThreeAxisScanner::getSampleLighten(int32_t xIndex, int32_t yIndex
 			(uint32_t *) yTable, &yDelta) >> 3;
 
 	uint32_t minmax = ((uint32_t)(ySample - xSample) >> 31);
-
 	*hemisphereBlend = minmax;
-	*deltaBlend = ((uint32_t)(yDelta - xDelta) >> 31);
+	*deltaBlend = (yDelta > xDelta) ? yDelta : xDelta;
+	*locationBlend = ((yIndex > xIndex) ? yIndex : xIndex) >> 4;
 
 	return minmax * xSample + !minmax * ySample; //right shift by 3 tp scale 15bit to 12bit
 
 }
 
 inline int32_t ThreeAxisScanner::getSampleSum(int32_t xIndex, int32_t yIndex, int32_t zIndex, int32_t * xTable,
-		int32_t*yTable, int32_t * hemisphereBlend, int32_t * deltaBlend) {
+		int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend) {
 
 	// waveterrain = wavetable(x, z) + wavetable(y, z)
 
@@ -72,13 +73,14 @@ inline int32_t ThreeAxisScanner::getSampleSum(int32_t xIndex, int32_t yIndex, in
 
 	*hemisphereBlend = (xSample >> 14) | (ySample >> 14);
 	*deltaBlend = xDelta | yDelta;
+	*locationBlend = foldSignal16Bit(xIndex + yIndex) >> 4;
 
 	return (xSample + ySample) >> 4; // scale from 15bit to 12 bit and divide by two to normalize the space (max value = 1+1)
 
 }
 
 inline int32_t ThreeAxisScanner::getSampleDifference(int32_t xIndex, int32_t yIndex, int32_t zIndex, int32_t * xTable,
-		int32_t*yTable, int32_t * hemisphereBlend, int32_t * deltaBlend) {
+		int32_t*yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend) {
 
 	// waveterrain = wavetable(x, z) + wavetable(y, z)
 
@@ -92,13 +94,14 @@ inline int32_t ThreeAxisScanner::getSampleDifference(int32_t xIndex, int32_t yIn
 
 	*hemisphereBlend = (xSample >> 14) ^ (ySample >> 14);
 	*deltaBlend = xDelta ^ yDelta;
+	*locationBlend = abs((xIndex - yIndex) >> 4);
 
 	return abs((xSample - ySample) >> 3); // scale from 15bit to 12 bit and divide by two to normalize the space (max value = 1+1)
 
 }
 
 void ThreeAxisScanner::scanTerrainMultiply(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
-		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
+		int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 		uint32_t writePosition, uint32_t samplesRemaining) {
 
 	uint32_t writeIndex = 0;
@@ -108,7 +111,7 @@ void ThreeAxisScanner::scanTerrainMultiply(int32_t * xIndexBuffer, int32_t * yIn
 	while (samplesRemaining) {
 
 		output[writeIndex] = getSampleMultiply(xIndexBuffer[writeIndex],
-				yIndexBuffer[writeIndex], zIndex, xTable, yTable,
+				yIndexBuffer[writeIndex], zIndex, xTable, yTable, locationBlend + writeIndex,
 				hemisphereBlend + writeIndex, deltaBlend + writeIndex);
 
 		writeIndex++;
@@ -119,7 +122,7 @@ void ThreeAxisScanner::scanTerrainMultiply(int32_t * xIndexBuffer, int32_t * yIn
 }
 
 void ThreeAxisScanner::scanTerrainSum(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
-		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
+		int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 		uint32_t writePosition, uint32_t samplesRemaining) {
 
 	uint32_t writeIndex = 0;
@@ -129,7 +132,7 @@ void ThreeAxisScanner::scanTerrainSum(int32_t * xIndexBuffer, int32_t * yIndexBu
 	while (samplesRemaining) {
 
 		output[writeIndex] = getSampleSum(xIndexBuffer[writeIndex],
-				yIndexBuffer[writeIndex], zIndex, xTable, yTable,
+				yIndexBuffer[writeIndex], zIndex, xTable, yTable, locationBlend + writeIndex,
 				hemisphereBlend + writeIndex, deltaBlend + writeIndex);
 
 		writeIndex++;
@@ -140,7 +143,7 @@ void ThreeAxisScanner::scanTerrainSum(int32_t * xIndexBuffer, int32_t * yIndexBu
 }
 
 void ThreeAxisScanner::scanTerrainDifference(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
-		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
+		int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 		uint32_t writePosition, uint32_t samplesRemaining) {
 
 	uint32_t writeIndex = 0;
@@ -150,7 +153,7 @@ void ThreeAxisScanner::scanTerrainDifference(int32_t * xIndexBuffer, int32_t * y
 	while (samplesRemaining) {
 
 		output[writeIndex] = getSampleDifference(xIndexBuffer[writeIndex],
-				yIndexBuffer[writeIndex], zIndex, xTable, yTable,
+				yIndexBuffer[writeIndex], zIndex, xTable, yTable, locationBlend + writeIndex,
 				hemisphereBlend + writeIndex, deltaBlend + writeIndex);
 
 		writeIndex++;
@@ -161,7 +164,7 @@ void ThreeAxisScanner::scanTerrainDifference(int32_t * xIndexBuffer, int32_t * y
 }
 
 void ThreeAxisScanner::scanTerrainLighten(int32_t * xIndexBuffer, int32_t * yIndexBuffer, int32_t zIndex,
-		int32_t * xTable, int32_t * yTable, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
+		int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 		uint32_t writePosition, uint32_t samplesRemaining) {
 
 	uint32_t writeIndex = 0;
@@ -171,7 +174,7 @@ void ThreeAxisScanner::scanTerrainLighten(int32_t * xIndexBuffer, int32_t * yInd
 	while (samplesRemaining) {
 
 		output[writeIndex] = getSampleLighten(xIndexBuffer[writeIndex],
-				yIndexBuffer[writeIndex], zIndex, xTable, yTable,
+				yIndexBuffer[writeIndex], zIndex, xTable, yTable, locationBlend + writeIndex,
 				hemisphereBlend + writeIndex, deltaBlend + writeIndex);
 
 		writeIndex++;
@@ -209,25 +212,25 @@ void ThreeAxisScanner::fillBuffer(ViaInputStreams * inputs,
 
 	case THREE_AXIS_SCANNER_SUM:
 		scanTerrainSum(xIndexBuffer, yIndexBuffer, zIndex,
-				xTable, yTable, mainLogicBlend, auxLogicBlend, (uint32_t *) altitude,
+				xTable, yTable, locationBlend, mainLogicBlend, auxLogicBlend, (uint32_t *) altitude,
 				0, bufferSize);
 		break;
 
 	case THREE_AXIS_SCANNER_Multiply:
 		scanTerrainMultiply(xIndexBuffer, yIndexBuffer, zIndex,
-			xTable, yTable, mainLogicBlend, auxLogicBlend, (uint32_t *) altitude,
-			0, bufferSize);
+				xTable, yTable, locationBlend, mainLogicBlend, auxLogicBlend, (uint32_t *) altitude,
+				0, bufferSize);
 		break;
 
 	case THREE_AXIS_SCANNER_DIFFERENCE:
 		scanTerrainDifference(xIndexBuffer, yIndexBuffer, zIndex,
-				xTable, yTable, mainLogicBlend, auxLogicBlend, (uint32_t *) altitude,
+				xTable, yTable, locationBlend, mainLogicBlend, auxLogicBlend, (uint32_t *) altitude,
 				0, bufferSize);
 		break;
 
 	case THREE_AXIS_SCANNER_LIGHTEN:
 		scanTerrainLighten(xIndexBuffer, yIndexBuffer, zIndex,
-				xTable, yTable, mainLogicBlend, auxLogicBlend, (uint32_t *) altitude,
+				xTable, yTable, locationBlend, mainLogicBlend, auxLogicBlend, (uint32_t *) altitude,
 				0, bufferSize);
 		break;
 
