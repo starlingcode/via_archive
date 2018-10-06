@@ -213,8 +213,8 @@ public:
 	void loadFromEEPROM(int32_t);
 	void storeToEEPROM(int32_t);
 
-	int32_t incrementModeAndStore(int32_t, int32_t, int32_t);
-	int32_t decrementModeAndStore(int32_t, int32_t, int32_t);
+	int32_t incrementModeAndStore(int32_t, int32_t, int32_t, int32_t);
+	int32_t decrementModeAndStore(int32_t, int32_t, int32_t, int32_t);
 
 	int32_t button1Mode = 0;
 	int32_t button2Mode = 0;
@@ -234,6 +234,7 @@ public:
 
 // how modes are arranged by size and location in modeStateBuffer (formatted for EEPROM storage).
 #define BUTTON1_MASK 		0b00000000000000000000000000000111
+#define BUTTON1_SHIFT		0
 
 #define BUTTON2_MASK 		0b00000000000000000000000000111000
 #define BUTTON2_SHIFT		3

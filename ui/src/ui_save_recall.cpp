@@ -32,6 +32,7 @@ void ViaUI::initialize(void) {
 
 	state = &ViaUI::defaultMenu;
 	transition(&ViaUI::defaultMenu);
+	loadFromEEPROM(0);
 
 }
 
@@ -48,9 +49,16 @@ void ViaUI::loadFromEEPROM(int32_t position) {
 //		transition(&ViaUI::error);
 //	}
 
-	//button1Mode = modeStateBuffer & BUTTON1_MASK;
-	//button3Mode = (modeStateBuffer & BUTTON3_MASK) >> BUTTON3_SHIFT;
-	//button4Mode = (modeStateBuffer & BUTTON4_MASK) >> BUTTON4_SHIFT;
+	button1Mode = modeStateBuffer & BUTTON1_MASK;
+	button2Mode = (modeStateBuffer & BUTTON2_MASK) >> BUTTON2_SHIFT;
+	button3Mode = (modeStateBuffer & BUTTON3_MASK) >> BUTTON3_SHIFT;
+	button4Mode = (modeStateBuffer & BUTTON4_MASK) >> BUTTON4_SHIFT;
+	button5Mode = (modeStateBuffer & BUTTON5_MASK) >> BUTTON5_SHIFT;
+	button6Mode = (modeStateBuffer & BUTTON6_MASK) >> BUTTON6_SHIFT;
+	aux1Mode = (modeStateBuffer & AUX_MODE1_MASK) >> AUX_MODE1_SHIFT;
+	aux2Mode = (modeStateBuffer & AUX_MODE2_MASK) >> AUX_MODE2_SHIFT;
+	aux3Mode = (modeStateBuffer & AUX_MODE3_MASK) >> AUX_MODE3_SHIFT;
+	aux4Mode = (modeStateBuffer & AUX_MODE4_MASK) >> AUX_MODE4_SHIFT;
 
 	/* ... initialization of ui attributes */
 	// call each menu to initialize, to make UI process the stored modes

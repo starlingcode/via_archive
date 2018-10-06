@@ -15,8 +15,8 @@ void ViaMeta::init() {
 
 	initializeAuxOutputs();
 
-	drumMode = &ViaMeta::drumModeOn;
-	updateRGB = &ViaMeta::updateRGBDrum;
+	drumMode = &ViaMeta::drumModeOff;
+	updateRGB = &ViaMeta::updateRGBSubaudio;
 	calculateDac3 = &ViaMeta::calculateDac3Phasor;
 	calculateLogicA = &ViaMeta::calculateLogicAReleaseGate;
 	calculateSH = &ViaMeta::calculateSHMode1;
@@ -30,25 +30,24 @@ void ViaMeta::init() {
 
 	// initialize our touch sensors
 
-	metaUI.initialize();
-
 	fillWavetableArray();
-
-	switchWavetable(wavetableArray[0][0]);
 	initDrum();
 	drumEnvelope.output = (uint32_t*) drumWrite;
-
-	metaController.triggerSignal = 1;
-	metaController.gateSignal = 0;
-	metaController.freeze = 1;
 
 	inputs.init(META_BUFFER_SIZE);
 	outputs.init(META_BUFFER_SIZE);
 	bufferSize = META_BUFFER_SIZE;
 
-	metaWavetable.morphMod = inputs.cv3Samples;
-	metaWavetable.morphScale = (int16_t*) drumEnvelope.output;
-	metaController.fm = (int16_t*) drumEnvelope.output;
+	metaUI.initialize();
 
+	// switchWavetable(wavetableArray[0][0]);
+
+	metaController.triggerSignal = 1;
+	metaController.gateSignal = 0;
+	metaController.freeze = 1;
+
+	metaWavetable.morphMod = inputs.cv3Samples;
+	// metaWavetable.morphScale = (int16_t*) drumEnvelope.output;
+	// metaController.fm = (int16_t*) drumEnvelope.output;
 
 }

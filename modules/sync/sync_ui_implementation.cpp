@@ -123,42 +123,42 @@ void ViaSync::ViaSyncUI::aux4EnterMenuCallback(void) {
 }
 
 void ViaSync::ViaSyncUI::button1TapCallback(void) {
-	SH_MODE = incrementModeAndStore(SH_MODE, BUTTON1_MASK, numButton1Modes);
+	SH_MODE = incrementModeAndStore(SH_MODE, BUTTON1_MASK, numButton1Modes, BUTTON1_SHIFT);
 	this_module.handleButton1ModeChange(SH_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(SH_MODE);
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 void ViaSync::ViaSyncUI::button2TapCallback(void) {
-	SCALE_MODE = incrementModeAndStore(SCALE_MODE, BUTTON2_MASK, numButton2Modes);
+	SCALE_MODE = incrementModeAndStore(SCALE_MODE, BUTTON2_MASK, numButton2Modes, BUTTON2_SHIFT);
 	this_module.handleButton2ModeChange(SCALE_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(SCALE_MODE);
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 void ViaSync::ViaSyncUI::button3TapCallback(void) {
-	X_MODE = incrementModeAndStore(X_MODE, BUTTON3_MASK, numButton3Modes);
+	X_MODE = incrementModeAndStore(X_MODE, BUTTON3_MASK, numButton3Modes, BUTTON3_SHIFT);
 	this_module.handleButton3ModeChange(X_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(X_MODE);
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 void ViaSync::ViaSyncUI::button4TapCallback(void) {
-	SYNC_MODE = incrementModeAndStore(SYNC_MODE, BUTTON4_MASK, numButton4Modes);
+	SYNC_MODE = incrementModeAndStore(SYNC_MODE, BUTTON4_MASK, numButton4Modes, BUTTON4_SHIFT);
 	this_module.handleButton4ModeChange(SYNC_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(SYNC_MODE);
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 void ViaSync::ViaSyncUI::button5TapCallback(void) {
-	GROUP_MODE = incrementModeAndStore(GROUP_MODE, BUTTON5_MASK, numButton5Modes);
+	GROUP_MODE = incrementModeAndStore(GROUP_MODE, BUTTON5_MASK, numButton5Modes, BUTTON5_SHIFT);
 	this_module.handleButton5ModeChange(GROUP_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(GROUP_MODE);
 	transition(&ViaSync::ViaSyncUI::newModeMenu);
 }
 void ViaSync::ViaSyncUI::button6TapCallback(void) {
-	TABLE_MODE = incrementModeAndStore(TABLE_MODE, BUTTON6_MASK, numButton6Modes);
+	TABLE_MODE = incrementModeAndStore(TABLE_MODE, BUTTON6_MASK, numButton6Modes, BUTTON6_SHIFT);
 	this_module.handleButton6ModeChange(TABLE_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(TABLE_MODE);
@@ -166,15 +166,15 @@ void ViaSync::ViaSyncUI::button6TapCallback(void) {
 }
 
 void ViaSync::ViaSyncUI::aux1TapCallback(void) {
-	LOGIC_A_MODE = incrementModeAndStore(LOGIC_A_MODE, AUX_MODE2_MASK, numAux2Modes);
-	this_module.handleAux2ModeChange(LOGIC_A_MODE);
+	LOGIC_A_MODE = incrementModeAndStore(LOGIC_A_MODE, AUX_MODE1_MASK, numAux1Modes, AUX_MODE1_MASK);
+	this_module.handleAux1ModeChange(LOGIC_A_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(LOGIC_A_MODE);
 	transition(&ViaSync::ViaSyncUI::newAuxModeMenu);
 }
 
 void ViaSync::ViaSyncUI::aux2TapCallback(void) {
-	QUADRATURE_MODE = incrementModeAndStore(QUADRATURE_MODE, AUX_MODE2_MASK, numAux2Modes);
+	QUADRATURE_MODE = incrementModeAndStore(QUADRATURE_MODE, AUX_MODE2_MASK, numAux2Modes, AUX_MODE2_MASK);
 	this_module.handleAux2ModeChange(QUADRATURE_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(QUADRATURE_MODE);
@@ -182,7 +182,7 @@ void ViaSync::ViaSyncUI::aux2TapCallback(void) {
 }
 
 void ViaSync::ViaSyncUI::aux3TapCallback(void) {
-	AUX_OUT_MODE = incrementModeAndStore(AUX_OUT_MODE, AUX_MODE3_MASK, numAux3Modes);
+	AUX_OUT_MODE = incrementModeAndStore(AUX_OUT_MODE, AUX_MODE3_MASK, numAux3Modes, AUX_MODE3_MASK);
 	this_module.handleAux3ModeChange(AUX_OUT_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(AUX_OUT_MODE);
@@ -190,7 +190,7 @@ void ViaSync::ViaSyncUI::aux3TapCallback(void) {
 }
 
 void ViaSync::ViaSyncUI::aux4TapCallback(void) {
-	TABLE_GROUP_MODE = incrementModeAndStore(TABLE_GROUP_MODE, AUX_MODE4_MASK, numAux4Modes);
+	TABLE_GROUP_MODE = incrementModeAndStore(TABLE_GROUP_MODE, AUX_MODE4_MASK, numAux4Modes, AUX_MODE4_MASK);
 	this_module.handleAux4ModeChange(TABLE_GROUP_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(TABLE_GROUP_MODE);

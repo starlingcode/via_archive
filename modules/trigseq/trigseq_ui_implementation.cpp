@@ -119,42 +119,42 @@ void ViaTrigseq::ViaTrigseqUI::aux4EnterMenuCallback(void) {
 }
 
 void ViaTrigseq::ViaTrigseqUI::button1TapCallback(void) {
-	SH_A_MODE = incrementModeAndStore(SH_A_MODE, BUTTON1_MASK, numButton1Modes);
+	SH_A_MODE = incrementModeAndStore(SH_A_MODE, BUTTON1_MASK, numButton1Modes, BUTTON1_MASK);
 	this_module.handleButton1ModeChange(SH_A_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(SH_A_MODE);
 	transition(&ViaTrigseq::ViaTrigseqUI::newModeMenu);
 }
 void ViaTrigseq::ViaTrigseqUI::button2TapCallback(void) {
-	AND_A_MODE = incrementModeAndStore(AND_A_MODE, BUTTON2_MASK, numButton2Modes);
+	AND_A_MODE = incrementModeAndStore(AND_A_MODE, BUTTON2_MASK, numButton2Modes, BUTTON2_MASK);
 	this_module.handleButton2ModeChange(AND_A_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(AND_A_MODE);
 	transition(&ViaTrigseq::ViaTrigseqUI::newModeMenu);
 }
 void ViaTrigseq::ViaTrigseqUI::button3TapCallback(void) {
-	A_PATTERN_BANK = incrementModeAndStore(A_PATTERN_BANK, BUTTON3_MASK, numButton3Modes);
+	A_PATTERN_BANK = incrementModeAndStore(A_PATTERN_BANK, BUTTON3_MASK, numButton3Modes, BUTTON3_MASK);
 	this_module.handleButton3ModeChange(A_PATTERN_BANK);
 	this_module.clearLEDs();
 	this_module.setLEDs(A_PATTERN_BANK);
 	transition(&ViaTrigseq::ViaTrigseqUI::newModeMenu);
 }
 void ViaTrigseq::ViaTrigseqUI::button4TapCallback(void) {
-	AND_A_MODE = incrementModeAndStore(AND_A_MODE, BUTTON4_MASK, numButton4Modes);
+	AND_A_MODE = incrementModeAndStore(AND_A_MODE, BUTTON4_MASK, numButton4Modes, BUTTON4_MASK);
 	this_module.handleButton4ModeChange(AND_A_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(AND_A_MODE);
 	transition(&ViaTrigseq::ViaTrigseqUI::newModeMenu);
 }
 void ViaTrigseq::ViaTrigseqUI::button5TapCallback(void) {
-	AND_B_MODE = decrementModeAndStore(AND_B_MODE, BUTTON5_MASK, numButton5Modes);
+	AND_B_MODE = decrementModeAndStore(AND_B_MODE, BUTTON5_MASK, numButton5Modes, BUTTON5_MASK);
 	this_module.handleButton5ModeChange(AND_B_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(AND_B_MODE);
 	transition(&ViaTrigseq::ViaTrigseqUI::newModeMenu);
 }
 void ViaTrigseq::ViaTrigseqUI::button6TapCallback(void) {
-	B_PATTERN_BANK = incrementModeAndStore(B_PATTERN_BANK, BUTTON6_MASK, numButton6Modes);
+	B_PATTERN_BANK = incrementModeAndStore(B_PATTERN_BANK, BUTTON6_MASK, numButton6Modes, BUTTON6_MASK);
 	this_module.handleButton6ModeChange(B_PATTERN_BANK);
 	this_module.clearLEDs();
 	this_module.setLEDs(B_PATTERN_BANK);
@@ -166,7 +166,7 @@ void ViaTrigseq::ViaTrigseqUI::aux1TapCallback(void) {
 }
 
 void ViaTrigseq::ViaTrigseqUI::aux2TapCallback(void) {
-	LOGIC_MODE = incrementModeAndStore(LOGIC_MODE, AUX_MODE2_MASK, numAux2Modes);
+	LOGIC_MODE = incrementModeAndStore(LOGIC_MODE, AUX_MODE2_MASK, numAux2Modes, AUX_MODE2_MASK);
 	this_module.handleAux2ModeChange(LOGIC_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(LOGIC_MODE);
