@@ -8,6 +8,9 @@ void ViaSync::init(void) {
 	// initialize our touch sensors
 	//tsl_user_Init();
 	syncUI.initialize();
+	scaleColor.r = hueSpace[0].r;
+	scaleColor.g = hueSpace[0].g;
+	scaleColor.b = hueSpace[0].b;
 
 	fillWavetableArray();
 

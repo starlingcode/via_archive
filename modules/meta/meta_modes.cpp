@@ -44,6 +44,8 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 	switch (mode) {
 	case audio:
 		if (metaUI.LOOP_MODE == noloop) {
+			updateRGBDisplay(0, 4095, 4095, 1);
+			updateRGB = &ViaMeta::updateRGBDrum;
 			metaController.generateIncrements = &MetaController::generateIncrementsDrum;
 			metaController.parseControls = &MetaController::parseControlsDrum;
 			metaController.fm = drumFullScale;
@@ -53,6 +55,8 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 			handleButton4ModeChange(0);
 			handleAux3ModeChange(metaUI.DRUM_MODE);
 		} else {
+			updateRGBDisplay(0, 0, 4095, 1);
+			updateRGB = &ViaMeta::updateRGBOsc;
 			metaController.parseControls = &MetaController::parseControlsAudio;
 			metaController.generateIncrements = &MetaController::generateIncrementsAudio;
 			metaController.fm = inputs.cv2Samples;
@@ -60,9 +64,10 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 			drumMode = &ViaMeta::drumModeOff;
 		}
 		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
-		//updateRGB = updateRGBAudio;
 		break;
 	case env:
+		updateRGBDisplay(0, 4095, 0, 1);
+		updateRGB = &ViaMeta::updateRGBSubaudio;
 		metaController.parseControls = &MetaController::parseControlsEnv;
 		metaController.generateIncrements = &MetaController::generateIncrementsEnv;
 		if (metaUI.DAC_3_MODE == phasor) {
@@ -80,9 +85,9 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 			metaController.loopMode = 0;
 			handleButton4ModeChange(metaUI.TRIG_MODE);
 		}
-		//updateRGB = updateRGBSubAudio;
 		break;
 	case seq:
+		updateRGBDisplay(4095, 0, 0, 1);
 		if (metaUI.DAC_3_MODE == phasor) {
 			calculateDac3 = &ViaMeta::calculateDac3Phasor;
 		} else {

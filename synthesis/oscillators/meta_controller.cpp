@@ -420,8 +420,8 @@ int32_t MetaController::gateRetriggerState(void) {
 	switch (phaseEvent) {
 
 	case (AT_B_FROM_RELEASE):
-		incrementArbiter = &MetaController::gateReleaseState;
-		return increment2;
+		incrementArbiter = &MetaController::gatedState;
+		return 0;
 
 	default:
 		return -increment1;

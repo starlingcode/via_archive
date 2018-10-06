@@ -198,6 +198,44 @@ public:
 	// Decimate (Resample A at B, resample B at A
 	void calculateSHMode6(int32_t writeIndex);
 
+	void (ViaMeta::*updateRGB)(void);
+
+	void updateRGBOsc(void) {
+
+		uint32_t displayFreq = __USAT(abs(fix16_mul(controls.knob1Value + controls.cv1Value - 2048, metaController.fm[0] + 32767)), 12);
+
+		int32_t redSignal = 4095 - displayFreq;
+		int32_t blueSignal = displayFreq;
+		int32_t greenSignal = __USAT(((-inputs.cv3Samples[0] >> 4) + controls.knob3Value), 12);
+
+		updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
+	}
+	void updateRGBDrum(void) {
+		
+		uint32_t displayFreq = __USAT(abs(fix16_mul(controls.knob1Value + controls.cv1Value - 2048, metaController.fm[0] << 1)), 12);
+		uint32_t drumEnvelopeLevel = drumEnvelope.output[0] << 1;
+
+		int32_t redSignal = fix16_mul(4095 - displayFreq, drumEnvelopeLevel);
+		int32_t blueSignal = fix16_mul(displayFreq, drumEnvelopeLevel);
+		int32_t greenSignal = fix16_mul(__USAT((-inputs.cv3Samples[0] >> 4) + controls.knob3Value, 12), drumEnvelopeLevel);
+
+		updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
+
+	}
+	void updateRGBSubaudio(void) {
+
+		int32_t sample = outputs.dac2Samples[0];
+		int32_t lastPhaseValue = metaWavetable.phase;
+
+		int32_t redSignal = sample * (lastPhaseValue >> 24);
+		int32_t blueSignal = sample * (!(lastPhaseValue >> 24));
+		int32_t greenSignal = (__USAT(((-inputs.cv3Samples[0] >> 4) + controls.knob3Value), 12)
+				* sample) >> 12;
+
+		updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
+
+	}
+
 	void init(void);
 
 	ViaMetaUI metaUI;

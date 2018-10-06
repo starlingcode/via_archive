@@ -16,6 +16,7 @@ void ViaMeta::init() {
 	initializeAuxOutputs();
 
 	drumMode = &ViaMeta::drumModeOn;
+	updateRGB = &ViaMeta::updateRGBDrum;
 	calculateDac3 = &ViaMeta::calculateDac3Phasor;
 	calculateLogicA = &ViaMeta::calculateLogicAReleaseGate;
 	calculateSH = &ViaMeta::calculateSHMode1;

@@ -123,11 +123,11 @@ void ViaSync::slowConversionCallback(void) {
 	}
 
 	int32_t sample = outputs.dac1Samples[0];
-	int32_t lastPhaseValue = syncWavetable.ghostPhase;
+	int32_t morphColorShift = controls.knob3Value << 4;
 
-	int32_t redSignal = sample * (lastPhaseValue >> 24);
-	int32_t blueSignal = sample * (!(lastPhaseValue >> 24));
-	int32_t greenSignal = __USAT((inputs.cv3Samples[0] + controls.knob3Value - 2048), 12) * sample >> 12;
+	int32_t redSignal = fix16_mul(sample, fix16_lerp(scaleColor.r << 4, 4095 << 4, morphColorShift));
+	int32_t blueSignal = fix16_mul(sample, fix16_lerp(scaleColor.b << 4, 4095 << 4, morphColorShift));
+	int32_t greenSignal = fix16_mul(sample, fix16_lerp(scaleColor.g << 4, 4095 << 4, morphColorShift));
 
 	updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
 

@@ -28,6 +28,10 @@ void ViaSync::handleButton1ModeChange(int32_t mode) {
 void ViaSync::handleButton2ModeChange(int32_t mode) {
 
 	pllController.scale = (Scale *) scaleArray[syncUI.GROUP_MODE][mode];
+	scaleHue =  mode + syncUI.GROUP_MODE * 4;
+	scaleColor.r = hueSpace[scaleHue].r;
+	scaleColor.g = hueSpace[scaleHue].g;
+	scaleColor.b = hueSpace[scaleHue].b;
 
 }
 
@@ -71,6 +75,10 @@ void ViaSync::handleButton4ModeChange(int32_t mode) {
 void ViaSync::handleButton5ModeChange(int32_t mode) {
 
 	pllController.scale = (Scale *) scaleArray[mode][syncUI.SCALE_MODE];
+	scaleHue = mode * 4 + syncUI.SCALE_MODE;
+	scaleColor.r = hueSpace[scaleHue].r;
+	scaleColor.g = hueSpace[scaleHue].g;
+	scaleColor.b = hueSpace[scaleHue].b;
 	if (syncUI.TABLE_GROUP_MODE) {
 		switchWavetable(wavetableArray[syncUI.SCALE_MODE][mode]);
 	} else {

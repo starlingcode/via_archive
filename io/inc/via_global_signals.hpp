@@ -157,6 +157,7 @@ typedef struct {
 #define __ORANGE {4095, 4095, 0}
 #define __MAGENTA {4095, 0, 4095}
 #define __CYAN {0, 4095, 4095}
+#define __COLORWHEELBASE {4095, 0, 0}
 
 // used for software implementations
 

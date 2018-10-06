@@ -217,6 +217,9 @@ public:
 		}
 	}
 
+	rgb scaleColor;
+	int32_t scaleHue;
+
 	void mainRisingEdgeCallback(void);
 	void mainFallingEdgeCallback(void);
 

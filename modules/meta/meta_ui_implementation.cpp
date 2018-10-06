@@ -78,6 +78,21 @@ void ViaMeta::ViaMetaUI::button3EnterMenuCallback(void) {
 	this_module.clearLEDs();
 	this_module.clearRGB();
 	this_module.setLEDs(FREQ_MODE);
+	switch (FREQ_MODE) {
+	case audio:
+		if (LOOP_MODE == noloop) {
+			this_module.updateRGBDisplay(0, 4095, 4095, 1);
+		} else {
+			this_module.updateRGBDisplay(0, 0, 4095, 1);
+		}
+		break;
+	case env:
+		this_module.updateRGBDisplay(0, 4095, 0, 1);
+		break;
+	case seq:
+		this_module.updateRGBDisplay(4095, 0, 0, 1);
+		break;
+	}
 	resetTimerMenu();
 }
 void ViaMeta::ViaMetaUI::button4EnterMenuCallback(void) {
