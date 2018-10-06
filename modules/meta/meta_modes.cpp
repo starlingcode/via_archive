@@ -65,6 +65,12 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 	case env:
 		metaController.parseControls = &MetaController::parseControlsEnv;
 		metaController.generateIncrements = &MetaController::generateIncrementsEnv;
+		if (metaUI.DAC_3_MODE == phasor) {
+			calculateDac3 = &ViaMeta::calculateDac3PhasorEnv;
+		} else {
+			calculateDac3 = &ViaMeta::calculateDac3ContourEnv;
+		}
+		
 		if (metaUI.LOOP_MODE == noloop) {
 			switchWavetable(wavetableArray[mode][metaUI.TABLE]);
 			metaController.fm = inputs.cv2Samples;
@@ -77,6 +83,11 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 		//updateRGB = updateRGBSubAudio;
 		break;
 	case seq:
+		if (metaUI.DAC_3_MODE == phasor) {
+			calculateDac3 = &ViaMeta::calculateDac3Phasor;
+		} else {
+			calculateDac3 = &ViaMeta::calculateDac3Contour;
+		}
 		metaController.parseControls = &MetaController::parseControlsSeq;
 		metaController.generateIncrements = &MetaController::generateIncrementsSeq;
 		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
@@ -186,10 +197,18 @@ void ViaMeta::handleAux4ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case phasor:
-		calculateDac3 = &ViaMeta::calculateDac3Phasor;
+		if (metaUI.FREQ_MODE == env) {
+			calculateDac3 = &ViaMeta::calculateDac3PhasorEnv;
+		} else {
+			calculateDac3 = &ViaMeta::calculateDac3Phasor;
+		}
 		break;
 	case contour:
-		calculateDac3 = &ViaMeta::calculateDac3Contour;
+		if (metaUI.FREQ_MODE == env) {
+			calculateDac3 = &ViaMeta::calculateDac3ContourEnv;
+		} else {
+			calculateDac3 = &ViaMeta::calculateDac3Contour;
+		}
 		break;
 	}
 

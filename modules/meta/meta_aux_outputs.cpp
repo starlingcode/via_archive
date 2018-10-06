@@ -75,11 +75,34 @@ void ViaMeta::calculateDac3Phasor(int32_t writeIndex) {
 	} else {
 		outputs.dac3Samples[writeIndex] = phase >> 12;
 	}
+
+	outputs.dac3Samples[writeIndex] = 4095 - outputs.dac3Samples[writeIndex];
+
 }
 
 void ViaMeta::calculateDac3Contour(int32_t writeIndex) {
 
-	outputs.dac3Samples[writeIndex] = outputs.dac2Samples[writeIndex];
+	outputs.dac3Samples[writeIndex] = (4095 - outputs.dac2Samples[writeIndex]);
+
+}
+
+void ViaMeta::calculateDac3PhasorEnv(int32_t writeIndex) {
+
+	int32_t phase = metaWavetable.phase;
+
+	if (phase >> 24) {
+		outputs.dac3Samples[writeIndex] = 8191 - (phase >> 12);
+	} else {
+		outputs.dac3Samples[writeIndex] = phase >> 12;
+	}
+
+	outputs.dac3Samples[writeIndex] = 2048 - (outputs.dac3Samples[writeIndex] >> 1);
+
+}
+
+void ViaMeta::calculateDac3ContourEnv(int32_t writeIndex) {
+
+	outputs.dac3Samples[writeIndex] = 2048 - (outputs.dac2Samples[writeIndex] >> 1);
 
 }
 

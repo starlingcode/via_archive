@@ -116,7 +116,7 @@ void ViaScanner::cv3HalfTransferCallback(void) {
 
 void ViaScanner::cv3TransferCompleteCallback(void) {
 
-	VIA_OFFSET_Q31(((q31_t *) inputs.cv3Samples)  + SCANNER_BUFFER_SIZE, 32767, (q31_t *) scanner.yInput, SCANNER_BUFFER_SIZE);
+	VIA_OFFSET_Q31(((q31_t *) inputs.cv3Samples) + SCANNER_BUFFER_SIZE, 32767, (q31_t *) scanner.yInput, SCANNER_BUFFER_SIZE);
 }
 
 void ViaScanner::slowConversionCallback(void) {

@@ -176,6 +176,8 @@ public:
 
 	void calculateDac3Phasor(int32_t writeIndex);
 	void calculateDac3Contour(int32_t writeIndex);
+	void calculateDac3PhasorEnv(int32_t writeIndex);
+	void calculateDac3ContourEnv(int32_t writeIndex);
 
 	void (ViaMeta::*calculateLogicA)(int32_t writeIndex);
 
