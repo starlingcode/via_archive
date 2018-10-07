@@ -32,7 +32,7 @@ void ViaUI::initialize(void) {
 
 	state = &ViaUI::defaultMenu;
 	transition(&ViaUI::defaultMenu);
-	loadFromEEPROM(0);
+	//loadFromEEPROM(0);
 
 }
 

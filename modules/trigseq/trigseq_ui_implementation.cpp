@@ -143,7 +143,7 @@ void ViaTrigseq::ViaTrigseqUI::button4TapCallback(void) {
 	transition(&ViaTrigseq::ViaTrigseqUI::newModeMenu);
 }
 void ViaTrigseq::ViaTrigseqUI::button5TapCallback(void) {
-	AND_B_MODE = decrementModeAndStore(AND_B_MODE, BUTTON5_MASK, numButton5Modes, BUTTON5_MASK);
+	AND_B_MODE = incrementModeAndStore(AND_B_MODE, BUTTON5_MASK, numButton5Modes, BUTTON5_MASK);
 	this_module.handleButton5ModeChange(AND_B_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(AND_B_MODE);
