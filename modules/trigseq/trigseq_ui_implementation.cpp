@@ -82,12 +82,8 @@ void ViaTrigseq::ViaTrigseqUI::button4EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
-	if (!B_PATTERN_BANK && !A_PATTERN_BANK) {
-		this->transition(&ViaTrigseq::ViaTrigseqUI::aux3Menu);
-	} else {
-		this_module.setLEDs(AND_A_MODE);
-		resetTimerMenu();
-	}
+	this_module.setLEDs(SH_B_MODE);
+	resetTimerMenu();
 }
 void ViaTrigseq::ViaTrigseqUI::button5EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
@@ -140,10 +136,10 @@ void ViaTrigseq::ViaTrigseqUI::button3TapCallback(void) {
 	transition(&ViaTrigseq::ViaTrigseqUI::newModeMenu);
 }
 void ViaTrigseq::ViaTrigseqUI::button4TapCallback(void) {
-	AND_A_MODE = incrementModeAndStore(AND_A_MODE, BUTTON4_MASK, numButton4Modes, BUTTON4_MASK);
-	this_module.handleButton4ModeChange(AND_A_MODE);
+	SH_B_MODE = incrementModeAndStore(SH_B_MODE, BUTTON4_MASK, numButton4Modes, BUTTON4_MASK);
+	this_module.handleButton4ModeChange(SH_B_MODE);
 	this_module.clearLEDs();
-	this_module.setLEDs(AND_A_MODE);
+	this_module.setLEDs(SH_B_MODE);
 	transition(&ViaTrigseq::ViaTrigseqUI::newModeMenu);
 }
 void ViaTrigseq::ViaTrigseqUI::button5TapCallback(void) {

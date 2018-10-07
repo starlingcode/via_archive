@@ -102,10 +102,10 @@ void DualEuclidean::processClock(void) {
 		break;
 	case __SR:
 		// nand instead?
-		if (logicOutput) {
-			logicOutput = aPatternValue;
+		if (!aPatternValue & !bPatternValue) {
+			logicOutput = 1;
 		} else {
-			logicOutput = bPatternValue;
+			logicOutput = 0;
 		}
 		break;
 	}

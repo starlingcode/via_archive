@@ -8,8 +8,24 @@ void ViaTrigseq::mainRisingEdgeCallback() {
 	setAuxLogic(sequencer.logicOutput);
 
 	// tricksy, sample only if sample and track mode is enabled
-	uint32_t shASetting = (sequencer.trackA | sequencer.sampleA)  * sequencer.aOutput;
-	uint32_t shBSetting = (sequencer.trackB | sequencer.sampleB) * sequencer.bOutput;
+	uint32_t shASetting;
+	uint32_t shBSetting;
+
+	if (sequencer.sampleA) {
+		shASetting = (!sequencer.aOutput);
+	} else if (sequencer.trackA) {
+		shASetting = (sequencer.aOutput);
+	} else {
+		shASetting = 0;
+	}
+
+	if (sequencer.sampleB) {
+		shBSetting = (!sequencer.bOutput);
+	} else if (sequencer.trackB) {
+		shBSetting = (sequencer.bOutput);
+	} else {
+		shBSetting = 0;
+	}
 
 	sequencer.shASignal = shASetting;
 	sequencer.shBSignal = shBSetting;
@@ -92,8 +108,12 @@ void ViaTrigseq::halfTransferCallback() {
 	sequencer.gateBEvent = SOFT_GATE_EXECUTE;
 
 	setSH(sequencer.shASignal, sequencer.shBSignal);
-	sequencer.shASignal += sequencer.sampleA;
-	sequencer.shBSignal += sequencer.sampleB;
+	if (sequencer.sampleA) {
+		sequencer.shASignal = 1;
+	}
+	if (sequencer.sampleB) {
+		sequencer.shBSignal = 1;
+	}
 
 }
 
