@@ -4,11 +4,6 @@ void ViaTrigseq::init(void) {
 
 	initializeAuxOutputs();
 
-	// initialize our touch sensors
-	// move to hardware init?
-	//tsl_user_Init();
-	trigseqUI.initialize();
-
 	initializePatterns();
 
 	gateController.updateGateA(SOFT_GATE_HIGH);
@@ -23,6 +18,8 @@ void ViaTrigseq::init(void) {
 	inputs.init(TRIGSEQ_BUFFER_SIZE);
 	outputs.init(TRIGSEQ_BUFFER_SIZE);
 	bufferSize = TRIGSEQ_BUFFER_SIZE;
+
+	trigseqUI.initialize();
 
 }
 

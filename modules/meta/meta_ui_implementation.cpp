@@ -33,6 +33,25 @@ void ViaMeta::ViaMetaUI::initialize(void) {
 	button5 = (int32_t *) &BUTTON5SENSOR;
 	button6 = (int32_t *) &BUTTON6SENSOR;
 
+	initializeMemory();
+
+#endif
+
+	loadFromEEPROM(0);
+
+#ifdef BUILD_F373
+
+	this_module.handleAux3ModeChange(this_module.metaUI.aux3Mode);
+	this_module.handleButton1ModeChange(this_module.metaUI.button1Mode);
+	this_module.handleButton2ModeChange(this_module.metaUI.button2Mode);
+	this_module.handleButton3ModeChange(this_module.metaUI.button3Mode);
+	this_module.handleButton4ModeChange(this_module.metaUI.button4Mode);
+	this_module.handleButton5ModeChange(this_module.metaUI.button5Mode);
+	this_module.handleButton6ModeChange(this_module.metaUI.button6Mode);
+	this_module.handleAux1ModeChange(this_module.metaUI.aux1Mode);
+	this_module.handleAux2ModeChange(this_module.metaUI.aux2Mode);
+	this_module.handleAux4ModeChange(this_module.metaUI.aux4Mode);
+
 #endif
 
 	state = &ViaUI::defaultMenu;

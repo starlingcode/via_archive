@@ -94,11 +94,13 @@ void ViaUI::newModeMenu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		newModeEnterMenuCallback();
-		//storeToEEPROM(0);
+#ifdef BUILD_F373
+		storeToEEPROM(0);
 		timerReset();
 		timerSetOverflow(5000);
 		timerEnable();
 		break;
+#endif
 
 		// once timerRead() times out, clear display and return to default state
 	case TIMEOUT_SIG:

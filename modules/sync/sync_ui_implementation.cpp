@@ -33,6 +33,25 @@ void ViaSync::ViaSyncUI::initialize(void) {
 	button5 = (int32_t *) &BUTTON5SENSOR;
 	button6 = (int32_t *) &BUTTON6SENSOR;
 
+	initializeMemory();
+
+#endif
+
+	loadFromEEPROM(0);
+
+#ifdef BUILD_F373
+
+	this_module.handleAux3ModeChange(this_module.syncUI.aux3Mode);
+	this_module.handleButton1ModeChange(this_module.syncUI.button1Mode);
+	this_module.handleButton2ModeChange(this_module.syncUI.button2Mode);
+	this_module.handleButton3ModeChange(this_module.syncUI.button3Mode);
+	this_module.handleButton4ModeChange(this_module.syncUI.button4Mode);
+	this_module.handleButton5ModeInit(this_module.syncUI.button5Mode);
+	//this_module.handleButton6ModeChange(this_module.syncUI.button6Mode);
+	this_module.handleAux1ModeChange(this_module.syncUI.aux1Mode);
+	this_module.handleAux2ModeChange(this_module.syncUI.aux2Mode);
+	//this_module.handleAux4ModeChange(this_module.syncUI.aux4Mode);
+
 #endif
 
 	state = &ViaUI::defaultMenu;
@@ -71,6 +90,7 @@ void ViaSync::ViaSyncUI::button2EnterMenuCallback(void) {
 	this_module.clearLEDs();
 	this_module.clearRGB();
 	this_module.setLEDs(SCALE_MODE);
+	this_module.updateRGBDisplay(this_module.scaleColor.r, this_module.scaleColor.g, this_module.scaleColor.b, 1);
 	resetTimerMenu();
 }
 void ViaSync::ViaSyncUI::button3EnterMenuCallback(void) {
@@ -91,6 +111,7 @@ void ViaSync::ViaSyncUI::button5EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
+	this_module.updateRGBDisplay(this_module.scaleColor.r, this_module.scaleColor.g, this_module.scaleColor.b, 1);
 	this_module.setLEDs(GROUP_MODE);
 	resetTimerMenu();
 }

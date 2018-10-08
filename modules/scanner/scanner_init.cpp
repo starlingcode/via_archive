@@ -16,10 +16,6 @@ void ViaScanner::init(void) {
 	scanner.reverse = reverseBuffer;
 	scanner.sh = inputs.auxTrigSamples;
 
-	// initialize our touch sensors
-	//tsl_user_Init();
-	scannerUI.initialize();
-
 	fillWavetableArray();
 
 	switchWavetableX(wavetableArray[0]);
@@ -34,7 +30,7 @@ void ViaScanner::init(void) {
 		reverseBuffer[i] = 1;
 	}
 
-	//ioStreamInit();
+	scannerUI.initialize();
 
 }
 

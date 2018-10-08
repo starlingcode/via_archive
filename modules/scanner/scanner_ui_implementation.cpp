@@ -25,8 +25,22 @@ void ViaScanner::ViaScannerUI::initialize(void) {
 	button5 = (int32_t *) &BUTTON5SENSOR;
 	button6 = (int32_t *) &BUTTON6SENSOR;
 
+	initializeMemory();
+
 #endif
 
+	loadFromEEPROM(0);
+
+#ifdef BUILD_F373
+
+	this_module.handleButton1ModeChange(this_module.scannerUI.button1Mode);
+	this_module.handleButton2ModeChange(this_module.scannerUI.button2Mode);
+	this_module.handleButton3ModeChange(this_module.scannerUI.button3Mode);
+	this_module.handleButton4ModeChange(this_module.scannerUI.button4Mode);
+	this_module.handleButton5ModeChange(this_module.scannerUI.button5Mode);
+	this_module.handleButton6ModeChange(this_module.scannerUI.button6Mode);
+
+#endif
 	state = &ViaUI::defaultMenu;
 	transition(&ViaUI::defaultMenu);
 

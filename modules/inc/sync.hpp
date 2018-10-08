@@ -129,6 +129,7 @@ public:
 	void handleButton3ModeChange(int32_t);
 	void handleButton4ModeChange(int32_t);
 	void handleButton5ModeChange(int32_t);
+	void handleButton5ModeInit(int32_t);
 	void handleButton6ModeChange(int32_t);
 	void handleAux1ModeChange(int32_t);
 	void handleAux2ModeChange(int32_t);

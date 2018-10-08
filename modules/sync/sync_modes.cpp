@@ -32,6 +32,8 @@ void ViaSync::handleButton2ModeChange(int32_t mode) {
 	scaleColor.r = hueSpace[scaleHue].r;
 	scaleColor.g = hueSpace[scaleHue].g;
 	scaleColor.b = hueSpace[scaleHue].b;
+	updateRGBDisplay(scaleColor.r, scaleColor.g, scaleColor.b, 1);
+
 
 }
 
@@ -74,15 +76,35 @@ void ViaSync::handleButton4ModeChange(int32_t mode) {
 
 void ViaSync::handleButton5ModeChange(int32_t mode) {
 
+	syncUI.SCALE_MODE = 0;
 	pllController.scale = (Scale *) scaleArray[mode][syncUI.SCALE_MODE];
 	scaleHue = mode * 4 + syncUI.SCALE_MODE;
 	scaleColor.r = hueSpace[scaleHue].r;
 	scaleColor.g = hueSpace[scaleHue].g;
 	scaleColor.b = hueSpace[scaleHue].b;
+	updateRGBDisplay(scaleColor.r, scaleColor.g, scaleColor.b, 1);
 	if (syncUI.TABLE_GROUP_MODE) {
-		switchWavetable(wavetableArray[syncUI.SCALE_MODE][mode]);
+		switchWavetableGlobal(wavetableArrayGlobal[syncUI.TABLE_MODE]);
 	} else {
-		switchWavetableGlobal(wavetableArrayGlobal[mode]);
+		syncUI.TABLE_MODE = 0;
+		switchWavetable(wavetableArray[mode][syncUI.TABLE_MODE]);
+	}
+
+}
+
+void ViaSync::handleButton5ModeInit(int32_t mode) {
+
+	pllController.scale = (Scale *) scaleArray[mode][syncUI.SCALE_MODE];
+	scaleHue = mode * 4 + syncUI.SCALE_MODE;
+	scaleColor.r = hueSpace[scaleHue].r;
+	scaleColor.g = hueSpace[scaleHue].g;
+	scaleColor.b = hueSpace[scaleHue].b;
+	updateRGBDisplay(scaleColor.r, scaleColor.g, scaleColor.b, 1);
+	if (syncUI.TABLE_GROUP_MODE) {
+		switchWavetableGlobal(wavetableArrayGlobal[syncUI.TABLE_MODE]);
+	} else {
+		syncUI.TABLE_MODE = 0;
+		switchWavetable(wavetableArray[mode][syncUI.TABLE_MODE]);
 	}
 
 }
@@ -90,9 +112,9 @@ void ViaSync::handleButton5ModeChange(int32_t mode) {
 void ViaSync::handleButton6ModeChange(int32_t mode) {
 
 	if (syncUI.TABLE_GROUP_MODE) {
-		switchWavetable(wavetableArray[syncUI.SCALE_MODE][mode]);
-	} else {
 		switchWavetableGlobal(wavetableArrayGlobal[mode]);
+	} else {
+		switchWavetable(wavetableArray[syncUI.GROUP_MODE][mode]);
 	}
 
 }
@@ -152,10 +174,10 @@ void ViaSync::handleAux3ModeChange(int32_t mode) {
 
 void ViaSync::handleAux4ModeChange(int32_t mode) {
 
-	if (syncUI.TABLE_GROUP_MODE) {
-		switchWavetable(wavetableArray[syncUI.SCALE_MODE][mode]);
+	if (mode) {
+		switchWavetableGlobal(wavetableArrayGlobal[syncUI.TABLE_MODE]);
 	} else {
-		switchWavetableGlobal(wavetableArrayGlobal[mode]);
+		switchWavetable(wavetableArray[syncUI.GROUP_MODE][syncUI.TABLE_MODE]);
 	}
 
 }

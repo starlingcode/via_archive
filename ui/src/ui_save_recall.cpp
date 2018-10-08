@@ -38,16 +38,7 @@ void ViaUI::initialize(void) {
 
 void ViaUI::loadFromEEPROM(int32_t position) {
 
-//	eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &EEPROMTemp);
-//	modeStateBuffer = EEPROMTemp;  // load bottom 16 bits
-//	eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1],
-//			&EEPROMTemp);
-//	modeStateBuffer |= EEPROMTemp << 16;  // load 16 upper bits
-//
-//	if (eepromStatus != HAL_OK) {
-//		uiSetLEDs(2);
-//		transition(&ViaUI::error);
-//	}
+	loadFromMemory(0);
 
 	button1Mode = modeStateBuffer & BUTTON1_MASK;
 	button2Mode = (modeStateBuffer & BUTTON2_MASK) >> BUTTON2_SHIFT;
@@ -68,15 +59,11 @@ void ViaUI::loadFromEEPROM(int32_t position) {
 // writes 2 16-bit values representing modeState to EEPROM per position,  1 runtime + 6 presets + calibration word
 void ViaUI::storeToEEPROM(int32_t position) {
 //	// store lower 16 bits
-//	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2],
-//			(uint16_t) modeStateBuffer);
-//	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1],
-//			(uint16_t) (modeStateBuffer >> 16)); // make sure i'm shifting in the right direction here!!
-//
-//	if (eepromStatus != HAL_OK) {
-//		uiSetLEDs(1);
-//		transition(&ViaUI::error);
-//	}
+	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2],
+			(uint16_t) modeStateBuffer);
+	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1],
+			(uint16_t) (modeStateBuffer >> 16)); // make sure i'm shifting in the right direction here!!
+
 }
 
 //// calibration and default preset initialization

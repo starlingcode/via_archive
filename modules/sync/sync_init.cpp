@@ -5,13 +5,6 @@ void ViaSync::init(void) {
 
 	initializeAuxOutputs();
 
-	// initialize our touch sensors
-	//tsl_user_Init();
-	syncUI.initialize();
-	scaleColor.r = hueSpace[0].r;
-	scaleColor.g = hueSpace[0].g;
-	scaleColor.b = hueSpace[0].b;
-
 	fillWavetableArray();
 
 	switchWavetable(wavetableArray[0][0]);
@@ -40,6 +33,7 @@ void ViaSync::init(void) {
 
 	syncWavetable.increment = 10000;
 
+	syncUI.initialize();
 
 }
 

@@ -168,6 +168,26 @@ public:
 		return TIM7->CNT;
 	}
 
+	int32_t eepromStatus;
+
+	uint16_t VirtAddVarTab[8] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+
+	void initializeMemory(void) {
+		eepromStatus = EE_Init();
+	}
+
+	void loadFromMemory(int32_t position) {
+
+		uint16_t eepromTemp;
+
+		eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &eepromTemp);
+		modeStateBuffer = (int32_t) eepromTemp;  // load bottom 16 bits
+		eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1],
+				&eepromTemp);
+		modeStateBuffer |= ((int32_t) eepromTemp) << 16;  // load 16 upper bits
+
+	}
+
 #endif
 
 #ifdef BUILD_VIRTUAL
