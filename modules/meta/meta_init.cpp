@@ -47,7 +47,9 @@ void ViaMeta::init() {
 	metaController.freeze = 1;
 
 	metaWavetable.morphMod = inputs.cv3Samples;
-	// metaWavetable.morphScale = (int16_t*) drumEnvelope.output;
-	// metaController.fm = (int16_t*) drumEnvelope.output;
+#ifdef BUILD_VIRTUAL
+	metaWavetable.morphScale = (int16_t*) drumEnvelope.output;
+	metaController.fm = (int16_t*) drumEnvelope.output;
+#endif
 
 }

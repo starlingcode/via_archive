@@ -192,7 +192,9 @@ public:
 
 #ifdef BUILD_VIRTUAL
 
-
+	void loadFromMemory(int32_t position) {
+		;
+	}
 
 	void timerReset(void) {
 		virtualTimer = 0;

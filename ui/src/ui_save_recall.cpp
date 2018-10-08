@@ -32,7 +32,6 @@ void ViaUI::initialize(void) {
 
 	state = &ViaUI::defaultMenu;
 	transition(&ViaUI::defaultMenu);
-	//loadFromEEPROM(0);
 
 }
 
@@ -59,10 +58,13 @@ void ViaUI::loadFromEEPROM(int32_t position) {
 // writes 2 16-bit values representing modeState to EEPROM per position,  1 runtime + 6 presets + calibration word
 void ViaUI::storeToEEPROM(int32_t position) {
 //	// store lower 16 bits
+
+#ifdef BUILD_F373
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2],
 			(uint16_t) modeStateBuffer);
 	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1],
 			(uint16_t) (modeStateBuffer >> 16)); // make sure i'm shifting in the right direction here!!
+#endif
 
 }
 
