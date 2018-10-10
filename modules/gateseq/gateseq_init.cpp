@@ -1,6 +1,6 @@
-#include <trigseq.hpp>
+#include <gateseq.hpp>
 
-void ViaTrigseq::init(void) {
+void ViaGateseq::init(void) {
 
 	initializeAuxOutputs();
 
@@ -19,7 +19,7 @@ void ViaTrigseq::init(void) {
 	outputs.init(TRIGSEQ_BUFFER_SIZE);
 	bufferSize = TRIGSEQ_BUFFER_SIZE;
 
-	trigseqUI.initialize();
+	gateseqUI.initialize();
 
 }
 

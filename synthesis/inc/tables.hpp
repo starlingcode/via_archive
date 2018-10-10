@@ -10,6 +10,27 @@
 
 #include <sample_data.hpp>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+//
+typedef struct {
+	const uint16_t **attackSlope;
+	const uint16_t **releaseSlope;
+	uint32_t slopeLength;
+	uint32_t numWaveforms;
+} Wavetable;
+
+#ifdef __cplusplus
+}
+#endif
+
+// helper function to load the above array
+
+void loadTable(Wavetable * family);
+
 /*
  *
  * Assign tables of slopes
@@ -172,27 +193,6 @@ static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
  * Link pairs of slope tables into families
  *
  */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-//
-typedef struct {
-	const uint16_t **attackSlope;
-	const uint16_t **releaseSlope;
-	uint32_t slopeLength;
-	uint32_t numWaveforms;
-} Wavetable;
-
-#ifdef __cplusplus
-}
-#endif
-
-// helper function to load the above array
-
-void loadTable(Wavetable * family);
 
 static const Wavetable moogSquare = {
 		.attackSlope = moogSquareShiftAttackFamily, .releaseSlope =

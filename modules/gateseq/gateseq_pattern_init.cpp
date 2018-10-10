@@ -1,6 +1,6 @@
-#include <trigseq.hpp>
+#include <gateseq.hpp>
 
-void ViaTrigseq::initializePatterns() {
+void ViaGateseq::initializePatterns() {
 	patternBank[0] = &euclidean_simple;
 	patternBank[1] = &euclidean_2vs3;
 	patternBank[2] = &euclidean_3_2multvs2_3mult;

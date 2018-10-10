@@ -8,14 +8,19 @@
 #ifndef SEQUENCERS_INC_BOOLEAN_SEQUENCES_H_
 #define SEQUENCERS_INC_BOOLEAN_SEQUENCES_H_
 
+typedef struct {
+	const uint32_t **aPatternBank;
+	const uint32_t **bPatternBank;
+	const uint32_t *aLengths;
+	const uint32_t *bLengths;
+	const uint32_t aNumPatterns;
+	const uint32_t bNumPatterns;
+} dualBooleanSequence;
 
-/*
- *
- * Sequence Data
- *
- */
+/////////////////////////
+// Euclidean sequences //
+/////////////////////////
 
-// euclidean rhythms
 static const uint32_t euclidean_simple_2_8[8] = { 1, 0, 0, 0, 1, 0, 0, 0 };
 
 static const uint32_t euclidean_16vs32odd_9_16[16] = { 1, 0, 1, 0, 1, 0, 1, 1,
@@ -353,19 +358,6 @@ static const uint32_t euclidean_2vs3_2_5[5] = { 1, 0, 1, 0, 0 };
  * Holding structures
  *
  */
-
-typedef struct {
-	const uint32_t **aPatternBank;
-	const uint32_t **bPatternBank;
-	const uint32_t *aLengths;
-	const uint32_t *bLengths;
-	const uint32_t aNumPatterns;
-	const uint32_t bNumPatterns;
-} dualBooleanSequence;
-
-/////////////////////////
-// Euclidean sequences //
-/////////////////////////
 
 static const uint32_t *euclidean_simple_a[8] = { euclidean_simple_1_16,
 		euclidean_simple_2_16, euclidean_simple_3_16, euclidean_simple_4_16,

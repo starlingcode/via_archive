@@ -1,5 +1,5 @@
 /*
- * trigseq.h
+ * gateseq.h
  *
  *  Created on: Aug 21, 2018
  *      Author: willmitchell
@@ -47,50 +47,50 @@ extern "C" {
 #define numAux3Modes 0
 #define numAux4Modes 0
 
-enum trigseq_button1Modes {
+enum gateseq_button1Modes {
 	aNoSH, aResample, aSampleTrack
 };
-enum trigseq_button2Modes {
+enum gateseq_button2Modes {
 	andAoff, andAon
 };
-enum trigseq_button3Modes {
+enum gateseq_button3Modes {
 	aPatternBankSelections
 };
-enum trigseq_button4Modes {
+enum gateseq_button4Modes {
 	bNoSH, bResample, bSampleTrack
 };
-enum trigseq_button5Modes {
+enum gateseq_button5Modes {
 	andBoff, andBon
 };
-enum trigseq_button6Modes {
+enum gateseq_button6Modes {
 	bPatternBankSelections
 };
-enum trigseq_aux1Modes {
-	trigseq_aux1NotUsed
+enum gateseq_aux1Modes {
+	gateseq_aux1NotUsed
 };
-enum trigseq_aux2Modes {
+enum gateseq_aux2Modes {
 	_and, _or, _xor, _sr
 };
-enum trigseq_aux3Modes {
-	trigseq_aux3NotUsed
+enum gateseq_aux3Modes {
+	gateseq_aux3NotUsed
 };
-enum trigseq_aux4Modes {
-	trigseq_aux4NotUsed
+enum gateseq_aux4Modes {
+	gateseq_aux4NotUsed
 };
 
 #define TRIGSEQ_BUFFER_SIZE 1
 
-void trigseqTouchLink (void *);
+void gateseqTouchLink (void *);
 
-class ViaTrigseq : public ViaModule {
+class ViaGateseq : public ViaModule {
 
 public:
 
-	class ViaTrigseqUI: public ViaUI {
+	class ViaGateseqUI: public ViaUI {
 
 	public:
 
-		ViaTrigseq& this_module;
+		ViaGateseq& this_module;
 
 		void button1TapCallback(void) override;
 		void button1HoldCallback(void) override;
@@ -133,8 +133,8 @@ public:
 
 		void initialize(void) override;
 
-		ViaTrigseqUI(ViaTrigseq& x): this_module(x) {
-			linkUI((void *) &trigseqTouchLink, (void *) this);
+		ViaGateseqUI(ViaGateseq& x): this_module(x) {
+			linkUI((void *) &gateseqTouchLink, (void *) this);
 		}
 
 	};
@@ -168,7 +168,7 @@ public:
 
 	void init(void);
 
-	ViaTrigseqUI trigseqUI;
+	ViaGateseqUI gateseqUI;
 
 	int32_t runtimeDisplay;
 
@@ -182,7 +182,7 @@ public:
 	 *
 	 */
 
-	ViaTrigseq() : trigseqUI(*this) {
+	ViaGateseq() : gateseqUI(*this) {
 		init();
 	}
 
@@ -201,7 +201,7 @@ public:
 	void slowConversionCallback(void);
 
 	void ui_dispatch(int32_t sig) {
-		trigseqUI.dispatch(sig);
+		gateseqUI.dispatch(sig);
 	};
 
 };

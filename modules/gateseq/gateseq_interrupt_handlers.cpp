@@ -1,6 +1,6 @@
-#include <trigseq.hpp>
+#include <gateseq.hpp>
 
-void ViaTrigseq::mainRisingEdgeCallback() {
+void ViaGateseq::mainRisingEdgeCallback() {
 
 	sequencer.processClock();
 
@@ -44,7 +44,7 @@ void ViaTrigseq::mainRisingEdgeCallback() {
 
 }
 
-void ViaTrigseq::mainFallingEdgeCallback() {
+void ViaGateseq::mainFallingEdgeCallback() {
 
 	sequencer.aOutput = 0;
 	sequencer.bOutput = 0;
@@ -70,7 +70,7 @@ void ViaTrigseq::mainFallingEdgeCallback() {
 
 }
 
-void ViaTrigseq::auxRisingEdgeCallback() {
+void ViaGateseq::auxRisingEdgeCallback() {
 
 	sequencer.aCounter = 0;
 	sequencer.bCounter = 0;
@@ -79,25 +79,25 @@ void ViaTrigseq::auxRisingEdgeCallback() {
 	// this might have to talk to the main trigger in a slightly more elaborate way
 
 }
-void ViaTrigseq::auxFallingEdgeCallback() {
+void ViaGateseq::auxFallingEdgeCallback() {
 	;
 }
 
-void ViaTrigseq::buttonPressedCallback() {
+void ViaGateseq::buttonPressedCallback() {
 
 	sequencer.aCounter = 0;
 	sequencer.bCounter = 0;
 
 }
-void ViaTrigseq::buttonReleasedCallback() {
+void ViaGateseq::buttonReleasedCallback() {
 	;
 }
 
-void ViaTrigseq::ioProcessCallback() {
+void ViaGateseq::ioProcessCallback() {
 	;
 }
 
-void ViaTrigseq::halfTransferCallback() {
+void ViaGateseq::halfTransferCallback() {
 
 	outputs.dac1Samples[0] = gateController.updateGateA(sequencer.gateAEvent);
 	outputs.dac2Samples[0] = gateController.updateGateB(sequencer.gateBEvent);
@@ -117,7 +117,7 @@ void ViaTrigseq::halfTransferCallback() {
 
 }
 
-void ViaTrigseq::transferCompleteCallback() {
+void ViaGateseq::transferCompleteCallback() {
 
 	outputs.dac1Samples[1] = gateController.updateGateA(sequencer.gateAEvent);
 	outputs.dac2Samples[1] = gateController.updateGateB(sequencer.gateBEvent);
@@ -136,7 +136,7 @@ void ViaTrigseq::transferCompleteCallback() {
 
 }
 
-void ViaTrigseq::slowConversionCallback() {
+void ViaGateseq::slowConversionCallback() {
 
 	controls.update();
 
