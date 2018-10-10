@@ -1,5 +1,6 @@
 #include "scanner.hpp"
 
+
 void ViaScanner::fillWavetableArray(void) {
 
 	wavetableArray[0] = &tenor257;
@@ -10,8 +11,8 @@ void ViaScanner::fillWavetableArray(void) {
 	wavetableArray[5] = &imp_5;
 	wavetableArray[6] = &additive_tri_to_pulse;
 	wavetableArray[7] = &newBounce;
-
 }
+
 
 // declare functions to set the currently active tables
 void ViaScanner::switchWavetableX(const Wavetable * table) {
