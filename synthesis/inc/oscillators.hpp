@@ -129,7 +129,7 @@ public:
 	uint32_t periodCount = 100000;
 	int32_t pllNudge = 0;
 	buffer nudgeBuffer;
-	int32_t nudgeSum;
+	int32_t nudgeSum = 0;
 
 	uint32_t phaseSignal = 0;
 	uint32_t phaseModSignal = 0;

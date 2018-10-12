@@ -46,11 +46,11 @@ void ViaSync::ViaSyncUI::initialize(void) {
 	this_module.handleButton2ModeChange(this_module.syncUI.button2Mode);
 	this_module.handleButton3ModeChange(this_module.syncUI.button3Mode);
 	this_module.handleButton4ModeChange(this_module.syncUI.button4Mode);
-	this_module.handleButton5ModeInit(this_module.syncUI.button5Mode);
-	//this_module.handleButton6ModeChange(this_module.syncUI.button6Mode);
+	//this_module.handleButton5ModeInit(this_module.syncUI.button5Mode);
+	this_module.handleButton6ModeChange(this_module.syncUI.button6Mode);
 	this_module.handleAux1ModeChange(this_module.syncUI.aux1Mode);
 	this_module.handleAux2ModeChange(this_module.syncUI.aux2Mode);
-	//this_module.handleAux4ModeChange(this_module.syncUI.aux4Mode);
+	this_module.handleAux4ModeChange(this_module.syncUI.aux4Mode);
 
 #endif
 

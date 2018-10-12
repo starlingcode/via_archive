@@ -7,7 +7,7 @@ void ViaSync::init(void) {
 
 	fillWavetableArray();
 
-	switchWavetable(wavetableArray[0][0]);
+	// switchWavetable(wavetableArray[0][0]);
 
 	initializeScales();
 
@@ -25,6 +25,10 @@ void ViaSync::init(void) {
 	syncWavetable.fm = inputs.cv2VirtualGround;
 	syncWavetable.pm = inputs.cv2VirtualGround;
 	syncWavetable.pwm = inputs.cv2VirtualGround;
+
+	for (int i = 0; i < 32; i++) {
+		writeBuffer(&pllController.nudgeBuffer, 0);
+	}
 
 	syncWavetable.morphMod = inputs.cv3Samples;
 
