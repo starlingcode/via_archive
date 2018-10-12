@@ -61,21 +61,16 @@ void PllController::doPLL(void) {
 				pllNudge = 0;
 				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
 				pllNudge -= phase * !(phase >> 24);
+
+				// for a different mode: 
+				// pllNudge = __SSAT(pllNudge, 22)
+
 				if (intMultiplier >> 16) {
 					pllNudge = ((int64_t) (pllNudge) << 16)/(intMultiplier);
 				}
-				printf("pllNudge: %d \n", pllNudge);
 				nudgeSum = pllNudge + nudgeSum - readBuffer(&nudgeBuffer, 3);
 				writeBuffer(&nudgeBuffer, pllNudge);
 				pllNudge = nudgeSum >> 4;
-
-				// if (gcd > 1) {
-				// 	pllNudge = pllNudge/16;
-				//}
-				printf("pllNudgeAverage: %d \n", pllNudge);
-				printf("intMultiplier: %d \n", intMultiplier);
-				printf("fracMultiplier: %d \n", fracMultiplier);
-				printf("gcd: %d \n\n", gcd);
 
 				pllCounter = gcd;
 				break;

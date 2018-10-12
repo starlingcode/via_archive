@@ -48,13 +48,12 @@ static const uint16_t *impshort_5[9] = { impshort0, impshort1, impshort2,
 
 
 
-static const uint16_t *bounce_257_slopes[5] = {
-	bounce_257_slopes0, bounce_257_slopes1, bounce_257_slopes2, bounce_257_slopes3, bounce_257_slopes4};
+static const uint16_t *circular_257_slopes[5] = {
+	circular_257_slopes0, circular_257_slopes1, circular_257_slopes2, circular_257_slopes3, circular_257_slopes4};
 
 
-static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
-	quintic_out2quintic_in257_slopes0, quintic_out2quintic_in257_slopes1, quintic_out2quintic_in257_slopes2, quintic_out2quintic_in257_slopes3, quintic_out2quintic_in257_slopes4, quintic_out2quintic_in257_slopes5, quintic_out2quintic_in257_slopes6, quintic_out2quintic_in257_slopes7,
-	quintic_out2quintic_in257_slopes8};
+static const uint16_t *tenor257Rls[5] = {
+	tenor257Rls0, tenor257Rls1, tenor257Rls2, tenor257Rls3, tenor257Rls4};
 
 
 static const uint16_t *moogSquareShiftAttackFamily[9] = {
@@ -62,9 +61,20 @@ static const uint16_t *moogSquareShiftAttackFamily[9] = {
 	moogSquareShiftAttackFamily8};
 
 
-static const uint16_t *exciteBikeReleaseFamily[9] = {
-	exciteBikeReleaseFamily0, exciteBikeReleaseFamily1, exciteBikeReleaseFamily2, exciteBikeReleaseFamily3, exciteBikeReleaseFamily4, exciteBikeReleaseFamily5, exciteBikeReleaseFamily6, exciteBikeReleaseFamily7,
-	exciteBikeReleaseFamily8};
+static const uint16_t *tenor257Atk[5] = {
+	tenor257Atk0, tenor257Atk1, tenor257Atk2, tenor257Atk3, tenor257Atk4};
+
+
+static const uint16_t *skipsaw[5] = {
+	skipsaw0, skipsaw1, skipsaw2, skipsaw3, skipsaw4};
+
+
+static const uint16_t *additive_tri_to_pulseFamily[5] = {
+	additive_tri_to_pulseFamily0, additive_tri_to_pulseFamily1, additive_tri_to_pulseFamily2, additive_tri_to_pulseFamily3, additive_tri_to_pulseFamily4};
+
+
+static const uint16_t *linwavefold_257_Family[5] = {
+	linwavefold_257_Family0, linwavefold_257_Family1, linwavefold_257_Family2, linwavefold_257_Family3, linwavefold_257_Family4};
 
 
 static const uint16_t *trioddAttackFamily[9] = {
@@ -77,8 +87,17 @@ static const uint16_t *moogSquareShiftReleaseFamily[9] = {
 	moogSquareShiftReleaseFamily8};
 
 
-static const uint16_t *algerianAttackFamily[5] = {
-	algerianAttackFamily0, algerianAttackFamily1, algerianAttackFamily2, algerianAttackFamily3, algerianAttackFamily4};
+static const uint16_t *algerianReleaseFamily[5] = {
+	algerianReleaseFamily0, algerianReleaseFamily1, algerianReleaseFamily2, algerianReleaseFamily3, algerianReleaseFamily4};
+
+
+static const uint16_t *exciteBikeReleaseFamily[9] = {
+	exciteBikeReleaseFamily0, exciteBikeReleaseFamily1, exciteBikeReleaseFamily2, exciteBikeReleaseFamily3, exciteBikeReleaseFamily4, exciteBikeReleaseFamily5, exciteBikeReleaseFamily6, exciteBikeReleaseFamily7,
+	exciteBikeReleaseFamily8};
+
+
+static const uint16_t *soprano257Rls[5] = {
+	soprano257Rls0, soprano257Rls1, soprano257Rls2, soprano257Rls3, soprano257Rls4};
 
 
 static const uint16_t *sharpExpoSymAttackFamily[9] = {
@@ -86,72 +105,39 @@ static const uint16_t *sharpExpoSymAttackFamily[9] = {
 	sharpExpoSymAttackFamily8};
 
 
-static const uint16_t *linwavefold_257_Family[5] = {
-	linwavefold_257_Family0, linwavefold_257_Family1, linwavefold_257_Family2, linwavefold_257_Family3, linwavefold_257_Family4};
+static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
+	quintic_out2quintic_in257_slopes0, quintic_out2quintic_in257_slopes1, quintic_out2quintic_in257_slopes2, quintic_out2quintic_in257_slopes3, quintic_out2quintic_in257_slopes4, quintic_out2quintic_in257_slopes5, quintic_out2quintic_in257_slopes6, quintic_out2quintic_in257_slopes7,
+	quintic_out2quintic_in257_slopes8};
+
+
+static const uint16_t *exciteBikeAttackFamily[9] = {
+	exciteBikeAttackFamily0, exciteBikeAttackFamily1, exciteBikeAttackFamily2, exciteBikeAttackFamily3, exciteBikeAttackFamily4, exciteBikeAttackFamily5, exciteBikeAttackFamily6, exciteBikeAttackFamily7,
+	exciteBikeAttackFamily8};
+
+
+static const uint16_t *test_fm_release[5] = {
+	test_fm_release0, test_fm_release1, test_fm_release2, test_fm_release3, test_fm_release4};
 
 
 static const uint16_t *allLinear129_5[5] = {
 	allLinear129_50, allLinear129_51, allLinear129_52, allLinear129_53, allLinear129_54};
 
 
-static const uint16_t *sharpExpoSymReleaseFamily[9] = {
-	sharpExpoSymReleaseFamily0, sharpExpoSymReleaseFamily1, sharpExpoSymReleaseFamily2, sharpExpoSymReleaseFamily3, sharpExpoSymReleaseFamily4, sharpExpoSymReleaseFamily5, sharpExpoSymReleaseFamily6, sharpExpoSymReleaseFamily7,
-	sharpExpoSymReleaseFamily8};
+static const uint16_t *soprano257Atk[5] = {
+	soprano257Atk0, soprano257Atk1, soprano257Atk2, soprano257Atk3, soprano257Atk4};
 
 
-static const uint16_t *soprano257Rls[5] = {
-	soprano257Rls0, soprano257Rls1, soprano257Rls2, soprano257Rls3, soprano257Rls4};
-
-
-static const uint16_t *circular_257_slopes[5] = {
-	circular_257_slopes0, circular_257_slopes1, circular_257_slopes2, circular_257_slopes3, circular_257_slopes4};
-
-
-static const uint16_t *gamma257Attack[9] = {
-	gamma257Attack0, gamma257Attack1, gamma257Attack2, gamma257Attack3, gamma257Attack4, gamma257Attack5, gamma257Attack6, gamma257Attack7,
-	gamma257Attack8};
-
-
-static const uint16_t *skipsaw[5] = {
-	skipsaw0, skipsaw1, skipsaw2, skipsaw3, skipsaw4};
+static const uint16_t *algerianAttackFamily[5] = {
+	algerianAttackFamily0, algerianAttackFamily1, algerianAttackFamily2, algerianAttackFamily3, algerianAttackFamily4};
 
 
 static const uint16_t *sawBendReleaseFamily[5] = {
 	sawBendReleaseFamily0, sawBendReleaseFamily1, sawBendReleaseFamily2, sawBendReleaseFamily3, sawBendReleaseFamily4};
 
 
-static const uint16_t *algerianReleaseFamily[5] = {
-	algerianReleaseFamily0, algerianReleaseFamily1, algerianReleaseFamily2, algerianReleaseFamily3, algerianReleaseFamily4};
-
-
-static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
-	quintic_inout2quintic_outin257_slopes0, quintic_inout2quintic_outin257_slopes1, quintic_inout2quintic_outin257_slopes2, quintic_inout2quintic_outin257_slopes3, quintic_inout2quintic_outin257_slopes4, quintic_inout2quintic_outin257_slopes5, quintic_inout2quintic_outin257_slopes6, quintic_inout2quintic_outin257_slopes7,
-	quintic_inout2quintic_outin257_slopes8};
-
-
-static const uint16_t *newBounceFamily[5] = {
-	newBounceFamily0, newBounceFamily1, newBounceFamily2, newBounceFamily3, newBounceFamily4};
-
-
-static const uint16_t *sawBendAttackFamily[5] = {
-	sawBendAttackFamily0, sawBendAttackFamily1, sawBendAttackFamily2, sawBendAttackFamily3, sawBendAttackFamily4};
-
-
-static const uint16_t *tenor257Rls[5] = {
-	tenor257Rls0, tenor257Rls1, tenor257Rls2, tenor257Rls3, tenor257Rls4};
-
-
-static const uint16_t *trioddReleaseFamily[9] = {
-	trioddReleaseFamily0, trioddReleaseFamily1, trioddReleaseFamily2, trioddReleaseFamily3, trioddReleaseFamily4, trioddReleaseFamily5, trioddReleaseFamily6, trioddReleaseFamily7,
-	trioddReleaseFamily8};
-
-
-static const uint16_t *tenor257Atk[5] = {
-	tenor257Atk0, tenor257Atk1, tenor257Atk2, tenor257Atk3, tenor257Atk4};
-
-
-static const uint16_t *soprano257Atk[5] = {
-	soprano257Atk0, soprano257Atk1, soprano257Atk2, soprano257Atk3, soprano257Atk4};
+static const uint16_t *sharpExpoSymReleaseFamily[9] = {
+	sharpExpoSymReleaseFamily0, sharpExpoSymReleaseFamily1, sharpExpoSymReleaseFamily2, sharpExpoSymReleaseFamily3, sharpExpoSymReleaseFamily4, sharpExpoSymReleaseFamily5, sharpExpoSymReleaseFamily6, sharpExpoSymReleaseFamily7,
+	sharpExpoSymReleaseFamily8};
 
 
 static const uint16_t *impshort[9] = {
@@ -163,18 +149,40 @@ static const uint16_t *testRMSRMSRls[5] = {
 	testRMSRMSRls0, testRMSRMSRls1, testRMSRMSRls2, testRMSRMSRls3, testRMSRMSRls4};
 
 
+static const uint16_t *trioddReleaseFamily[9] = {
+	trioddReleaseFamily0, trioddReleaseFamily1, trioddReleaseFamily2, trioddReleaseFamily3, trioddReleaseFamily4, trioddReleaseFamily5, trioddReleaseFamily6, trioddReleaseFamily7,
+	trioddReleaseFamily8};
+
+
+static const uint16_t *bounce_257_slopes[5] = {
+	bounce_257_slopes0, bounce_257_slopes1, bounce_257_slopes2, bounce_257_slopes3, bounce_257_slopes4};
+
+
+static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
+	quintic_inout2quintic_outin257_slopes0, quintic_inout2quintic_outin257_slopes1, quintic_inout2quintic_outin257_slopes2, quintic_inout2quintic_outin257_slopes3, quintic_inout2quintic_outin257_slopes4, quintic_inout2quintic_outin257_slopes5, quintic_inout2quintic_outin257_slopes6, quintic_inout2quintic_outin257_slopes7,
+	quintic_inout2quintic_outin257_slopes8};
+
+
+static const uint16_t *test_fm_attack[5] = {
+	test_fm_attack0, test_fm_attack1, test_fm_attack2, test_fm_attack3, test_fm_attack4};
+
+
+static const uint16_t *newBounceFamily[5] = {
+	newBounceFamily0, newBounceFamily1, newBounceFamily2, newBounceFamily3, newBounceFamily4};
+
+
+static const uint16_t *sawBendAttackFamily[5] = {
+	sawBendAttackFamily0, sawBendAttackFamily1, sawBendAttackFamily2, sawBendAttackFamily3, sawBendAttackFamily4};
+
+
 static const uint16_t *sinwavefold_257_Family[9] = {
 	sinwavefold_257_Family0, sinwavefold_257_Family1, sinwavefold_257_Family2, sinwavefold_257_Family3, sinwavefold_257_Family4, sinwavefold_257_Family5, sinwavefold_257_Family6, sinwavefold_257_Family7,
 	sinwavefold_257_Family8};
 
 
-static const uint16_t *exciteBikeAttackFamily[9] = {
-	exciteBikeAttackFamily0, exciteBikeAttackFamily1, exciteBikeAttackFamily2, exciteBikeAttackFamily3, exciteBikeAttackFamily4, exciteBikeAttackFamily5, exciteBikeAttackFamily6, exciteBikeAttackFamily7,
-	exciteBikeAttackFamily8};
-
-
-static const uint16_t *additive_tri_to_pulseFamily[5] = {
-	additive_tri_to_pulseFamily0, additive_tri_to_pulseFamily1, additive_tri_to_pulseFamily2, additive_tri_to_pulseFamily3, additive_tri_to_pulseFamily4};
+static const uint16_t *gamma257Attack[9] = {
+	gamma257Attack0, gamma257Attack1, gamma257Attack2, gamma257Attack3, gamma257Attack4, gamma257Attack5, gamma257Attack6, gamma257Attack7,
+	gamma257Attack8};
 
 
 // TABLES 
@@ -318,6 +326,13 @@ static const Wavetable quintic_inout2quintic_outin257 = {
 	.releaseSlope = quintic_inout2quintic_outin257_slopes,
 	.slopeLength = 256,
 	.numWaveforms = 9};
+
+
+static const Wavetable test_fm = {
+	.attackSlope = test_fm_attack,
+	.releaseSlope = test_fm_release,
+	.slopeLength = 256,
+	.numWaveforms = 5};
 
 
 

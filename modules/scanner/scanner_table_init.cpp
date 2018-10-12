@@ -9,7 +9,7 @@ void ViaScanner::fillWavetableArray(void) {
 	wavetableArray[3] = &linwavefold_257;
 	wavetableArray[4] = &skipSaw;
 	wavetableArray[5] = &imp_5;
-	wavetableArray[6] = &additive_tri_to_pulse;
+	wavetableArray[6] = &test_fm;
 	wavetableArray[7] = &newBounce;
 }
 
