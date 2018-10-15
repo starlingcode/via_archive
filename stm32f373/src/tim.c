@@ -89,7 +89,7 @@ void MX_TIM2_Init(void) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 
-	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+	sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
 	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
 	if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig)
 			!= HAL_OK) {
@@ -138,7 +138,7 @@ void MX_TIM4_Init(void) {
 	TIM_OC_InitTypeDef sConfigOC;
 
 	htim4.Instance = TIM4;
-	htim4.Init.Prescaler = 1 - 1;
+	htim4.Init.Prescaler = 0;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
 	htim4.Init.Period = 4095;
 	htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -172,7 +172,7 @@ void MX_TIM5_Init(void) {
 	TIM_OC_InitTypeDef sConfigOC;
 
 	htim5.Instance = TIM5;
-	htim5.Init.Prescaler = 1 - 1;
+	htim5.Init.Prescaler = 0;
 	htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
 	htim5.Init.Period = 4095;
 	htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -200,12 +200,56 @@ void MX_TIM5_Init(void) {
 	HAL_TIM_MspPostInit(&htim5);
 
 }
+
+/* TIM5 init function */
+void MX_TIM5_Init_Gateseq(void) {
+	TIM_MasterConfigTypeDef sMasterConfig;
+	TIM_OC_InitTypeDef sConfigOC;
+
+	htim5.Instance = TIM5;
+	htim5.Init.Prescaler = 0;
+	htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
+	htim5.Init.Period = 4095;
+	htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+	if (HAL_TIM_PWM_Init(&htim5) != HAL_OK) {
+		_Error_Handler(__FILE__, __LINE__);
+	}
+
+	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+	if (HAL_TIMEx_MasterConfigSynchronization(&htim5, &sMasterConfig)
+			!= HAL_OK) {
+		_Error_Handler(__FILE__, __LINE__);
+	}
+
+	sConfigOC.OCMode = TIM_OCMODE_PWM1;
+	sConfigOC.Pulse = 0;
+	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+	if (HAL_TIM_PWM_ConfigChannel(&htim5, &sConfigOC, TIM_CHANNEL_1)
+			!= HAL_OK) {
+		_Error_Handler(__FILE__, __LINE__);
+	}
+
+	//HAL_TIM_MspPostInit(&htim5);
+	// configure the pin as a GPIO
+	GPIO_InitTypeDef GPIO_InitStruct;
+	/*Configure GPIO pins : PAPin PA12 */
+	GPIO_InitStruct.Pin = GPIO_PIN_8;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+}
+
 /* TIM6 init function */
 void MX_TIM6_Init(void) {
 	TIM_MasterConfigTypeDef sMasterConfig;
 
 	htim6.Instance = TIM6;
-	htim6.Init.Prescaler = 1 - 1;
+	htim6.Init.Prescaler = 0;
 	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
 	htim6.Init.Period = 1439;
 	htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -301,7 +345,7 @@ void MX_TIM17_Init(void) {
 	htim17.Instance = TIM17;
 	htim17.Init.Prescaler = 1;
 	htim17.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim17.Init.Period = 1000;
+	htim17.Init.Period = 10000;
 	htim17.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim17.Init.RepetitionCounter = 0;
 	htim17.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -377,6 +421,9 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle) {
 		__HAL_RCC_TIM2_CLK_ENABLE()
 		;
 		/* USER CODE BEGIN TIM2_MspInit 1 */
+		/* TIM62 interrupt Init */
+		HAL_NVIC_SetPriority(TIM2_IRQn, 1, 0);
+		HAL_NVIC_EnableIRQ(TIM2_IRQn);
 
 		/* USER CODE END TIM2_MspInit 1 */
 	}

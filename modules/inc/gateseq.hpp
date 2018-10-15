@@ -200,6 +200,10 @@ public:
 	void transferCompleteCallback(void);
 	void slowConversionCallback(void);
 
+	void auxTimer1InterruptCallback(void);
+	void auxTimer2InterruptCallback(void);
+
+
 	void ui_dispatch(int32_t sig) {
 		gateseqUI.dispatch(sig);
 	};

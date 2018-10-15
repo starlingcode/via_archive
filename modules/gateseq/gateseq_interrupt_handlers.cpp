@@ -4,69 +4,107 @@ void ViaGateseq::mainRisingEdgeCallback() {
 
 	sequencer.processClock();
 
-	setLogicA(sequencer.aOutput);
+	//setLogicA(1);
 	setAuxLogic(sequencer.logicOutput);
 
-	// tricksy, sample only if sample and track mode is enabled
-	uint32_t shASetting;
-	uint32_t shBSetting;
-
-	if (sequencer.sampleA) {
-		shASetting = (!sequencer.aOutput);
-	} else if (sequencer.trackA) {
-		shASetting = (sequencer.aOutput);
-	} else {
-		shASetting = 0;
-	}
+//	if (sequencer.sampleA) {
+//		sequencer.shASignal = (!sequencer.aOutput);
+//	} else if (sequencer.trackA) {
+//		sequencer.shASignal = (sequencer.aOutput);
+//	} else {
+//		sequencer.shASignal = 0;
+//	}
 
 	if (sequencer.sampleB) {
-		shBSetting = (!sequencer.bOutput);
+		sequencer.shBSignal = (!sequencer.bOutput);
 	} else if (sequencer.trackB) {
-		shBSetting = (sequencer.bOutput);
+		sequencer.shBSignal = (sequencer.bOutput);
 	} else {
-		shBSetting = 0;
+		sequencer.shBSignal = 0;
 	}
-
-	sequencer.shASignal = shASetting;
-	sequencer.shBSignal = shBSetting;
 
 	// similar deal here
 	if (runtimeDisplay) {
-		setLEDA(sequencer.sampleA | shASetting);
-		setLEDB(sequencer.sampleB | shBSetting);
+		//setLEDA(sequencer.sampleA | sequencer.shASignal);
+		setLEDB(sequencer.sampleB | sequencer.shBSignal);
 
-		setLEDC(sequencer.aOutput);
+		//setLEDC(sequencer.aOutput);
 		setLEDD(sequencer.bOutput);
 	}
 
-	sequencer.gateAEvent = SOFT_GATE_HIGH * sequencer.aOutput;
+	//sequencer.gateAEvent = SOFT_GATE_HIGH * sequencer.aOutput;
 	sequencer.gateBEvent = SOFT_GATE_HIGH * sequencer.bOutput;
 
 }
 
 void ViaGateseq::mainFallingEdgeCallback() {
 
-	sequencer.aOutput = 0;
 	sequencer.bOutput = 0;
-	sequencer.logicOutput = 0;
+	sequencer.updateLogicOutput();
 
-	setLogicA(sequencer.aOutput);
 	setAuxLogic(sequencer.logicOutput);
 
-	sequencer.shASignal = sequencer.sampleA;
 	sequencer.shBSignal = sequencer.sampleB;
 
 	// similar deal here
 	if (runtimeDisplay) {
-		setLEDA(sequencer.sampleA);
 		setLEDB(sequencer.sampleB);
-
-		setLEDC(sequencer.aOutput);
 		setLEDD(sequencer.bOutput);
 	}
 
-	sequencer.gateAEvent = SOFT_GATE_LOW * sequencer.andA;
 	sequencer.gateBEvent = SOFT_GATE_LOW * sequencer.andB;
+
+}
+
+void ViaGateseq::auxTimer1InterruptCallback() {
+
+		// test
+		// setLogicA(1);
+
+		sequencer.advanceSequencerA();
+		sequencer.updateLogicOutput();
+		setLogicA(sequencer.aOutput);
+		setAuxLogic(sequencer.logicOutput);
+
+		if (sequencer.sampleA) {
+			sequencer.shASignal = (!sequencer.aOutput);
+		} else if (sequencer.trackA) {
+			sequencer.shASignal = (sequencer.aOutput);
+		} else {
+			sequencer.shASignal = 0;
+		}
+
+		// similar deal here
+		if (runtimeDisplay) {
+			setLEDA(sequencer.sampleA | sequencer.shASignal);
+			setLEDC(sequencer.aOutput);
+		}
+
+		sequencer.gateAEvent = SOFT_GATE_HIGH * sequencer.aOutput;
+
+		TIM2->ARR = sequencer.periodCount/sequencer.multiplier;
+		TIM17->ARR = TIM2->ARR >> 13;
+		TIM17->CNT = 1;
+		TIM17->CR1 = TIM_CR1_CEN;
+
+
+}
+
+void ViaGateseq::auxTimer2InterruptCallback() {
+
+		sequencer.aOutput = 0;
+		setLogicA(sequencer.aOutput);
+		sequencer.updateLogicOutput();
+		setAuxLogic(sequencer.logicOutput);
+		sequencer.shASignal = sequencer.sampleA;
+		// similar deal here
+		if (runtimeDisplay) {
+			setLEDA(sequencer.sampleA);
+			setLEDC(sequencer.aOutput);
+		}
+		sequencer.gateAEvent = SOFT_GATE_LOW * sequencer.andA;
+
+		TIM17->CR1 &= ~TIM_CR1_CEN;
 
 }
 
@@ -145,6 +183,12 @@ void ViaGateseq::slowConversionCallback() {
 	updateRGBDisplay(outputs.dac1Samples[0],
 			sequencer.logicOutput * 4095,
 			outputs.dac2Samples[0], runtimeDisplay);
+
+	GPIOA->BRR |= GPIO_PIN_8;
+
+	if (runtimeDisplay) {
+		//SET_BLUE_LED_ONOFF(0);
+	}
 
 }
 

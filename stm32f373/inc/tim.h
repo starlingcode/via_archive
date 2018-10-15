@@ -84,6 +84,7 @@ void MX_TIM3_Init(void);
 void MX_TIM4_Init(void);
 void MX_TIM5_Init(void);
 void MX_TIM6_Init(void);
+void MX_TIM5_Init_Gateseq(void);
 void MX_TIM7_Init(void);
 void MX_TIM12_Init(void);
 void MX_TIM13_Init(void);

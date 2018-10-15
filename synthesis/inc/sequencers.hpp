@@ -26,8 +26,8 @@ enum {
 
 class DualEuclidean {
 
-	uint32_t aLength = 0;
-	uint32_t bLength = 0;
+	uint32_t aLength = 1;
+	uint32_t bLength = 1;
 	uint32_t aPatternMorph = 0;
 	uint32_t bPatternMorph = 0;
 	uint32_t offset = 0;
@@ -35,6 +35,11 @@ class DualEuclidean {
 	uint32_t bPatternIndex = 0;
 
 public:
+
+	uint32_t periodCount;
+	uint32_t multiplier = 3;
+	uint32_t divider = 1;
+	uint32_t auxTimerRisingEdge;
 
 	// "inputs"
 	uint32_t aCounter = 0;
@@ -61,6 +66,9 @@ public:
 	uint32_t shBSignal = 0;
 
 	void processClock(void);
+	void advanceSequencerA(void);
+	void advanceSequencerB(void);
+	void updateLogicOutput(void);
 	void parseControls(ViaControls *, ViaInputStreams *);
 
 };
