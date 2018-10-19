@@ -60,6 +60,7 @@ void ViaGateseq::auxTimer1InterruptCallback() {
 
 		// test
 		// setLogicA(1);
+		sequencer.virtualGateHigh = 1;
 
 		sequencer.advanceSequencerA();
 		sequencer.updateLogicOutput();
@@ -91,6 +92,8 @@ void ViaGateseq::auxTimer1InterruptCallback() {
 }
 
 void ViaGateseq::auxTimer2InterruptCallback() {
+
+		sequencer.virtualGateHigh = 0;
 
 		sequencer.aOutput = 0;
 		setLogicA(sequencer.aOutput);
@@ -184,10 +187,8 @@ void ViaGateseq::slowConversionCallback() {
 			sequencer.logicOutput * 4095,
 			outputs.dac2Samples[0], runtimeDisplay);
 
-	GPIOA->BRR |= GPIO_PIN_8;
-
 	if (runtimeDisplay) {
-		//SET_BLUE_LED_ONOFF(0);
+		SET_BLUE_LED_ONOFF(outputs.dac2Samples[0] >> 11);
 	}
 
 }

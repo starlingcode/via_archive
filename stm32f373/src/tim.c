@@ -223,14 +223,14 @@ void MX_TIM5_Init_Gateseq(void) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 
-	sConfigOC.OCMode = TIM_OCMODE_PWM1;
-	sConfigOC.Pulse = 0;
-	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-	if (HAL_TIM_PWM_ConfigChannel(&htim5, &sConfigOC, TIM_CHANNEL_1)
-			!= HAL_OK) {
-		_Error_Handler(__FILE__, __LINE__);
-	}
+//	sConfigOC.OCMode = TIM_OCMODE_PWM1;
+//	sConfigOC.Pulse = 0;
+//	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+//	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+//	if (HAL_TIM_PWM_ConfigChannel(&htim5, &sConfigOC, TIM_CHANNEL_1)
+//			!= HAL_OK) {
+//		_Error_Handler(__FILE__, __LINE__);
+//	}
 
 	//HAL_TIM_MspPostInit(&htim5);
 	// configure the pin as a GPIO

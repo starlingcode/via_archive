@@ -38,10 +38,10 @@ extern "C" {
 
 #define numButton1Modes 3
 #define numButton2Modes 2
-#define numButton3Modes 8
+#define numButton3Modes 4
 #define numButton4Modes 3
 #define numButton5Modes 2
-#define numButton6Modes 8
+#define numButton6Modes 4
 #define numAux1Modes 0
 #define numAux2Modes 4
 #define numAux3Modes 0
@@ -156,7 +156,8 @@ public:
 	 *
 	 */
 
-	const dualBooleanSequence *patternBank[8];
+	const booleanSequenceBank *seq1PatternBank[4];
+	const booleanSequenceBank *seq2PatternBank[4];
 
 	void initializePatterns(void);
 

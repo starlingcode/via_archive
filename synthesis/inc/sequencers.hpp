@@ -30,16 +30,18 @@ class DualEuclidean {
 	uint32_t bLength = 1;
 	uint32_t aPatternMorph = 0;
 	uint32_t bPatternMorph = 0;
-	uint32_t offset = 0;
 	uint32_t aPatternIndex = 0;
 	uint32_t bPatternIndex = 0;
 
 public:
 
+	uint32_t offset = 0;
+
 	uint32_t periodCount;
-	uint32_t multiplier = 3;
+	uint32_t multiplier = 1;
 	uint32_t divider = 1;
-	uint32_t auxTimerRisingEdge;
+	uint32_t modulateMultiplier;
+	uint32_t virtualGateHigh;
 
 	// "inputs"
 	uint32_t aCounter = 0;
@@ -54,8 +56,8 @@ public:
 	uint32_t gateBEvent = 0;
 	uint32_t auxLogicMode = 0;
 
-	const dualBooleanSequence *currentABank;
-	const dualBooleanSequence *currentBBank;
+	const booleanSequenceBank *currentABank;
+	const booleanSequenceBank *currentBBank;
 
 	// "outputs"
 	uint32_t aOutput = 0;
