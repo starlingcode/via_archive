@@ -69,6 +69,8 @@ void TIM7_IRQHandler(void);
 void DMA2_Channel3_IRQHandler(void);
 void DMA2_Channel4_IRQHandler(void);
 void TIM2_IRQHandler(void);
+void TIM18_DAC2_IRQHandler(void);
+
 
 #ifdef __cplusplus
 }

@@ -177,6 +177,8 @@ public:
 
 	SoftGate gateController;
 
+	uint32_t simultaneousTrigFlag;
+
 	/*
 	 *
 	 * Event meta_handlers
@@ -203,7 +205,7 @@ public:
 
 	void auxTimer1InterruptCallback(void);
 	void auxTimer2InterruptCallback(void);
-
+	void auxTimer3InterruptCallback(void);
 
 	void ui_dispatch(int32_t sig) {
 		gateseqUI.dispatch(sig);

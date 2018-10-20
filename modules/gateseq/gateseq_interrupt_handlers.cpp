@@ -2,6 +2,11 @@
 
 void ViaGateseq::mainRisingEdgeCallback() {
 
+	setLEDA(1);
+
+	simultaneousTrigFlag = 1;
+	TIM18->CR1 = TIM_CR1_CEN;
+
 	sequencer.processClock();
 
 #ifdef BUILD_VIRTUAL
@@ -63,8 +68,6 @@ void ViaGateseq::mainFallingEdgeCallback() {
 
 void ViaGateseq::auxTimer1InterruptCallback() {
 
-		// test
-		// setLogicA(1);
 		sequencer.virtualGateHigh = 1;
 
 		sequencer.advanceSequencerA();
@@ -116,7 +119,7 @@ void ViaGateseq::auxTimer2InterruptCallback() {
 		sequencer.shASignal = sequencer.sampleA;
 		// similar deal here
 		if (runtimeDisplay) {
-			setLEDA(sequencer.sampleA);
+			//setLEDA(sequencer.sampleA);
 			setLEDC(sequencer.aOutput);
 		}
 		sequencer.gateAEvent = SOFT_GATE_LOW * sequencer.andA;
@@ -126,18 +129,58 @@ void ViaGateseq::auxTimer2InterruptCallback() {
 #endif
 #ifdef BUILD_VIRTUAL
 		sequencer.virtualTimer3Enable = 0;
-#endif BUILD_VIRTUAL
+#endif
+
+}
+
+void ViaGateseq::auxTimer3InterruptCallback() {
+
+	setLEDA(0);
+	simultaneousTrigFlag = 0;
+	TIM18->CR1 &= ~TIM_CR1_CEN;
+	TIM18->CNT = 1;
 
 }
 
 void ViaGateseq::auxRisingEdgeCallback() {
 
-	sequencer.aCounter = 0;
-	sequencer.bCounter = 0;
-	sequencer.skipClock = 0;
+	if (simultaneousTrigFlag) {
+		sequencer.aCounter = 0;
+		sequencer.bCounter = 0;
+		sequencer.advanceSequencerA();
+		sequencer.advanceSequencerB();
+		sequencer.updateLogicOutput();
+		setLogicA(sequencer.aOutput);
+		setAuxLogic(sequencer.logicOutput);
+		if (sequencer.sampleB) {
+			sequencer.shBSignal = (!sequencer.bOutput);
+		} else if (sequencer.trackB) {
+			sequencer.shBSignal = (sequencer.bOutput);
+		} else {
+			sequencer.shBSignal = 0;
+		}
+		if (sequencer.sampleA) {
+			sequencer.shASignal = (!sequencer.aOutput);
+		} else if (sequencer.trackA) {
+			sequencer.shASignal = (sequencer.aOutput);
+		} else {
+			sequencer.shASignal = 0;
+		}
 
-	// process clock if there is a noticeable issue with resyncing?
-	// this might have to talk to the main trigger in a slightly more elaborate way
+		// similar deal here
+		if (runtimeDisplay) {
+			setLEDA(sequencer.sampleA | sequencer.shASignal);
+			setLEDB(sequencer.sampleB | sequencer.shBSignal);
+			setLEDC(sequencer.aOutput);
+			setLEDD(sequencer.bOutput);
+		}
+
+		sequencer.gateAEvent = SOFT_GATE_HIGH * sequencer.aOutput;
+		sequencer.gateBEvent = SOFT_GATE_HIGH * sequencer.bOutput;
+	} else {
+		sequencer.aCounter = 0;
+		sequencer.bCounter = 0;
+	}
 
 }
 void ViaGateseq::auxFallingEdgeCallback() {
@@ -148,6 +191,7 @@ void ViaGateseq::buttonPressedCallback() {
 
 	sequencer.aCounter = 0;
 	sequencer.bCounter = 0;
+
 
 }
 void ViaGateseq::buttonReleasedCallback() {

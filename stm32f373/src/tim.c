@@ -359,15 +359,15 @@ void MX_TIM18_Init(void) {
 	TIM_MasterConfigTypeDef sMasterConfig;
 
 	htim18.Instance = TIM18;
-	htim18.Init.Prescaler = 1;
+	htim18.Init.Prescaler = 100;
 	htim18.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim18.Init.Period = 1000;
+	htim18.Init.Period = 10000;
 	htim18.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim18) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 
-	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+	sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
 	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
 	if (HAL_TIMEx_MasterConfigSynchronization(&htim18, &sMasterConfig)
 			!= HAL_OK) {
@@ -503,9 +503,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle) {
 
 		/* USER CODE END TIM18_MspInit 0 */
 		/* TIM18 clock enable */
-		__HAL_RCC_TIM18_CLK_ENABLE()
-		;
+		__HAL_RCC_TIM18_CLK_ENABLE();
 		/* USER CODE BEGIN TIM18_MspInit 1 */
+	    HAL_NVIC_SetPriority(TIM18_DAC2_IRQn, 2, 0);
+	    HAL_NVIC_EnableIRQ(TIM18_DAC2_IRQn);
 
 		/* USER CODE END TIM18_MspInit 1 */
 	}
