@@ -47,6 +47,10 @@ public:
 	int32_t virtualTimer3Count = 0;
 	int32_t virtualTimer3Overflow = 0;
 	int32_t virtualTimer3Enable = 0;
+
+	int32_t virtualTimer4Count = 0;
+	int32_t virtualTimer4Overflow = 16;
+	int32_t virtualTimer4Enable = 0;
 #endif
 
 	uint32_t offset = 0;

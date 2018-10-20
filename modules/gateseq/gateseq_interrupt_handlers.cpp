@@ -2,10 +2,13 @@
 
 void ViaGateseq::mainRisingEdgeCallback() {
 
-	setLEDA(1);
-
 	simultaneousTrigFlag = 1;
+#ifdef BUILD_F373
 	TIM18->CR1 = TIM_CR1_CEN;
+#endif
+#ifdef BUILD_VIRTUAL
+	sequencer.virtualTimer4Enable = 1;
+#endif
 
 	sequencer.processClock();
 
@@ -14,16 +17,7 @@ void ViaGateseq::mainRisingEdgeCallback() {
 	sequencer.updateLogicOutput();
 #endif
 
-	//setLogicA(1);
 	setAuxLogic(sequencer.logicOutput);
-
-//	if (sequencer.sampleA) {
-//		sequencer.shASignal = (!sequencer.aOutput);
-//	} else if (sequencer.trackA) {
-//		sequencer.shASignal = (sequencer.aOutput);
-//	} else {
-//		sequencer.shASignal = 0;
-//	}
 
 	if (sequencer.sampleB) {
 		sequencer.shBSignal = (!sequencer.bOutput);
@@ -35,14 +29,10 @@ void ViaGateseq::mainRisingEdgeCallback() {
 
 	// similar deal here
 	if (runtimeDisplay) {
-		//setLEDA(sequencer.sampleA | sequencer.shASignal);
 		setLEDB(sequencer.sampleB | sequencer.shBSignal);
-
-		//setLEDC(sequencer.aOutput);
 		setLEDD(sequencer.bOutput);
 	}
 
-	//sequencer.gateAEvent = SOFT_GATE_HIGH * sequencer.aOutput;
 	sequencer.gateBEvent = SOFT_GATE_HIGH * sequencer.bOutput;
 
 }
@@ -135,10 +125,15 @@ void ViaGateseq::auxTimer2InterruptCallback() {
 
 void ViaGateseq::auxTimer3InterruptCallback() {
 
-	setLEDA(0);
 	simultaneousTrigFlag = 0;
+#ifdef BUILD_F373
 	TIM18->CR1 &= ~TIM_CR1_CEN;
 	TIM18->CNT = 1;
+#endif
+#ifdef BUILD_VIRTUAL
+	sequencer.virtualTimer4Enable = 0;
+	sequencer.virtualTimer4Count = 1;
+#endif
 
 }
 
