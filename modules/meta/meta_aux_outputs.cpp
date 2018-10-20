@@ -16,8 +16,8 @@ void ViaMeta::drumModeOn(int32_t writeIndex) {
 	drumEnvelope.advance(&inputs, wavetableReadDrum);
 	uint32_t ampScale = drumEnvelope.output[0] << 1;
 	int32_t sample = outputs.dac2Samples[writeIndex];
-	outputs.dac2Samples[writeIndex] = (__USAT(sample - 2048, 12) * ampScale) >> 16;
-	outputs.dac1Samples[writeIndex] = ((4095 - __USAT(sample + 2048, 12)) * ampScale) >> 16;
+	outputs.dac2Samples[writeIndex] = (__USAT(sample - 2048, 12) * ampScale) >> 15;
+	outputs.dac1Samples[writeIndex] = ((4095 - __USAT(sample + 2048, 12)) * ampScale) >> 15;
 }
 
 void ViaMeta::calculateLogicAReleaseGate(int32_t writeIndex) {

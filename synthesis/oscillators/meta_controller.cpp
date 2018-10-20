@@ -49,8 +49,8 @@ void MetaController::parseControlsEnv(ViaControls * controls, ViaInputStreams * 
 
 	releaseMod = releaseMod >> 4;
 
-	timeBase1 = fix16_mul(expoTable[4095 - controls->knob1Value] >> 6,
-			expoTable[controls->cv1Value >> 2] >> 6);
+	timeBase1 = fix16_mul(expoTable[4095 - controls->knob1Value] >> 7,
+			expoTable[(4095 - controls->cv1Value) >> 1] >> 7);
 	timeBase2 = fix16_mul(expoTable[((4095 - controls->knob2Value) >> 2) * 3] >> 7,
 			expoTable[releaseMod] >> 10);
 
@@ -62,7 +62,7 @@ void MetaController::parseControlsSeq(ViaControls * controls, ViaInputStreams * 
 	// t1 is cycle time, t2 is used to feed the duty cycle input for getSamples
 
 	timeBase1 = fix16_mul(expoTable[4095 - controls->knob1Value] >> 9,
-			expoTable[controls->cv1Value >> 2] >> 9);
+			expoTable[(4095 - controls->cv1Value) >> 1] >> 9);
 	timeBase2 = timeBase1;
 
 	dutyCycleBase = controls->knob2Value << 4;

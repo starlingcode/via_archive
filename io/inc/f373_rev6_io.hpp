@@ -27,6 +27,7 @@ extern TIM_HandleTypeDef htim7;
 //#define SET_GREEN_LED(X) __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, X);
 //#define SET_BLUE_LED(X) __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, X);
 
+
 extern ADC_HandleTypeDef hadc1;
 extern DAC_HandleTypeDef hdac1;
 extern DAC_HandleTypeDef hdac2;
@@ -53,6 +54,9 @@ extern SDADC_HandleTypeDef hsdadc2;
 #define GET_EXPAND_LOGIC_MASK(X) (EXPAND_LOGIC_LOW_MASK << (16*(X)))
 #define GET_SH_A_MASK(X) (SH_A_TRACK_MASK << (16*(X)))
 #define GET_SH_B_MASK(X) (SH_B_TRACK_MASK << (16*(X)))
+
+#define SET_BLUE_LED_ONOFF(X) GPIOA->BSRR |= ((uint32_t)GPIO_PIN_8 << (16 * X))
+
 
 // Trigger input and button "high" (inverted in hardware)
 
