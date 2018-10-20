@@ -4,6 +4,11 @@ void ViaGateseq::mainRisingEdgeCallback() {
 
 	sequencer.processClock();
 
+#ifdef BUILD_VIRTUAL
+	auxTimer1InterruptCallback();
+	sequencer.updateLogicOutput();
+#endif
+
 	//setLogicA(1);
 	setAuxLogic(sequencer.logicOutput);
 
@@ -83,10 +88,19 @@ void ViaGateseq::auxTimer1InterruptCallback() {
 
 		sequencer.gateAEvent = SOFT_GATE_HIGH * sequencer.aOutput;
 
+#ifdef BUILD_F373
 		TIM2->ARR = sequencer.periodCount/sequencer.multiplier;
 		TIM17->ARR = TIM2->ARR >> 13;
 		TIM17->CNT = 1;
 		TIM17->CR1 = TIM_CR1_CEN;
+#endif 
+#ifdef BUILD_VIRTUAL
+		sequencer.virtualTimer2Overflow = sequencer.periodCount/sequencer.multiplier;
+		sequencer.virtualTimer3Overflow = sequencer.virtualTimer2Overflow >> 1;
+		sequencer.virtualTimer3Count = 0;
+		sequencer.virtualTimer3Enable = 1;
+#endif
+
 
 
 }
@@ -107,7 +121,12 @@ void ViaGateseq::auxTimer2InterruptCallback() {
 		}
 		sequencer.gateAEvent = SOFT_GATE_LOW * sequencer.andA;
 
+#ifdef BUILD_F373
 		TIM17->CR1 &= ~TIM_CR1_CEN;
+#endif
+#ifdef BUILD_VIRTUAL
+		sequencer.virtualTimer3Enable = 0;
+#endif BUILD_VIRTUAL
 
 }
 
@@ -115,6 +134,7 @@ void ViaGateseq::auxRisingEdgeCallback() {
 
 	sequencer.aCounter = 0;
 	sequencer.bCounter = 0;
+	sequencer.skipClock = 0;
 
 	// process clock if there is a noticeable issue with resyncing?
 	// this might have to talk to the main trigger in a slightly more elaborate way
@@ -187,9 +207,13 @@ void ViaGateseq::slowConversionCallback() {
 			sequencer.logicOutput * 4095,
 			outputs.dac2Samples[0], runtimeDisplay);
 
+#ifdef BUILD_F373
+
 	if (runtimeDisplay) {
 		SET_BLUE_LED_ONOFF(outputs.dac2Samples[0] >> 11);
 	}
+
+#endif
 
 }
 

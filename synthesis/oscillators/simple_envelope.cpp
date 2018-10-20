@@ -9,7 +9,7 @@
 
 void SimpleEnvelope::parseControls(ViaControls * controls, ViaInputStreams * inputs) {
 
-	int32_t releaseMod = -inputs->cv2Samples[0];
+	int32_t releaseMod = inputs->cv2Samples[0];
 	releaseMod += 32767;
 
 	releaseMod = releaseMod >> 4;

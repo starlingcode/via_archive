@@ -43,7 +43,7 @@ void DualEuclidean::parseControls(ViaControls * controls,
 					cv2Sample << 5)) >> 9;
 		}
 		//0-7 -> 1-8
-		multiplier++;
+		multiplier += 2;
 
 	} else {
 
@@ -76,6 +76,20 @@ void DualEuclidean::processClock(void) {
 
 	advanceSequencerB();
 
+	if (skipClock) {
+		skipClock = 0;
+	} else {
+#ifdef BUILD_VIRTUAL
+	periodCount = virtualTimer1Count;
+	virtualTimer1Count = 0;
+	virtualTimer3Enable = 0;
+	//virtualTimer2Prescaler = divider - 1; // no division implemented yet
+	virtualTimer2Overflow = periodCount/multiplier;
+	virtualTimer2Count = 0;
+	// then "handle an interrupt" on the multiplier timer and update the aux logic output in the module interrupt handler
+	skipClock = 1;
+	}
+#endif
 #ifdef BUILD_F373
 	periodCount = TIM5->CNT;
 	TIM5->CNT = 0;
@@ -84,10 +98,11 @@ void DualEuclidean::processClock(void) {
 	TIM2->EGR = TIM_EGR_UG;
 	TIM2->ARR = periodCount/multiplier;
 	TIM2->CNT = 0;
-
-
+	skipClock = 1;
+	}
+	updateLogicOutput();
 #endif
-		updateLogicOutput();
+
 
 }
 

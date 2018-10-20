@@ -36,8 +36,6 @@ public:
 	int32_t button5Input = 0;
 	int32_t button6Input = 0;
 
-
-
 	ViaControls controls;
 
 	int32_t bufferSize;

@@ -12,187 +12,187 @@ typedef struct {
 /////////////////////////
 
 
-static const uint32_t euclidean_12vs16odd_9_24[24] = {1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0}; 
+static const uint32_t euclidean_divider_1_14[14] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
 
-static const uint32_t euclidean_simple_2_8[8] = {1, 0, 0, 0, 1, 0, 0, 0}; 
+static const uint32_t euclidean_doubled_divider_2_6[6] = {1, 0, 0, 1, 0, 0}; 
 
-static const uint32_t euclidean_16vs32odd_5_32[32] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_16vs32odd_7_16[16] = {1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t euclidean_2vs3_3_4[4] = {1, 1, 1, 0}; 
+static const uint32_t euclidean_doubled_divider_1_6[6] = {1, 0, 0, 0, 0, 0}; 
 
 static const uint32_t euclidean_simple_8_8[8] = {1, 1, 1, 1, 1, 1, 1, 1}; 
 
-static const uint32_t euclidean_12vs16odd_1_12[12] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_16vs32odd_3_16[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_simple_5_8[8] = {1, 0, 1, 1, 0, 1, 1, 0}; 
-
-static const uint32_t euclidean_12vs16odd_21_24[24] = {1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0}; 
-
-static const uint32_t euclidean_doubled_divider_1_8[8] = {1, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_12vs16odd_13_24[24] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0}; 
+static const uint32_t euclidean_simple_3_8[8] = {1, 0, 0, 1, 0, 0, 1, 0}; 
 
 static const uint32_t euclidean_2vs3_3_5[5] = {1, 0, 1, 0, 1}; 
 
-static const uint32_t euclidean_12vs16odd_5_12[12] = {1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t euclidean_simple_3_8[8] = {1, 0, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t euclidean_12vs16odd_6_12[12] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}; 
-
-static const uint32_t euclidean_doubled_divider_2_4[4] = {1, 0, 1, 0}; 
-
-static const uint32_t euclidean_simple_3_16[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_simple_5_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t euclidean_simple_4_8[8] = {1, 0, 1, 0, 1, 0, 1, 0}; 
-
-static const uint32_t euclidean_16vs32odd_11_16[16] = {1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1}; 
-
-static const uint32_t euclidean_12vs16odd_3_12[12] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t euclidean_12vs16odd_4_12[12] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0}; 
-
-static const uint32_t euclidean_12vs16odd_11_24[24] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t euclidean_divider_1_4[4] = {1, 0, 0, 0}; 
-
-static const uint32_t euclidean_16vs32odd_13_16[16] = {1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1}; 
-
-static const uint32_t euclidean_16vs32odd_15_16[16] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}; 
-
-static const uint32_t euclidean_doubled_divider_2_3[3] = {1, 1, 0}; 
-
-static const uint32_t euclidean_doubled_divider_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_2vs3_3_9[9] = {1, 0, 0, 1, 0, 0, 1, 0, 0}; 
-
-static const uint32_t euclidean_16vs32odd_13_32[32] = {1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0}; 
+static const uint32_t euclidean_12vs16odd_14_24[24] = {1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0}; 
 
 static const uint32_t euclidean_divider_1_7[7] = {1, 0, 0, 0, 0, 0, 0}; 
 
-static const uint32_t euclidean_2vs3_3_7[7] = {1, 0, 1, 0, 1, 0, 0}; 
+static const uint32_t euclidean_16vs32odd_7_32[32] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0}; 
 
-static const uint32_t euclidean_12vs16odd_23_24[24] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}; 
+static const uint32_t euclidean_simple_2_8[8] = {1, 0, 0, 0, 1, 0, 0, 0}; 
 
-static const uint32_t euclidean_divider_1_3[3] = {1, 0, 0}; 
-
-static const uint32_t euclidean_12vs16odd_2_12[12] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_16vs32odd_9_32[32] = {1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t euclidean_12vs16odd_19_24[24] = {1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0}; 
-
-static const uint32_t euclidean_2vs3_2_6[6] = {1, 0, 0, 1, 0, 0}; 
+static const uint32_t euclidean_2vs3_2_9[9] = {1, 0, 0, 0, 1, 0, 0, 0, 0}; 
 
 static const uint32_t euclidean_divider_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
 
-static const uint32_t euclidean_2vs3_2_7[7] = {1, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t euclidean_divider_1_6[6] = {1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_simple_6_8[8] = {1, 1, 1, 0, 1, 1, 1, 0}; 
-
-static const uint32_t euclidean_2vs3_3_10[10] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t euclidean_16vs32odd_11_32[32] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t euclidean_2vs3_3_8[8] = {1, 0, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t euclidean_2vs3_2_4[4] = {1, 0, 1, 0}; 
-
-static const uint32_t euclidean_divider_1_14[14] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_2vs3_2_5[5] = {1, 0, 1, 0, 0}; 
-
-static const uint32_t euclidean_doubled_divider_1_10[10] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_16vs32odd_7_32[32] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_2vs3_2_10[10] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_12vs16odd_15_24[24] = {1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0}; 
-
-static const uint32_t euclidean_divider_1_8[8] = {1, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_simple_6_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t euclidean_12vs16odd_8_12[12] = {1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0}; 
-
-static const uint32_t euclidean_simple_7_16[16] = {1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t euclidean_2vs3_2_8[8] = {1, 0, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t euclidean_simple_8_16[16] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}; 
-
-static const uint32_t euclidean_simple_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_16vs32odd_1_32[32] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_doubled_divider_2_7[7] = {1, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t euclidean_simple_1_8[8] = {1, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_simple_4_16[16] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t euclidean_divider_1_12[12] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_simple_7_8[8] = {1, 1, 1, 1, 1, 1, 1, 0}; 
-
-static const uint32_t euclidean_2vs3_2_9[9] = {1, 0, 0, 0, 1, 0, 0, 0, 0}; 
+static const uint32_t euclidean_16vs32odd_11_16[16] = {1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1}; 
 
 static const uint32_t euclidean_2vs3_3_6[6] = {1, 0, 1, 0, 1, 0}; 
 
 static const uint32_t euclidean_16vs32odd_9_16[16] = {1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0}; 
 
-static const uint32_t euclidean_doubled_divider_1_6[6] = {1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_doubled_divider_2_6[6] = {1, 0, 0, 1, 0, 0}; 
-
-static const uint32_t euclidean_divider_1_10[10] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_16vs32odd_5_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t euclidean_12vs16odd_7_12[12] = {1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0}; 
-
-static const uint32_t euclidean_simple_2_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t euclidean_16vs32odd_15_32[32] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
+static const uint32_t euclidean_12vs16odd_18_24[24] = {1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0}; 
 
 static const uint32_t euclidean_divider_2_2[2] = {1, 1}; 
 
-static const uint32_t euclidean_12vs16odd_17_24[24] = {1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0}; 
+static const uint32_t euclidean_simple_7_16[16] = {1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t euclidean_divider_1_4[4] = {1, 0, 0, 0}; 
+
+static const uint32_t euclidean_doubled_divider_1_14[14] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_doubled_divider_2_2[2] = {1, 1}; 
+
+static const uint32_t euclidean_divider_1_8[8] = {1, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_2vs3_3_8[8] = {1, 0, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t euclidean_12vs16odd_20_24[24] = {1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0}; 
+
+static const uint32_t euclidean_simple_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_12vs16odd_6_24[24] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t euclidean_16vs32odd_9_32[32] = {1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
 
 static const uint32_t euclidean_divider_1_2[2] = {1, 0}; 
 
-static const uint32_t euclidean_doubled_divider_2_5[5] = {1, 0, 1, 0, 0}; 
+static const uint32_t euclidean_2vs3_2_10[10] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_divider_1_6[6] = {1, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_12vs16odd_12_24[24] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}; 
+
+static const uint32_t euclidean_2vs3_3_10[10] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t euclidean_12vs16odd_5_24[24] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t euclidean_16vs32odd_7_16[16] = {1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t euclidean_doubled_divider_2_3[3] = {1, 1, 0}; 
+
+static const uint32_t euclidean_16vs32odd_15_16[16] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}; 
+
+static const uint32_t euclidean_doubled_divider_1_8[8] = {1, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_12vs16odd_22_24[24] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}; 
+
+static const uint32_t euclidean_16vs32odd_3_16[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_doubled_divider_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_2vs3_3_7[7] = {1, 0, 1, 0, 1, 0, 0}; 
+
+static const uint32_t euclidean_doubled_divider_2_8[8] = {1, 0, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t euclidean_simple_6_8[8] = {1, 1, 1, 0, 1, 1, 1, 0}; 
+
+static const uint32_t euclidean_simple_2_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}; 
 
 static const uint32_t euclidean_divider_1_5[5] = {1, 0, 0, 0, 0}; 
 
-static const uint32_t euclidean_doubled_divider_1_4[4] = {1, 0, 0, 0}; 
+static const uint32_t euclidean_doubled_divider_1_12[12] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_2vs3_3_9[9] = {1, 0, 0, 1, 0, 0, 1, 0, 0}; 
+
+static const uint32_t euclidean_12vs16odd_10_24[24] = {1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t euclidean_12vs16odd_4_24[24] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
 
 static const uint32_t euclidean_16vs32odd_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_16vs32odd_3_32[32] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_simple_1_8[8] = {1, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_doubled_divider_2_5[5] = {1, 0, 1, 0, 0}; 
+
+static const uint32_t euclidean_16vs32odd_1_32[32] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_doubled_divider_1_4[4] = {1, 0, 0, 0}; 
+
+static const uint32_t euclidean_16vs32odd_11_32[32] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t euclidean_simple_5_8[8] = {1, 0, 1, 1, 0, 1, 1, 0}; 
+
+static const uint32_t euclidean_2vs3_2_5[5] = {1, 0, 1, 0, 0}; 
+
+static const uint32_t euclidean_divider_1_10[10] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_simple_6_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t euclidean_2vs3_2_6[6] = {1, 0, 0, 1, 0, 0}; 
+
+static const uint32_t euclidean_divider_1_3[3] = {1, 0, 0}; 
+
+static const uint32_t euclidean_simple_8_16[16] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}; 
+
+static const uint32_t euclidean_simple_4_8[8] = {1, 0, 1, 0, 1, 0, 1, 0}; 
+
+static const uint32_t euclidean_12vs16odd_8_24[24] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0}; 
+
+static const uint32_t euclidean_16vs32odd_15_32[32] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t euclidean_12vs16odd_2_24[24] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_12vs16odd_1_24[24] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_12vs16odd_16_24[24] = {1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0}; 
+
+static const uint32_t euclidean_16vs32odd_5_32[32] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_simple_3_16[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_2vs3_2_8[8] = {1, 0, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t euclidean_doubled_divider_2_4[4] = {1, 0, 1, 0}; 
+
+static const uint32_t euclidean_doubled_divider_1_10[10] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_16vs32odd_13_32[32] = {1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t euclidean_12vs16odd_7_24[24] = {1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0}; 
+
+static const uint32_t euclidean_16vs32odd_13_16[16] = {1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1}; 
+
+static const uint32_t euclidean_2vs3_3_4[4] = {1, 1, 1, 0}; 
+
+static const uint32_t euclidean_simple_4_16[16] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t euclidean_12vs16odd_24_24[24] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; 
+
+static const uint32_t euclidean_divider_1_12[12] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t euclidean_16vs32odd_5_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
 
 static const uint32_t euclidean_2vs3_2_3[3] = {1, 1, 0}; 
 
 static const uint32_t euclidean_2vs3_3_3[3] = {1, 1, 1}; 
 
-static const uint32_t euclidean_doubled_divider_2_2[2] = {1, 1}; 
+static const uint32_t euclidean_simple_5_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
 
-static const uint32_t euclidean_doubled_divider_1_12[12] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+static const uint32_t euclidean_12vs16odd_3_24[24] = {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}; 
 
-static const uint32_t euclidean_doubled_divider_1_14[14] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+static const uint32_t euclidean_2vs3_2_7[7] = {1, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t euclidean_simple_7_8[8] = {1, 1, 1, 1, 1, 1, 1, 0}; 
 
 static const uint32_t euclidean_doubled_divider_1_2[2] = {1, 0}; 
 
-static const uint32_t euclidean_16vs32odd_3_32[32] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+static const uint32_t euclidean_2vs3_2_4[4] = {1, 0, 1, 0}; 
 
-static const uint32_t euclidean_doubled_divider_2_8[8] = {1, 0, 0, 0, 1, 0, 0, 0}; 
+static const uint32_t euclidean_doubled_divider_2_7[7] = {1, 0, 0, 1, 0, 0, 0}; 
 
 
 
@@ -212,9 +212,9 @@ static const booleanSequenceBank euclidean_simple_bank = {
    .numPatterns = 16};
 //////////////////////////////////////////////////////// 
 
-static const uint32_t *euclidean_12vs16odd[16] = {euclidean_12vs16odd_1_12, euclidean_12vs16odd_2_12, euclidean_12vs16odd_3_12, euclidean_12vs16odd_4_12, euclidean_12vs16odd_9_24, euclidean_12vs16odd_5_12, euclidean_12vs16odd_11_24, euclidean_12vs16odd_6_12, euclidean_12vs16odd_13_24, euclidean_12vs16odd_7_12, euclidean_12vs16odd_15_24, euclidean_12vs16odd_8_12, euclidean_12vs16odd_17_24, euclidean_12vs16odd_19_24, euclidean_12vs16odd_21_24, euclidean_12vs16odd_23_24}; 
+static const uint32_t *euclidean_12vs16odd[16] = {euclidean_12vs16odd_1_24, euclidean_12vs16odd_2_24, euclidean_12vs16odd_3_24, euclidean_12vs16odd_4_24, euclidean_12vs16odd_5_24, euclidean_12vs16odd_6_24, euclidean_12vs16odd_7_24, euclidean_12vs16odd_8_24, euclidean_12vs16odd_10_24, euclidean_12vs16odd_12_24, euclidean_12vs16odd_14_24, euclidean_12vs16odd_16_24, euclidean_12vs16odd_18_24, euclidean_12vs16odd_20_24, euclidean_12vs16odd_22_24, euclidean_12vs16odd_24_24}; 
 
-static const uint32_t euclidean_12vs16oddLengths[16] = {12, 12, 12, 12, 24, 12, 24, 12, 24, 12, 24, 12, 24, 24, 24, 24}; 
+static const uint32_t euclidean_12vs16oddLengths[16] = {24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24}; 
 
 static const booleanSequenceBank euclidean_12vs16odd_bank = {
    .patternBank = euclidean_12vs16odd,
