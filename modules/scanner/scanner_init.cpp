@@ -10,7 +10,9 @@ void ViaScanner::init(void) {
 
 	inputs.init(SCANNER_BUFFER_SIZE);
 	outputs.init(SCANNER_BUFFER_SIZE);
-	bufferSize = SCANNER_BUFFER_SIZE;
+	outputBufferSize = SCANNER_BUFFER_SIZE;
+	inputBufferSize = SCANNER_BUFFER_SIZE;
+
 
 	scanner.hardSync = inputs.trigSamples;
 	scanner.reverse = reverseBuffer;

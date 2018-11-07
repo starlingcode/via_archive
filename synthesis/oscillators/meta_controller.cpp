@@ -121,9 +121,11 @@ int32_t MetaController::advancePhase(uint32_t * phaseDistTable) {
 
 	int32_t phaseWrapper;
 
-	int32_t increment = (this->*incrementArbiter)() * freeze;
+	incrementUsed = (this->*incrementArbiter)();
 
-	int32_t localPhase = phase;
+	int32_t increment = incrementUsed * freeze;
+
+	int32_t localPhase = phase + !triggerSignal;
 
 	localPhase = (localPhase + __SSAT(increment, 24)) * (oscillatorOn);
 
@@ -141,12 +143,6 @@ int32_t MetaController::advancePhase(uint32_t * phaseDistTable) {
 	// no effect if the phase is in bounds
 
 	localPhase += phaseWrapper;
-
-	// TODO rewrite logic parsing function
-
-	(this->*loopHandler)();
-
-	triggerSignal = 1;
 
 	phase = localPhase;
 
@@ -179,7 +175,10 @@ int32_t MetaController::advancePhase(uint32_t * phaseDistTable) {
 
 	phaseEvent = phaseWrapper;
 
+	(this->*loopHandler)();
+
 	// store the current phases
+	phaseBeforeIncrement = previousGhostPhase;
 	previousGhostPhase = localPhase;
 	previousPhase = phase;
 
@@ -196,9 +195,9 @@ void MetaController::handleLoopOn(void) {
 
 void MetaController::handleLoopOff(void) {
 
-	oscillatorOn |= !(triggerSignal);
-
 	oscillatorOn &= !(int32_abs(phaseEvent) >> 24);
+
+	oscillatorOn |= !(triggerSignal);
 
 }
 
@@ -381,9 +380,11 @@ int32_t MetaController::gateReleaseReverseState(void) {
 int32_t MetaController::gatedState(void) {
 
 	if (gateSignal == 0) {
+		atB = 0;
 		incrementArbiter = &MetaController::gateReleaseState;
 		return increment2;
 	} else {
+		atB = 1;
 		return 0;
 	}
 
@@ -525,3 +526,111 @@ int32_t MetaController::pendulumReverseReleaseState(void) {
 
 }
 
+/*
+ *
+ * stickyPendulumStateMachine
+ *
+ */
+
+int32_t MetaController::stickyPendulumRestingState(void) {
+	if (triggerSignal == 0) {
+		incrementArbiter = &MetaController::stickyPendulumForwardAttackState;
+		return increment1;
+	} else {
+		return 0;
+	}
+}
+
+int32_t MetaController::stickyPendulumAtBState(void) {
+
+	if (triggerSignal == 0) {
+		atB = 0;
+		incrementArbiter = &MetaController::stickyPendulumForwardReleaseState;
+		return increment2;
+	} else {
+		atB = 1;
+		return 0;
+	}
+
+}
+
+int32_t MetaController::stickyPendulumForwardAttackState(void) {
+
+	if (triggerSignal == 0 && oscillatorOn) {
+		incrementArbiter = &MetaController::stickyPendulumReverseAttackState;
+		return 0;
+	}
+
+	switch (phaseEvent) {
+
+	case (AT_B_FROM_ATTACK):
+		incrementArbiter = &MetaController::stickyPendulumAtBState;
+		return 0;
+
+	default:
+		return increment1;
+
+	}
+
+}
+
+int32_t MetaController::stickyPendulumReverseAttackState(void) {
+
+
+	if (triggerSignal == 0) {
+		incrementArbiter = &MetaController::stickyPendulumForwardAttackState;
+		return increment1;
+	}
+
+	switch (phaseEvent) {
+
+	case (AT_A_FROM_ATTACK):
+		incrementArbiter = &MetaController::stickyPendulumRestingState;
+		return 0;
+
+	default:
+		return -increment1;
+
+	}
+
+}
+
+int32_t MetaController::stickyPendulumForwardReleaseState(void) {
+
+	if (triggerSignal == 0) {
+		incrementArbiter = &MetaController::stickyPendulumReverseReleaseState;
+		return -increment2;
+	}
+
+	switch (phaseEvent) {
+
+	case (AT_A_FROM_RELEASE):
+		incrementArbiter = &MetaController::stickyPendulumRestingState;;
+		return 0;
+
+	default:
+		return increment2;
+
+	}
+
+}
+
+int32_t MetaController::stickyPendulumReverseReleaseState(void) {
+
+	if (triggerSignal == 0) {
+		incrementArbiter = &MetaController::stickyPendulumForwardReleaseState;
+		return increment2;
+	}
+
+	switch (phaseEvent) {
+
+	case (AT_B_FROM_RELEASE):
+		incrementArbiter = &MetaController::stickyPendulumAtBState;
+		return 0;
+
+	default:
+		return -increment2;
+
+	}
+
+}

@@ -78,9 +78,13 @@ void ViaSync::buttonPressedCallback(void) {
 		pllController.tapTempo = 1;
 	}
 
+	this->syncUI.dispatch(EXPAND_SW_ON_SIG);
+
 }
 void ViaSync::buttonReleasedCallback(void) {
-	;
+
+	this->syncUI.dispatch(EXPAND_SW_OFF_SIG);
+
 }
 
 void ViaSync::ioProcessCallback(void) {
@@ -90,11 +94,27 @@ void ViaSync::halfTransferCallback(void) {
 
 	setLogicOut(0, runtimeDisplay);
 
+	syncWavetable.advance((uint32_t *)wavetableRead, (uint32_t *) phaseModPWMTables);
 
-	outputs.dac2Samples[0] = __USAT(syncWavetable.advance((uint32_t *)wavetableRead, (uint32_t *) phaseModPWMTables), 12);
-	outputs.dac1Samples[0] = 4095 - outputs.dac2Samples[0];
+	int32_t samplesRemaining = outputBufferSize;
+	int32_t writeIndex = 0;
+	int32_t readIndex = 0;
+
+	while (samplesRemaining) {
+
+		int32_t sample = syncWavetable.signalOut[readIndex];
+		outputs.dac1Samples[writeIndex] = 4095 - sample;
+		outputs.dac2Samples[writeIndex] = sample;
+
+		writeIndex ++;
+		readIndex ++;
+		samplesRemaining --;
+
+	}
+
 	(this->*calculateDac3)(0);
-	(this->*calculateLogicA)(0);
+	//(this->*calculateLogicA)(0);
+	outputs.logicA[0] = GPIO_NOP;
 	(this->*calculateSH)(0);
 
 }
@@ -103,10 +123,27 @@ void ViaSync::transferCompleteCallback(void) {
 
 	setLogicOut(0, runtimeDisplay);
 
-	outputs.dac2Samples[1] = __USAT(syncWavetable.advance((uint32_t *)wavetableRead, (uint32_t *) phaseModPWMTables), 12);
-	outputs.dac1Samples[1] = 4095 - outputs.dac2Samples[1];
-	(this->*calculateDac3)(1);
-	(this->*calculateLogicA)(0);
+	syncWavetable.advance((uint32_t *)wavetableRead, (uint32_t *) phaseModPWMTables);
+
+	int32_t samplesRemaining = outputBufferSize;
+	int32_t writeIndex = SYNC_BUFFER_SIZE;
+	int32_t readIndex = 0;
+
+	while (samplesRemaining) {
+
+		int32_t sample = syncWavetable.signalOut[readIndex];
+		outputs.dac1Samples[writeIndex] = 4095 - sample;
+		outputs.dac2Samples[writeIndex] = sample;
+
+		writeIndex ++;
+		readIndex ++;
+		samplesRemaining --;
+
+	}
+
+	(this->*calculateDac3)(SYNC_BUFFER_SIZE);
+	//(this->*calculateLogicA)(0);
+	outputs.logicA[0] = GPIO_NOP;
 	(this->*calculateSH)(0);
 
 }

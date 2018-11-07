@@ -89,7 +89,7 @@ void SoftGate::gateARise(void) {
 
 	switch (aSignal) {
 	case SOFT_GATE_EXECUTE:
-		gateA += attackTimeB;
+		gateA += attackTimeA;
 		if (gateA >= 4095) {
 			gateA = 4095;
 			manageGateA = &SoftGate::gateAHigh;

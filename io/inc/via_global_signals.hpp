@@ -43,7 +43,7 @@ public:
 
 	}
 
-	uint32_t controlRateInputs[4];
+	uint32_t controlRateInputs[16];
 
 	uint32_t knob1Value = 0;
 	uint32_t knob2Value = 0;

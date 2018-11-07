@@ -28,7 +28,10 @@ inline int32_t ThreeAxisScanner::getSampleMultiply(int32_t xIndex, int32_t yInde
 	int32_t ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
 			(uint32_t *) yTable, &yDelta);
 
-	*hemisphereBlend = (xSample >> 14) & (ySample >> 14);
+	xHemisphereLast = getHemisphereHysteresis(xSample, xHemisphereLast);
+	yHemisphereLast = getHemisphereHysteresis(ySample, yHemisphereLast);
+
+	*hemisphereBlend = xHemisphereLast & yHemisphereLast;
 	*deltaBlend = xDelta & yDelta;
 	*locationBlend = fix16_mul(xIndex, yIndex) >> 4;
 
@@ -49,12 +52,12 @@ inline int32_t ThreeAxisScanner::getSampleLighten(int32_t xIndex, int32_t yIndex
 	int32_t ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
 			(uint32_t *) yTable, &yDelta) >> 3;
 
-	uint32_t minmax = ((uint32_t)(ySample - xSample) >> 31);
-	*hemisphereBlend = minmax;
+	signalCompare = compareWithHysterisis(xSample, ySample, signalCompare);
+	*hemisphereBlend = signalCompare;
 	*deltaBlend = (yDelta > xDelta) ? yDelta : xDelta;
 	*locationBlend = ((yIndex > xIndex) ? yIndex : xIndex) >> 4;
 
-	return minmax * xSample + !minmax * ySample; //right shift by 3 tp scale 15bit to 12bit
+	return (ySample > xSample) ? ySample : xSample; //right shift by 3 tp scale 15bit to 12bit
 
 }
 
@@ -71,7 +74,10 @@ inline int32_t ThreeAxisScanner::getSampleSum(int32_t xIndex, int32_t yIndex, in
 	int32_t ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
 			(uint32_t *) yTable, &yDelta);
 
-	*hemisphereBlend = (xSample >> 14) | (ySample >> 14);
+	xHemisphereLast = getHemisphereHysteresis(xSample, xHemisphereLast);
+	yHemisphereLast = getHemisphereHysteresis(ySample, yHemisphereLast);
+
+	*hemisphereBlend = xHemisphereLast | yHemisphereLast;
 	*deltaBlend = xDelta | yDelta;
 	*locationBlend = foldSignal16Bit(xIndex + yIndex) >> 4;
 
@@ -92,7 +98,10 @@ inline int32_t ThreeAxisScanner::getSampleDifference(int32_t xIndex, int32_t yIn
 	int32_t ySample = getSampleQuinticSpline(yIndex << 9, zIndex,
 			(uint32_t *) yTable, &yDelta);
 
-	*hemisphereBlend = (xSample >> 14) ^ (ySample >> 14);
+	xHemisphereLast = getHemisphereHysteresis(xSample, xHemisphereLast);
+	yHemisphereLast = getHemisphereHysteresis(ySample, yHemisphereLast);
+
+	*hemisphereBlend = xHemisphereLast ^ yHemisphereLast;
 	*deltaBlend = xDelta ^ yDelta;
 	*locationBlend = abs((xIndex - yIndex) >> 4);
 

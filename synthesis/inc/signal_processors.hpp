@@ -52,6 +52,35 @@ class ThreeAxisScanner {
 			int32_t * xTable, int32_t * yTable, int32_t * locationBlend, int32_t * hemisphereBlend, int32_t * deltaBlend, uint32_t * output,
 			uint32_t writePosition, uint32_t samplesRemaining);
 
+	int32_t xHemisphereLast;
+	int32_t yHemisphereLast;
+	int32_t signalCompare;
+	int32_t xDeltaLast;
+	int32_t yDeltaLast;
+
+
+	int32_t getHemisphereHysteresis(int32_t signal, int32_t last) {
+		if (last && (signal < (1 << 14) - 5000)) {
+			return 0;
+		} else if (!last && signal > (1 << 14) + 5000) {
+			return 1;
+		} else {
+			return last;
+		}
+	}
+
+	int32_t compareWithHysterisis(int32_t xSignal, int32_t ySignal, int32_t yGreater) {
+
+		if (yGreater && ySignal < (xSignal - 100)) {
+			return 0;
+		} else if (!yGreater && ySignal > (xSignal + 100)) {
+			return 1;
+		} else {
+			return yGreater;
+		}
+
+	}
+
 public:
 
 #define THREE_AXIS_SCANNER_SUM 0

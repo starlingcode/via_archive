@@ -45,6 +45,16 @@ void DualEuclidean::parseControls(ViaControls * controls,
 		//0-7 -> 1-8
 		multiplier += 2;
 
+	} else if (shuffleOn) {
+
+		if (cv2Sample >= 2048) {
+			shuffle = ((fix16_lerp(controls->knob2Value, 4095,
+					(cv2Sample - 2048) << 5)) - 2048) << 3;
+		} else {
+			shuffle = ((fix16_lerp(0, controls->knob2Value,
+					cv2Sample << 5)) - 2048) << 3;
+		}
+
 	} else {
 
 		if (cv2Sample >= 2048) {
@@ -76,7 +86,7 @@ void DualEuclidean::processClock(void) {
 
 	advanceSequencerB();
 
-	if (skipClock) {
+	if (skipClock & clockOn) {
 		skipClock = 0;
 	} else {
 #ifdef BUILD_VIRTUAL
@@ -95,14 +105,13 @@ void DualEuclidean::processClock(void) {
 	TIM5->CNT = 0;
 	TIM17->CR1 &= ~TIM_CR1_CEN;
 	TIM2->PSC = divider-1;
-	TIM2->EGR = TIM_EGR_UG;
-	TIM2->ARR = periodCount/multiplier;
 	TIM2->CNT = 0;
+	TIM2->EGR = TIM_EGR_UG;
+	shuffledStep = 1;
 	skipClock = 1;
 	}
 	updateLogicOutput();
 #endif
-
 
 }
 

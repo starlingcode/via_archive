@@ -82,8 +82,18 @@ void ViaGateseq::auxTimer1InterruptCallback() {
 		sequencer.gateAEvent = SOFT_GATE_HIGH * sequencer.aOutput;
 
 #ifdef BUILD_F373
-		TIM2->ARR = sequencer.periodCount/sequencer.multiplier;
-		TIM17->ARR = TIM2->ARR >> 13;
+		uint32_t clockPeriod = sequencer.periodCount/sequencer.multiplier;
+		if (sequencer.shuffledStep) {
+			sequencer.shuffleDelay = fix16_mul(clockPeriod, sequencer.shuffle);
+			sequencer.shuffledStep = 0;
+
+		} else {
+			sequencer.shuffleDelay = -fix16_mul(clockPeriod, sequencer.shuffle);
+			sequencer.shuffledStep = 1;
+		}
+		clockPeriod += sequencer.shuffleDelay;
+		TIM2->ARR = clockPeriod;
+		TIM17->ARR = clockPeriod >> 13;
 		TIM17->CNT = 1;
 		TIM17->CR1 = TIM_CR1_CEN;
 #endif 
@@ -187,10 +197,14 @@ void ViaGateseq::buttonPressedCallback() {
 	sequencer.aCounter = 0;
 	sequencer.bCounter = 0;
 
+	this->gateseqUI.dispatch(EXPAND_SW_ON_SIG);
+
 
 }
 void ViaGateseq::buttonReleasedCallback() {
-	;
+
+	this->gateseqUI.dispatch(EXPAND_SW_OFF_SIG);
+
 }
 
 void ViaGateseq::ioProcessCallback() {

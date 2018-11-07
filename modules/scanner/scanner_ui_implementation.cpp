@@ -33,12 +33,7 @@ void ViaScanner::ViaScannerUI::initialize(void) {
 
 #ifdef BUILD_F373
 
-	this_module.handleButton1ModeChange(this_module.scannerUI.button1Mode);
-	this_module.handleButton2ModeChange(this_module.scannerUI.button2Mode);
-	this_module.handleButton3ModeChange(this_module.scannerUI.button3Mode);
-	this_module.handleButton4ModeChange(this_module.scannerUI.button4Mode);
-	this_module.handleButton5ModeChange(this_module.scannerUI.button5Mode);
-	this_module.handleButton6ModeChange(this_module.scannerUI.button6Mode);
+	recallModuleState();
 
 #endif
 	state = &ViaUI::defaultMenu;
@@ -49,6 +44,21 @@ void ViaScanner::ViaScannerUI::initialize(void) {
 void scannerTouchLink (void * uiVoid) {
 	ViaScanner::ViaScannerUI * ui = (ViaScanner::ViaScannerUI *) uiVoid;
 	ui->dispatch(SENSOR_EVENT_SIG);
+}
+
+void ViaScanner::ViaScannerUI::recallModuleState(void) {
+
+	this_module.handleButton1ModeChange(this_module.scannerUI.button1Mode);
+	this_module.handleButton2ModeChange(this_module.scannerUI.button2Mode);
+	this_module.handleButton3ModeChange(this_module.scannerUI.button3Mode);
+	this_module.handleButton4ModeChange(this_module.scannerUI.button4Mode);
+	this_module.handleButton5ModeChange(this_module.scannerUI.button5Mode);
+	this_module.handleButton6ModeChange(this_module.scannerUI.button6Mode);
+
+}
+
+void ViaScanner::ViaScannerUI::uiSetLEDs(int mode) {
+	this_module.setLEDs(mode);
 }
 
 void ViaScanner::ViaScannerUI::defaultEnterMenuCallback(void) {
@@ -62,7 +72,9 @@ void ViaScanner::ViaScannerUI::newAuxModeEnterMenuCallback(void) {
 	;
 }
 void ViaScanner::ViaScannerUI::presetEnterMenuCallback(void) {
-	;
+	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 }
 
 void ViaScanner::ViaScannerUI::button1EnterMenuCallback(void) {

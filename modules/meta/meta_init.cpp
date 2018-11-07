@@ -15,7 +15,7 @@ void ViaMeta::init() {
 
 	initializeAuxOutputs();
 
-	drumMode = &ViaMeta::drumModeOff;
+	outputStage = &ViaMeta::oversample;
 	updateRGB = &ViaMeta::updateRGBSubaudio;
 	calculateDac3 = &ViaMeta::calculateDac3Phasor;
 	calculateLogicA = &ViaMeta::calculateLogicAReleaseGate;
@@ -36,7 +36,8 @@ void ViaMeta::init() {
 
 	inputs.init(META_BUFFER_SIZE);
 	outputs.init(META_BUFFER_SIZE);
-	bufferSize = META_BUFFER_SIZE;
+	outputBufferSize = META_BUFFER_SIZE;
+	inputBufferSize = 1;
 
 	metaUI.initialize();
 

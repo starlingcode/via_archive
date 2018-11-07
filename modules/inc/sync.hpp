@@ -22,7 +22,7 @@ extern "C" {
 }
 #endif
 
-#define SYNC_BUFFER_SIZE 1
+#define SYNC_BUFFER_SIZE 8
 
 /*
  *
@@ -98,6 +98,10 @@ public:
 		void aux3HoldCallback(void) override;
 		void aux4TapCallback(void) override;
 		void aux4HoldCallback(void) override;
+
+		void uiSetLEDs(int) override;
+
+		void recallModuleState(void) override;
 
 		void defaultEnterMenuCallback(void) override;
 		void newModeEnterMenuCallback(void) override;
@@ -197,7 +201,7 @@ public:
 
 	int32_t runtimeDisplay;
 
-	SingleSampleWavetable syncWavetable;
+	SyncWavetable syncWavetable;
 	PllController pllController;
 
 	// average tap tempo

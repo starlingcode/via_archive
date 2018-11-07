@@ -120,6 +120,10 @@ public:
 		void aux4TapCallback(void) override;
 		void aux4HoldCallback(void) override;
 
+		void uiSetLEDs(int) override;
+
+		void recallModuleState(void) override;
+
 		void defaultEnterMenuCallback(void) override;
 		void newModeEnterMenuCallback(void) override;
 		void newAuxModeEnterMenuCallback(void) override;

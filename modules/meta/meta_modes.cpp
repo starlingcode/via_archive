@@ -46,10 +46,12 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 		if (metaUI.LOOP_MODE == noloop) {
 			updateRGBDisplay(0, 4095, 4095, 1);
 			updateRGB = &ViaMeta::updateRGBDrum;
+			currentRGBBehavior = &ViaMeta::updateRGBDrum;
 			metaController.generateIncrements = &MetaController::generateIncrementsDrum;
 			metaController.parseControls = &MetaController::parseControlsDrum;
 			metaController.fm = drumFullScale;
-			drumMode = &ViaMeta::drumModeOn;
+			outputStage = &ViaMeta::drumMode;
+			metaWavetable.oversamplingFactor = 0;
 			metaController.loopHandler = &MetaController::handleLoopOn;
 			metaController.loopMode = 1;
 			handleButton4ModeChange(0);
@@ -57,19 +59,30 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 		} else {
 			updateRGBDisplay(0, 0, 4095, 1);
 			updateRGB = &ViaMeta::updateRGBOsc;
+			currentRGBBehavior = &ViaMeta::updateRGBOsc;
 			metaController.parseControls = &MetaController::parseControlsAudio;
 			metaController.generateIncrements = &MetaController::generateIncrementsAudio;
+			outputStage = &ViaMeta::oversample;
+			metaWavetable.oversamplingFactor = 3;
 			metaController.fm = inputs.cv2Samples;
 			metaWavetable.morphScale = drumFullScale;
-			drumMode = &ViaMeta::drumModeOff;
+
 		}
 		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
 		break;
 	case env:
+
 		updateRGBDisplay(0, 4095, 0, 1);
 		updateRGB = &ViaMeta::updateRGBSubaudio;
+		currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
 		metaController.parseControls = &MetaController::parseControlsEnv;
 		metaController.generateIncrements = &MetaController::generateIncrementsEnv;
+
+		outputStage = &ViaMeta::addThreeBits;
+		metaWavetable.oversamplingFactor = 0;
+
+		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
+
 		if (metaUI.DAC_3_MODE == phasor) {
 			calculateDac3 = &ViaMeta::calculateDac3PhasorEnv;
 		} else {
@@ -77,10 +90,8 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 		}
 		
 		if (metaUI.LOOP_MODE == noloop) {
-			switchWavetable(wavetableArray[mode][metaUI.TABLE]);
 			metaController.fm = inputs.cv2Samples;
 			metaWavetable.morphScale = drumFullScale;
-			drumMode = &ViaMeta::drumModeOff;
 			metaController.loopHandler = &MetaController::handleLoopOff;
 			metaController.loopMode = 0;
 			handleButton4ModeChange(metaUI.TRIG_MODE);
@@ -93,8 +104,13 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 		} else {
 			calculateDac3 = &ViaMeta::calculateDac3Contour;
 		}
+		updateRGB = &ViaMeta::updateRGBSubaudio;
+		currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
 		metaController.parseControls = &MetaController::parseControlsSeq;
 		metaController.generateIncrements = &MetaController::generateIncrementsSeq;
+
+		outputStage = &ViaMeta::addThreeBits;
+
 		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
 		break;
 	}
@@ -102,6 +118,8 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 }
 
 void ViaMeta::handleButton4ModeChange(int32_t mode) {
+
+	metaController.atB = 0;
 
 	switch (mode) {
 	case noretrigger:
@@ -119,7 +137,11 @@ void ViaMeta::handleButton4ModeChange(int32_t mode) {
 		metaController.gateOn = 1;
 		break;
 	case meta_pendulum:
-		metaController.incrementArbiter = &MetaController::pendulumForwardAttackState;
+		if (metaUI.LOOP_MODE == 1) {
+			metaController.incrementArbiter = &MetaController::pendulumForwardAttackState;
+		} else {
+			metaController.incrementArbiter = &MetaController::stickyPendulumRestingState;
+		}
 		metaController.gateOn = 0;
 		break;
 	}
@@ -140,18 +162,28 @@ void ViaMeta::handleButton6ModeChange(int32_t mode) {
 			handleAux3ModeChange(metaUI.DRUM_MODE);
 			handleButton3ModeChange(0);
 			handleButton4ModeChange(0);
+			outputStage = &ViaMeta::drumMode;
+			metaWavetable.oversamplingFactor = 0;
 		} else {
 			metaController.loopHandler = &MetaController::handleLoopOff;
 			metaController.loopMode = 0;
+		}
+		if (metaUI.TRIG_MODE == meta_pendulum)  {
+			metaController.incrementArbiter = &MetaController::stickyPendulumRestingState;
 		}
 		break;
 	case looping:
 		if (metaUI.FREQ_MODE == audio) {
 			handleButton3ModeChange(0);
 			handleButton4ModeChange(metaUI.TRIG_MODE);
+			outputStage = &ViaMeta::oversample;
+			metaWavetable.oversamplingFactor = 3;
 		}
 		metaController.loopHandler = &MetaController::handleLoopOn;
 		metaController.loopMode = 1;
+		if (metaUI.TRIG_MODE == meta_pendulum)  {
+			metaController.incrementArbiter = &MetaController::pendulumRestingState;
+		}
 		break;
 	}
 

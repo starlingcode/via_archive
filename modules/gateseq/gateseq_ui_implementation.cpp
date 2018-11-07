@@ -41,14 +41,7 @@ void ViaGateseq::ViaGateseqUI::initialize(void) {
 
 #ifdef BUILD_F373
 
-	this_module.handleButton1ModeChange(this_module.gateseqUI.button1Mode);
-	this_module.handleButton2ModeChange(this_module.gateseqUI.button2Mode);
-	this_module.handleButton3ModeChange(this_module.gateseqUI.button3Mode);
-	this_module.handleButton4ModeChange(this_module.gateseqUI.button4Mode);
-	this_module.handleButton5ModeChange(this_module.gateseqUI.button5Mode);
-	this_module.handleButton6ModeChange(this_module.gateseqUI.button6Mode);
-	this_module.handleAux2ModeChange(this_module.gateseqUI.aux2Mode);
-
+	recallModuleState();
 
 #endif
 
@@ -61,6 +54,22 @@ void gateseqTouchLink (void * uiVoid) {
 	ui->dispatch(SENSOR_EVENT_SIG);
 }
 
+void ViaGateseq::ViaGateseqUI::recallModuleState(void) {
+
+	this_module.handleButton1ModeChange(this_module.gateseqUI.button1Mode);
+	this_module.handleButton2ModeChange(this_module.gateseqUI.button2Mode);
+	this_module.handleButton3ModeChange(this_module.gateseqUI.button3Mode);
+	this_module.handleButton4ModeChange(this_module.gateseqUI.button4Mode);
+	this_module.handleButton5ModeChange(this_module.gateseqUI.button5Mode);
+	this_module.handleButton6ModeChange(this_module.gateseqUI.button6Mode);
+	this_module.handleAux2ModeChange(this_module.gateseqUI.aux2Mode);
+
+}
+
+void ViaGateseq::ViaGateseqUI::uiSetLEDs(int mode) {
+	this_module.setLEDs(mode);
+}
+
 void ViaGateseq::ViaGateseqUI::defaultEnterMenuCallback(void) {
 	this_module.runtimeDisplay = 1;
 }
@@ -71,6 +80,10 @@ void ViaGateseq::ViaGateseqUI::newAuxModeEnterMenuCallback(void) {
 	;
 }
 void ViaGateseq::ViaGateseqUI::presetEnterMenuCallback(void) {;
+
+	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 
 }
 
@@ -93,6 +106,13 @@ void ViaGateseq::ViaGateseqUI::button3EnterMenuCallback(void) {
 	this_module.clearLEDs();
 	this_module.clearRGB();
 	this_module.setLEDs(A_PATTERN_BANK);
+	this_module.setRedLED((button3Mode >> 1) * 4095);
+	this_module.setGreenLED(!(button3Mode >> 1) * 4095);
+	if (button3Mode == 1 || button3Mode == 3) {
+		SET_BLUE_LED_ONOFF(1);
+	} else {
+		SET_BLUE_LED_ONOFF(0);
+	}
 	resetTimerMenu();
 }
 void ViaGateseq::ViaGateseqUI::button4EnterMenuCallback(void) {

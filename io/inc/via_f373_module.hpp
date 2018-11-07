@@ -38,7 +38,8 @@ public:
 
 	ViaControls controls;
 
-	int32_t bufferSize;
+	int32_t inputBufferSize;
+	int32_t outputBufferSize;
 	ViaInputStreams inputs;
 	ViaOutputStreams outputs;
 
@@ -53,7 +54,7 @@ public:
 //		}
 
 		// initialize the ADCs and their respective DMA arrays
-		HAL_ADC_Start_DMA(&hadc1, controls.controlRateInputs, 4);
+		HAL_ADC_Start_DMA(&hadc1, controls.controlRateInputs, 16);
 
 		if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1)
 				!= HAL_OK) {
@@ -72,15 +73,15 @@ public:
 		}
 
 		HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, outputs.dac1Samples,
-				2 * bufferSize, DAC_ALIGN_12B_R);
+				2 * outputBufferSize, DAC_ALIGN_12B_R);
 		HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, outputs.dac2Samples,
-				2 * bufferSize, DAC_ALIGN_12B_R);
+				2 * outputBufferSize, DAC_ALIGN_12B_R);
 		HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, outputs.dac3Samples,
-				2 * bufferSize, DAC_ALIGN_12B_R);
+				2 * outputBufferSize, DAC_ALIGN_12B_R);
 
 		// set the dac sample rate and start the dac timer
-		HAL_SDADC_Start_DMA(&hsdadc1, (uint32_t *) inputs.cv2Samples, 2 * bufferSize);
-		HAL_SDADC_Start_DMA(&hsdadc2, (uint32_t *) inputs.cv3Samples, 2 * bufferSize);
+		HAL_SDADC_Start_DMA(&hsdadc1, (uint32_t *) inputs.cv2Samples, inputBufferSize);
+		HAL_SDADC_Start_DMA(&hsdadc2, (uint32_t *) inputs.cv3Samples, inputBufferSize);
 
 	}
 
@@ -106,10 +107,6 @@ public:
 	}
 
 	// 16 samples from the hue space as RGB
-
-	//rgb hueSpace[16] = {{4095, 2457, 0}, {4095, 3992, 0}, {2661, 4095, 0}, {1126, 4095, 0}, {0, 4095, 409}, {0, 4095, 1945}, {0, 4095, 3480}, {0, 3173, 4095}, {0, 1638, 4095}, {0, 102, 4095}, {1433, 0, 4095}, {2968, 0, 4095}, {4095, 0, 3685}, {4095, 0, 2149}, {4095, 0, 614}, {4095, 921, 0}};
-
-	//rgb hueSpace[16] = {{4095, 0, 0}, {4095, 1535, 0}, {4095, 3071, 0}, {3583, 4095, 0}, {2047, 4095, 0}, {511, 4095, 0}, {0, 4095, 1023}, {0, 4095, 2559}, {0, 4095, 4095}, {0, 2559, 4095}, {0, 1023, 4095}, {511, 0, 4095}, {2047, 0, 4095}, {3583, 0, 4095}, {4095, 0, 3071}, {4095, 0, 1535}};
 
 	rgb hueSpace[16] = {{4095, 0, 0}, {4095, 1228, 0}, {4095, 2457, 0}, {4095, 3685, 0}, {2047, 4095, 0}, {819, 4095, 0}, {0, 4095, 409}, {0, 4095, 1638}, {0, 4095, 4095}, {0, 2866, 4095}, {0, 1638, 4095}, {0, 409, 4095}, {2047, 0, 4095}, {3276, 0, 4095}, {4095, 0, 3685}, {4095, 0, 2456}};
 
@@ -258,6 +255,7 @@ public:
 
 	void clearRGB() {
 		setRGB({0, 0, 0});
+		SET_BLUE_LED_ONOFF(0);
 	}
 
 	void setLEDs(int32_t digit) {

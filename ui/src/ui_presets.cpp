@@ -19,11 +19,7 @@ void ViaUI::presetMenu(int32_t sig) {
 	switch (sig) {
 
 	case ENTRY_SIG:
-//		CLEAR_RUNTIME_DISPLAY;
-//		uiClearLEDs();
-//		uiClearRGB();
-		timerReset();
-		timerDisable();
+		presetEnterMenuCallback();
 		break;
 
 	case SENSOR_EVENT_SIG:
@@ -54,9 +50,7 @@ void ViaUI::presetMenu(int32_t sig) {
 		break;
 
 		case EXIT_SIG:
-//		CLEAR_RUNTIME_DISPLAY;
-//		uiClearLEDs();
-//		uiClearRGB();
+
 		break;
 
 		default:
@@ -76,7 +70,7 @@ void ViaUI::presetPressedMenu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		timerReset();
-		timerSetOverflow(500);
+		timerSetOverflow(5000);
 		timerEnable();
 		break;
 
@@ -85,36 +79,42 @@ void ViaUI::presetPressedMenu(int32_t sig) {
 		case 1:
 			if (*button1 == RELEASED) {
 				loadFromEEPROM(presetNumber);
+				recallModuleState();
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 2:
 			if (*button4 == RELEASED) {
 				loadFromEEPROM(presetNumber);
+				recallModuleState();
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 3:
 			if (*button3 == RELEASED) {
 				loadFromEEPROM(presetNumber);
+				recallModuleState();
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 4:
 			if (*button4 == RELEASED) {
 				loadFromEEPROM(presetNumber);
+				recallModuleState();
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 5:
 			if (*button5 == RELEASED) {
 				loadFromEEPROM(presetNumber);
+				recallModuleState();
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 6:
 			if (*button6 == RELEASED) {
 				loadFromEEPROM(presetNumber);
+				recallModuleState();
 				transition(&ViaUI::switchPreset);
 			}
 			break;
@@ -154,10 +154,8 @@ void ViaUI::newPreset(int32_t sig) {
 
 	case TIMEOUT_SIG:
 		if (flashCounter < 16) {
-//			UI_TIMER_ENABLE
-//			;
 			flashCounter++;
-//			uiSetLEDs(flashCounter % 4);
+			uiSetLEDs(flashCounter % 8);
 		} else {
 			flashCounter = 0;
 			transition(&ViaUI::defaultMenu);
@@ -183,10 +181,8 @@ void ViaUI::switchPreset(int32_t sig) {
 
 	case TIMEOUT_SIG:
 		if (flashCounter < 4) {
-//			UI_TIMER_ENABLE
-//			;
 			flashCounter++;
-			//uiSetLEDs(flashCounter % 4);
+			uiSetLEDs(flashCounter % 4);
 		} else {
 			flashCounter = 0;
 			transition(&ViaUI::defaultMenu);

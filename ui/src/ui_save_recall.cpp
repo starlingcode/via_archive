@@ -37,7 +37,7 @@ void ViaUI::initialize(void) {
 
 void ViaUI::loadFromEEPROM(int32_t position) {
 
-	loadFromMemory(0);
+	loadFromMemory(position);
 
 	button1Mode = modeStateBuffer & BUTTON1_MASK;
 	button2Mode = (modeStateBuffer & BUTTON2_MASK) >> BUTTON2_SHIFT;
@@ -63,7 +63,7 @@ void ViaUI::storeToEEPROM(int32_t position) {
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2],
 			(uint16_t) modeStateBuffer);
 	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1],
-			(uint16_t) (modeStateBuffer >> 16)); // make sure i'm shifting in the right direction here!!
+			(uint16_t) (modeStateBuffer >> 16));
 #endif
 
 }

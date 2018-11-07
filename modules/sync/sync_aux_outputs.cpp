@@ -38,18 +38,39 @@ void ViaSync::calculateLogicADelta(int32_t writeIndex) {
 
 void ViaSync::calculateDac3Phasor(int32_t writeIndex) {
 
-	int32_t phase = syncWavetable.phase;
+	int32_t phasorOut = syncWavetable.phaseOut[0];
 
-	if (phase >> 24) {
-		outputs.dac3Samples[writeIndex] = 8191 - (phase >> 12);
+	if (phasorOut >> 24) {
+		phasorOut = 8191 - (phasorOut >> 12);
 	} else {
-		outputs.dac3Samples[writeIndex] = phase >> 12;
+		phasorOut = phasorOut >> 12;
+	}
+
+	int32_t samplesRemaining = outputBufferSize;
+	int32_t readIndex = 0;
+
+	while (samplesRemaining) {
+		outputs.dac3Samples[writeIndex] = phasorOut;
+
+		writeIndex ++;
+		samplesRemaining --;
+
 	}
 }
 
 void ViaSync::calculateDac3Contour(int32_t writeIndex) {
 
-	outputs.dac3Samples[writeIndex] = outputs.dac2Samples[writeIndex];
+	int32_t samplesRemaining = outputBufferSize;
+	int32_t readIndex = 0;
+
+	while (samplesRemaining) {
+		outputs.dac3Samples[writeIndex] = syncWavetable.signalOut[readIndex];
+
+		writeIndex ++;
+		readIndex ++;
+		samplesRemaining --;
+
+	}
 
 }
 

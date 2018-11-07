@@ -36,7 +36,7 @@ uint32_t controlRateADCReadings[4];
 // initialize a copy of each signal group
 
 static inline void via_ioStreamInit(audioRateInputs * audioRateInput,
-		audioRateOutputs * audioRateOutput, int bufferSize) {
+		audioRateOutputs * audioRateOutput, int outputBufferSize, int inputBufferSize) {
 
 	audioRateOutput->dac1Samples = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
 	audioRateOutput->dac2Samples = (uint32_t*) malloc(2 * bufferSize * sizeof(int));
@@ -79,15 +79,15 @@ static inline void via_ioStreamInit(audioRateInputs * audioRateInput,
 	}
 
 	HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, audioRateOutput->dac1Samples,
-			2 * bufferSize, DAC_ALIGN_12B_R);
+			2 * outputBufferSize, DAC_ALIGN_12B_R);
 	HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, audioRateOutput->dac2Samples,
-			2 * bufferSize, DAC_ALIGN_12B_R);
+			2 * outputBufferSize, DAC_ALIGN_12B_R);
 	HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, audioRateOutput->dac3Samples,
-			2 * bufferSize, DAC_ALIGN_12B_R);
+			2 * outputBufferSize, DAC_ALIGN_12B_R);
 
 	// set the dac sample rate and start the dac timer
-	HAL_SDADC_Start_DMA(&hsdadc1, (uint32_t *) audioRateInput->cv2Samples, 2 * bufferSize);
-	HAL_SDADC_Start_DMA(&hsdadc2, (uint32_t *) audioRateInput->cv3Samples, 2 * bufferSize);
+	HAL_SDADC_Start_DMA(&hsdadc1, (uint32_t *) audioRateInput->cv2Samples, 2 * inputBufferSize);
+	HAL_SDADC_Start_DMA(&hsdadc2, (uint32_t *) audioRateInput->cv3Samples, 2 * inputBufferSize);
 //	TIM6->ARR = 1439;
 //	TIM6->CR1 |= TIM_CR1_CEN;
 

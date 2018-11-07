@@ -249,6 +249,29 @@ static inline int32_t fast_15_16_bilerp_prediff(int32_t in0, int32_t in1, int32_
 	return in0;
 }
 
+static inline int32_t fast_15_16_bilerp_prediff_delta(int32_t in0, int32_t in1, int32_t frac0,
+		int32_t frac1, int32_t * delta) {
+
+	__asm ("SMLAWT %[result_1], %[input_1], %[input_2], %[input_3]"
+			: [result_1] "=r" (in0)
+			: [input_1] "r" (frac0), [input_2] "r" (in0), [input_3] "r" (in0 & 0xFFFF)
+	);
+
+	__asm ("SMLAWT %[result_1], %[input_1], %[input_2], %[input_3]"
+			: [result_1] "=r" (in1)
+			: [input_1] "r" (frac0), [input_2] "r" (in1), [input_3] "r" (in1 & 0xFFFF)
+	);
+
+	*delta = ((uint32_t) in1 - in0) >> 31;
+
+	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+			: [result_1] "=r" (in0)
+			: [input_1] "r" (frac1), [input_2] "r" (in1 - in0), [input_3] "r" (in0)
+	);
+
+	return in0;
+}
+
 // overkill probably, assumes 9 tables and 517 samples padded with two at the start and end of each waveform
 // this is fortunately the default table load
 // morph should have a max value of the table size
