@@ -113,7 +113,7 @@ void ViaSync::halfTransferCallback(void) {
 	}
 
 	(this->*calculateDac3)(0);
-	//(this->*calculateLogicA)(0);
+	(this->*calculateLogicA)(0);
 	outputs.logicA[0] = GPIO_NOP;
 	(this->*calculateSH)(0);
 
@@ -142,7 +142,7 @@ void ViaSync::transferCompleteCallback(void) {
 	}
 
 	(this->*calculateDac3)(SYNC_BUFFER_SIZE);
-	//(this->*calculateLogicA)(0);
+	(this->*calculateLogicA)(0);
 	outputs.logicA[0] = GPIO_NOP;
 	(this->*calculateSH)(0);
 
@@ -160,11 +160,10 @@ void ViaSync::slowConversionCallback(void) {
 	}
 
 	int32_t sample = outputs.dac1Samples[0];
-	int32_t morphColorShift = controls.knob3Value << 4;
 
-	int32_t redSignal = fix16_mul(sample, fix16_lerp(scaleColor.r << 4, 4095 << 4, morphColorShift));
-	int32_t blueSignal = fix16_mul(sample, fix16_lerp(scaleColor.b << 4, 4095 << 4, morphColorShift));
-	int32_t greenSignal = fix16_mul(sample, fix16_lerp(scaleColor.g << 4, 4095 << 4, morphColorShift));
+	int32_t redSignal = fix16_mul(sample << 4, scaleColor.r);
+	int32_t blueSignal = fix16_mul(sample << 4, scaleColor.b);
+	int32_t greenSignal = fix16_mul(sample << 4, scaleColor.g);
 
 	updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
 
