@@ -118,21 +118,21 @@ void ViaMeta::calculateLogicAAttackGate(int32_t writeIndex) {
 
 void ViaMeta::calculateDac3Phasor(int32_t writeIndex) {
 
-	int32_t phase = metaController.ghostPhase;
+	int32_t phasor = metaController.ghostPhase;
 
-	if (phase >> 24) {
-		phase = 8191 - (phase >> 12);
+	if (phasor >> 24) {
+		phasor = 8191 - (phasor >> 12);
 	} else {
-		phase = phase >> 12;
+		phasor = phasor >> 12;
 	}
 
-	phase = 4095 - phase;
+	phasor = 4095 - phasor;
 
 	int32_t samplesRemaining = outputBufferSize;
 
 	while (samplesRemaining) {
 
-		outputs.dac3Samples[writeIndex] = phase;
+		outputs.dac3Samples[writeIndex] = phasor;
 
 		samplesRemaining --;
 		writeIndex ++;
@@ -159,21 +159,26 @@ void ViaMeta::calculateDac3Contour(int32_t writeIndex) {
 
 void ViaMeta::calculateDac3PhasorEnv(int32_t writeIndex) {
 
-	int32_t phase = metaController.ghostPhase;
+	int32_t phasor = metaController.ghostPhase;
 
-	if (phase >> 24) {
-		phase = 8191 - (phase >> 12);
+	if (phasor >> 24) {
+		phasor = 8191 - (phasor >> 12);
 	} else {
-		phase = phase >> 12;
+		phasor = phasor >> 12;
 	}
 
-	phase = 2048 - (phase >> 1);
+	int32_t dac3OffsetScale = 61983;
+	int32_t dac3Offset = 111;
+
+	phasor = fix16_mul((phasor >> 1), dac3OffsetScale);
+
+	phasor = __USAT(2048 - phasor - dac3Offset, 12) ;
 
 	int32_t samplesRemaining = outputBufferSize;
 
 	while (samplesRemaining) {
 
-		outputs.dac3Samples[writeIndex] = phase;
+		outputs.dac3Samples[writeIndex] = phasor;
 
 		samplesRemaining --;
 		writeIndex ++;
@@ -184,7 +189,12 @@ void ViaMeta::calculateDac3PhasorEnv(int32_t writeIndex) {
 
 void ViaMeta::calculateDac3ContourEnv(int32_t writeIndex) {
 
-	outputs.dac3Samples[writeIndex] = 2048 - (outputs.dac2Samples[writeIndex] >> 1);
+	int32_t dac3OffsetScale = 61983;
+	int32_t dac3Offset = 111;
+
+	int32_t contour = fix16_mul(outputs.dac2Samples[writeIndex] >> 1, dac3OffsetScale);
+
+	contour = 2048 - contour - dac3Offset;
 
 	int32_t samplesRemaining = outputBufferSize;
 

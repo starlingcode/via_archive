@@ -48,6 +48,7 @@
  */
 
 #include "tsl_user.h"
+#include "tsc.h"
 
 /*============================================================================*/
 /* Channels                                                                   */
@@ -255,8 +256,10 @@ tsl_user_status_t tsl_user_Exec(void) {
 		/* USER CODE END not config_done */
 	}
 
+	TSL_Status_enum_T stateHere = TSL_acq_BankWaitEOC();
+
 	/* Check end of acquisition (polling mode) and read result */
-	if (TSL_acq_BankWaitEOC() == TSL_STATUS_OK) {
+	if (stateHere == TSL_STATUS_OK) {
 		/* USER CODE BEGIN end of acquisition start*/
 
 		/* USER CODE END end of acquisition start*/
@@ -268,6 +271,13 @@ tsl_user_status_t tsl_user_Exec(void) {
 		/* USER CODE BEGIN end of acquisition */
 
 		/* USER CODE END end of acquisition */
+	} else if (stateHere == TSL_STATUS_ERROR) {
+
+		HAL_TSC_MspDeInit(&htsc);
+		NVIC_SystemReset();
+		HAL_TSC_MspInit(&htsc);
+		MX_TSC_Init();
+		tsl_user_Init(); /* Init acquisition module */
 	}
 
 	/* Process objects, DxS and ECS

@@ -75,7 +75,7 @@ public:
 
 	void advance(uint32_t * wavetable,
 			uint32_t * phaseDistTable) {
-		if (increment > (65536 >> 2)) {
+		if (increment > (1 << 22)) {
 			oversample(wavetable, phaseDistTable);
 		} else {
 			spline(wavetable, phaseDistTable);

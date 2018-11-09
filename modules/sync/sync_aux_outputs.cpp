@@ -17,12 +17,12 @@ void ViaSync::calculateLogicAGate(int32_t writeIndex) {
 			//dummy at a handling
 			case AT_A_FROM_RELEASE:
 			case AT_A_FROM_ATTACK:
-				outputs.logicA[writeIndex] = ALOGIC_HIGH_MASK;
+				outputs.logicA[writeIndex] = ALOGIC_LOW_MASK;
 				break;
 			//dummy at b handling
 			case AT_B_FROM_RELEASE:
 			case AT_B_FROM_ATTACK:
-				outputs.logicA[writeIndex] = ALOGIC_LOW_MASK;
+				outputs.logicA[writeIndex] = ALOGIC_HIGH_MASK;
 				break;
 			default:
 				break;

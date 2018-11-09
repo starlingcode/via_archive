@@ -31,12 +31,25 @@ typedef struct {
 	int32_t writeIndex;
 } buffer;
 
+typedef struct {
+	int32_t buff[256];
+	int32_t writeIndex;
+} longBuffer;
+
 static inline void writeBuffer(buffer* buffer, int32_t value) {
 	buffer->buff[(buffer->writeIndex++) & 31] = value;
 }
 
 static inline int32_t readBuffer(buffer* buffer, int32_t Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
+}
+
+static inline void writeLongBuffer(longBuffer* buffer, int32_t value) {
+	buffer->buff[(buffer->writeIndex++) & 255] = value;
+}
+
+static inline int32_t readLongBuffer(longBuffer* buffer, int32_t Xn) {
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 255];
 }
 
 /*

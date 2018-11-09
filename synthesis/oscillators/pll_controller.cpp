@@ -44,42 +44,62 @@ void PllController::doPLL(void) {
 	// this switch is always 0 unless pllCounter is 0, in which case its sync mode
 
 #define IGNORE 0
-#define PLL_OFF 1
-#define TRUE_PLL 2
-#define HARD_RESET 3
+#define SLOW_PLL 1
+#define FAST_PLL 2
+#define WILD_PLL 3
+#define HARD_SYNC 4
 
 	if (pllCounter >= gcd) {
 
 		switch (syncMode) {
 			case IGNORE:
 				break;
-			case PLL_OFF:
-				pllNudge = 0;
-				pllCounter = 0;
-				break;
-			case TRUE_PLL:
+			case SLOW_PLL:
+
 				pllNudge = 0;
 				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
 				pllNudge -= phase * !(phase >> 24);
 
-				// for a different mode: 
-				// pllNudge = __SSAT(pllNudge, 22)
+				pllCounter = gcd;
+
+				break;
+			case FAST_PLL:
+				pllNudge = 0;
+				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
+				pllNudge -= phase * !(phase >> 24);
 
 				if (intMultiplier >> 16) {
 					pllNudge = ((int64_t) (pllNudge) << 16)/(intMultiplier);
 				}
 				nudgeSum = pllNudge + nudgeSum - readBuffer(&nudgeBuffer, 7);
 				writeBuffer(&nudgeBuffer, pllNudge);
-				pllNudge = nudgeSum >> 6;
+				pllNudge = nudgeSum << 2;
 
 				pllCounter = gcd;
 				break;
-			case HARD_RESET:
+			case WILD_PLL:
+
+				pllNudge = 0;
+				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
+				pllNudge -= phase * !(phase >> 24);
+
+				if (intMultiplier >> 16) {
+					pllNudge = ((int64_t) (pllNudge) << 16)/(intMultiplier);
+				}
+				nudgeSum = pllNudge + nudgeSum - readBuffer(&nudgeBuffer, 7);
+				writeBuffer(&nudgeBuffer, pllNudge);
+				pllNudge = nudgeSum << 4;
+
+				break;
+			case HARD_SYNC:
+
 				pllNudge = 0;
 				nudgeSum = 0;
 				pllCounter = 0;
 				phaseSignal = localPhaseOffset + phaseModSignal;
+
 				break;
+
 			default:
 				pllCounter = 0;
 				break;
@@ -103,9 +123,9 @@ void PllController::generateFrequency(void) {
 
 #ifdef BUILD_F373
 
-	int32_t incrementCalc = ((uint64_t)(WAVETABLE_LENGTH  + pllNudge) * 1440) / periodCount;
+	int32_t incrementCalc = ((uint64_t)(0x100000000 + (uint64_t) pllNudge) * 180) / periodCount;
 	incrementCalc = (fix48_mul(incrementCalc, fracMultiplier) + fix16_mul(incrementCalc, intMultiplier));
-	increment = __USAT(incrementCalc, 24);
+	increment = __USAT(incrementCalc, 31);
 
 #endif
 

@@ -19,7 +19,7 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 
 	int32_t localPhase = phase;
 
-	int32_t localIncrement = increment;
+	int32_t localIncrement = increment >> (7 - oversamplingFactor);
 
 	int32_t pmAmount = (int32_t) -pm[0];
 
@@ -118,7 +118,7 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 
 	uint32_t localPhase = phase;
 
-	int32_t localIncrement = increment;
+	int32_t localIncrement = increment >> 7;
 
 	int32_t pmAmount = (int32_t) -pm[0];
 
@@ -167,11 +167,11 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 	wavetable += (morphIndex * 517) + 2;
 
 	// scale increment to size of new phase space (<< 7) and down by oversampling factor
-	localIncrement = (localIncrement << (7 - oversamplingFactor));
+	localIncrement = increment + (phaseModulationValue << (7 - oversamplingFactor));
 	uint32_t leftSample;
 	phaseReset = 1;
 
-	// throw away the test phase value
+	// throw away the test phase value (don't like this)
 	localPhase = phase << 7;
 
 	int32_t samplesRemaining = bufferSize - 1;

@@ -185,7 +185,11 @@ void ViaUI::switchPreset(int32_t sig) {
 			uiSetLEDs(flashCounter % 4);
 		} else {
 			flashCounter = 0;
-			transition(&ViaUI::defaultMenu);
+			if (EXPANDER_BUTTON_PRESSED) {
+				transition(&ViaUI::presetMenu);
+			} else {
+				transition(&ViaUI::defaultMenu);
+			}
 		}
 	}
 }

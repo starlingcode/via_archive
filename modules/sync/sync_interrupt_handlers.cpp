@@ -114,7 +114,6 @@ void ViaSync::halfTransferCallback(void) {
 
 	(this->*calculateDac3)(0);
 	(this->*calculateLogicA)(0);
-	outputs.logicA[0] = GPIO_NOP;
 	(this->*calculateSH)(0);
 
 }
@@ -143,7 +142,6 @@ void ViaSync::transferCompleteCallback(void) {
 
 	(this->*calculateDac3)(SYNC_BUFFER_SIZE);
 	(this->*calculateLogicA)(0);
-	outputs.logicA[0] = GPIO_NOP;
 	(this->*calculateSH)(0);
 
 }

@@ -13,6 +13,7 @@ extern "C" {
 #endif
 
 void (*touchStateChangeCallback)(void *);
+void (*touchStateErrorCallback)(void *);
 void * thisUI;
 
 #ifdef __cplusplus

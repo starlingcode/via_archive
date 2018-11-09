@@ -93,7 +93,7 @@ void ViaGateseq::auxTimer1InterruptCallback() {
 		}
 		clockPeriod += sequencer.shuffleDelay;
 		TIM2->ARR = clockPeriod;
-		TIM17->ARR = clockPeriod >> 13;
+		TIM17->ARR = clockPeriod >> 14;
 		TIM17->CNT = 1;
 		TIM17->CR1 = TIM_CR1_CEN;
 #endif 

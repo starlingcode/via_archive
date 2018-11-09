@@ -83,8 +83,8 @@ void ViaMeta::halfTransferCallback(void) {
 	metaWavetable.increment = metaController.incrementUsed;
 	metaWavetable.advance((uint32_t *) wavetableRead);
 	(this->*outputStage)(0);
-	outputs.auxLogic[0] = EXPAND_LOGIC_LOW_MASK << (16 * metaWavetable.delta);
-	outputs.auxLogic[0] = GPIO_NOP;
+	int32_t reversed = (uint32_t) metaWavetable.increment >> 31;
+	outputs.auxLogic[0] = EXPAND_LOGIC_LOW_MASK << (16 * (reversed ? !metaWavetable.delta : metaWavetable.delta));
 	(this->*calculateDac3)(0);
 	(this->*calculateLogicA)(0);
 	(this->*calculateSH)(0);
@@ -102,8 +102,8 @@ void ViaMeta::transferCompleteCallback(void) {
 	metaWavetable.increment = metaController.incrementUsed;
 	metaWavetable.advance((uint32_t *) wavetableRead);
 	(this->*outputStage)(META_BUFFER_SIZE);
-	outputs.auxLogic[1] = EXPAND_LOGIC_LOW_MASK << (16 * metaWavetable.delta);
-	outputs.auxLogic[1] = GPIO_NOP;
+	int32_t reversed = (uint32_t) metaWavetable.increment >> 31;
+	outputs.auxLogic[1] = EXPAND_LOGIC_LOW_MASK << (16 * (reversed ? !metaWavetable.delta : metaWavetable.delta));
 	(this->*calculateDac3)(META_BUFFER_SIZE);
 	(this->*calculateLogicA)(1);
 	(this->*calculateSH)(1);

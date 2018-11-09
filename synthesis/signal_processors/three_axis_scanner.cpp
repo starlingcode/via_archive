@@ -90,14 +90,14 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 	int32_t xSample;
 	int32_t ySample;
 
-	int32_t samplesRemaining = bufferSize - 1;
-
 	int32_t * xTableRead = (int32_t *) xTable + (517 * (zIndex >> 16)) + 2;
 	int32_t * yTableRead = (int32_t *) yTable + (517 * (zIndex >> 16)) + 2;
 
 	int32_t leftSample;
 	int32_t morphFrac;
 	int32_t phaseFrac;
+
+	int32_t samplesRemaining = bufferSize - 1;
 
 	if (oversample == 0) {
 
