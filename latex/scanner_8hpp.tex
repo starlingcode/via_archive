@@ -1,0 +1,329 @@
+\hypertarget{scanner_8hpp}{}\section{modules/inc/scanner.hpp File Reference}
+\label{scanner_8hpp}\index{modules/inc/scanner.\+hpp@{modules/inc/scanner.\+hpp}}
+{\ttfamily \#include \char`\"{}user\+\_\+interface.\+hpp\char`\"{}}\newline
+{\ttfamily \#include $<$via\+\_\+platform\+\_\+binding.\+hpp$>$}\newline
+{\ttfamily \#include $<$signal\+\_\+processors.\+hpp$>$}\newline
+{\ttfamily \#include $<$tables.\+hpp$>$}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_via_scanner}{Via\+Scanner}}
+\item 
+class \mbox{\hyperlink{class_via_scanner_1_1_via_scanner_u_i}{Via\+Scanner\+::\+Via\+Scanner\+UI}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_a6d1fe8ce81e54d6d70e734bf39dee4b0}{S\+C\+A\+N\+N\+E\+R\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}}~8
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_a991daab853e00dc615b1cd598309eb1e}{X\+\_\+\+T\+A\+B\+LE}}~button4\+Mode
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_ace176b12d9a648838ac90aff9bd4be68}{Y\+\_\+\+T\+A\+B\+LE}}~button2\+Mode
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_adde5bae46f5a7ea397424615923deb2b}{S\+Y\+N\+C\+\_\+\+M\+O\+DE}}~button1\+Mode
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_adac8815cd77cbac3965490ee19d16eda}{T\+E\+R\+R\+A\+IN}}~button3\+Mode
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_a2fc3d0b935815ae315b960073b1ab4f7}{num\+Button1\+Modes}}~2
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_adf89450c55b663ccbdcc3500e2103752}{num\+Button2\+Modes}}~8
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_a4f1522ac1b01c067f5c889ae2875a05f}{num\+Button3\+Modes}}~4
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_a5b2401d112f6a1b190aeb54d87335f4f}{num\+Button4\+Modes}}~8
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_affa839d59d3b6c92c16d65b07cf24b13}{num\+Button5\+Modes}}~8
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_a1cacb7ddb96ab1812ebba173402deede}{num\+Button6\+Modes}}~8
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_a11efd8a8ecf654c98fb8b2e207f17065}{num\+Aux1\+Modes}}~0
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_a4929c890d5fc8ec49b2abce0c0ab9f78}{num\+Aux2\+Modes}}~0
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_a449dba0080009cec2a8a95256ef4fb6a}{num\+Aux3\+Modes}}~0
+\item 
+\#define \mbox{\hyperlink{scanner_8hpp_ac39f0c3829d44dfbeeffe6477c7dd45f}{num\+Aux4\+Modes}}~0
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{scanner_8hpp_a9d579390f904c6ba247de18080dc5a47}{button1\+Modes}} \{ \mbox{\hyperlink{scanner_8hpp_a9d579390f904c6ba247de18080dc5a47a5a40f8ecbed801e00fddb306fc5666f0}{reverse}}, 
+\mbox{\hyperlink{scanner_8hpp_a9d579390f904c6ba247de18080dc5a47a50c36646c1d92ee366f8a4f873616dac}{hardsync}}
+ \}
+\item 
+enum \mbox{\hyperlink{scanner_8hpp_a384c0b6b2a15cf9c8e92e5fa1dffc48d}{button2\+Modes}} \{ \mbox{\hyperlink{scanner_8hpp_a384c0b6b2a15cf9c8e92e5fa1dffc48dabb64356356600f2d9ef0168685cf890d}{y\+Tables}}
+ \}
+\item 
+enum \mbox{\hyperlink{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306}{button3\+Modes}} \{ \mbox{\hyperlink{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306a3693895373771b9806a9775d16d1198b}{sum}}, 
+\mbox{\hyperlink{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306a9696f672180c3272834323a910246247}{subtract}}, 
+\mbox{\hyperlink{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306a4e445801af0cdc7c8a750dae03484a4e}{product}}, 
+\mbox{\hyperlink{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306a7829c8dafd1b406bc832743e929f0b31}{phase\+Mod}}
+ \}
+\item 
+enum \mbox{\hyperlink{scanner_8hpp_a8aed35597788d2f92fc8085dace0a555}{button4\+Modes}} \{ \mbox{\hyperlink{scanner_8hpp_a8aed35597788d2f92fc8085dace0a555ae3b1252f4d4b58555703622493d44c4a}{x\+Tables}}
+ \}
+\item 
+enum \mbox{\hyperlink{scanner_8hpp_a8f6748506cdc25bc81d8704bfa6b65ca}{button5\+Modes}} \{ \mbox{\hyperlink{scanner_8hpp_a8f6748506cdc25bc81d8704bfa6b65caab51ed61fef1365d3ff964592b1208ceb}{paired\+With\+Button2}}
+ \}
+\item 
+enum \mbox{\hyperlink{scanner_8hpp_aea581a7cec37126723a82a6244db1936}{button6\+Modes}} \{ \mbox{\hyperlink{scanner_8hpp_aea581a7cec37126723a82a6244db1936a2a73618ad46d2e33fa8873c07e997c4a}{paired\+With\+Button3}}
+ \}
+\item 
+enum \mbox{\hyperlink{scanner_8hpp_a2387c354c645d2d20884227a7af43f2d}{aux1\+Modes}} \{ \mbox{\hyperlink{scanner_8hpp_a2387c354c645d2d20884227a7af43f2da578bbd69f5ebda15c6f42009f8063639}{aux1\+Not\+Used}}
+ \}
+\item 
+enum \mbox{\hyperlink{scanner_8hpp_a3cb1f897e38409bcf70c1b94581265d5}{aux2\+Modes}} \{ \mbox{\hyperlink{scanner_8hpp_a3cb1f897e38409bcf70c1b94581265d5a4dd0cf4be74ceff1bdb582849971aed5}{aux2\+Not\+Used}}
+ \}
+\item 
+enum \mbox{\hyperlink{scanner_8hpp_a5e2c9e6b77c9e5723fcb9c77ac953b0a}{aux3\+Modes}} \{ \mbox{\hyperlink{scanner_8hpp_a5e2c9e6b77c9e5723fcb9c77ac953b0aa425cc652c203dc93de6e23bd48812315}{aux3\+Not\+Used}}
+ \}
+\item 
+enum \mbox{\hyperlink{scanner_8hpp_a63f311a51c2e186f48d5528f97d6643a}{aux4\+Modes}} \{ \mbox{\hyperlink{scanner_8hpp_a63f311a51c2e186f48d5528f97d6643aab64a33d271277b3ee6a00872f0f2543b}{aux4\+Not\+Used}}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{scanner_8hpp_a2c9faf3278d52e0e104b0e34aa63711c}{scanner\+Touch\+Link}} (void $\ast$)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{scanner_8hpp_a11efd8a8ecf654c98fb8b2e207f17065}\label{scanner_8hpp_a11efd8a8ecf654c98fb8b2e207f17065}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!num\+Aux1\+Modes@{num\+Aux1\+Modes}}
+\index{num\+Aux1\+Modes@{num\+Aux1\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Aux1\+Modes}{numAux1Modes}}
+{\footnotesize\ttfamily \#define num\+Aux1\+Modes~0}
+
+\mbox{\Hypertarget{scanner_8hpp_a4929c890d5fc8ec49b2abce0c0ab9f78}\label{scanner_8hpp_a4929c890d5fc8ec49b2abce0c0ab9f78}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!num\+Aux2\+Modes@{num\+Aux2\+Modes}}
+\index{num\+Aux2\+Modes@{num\+Aux2\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Aux2\+Modes}{numAux2Modes}}
+{\footnotesize\ttfamily \#define num\+Aux2\+Modes~0}
+
+\mbox{\Hypertarget{scanner_8hpp_a449dba0080009cec2a8a95256ef4fb6a}\label{scanner_8hpp_a449dba0080009cec2a8a95256ef4fb6a}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!num\+Aux3\+Modes@{num\+Aux3\+Modes}}
+\index{num\+Aux3\+Modes@{num\+Aux3\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Aux3\+Modes}{numAux3Modes}}
+{\footnotesize\ttfamily \#define num\+Aux3\+Modes~0}
+
+\mbox{\Hypertarget{scanner_8hpp_ac39f0c3829d44dfbeeffe6477c7dd45f}\label{scanner_8hpp_ac39f0c3829d44dfbeeffe6477c7dd45f}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!num\+Aux4\+Modes@{num\+Aux4\+Modes}}
+\index{num\+Aux4\+Modes@{num\+Aux4\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Aux4\+Modes}{numAux4Modes}}
+{\footnotesize\ttfamily \#define num\+Aux4\+Modes~0}
+
+\mbox{\Hypertarget{scanner_8hpp_a2fc3d0b935815ae315b960073b1ab4f7}\label{scanner_8hpp_a2fc3d0b935815ae315b960073b1ab4f7}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!num\+Button1\+Modes@{num\+Button1\+Modes}}
+\index{num\+Button1\+Modes@{num\+Button1\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Button1\+Modes}{numButton1Modes}}
+{\footnotesize\ttfamily \#define num\+Button1\+Modes~2}
+
+\mbox{\Hypertarget{scanner_8hpp_adf89450c55b663ccbdcc3500e2103752}\label{scanner_8hpp_adf89450c55b663ccbdcc3500e2103752}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!num\+Button2\+Modes@{num\+Button2\+Modes}}
+\index{num\+Button2\+Modes@{num\+Button2\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Button2\+Modes}{numButton2Modes}}
+{\footnotesize\ttfamily \#define num\+Button2\+Modes~8}
+
+\mbox{\Hypertarget{scanner_8hpp_a4f1522ac1b01c067f5c889ae2875a05f}\label{scanner_8hpp_a4f1522ac1b01c067f5c889ae2875a05f}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!num\+Button3\+Modes@{num\+Button3\+Modes}}
+\index{num\+Button3\+Modes@{num\+Button3\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Button3\+Modes}{numButton3Modes}}
+{\footnotesize\ttfamily \#define num\+Button3\+Modes~4}
+
+\mbox{\Hypertarget{scanner_8hpp_a5b2401d112f6a1b190aeb54d87335f4f}\label{scanner_8hpp_a5b2401d112f6a1b190aeb54d87335f4f}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!num\+Button4\+Modes@{num\+Button4\+Modes}}
+\index{num\+Button4\+Modes@{num\+Button4\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Button4\+Modes}{numButton4Modes}}
+{\footnotesize\ttfamily \#define num\+Button4\+Modes~8}
+
+\mbox{\Hypertarget{scanner_8hpp_affa839d59d3b6c92c16d65b07cf24b13}\label{scanner_8hpp_affa839d59d3b6c92c16d65b07cf24b13}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!num\+Button5\+Modes@{num\+Button5\+Modes}}
+\index{num\+Button5\+Modes@{num\+Button5\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Button5\+Modes}{numButton5Modes}}
+{\footnotesize\ttfamily \#define num\+Button5\+Modes~8}
+
+\mbox{\Hypertarget{scanner_8hpp_a1cacb7ddb96ab1812ebba173402deede}\label{scanner_8hpp_a1cacb7ddb96ab1812ebba173402deede}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!num\+Button6\+Modes@{num\+Button6\+Modes}}
+\index{num\+Button6\+Modes@{num\+Button6\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Button6\+Modes}{numButton6Modes}}
+{\footnotesize\ttfamily \#define num\+Button6\+Modes~8}
+
+\mbox{\Hypertarget{scanner_8hpp_a6d1fe8ce81e54d6d70e734bf39dee4b0}\label{scanner_8hpp_a6d1fe8ce81e54d6d70e734bf39dee4b0}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!S\+C\+A\+N\+N\+E\+R\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE@{S\+C\+A\+N\+N\+E\+R\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}}
+\index{S\+C\+A\+N\+N\+E\+R\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE@{S\+C\+A\+N\+N\+E\+R\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{S\+C\+A\+N\+N\+E\+R\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}{SCANNER\_BUFFER\_SIZE}}
+{\footnotesize\ttfamily \#define S\+C\+A\+N\+N\+E\+R\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE~8}
+
+\mbox{\Hypertarget{scanner_8hpp_adde5bae46f5a7ea397424615923deb2b}\label{scanner_8hpp_adde5bae46f5a7ea397424615923deb2b}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!S\+Y\+N\+C\+\_\+\+M\+O\+DE@{S\+Y\+N\+C\+\_\+\+M\+O\+DE}}
+\index{S\+Y\+N\+C\+\_\+\+M\+O\+DE@{S\+Y\+N\+C\+\_\+\+M\+O\+DE}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{S\+Y\+N\+C\+\_\+\+M\+O\+DE}{SYNC\_MODE}}
+{\footnotesize\ttfamily \#define S\+Y\+N\+C\+\_\+\+M\+O\+DE~button1\+Mode}
+
+\mbox{\Hypertarget{scanner_8hpp_adac8815cd77cbac3965490ee19d16eda}\label{scanner_8hpp_adac8815cd77cbac3965490ee19d16eda}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!T\+E\+R\+R\+A\+IN@{T\+E\+R\+R\+A\+IN}}
+\index{T\+E\+R\+R\+A\+IN@{T\+E\+R\+R\+A\+IN}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{T\+E\+R\+R\+A\+IN}{TERRAIN}}
+{\footnotesize\ttfamily \#define T\+E\+R\+R\+A\+IN~button3\+Mode}
+
+\mbox{\Hypertarget{scanner_8hpp_a991daab853e00dc615b1cd598309eb1e}\label{scanner_8hpp_a991daab853e00dc615b1cd598309eb1e}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!X\+\_\+\+T\+A\+B\+LE@{X\+\_\+\+T\+A\+B\+LE}}
+\index{X\+\_\+\+T\+A\+B\+LE@{X\+\_\+\+T\+A\+B\+LE}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{X\+\_\+\+T\+A\+B\+LE}{X\_TABLE}}
+{\footnotesize\ttfamily \#define X\+\_\+\+T\+A\+B\+LE~button4\+Mode}
+
+\mbox{\Hypertarget{scanner_8hpp_ace176b12d9a648838ac90aff9bd4be68}\label{scanner_8hpp_ace176b12d9a648838ac90aff9bd4be68}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!Y\+\_\+\+T\+A\+B\+LE@{Y\+\_\+\+T\+A\+B\+LE}}
+\index{Y\+\_\+\+T\+A\+B\+LE@{Y\+\_\+\+T\+A\+B\+LE}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{Y\+\_\+\+T\+A\+B\+LE}{Y\_TABLE}}
+{\footnotesize\ttfamily \#define Y\+\_\+\+T\+A\+B\+LE~button2\+Mode}
+
+
+
+\subsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{scanner_8hpp_a2387c354c645d2d20884227a7af43f2d}\label{scanner_8hpp_a2387c354c645d2d20884227a7af43f2d}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!aux1\+Modes@{aux1\+Modes}}
+\index{aux1\+Modes@{aux1\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{aux1\+Modes}{aux1Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{scanner_8hpp_a2387c354c645d2d20884227a7af43f2d}{aux1\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{aux1\+Not\+Used@{aux1\+Not\+Used}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!aux1\+Not\+Used@{aux1\+Not\+Used}}}\mbox{\Hypertarget{scanner_8hpp_a2387c354c645d2d20884227a7af43f2da578bbd69f5ebda15c6f42009f8063639}\label{scanner_8hpp_a2387c354c645d2d20884227a7af43f2da578bbd69f5ebda15c6f42009f8063639}} 
+aux1\+Not\+Used&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{scanner_8hpp_a3cb1f897e38409bcf70c1b94581265d5}\label{scanner_8hpp_a3cb1f897e38409bcf70c1b94581265d5}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!aux2\+Modes@{aux2\+Modes}}
+\index{aux2\+Modes@{aux2\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{aux2\+Modes}{aux2Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{scanner_8hpp_a3cb1f897e38409bcf70c1b94581265d5}{aux2\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{aux2\+Not\+Used@{aux2\+Not\+Used}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!aux2\+Not\+Used@{aux2\+Not\+Used}}}\mbox{\Hypertarget{scanner_8hpp_a3cb1f897e38409bcf70c1b94581265d5a4dd0cf4be74ceff1bdb582849971aed5}\label{scanner_8hpp_a3cb1f897e38409bcf70c1b94581265d5a4dd0cf4be74ceff1bdb582849971aed5}} 
+aux2\+Not\+Used&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{scanner_8hpp_a5e2c9e6b77c9e5723fcb9c77ac953b0a}\label{scanner_8hpp_a5e2c9e6b77c9e5723fcb9c77ac953b0a}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!aux3\+Modes@{aux3\+Modes}}
+\index{aux3\+Modes@{aux3\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{aux3\+Modes}{aux3Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{scanner_8hpp_a5e2c9e6b77c9e5723fcb9c77ac953b0a}{aux3\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{aux3\+Not\+Used@{aux3\+Not\+Used}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!aux3\+Not\+Used@{aux3\+Not\+Used}}}\mbox{\Hypertarget{scanner_8hpp_a5e2c9e6b77c9e5723fcb9c77ac953b0aa425cc652c203dc93de6e23bd48812315}\label{scanner_8hpp_a5e2c9e6b77c9e5723fcb9c77ac953b0aa425cc652c203dc93de6e23bd48812315}} 
+aux3\+Not\+Used&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{scanner_8hpp_a63f311a51c2e186f48d5528f97d6643a}\label{scanner_8hpp_a63f311a51c2e186f48d5528f97d6643a}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!aux4\+Modes@{aux4\+Modes}}
+\index{aux4\+Modes@{aux4\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{aux4\+Modes}{aux4Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{scanner_8hpp_a63f311a51c2e186f48d5528f97d6643a}{aux4\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{aux4\+Not\+Used@{aux4\+Not\+Used}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!aux4\+Not\+Used@{aux4\+Not\+Used}}}\mbox{\Hypertarget{scanner_8hpp_a63f311a51c2e186f48d5528f97d6643aab64a33d271277b3ee6a00872f0f2543b}\label{scanner_8hpp_a63f311a51c2e186f48d5528f97d6643aab64a33d271277b3ee6a00872f0f2543b}} 
+aux4\+Not\+Used&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{scanner_8hpp_a9d579390f904c6ba247de18080dc5a47}\label{scanner_8hpp_a9d579390f904c6ba247de18080dc5a47}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!button1\+Modes@{button1\+Modes}}
+\index{button1\+Modes@{button1\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{button1\+Modes}{button1Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{scanner_8hpp_a9d579390f904c6ba247de18080dc5a47}{button1\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{reverse@{reverse}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!reverse@{reverse}}}\mbox{\Hypertarget{scanner_8hpp_a9d579390f904c6ba247de18080dc5a47a5a40f8ecbed801e00fddb306fc5666f0}\label{scanner_8hpp_a9d579390f904c6ba247de18080dc5a47a5a40f8ecbed801e00fddb306fc5666f0}} 
+reverse&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{hardsync@{hardsync}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!hardsync@{hardsync}}}\mbox{\Hypertarget{scanner_8hpp_a9d579390f904c6ba247de18080dc5a47a50c36646c1d92ee366f8a4f873616dac}\label{scanner_8hpp_a9d579390f904c6ba247de18080dc5a47a50c36646c1d92ee366f8a4f873616dac}} 
+hardsync&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{scanner_8hpp_a384c0b6b2a15cf9c8e92e5fa1dffc48d}\label{scanner_8hpp_a384c0b6b2a15cf9c8e92e5fa1dffc48d}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!button2\+Modes@{button2\+Modes}}
+\index{button2\+Modes@{button2\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{button2\+Modes}{button2Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{scanner_8hpp_a384c0b6b2a15cf9c8e92e5fa1dffc48d}{button2\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{y\+Tables@{y\+Tables}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!y\+Tables@{y\+Tables}}}\mbox{\Hypertarget{scanner_8hpp_a384c0b6b2a15cf9c8e92e5fa1dffc48dabb64356356600f2d9ef0168685cf890d}\label{scanner_8hpp_a384c0b6b2a15cf9c8e92e5fa1dffc48dabb64356356600f2d9ef0168685cf890d}} 
+y\+Tables&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306}\label{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!button3\+Modes@{button3\+Modes}}
+\index{button3\+Modes@{button3\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{button3\+Modes}{button3Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306}{button3\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{sum@{sum}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!sum@{sum}}}\mbox{\Hypertarget{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306a3693895373771b9806a9775d16d1198b}\label{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306a3693895373771b9806a9775d16d1198b}} 
+sum&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{subtract@{subtract}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!subtract@{subtract}}}\mbox{\Hypertarget{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306a9696f672180c3272834323a910246247}\label{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306a9696f672180c3272834323a910246247}} 
+subtract&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{product@{product}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!product@{product}}}\mbox{\Hypertarget{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306a4e445801af0cdc7c8a750dae03484a4e}\label{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306a4e445801af0cdc7c8a750dae03484a4e}} 
+product&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{phase\+Mod@{phase\+Mod}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!phase\+Mod@{phase\+Mod}}}\mbox{\Hypertarget{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306a7829c8dafd1b406bc832743e929f0b31}\label{scanner_8hpp_a63a35a16e8b46c48a5e7d4196de8b306a7829c8dafd1b406bc832743e929f0b31}} 
+phase\+Mod&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{scanner_8hpp_a8aed35597788d2f92fc8085dace0a555}\label{scanner_8hpp_a8aed35597788d2f92fc8085dace0a555}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!button4\+Modes@{button4\+Modes}}
+\index{button4\+Modes@{button4\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{button4\+Modes}{button4Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{scanner_8hpp_a8aed35597788d2f92fc8085dace0a555}{button4\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{x\+Tables@{x\+Tables}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!x\+Tables@{x\+Tables}}}\mbox{\Hypertarget{scanner_8hpp_a8aed35597788d2f92fc8085dace0a555ae3b1252f4d4b58555703622493d44c4a}\label{scanner_8hpp_a8aed35597788d2f92fc8085dace0a555ae3b1252f4d4b58555703622493d44c4a}} 
+x\+Tables&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{scanner_8hpp_a8f6748506cdc25bc81d8704bfa6b65ca}\label{scanner_8hpp_a8f6748506cdc25bc81d8704bfa6b65ca}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!button5\+Modes@{button5\+Modes}}
+\index{button5\+Modes@{button5\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{button5\+Modes}{button5Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{scanner_8hpp_a8f6748506cdc25bc81d8704bfa6b65ca}{button5\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{paired\+With\+Button2@{paired\+With\+Button2}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!paired\+With\+Button2@{paired\+With\+Button2}}}\mbox{\Hypertarget{scanner_8hpp_a8f6748506cdc25bc81d8704bfa6b65caab51ed61fef1365d3ff964592b1208ceb}\label{scanner_8hpp_a8f6748506cdc25bc81d8704bfa6b65caab51ed61fef1365d3ff964592b1208ceb}} 
+paired\+With\+Button2&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{scanner_8hpp_aea581a7cec37126723a82a6244db1936}\label{scanner_8hpp_aea581a7cec37126723a82a6244db1936}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!button6\+Modes@{button6\+Modes}}
+\index{button6\+Modes@{button6\+Modes}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{button6\+Modes}{button6Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{scanner_8hpp_aea581a7cec37126723a82a6244db1936}{button6\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{paired\+With\+Button3@{paired\+With\+Button3}!scanner.\+hpp@{scanner.\+hpp}}\index{scanner.\+hpp@{scanner.\+hpp}!paired\+With\+Button3@{paired\+With\+Button3}}}\mbox{\Hypertarget{scanner_8hpp_aea581a7cec37126723a82a6244db1936a2a73618ad46d2e33fa8873c07e997c4a}\label{scanner_8hpp_aea581a7cec37126723a82a6244db1936a2a73618ad46d2e33fa8873c07e997c4a}} 
+paired\+With\+Button3&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{scanner_8hpp_a2c9faf3278d52e0e104b0e34aa63711c}\label{scanner_8hpp_a2c9faf3278d52e0e104b0e34aa63711c}} 
+\index{scanner.\+hpp@{scanner.\+hpp}!scanner\+Touch\+Link@{scanner\+Touch\+Link}}
+\index{scanner\+Touch\+Link@{scanner\+Touch\+Link}!scanner.\+hpp@{scanner.\+hpp}}
+\subsubsection{\texorpdfstring{scanner\+Touch\+Link()}{scannerTouchLink()}}
+{\footnotesize\ttfamily void scanner\+Touch\+Link (\begin{DoxyParamCaption}\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+

@@ -49,7 +49,7 @@
 uint16_t DataVar = 0;
 
 /* Virtual address defined by the user: 0xFFFF value is prohibited */
-uint16_t VirtAddVarTab[NB_OF_VAR] = {0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7};
+uint16_t VirtAddVarTab[NB_OF_VAR] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/

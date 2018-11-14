@@ -1,0 +1,377 @@
+\hypertarget{gateseq_8hpp}{}\section{modules/inc/gateseq.hpp File Reference}
+\label{gateseq_8hpp}\index{modules/inc/gateseq.\+hpp@{modules/inc/gateseq.\+hpp}}
+{\ttfamily \#include \char`\"{}sequencers.\+hpp\char`\"{}}\newline
+{\ttfamily \#include $<$via\+\_\+platform\+\_\+binding.\+hpp$>$}\newline
+{\ttfamily \#include $<$user\+\_\+interface.\+hpp$>$}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_via_gateseq}{Via\+Gateseq}}
+\item 
+class \mbox{\hyperlink{class_via_gateseq_1_1_via_gateseq_u_i}{Via\+Gateseq\+::\+Via\+Gateseq\+UI}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_ae332d5e4082706ff3f180c8104625a34}{S\+H\+\_\+\+A\+\_\+\+M\+O\+DE}}~button1\+Mode
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_aaee02a512151a549f30147369360004b}{A\+N\+D\+\_\+\+A\+\_\+\+M\+O\+DE}}~button2\+Mode
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_ae82adb2080091af01ba2159cca8fd20d}{A\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK}}~button3\+Mode
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_a02820514803a14ebcbc84b35d227d7b0}{S\+H\+\_\+\+B\+\_\+\+M\+O\+DE}}~button4\+Mode
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_ada0c65bfed0b51e8222e1e0c7549feb7}{A\+N\+D\+\_\+\+B\+\_\+\+M\+O\+DE}}~button5\+Mode
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_a5b8eecac3b30370ffec3cf5af51e8b65}{B\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK}}~button6\+Mode
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_ab4ea278c076a5f89e52414a8d1769b9b}{L\+O\+G\+I\+C\+\_\+\+M\+O\+DE}}~aux2\+Mode
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_a2fc3d0b935815ae315b960073b1ab4f7}{num\+Button1\+Modes}}~3
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_adf89450c55b663ccbdcc3500e2103752}{num\+Button2\+Modes}}~2
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_a4f1522ac1b01c067f5c889ae2875a05f}{num\+Button3\+Modes}}~4
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_a5b2401d112f6a1b190aeb54d87335f4f}{num\+Button4\+Modes}}~3
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_affa839d59d3b6c92c16d65b07cf24b13}{num\+Button5\+Modes}}~2
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_a1cacb7ddb96ab1812ebba173402deede}{num\+Button6\+Modes}}~4
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_a11efd8a8ecf654c98fb8b2e207f17065}{num\+Aux1\+Modes}}~0
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_a4929c890d5fc8ec49b2abce0c0ab9f78}{num\+Aux2\+Modes}}~4
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_a449dba0080009cec2a8a95256ef4fb6a}{num\+Aux3\+Modes}}~0
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_ac39f0c3829d44dfbeeffe6477c7dd45f}{num\+Aux4\+Modes}}~0
+\item 
+\#define \mbox{\hyperlink{gateseq_8hpp_aa499ca0f08455aae6095b98fd4de38ea}{T\+R\+I\+G\+S\+E\+Q\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}}~1
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0}{gateseq\+\_\+button1\+Modes}} \{ \mbox{\hyperlink{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0ab4be2e00865571be10c2dd102e41965e}{a\+No\+SH}}, 
+\mbox{\hyperlink{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0a037eaa4e596128076c5ffc57f9790fb8}{a\+Resample}}, 
+\mbox{\hyperlink{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0abd78a86308761e5cc8ec6d44b99ef52c}{a\+Sample\+Track}}
+ \}
+\item 
+enum \mbox{\hyperlink{gateseq_8hpp_ad1f9c19405ec30150a0d5bf10d3f7539}{gateseq\+\_\+button2\+Modes}} \{ \mbox{\hyperlink{gateseq_8hpp_ad1f9c19405ec30150a0d5bf10d3f7539ad34f7cdbb407cab365eb77e14ab0334f}{and\+Aoff}}, 
+\mbox{\hyperlink{gateseq_8hpp_ad1f9c19405ec30150a0d5bf10d3f7539a7a339d6074a79b0b53564d6bb0a368e8}{and\+Aon}}
+ \}
+\item 
+enum \mbox{\hyperlink{gateseq_8hpp_a6c76e12a724eb47e27cfa9a46bfcd4a5}{gateseq\+\_\+button3\+Modes}} \{ \mbox{\hyperlink{gateseq_8hpp_a6c76e12a724eb47e27cfa9a46bfcd4a5ace0dae04a047c27e55f6b2085254977f}{a\+Pattern\+Bank\+Selections}}
+ \}
+\item 
+enum \mbox{\hyperlink{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caa}{gateseq\+\_\+button4\+Modes}} \{ \mbox{\hyperlink{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caaa47a164040d6437e6fce3ac358ce6cdc0}{b\+No\+SH}}, 
+\mbox{\hyperlink{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caaa2b20b69e8313d3d6da17b3c612436a69}{b\+Resample}}, 
+\mbox{\hyperlink{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caaa8d2e5f48f3611ec8b22559090c774144}{b\+Sample\+Track}}
+ \}
+\item 
+enum \mbox{\hyperlink{gateseq_8hpp_a3a61889710ee517905d26330a14878a7}{gateseq\+\_\+button5\+Modes}} \{ \mbox{\hyperlink{gateseq_8hpp_a3a61889710ee517905d26330a14878a7a998f260a8eb2d09df34e3e9abbcf582d}{and\+Boff}}, 
+\mbox{\hyperlink{gateseq_8hpp_a3a61889710ee517905d26330a14878a7a16c118f2b880c3cdc76b2e716a168908}{and\+Bon}}
+ \}
+\item 
+enum \mbox{\hyperlink{gateseq_8hpp_a68e0715504d8da807c653980431b1341}{gateseq\+\_\+button6\+Modes}} \{ \mbox{\hyperlink{gateseq_8hpp_a68e0715504d8da807c653980431b1341a3a8a62a1449033eac87af002c558d16e}{b\+Pattern\+Bank\+Selections}}
+ \}
+\item 
+enum \mbox{\hyperlink{gateseq_8hpp_ac036390f70cec3ec583e900b18363020}{gateseq\+\_\+aux1\+Modes}} \{ \mbox{\hyperlink{gateseq_8hpp_ac036390f70cec3ec583e900b18363020a429e6fb403cf49440adb9c2de26cf642}{gateseq\+\_\+aux1\+Not\+Used}}
+ \}
+\item 
+enum \mbox{\hyperlink{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48e}{gateseq\+\_\+aux2\+Modes}} \{ \mbox{\hyperlink{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48ead907afb95f258b1011a2afbb17d6ea12}{\+\_\+and}}, 
+\mbox{\hyperlink{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48eab3fe552fa7cb5910bf5e2e32b26c3a28}{\+\_\+or}}, 
+\mbox{\hyperlink{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48ea27d5a5accf996a8eea84d6b95573d913}{\+\_\+xor}}, 
+\mbox{\hyperlink{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48ead26624e1702715104188c7e4f2cf7b13}{\+\_\+sr}}
+ \}
+\item 
+enum \mbox{\hyperlink{gateseq_8hpp_ae40ca3cf706f615d1dc3f2d9d06661fb}{gateseq\+\_\+aux3\+Modes}} \{ \mbox{\hyperlink{gateseq_8hpp_ae40ca3cf706f615d1dc3f2d9d06661fba733e226644d634a80e55fa21afad0e6b}{gateseq\+\_\+aux3\+Not\+Used}}
+ \}
+\item 
+enum \mbox{\hyperlink{gateseq_8hpp_a247afab9290c9bf5539c72831e8965b4}{gateseq\+\_\+aux4\+Modes}} \{ \mbox{\hyperlink{gateseq_8hpp_a247afab9290c9bf5539c72831e8965b4a78a2e76dee2ee709fdd8d3304ae28099}{gateseq\+\_\+aux4\+Not\+Used}}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{gateseq_8hpp_ad2cba78c5e97aa4a78515dfd23cfc28e}{gateseq\+Touch\+Link}} (void $\ast$)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{gateseq_8hpp_ae82adb2080091af01ba2159cca8fd20d}\label{gateseq_8hpp_ae82adb2080091af01ba2159cca8fd20d}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!A\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK@{A\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK}}
+\index{A\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK@{A\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{A\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK}{A\_PATTERN\_BANK}}
+{\footnotesize\ttfamily \#define A\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK~button3\+Mode}
+
+\mbox{\Hypertarget{gateseq_8hpp_aaee02a512151a549f30147369360004b}\label{gateseq_8hpp_aaee02a512151a549f30147369360004b}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!A\+N\+D\+\_\+\+A\+\_\+\+M\+O\+DE@{A\+N\+D\+\_\+\+A\+\_\+\+M\+O\+DE}}
+\index{A\+N\+D\+\_\+\+A\+\_\+\+M\+O\+DE@{A\+N\+D\+\_\+\+A\+\_\+\+M\+O\+DE}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{A\+N\+D\+\_\+\+A\+\_\+\+M\+O\+DE}{AND\_A\_MODE}}
+{\footnotesize\ttfamily \#define A\+N\+D\+\_\+\+A\+\_\+\+M\+O\+DE~button2\+Mode}
+
+\mbox{\Hypertarget{gateseq_8hpp_ada0c65bfed0b51e8222e1e0c7549feb7}\label{gateseq_8hpp_ada0c65bfed0b51e8222e1e0c7549feb7}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!A\+N\+D\+\_\+\+B\+\_\+\+M\+O\+DE@{A\+N\+D\+\_\+\+B\+\_\+\+M\+O\+DE}}
+\index{A\+N\+D\+\_\+\+B\+\_\+\+M\+O\+DE@{A\+N\+D\+\_\+\+B\+\_\+\+M\+O\+DE}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{A\+N\+D\+\_\+\+B\+\_\+\+M\+O\+DE}{AND\_B\_MODE}}
+{\footnotesize\ttfamily \#define A\+N\+D\+\_\+\+B\+\_\+\+M\+O\+DE~button5\+Mode}
+
+\mbox{\Hypertarget{gateseq_8hpp_a5b8eecac3b30370ffec3cf5af51e8b65}\label{gateseq_8hpp_a5b8eecac3b30370ffec3cf5af51e8b65}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!B\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK@{B\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK}}
+\index{B\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK@{B\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{B\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK}{B\_PATTERN\_BANK}}
+{\footnotesize\ttfamily \#define B\+\_\+\+P\+A\+T\+T\+E\+R\+N\+\_\+\+B\+A\+NK~button6\+Mode}
+
+\mbox{\Hypertarget{gateseq_8hpp_ab4ea278c076a5f89e52414a8d1769b9b}\label{gateseq_8hpp_ab4ea278c076a5f89e52414a8d1769b9b}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!L\+O\+G\+I\+C\+\_\+\+M\+O\+DE@{L\+O\+G\+I\+C\+\_\+\+M\+O\+DE}}
+\index{L\+O\+G\+I\+C\+\_\+\+M\+O\+DE@{L\+O\+G\+I\+C\+\_\+\+M\+O\+DE}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{L\+O\+G\+I\+C\+\_\+\+M\+O\+DE}{LOGIC\_MODE}}
+{\footnotesize\ttfamily \#define L\+O\+G\+I\+C\+\_\+\+M\+O\+DE~aux2\+Mode}
+
+\mbox{\Hypertarget{gateseq_8hpp_a11efd8a8ecf654c98fb8b2e207f17065}\label{gateseq_8hpp_a11efd8a8ecf654c98fb8b2e207f17065}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!num\+Aux1\+Modes@{num\+Aux1\+Modes}}
+\index{num\+Aux1\+Modes@{num\+Aux1\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Aux1\+Modes}{numAux1Modes}}
+{\footnotesize\ttfamily \#define num\+Aux1\+Modes~0}
+
+\mbox{\Hypertarget{gateseq_8hpp_a4929c890d5fc8ec49b2abce0c0ab9f78}\label{gateseq_8hpp_a4929c890d5fc8ec49b2abce0c0ab9f78}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!num\+Aux2\+Modes@{num\+Aux2\+Modes}}
+\index{num\+Aux2\+Modes@{num\+Aux2\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Aux2\+Modes}{numAux2Modes}}
+{\footnotesize\ttfamily \#define num\+Aux2\+Modes~4}
+
+\mbox{\Hypertarget{gateseq_8hpp_a449dba0080009cec2a8a95256ef4fb6a}\label{gateseq_8hpp_a449dba0080009cec2a8a95256ef4fb6a}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!num\+Aux3\+Modes@{num\+Aux3\+Modes}}
+\index{num\+Aux3\+Modes@{num\+Aux3\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Aux3\+Modes}{numAux3Modes}}
+{\footnotesize\ttfamily \#define num\+Aux3\+Modes~0}
+
+\mbox{\Hypertarget{gateseq_8hpp_ac39f0c3829d44dfbeeffe6477c7dd45f}\label{gateseq_8hpp_ac39f0c3829d44dfbeeffe6477c7dd45f}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!num\+Aux4\+Modes@{num\+Aux4\+Modes}}
+\index{num\+Aux4\+Modes@{num\+Aux4\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Aux4\+Modes}{numAux4Modes}}
+{\footnotesize\ttfamily \#define num\+Aux4\+Modes~0}
+
+\mbox{\Hypertarget{gateseq_8hpp_a2fc3d0b935815ae315b960073b1ab4f7}\label{gateseq_8hpp_a2fc3d0b935815ae315b960073b1ab4f7}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!num\+Button1\+Modes@{num\+Button1\+Modes}}
+\index{num\+Button1\+Modes@{num\+Button1\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Button1\+Modes}{numButton1Modes}}
+{\footnotesize\ttfamily \#define num\+Button1\+Modes~3}
+
+\mbox{\Hypertarget{gateseq_8hpp_adf89450c55b663ccbdcc3500e2103752}\label{gateseq_8hpp_adf89450c55b663ccbdcc3500e2103752}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!num\+Button2\+Modes@{num\+Button2\+Modes}}
+\index{num\+Button2\+Modes@{num\+Button2\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Button2\+Modes}{numButton2Modes}}
+{\footnotesize\ttfamily \#define num\+Button2\+Modes~2}
+
+\mbox{\Hypertarget{gateseq_8hpp_a4f1522ac1b01c067f5c889ae2875a05f}\label{gateseq_8hpp_a4f1522ac1b01c067f5c889ae2875a05f}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!num\+Button3\+Modes@{num\+Button3\+Modes}}
+\index{num\+Button3\+Modes@{num\+Button3\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Button3\+Modes}{numButton3Modes}}
+{\footnotesize\ttfamily \#define num\+Button3\+Modes~4}
+
+\mbox{\Hypertarget{gateseq_8hpp_a5b2401d112f6a1b190aeb54d87335f4f}\label{gateseq_8hpp_a5b2401d112f6a1b190aeb54d87335f4f}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!num\+Button4\+Modes@{num\+Button4\+Modes}}
+\index{num\+Button4\+Modes@{num\+Button4\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Button4\+Modes}{numButton4Modes}}
+{\footnotesize\ttfamily \#define num\+Button4\+Modes~3}
+
+\mbox{\Hypertarget{gateseq_8hpp_affa839d59d3b6c92c16d65b07cf24b13}\label{gateseq_8hpp_affa839d59d3b6c92c16d65b07cf24b13}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!num\+Button5\+Modes@{num\+Button5\+Modes}}
+\index{num\+Button5\+Modes@{num\+Button5\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Button5\+Modes}{numButton5Modes}}
+{\footnotesize\ttfamily \#define num\+Button5\+Modes~2}
+
+\mbox{\Hypertarget{gateseq_8hpp_a1cacb7ddb96ab1812ebba173402deede}\label{gateseq_8hpp_a1cacb7ddb96ab1812ebba173402deede}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!num\+Button6\+Modes@{num\+Button6\+Modes}}
+\index{num\+Button6\+Modes@{num\+Button6\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{num\+Button6\+Modes}{numButton6Modes}}
+{\footnotesize\ttfamily \#define num\+Button6\+Modes~4}
+
+\mbox{\Hypertarget{gateseq_8hpp_ae332d5e4082706ff3f180c8104625a34}\label{gateseq_8hpp_ae332d5e4082706ff3f180c8104625a34}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!S\+H\+\_\+\+A\+\_\+\+M\+O\+DE@{S\+H\+\_\+\+A\+\_\+\+M\+O\+DE}}
+\index{S\+H\+\_\+\+A\+\_\+\+M\+O\+DE@{S\+H\+\_\+\+A\+\_\+\+M\+O\+DE}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{S\+H\+\_\+\+A\+\_\+\+M\+O\+DE}{SH\_A\_MODE}}
+{\footnotesize\ttfamily \#define S\+H\+\_\+\+A\+\_\+\+M\+O\+DE~button1\+Mode}
+
+\mbox{\Hypertarget{gateseq_8hpp_a02820514803a14ebcbc84b35d227d7b0}\label{gateseq_8hpp_a02820514803a14ebcbc84b35d227d7b0}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!S\+H\+\_\+\+B\+\_\+\+M\+O\+DE@{S\+H\+\_\+\+B\+\_\+\+M\+O\+DE}}
+\index{S\+H\+\_\+\+B\+\_\+\+M\+O\+DE@{S\+H\+\_\+\+B\+\_\+\+M\+O\+DE}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{S\+H\+\_\+\+B\+\_\+\+M\+O\+DE}{SH\_B\_MODE}}
+{\footnotesize\ttfamily \#define S\+H\+\_\+\+B\+\_\+\+M\+O\+DE~button4\+Mode}
+
+\mbox{\Hypertarget{gateseq_8hpp_aa499ca0f08455aae6095b98fd4de38ea}\label{gateseq_8hpp_aa499ca0f08455aae6095b98fd4de38ea}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!T\+R\+I\+G\+S\+E\+Q\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE@{T\+R\+I\+G\+S\+E\+Q\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}}
+\index{T\+R\+I\+G\+S\+E\+Q\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE@{T\+R\+I\+G\+S\+E\+Q\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{T\+R\+I\+G\+S\+E\+Q\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}{TRIGSEQ\_BUFFER\_SIZE}}
+{\footnotesize\ttfamily \#define T\+R\+I\+G\+S\+E\+Q\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE~1}
+
+
+
+\subsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{gateseq_8hpp_ac036390f70cec3ec583e900b18363020}\label{gateseq_8hpp_ac036390f70cec3ec583e900b18363020}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+aux1\+Modes@{gateseq\+\_\+aux1\+Modes}}
+\index{gateseq\+\_\+aux1\+Modes@{gateseq\+\_\+aux1\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{gateseq\+\_\+aux1\+Modes}{gateseq\_aux1Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{gateseq_8hpp_ac036390f70cec3ec583e900b18363020}{gateseq\+\_\+aux1\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{gateseq\+\_\+aux1\+Not\+Used@{gateseq\+\_\+aux1\+Not\+Used}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+aux1\+Not\+Used@{gateseq\+\_\+aux1\+Not\+Used}}}\mbox{\Hypertarget{gateseq_8hpp_ac036390f70cec3ec583e900b18363020a429e6fb403cf49440adb9c2de26cf642}\label{gateseq_8hpp_ac036390f70cec3ec583e900b18363020a429e6fb403cf49440adb9c2de26cf642}} 
+gateseq\+\_\+aux1\+Not\+Used&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48e}\label{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48e}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+aux2\+Modes@{gateseq\+\_\+aux2\+Modes}}
+\index{gateseq\+\_\+aux2\+Modes@{gateseq\+\_\+aux2\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{gateseq\+\_\+aux2\+Modes}{gateseq\_aux2Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48e}{gateseq\+\_\+aux2\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{\+\_\+and@{\+\_\+and}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!\+\_\+and@{\+\_\+and}}}\mbox{\Hypertarget{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48ead907afb95f258b1011a2afbb17d6ea12}\label{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48ead907afb95f258b1011a2afbb17d6ea12}} 
+\+\_\+and&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{\+\_\+or@{\+\_\+or}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!\+\_\+or@{\+\_\+or}}}\mbox{\Hypertarget{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48eab3fe552fa7cb5910bf5e2e32b26c3a28}\label{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48eab3fe552fa7cb5910bf5e2e32b26c3a28}} 
+\+\_\+or&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{\+\_\+xor@{\+\_\+xor}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!\+\_\+xor@{\+\_\+xor}}}\mbox{\Hypertarget{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48ea27d5a5accf996a8eea84d6b95573d913}\label{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48ea27d5a5accf996a8eea84d6b95573d913}} 
+\+\_\+xor&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{\+\_\+sr@{\+\_\+sr}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!\+\_\+sr@{\+\_\+sr}}}\mbox{\Hypertarget{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48ead26624e1702715104188c7e4f2cf7b13}\label{gateseq_8hpp_adb6242c6eadb6868ef00ac6a772ca48ead26624e1702715104188c7e4f2cf7b13}} 
+\+\_\+sr&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{gateseq_8hpp_ae40ca3cf706f615d1dc3f2d9d06661fb}\label{gateseq_8hpp_ae40ca3cf706f615d1dc3f2d9d06661fb}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+aux3\+Modes@{gateseq\+\_\+aux3\+Modes}}
+\index{gateseq\+\_\+aux3\+Modes@{gateseq\+\_\+aux3\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{gateseq\+\_\+aux3\+Modes}{gateseq\_aux3Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{gateseq_8hpp_ae40ca3cf706f615d1dc3f2d9d06661fb}{gateseq\+\_\+aux3\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{gateseq\+\_\+aux3\+Not\+Used@{gateseq\+\_\+aux3\+Not\+Used}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+aux3\+Not\+Used@{gateseq\+\_\+aux3\+Not\+Used}}}\mbox{\Hypertarget{gateseq_8hpp_ae40ca3cf706f615d1dc3f2d9d06661fba733e226644d634a80e55fa21afad0e6b}\label{gateseq_8hpp_ae40ca3cf706f615d1dc3f2d9d06661fba733e226644d634a80e55fa21afad0e6b}} 
+gateseq\+\_\+aux3\+Not\+Used&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{gateseq_8hpp_a247afab9290c9bf5539c72831e8965b4}\label{gateseq_8hpp_a247afab9290c9bf5539c72831e8965b4}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+aux4\+Modes@{gateseq\+\_\+aux4\+Modes}}
+\index{gateseq\+\_\+aux4\+Modes@{gateseq\+\_\+aux4\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{gateseq\+\_\+aux4\+Modes}{gateseq\_aux4Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{gateseq_8hpp_a247afab9290c9bf5539c72831e8965b4}{gateseq\+\_\+aux4\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{gateseq\+\_\+aux4\+Not\+Used@{gateseq\+\_\+aux4\+Not\+Used}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+aux4\+Not\+Used@{gateseq\+\_\+aux4\+Not\+Used}}}\mbox{\Hypertarget{gateseq_8hpp_a247afab9290c9bf5539c72831e8965b4a78a2e76dee2ee709fdd8d3304ae28099}\label{gateseq_8hpp_a247afab9290c9bf5539c72831e8965b4a78a2e76dee2ee709fdd8d3304ae28099}} 
+gateseq\+\_\+aux4\+Not\+Used&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0}\label{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+button1\+Modes@{gateseq\+\_\+button1\+Modes}}
+\index{gateseq\+\_\+button1\+Modes@{gateseq\+\_\+button1\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{gateseq\+\_\+button1\+Modes}{gateseq\_button1Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0}{gateseq\+\_\+button1\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{a\+No\+SH@{a\+No\+SH}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!a\+No\+SH@{a\+No\+SH}}}\mbox{\Hypertarget{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0ab4be2e00865571be10c2dd102e41965e}\label{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0ab4be2e00865571be10c2dd102e41965e}} 
+a\+No\+SH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{a\+Resample@{a\+Resample}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!a\+Resample@{a\+Resample}}}\mbox{\Hypertarget{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0a037eaa4e596128076c5ffc57f9790fb8}\label{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0a037eaa4e596128076c5ffc57f9790fb8}} 
+a\+Resample&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{a\+Sample\+Track@{a\+Sample\+Track}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!a\+Sample\+Track@{a\+Sample\+Track}}}\mbox{\Hypertarget{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0abd78a86308761e5cc8ec6d44b99ef52c}\label{gateseq_8hpp_a2e7baf78d26d1daa3685881dcf4502b0abd78a86308761e5cc8ec6d44b99ef52c}} 
+a\+Sample\+Track&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{gateseq_8hpp_ad1f9c19405ec30150a0d5bf10d3f7539}\label{gateseq_8hpp_ad1f9c19405ec30150a0d5bf10d3f7539}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+button2\+Modes@{gateseq\+\_\+button2\+Modes}}
+\index{gateseq\+\_\+button2\+Modes@{gateseq\+\_\+button2\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{gateseq\+\_\+button2\+Modes}{gateseq\_button2Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{gateseq_8hpp_ad1f9c19405ec30150a0d5bf10d3f7539}{gateseq\+\_\+button2\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{and\+Aoff@{and\+Aoff}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!and\+Aoff@{and\+Aoff}}}\mbox{\Hypertarget{gateseq_8hpp_ad1f9c19405ec30150a0d5bf10d3f7539ad34f7cdbb407cab365eb77e14ab0334f}\label{gateseq_8hpp_ad1f9c19405ec30150a0d5bf10d3f7539ad34f7cdbb407cab365eb77e14ab0334f}} 
+and\+Aoff&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{and\+Aon@{and\+Aon}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!and\+Aon@{and\+Aon}}}\mbox{\Hypertarget{gateseq_8hpp_ad1f9c19405ec30150a0d5bf10d3f7539a7a339d6074a79b0b53564d6bb0a368e8}\label{gateseq_8hpp_ad1f9c19405ec30150a0d5bf10d3f7539a7a339d6074a79b0b53564d6bb0a368e8}} 
+and\+Aon&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{gateseq_8hpp_a6c76e12a724eb47e27cfa9a46bfcd4a5}\label{gateseq_8hpp_a6c76e12a724eb47e27cfa9a46bfcd4a5}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+button3\+Modes@{gateseq\+\_\+button3\+Modes}}
+\index{gateseq\+\_\+button3\+Modes@{gateseq\+\_\+button3\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{gateseq\+\_\+button3\+Modes}{gateseq\_button3Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{gateseq_8hpp_a6c76e12a724eb47e27cfa9a46bfcd4a5}{gateseq\+\_\+button3\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{a\+Pattern\+Bank\+Selections@{a\+Pattern\+Bank\+Selections}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!a\+Pattern\+Bank\+Selections@{a\+Pattern\+Bank\+Selections}}}\mbox{\Hypertarget{gateseq_8hpp_a6c76e12a724eb47e27cfa9a46bfcd4a5ace0dae04a047c27e55f6b2085254977f}\label{gateseq_8hpp_a6c76e12a724eb47e27cfa9a46bfcd4a5ace0dae04a047c27e55f6b2085254977f}} 
+a\+Pattern\+Bank\+Selections&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caa}\label{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caa}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+button4\+Modes@{gateseq\+\_\+button4\+Modes}}
+\index{gateseq\+\_\+button4\+Modes@{gateseq\+\_\+button4\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{gateseq\+\_\+button4\+Modes}{gateseq\_button4Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caa}{gateseq\+\_\+button4\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{b\+No\+SH@{b\+No\+SH}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!b\+No\+SH@{b\+No\+SH}}}\mbox{\Hypertarget{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caaa47a164040d6437e6fce3ac358ce6cdc0}\label{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caaa47a164040d6437e6fce3ac358ce6cdc0}} 
+b\+No\+SH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{b\+Resample@{b\+Resample}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!b\+Resample@{b\+Resample}}}\mbox{\Hypertarget{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caaa2b20b69e8313d3d6da17b3c612436a69}\label{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caaa2b20b69e8313d3d6da17b3c612436a69}} 
+b\+Resample&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{b\+Sample\+Track@{b\+Sample\+Track}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!b\+Sample\+Track@{b\+Sample\+Track}}}\mbox{\Hypertarget{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caaa8d2e5f48f3611ec8b22559090c774144}\label{gateseq_8hpp_aaaa82c3e94e70200ac9003ee0a1a6caaa8d2e5f48f3611ec8b22559090c774144}} 
+b\+Sample\+Track&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{gateseq_8hpp_a3a61889710ee517905d26330a14878a7}\label{gateseq_8hpp_a3a61889710ee517905d26330a14878a7}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+button5\+Modes@{gateseq\+\_\+button5\+Modes}}
+\index{gateseq\+\_\+button5\+Modes@{gateseq\+\_\+button5\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{gateseq\+\_\+button5\+Modes}{gateseq\_button5Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{gateseq_8hpp_a3a61889710ee517905d26330a14878a7}{gateseq\+\_\+button5\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{and\+Boff@{and\+Boff}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!and\+Boff@{and\+Boff}}}\mbox{\Hypertarget{gateseq_8hpp_a3a61889710ee517905d26330a14878a7a998f260a8eb2d09df34e3e9abbcf582d}\label{gateseq_8hpp_a3a61889710ee517905d26330a14878a7a998f260a8eb2d09df34e3e9abbcf582d}} 
+and\+Boff&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{and\+Bon@{and\+Bon}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!and\+Bon@{and\+Bon}}}\mbox{\Hypertarget{gateseq_8hpp_a3a61889710ee517905d26330a14878a7a16c118f2b880c3cdc76b2e716a168908}\label{gateseq_8hpp_a3a61889710ee517905d26330a14878a7a16c118f2b880c3cdc76b2e716a168908}} 
+and\+Bon&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{gateseq_8hpp_a68e0715504d8da807c653980431b1341}\label{gateseq_8hpp_a68e0715504d8da807c653980431b1341}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+\_\+button6\+Modes@{gateseq\+\_\+button6\+Modes}}
+\index{gateseq\+\_\+button6\+Modes@{gateseq\+\_\+button6\+Modes}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{gateseq\+\_\+button6\+Modes}{gateseq\_button6Modes}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{gateseq_8hpp_a68e0715504d8da807c653980431b1341}{gateseq\+\_\+button6\+Modes}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{b\+Pattern\+Bank\+Selections@{b\+Pattern\+Bank\+Selections}!gateseq.\+hpp@{gateseq.\+hpp}}\index{gateseq.\+hpp@{gateseq.\+hpp}!b\+Pattern\+Bank\+Selections@{b\+Pattern\+Bank\+Selections}}}\mbox{\Hypertarget{gateseq_8hpp_a68e0715504d8da807c653980431b1341a3a8a62a1449033eac87af002c558d16e}\label{gateseq_8hpp_a68e0715504d8da807c653980431b1341a3a8a62a1449033eac87af002c558d16e}} 
+b\+Pattern\+Bank\+Selections&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{gateseq_8hpp_ad2cba78c5e97aa4a78515dfd23cfc28e}\label{gateseq_8hpp_ad2cba78c5e97aa4a78515dfd23cfc28e}} 
+\index{gateseq.\+hpp@{gateseq.\+hpp}!gateseq\+Touch\+Link@{gateseq\+Touch\+Link}}
+\index{gateseq\+Touch\+Link@{gateseq\+Touch\+Link}!gateseq.\+hpp@{gateseq.\+hpp}}
+\subsubsection{\texorpdfstring{gateseq\+Touch\+Link()}{gateseqTouchLink()}}
+{\footnotesize\ttfamily void gateseq\+Touch\+Link (\begin{DoxyParamCaption}\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+

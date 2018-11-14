@@ -10,16 +10,20 @@ void ViaScanner::init(void) {
 
 	inputs.init(SCANNER_BUFFER_SIZE);
 	outputs.init(SCANNER_BUFFER_SIZE);
-	bufferSize = SCANNER_BUFFER_SIZE;
+	outputBufferSize = SCANNER_BUFFER_SIZE;
+	inputBufferSize = 1;
 
-	scanner.hardSync = inputs.trigSamples;
-	scanner.reverse = reverseBuffer;
-	scanner.sh = inputs.auxTrigSamples;
+
+	scanner.hardSync = 1;
+	scanner.reverse = 1;
 
 	fillWavetableArray();
 
 	switchWavetableX(wavetableArray[0]);
 	switchWavetableY(wavetableArray[0]);
+
+	scanner.xTable = (uint32_t *) &wavetableXRead[0][0];
+	scanner.yTable = (uint32_t *) &wavetableYRead[0][0];
 
 	inputs.trigInput = 1;
 	inputs.auxTrigInput = 0;

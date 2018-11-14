@@ -25,6 +25,10 @@ void ViaMeta::mainRisingEdgeCallback(void) {
 
 	drumEnvelope.trigger = 0;
 
+	updateRGB = &ViaMeta::updateRGBBlink;
+
+	TIM17->CR1 |= TIM_CR1_CEN;
+
 }
 
 void ViaMeta::mainFallingEdgeCallback(void) {
@@ -52,10 +56,14 @@ void ViaMeta::buttonPressedCallback(void) {
 
 	drumEnvelope.trigger = 0;
 
+	this->metaUI.dispatch(EXPAND_SW_ON_SIG);
+
 }
 void ViaMeta::buttonReleasedCallback(void) {
 
 	metaController.gateSignal = 0;
+
+	this->metaUI.dispatch(EXPAND_SW_OFF_SIG);
 
 }
 
@@ -69,16 +77,18 @@ void ViaMeta::halfTransferCallback(void) {
 
 	setLogicOut(0, runtimeDisplay);
 
-
 	metaController.generateIncrementsExternal(&inputs);
 	metaController.advancePhase((uint32_t *) phaseModPWMTables);
-	metaWavetable.phase = metaController.ghostPhase;
-	outputs.dac2Samples[0] = metaWavetable.advance((uint32_t *) wavetableRead);
-	(this->*drumMode)(0);
-	outputs.auxLogic[0] = EXPAND_LOGIC_LOW_MASK << (16 * metaWavetable.delta);
+	metaWavetable.phase = metaController.phaseBeforeIncrement;
+	metaWavetable.increment = metaController.incrementUsed;
+	metaWavetable.advance((uint32_t *) wavetableRead);
+	(this->*outputStage)(0);
+	int32_t reversed = (uint32_t) metaWavetable.increment >> 31;
+	outputs.auxLogic[0] = EXPAND_LOGIC_LOW_MASK << (16 * (reversed ? !metaWavetable.delta : metaWavetable.delta));
 	(this->*calculateDac3)(0);
 	(this->*calculateLogicA)(0);
 	(this->*calculateSH)(0);
+	metaController.triggerSignal = 1;
 
 }
 
@@ -88,13 +98,16 @@ void ViaMeta::transferCompleteCallback(void) {
 
 	metaController.generateIncrementsExternal(&inputs);
 	metaController.advancePhase((uint32_t *) phaseModPWMTables);
-	metaWavetable.phase = metaController.ghostPhase;
-	outputs.dac2Samples[1] = metaWavetable.advance((uint32_t *) wavetableRead);
-	(this->*drumMode)(1);
-	outputs.auxLogic[1] = EXPAND_LOGIC_LOW_MASK << (16 * metaWavetable.delta);
-	(this->*calculateDac3)(1);
+	metaWavetable.phase = metaController.phaseBeforeIncrement;
+	metaWavetable.increment = metaController.incrementUsed;
+	metaWavetable.advance((uint32_t *) wavetableRead);
+	(this->*outputStage)(META_BUFFER_SIZE);
+	int32_t reversed = (uint32_t) metaWavetable.increment >> 31;
+	outputs.auxLogic[1] = EXPAND_LOGIC_LOW_MASK << (16 * (reversed ? !metaWavetable.delta : metaWavetable.delta));
+	(this->*calculateDac3)(META_BUFFER_SIZE);
 	(this->*calculateLogicA)(1);
 	(this->*calculateSH)(1);
+	metaController.triggerSignal = 1;
 
 }
 
@@ -107,6 +120,18 @@ void ViaMeta::slowConversionCallback(void) {
 	drumEnvelope.parseControls(&controls, &inputs);
 
 	(this->*updateRGB)();
+
+}
+
+void ViaMeta::auxTimer1InterruptCallback(void) {
+
+	updateRGB = &ViaMeta::updateRGBBlank;
+
+}
+
+void ViaMeta::auxTimer2InterruptCallback(void) {
+
+	updateRGB = currentRGBBehavior;
 
 }
 

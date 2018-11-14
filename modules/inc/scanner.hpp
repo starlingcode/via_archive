@@ -50,8 +50,8 @@ extern "C" {
 #define numButton6Modes 8
 #define numAux1Modes 0
 #define numAux2Modes 0
-#define numAux3Modes 3
-#define numAux4Modes 2
+#define numAux3Modes 0
+#define numAux4Modes 0
 
 enum button1Modes {
 	reverse, hardsync
@@ -119,6 +119,10 @@ public:
 		void aux3HoldCallback(void) override;
 		void aux4TapCallback(void) override;
 		void aux4HoldCallback(void) override;
+
+		void uiSetLEDs(int) override;
+
+		void recallModuleState(void) override;
 
 		void defaultEnterMenuCallback(void) override;
 		void newModeEnterMenuCallback(void) override;

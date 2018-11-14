@@ -41,16 +41,7 @@ void ViaMeta::ViaMetaUI::initialize(void) {
 
 #ifdef BUILD_F373
 
-	this_module.handleAux3ModeChange(this_module.metaUI.aux3Mode);
-	this_module.handleButton1ModeChange(this_module.metaUI.button1Mode);
-	this_module.handleButton2ModeChange(this_module.metaUI.button2Mode);
-	this_module.handleButton3ModeChange(this_module.metaUI.button3Mode);
-	this_module.handleButton4ModeChange(this_module.metaUI.button4Mode);
-	this_module.handleButton5ModeChange(this_module.metaUI.button5Mode);
-	this_module.handleButton6ModeChange(this_module.metaUI.button6Mode);
-	this_module.handleAux1ModeChange(this_module.metaUI.aux1Mode);
-	this_module.handleAux2ModeChange(this_module.metaUI.aux2Mode);
-	this_module.handleAux4ModeChange(this_module.metaUI.aux4Mode);
+	recallModuleState();
 
 #endif
 
@@ -63,9 +54,28 @@ void metaTouchLink (void * uiVoid) {
 	ui->dispatch(SENSOR_EVENT_SIG);
 }
 
+void ViaMeta::ViaMetaUI::recallModuleState(void) {
+
+	this_module.handleAux3ModeChange(this_module.metaUI.aux3Mode);
+	this_module.handleButton1ModeChange(this_module.metaUI.button1Mode);
+	this_module.handleButton2ModeChange(this_module.metaUI.button2Mode);
+	this_module.handleButton3ModeChange(this_module.metaUI.button3Mode);
+	this_module.handleButton4ModeChange(this_module.metaUI.button4Mode);
+	this_module.handleButton5ModeChange(this_module.metaUI.button5Mode);
+	this_module.handleButton6ModeChange(this_module.metaUI.button6Mode);
+	this_module.handleAux2ModeChange(this_module.metaUI.aux2Mode);
+	this_module.handleAux4ModeChange(this_module.metaUI.aux4Mode);
+
+}
+
+void ViaMeta::ViaMetaUI::uiSetLEDs(int mode) {
+	this_module.setLEDs(mode);
+}
+
 void ViaMeta::ViaMetaUI::defaultEnterMenuCallback(void) {
 	this_module.clearLEDs();
 	this_module.runtimeDisplay = 1;
+	this_module.setLEDD(aux4Mode);
 }
 void ViaMeta::ViaMetaUI::newModeEnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
@@ -75,6 +85,8 @@ void ViaMeta::ViaMetaUI::newAuxModeEnterMenuCallback(void) {
 }
 void ViaMeta::ViaMetaUI::presetEnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 }
 
 void ViaMeta::ViaMetaUI::button1EnterMenuCallback(void) {

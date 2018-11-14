@@ -10,22 +10,22 @@
 void ViaControls::update(void) {
 
 	// implement a running average on the control rate CV controls
-	cv1Sum = cv1 + cv1Sum - readBuffer(&cv1Buffer, 31);
-	knob1Sum = knob1 + knob1Sum - readBuffer(&knob1Buffer, 31);
-	knob2Sum = knob2 + knob2Sum - readBuffer(&knob2Buffer, 31);
-	knob3Sum = knob3 + knob3Sum - readBuffer(&knob3Buffer, 31);
+	cv1Sum = cv1 + cv1Sum - readBuffer(&cv1Buffer, 7);
+	knob1Sum = knob1 + knob1Sum - readLongBuffer(&knob1Buffer, 63);
+	knob2Sum = knob2 + knob2Sum - readLongBuffer(&knob2Buffer, 63);
+	knob3Sum = knob3 + knob3Sum - readLongBuffer(&knob3Buffer, 63);
 
 	// write the averaged controls to the holding struct
-	cv1Value = cv1Sum >> 5;
-	knob1Value = knob1Sum >> 5;
-	knob2Value = knob2Sum >> 5;
-	knob3Value = knob3Sum >> 5;
+	cv1Value = cv1Sum >> 3;
+	knob1Value = knob1Sum >> 6;
+	knob2Value = knob2Sum >> 6;
+	knob3Value = knob3Sum >> 6;
 
 	// store the newest value in a ring buffer
 	writeBuffer(&cv1Buffer, cv1);
-	writeBuffer(&knob1Buffer, knob1);
-	writeBuffer(&knob2Buffer, knob2);
-	writeBuffer(&knob3Buffer, knob3);
+	writeLongBuffer(&knob1Buffer, knob1);
+	writeLongBuffer(&knob2Buffer, knob2);
+	writeLongBuffer(&knob3Buffer, knob3);
 
 }
 

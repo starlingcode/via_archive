@@ -20,9 +20,9 @@ class ViaControls {
 	uint32_t knob3Sum = 0;
 	uint32_t cv1Sum = 0;
 
-	buffer knob1Buffer;
-	buffer knob2Buffer;
-	buffer knob3Buffer;
+	longBuffer knob1Buffer;
+	longBuffer knob2Buffer;
+	longBuffer knob3Buffer;
 	buffer cv1Buffer;
 
 #define knob2 controlRateInputs[3]
@@ -36,14 +36,17 @@ public:
 
 		for (int32_t i = 0; i < 32; i++) {
 			writeBuffer(&cv1Buffer, 0);
-			writeBuffer(&knob1Buffer, 0);
-			writeBuffer(&knob2Buffer, 0);
-			writeBuffer(&knob3Buffer, 0);
+		}
+
+		for (int32_t i = 0; i < 256; i++) {
+			writeLongBuffer(&knob1Buffer, 0);
+			writeLongBuffer(&knob2Buffer, 0);
+			writeLongBuffer(&knob3Buffer, 0);
 		}
 
 	}
 
-	uint32_t controlRateInputs[4];
+	uint32_t controlRateInputs[16];
 
 	uint32_t knob1Value = 0;
 	uint32_t knob2Value = 0;

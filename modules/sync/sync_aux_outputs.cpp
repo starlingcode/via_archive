@@ -17,12 +17,12 @@ void ViaSync::calculateLogicAGate(int32_t writeIndex) {
 			//dummy at a handling
 			case AT_A_FROM_RELEASE:
 			case AT_A_FROM_ATTACK:
-				outputs.logicA[writeIndex] = ALOGIC_HIGH_MASK;
+				outputs.logicA[writeIndex] = ALOGIC_LOW_MASK;
 				break;
 			//dummy at b handling
 			case AT_B_FROM_RELEASE:
 			case AT_B_FROM_ATTACK:
-				outputs.logicA[writeIndex] = ALOGIC_LOW_MASK;
+				outputs.logicA[writeIndex] = ALOGIC_HIGH_MASK;
 				break;
 			default:
 				break;
@@ -32,24 +32,47 @@ void ViaSync::calculateLogicAGate(int32_t writeIndex) {
 
 void ViaSync::calculateLogicADelta(int32_t writeIndex) {
 
-	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(syncWavetable.delta);
+//	if (syncWavetable.reversed) {
+//		outputs.logicA[writeIndex] = GET_ALOGIC_MASK(!syncWavetable.delta);
+//	} else {
+		outputs.logicA[writeIndex] = GET_ALOGIC_MASK(syncWavetable.delta);
+//	}
 
 }
 
 void ViaSync::calculateDac3Phasor(int32_t writeIndex) {
 
-	int32_t phase = syncWavetable.phase;
+	int32_t samplesRemaining = outputBufferSize;
+	int32_t readIndex = 0;
 
-	if (phase >> 24) {
-		outputs.dac3Samples[writeIndex] = 8191 - (phase >> 12);
-	} else {
-		outputs.dac3Samples[writeIndex] = phase >> 12;
+	while (samplesRemaining) {
+
+		if (syncWavetable.phaseOut[readIndex] >> 24) {
+			outputs.dac3Samples[writeIndex] = 8191 - (syncWavetable.phaseOut[readIndex] >> 12);
+		} else {
+			outputs.dac3Samples[writeIndex] = syncWavetable.phaseOut[readIndex] >> 12;
+		}
+
+		readIndex ++;
+		writeIndex ++;
+		samplesRemaining --;
+
 	}
 }
 
 void ViaSync::calculateDac3Contour(int32_t writeIndex) {
 
-	outputs.dac3Samples[writeIndex] = outputs.dac2Samples[writeIndex];
+	int32_t samplesRemaining = outputBufferSize;
+	int32_t readIndex = 0;
+
+	while (samplesRemaining) {
+		outputs.dac3Samples[writeIndex] = syncWavetable.signalOut[readIndex];
+
+		writeIndex ++;
+		readIndex ++;
+		samplesRemaining --;
+
+	}
 
 }
 

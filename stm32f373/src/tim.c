@@ -204,7 +204,6 @@ void MX_TIM5_Init(void) {
 /* TIM5 init function */
 void MX_TIM5_Init_Gateseq(void) {
 	TIM_MasterConfigTypeDef sMasterConfig;
-	TIM_OC_InitTypeDef sConfigOC;
 
 	htim5.Instance = TIM5;
 	htim5.Init.Prescaler = 0;
@@ -328,7 +327,7 @@ void MX_TIM13_Init(void) {
 void MX_TIM16_Init(void) {
 
 	htim16.Instance = TIM16;
-	htim16.Init.Prescaler = 10000;
+	htim16.Init.Prescaler = 4000;
 	htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
 	htim16.Init.Period = 1000;
 	htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

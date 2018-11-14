@@ -1,0 +1,366 @@
+\hypertarget{class_three_axis_scanner}{}\section{Three\+Axis\+Scanner Class Reference}
+\label{class_three_axis_scanner}\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+
+
+{\ttfamily \#include $<$signal\+\_\+processors.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_three_axis_scanner_a4db94f0a424eeebb35b87e3ea74050dc}{fill\+Buffer}} (void)
+\item 
+void \mbox{\hyperlink{class_three_axis_scanner_a3e4843f929d7acfff7b4ff78989af686}{parse\+Controls}} (\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$controls)
+\item 
+void \mbox{\hyperlink{class_three_axis_scanner_a68093cb4dc011a3c91084b8bba61315c}{init}} (void)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t $\ast$ \mbox{\hyperlink{class_three_axis_scanner_a52cba5584884df990e63128f02e52336}{x\+Table}}
+\item 
+uint32\+\_\+t $\ast$ \mbox{\hyperlink{class_three_axis_scanner_a292e1e41da2aa49d6680c4ec504c25cb}{y\+Table}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a36d5ebdb169f0a3a8d612cdc3e3a13f0}{x\+Input}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a8c84dff492c6ebb8d76610eae2150c1f}{y\+Input}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a3c6c26ad2f1362eba40cda25cf1ff054}{hard\+Sync}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_aeb4f7b49b316534d905c48e7c0bede43}{reverse}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a877062100b620dd12008464c0e59866d}{x\+Offset}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_ae9056dd10838e243c6f56a6e59850f4f}{y\+Offset}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a1e0deccb90209b32e5f8a837137a3aec}{z\+Index}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_acb5f976017defd8b44532689d98de006}{terrain\+Type}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a3e35232961df473f0b7809044caea561}{sync\+Mode}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a392fd00e79c8bee282c74f279f514781}{x\+Table\+Size}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a774c001a0a47d99fc1139edac12dd234}{y\+Table\+Size}} = 0
+\item 
+int32\+\_\+t $\ast$ \mbox{\hyperlink{class_three_axis_scanner_a72eb33f11bfbb80c7fc6fe159a8b735e}{x\+Index\+Buffer}}
+\item 
+int32\+\_\+t $\ast$ \mbox{\hyperlink{class_three_axis_scanner_a0d0cec10e4860da556540f60c18c2981}{y\+Index\+Buffer}}
+\item 
+int32\+\_\+t $\ast$ \mbox{\hyperlink{class_three_axis_scanner_a42ad93158a65ff98a1eebc9bfd772b65}{location\+Blend}}
+\item 
+int32\+\_\+t $\ast$ \mbox{\hyperlink{class_three_axis_scanner_aa6c1a21084147bf05b0f1f29de17c9e4}{altitude}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_aa01ba56910f131050ff8ac4b78e55210}{hemisphere\+Blend}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_abcccc514a2b9d926b101a82021fca3b2}{delta\+Blend}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a6a080649633743470149b7ad3f8f85fb}{buffer\+Size}} = 8
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_three_axis_scanner_a3706b4fadf1553064b52ca3602579c64}{scan\+Terrain\+Multiply}} (void)
+\item 
+void \mbox{\hyperlink{class_three_axis_scanner_a114aa4a7e22ccb30d1d1cf9a793a33a5}{scan\+Terrain\+Lighten}} (void)
+\item 
+void \mbox{\hyperlink{class_three_axis_scanner_adaa600e4f33d6cfda8841e6235e6fe92}{scan\+Terrain\+Sum}} (void)
+\item 
+void \mbox{\hyperlink{class_three_axis_scanner_a6f4c60269adf60a72aae8b13d5585a88}{scan\+Terrain\+Difference}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a09735acf1f7906a7f4aad3165f3c454c}{get\+Delta\+Hysterisis}} (int32\+\_\+t delta, int32\+\_\+t last)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a198db246717d1c653568bb44310b48a7}{get\+Hemisphere\+Hysteresis}} (int32\+\_\+t signal, int32\+\_\+t last)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_aa2bcef759f2a4bac59f38bf23e3cb318}{compare\+With\+Hysterisis}} (int32\+\_\+t x\+Signal, int32\+\_\+t y\+Signal, int32\+\_\+t y\+Greater)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_ab0a1b67b6c62a8299cb77a38a96c97f9}{oversample}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a0005b8d39210e262e5250be3c6915370}{last\+X\+Input}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a9f2d830414c641ff7e56b4c2bb24ad2c}{last\+Y\+Input}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_aaff13e6600ee25694960accfa89e61ac}{last\+X\+Index}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a9555d7dccbce08f2d3be607fc28fb99a}{last\+Y\+Index}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_aded2ed55f7b977b2c215035bfe78ac07}{x\+Hemisphere\+Last}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a9fa73514ec9297aa5a4199cbd13427c0}{y\+Hemisphere\+Last}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_ae0b7e566ef7f99732871fe5f467c4691}{signal\+Compare}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_af3b467e4b90a698653d8940a50c5bdd1}{x\+Delta\+Last}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a9c8557a9927184faa7ba84f6c9c8d5dd}{y\+Delta\+Last}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a0c65fb8677a6c717b44fd4e927a8b686}{x\+Reversed}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_three_axis_scanner_a2517bc1e2371562ba91a18cc1e58d9ba}{y\+Reversed}}
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_three_axis_scanner_aa2bcef759f2a4bac59f38bf23e3cb318}\label{class_three_axis_scanner_aa2bcef759f2a4bac59f38bf23e3cb318}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!compare\+With\+Hysterisis@{compare\+With\+Hysterisis}}
+\index{compare\+With\+Hysterisis@{compare\+With\+Hysterisis}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{compare\+With\+Hysterisis()}{compareWithHysterisis()}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::compare\+With\+Hysterisis (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{x\+Signal,  }\item[{int32\+\_\+t}]{y\+Signal,  }\item[{int32\+\_\+t}]{y\+Greater }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a4db94f0a424eeebb35b87e3ea74050dc}\label{class_three_axis_scanner_a4db94f0a424eeebb35b87e3ea74050dc}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!fill\+Buffer@{fill\+Buffer}}
+\index{fill\+Buffer@{fill\+Buffer}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{fill\+Buffer()}{fillBuffer()}}
+{\footnotesize\ttfamily void Three\+Axis\+Scanner\+::fill\+Buffer (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a09735acf1f7906a7f4aad3165f3c454c}\label{class_three_axis_scanner_a09735acf1f7906a7f4aad3165f3c454c}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!get\+Delta\+Hysterisis@{get\+Delta\+Hysterisis}}
+\index{get\+Delta\+Hysterisis@{get\+Delta\+Hysterisis}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{get\+Delta\+Hysterisis()}{getDeltaHysterisis()}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::get\+Delta\+Hysterisis (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{delta,  }\item[{int32\+\_\+t}]{last }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a198db246717d1c653568bb44310b48a7}\label{class_three_axis_scanner_a198db246717d1c653568bb44310b48a7}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!get\+Hemisphere\+Hysteresis@{get\+Hemisphere\+Hysteresis}}
+\index{get\+Hemisphere\+Hysteresis@{get\+Hemisphere\+Hysteresis}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{get\+Hemisphere\+Hysteresis()}{getHemisphereHysteresis()}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::get\+Hemisphere\+Hysteresis (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{signal,  }\item[{int32\+\_\+t}]{last }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a68093cb4dc011a3c91084b8bba61315c}\label{class_three_axis_scanner_a68093cb4dc011a3c91084b8bba61315c}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!init@{init}}
+\index{init@{init}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily void Three\+Axis\+Scanner\+::init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a3e4843f929d7acfff7b4ff78989af686}\label{class_three_axis_scanner_a3e4843f929d7acfff7b4ff78989af686}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!parse\+Controls@{parse\+Controls}}
+\index{parse\+Controls@{parse\+Controls}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{parse\+Controls()}{parseControls()}}
+{\footnotesize\ttfamily void Three\+Axis\+Scanner\+::parse\+Controls (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$}]{controls }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a6f4c60269adf60a72aae8b13d5585a88}\label{class_three_axis_scanner_a6f4c60269adf60a72aae8b13d5585a88}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!scan\+Terrain\+Difference@{scan\+Terrain\+Difference}}
+\index{scan\+Terrain\+Difference@{scan\+Terrain\+Difference}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{scan\+Terrain\+Difference()}{scanTerrainDifference()}}
+{\footnotesize\ttfamily void Three\+Axis\+Scanner\+::scan\+Terrain\+Difference (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a114aa4a7e22ccb30d1d1cf9a793a33a5}\label{class_three_axis_scanner_a114aa4a7e22ccb30d1d1cf9a793a33a5}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!scan\+Terrain\+Lighten@{scan\+Terrain\+Lighten}}
+\index{scan\+Terrain\+Lighten@{scan\+Terrain\+Lighten}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{scan\+Terrain\+Lighten()}{scanTerrainLighten()}}
+{\footnotesize\ttfamily void Three\+Axis\+Scanner\+::scan\+Terrain\+Lighten (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a3706b4fadf1553064b52ca3602579c64}\label{class_three_axis_scanner_a3706b4fadf1553064b52ca3602579c64}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!scan\+Terrain\+Multiply@{scan\+Terrain\+Multiply}}
+\index{scan\+Terrain\+Multiply@{scan\+Terrain\+Multiply}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{scan\+Terrain\+Multiply()}{scanTerrainMultiply()}}
+{\footnotesize\ttfamily void Three\+Axis\+Scanner\+::scan\+Terrain\+Multiply (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_adaa600e4f33d6cfda8841e6235e6fe92}\label{class_three_axis_scanner_adaa600e4f33d6cfda8841e6235e6fe92}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!scan\+Terrain\+Sum@{scan\+Terrain\+Sum}}
+\index{scan\+Terrain\+Sum@{scan\+Terrain\+Sum}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{scan\+Terrain\+Sum()}{scanTerrainSum()}}
+{\footnotesize\ttfamily void Three\+Axis\+Scanner\+::scan\+Terrain\+Sum (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{class_three_axis_scanner_aa6c1a21084147bf05b0f1f29de17c9e4}\label{class_three_axis_scanner_aa6c1a21084147bf05b0f1f29de17c9e4}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!altitude@{altitude}}
+\index{altitude@{altitude}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{altitude}{altitude}}
+{\footnotesize\ttfamily int32\+\_\+t$\ast$ Three\+Axis\+Scanner\+::altitude}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a6a080649633743470149b7ad3f8f85fb}\label{class_three_axis_scanner_a6a080649633743470149b7ad3f8f85fb}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!buffer\+Size@{buffer\+Size}}
+\index{buffer\+Size@{buffer\+Size}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{buffer\+Size}{bufferSize}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::buffer\+Size = 8}
+
+\mbox{\Hypertarget{class_three_axis_scanner_abcccc514a2b9d926b101a82021fca3b2}\label{class_three_axis_scanner_abcccc514a2b9d926b101a82021fca3b2}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!delta\+Blend@{delta\+Blend}}
+\index{delta\+Blend@{delta\+Blend}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{delta\+Blend}{deltaBlend}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::delta\+Blend}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a3c6c26ad2f1362eba40cda25cf1ff054}\label{class_three_axis_scanner_a3c6c26ad2f1362eba40cda25cf1ff054}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!hard\+Sync@{hard\+Sync}}
+\index{hard\+Sync@{hard\+Sync}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{hard\+Sync}{hardSync}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::hard\+Sync}
+
+\mbox{\Hypertarget{class_three_axis_scanner_aa01ba56910f131050ff8ac4b78e55210}\label{class_three_axis_scanner_aa01ba56910f131050ff8ac4b78e55210}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!hemisphere\+Blend@{hemisphere\+Blend}}
+\index{hemisphere\+Blend@{hemisphere\+Blend}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{hemisphere\+Blend}{hemisphereBlend}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::hemisphere\+Blend}
+
+\mbox{\Hypertarget{class_three_axis_scanner_aaff13e6600ee25694960accfa89e61ac}\label{class_three_axis_scanner_aaff13e6600ee25694960accfa89e61ac}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!last\+X\+Index@{last\+X\+Index}}
+\index{last\+X\+Index@{last\+X\+Index}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{last\+X\+Index}{lastXIndex}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::last\+X\+Index = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a0005b8d39210e262e5250be3c6915370}\label{class_three_axis_scanner_a0005b8d39210e262e5250be3c6915370}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!last\+X\+Input@{last\+X\+Input}}
+\index{last\+X\+Input@{last\+X\+Input}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{last\+X\+Input}{lastXInput}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::last\+X\+Input = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a9555d7dccbce08f2d3be607fc28fb99a}\label{class_three_axis_scanner_a9555d7dccbce08f2d3be607fc28fb99a}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!last\+Y\+Index@{last\+Y\+Index}}
+\index{last\+Y\+Index@{last\+Y\+Index}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{last\+Y\+Index}{lastYIndex}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::last\+Y\+Index = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a9f2d830414c641ff7e56b4c2bb24ad2c}\label{class_three_axis_scanner_a9f2d830414c641ff7e56b4c2bb24ad2c}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!last\+Y\+Input@{last\+Y\+Input}}
+\index{last\+Y\+Input@{last\+Y\+Input}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{last\+Y\+Input}{lastYInput}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::last\+Y\+Input = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a42ad93158a65ff98a1eebc9bfd772b65}\label{class_three_axis_scanner_a42ad93158a65ff98a1eebc9bfd772b65}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!location\+Blend@{location\+Blend}}
+\index{location\+Blend@{location\+Blend}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{location\+Blend}{locationBlend}}
+{\footnotesize\ttfamily int32\+\_\+t$\ast$ Three\+Axis\+Scanner\+::location\+Blend}
+
+\mbox{\Hypertarget{class_three_axis_scanner_ab0a1b67b6c62a8299cb77a38a96c97f9}\label{class_three_axis_scanner_ab0a1b67b6c62a8299cb77a38a96c97f9}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!oversample@{oversample}}
+\index{oversample@{oversample}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{oversample}{oversample}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::oversample = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_aeb4f7b49b316534d905c48e7c0bede43}\label{class_three_axis_scanner_aeb4f7b49b316534d905c48e7c0bede43}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!reverse@{reverse}}
+\index{reverse@{reverse}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{reverse}{reverse}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::reverse}
+
+\mbox{\Hypertarget{class_three_axis_scanner_ae0b7e566ef7f99732871fe5f467c4691}\label{class_three_axis_scanner_ae0b7e566ef7f99732871fe5f467c4691}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!signal\+Compare@{signal\+Compare}}
+\index{signal\+Compare@{signal\+Compare}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{signal\+Compare}{signalCompare}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::signal\+Compare\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a3e35232961df473f0b7809044caea561}\label{class_three_axis_scanner_a3e35232961df473f0b7809044caea561}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!sync\+Mode@{sync\+Mode}}
+\index{sync\+Mode@{sync\+Mode}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{sync\+Mode}{syncMode}}
+{\footnotesize\ttfamily uint32\+\_\+t Three\+Axis\+Scanner\+::sync\+Mode = 0}
+
+\mbox{\Hypertarget{class_three_axis_scanner_acb5f976017defd8b44532689d98de006}\label{class_three_axis_scanner_acb5f976017defd8b44532689d98de006}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!terrain\+Type@{terrain\+Type}}
+\index{terrain\+Type@{terrain\+Type}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{terrain\+Type}{terrainType}}
+{\footnotesize\ttfamily uint32\+\_\+t Three\+Axis\+Scanner\+::terrain\+Type = 0}
+
+\mbox{\Hypertarget{class_three_axis_scanner_af3b467e4b90a698653d8940a50c5bdd1}\label{class_three_axis_scanner_af3b467e4b90a698653d8940a50c5bdd1}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!x\+Delta\+Last@{x\+Delta\+Last}}
+\index{x\+Delta\+Last@{x\+Delta\+Last}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{x\+Delta\+Last}{xDeltaLast}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::x\+Delta\+Last\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_aded2ed55f7b977b2c215035bfe78ac07}\label{class_three_axis_scanner_aded2ed55f7b977b2c215035bfe78ac07}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!x\+Hemisphere\+Last@{x\+Hemisphere\+Last}}
+\index{x\+Hemisphere\+Last@{x\+Hemisphere\+Last}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{x\+Hemisphere\+Last}{xHemisphereLast}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::x\+Hemisphere\+Last\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a72eb33f11bfbb80c7fc6fe159a8b735e}\label{class_three_axis_scanner_a72eb33f11bfbb80c7fc6fe159a8b735e}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!x\+Index\+Buffer@{x\+Index\+Buffer}}
+\index{x\+Index\+Buffer@{x\+Index\+Buffer}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{x\+Index\+Buffer}{xIndexBuffer}}
+{\footnotesize\ttfamily int32\+\_\+t$\ast$ Three\+Axis\+Scanner\+::x\+Index\+Buffer}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a36d5ebdb169f0a3a8d612cdc3e3a13f0}\label{class_three_axis_scanner_a36d5ebdb169f0a3a8d612cdc3e3a13f0}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!x\+Input@{x\+Input}}
+\index{x\+Input@{x\+Input}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{x\+Input}{xInput}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::x\+Input}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a877062100b620dd12008464c0e59866d}\label{class_three_axis_scanner_a877062100b620dd12008464c0e59866d}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!x\+Offset@{x\+Offset}}
+\index{x\+Offset@{x\+Offset}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{x\+Offset}{xOffset}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::x\+Offset}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a0c65fb8677a6c717b44fd4e927a8b686}\label{class_three_axis_scanner_a0c65fb8677a6c717b44fd4e927a8b686}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!x\+Reversed@{x\+Reversed}}
+\index{x\+Reversed@{x\+Reversed}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{x\+Reversed}{xReversed}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::x\+Reversed\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a52cba5584884df990e63128f02e52336}\label{class_three_axis_scanner_a52cba5584884df990e63128f02e52336}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!x\+Table@{x\+Table}}
+\index{x\+Table@{x\+Table}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{x\+Table}{xTable}}
+{\footnotesize\ttfamily uint32\+\_\+t$\ast$ Three\+Axis\+Scanner\+::x\+Table}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a392fd00e79c8bee282c74f279f514781}\label{class_three_axis_scanner_a392fd00e79c8bee282c74f279f514781}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!x\+Table\+Size@{x\+Table\+Size}}
+\index{x\+Table\+Size@{x\+Table\+Size}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{x\+Table\+Size}{xTableSize}}
+{\footnotesize\ttfamily uint32\+\_\+t Three\+Axis\+Scanner\+::x\+Table\+Size = 0}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a9c8557a9927184faa7ba84f6c9c8d5dd}\label{class_three_axis_scanner_a9c8557a9927184faa7ba84f6c9c8d5dd}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!y\+Delta\+Last@{y\+Delta\+Last}}
+\index{y\+Delta\+Last@{y\+Delta\+Last}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{y\+Delta\+Last}{yDeltaLast}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::y\+Delta\+Last\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a9fa73514ec9297aa5a4199cbd13427c0}\label{class_three_axis_scanner_a9fa73514ec9297aa5a4199cbd13427c0}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!y\+Hemisphere\+Last@{y\+Hemisphere\+Last}}
+\index{y\+Hemisphere\+Last@{y\+Hemisphere\+Last}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{y\+Hemisphere\+Last}{yHemisphereLast}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::y\+Hemisphere\+Last\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a0d0cec10e4860da556540f60c18c2981}\label{class_three_axis_scanner_a0d0cec10e4860da556540f60c18c2981}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!y\+Index\+Buffer@{y\+Index\+Buffer}}
+\index{y\+Index\+Buffer@{y\+Index\+Buffer}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{y\+Index\+Buffer}{yIndexBuffer}}
+{\footnotesize\ttfamily int32\+\_\+t$\ast$ Three\+Axis\+Scanner\+::y\+Index\+Buffer}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a8c84dff492c6ebb8d76610eae2150c1f}\label{class_three_axis_scanner_a8c84dff492c6ebb8d76610eae2150c1f}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!y\+Input@{y\+Input}}
+\index{y\+Input@{y\+Input}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{y\+Input}{yInput}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::y\+Input}
+
+\mbox{\Hypertarget{class_three_axis_scanner_ae9056dd10838e243c6f56a6e59850f4f}\label{class_three_axis_scanner_ae9056dd10838e243c6f56a6e59850f4f}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!y\+Offset@{y\+Offset}}
+\index{y\+Offset@{y\+Offset}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{y\+Offset}{yOffset}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::y\+Offset}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a2517bc1e2371562ba91a18cc1e58d9ba}\label{class_three_axis_scanner_a2517bc1e2371562ba91a18cc1e58d9ba}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!y\+Reversed@{y\+Reversed}}
+\index{y\+Reversed@{y\+Reversed}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{y\+Reversed}{yReversed}}
+{\footnotesize\ttfamily int32\+\_\+t Three\+Axis\+Scanner\+::y\+Reversed\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a292e1e41da2aa49d6680c4ec504c25cb}\label{class_three_axis_scanner_a292e1e41da2aa49d6680c4ec504c25cb}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!y\+Table@{y\+Table}}
+\index{y\+Table@{y\+Table}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{y\+Table}{yTable}}
+{\footnotesize\ttfamily uint32\+\_\+t$\ast$ Three\+Axis\+Scanner\+::y\+Table}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a774c001a0a47d99fc1139edac12dd234}\label{class_three_axis_scanner_a774c001a0a47d99fc1139edac12dd234}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!y\+Table\+Size@{y\+Table\+Size}}
+\index{y\+Table\+Size@{y\+Table\+Size}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{y\+Table\+Size}{yTableSize}}
+{\footnotesize\ttfamily uint32\+\_\+t Three\+Axis\+Scanner\+::y\+Table\+Size = 0}
+
+\mbox{\Hypertarget{class_three_axis_scanner_a1e0deccb90209b32e5f8a837137a3aec}\label{class_three_axis_scanner_a1e0deccb90209b32e5f8a837137a3aec}} 
+\index{Three\+Axis\+Scanner@{Three\+Axis\+Scanner}!z\+Index@{z\+Index}}
+\index{z\+Index@{z\+Index}!Three\+Axis\+Scanner@{Three\+Axis\+Scanner}}
+\subsubsection{\texorpdfstring{z\+Index}{zIndex}}
+{\footnotesize\ttfamily uint32\+\_\+t Three\+Axis\+Scanner\+::z\+Index = 0}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+synthesis/inc/\mbox{\hyperlink{signal__processors_8hpp}{signal\+\_\+processors.\+hpp}}\item 
+synthesis/signal\+\_\+processors/\mbox{\hyperlink{three__axis__scanner_8cpp}{three\+\_\+axis\+\_\+scanner.\+cpp}}\end{DoxyCompactItemize}

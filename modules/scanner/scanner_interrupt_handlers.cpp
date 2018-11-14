@@ -18,13 +18,11 @@ void ViaScanner::mainFallingEdgeCallback(void) {
 void ViaScanner::auxRisingEdgeCallback(void) {
 	setSH(1, 1);
 	setLEDA(1);
-	setLEDB(1);
 	inputs.auxTrigInput = 1;
 }
 void ViaScanner::auxFallingEdgeCallback(void) {
 	setSH(0, 0);
 	setLEDA(0);
-	setLEDB(0);
 	inputs.auxTrigInput = 0;
 }
 
@@ -37,96 +35,102 @@ void ViaScanner::buttonReleasedCallback(void) {
 
 void ViaScanner::ioProcessCallback(void) {
 
-	setLogicOut(readIndex, runtimeDisplay);
-	inputs.trigSamples[readIndex] = inputs.trigInput;
-	inputs.trigInput = 1;
-	reverseBuffer[readIndex] = reverseSignal;
-	inputs.auxTrigSamples[readIndex] = inputs.auxTrigInput;
-
-	readIndex++;
-
-	readIndex &= SCANNER_BUFFER_SIZE*2 - 1;
+//	setLogicOut(readIndex, runtimeDisplay);
+//	inputs.trigSamples[readIndex] = inputs.trigInput;
+//	inputs.trigInput = 1;
+//	reverseBuffer[readIndex] = reverseSignal;
+//	inputs.auxTrigSamples[readIndex] = inputs.auxTrigInput;
+//
+//	readIndex++;
+//
+//	readIndex &= SCANNER_BUFFER_SIZE*2 - 1;
 
 }
 
 void ViaScanner::halfTransferCallback(void) {
 
-	scanner.hardSync = inputs.trigSamples;
-	scanner.reverse = reverseBuffer;
+	setLogicOutNoLED(0);
 
-	scanner.fillBuffer(&inputs, &controls,
-			(int32_t *) wavetableXRead, (int32_t *) wavetableYRead,
-			0, SCANNER_BUFFER_SIZE);
+	if (runtimeDisplay) {
 
-	VIA_SHIFT_Q31((q31_t *) scanner.xInput, -4, (q31_t *) outputs.dac3Samples, 8);
+		*auxLogicOutput |= (__ROR(outputs.logicA[0], 16) >> 11);
+
+	}
+
+	scanner.hardSync = inputs.trigInput;
+	inputs.trigInput = 1;
+	scanner.reverse = reverseSignal;
+
+	scanner.xInput = (int32_t)-inputs.cv2Samples[0];
+
+	scanner.yInput = (int32_t)-inputs.cv3Samples[0];
+
+	scanner.fillBuffer();
 
 	for (int32_t i = 0; i < SCANNER_BUFFER_SIZE; i++) {
 		outputs.dac2Samples[i] = scanner.altitude[i];
 		outputs.dac1Samples[i] = 4095 - scanner.altitude[i];
 		outputs.dac3Samples[i] = scanner.locationBlend[i];
-		outputs.logicA[i] = GET_ALOGIC_MASK(scanner.mainLogicBlend[i]);
-		outputs.auxLogic[i] = GET_EXPAND_LOGIC_MASK(scanner.auxLogicBlend[i]);
-		outputs.shA[i] = GPIO_NOP;
-		outputs.shB[i] = GPIO_NOP;
 	}
+
+	outputs.logicA[0] = GET_ALOGIC_MASK(scanner.hemisphereBlend);
+	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(scanner.deltaBlend);
+	outputs.shA[0] = GPIO_NOP;
+	outputs.shB[0] = GPIO_NOP;
 
 }
 
 void ViaScanner::transferCompleteCallback(void) {
 
-	scanner.hardSync = inputs.trigSamples + SCANNER_BUFFER_SIZE;
-	scanner.reverse = reverseBuffer + SCANNER_BUFFER_SIZE;
+	setLogicOutNoLED(0);
 
-	scanner.fillBuffer(&inputs, &controls,
-			(int32_t *) wavetableXRead, (int32_t *) wavetableYRead,
-			SCANNER_BUFFER_SIZE, SCANNER_BUFFER_SIZE);
+	if (runtimeDisplay) {
 
-	VIA_SHIFT_Q31((q31_t *) scanner.xInput, -4, ((q31_t *) outputs.dac3Samples) + 8, 8);
+		*auxLogicOutput |= (__ROR(outputs.logicA[0], 16) >> 11);
+
+	}
+
+	scanner.hardSync = inputs.trigInput;
+	inputs.trigInput = 1;
+	scanner.reverse = reverseSignal;
+
+//	int32_t inputMasked = (int32_t)-inputs.cv2Samples[0];
+//	inputMasked += 32767;
+//	inputMasked &=0xFFF0;
+	scanner.xInput = (int32_t)-inputs.cv2Samples[0];
+
+//	inputMasked = (int32_t)-inputs.cv3Samples[0];
+//	inputMasked += 32767;
+//	inputMasked &= 0xFFF0;
+//
+//	scanner.yInput = inputMasked;
+	scanner.yInput = (int32_t)-inputs.cv3Samples[0];
+
+
+	scanner.fillBuffer();
 
 	for (int32_t i = 0; i < SCANNER_BUFFER_SIZE; i++) {
 		outputs.dac2Samples[i + SCANNER_BUFFER_SIZE] = scanner.altitude[i];
 		outputs.dac1Samples[i + SCANNER_BUFFER_SIZE] = 4095 - scanner.altitude[i];
 		outputs.dac3Samples[i + SCANNER_BUFFER_SIZE] = scanner.locationBlend[i];
-		outputs.logicA[i + SCANNER_BUFFER_SIZE] = GET_ALOGIC_MASK(scanner.mainLogicBlend[i]);
-		outputs.auxLogic[i + SCANNER_BUFFER_SIZE] = GET_EXPAND_LOGIC_MASK(scanner.auxLogicBlend[i]);
-		outputs.shA[i + SCANNER_BUFFER_SIZE] = GPIO_NOP;
-		outputs.shB[i + SCANNER_BUFFER_SIZE] = GPIO_NOP;
-
 	}
 
-}
-
-void ViaScanner::cv2HalfTransferCallback(void) {
-
-	VIA_OFFSET_Q31(((q31_t *) inputs.cv2Samples), 32767, (q31_t *) scanner.xInput, SCANNER_BUFFER_SIZE);
-
-}
-
-void ViaScanner::cv2TransferCompleteCallback(void) {
-
-	VIA_OFFSET_Q31(((q31_t *) inputs.cv2Samples) + SCANNER_BUFFER_SIZE, 32767, (q31_t *) scanner.xInput, SCANNER_BUFFER_SIZE);
+	outputs.logicA[0] = GET_ALOGIC_MASK(scanner.hemisphereBlend);
+	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(scanner.deltaBlend);
+	outputs.shA[0] = GPIO_NOP;
+	outputs.shB[0] = GPIO_NOP;
 
 }
 
-void ViaScanner::cv3HalfTransferCallback(void) {
-
-	VIA_OFFSET_Q31(((q31_t *) inputs.cv3Samples), 32767, (q31_t *) scanner.yInput, SCANNER_BUFFER_SIZE);
-
-}
-
-void ViaScanner::cv3TransferCompleteCallback(void) {
-
-	VIA_OFFSET_Q31(((q31_t *) inputs.cv3Samples) + SCANNER_BUFFER_SIZE, 32767, (q31_t *) scanner.yInput, SCANNER_BUFFER_SIZE);
-}
 
 void ViaScanner::slowConversionCallback(void) {
 
 	controls.update();
 	scanner.parseControls(&controls);
 
-	uint32_t redLevel = abs(scanner.xInput[0] - 32767) >> 4;
+	uint32_t redLevel = abs(scanner.xInput) >> 4;
 	uint32_t greenLevel = scanner.zIndex >> 7;
-	uint32_t blueLevel = abs(scanner.yInput[0] - 32767) >> 4;
+	uint32_t blueLevel = abs(scanner.yInput) >> 4;
 
 	updateRGBDisplay(redLevel, greenLevel, blueLevel, runtimeDisplay);
 

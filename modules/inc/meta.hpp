@@ -22,7 +22,7 @@ extern "C" {
 }
 #endif
 
-#define META_BUFFER_SIZE 1
+#define META_BUFFER_SIZE 8
 
 /*
  *
@@ -98,6 +98,10 @@ public:
 		void aux4TapCallback(void) override;
 		void aux4HoldCallback(void) override;
 
+		void uiSetLEDs(int) override;
+
+		void recallModuleState(void) override;
+
 		void defaultEnterMenuCallback(void) override;
 		void newModeEnterMenuCallback(void) override;
 		void newAuxModeEnterMenuCallback(void) override;
@@ -164,10 +168,11 @@ public:
 	 *
 	 */
 
-	void (ViaMeta::*drumMode)(int32_t writeIndex);
+	void (ViaMeta::*outputStage)(int32_t writeIndex);
 
-	void drumModeOff(int32_t writeIndex);
-	void drumModeOn(int32_t writeIndex);
+	void oversample(int32_t writeIndex);
+	void addThreeBits(int32_t writeIndex);
+	void drumMode(int32_t writeIndex);
 
 	uint16_t virtualFM[2];
 	uint16_t virtualMorph[2];
@@ -199,25 +204,26 @@ public:
 	void calculateSHMode6(int32_t writeIndex);
 
 	void (ViaMeta::*updateRGB)(void);
+	void (ViaMeta::*currentRGBBehavior)(void);
 
 	void updateRGBOsc(void) {
 
-		uint32_t displayFreq = __USAT(abs(fix16_mul(controls.knob1Value + controls.cv1Value - 2048, metaController.fm[0] + 32767)), 12);
+		int32_t displayFreq = abs(fix16_mul(__USAT(controls.knob1Value + controls.cv1Value - 1000, 12), metaController.fm[0] + 32767));
 
 		int32_t redSignal = 4095 - displayFreq;
 		int32_t blueSignal = displayFreq;
-		int32_t greenSignal = __USAT(((-inputs.cv3Samples[0] >> 4) + controls.knob3Value), 12);
+		int32_t greenSignal = __USAT(((-inputs.cv3Samples[0] >> 4) + controls.knob3Value), 12) >> 1;
 
 		updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
 	}
 	void updateRGBDrum(void) {
 		
-		uint32_t displayFreq = __USAT(abs(fix16_mul(controls.knob1Value + controls.cv1Value - 2048, metaController.fm[0] << 1)), 12);
+		int32_t displayFreq = abs(fix16_mul(__USAT(controls.knob1Value + controls.cv1Value - 1000, 12), metaController.fm[0] + 32767));
 		uint32_t drumEnvelopeLevel = drumEnvelope.output[0] << 1;
 
 		int32_t redSignal = fix16_mul(4095 - displayFreq, drumEnvelopeLevel);
 		int32_t blueSignal = fix16_mul(displayFreq, drumEnvelopeLevel);
-		int32_t greenSignal = fix16_mul(__USAT((-inputs.cv3Samples[0] >> 4) + controls.knob3Value, 12), drumEnvelopeLevel);
+		int32_t greenSignal = fix16_mul(__USAT((-inputs.cv3Samples[0] >> 4) + controls.knob3Value, 12), drumEnvelopeLevel) >> 1;
 
 		updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
 
@@ -225,16 +231,30 @@ public:
 	void updateRGBSubaudio(void) {
 
 		int32_t sample = outputs.dac2Samples[0];
-		int32_t lastPhaseValue = metaWavetable.phase;
+		int32_t lastPhaseValue = metaController.ghostPhase;
 
 		int32_t redSignal = sample * (lastPhaseValue >> 24);
-		int32_t blueSignal = sample * (!(lastPhaseValue >> 24));
+		int32_t blueSignal = (sample * (!(lastPhaseValue >> 24))) >> 1;
 		int32_t greenSignal = (__USAT(((-inputs.cv3Samples[0] >> 4) + controls.knob3Value), 12)
-				* sample) >> 12;
+				* sample) >> 13;
 
 		updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
 
 	}
+
+	void updateRGBBlink(void) {
+
+		updateRGBDisplay(4095, 4095, 4095, runtimeDisplay);
+
+	}
+
+	void updateRGBBlank(void) {
+
+		updateRGBDisplay(0, 0, 0, runtimeDisplay);
+
+	}
+
+
 
 	void init(void);
 
@@ -242,7 +262,7 @@ public:
 
 	int32_t runtimeDisplay;
 
-	SimpleWavetable metaWavetable;
+	MetaWavetable metaWavetable;
 	MetaController metaController;
 	SimpleEnvelope drumEnvelope;
 
@@ -270,6 +290,10 @@ public:
 	void halfTransferCallback(void);
 	void transferCompleteCallback(void);
 	void slowConversionCallback(void);
+
+	void auxTimer1InterruptCallback(void);
+	void auxTimer2InterruptCallback(void);
+
 
 	void ui_dispatch(int32_t sig) {
 		this->metaUI.dispatch(sig);

@@ -17,6 +17,9 @@ void ViaSync::mainRisingEdgeCallback(void) {
 
 
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(pllController.ratioChange);
+	if (runtimeDisplay & showYChange) {
+		setLEDD(pllController.yIndexChange);
+	}
 	pllController.tapTempo = 0;
 
 }
@@ -24,6 +27,10 @@ void ViaSync::mainRisingEdgeCallback(void) {
 void ViaSync::mainFallingEdgeCallback(void) {
 
 	pllController.ratioChange = 0;
+	pllController.yIndexChange = 0;
+	if (runtimeDisplay & showYChange) {
+		setLEDD(pllController.yIndexChange);
+	}
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(pllController.ratioChange);
 
 }
@@ -78,9 +85,13 @@ void ViaSync::buttonPressedCallback(void) {
 		pllController.tapTempo = 1;
 	}
 
+	this->syncUI.dispatch(EXPAND_SW_ON_SIG);
+
 }
 void ViaSync::buttonReleasedCallback(void) {
-	;
+
+	this->syncUI.dispatch(EXPAND_SW_OFF_SIG);
+
 }
 
 void ViaSync::ioProcessCallback(void) {
@@ -90,9 +101,24 @@ void ViaSync::halfTransferCallback(void) {
 
 	setLogicOut(0, runtimeDisplay);
 
+	syncWavetable.advance((uint32_t *)wavetableRead, (uint32_t *) phaseModPWMTables);
 
-	outputs.dac2Samples[0] = __USAT(syncWavetable.advance((uint32_t *)wavetableRead, (uint32_t *) phaseModPWMTables), 12);
-	outputs.dac1Samples[0] = 4095 - outputs.dac2Samples[0];
+	int32_t samplesRemaining = outputBufferSize;
+	int32_t writeIndex = 0;
+	int32_t readIndex = 0;
+
+	while (samplesRemaining) {
+
+		int32_t sample = syncWavetable.signalOut[readIndex];
+		outputs.dac1Samples[writeIndex] = 4095 - sample;
+		outputs.dac2Samples[writeIndex] = sample;
+
+		writeIndex ++;
+		readIndex ++;
+		samplesRemaining --;
+
+	}
+
 	(this->*calculateDac3)(0);
 	(this->*calculateLogicA)(0);
 	(this->*calculateSH)(0);
@@ -103,9 +129,25 @@ void ViaSync::transferCompleteCallback(void) {
 
 	setLogicOut(0, runtimeDisplay);
 
-	outputs.dac2Samples[1] = __USAT(syncWavetable.advance((uint32_t *)wavetableRead, (uint32_t *) phaseModPWMTables), 12);
-	outputs.dac1Samples[1] = 4095 - outputs.dac2Samples[1];
-	(this->*calculateDac3)(1);
+	syncWavetable.advance((uint32_t *)wavetableRead, (uint32_t *) phaseModPWMTables);
+
+	int32_t samplesRemaining = outputBufferSize;
+	int32_t writeIndex = SYNC_BUFFER_SIZE;
+	int32_t readIndex = 0;
+
+	while (samplesRemaining) {
+
+		int32_t sample = syncWavetable.signalOut[readIndex];
+		outputs.dac1Samples[writeIndex] = 4095 - sample;
+		outputs.dac2Samples[writeIndex] = sample;
+
+		writeIndex ++;
+		readIndex ++;
+		samplesRemaining --;
+
+	}
+
+	(this->*calculateDac3)(SYNC_BUFFER_SIZE);
 	(this->*calculateLogicA)(0);
 	(this->*calculateSH)(0);
 
@@ -123,11 +165,10 @@ void ViaSync::slowConversionCallback(void) {
 	}
 
 	int32_t sample = outputs.dac1Samples[0];
-	int32_t morphColorShift = controls.knob3Value << 4;
 
-	int32_t redSignal = fix16_mul(sample, fix16_lerp(scaleColor.r << 4, 4095 << 4, morphColorShift));
-	int32_t blueSignal = fix16_mul(sample, fix16_lerp(scaleColor.b << 4, 4095 << 4, morphColorShift));
-	int32_t greenSignal = fix16_mul(sample, fix16_lerp(scaleColor.g << 4, 4095 << 4, morphColorShift));
+	int32_t redSignal = fix16_mul(sample << 4, scaleColor.r);
+	int32_t blueSignal = fix16_mul(sample << 4, scaleColor.b);
+	int32_t greenSignal = fix16_mul(sample << 4, scaleColor.g);
 
 	updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
 

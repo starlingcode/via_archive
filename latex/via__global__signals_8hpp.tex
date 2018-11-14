@@ -1,0 +1,111 @@
+\hypertarget{via__global__signals_8hpp}{}\section{io/inc/via\+\_\+global\+\_\+signals.hpp File Reference}
+\label{via__global__signals_8hpp}\index{io/inc/via\+\_\+global\+\_\+signals.\+hpp@{io/inc/via\+\_\+global\+\_\+signals.\+hpp}}
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}dsp.\+hpp\char`\"{}}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_via_controls}{Via\+Controls}}
+\item 
+class \mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}}
+\item 
+class \mbox{\hyperlink{class_via_output_streams}{Via\+Output\+Streams}}
+\item 
+struct \mbox{\hyperlink{structrgb}{rgb}}
+\item 
+class \mbox{\hyperlink{class_via_virtual_hardware}{Via\+Virtual\+Hardware}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{via__global__signals_8hpp_acaa0e57cc99c689de1e22581f17010e4}{knob2}}~control\+Rate\+Inputs\mbox{[}3\mbox{]}
+\item 
+\#define \mbox{\hyperlink{via__global__signals_8hpp_ac565131497c284c7b9dfe1879e98e348}{knob3}}~control\+Rate\+Inputs\mbox{[}1\mbox{]}
+\item 
+\#define \mbox{\hyperlink{via__global__signals_8hpp_af5f402125462bfebbd1a7cae0012ea81}{knob1}}~control\+Rate\+Inputs\mbox{[}2\mbox{]}
+\item 
+\#define \mbox{\hyperlink{via__global__signals_8hpp_a8003f0e56cb48d4be873968a628b5245}{cv1}}~(4095 -\/ control\+Rate\+Inputs\mbox{[}0\mbox{]})
+\item 
+\#define \mbox{\hyperlink{via__global__signals_8hpp_a52bfc0e56d362846e38041fd270f129a}{\+\_\+\+\_\+\+R\+ED}}~\{4095, 0, 0\}
+\item 
+\#define \mbox{\hyperlink{via__global__signals_8hpp_ace202351738c813b661dc570cdd6f7d0}{\+\_\+\+\_\+\+G\+R\+E\+EN}}~\{0, 4095, 0\}
+\item 
+\#define \mbox{\hyperlink{via__global__signals_8hpp_a9a4453ee1ee22eb4983d481110733ff5}{\+\_\+\+\_\+\+B\+L\+UE}}~\{0, 0, 4095\}
+\item 
+\#define \mbox{\hyperlink{via__global__signals_8hpp_a84e0339103b1aca06f3c712ac0ac8913}{\+\_\+\+\_\+\+O\+R\+A\+N\+GE}}~\{4095, 4095, 0\}
+\item 
+\#define \mbox{\hyperlink{via__global__signals_8hpp_a796ab86e4cc9331c5b64f3bff6abff08}{\+\_\+\+\_\+\+M\+A\+G\+E\+N\+TA}}~\{4095, 0, 4095\}
+\item 
+\#define \mbox{\hyperlink{via__global__signals_8hpp_a9915756a78aa330aa6e587b0571afb4d}{\+\_\+\+\_\+\+C\+Y\+AN}}~\{0, 4095, 4095\}
+\item 
+\#define \mbox{\hyperlink{via__global__signals_8hpp_aa002d4166840aa9012200b8de53ef3e9}{\+\_\+\+\_\+\+C\+O\+L\+O\+R\+W\+H\+E\+E\+L\+B\+A\+SE}}~\{4095, 0, 0\}
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{via__global__signals_8hpp_a9a4453ee1ee22eb4983d481110733ff5}\label{via__global__signals_8hpp_a9a4453ee1ee22eb4983d481110733ff5}} 
+\index{via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}!\+\_\+\+\_\+\+B\+L\+UE@{\+\_\+\+\_\+\+B\+L\+UE}}
+\index{\+\_\+\+\_\+\+B\+L\+UE@{\+\_\+\+\_\+\+B\+L\+UE}!via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+\+B\+L\+UE}{\_\_BLUE}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+B\+L\+UE~\{0, 0, 4095\}}
+
+\mbox{\Hypertarget{via__global__signals_8hpp_aa002d4166840aa9012200b8de53ef3e9}\label{via__global__signals_8hpp_aa002d4166840aa9012200b8de53ef3e9}} 
+\index{via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}!\+\_\+\+\_\+\+C\+O\+L\+O\+R\+W\+H\+E\+E\+L\+B\+A\+SE@{\+\_\+\+\_\+\+C\+O\+L\+O\+R\+W\+H\+E\+E\+L\+B\+A\+SE}}
+\index{\+\_\+\+\_\+\+C\+O\+L\+O\+R\+W\+H\+E\+E\+L\+B\+A\+SE@{\+\_\+\+\_\+\+C\+O\+L\+O\+R\+W\+H\+E\+E\+L\+B\+A\+SE}!via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+\+C\+O\+L\+O\+R\+W\+H\+E\+E\+L\+B\+A\+SE}{\_\_COLORWHEELBASE}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+C\+O\+L\+O\+R\+W\+H\+E\+E\+L\+B\+A\+SE~\{4095, 0, 0\}}
+
+\mbox{\Hypertarget{via__global__signals_8hpp_a9915756a78aa330aa6e587b0571afb4d}\label{via__global__signals_8hpp_a9915756a78aa330aa6e587b0571afb4d}} 
+\index{via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}!\+\_\+\+\_\+\+C\+Y\+AN@{\+\_\+\+\_\+\+C\+Y\+AN}}
+\index{\+\_\+\+\_\+\+C\+Y\+AN@{\+\_\+\+\_\+\+C\+Y\+AN}!via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+\+C\+Y\+AN}{\_\_CYAN}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+C\+Y\+AN~\{0, 4095, 4095\}}
+
+\mbox{\Hypertarget{via__global__signals_8hpp_ace202351738c813b661dc570cdd6f7d0}\label{via__global__signals_8hpp_ace202351738c813b661dc570cdd6f7d0}} 
+\index{via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}!\+\_\+\+\_\+\+G\+R\+E\+EN@{\+\_\+\+\_\+\+G\+R\+E\+EN}}
+\index{\+\_\+\+\_\+\+G\+R\+E\+EN@{\+\_\+\+\_\+\+G\+R\+E\+EN}!via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+\+G\+R\+E\+EN}{\_\_GREEN}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+G\+R\+E\+EN~\{0, 4095, 0\}}
+
+\mbox{\Hypertarget{via__global__signals_8hpp_a796ab86e4cc9331c5b64f3bff6abff08}\label{via__global__signals_8hpp_a796ab86e4cc9331c5b64f3bff6abff08}} 
+\index{via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}!\+\_\+\+\_\+\+M\+A\+G\+E\+N\+TA@{\+\_\+\+\_\+\+M\+A\+G\+E\+N\+TA}}
+\index{\+\_\+\+\_\+\+M\+A\+G\+E\+N\+TA@{\+\_\+\+\_\+\+M\+A\+G\+E\+N\+TA}!via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+\+M\+A\+G\+E\+N\+TA}{\_\_MAGENTA}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+M\+A\+G\+E\+N\+TA~\{4095, 0, 4095\}}
+
+\mbox{\Hypertarget{via__global__signals_8hpp_a84e0339103b1aca06f3c712ac0ac8913}\label{via__global__signals_8hpp_a84e0339103b1aca06f3c712ac0ac8913}} 
+\index{via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}!\+\_\+\+\_\+\+O\+R\+A\+N\+GE@{\+\_\+\+\_\+\+O\+R\+A\+N\+GE}}
+\index{\+\_\+\+\_\+\+O\+R\+A\+N\+GE@{\+\_\+\+\_\+\+O\+R\+A\+N\+GE}!via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+\+O\+R\+A\+N\+GE}{\_\_ORANGE}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+O\+R\+A\+N\+GE~\{4095, 4095, 0\}}
+
+\mbox{\Hypertarget{via__global__signals_8hpp_a52bfc0e56d362846e38041fd270f129a}\label{via__global__signals_8hpp_a52bfc0e56d362846e38041fd270f129a}} 
+\index{via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}!\+\_\+\+\_\+\+R\+ED@{\+\_\+\+\_\+\+R\+ED}}
+\index{\+\_\+\+\_\+\+R\+ED@{\+\_\+\+\_\+\+R\+ED}!via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+\+R\+ED}{\_\_RED}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+R\+ED~\{4095, 0, 0\}}
+
+\mbox{\Hypertarget{via__global__signals_8hpp_a8003f0e56cb48d4be873968a628b5245}\label{via__global__signals_8hpp_a8003f0e56cb48d4be873968a628b5245}} 
+\index{via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}!cv1@{cv1}}
+\index{cv1@{cv1}!via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}}
+\subsubsection{\texorpdfstring{cv1}{cv1}}
+{\footnotesize\ttfamily \#define cv1~(4095 -\/ control\+Rate\+Inputs\mbox{[}0\mbox{]})}
+
+\mbox{\Hypertarget{via__global__signals_8hpp_af5f402125462bfebbd1a7cae0012ea81}\label{via__global__signals_8hpp_af5f402125462bfebbd1a7cae0012ea81}} 
+\index{via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}!knob1@{knob1}}
+\index{knob1@{knob1}!via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}}
+\subsubsection{\texorpdfstring{knob1}{knob1}}
+{\footnotesize\ttfamily \#define knob1~control\+Rate\+Inputs\mbox{[}2\mbox{]}}
+
+\mbox{\Hypertarget{via__global__signals_8hpp_acaa0e57cc99c689de1e22581f17010e4}\label{via__global__signals_8hpp_acaa0e57cc99c689de1e22581f17010e4}} 
+\index{via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}!knob2@{knob2}}
+\index{knob2@{knob2}!via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}}
+\subsubsection{\texorpdfstring{knob2}{knob2}}
+{\footnotesize\ttfamily \#define knob2~control\+Rate\+Inputs\mbox{[}3\mbox{]}}
+
+\mbox{\Hypertarget{via__global__signals_8hpp_ac565131497c284c7b9dfe1879e98e348}\label{via__global__signals_8hpp_ac565131497c284c7b9dfe1879e98e348}} 
+\index{via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}!knob3@{knob3}}
+\index{knob3@{knob3}!via\+\_\+global\+\_\+signals.\+hpp@{via\+\_\+global\+\_\+signals.\+hpp}}
+\subsubsection{\texorpdfstring{knob3}{knob3}}
+{\footnotesize\ttfamily \#define knob3~control\+Rate\+Inputs\mbox{[}1\mbox{]}}
+

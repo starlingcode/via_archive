@@ -42,22 +42,46 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 
 	sequencer.currentABank = seq1PatternBank[mode];
 
+	setRedLED((mode >> 1) * 4095);
+	setGreenLED(!(mode >> 1) * 4095);
+	if (mode == 1 || mode == 3) {
+		SET_BLUE_LED_ONOFF(1);
+	} else {
+		SET_BLUE_LED_ONOFF(0);
+	}
+
 	switch (mode) {
 	case 0:
+		TIM2->CR1 &= ~TIM_CR1_CEN;
+		sequencer.clockOn = 0;
 		sequencer.modulateMultiplier = 0;
-		sequencer.multiplier = 2;
+		sequencer.multiplier = 1;
+		sequencer.shuffleOn = 0;
+		sequencer.shuffle = 0;
 		break;
 	case 1:
+		TIM2->CR1 |= TIM_CR1_CEN;
+		sequencer.clockOn = 1;
 		sequencer.modulateMultiplier = 0;
 		sequencer.multiplier = 3;
+		sequencer.shuffleOn = 0;
+		sequencer.shuffle = 0;
 		break;
 	case 2:
+		TIM2->CR1 |= TIM_CR1_CEN;
+		sequencer.clockOn = 1;
 		sequencer.modulateMultiplier = 0;
 		sequencer.multiplier = 4;
+		sequencer.shuffleOn = 1;
+		sequencer.shuffle = 0;
 		break;
 	case 3:
+		TIM2->CR1 |= TIM_CR1_CEN;
+		sequencer.clockOn = 1;
 		sequencer.modulateMultiplier = 1;
 		sequencer.offset = 0;
+		sequencer.shuffleOn = 0;
+		sequencer.shuffle = 0;
 		break;
 	}
 

@@ -22,7 +22,7 @@ extern "C" {
 }
 #endif
 
-#define SYNC_BUFFER_SIZE 1
+#define SYNC_BUFFER_SIZE 8
 
 /*
  *
@@ -46,7 +46,7 @@ extern "C" {
 #define numButton1Modes 3
 #define numButton2Modes 4
 #define numButton3Modes 3
-#define numButton4Modes 3
+#define numButton4Modes 4
 #define numButton5Modes 4
 #define numButton6Modes 4
 #define numAux1Modes 2
@@ -57,7 +57,7 @@ extern "C" {
 enum sync_button1Modes {noSH, sampletrack, resample};
 enum sync_button2Modes {scale1, scale2, scale3, scale4};
 enum sync_button3Modes {root, pm, pwm};
-enum sync_button4Modes {nosync, truePLL, hardsync};
+enum sync_button4Modes {nosync, truePLL, hardsync, wobble};
 enum sync_button5Modes {group1, group2, group3, group4};
 enum sync_button6Modes {table1, table2, table3, table4};
 enum sync_aux1Modes {sync_gate, sync_delta};
@@ -98,6 +98,10 @@ public:
 		void aux3HoldCallback(void) override;
 		void aux4TapCallback(void) override;
 		void aux4HoldCallback(void) override;
+
+		void uiSetLEDs(int) override;
+
+		void recallModuleState(void) override;
 
 		void defaultEnterMenuCallback(void) override;
 		void newModeEnterMenuCallback(void) override;
@@ -197,7 +201,9 @@ public:
 
 	int32_t runtimeDisplay;
 
-	SingleSampleWavetable syncWavetable;
+	int32_t showYChange;
+
+	SyncWavetable syncWavetable;
 	PllController pllController;
 
 	// average tap tempo

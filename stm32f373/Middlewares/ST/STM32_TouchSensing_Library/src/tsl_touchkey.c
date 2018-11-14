@@ -29,6 +29,8 @@
 #include <touch_lib_link.hpp>
 #include "tsl_touchkey.h"
 #include "tsl_globals.h"
+#include "tsl_user.h"
+#include "tsc.h"
 
 #if TSLPRM_TOTAL_TKEYS > 0
 
@@ -566,6 +568,15 @@ void TSL_tkey_CalibrationStateProcess(void)
 #else // Calculate it
     new_meas = TSL_acq_ComputeMeas(THIS_REF, THIS_DELTA);
 #endif
+
+
+    if (new_meas > 2000) {
+		HAL_TSC_MspDeInit(&htsc);
+		NVIC_SystemReset();
+		HAL_TSC_MspInit(&htsc);
+		MX_TSC_Init();
+		tsl_user_Init(); /* Init acquisition module */
+    }
 
     // Verify the first Reference value
     if (THIS_COUNTER_DEB == (TSL_tCounter_T)TSL_Params.NbCalibSamples)

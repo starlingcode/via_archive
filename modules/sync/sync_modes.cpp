@@ -45,12 +45,14 @@ void ViaSync::handleButton3ModeChange(int32_t mode) {
 		syncWavetable.fm = inputs.cv2VirtualGround;
 		syncWavetable.pm = inputs.cv2VirtualGround;
 		syncWavetable.pwm = inputs.cv2VirtualGround;
+		showYChange = 1;
 		break;
 	case pm:
 		pllController.rootMod = inputs.cv2VirtualGround;
 		syncWavetable.fm = inputs.cv2VirtualGround;
 		syncWavetable.pm = inputs.cv2Samples;
 		syncWavetable.pwm = inputs.cv2VirtualGround;
+		showYChange = 0;
 		break;
 	case pwm:
 		syncWavetable.pm = 0;
@@ -58,6 +60,7 @@ void ViaSync::handleButton3ModeChange(int32_t mode) {
 		syncWavetable.fm = inputs.cv2VirtualGround;
 		syncWavetable.pm = inputs.cv2VirtualGround;
 		syncWavetable.pwm = inputs.cv2Samples;
+		showYChange = 0;
 		break;
 	default:
 		break;

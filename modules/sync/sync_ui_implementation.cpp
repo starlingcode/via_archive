@@ -41,16 +41,7 @@ void ViaSync::ViaSyncUI::initialize(void) {
 
 #ifdef BUILD_F373
 
-	this_module.handleAux3ModeChange(this_module.syncUI.aux3Mode);
-	this_module.handleButton1ModeChange(this_module.syncUI.button1Mode);
-	this_module.handleButton2ModeChange(this_module.syncUI.button2Mode);
-	this_module.handleButton3ModeChange(this_module.syncUI.button3Mode);
-	this_module.handleButton4ModeChange(this_module.syncUI.button4Mode);
-	//this_module.handleButton5ModeInit(this_module.syncUI.button5Mode);
-	this_module.handleButton6ModeChange(this_module.syncUI.button6Mode);
-	this_module.handleAux1ModeChange(this_module.syncUI.aux1Mode);
-	this_module.handleAux2ModeChange(this_module.syncUI.aux2Mode);
-	this_module.handleAux4ModeChange(this_module.syncUI.aux4Mode);
+	recallModuleState();
 
 #endif
 
@@ -64,8 +55,32 @@ void syncTouchLink (void * uiVoid) {
 	ui->dispatch(SENSOR_EVENT_SIG);
 }
 
+void ViaSync::ViaSyncUI::recallModuleState(void) {
+
+	this_module.handleAux3ModeChange(this_module.syncUI.aux3Mode);
+	this_module.handleButton1ModeChange(this_module.syncUI.button1Mode);
+	this_module.handleButton2ModeChange(this_module.syncUI.button2Mode);
+	this_module.handleButton3ModeChange(this_module.syncUI.button3Mode);
+	this_module.handleButton4ModeChange(this_module.syncUI.button4Mode);
+	//this_module.handleButton5ModeInit(this_module.syncUI.button5Mode);
+	this_module.handleButton6ModeChange(this_module.syncUI.button6Mode);
+	this_module.handleAux1ModeChange(this_module.syncUI.aux1Mode);
+	this_module.handleAux2ModeChange(this_module.syncUI.aux2Mode);
+	this_module.handleAux4ModeChange(this_module.syncUI.aux4Mode);
+
+}
+
+void ViaSync::ViaSyncUI::uiSetLEDs(int mode) {
+	this_module.setLEDs(mode);
+}
+
 void ViaSync::ViaSyncUI::defaultEnterMenuCallback(void) {
 	this_module.clearLEDs();
+	if (button3Mode == 1) {
+		this_module.setLEDD(0);
+	} else {
+		this_module.setLEDD(1);
+	}
 	this_module.runtimeDisplay = 1;
 }
 void ViaSync::ViaSyncUI::newModeEnterMenuCallback(void) {
@@ -75,7 +90,9 @@ void ViaSync::ViaSyncUI::newAuxModeEnterMenuCallback(void) {
 	;
 }
 void ViaSync::ViaSyncUI::presetEnterMenuCallback(void) {;
-
+	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
 }
 
 void ViaSync::ViaSyncUI::button1EnterMenuCallback(void) {

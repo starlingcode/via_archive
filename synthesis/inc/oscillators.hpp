@@ -29,10 +29,8 @@
  *
  */
 
-// single sample wavetable
-// no buffering, looks to it's parameters each sample
 
-class SingleSampleWavetable {
+class SyncWavetable {
 
 	int32_t previousPhase = 0;
 	int32_t previousPhaseMod = 0;
@@ -52,6 +50,20 @@ public:
 	int32_t increment = 0;
 	int32_t morphBase = 0;
 
+	int32_t xDeltaLast = 0;
+
+	int32_t getDeltaHysterisis(int32_t delta, int32_t last) {
+
+		if (last && (delta < -100)) {
+			return 0;
+		} else if (!last && delta > 100) {
+			return 1;
+		} else {
+			return last;
+		}
+
+	}
+
 	// results
 	int32_t phaseMod = 0;
 	int32_t phase = 0;
@@ -59,12 +71,31 @@ public:
 	int32_t phaseEvent = 0;
 	int32_t delta = 0;
 
+	int32_t phaseOut[32];
+	int32_t signalOut[32];
+
+	int32_t oversamplingFactor = 3;
+	int32_t bufferSize = 8;
+
 	void parseControls(ViaControls * controls);
 
 	inline int32_t incrementPhase(uint32_t * phaseDistTable);
 
-	uint32_t advance(uint32_t * wavetable,
+	void oversample(uint32_t * wavetable,
 			uint32_t * phaseDistTable);
+
+	void spline(uint32_t * wavetable,
+			uint32_t * phaseDistTable);
+
+	void advance(uint32_t * wavetable,
+			uint32_t * phaseDistTable) {
+		if (increment > (1 << 22)) {
+			oversample(wavetable, phaseDistTable);
+		} else {
+			spline(wavetable, phaseDistTable);
+		}
+	}
+
 
 };
 
@@ -74,7 +105,7 @@ public:
 
 // simplest wavetable, provide a phase and a morph
 
-class SimpleWavetable {
+class MetaWavetable {
 
 public:
 
@@ -83,14 +114,33 @@ public:
 	int16_t * morphScale;
 	int32_t phase = 0;
 	uint32_t tableSize = 0;
+	int32_t increment = 0;
+
+	int32_t oversamplingFactor = 3;
+	int32_t bufferSize = 8;
 
 	// results
 	int32_t delta = 0;
 
+	int32_t phaseOut[32];
+	int32_t signalOut[32];
+
 	void parseControls(ViaControls * controls);
-	int32_t advance(uint32_t * wavetable);
+
+	void advance(uint32_t * wavetable) {
+		if (oversamplingFactor) {
+			advanceOversampled(wavetable);
+		} else {
+			advanceSingleSample(wavetable);
+		}
+	}
+
+	void advanceSingleSample(uint32_t * wavetable);
+
+	void advanceOversampled(uint32_t * wavetable);
 
 };
+
 
 // cheap version of that with bilinear interpolation
 
@@ -121,6 +171,7 @@ class PllController {
 
 	uint32_t pllCounter;
 	int32_t lastMultiplier;
+	int32_t lastYIndex;
 
 public:
 
@@ -148,6 +199,7 @@ public:
 	uint32_t increment = 0;
 	uint32_t phaseReset = 0;
 	uint32_t ratioChange = 0;
+	uint32_t yIndexChange = 0;
 
 	void parseControls(ViaControls * controls, ViaInputStreams * input);
 
@@ -194,15 +246,18 @@ public:
 	int32_t freeze = 0;
 	int32_t gateOn = 0;
 	uint32_t loopMode = 0;
+	int32_t atB = 0;
 
 	int32_t increment1 = 0;
 	int32_t increment2 = 0;
+	int32_t incrementUsed = 0;
 	int32_t dutyCycle = 0;
 	int32_t lastPhase = 0;
 	int32_t oscillatorOn = 0;
 	int16_t * fm;
 
 	int32_t phase = 0;
+	int32_t phaseBeforeIncrement;
 	int32_t ghostPhase = 0;
 	int32_t phaseEvent = 0;
 
@@ -249,6 +304,13 @@ public:
 	int32_t pendulumForwardReleaseState(void);
 	int32_t pendulumReverseAttackState(void);
 	int32_t pendulumReverseReleaseState(void);
+
+	int32_t stickyPendulumRestingState(void);
+	int32_t stickyPendulumAtBState(void);
+	int32_t stickyPendulumForwardAttackState(void);
+	int32_t stickyPendulumForwardReleaseState(void);
+	int32_t stickyPendulumReverseAttackState(void);
+	int32_t stickyPendulumReverseReleaseState(void);
 
 	void (MetaController::*loopHandler)(void);
 

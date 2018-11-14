@@ -56,8 +56,14 @@ public:
 	uint32_t offset = 0;
 
 	uint32_t periodCount;
+	uint32_t clockOn;
 	uint32_t multiplier = 1;
 	uint32_t divider = 1;
+	uint32_t clockPeriod;
+	uint32_t shuffleOn;
+	uint32_t shuffle = 32767;
+	uint32_t shuffleDelay = 0;
+	uint32_t shuffledStep = 0;
 	uint32_t skipClock = 0;
 	uint32_t modulateMultiplier;
 	uint32_t virtualGateHigh;

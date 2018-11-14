@@ -1,0 +1,523 @@
+\hypertarget{class_meta_controller}{}\section{Meta\+Controller Class Reference}
+\label{class_meta_controller}\index{Meta\+Controller@{Meta\+Controller}}
+
+
+{\ttfamily \#include $<$oscillators.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_meta_controller_a04a33cca84424c10d37cddecb663f619}{parse\+Controls\+External}} (\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$controls, \mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+void \mbox{\hyperlink{class_meta_controller_ae12fe6794e457ed924fe53142eed83c7}{parse\+Controls\+Audio}} (\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$controls, \mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+void \mbox{\hyperlink{class_meta_controller_a557b81488e8c917eaacf8ae65fd85724}{parse\+Controls\+Drum}} (\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$controls, \mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+void \mbox{\hyperlink{class_meta_controller_a5f3e148b9730b47b9d3105d39dd88938}{parse\+Controls\+Env}} (\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$controls, \mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+void \mbox{\hyperlink{class_meta_controller_ac337c31f2c24c6a51684a44c8947e178}{parse\+Controls\+Seq}} (\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$controls, \mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+void \mbox{\hyperlink{class_meta_controller_a37edb9a2541a99701a7095c5df577b63}{generate\+Increments\+External}} (\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+void \mbox{\hyperlink{class_meta_controller_a672ae7cfd750f7bbda998ad6ad407bb8}{generate\+Increments\+Audio}} (\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+void \mbox{\hyperlink{class_meta_controller_a89346194e41db563a6cc215d8223e691}{generate\+Increments\+Drum}} (\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+void \mbox{\hyperlink{class_meta_controller_ab5edafda7b2d14c42b80d56b3c1aba09}{generate\+Increments\+Env}} (\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+void \mbox{\hyperlink{class_meta_controller_ab78ff8455308bff2fb7ebff51c33790b}{generate\+Increments\+Seq}} (\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_aaca3bcd3c1ad139f9743d95f206d53b6}{advance\+Phase}} (uint32\+\_\+t $\ast$phase\+Dist\+Table)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a83b8da3f1d5f19ed4e3bccba2500691b}{no\+Retrig\+Attack\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_ae3fe6a696bbbdd4eed7467b610ec72b3}{no\+Retrig\+Release\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_ad61c4e2a782f372752215b10d9490319}{hard\+Sync\+Attack\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a3fd09e0d250fb666d60d643ea894e1ea}{hard\+Sync\+Release\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_afd3d1fbf5121b09b014fa6b64468c78c}{env\+Attack\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a2025aa7292568159bc5e4708d305b62a}{env\+Release\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_ad96c9b0dd76428cbbf4cc7e578a69319}{env\+Retrigger\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_aa87c02c2098f16612329abe3dcb71710}{gate\+Attack\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_aee60552d4bbf1fd4087daa09419d57b0}{gate\+Release\+Reverse\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a7381643e084577e6c5dc2a49b37ffa3a}{gated\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_af8205394c094350baa9f9f7fdd2fe29c}{gate\+Release\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_aed970942a999d6877cc25908111d8d86}{gate\+Retrigger\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_aa23c5bdc67442973a0bbcec0448ce6b1}{pendulum\+Resting\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_abf6bdd57f10954b720d7ffa022b9a153}{pendulum\+Forward\+Attack\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_ae19cd919a5c011b6f8d92db018e12ab5}{pendulum\+Forward\+Release\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a4a36b6e78f12343efa97f78f62a84961}{pendulum\+Reverse\+Attack\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_ac0dfd31e6a44435ad874cf6cf9ce6cb9}{pendulum\+Reverse\+Release\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_aa2d483666f462cd7463359e01884b0ed}{sticky\+Pendulum\+Resting\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a9d1d5e1874af5aaa313de79f8eda8ab8}{sticky\+Pendulum\+At\+B\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a93afa53f78656a0796a5e4b1fd3ced39}{sticky\+Pendulum\+Forward\+Attack\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a5acfa8ab673a41895e112430b0d49806}{sticky\+Pendulum\+Forward\+Release\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_aa2b6e015a980cb21d1ab081cf860d9ca}{sticky\+Pendulum\+Reverse\+Attack\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a68d06e87f408205ffee85cab3560b54a}{sticky\+Pendulum\+Reverse\+Release\+State}} (void)
+\item 
+void \mbox{\hyperlink{class_meta_controller_aa585d038b9fdfab1eb5fff6e353b7ebe}{handle\+Loop\+Off}} (void)
+\item 
+void \mbox{\hyperlink{class_meta_controller_a52054c11063311316152e195a8982cd0}{handle\+Loop\+On}} (void)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a1483db6d13fcdfe1bd95fbf93ca3326e}{time\+Base1}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_ac5c0483ea2ebb1eb10bfea59f10bdcda}{time\+Base2}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_ac59400b4de40c7cf7e04f51162cd270b}{duty\+Cycle\+Base}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_ac38144448ad067233f55c7902dea1295}{trigger\+Signal}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_ac1119da420cd861668836ad8e0377511}{gate\+Signal}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_aeedbf9351f89858e25f85ab7652f0ac9}{freeze}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a43d2de121185a3ed58636a0b1b30035d}{gate\+On}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_meta_controller_a0bf67d9b21bc680e8d9b1da00775d82e}{loop\+Mode}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a4e7438588ed111de3739188278576b38}{atB}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a7d5b47c8cd4550e7adfa219173345ea0}{increment1}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a3f42cf7429ea0da667b46b973484fc16}{increment2}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a0f9a8717d45e65cfad651af960c80109}{increment\+Used}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a695d6b40b4a97789320e097267272840}{duty\+Cycle}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_aee346cae981fdd59a39fcb5911f4e2ef}{last\+Phase}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a5fd35122564a177ec064c87fdb5dd218}{oscillator\+On}} = 0
+\item 
+int16\+\_\+t $\ast$ \mbox{\hyperlink{class_meta_controller_a0baa5897d4b06f0e922d96cda137f6ab}{fm}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a46db61d62388f7d72047cc188d67bddc}{phase}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_ad460161d10335de5227b5b15e523adb6}{phase\+Before\+Increment}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_ada896e87923a5660cba1889692c67f3d}{ghost\+Phase}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a00854d18e1394459842769c712ac1c81}{phase\+Event}} = 0
+\item 
+void(Meta\+Controller\+::$\ast$ \mbox{\hyperlink{class_meta_controller_a2dca0b0a40e81430fd22cbce198c2b5b}{parse\+Controls}} )(\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$controls, \mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+void(Meta\+Controller\+::$\ast$ \mbox{\hyperlink{class_meta_controller_a9cece3599531090186f2e21e26638579}{generate\+Increments}} )(\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+int32\+\_\+t(Meta\+Controller\+::$\ast$ \mbox{\hyperlink{class_meta_controller_ab4825810085dd530123a7dcf99594780}{increment\+Arbiter}} )(void)
+\item 
+void(Meta\+Controller\+::$\ast$ \mbox{\hyperlink{class_meta_controller_ad7a9bfb22b8149d17e32fa5ffd0eb025}{loop\+Handler}} )(void)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_acf1f6b23d24cae56383d278aaaf2b6d6}{previous\+Ghost\+Phase}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_afbdb66d7673f39db7b252cdc64b0175f}{previous\+Phase}} = 0
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_meta_controller_aaca3bcd3c1ad139f9743d95f206d53b6}\label{class_meta_controller_aaca3bcd3c1ad139f9743d95f206d53b6}} 
+\index{Meta\+Controller@{Meta\+Controller}!advance\+Phase@{advance\+Phase}}
+\index{advance\+Phase@{advance\+Phase}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{advance\+Phase()}{advancePhase()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::advance\+Phase (\begin{DoxyParamCaption}\item[{uint32\+\_\+t $\ast$}]{phase\+Dist\+Table }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_afd3d1fbf5121b09b014fa6b64468c78c}\label{class_meta_controller_afd3d1fbf5121b09b014fa6b64468c78c}} 
+\index{Meta\+Controller@{Meta\+Controller}!env\+Attack\+State@{env\+Attack\+State}}
+\index{env\+Attack\+State@{env\+Attack\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{env\+Attack\+State()}{envAttackState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::env\+Attack\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a2025aa7292568159bc5e4708d305b62a}\label{class_meta_controller_a2025aa7292568159bc5e4708d305b62a}} 
+\index{Meta\+Controller@{Meta\+Controller}!env\+Release\+State@{env\+Release\+State}}
+\index{env\+Release\+State@{env\+Release\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{env\+Release\+State()}{envReleaseState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::env\+Release\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_ad96c9b0dd76428cbbf4cc7e578a69319}\label{class_meta_controller_ad96c9b0dd76428cbbf4cc7e578a69319}} 
+\index{Meta\+Controller@{Meta\+Controller}!env\+Retrigger\+State@{env\+Retrigger\+State}}
+\index{env\+Retrigger\+State@{env\+Retrigger\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{env\+Retrigger\+State()}{envRetriggerState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::env\+Retrigger\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_aa87c02c2098f16612329abe3dcb71710}\label{class_meta_controller_aa87c02c2098f16612329abe3dcb71710}} 
+\index{Meta\+Controller@{Meta\+Controller}!gate\+Attack\+State@{gate\+Attack\+State}}
+\index{gate\+Attack\+State@{gate\+Attack\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{gate\+Attack\+State()}{gateAttackState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::gate\+Attack\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a7381643e084577e6c5dc2a49b37ffa3a}\label{class_meta_controller_a7381643e084577e6c5dc2a49b37ffa3a}} 
+\index{Meta\+Controller@{Meta\+Controller}!gated\+State@{gated\+State}}
+\index{gated\+State@{gated\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{gated\+State()}{gatedState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::gated\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_aee60552d4bbf1fd4087daa09419d57b0}\label{class_meta_controller_aee60552d4bbf1fd4087daa09419d57b0}} 
+\index{Meta\+Controller@{Meta\+Controller}!gate\+Release\+Reverse\+State@{gate\+Release\+Reverse\+State}}
+\index{gate\+Release\+Reverse\+State@{gate\+Release\+Reverse\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{gate\+Release\+Reverse\+State()}{gateReleaseReverseState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::gate\+Release\+Reverse\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_af8205394c094350baa9f9f7fdd2fe29c}\label{class_meta_controller_af8205394c094350baa9f9f7fdd2fe29c}} 
+\index{Meta\+Controller@{Meta\+Controller}!gate\+Release\+State@{gate\+Release\+State}}
+\index{gate\+Release\+State@{gate\+Release\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{gate\+Release\+State()}{gateReleaseState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::gate\+Release\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_aed970942a999d6877cc25908111d8d86}\label{class_meta_controller_aed970942a999d6877cc25908111d8d86}} 
+\index{Meta\+Controller@{Meta\+Controller}!gate\+Retrigger\+State@{gate\+Retrigger\+State}}
+\index{gate\+Retrigger\+State@{gate\+Retrigger\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{gate\+Retrigger\+State()}{gateRetriggerState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::gate\+Retrigger\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a672ae7cfd750f7bbda998ad6ad407bb8}\label{class_meta_controller_a672ae7cfd750f7bbda998ad6ad407bb8}} 
+\index{Meta\+Controller@{Meta\+Controller}!generate\+Increments\+Audio@{generate\+Increments\+Audio}}
+\index{generate\+Increments\+Audio@{generate\+Increments\+Audio}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{generate\+Increments\+Audio()}{generateIncrementsAudio()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::generate\+Increments\+Audio (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a89346194e41db563a6cc215d8223e691}\label{class_meta_controller_a89346194e41db563a6cc215d8223e691}} 
+\index{Meta\+Controller@{Meta\+Controller}!generate\+Increments\+Drum@{generate\+Increments\+Drum}}
+\index{generate\+Increments\+Drum@{generate\+Increments\+Drum}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{generate\+Increments\+Drum()}{generateIncrementsDrum()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::generate\+Increments\+Drum (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_ab5edafda7b2d14c42b80d56b3c1aba09}\label{class_meta_controller_ab5edafda7b2d14c42b80d56b3c1aba09}} 
+\index{Meta\+Controller@{Meta\+Controller}!generate\+Increments\+Env@{generate\+Increments\+Env}}
+\index{generate\+Increments\+Env@{generate\+Increments\+Env}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{generate\+Increments\+Env()}{generateIncrementsEnv()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::generate\+Increments\+Env (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a37edb9a2541a99701a7095c5df577b63}\label{class_meta_controller_a37edb9a2541a99701a7095c5df577b63}} 
+\index{Meta\+Controller@{Meta\+Controller}!generate\+Increments\+External@{generate\+Increments\+External}}
+\index{generate\+Increments\+External@{generate\+Increments\+External}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{generate\+Increments\+External()}{generateIncrementsExternal()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::generate\+Increments\+External (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_ab78ff8455308bff2fb7ebff51c33790b}\label{class_meta_controller_ab78ff8455308bff2fb7ebff51c33790b}} 
+\index{Meta\+Controller@{Meta\+Controller}!generate\+Increments\+Seq@{generate\+Increments\+Seq}}
+\index{generate\+Increments\+Seq@{generate\+Increments\+Seq}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{generate\+Increments\+Seq()}{generateIncrementsSeq()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::generate\+Increments\+Seq (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_aa585d038b9fdfab1eb5fff6e353b7ebe}\label{class_meta_controller_aa585d038b9fdfab1eb5fff6e353b7ebe}} 
+\index{Meta\+Controller@{Meta\+Controller}!handle\+Loop\+Off@{handle\+Loop\+Off}}
+\index{handle\+Loop\+Off@{handle\+Loop\+Off}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{handle\+Loop\+Off()}{handleLoopOff()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::handle\+Loop\+Off (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a52054c11063311316152e195a8982cd0}\label{class_meta_controller_a52054c11063311316152e195a8982cd0}} 
+\index{Meta\+Controller@{Meta\+Controller}!handle\+Loop\+On@{handle\+Loop\+On}}
+\index{handle\+Loop\+On@{handle\+Loop\+On}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{handle\+Loop\+On()}{handleLoopOn()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::handle\+Loop\+On (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_ad61c4e2a782f372752215b10d9490319}\label{class_meta_controller_ad61c4e2a782f372752215b10d9490319}} 
+\index{Meta\+Controller@{Meta\+Controller}!hard\+Sync\+Attack\+State@{hard\+Sync\+Attack\+State}}
+\index{hard\+Sync\+Attack\+State@{hard\+Sync\+Attack\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{hard\+Sync\+Attack\+State()}{hardSyncAttackState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::hard\+Sync\+Attack\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a3fd09e0d250fb666d60d643ea894e1ea}\label{class_meta_controller_a3fd09e0d250fb666d60d643ea894e1ea}} 
+\index{Meta\+Controller@{Meta\+Controller}!hard\+Sync\+Release\+State@{hard\+Sync\+Release\+State}}
+\index{hard\+Sync\+Release\+State@{hard\+Sync\+Release\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{hard\+Sync\+Release\+State()}{hardSyncReleaseState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::hard\+Sync\+Release\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a83b8da3f1d5f19ed4e3bccba2500691b}\label{class_meta_controller_a83b8da3f1d5f19ed4e3bccba2500691b}} 
+\index{Meta\+Controller@{Meta\+Controller}!no\+Retrig\+Attack\+State@{no\+Retrig\+Attack\+State}}
+\index{no\+Retrig\+Attack\+State@{no\+Retrig\+Attack\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{no\+Retrig\+Attack\+State()}{noRetrigAttackState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::no\+Retrig\+Attack\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_ae3fe6a696bbbdd4eed7467b610ec72b3}\label{class_meta_controller_ae3fe6a696bbbdd4eed7467b610ec72b3}} 
+\index{Meta\+Controller@{Meta\+Controller}!no\+Retrig\+Release\+State@{no\+Retrig\+Release\+State}}
+\index{no\+Retrig\+Release\+State@{no\+Retrig\+Release\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{no\+Retrig\+Release\+State()}{noRetrigReleaseState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::no\+Retrig\+Release\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_ae12fe6794e457ed924fe53142eed83c7}\label{class_meta_controller_ae12fe6794e457ed924fe53142eed83c7}} 
+\index{Meta\+Controller@{Meta\+Controller}!parse\+Controls\+Audio@{parse\+Controls\+Audio}}
+\index{parse\+Controls\+Audio@{parse\+Controls\+Audio}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{parse\+Controls\+Audio()}{parseControlsAudio()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::parse\+Controls\+Audio (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$}]{controls,  }\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a557b81488e8c917eaacf8ae65fd85724}\label{class_meta_controller_a557b81488e8c917eaacf8ae65fd85724}} 
+\index{Meta\+Controller@{Meta\+Controller}!parse\+Controls\+Drum@{parse\+Controls\+Drum}}
+\index{parse\+Controls\+Drum@{parse\+Controls\+Drum}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{parse\+Controls\+Drum()}{parseControlsDrum()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::parse\+Controls\+Drum (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$}]{controls,  }\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a5f3e148b9730b47b9d3105d39dd88938}\label{class_meta_controller_a5f3e148b9730b47b9d3105d39dd88938}} 
+\index{Meta\+Controller@{Meta\+Controller}!parse\+Controls\+Env@{parse\+Controls\+Env}}
+\index{parse\+Controls\+Env@{parse\+Controls\+Env}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{parse\+Controls\+Env()}{parseControlsEnv()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::parse\+Controls\+Env (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$}]{controls,  }\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a04a33cca84424c10d37cddecb663f619}\label{class_meta_controller_a04a33cca84424c10d37cddecb663f619}} 
+\index{Meta\+Controller@{Meta\+Controller}!parse\+Controls\+External@{parse\+Controls\+External}}
+\index{parse\+Controls\+External@{parse\+Controls\+External}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{parse\+Controls\+External()}{parseControlsExternal()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::parse\+Controls\+External (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$}]{controls,  }\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_ac337c31f2c24c6a51684a44c8947e178}\label{class_meta_controller_ac337c31f2c24c6a51684a44c8947e178}} 
+\index{Meta\+Controller@{Meta\+Controller}!parse\+Controls\+Seq@{parse\+Controls\+Seq}}
+\index{parse\+Controls\+Seq@{parse\+Controls\+Seq}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{parse\+Controls\+Seq()}{parseControlsSeq()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::parse\+Controls\+Seq (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$}]{controls,  }\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_abf6bdd57f10954b720d7ffa022b9a153}\label{class_meta_controller_abf6bdd57f10954b720d7ffa022b9a153}} 
+\index{Meta\+Controller@{Meta\+Controller}!pendulum\+Forward\+Attack\+State@{pendulum\+Forward\+Attack\+State}}
+\index{pendulum\+Forward\+Attack\+State@{pendulum\+Forward\+Attack\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{pendulum\+Forward\+Attack\+State()}{pendulumForwardAttackState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::pendulum\+Forward\+Attack\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_ae19cd919a5c011b6f8d92db018e12ab5}\label{class_meta_controller_ae19cd919a5c011b6f8d92db018e12ab5}} 
+\index{Meta\+Controller@{Meta\+Controller}!pendulum\+Forward\+Release\+State@{pendulum\+Forward\+Release\+State}}
+\index{pendulum\+Forward\+Release\+State@{pendulum\+Forward\+Release\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{pendulum\+Forward\+Release\+State()}{pendulumForwardReleaseState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::pendulum\+Forward\+Release\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_aa23c5bdc67442973a0bbcec0448ce6b1}\label{class_meta_controller_aa23c5bdc67442973a0bbcec0448ce6b1}} 
+\index{Meta\+Controller@{Meta\+Controller}!pendulum\+Resting\+State@{pendulum\+Resting\+State}}
+\index{pendulum\+Resting\+State@{pendulum\+Resting\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{pendulum\+Resting\+State()}{pendulumRestingState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::pendulum\+Resting\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a4a36b6e78f12343efa97f78f62a84961}\label{class_meta_controller_a4a36b6e78f12343efa97f78f62a84961}} 
+\index{Meta\+Controller@{Meta\+Controller}!pendulum\+Reverse\+Attack\+State@{pendulum\+Reverse\+Attack\+State}}
+\index{pendulum\+Reverse\+Attack\+State@{pendulum\+Reverse\+Attack\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{pendulum\+Reverse\+Attack\+State()}{pendulumReverseAttackState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::pendulum\+Reverse\+Attack\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_ac0dfd31e6a44435ad874cf6cf9ce6cb9}\label{class_meta_controller_ac0dfd31e6a44435ad874cf6cf9ce6cb9}} 
+\index{Meta\+Controller@{Meta\+Controller}!pendulum\+Reverse\+Release\+State@{pendulum\+Reverse\+Release\+State}}
+\index{pendulum\+Reverse\+Release\+State@{pendulum\+Reverse\+Release\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{pendulum\+Reverse\+Release\+State()}{pendulumReverseReleaseState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::pendulum\+Reverse\+Release\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a9d1d5e1874af5aaa313de79f8eda8ab8}\label{class_meta_controller_a9d1d5e1874af5aaa313de79f8eda8ab8}} 
+\index{Meta\+Controller@{Meta\+Controller}!sticky\+Pendulum\+At\+B\+State@{sticky\+Pendulum\+At\+B\+State}}
+\index{sticky\+Pendulum\+At\+B\+State@{sticky\+Pendulum\+At\+B\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{sticky\+Pendulum\+At\+B\+State()}{stickyPendulumAtBState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::sticky\+Pendulum\+At\+B\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a93afa53f78656a0796a5e4b1fd3ced39}\label{class_meta_controller_a93afa53f78656a0796a5e4b1fd3ced39}} 
+\index{Meta\+Controller@{Meta\+Controller}!sticky\+Pendulum\+Forward\+Attack\+State@{sticky\+Pendulum\+Forward\+Attack\+State}}
+\index{sticky\+Pendulum\+Forward\+Attack\+State@{sticky\+Pendulum\+Forward\+Attack\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{sticky\+Pendulum\+Forward\+Attack\+State()}{stickyPendulumForwardAttackState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::sticky\+Pendulum\+Forward\+Attack\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a5acfa8ab673a41895e112430b0d49806}\label{class_meta_controller_a5acfa8ab673a41895e112430b0d49806}} 
+\index{Meta\+Controller@{Meta\+Controller}!sticky\+Pendulum\+Forward\+Release\+State@{sticky\+Pendulum\+Forward\+Release\+State}}
+\index{sticky\+Pendulum\+Forward\+Release\+State@{sticky\+Pendulum\+Forward\+Release\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{sticky\+Pendulum\+Forward\+Release\+State()}{stickyPendulumForwardReleaseState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::sticky\+Pendulum\+Forward\+Release\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_aa2d483666f462cd7463359e01884b0ed}\label{class_meta_controller_aa2d483666f462cd7463359e01884b0ed}} 
+\index{Meta\+Controller@{Meta\+Controller}!sticky\+Pendulum\+Resting\+State@{sticky\+Pendulum\+Resting\+State}}
+\index{sticky\+Pendulum\+Resting\+State@{sticky\+Pendulum\+Resting\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{sticky\+Pendulum\+Resting\+State()}{stickyPendulumRestingState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::sticky\+Pendulum\+Resting\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_aa2b6e015a980cb21d1ab081cf860d9ca}\label{class_meta_controller_aa2b6e015a980cb21d1ab081cf860d9ca}} 
+\index{Meta\+Controller@{Meta\+Controller}!sticky\+Pendulum\+Reverse\+Attack\+State@{sticky\+Pendulum\+Reverse\+Attack\+State}}
+\index{sticky\+Pendulum\+Reverse\+Attack\+State@{sticky\+Pendulum\+Reverse\+Attack\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{sticky\+Pendulum\+Reverse\+Attack\+State()}{stickyPendulumReverseAttackState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::sticky\+Pendulum\+Reverse\+Attack\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a68d06e87f408205ffee85cab3560b54a}\label{class_meta_controller_a68d06e87f408205ffee85cab3560b54a}} 
+\index{Meta\+Controller@{Meta\+Controller}!sticky\+Pendulum\+Reverse\+Release\+State@{sticky\+Pendulum\+Reverse\+Release\+State}}
+\index{sticky\+Pendulum\+Reverse\+Release\+State@{sticky\+Pendulum\+Reverse\+Release\+State}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{sticky\+Pendulum\+Reverse\+Release\+State()}{stickyPendulumReverseReleaseState()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::sticky\+Pendulum\+Reverse\+Release\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{class_meta_controller_a4e7438588ed111de3739188278576b38}\label{class_meta_controller_a4e7438588ed111de3739188278576b38}} 
+\index{Meta\+Controller@{Meta\+Controller}!atB@{atB}}
+\index{atB@{atB}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{atB}{atB}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::atB = 0}
+
+\mbox{\Hypertarget{class_meta_controller_a695d6b40b4a97789320e097267272840}\label{class_meta_controller_a695d6b40b4a97789320e097267272840}} 
+\index{Meta\+Controller@{Meta\+Controller}!duty\+Cycle@{duty\+Cycle}}
+\index{duty\+Cycle@{duty\+Cycle}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{duty\+Cycle}{dutyCycle}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::duty\+Cycle = 0}
+
+\mbox{\Hypertarget{class_meta_controller_ac59400b4de40c7cf7e04f51162cd270b}\label{class_meta_controller_ac59400b4de40c7cf7e04f51162cd270b}} 
+\index{Meta\+Controller@{Meta\+Controller}!duty\+Cycle\+Base@{duty\+Cycle\+Base}}
+\index{duty\+Cycle\+Base@{duty\+Cycle\+Base}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{duty\+Cycle\+Base}{dutyCycleBase}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::duty\+Cycle\+Base = 0}
+
+\mbox{\Hypertarget{class_meta_controller_a0baa5897d4b06f0e922d96cda137f6ab}\label{class_meta_controller_a0baa5897d4b06f0e922d96cda137f6ab}} 
+\index{Meta\+Controller@{Meta\+Controller}!fm@{fm}}
+\index{fm@{fm}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{fm}{fm}}
+{\footnotesize\ttfamily int16\+\_\+t$\ast$ Meta\+Controller\+::fm}
+
+\mbox{\Hypertarget{class_meta_controller_aeedbf9351f89858e25f85ab7652f0ac9}\label{class_meta_controller_aeedbf9351f89858e25f85ab7652f0ac9}} 
+\index{Meta\+Controller@{Meta\+Controller}!freeze@{freeze}}
+\index{freeze@{freeze}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{freeze}{freeze}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::freeze = 0}
+
+\mbox{\Hypertarget{class_meta_controller_a43d2de121185a3ed58636a0b1b30035d}\label{class_meta_controller_a43d2de121185a3ed58636a0b1b30035d}} 
+\index{Meta\+Controller@{Meta\+Controller}!gate\+On@{gate\+On}}
+\index{gate\+On@{gate\+On}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{gate\+On}{gateOn}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::gate\+On = 0}
+
+\mbox{\Hypertarget{class_meta_controller_ac1119da420cd861668836ad8e0377511}\label{class_meta_controller_ac1119da420cd861668836ad8e0377511}} 
+\index{Meta\+Controller@{Meta\+Controller}!gate\+Signal@{gate\+Signal}}
+\index{gate\+Signal@{gate\+Signal}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{gate\+Signal}{gateSignal}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::gate\+Signal = 0}
+
+\mbox{\Hypertarget{class_meta_controller_a9cece3599531090186f2e21e26638579}\label{class_meta_controller_a9cece3599531090186f2e21e26638579}} 
+\index{Meta\+Controller@{Meta\+Controller}!generate\+Increments@{generate\+Increments}}
+\index{generate\+Increments@{generate\+Increments}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{generate\+Increments}{generateIncrements}}
+{\footnotesize\ttfamily void(Meta\+Controller\+::$\ast$ Meta\+Controller\+::generate\+Increments) (\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)}
+
+\mbox{\Hypertarget{class_meta_controller_ada896e87923a5660cba1889692c67f3d}\label{class_meta_controller_ada896e87923a5660cba1889692c67f3d}} 
+\index{Meta\+Controller@{Meta\+Controller}!ghost\+Phase@{ghost\+Phase}}
+\index{ghost\+Phase@{ghost\+Phase}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{ghost\+Phase}{ghostPhase}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::ghost\+Phase = 0}
+
+\mbox{\Hypertarget{class_meta_controller_a7d5b47c8cd4550e7adfa219173345ea0}\label{class_meta_controller_a7d5b47c8cd4550e7adfa219173345ea0}} 
+\index{Meta\+Controller@{Meta\+Controller}!increment1@{increment1}}
+\index{increment1@{increment1}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{increment1}{increment1}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::increment1 = 0}
+
+\mbox{\Hypertarget{class_meta_controller_a3f42cf7429ea0da667b46b973484fc16}\label{class_meta_controller_a3f42cf7429ea0da667b46b973484fc16}} 
+\index{Meta\+Controller@{Meta\+Controller}!increment2@{increment2}}
+\index{increment2@{increment2}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{increment2}{increment2}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::increment2 = 0}
+
+\mbox{\Hypertarget{class_meta_controller_ab4825810085dd530123a7dcf99594780}\label{class_meta_controller_ab4825810085dd530123a7dcf99594780}} 
+\index{Meta\+Controller@{Meta\+Controller}!increment\+Arbiter@{increment\+Arbiter}}
+\index{increment\+Arbiter@{increment\+Arbiter}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{increment\+Arbiter}{incrementArbiter}}
+{\footnotesize\ttfamily int32\+\_\+t(Meta\+Controller\+::$\ast$ Meta\+Controller\+::increment\+Arbiter) (void)}
+
+\mbox{\Hypertarget{class_meta_controller_a0f9a8717d45e65cfad651af960c80109}\label{class_meta_controller_a0f9a8717d45e65cfad651af960c80109}} 
+\index{Meta\+Controller@{Meta\+Controller}!increment\+Used@{increment\+Used}}
+\index{increment\+Used@{increment\+Used}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{increment\+Used}{incrementUsed}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::increment\+Used = 0}
+
+\mbox{\Hypertarget{class_meta_controller_aee346cae981fdd59a39fcb5911f4e2ef}\label{class_meta_controller_aee346cae981fdd59a39fcb5911f4e2ef}} 
+\index{Meta\+Controller@{Meta\+Controller}!last\+Phase@{last\+Phase}}
+\index{last\+Phase@{last\+Phase}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{last\+Phase}{lastPhase}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::last\+Phase = 0}
+
+\mbox{\Hypertarget{class_meta_controller_ad7a9bfb22b8149d17e32fa5ffd0eb025}\label{class_meta_controller_ad7a9bfb22b8149d17e32fa5ffd0eb025}} 
+\index{Meta\+Controller@{Meta\+Controller}!loop\+Handler@{loop\+Handler}}
+\index{loop\+Handler@{loop\+Handler}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{loop\+Handler}{loopHandler}}
+{\footnotesize\ttfamily void(Meta\+Controller\+::$\ast$ Meta\+Controller\+::loop\+Handler) (void)}
+
+\mbox{\Hypertarget{class_meta_controller_a0bf67d9b21bc680e8d9b1da00775d82e}\label{class_meta_controller_a0bf67d9b21bc680e8d9b1da00775d82e}} 
+\index{Meta\+Controller@{Meta\+Controller}!loop\+Mode@{loop\+Mode}}
+\index{loop\+Mode@{loop\+Mode}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{loop\+Mode}{loopMode}}
+{\footnotesize\ttfamily uint32\+\_\+t Meta\+Controller\+::loop\+Mode = 0}
+
+\mbox{\Hypertarget{class_meta_controller_a5fd35122564a177ec064c87fdb5dd218}\label{class_meta_controller_a5fd35122564a177ec064c87fdb5dd218}} 
+\index{Meta\+Controller@{Meta\+Controller}!oscillator\+On@{oscillator\+On}}
+\index{oscillator\+On@{oscillator\+On}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{oscillator\+On}{oscillatorOn}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::oscillator\+On = 0}
+
+\mbox{\Hypertarget{class_meta_controller_a2dca0b0a40e81430fd22cbce198c2b5b}\label{class_meta_controller_a2dca0b0a40e81430fd22cbce198c2b5b}} 
+\index{Meta\+Controller@{Meta\+Controller}!parse\+Controls@{parse\+Controls}}
+\index{parse\+Controls@{parse\+Controls}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{parse\+Controls}{parseControls}}
+{\footnotesize\ttfamily void(Meta\+Controller\+::$\ast$ Meta\+Controller\+::parse\+Controls) (\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$controls, \mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)}
+
+\mbox{\Hypertarget{class_meta_controller_a46db61d62388f7d72047cc188d67bddc}\label{class_meta_controller_a46db61d62388f7d72047cc188d67bddc}} 
+\index{Meta\+Controller@{Meta\+Controller}!phase@{phase}}
+\index{phase@{phase}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{phase}{phase}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::phase = 0}
+
+\mbox{\Hypertarget{class_meta_controller_ad460161d10335de5227b5b15e523adb6}\label{class_meta_controller_ad460161d10335de5227b5b15e523adb6}} 
+\index{Meta\+Controller@{Meta\+Controller}!phase\+Before\+Increment@{phase\+Before\+Increment}}
+\index{phase\+Before\+Increment@{phase\+Before\+Increment}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{phase\+Before\+Increment}{phaseBeforeIncrement}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::phase\+Before\+Increment}
+
+\mbox{\Hypertarget{class_meta_controller_a00854d18e1394459842769c712ac1c81}\label{class_meta_controller_a00854d18e1394459842769c712ac1c81}} 
+\index{Meta\+Controller@{Meta\+Controller}!phase\+Event@{phase\+Event}}
+\index{phase\+Event@{phase\+Event}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{phase\+Event}{phaseEvent}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::phase\+Event = 0}
+
+\mbox{\Hypertarget{class_meta_controller_acf1f6b23d24cae56383d278aaaf2b6d6}\label{class_meta_controller_acf1f6b23d24cae56383d278aaaf2b6d6}} 
+\index{Meta\+Controller@{Meta\+Controller}!previous\+Ghost\+Phase@{previous\+Ghost\+Phase}}
+\index{previous\+Ghost\+Phase@{previous\+Ghost\+Phase}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{previous\+Ghost\+Phase}{previousGhostPhase}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::previous\+Ghost\+Phase = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_meta_controller_afbdb66d7673f39db7b252cdc64b0175f}\label{class_meta_controller_afbdb66d7673f39db7b252cdc64b0175f}} 
+\index{Meta\+Controller@{Meta\+Controller}!previous\+Phase@{previous\+Phase}}
+\index{previous\+Phase@{previous\+Phase}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{previous\+Phase}{previousPhase}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::previous\+Phase = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_meta_controller_a1483db6d13fcdfe1bd95fbf93ca3326e}\label{class_meta_controller_a1483db6d13fcdfe1bd95fbf93ca3326e}} 
+\index{Meta\+Controller@{Meta\+Controller}!time\+Base1@{time\+Base1}}
+\index{time\+Base1@{time\+Base1}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{time\+Base1}{timeBase1}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::time\+Base1 = 0}
+
+\mbox{\Hypertarget{class_meta_controller_ac5c0483ea2ebb1eb10bfea59f10bdcda}\label{class_meta_controller_ac5c0483ea2ebb1eb10bfea59f10bdcda}} 
+\index{Meta\+Controller@{Meta\+Controller}!time\+Base2@{time\+Base2}}
+\index{time\+Base2@{time\+Base2}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{time\+Base2}{timeBase2}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::time\+Base2 = 0}
+
+\mbox{\Hypertarget{class_meta_controller_ac38144448ad067233f55c7902dea1295}\label{class_meta_controller_ac38144448ad067233f55c7902dea1295}} 
+\index{Meta\+Controller@{Meta\+Controller}!trigger\+Signal@{trigger\+Signal}}
+\index{trigger\+Signal@{trigger\+Signal}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{trigger\+Signal}{triggerSignal}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::trigger\+Signal = 0}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+synthesis/inc/\mbox{\hyperlink{oscillators_8hpp}{oscillators.\+hpp}}\item 
+synthesis/oscillators/\mbox{\hyperlink{meta__controller_8cpp}{meta\+\_\+controller.\+cpp}}\end{DoxyCompactItemize}

@@ -145,6 +145,10 @@ public:
 	virtual void aux3EnterMenuCallback(void) = 0;
 	virtual void aux4EnterMenuCallback(void) = 0;
 
+	virtual void uiSetLEDs(int) = 0;
+
+	virtual void recallModuleState(void) = 0;
+
 	// initial setup of UI
 	virtual void initialize(void) = 0;
 
@@ -170,7 +174,7 @@ public:
 
 	int32_t eepromStatus;
 
-	uint16_t VirtAddVarTab[8] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+	uint16_t VirtAddVarTab[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
 	void initializeMemory(void) {
 		eepromStatus = EE_Init();

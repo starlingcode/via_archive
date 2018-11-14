@@ -1,0 +1,155 @@
+\hypertarget{class_simple_envelope}{}\section{Simple\+Envelope Class Reference}
+\label{class_simple_envelope}\index{Simple\+Envelope@{Simple\+Envelope}}
+
+
+{\ttfamily \#include $<$oscillators.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_simple_envelope_a0fdf4e82a5eef737eab97e47ba92eef5}{parse\+Controls}} (\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$controls, \mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+void \mbox{\hyperlink{class_simple_envelope_a4d0202e556234d3c967644fd1bea6fff}{advance}} (\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs, uint32\+\_\+t $\ast$wavetable)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_simple_envelope_ab9c33fdb73ee3dce2983e33f6ac44af6}{attack\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_simple_envelope_a80ddc519be4aaa0f72a46c5b0a3b2fab}{release\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_simple_envelope_a2348516abb5eb0cd304ea70543b2e853}{retrigger\+State}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_simple_envelope_a6d66b7278e15284e8dc996a73d7b042f}{resting\+State}} (void)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_simple_envelope_acc118c5a74cb3373b48853916de74ce1}{attack}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_simple_envelope_a0776a9109e91358cc570b639e9437081}{release}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_simple_envelope_a67a284db902cdd8ea5a98534ee98919d}{increment}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_simple_envelope_ad17757bb65fb92738039ab3b2c491598}{morph}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_simple_envelope_a20f0e52c5fb52d053229ae138486b11a}{phase}} = 0
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_simple_envelope_a3d9297ae4a3058743fb0311d698015e4}{phase\+Event}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_simple_envelope_a1de4ca7380abf92d8e7d1a2643e0e20d}{trigger}}
+\item 
+uint32\+\_\+t $\ast$ \mbox{\hyperlink{class_simple_envelope_ac15b5b29f933474b1849994cf3bd11eb}{output}}
+\item 
+int32\+\_\+t(Simple\+Envelope\+::$\ast$ \mbox{\hyperlink{class_simple_envelope_a9142a7c1dad70d38081b5bf5f36a0bf2}{increment\+Arbiter}} )(void)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_simple_envelope_aa31e875f02278ee2d62fc38773bb1399}{previous\+Phase}}
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_simple_envelope_a4d0202e556234d3c967644fd1bea6fff}\label{class_simple_envelope_a4d0202e556234d3c967644fd1bea6fff}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!advance@{advance}}
+\index{advance@{advance}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{advance()}{advance()}}
+{\footnotesize\ttfamily void Simple\+Envelope\+::advance (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs,  }\item[{uint32\+\_\+t $\ast$}]{wavetable }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_simple_envelope_ab9c33fdb73ee3dce2983e33f6ac44af6}\label{class_simple_envelope_ab9c33fdb73ee3dce2983e33f6ac44af6}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!attack\+State@{attack\+State}}
+\index{attack\+State@{attack\+State}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{attack\+State()}{attackState()}}
+{\footnotesize\ttfamily int32\+\_\+t Simple\+Envelope\+::attack\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_simple_envelope_a0fdf4e82a5eef737eab97e47ba92eef5}\label{class_simple_envelope_a0fdf4e82a5eef737eab97e47ba92eef5}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!parse\+Controls@{parse\+Controls}}
+\index{parse\+Controls@{parse\+Controls}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{parse\+Controls()}{parseControls()}}
+{\footnotesize\ttfamily void Simple\+Envelope\+::parse\+Controls (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$}]{controls,  }\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_simple_envelope_a80ddc519be4aaa0f72a46c5b0a3b2fab}\label{class_simple_envelope_a80ddc519be4aaa0f72a46c5b0a3b2fab}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!release\+State@{release\+State}}
+\index{release\+State@{release\+State}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{release\+State()}{releaseState()}}
+{\footnotesize\ttfamily int32\+\_\+t Simple\+Envelope\+::release\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_simple_envelope_a6d66b7278e15284e8dc996a73d7b042f}\label{class_simple_envelope_a6d66b7278e15284e8dc996a73d7b042f}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!resting\+State@{resting\+State}}
+\index{resting\+State@{resting\+State}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{resting\+State()}{restingState()}}
+{\footnotesize\ttfamily int32\+\_\+t Simple\+Envelope\+::resting\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_simple_envelope_a2348516abb5eb0cd304ea70543b2e853}\label{class_simple_envelope_a2348516abb5eb0cd304ea70543b2e853}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!retrigger\+State@{retrigger\+State}}
+\index{retrigger\+State@{retrigger\+State}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{retrigger\+State()}{retriggerState()}}
+{\footnotesize\ttfamily int32\+\_\+t Simple\+Envelope\+::retrigger\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{class_simple_envelope_acc118c5a74cb3373b48853916de74ce1}\label{class_simple_envelope_acc118c5a74cb3373b48853916de74ce1}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!attack@{attack}}
+\index{attack@{attack}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{attack}{attack}}
+{\footnotesize\ttfamily uint32\+\_\+t Simple\+Envelope\+::attack = 0}
+
+\mbox{\Hypertarget{class_simple_envelope_a67a284db902cdd8ea5a98534ee98919d}\label{class_simple_envelope_a67a284db902cdd8ea5a98534ee98919d}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!increment@{increment}}
+\index{increment@{increment}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{increment}{increment}}
+{\footnotesize\ttfamily uint32\+\_\+t Simple\+Envelope\+::increment = 0}
+
+\mbox{\Hypertarget{class_simple_envelope_a9142a7c1dad70d38081b5bf5f36a0bf2}\label{class_simple_envelope_a9142a7c1dad70d38081b5bf5f36a0bf2}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!increment\+Arbiter@{increment\+Arbiter}}
+\index{increment\+Arbiter@{increment\+Arbiter}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{increment\+Arbiter}{incrementArbiter}}
+{\footnotesize\ttfamily int32\+\_\+t(Simple\+Envelope\+::$\ast$ Simple\+Envelope\+::increment\+Arbiter) (void)}
+
+\mbox{\Hypertarget{class_simple_envelope_ad17757bb65fb92738039ab3b2c491598}\label{class_simple_envelope_ad17757bb65fb92738039ab3b2c491598}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!morph@{morph}}
+\index{morph@{morph}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{morph}{morph}}
+{\footnotesize\ttfamily uint32\+\_\+t Simple\+Envelope\+::morph = 0}
+
+\mbox{\Hypertarget{class_simple_envelope_ac15b5b29f933474b1849994cf3bd11eb}\label{class_simple_envelope_ac15b5b29f933474b1849994cf3bd11eb}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!output@{output}}
+\index{output@{output}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{output}{output}}
+{\footnotesize\ttfamily uint32\+\_\+t$\ast$ Simple\+Envelope\+::output}
+
+\mbox{\Hypertarget{class_simple_envelope_a20f0e52c5fb52d053229ae138486b11a}\label{class_simple_envelope_a20f0e52c5fb52d053229ae138486b11a}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!phase@{phase}}
+\index{phase@{phase}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{phase}{phase}}
+{\footnotesize\ttfamily uint32\+\_\+t Simple\+Envelope\+::phase = 0}
+
+\mbox{\Hypertarget{class_simple_envelope_a3d9297ae4a3058743fb0311d698015e4}\label{class_simple_envelope_a3d9297ae4a3058743fb0311d698015e4}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!phase\+Event@{phase\+Event}}
+\index{phase\+Event@{phase\+Event}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{phase\+Event}{phaseEvent}}
+{\footnotesize\ttfamily int32\+\_\+t Simple\+Envelope\+::phase\+Event = 0}
+
+\mbox{\Hypertarget{class_simple_envelope_aa31e875f02278ee2d62fc38773bb1399}\label{class_simple_envelope_aa31e875f02278ee2d62fc38773bb1399}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!previous\+Phase@{previous\+Phase}}
+\index{previous\+Phase@{previous\+Phase}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{previous\+Phase}{previousPhase}}
+{\footnotesize\ttfamily int32\+\_\+t Simple\+Envelope\+::previous\+Phase\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_simple_envelope_a0776a9109e91358cc570b639e9437081}\label{class_simple_envelope_a0776a9109e91358cc570b639e9437081}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!release@{release}}
+\index{release@{release}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{release}{release}}
+{\footnotesize\ttfamily uint32\+\_\+t Simple\+Envelope\+::release = 0}
+
+\mbox{\Hypertarget{class_simple_envelope_a1de4ca7380abf92d8e7d1a2643e0e20d}\label{class_simple_envelope_a1de4ca7380abf92d8e7d1a2643e0e20d}} 
+\index{Simple\+Envelope@{Simple\+Envelope}!trigger@{trigger}}
+\index{trigger@{trigger}!Simple\+Envelope@{Simple\+Envelope}}
+\subsubsection{\texorpdfstring{trigger}{trigger}}
+{\footnotesize\ttfamily uint32\+\_\+t Simple\+Envelope\+::trigger}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+synthesis/inc/\mbox{\hyperlink{oscillators_8hpp}{oscillators.\+hpp}}\item 
+synthesis/oscillators/\mbox{\hyperlink{simple__envelope_8cpp}{simple\+\_\+envelope.\+cpp}}\end{DoxyCompactItemize}
