@@ -166,7 +166,7 @@ int32_t MetaController::advancePhase(uint32_t * phaseDistTable) {
 	// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
 	// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
 
-	int32_t atBIndicator = ((uint32_t)(localPhase - AT_B_PHASE) >> 31) - ((uint32_t)(previousGhostPhase - AT_B_PHASE) >> 31);
+	int32_t atBIndicator = ((uint32_t)(localPhase - AT_B_PHASE) >> 31) - ((uint32_t)(ghostPhase - AT_B_PHASE) >> 31);
 
 	phaseWrapper += atBIndicator;
 
@@ -178,8 +178,8 @@ int32_t MetaController::advancePhase(uint32_t * phaseDistTable) {
 	(this->*loopHandler)();
 
 	// store the current phases
-	phaseBeforeIncrement = previousGhostPhase;
-	previousGhostPhase = localPhase;
+	phaseBeforeIncrement = ghostPhase;
+
 	previousPhase = phase;
 
 	ghostPhase = localPhase;
@@ -308,6 +308,7 @@ int32_t MetaController::envReleaseState(void) {
 	switch (phaseEvent) {
 
 	case (AT_A_FROM_RELEASE):
+	case (AT_A_FROM_ATTACK):
 		incrementArbiter = &MetaController::envAttackState;
 		return increment1;
 
@@ -322,8 +323,15 @@ int32_t MetaController::envRetriggerState(void) {
 	switch (phaseEvent) {
 
 	case (AT_B_FROM_RELEASE):
+	case (AT_B_FROM_ATTACK):
 		incrementArbiter = &MetaController::envReleaseState;
 		return increment2;
+
+	// hack to catch when skew modulation skips over the B phase event ?
+
+	case (AT_A_FROM_ATTACK):
+		incrementArbiter = &MetaController::envAttackState;
+		return increment1;
 
 	default:
 		return -increment1;

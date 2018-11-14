@@ -171,16 +171,17 @@ public:
 
 	inline void setLogicOut(int32_t writeIndex, int32_t runtimeDisplay) {
 
-		int32_t logicA = outputs.logicA[writeIndex];
-		int32_t auxLogic = outputs.auxLogic[writeIndex];
-		int32_t shA = outputs.shA[writeIndex];
-		int32_t shB = outputs.shB[writeIndex];
-
 		if (runtimeDisplay) {
-			setLogicOutputsLEDOn(logicA, auxLogic, shA, shB);
+			setLogicOutputsLEDOn(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
 		} else {
-			setLogicOutputsLEDOff(logicA, auxLogic, shA, shB);
+			setLogicOutputsLEDOff(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
 		}
+
+	}
+
+	inline void setLogicOutNoLED(int32_t writeIndex) {
+
+		setLogicOutputsLEDOff(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
 
 	}
 

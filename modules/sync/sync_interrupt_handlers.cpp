@@ -17,6 +17,9 @@ void ViaSync::mainRisingEdgeCallback(void) {
 
 
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(pllController.ratioChange);
+	if (runtimeDisplay & showYChange) {
+		setLEDD(pllController.yIndexChange);
+	}
 	pllController.tapTempo = 0;
 
 }
@@ -24,6 +27,10 @@ void ViaSync::mainRisingEdgeCallback(void) {
 void ViaSync::mainFallingEdgeCallback(void) {
 
 	pllController.ratioChange = 0;
+	pllController.yIndexChange = 0;
+	if (runtimeDisplay & showYChange) {
+		setLEDD(pllController.yIndexChange);
+	}
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(pllController.ratioChange);
 
 }

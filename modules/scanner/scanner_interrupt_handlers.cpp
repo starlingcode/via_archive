@@ -18,13 +18,11 @@ void ViaScanner::mainFallingEdgeCallback(void) {
 void ViaScanner::auxRisingEdgeCallback(void) {
 	setSH(1, 1);
 	setLEDA(1);
-	setLEDB(1);
 	inputs.auxTrigInput = 1;
 }
 void ViaScanner::auxFallingEdgeCallback(void) {
 	setSH(0, 0);
 	setLEDA(0);
-	setLEDB(0);
 	inputs.auxTrigInput = 0;
 }
 
@@ -51,7 +49,13 @@ void ViaScanner::ioProcessCallback(void) {
 
 void ViaScanner::halfTransferCallback(void) {
 
-	setLogicOut(0, runtimeDisplay);
+	setLogicOutNoLED(0);
+
+	if (runtimeDisplay) {
+
+		*auxLogicOutput |= (__ROR(outputs.logicA[0], 16) >> 11);
+
+	}
 
 	scanner.hardSync = inputs.trigInput;
 	inputs.trigInput = 1;
@@ -71,7 +75,6 @@ void ViaScanner::halfTransferCallback(void) {
 
 	outputs.logicA[0] = GET_ALOGIC_MASK(scanner.hemisphereBlend);
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(scanner.deltaBlend);
-	outputs.auxLogic[0] = GPIO_NOP;
 	outputs.shA[0] = GPIO_NOP;
 	outputs.shB[0] = GPIO_NOP;
 
@@ -79,15 +82,30 @@ void ViaScanner::halfTransferCallback(void) {
 
 void ViaScanner::transferCompleteCallback(void) {
 
-	setLogicOut(0, runtimeDisplay);
+	setLogicOutNoLED(0);
+
+	if (runtimeDisplay) {
+
+		*auxLogicOutput |= (__ROR(outputs.logicA[0], 16) >> 11);
+
+	}
 
 	scanner.hardSync = inputs.trigInput;
 	inputs.trigInput = 1;
 	scanner.reverse = reverseSignal;
 
+//	int32_t inputMasked = (int32_t)-inputs.cv2Samples[0];
+//	inputMasked += 32767;
+//	inputMasked &=0xFFF0;
 	scanner.xInput = (int32_t)-inputs.cv2Samples[0];
 
+//	inputMasked = (int32_t)-inputs.cv3Samples[0];
+//	inputMasked += 32767;
+//	inputMasked &= 0xFFF0;
+//
+//	scanner.yInput = inputMasked;
 	scanner.yInput = (int32_t)-inputs.cv3Samples[0];
+
 
 	scanner.fillBuffer();
 
@@ -99,7 +117,6 @@ void ViaScanner::transferCompleteCallback(void) {
 
 	outputs.logicA[0] = GET_ALOGIC_MASK(scanner.hemisphereBlend);
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(scanner.deltaBlend);
-	outputs.auxLogic[0] = GPIO_NOP;
 	outputs.shA[0] = GPIO_NOP;
 	outputs.shB[0] = GPIO_NOP;
 
@@ -111,9 +128,9 @@ void ViaScanner::slowConversionCallback(void) {
 	controls.update();
 	scanner.parseControls(&controls);
 
-	uint32_t redLevel = abs(scanner.xInput - 32767) >> 4;
+	uint32_t redLevel = abs(scanner.xInput) >> 4;
 	uint32_t greenLevel = scanner.zIndex >> 7;
-	uint32_t blueLevel = abs(scanner.xInput - 32767) >> 4;
+	uint32_t blueLevel = abs(scanner.yInput) >> 4;
 
 	updateRGBDisplay(redLevel, greenLevel, blueLevel, runtimeDisplay);
 

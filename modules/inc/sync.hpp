@@ -201,6 +201,8 @@ public:
 
 	int32_t runtimeDisplay;
 
+	int32_t showYChange;
+
 	SyncWavetable syncWavetable;
 	PllController pllController;
 

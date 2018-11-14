@@ -1,0 +1,363 @@
+\hypertarget{class_dual_euclidean}{}\section{Dual\+Euclidean Class Reference}
+\label{class_dual_euclidean}\index{Dual\+Euclidean@{Dual\+Euclidean}}
+
+
+{\ttfamily \#include $<$sequencers.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_dual_euclidean_a546f3720e1120c3ff547f330287fefde}{process\+Clock}} (void)
+\item 
+void \mbox{\hyperlink{class_dual_euclidean_adfa104faaaa81723ec6e3ce1f3f70d92}{advance\+SequencerA}} (void)
+\item 
+void \mbox{\hyperlink{class_dual_euclidean_a84bd2974dc771fde961db2e81797916f}{advance\+SequencerB}} (void)
+\item 
+void \mbox{\hyperlink{class_dual_euclidean_afed6b5eb3ac657c75b1d158ee53d1d84}{update\+Logic\+Output}} (void)
+\item 
+void \mbox{\hyperlink{class_dual_euclidean_ab18b3a9c1a51e7f47d6fc3c6fd26ef4a}{parse\+Controls}} (\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$, \mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a2dddcba8d52c9deba965c7751866c85f}{offset}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a64fd4a846ef9448e45ed252f0c272b59}{period\+Count}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_ad11fa3c6d1303467ebffae617dda5cc8}{clock\+On}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a7ef5ab9221f00262bf015f7a67663f3e}{multiplier}} = 1
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a9f1e0d3ea0d236c36c9ec259b4af6320}{divider}} = 1
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a358adc877f7d9c9baa67928d75a667d2}{clock\+Period}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a10b8d6a00cc86bde18bd612619138724}{shuffle\+On}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a19521a4f42d79dcf5c88c02acb8fcc30}{shuffle}} = 32767
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a3573c1d5e5484ebfccfad19b17aa5113}{shuffle\+Delay}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_ab17ea18eb5504cffd255fbd926d3f41d}{shuffled\+Step}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a0cee123dd1067d2144f9c3c53e1d4707}{skip\+Clock}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_aad2c789fc10f9bb42e36ade714cf8e32}{modulate\+Multiplier}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a178d24471a08efe6149529d86b05fa1d}{virtual\+Gate\+High}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_acf4499de05acdc7547c5acb21219ef4d}{a\+Counter}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a5313528458ec30301e147c1ea7908d25}{b\+Counter}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a80ac40990fb9804313428fc88bb25a00}{sampleA}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_ac7586dbe4b5473ad464f51ce8315c25e}{sampleB}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a9c9f254af7b89c373ce03d8b857b2477}{trackA}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a9c2333d598bf61280491b69b2e01e8e1}{trackB}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a37738201f93b6762ff5eef6e3f231f3b}{andA}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a7e2d80e82bb30ced0df37b75d21533ca}{andB}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a0ff6e722af5d341219112ed173fe2d6a}{gate\+A\+Event}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_acf70f4efc7acca8111895c6a71f59bb5}{gate\+B\+Event}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_ab28bd6271a4cc839b1419091f7a47e96}{aux\+Logic\+Mode}} = 0
+\item 
+const \mbox{\hyperlink{structboolean_sequence_bank}{boolean\+Sequence\+Bank}} $\ast$ \mbox{\hyperlink{class_dual_euclidean_a8c4259c3b82f62c4c3a2b5a7b2a511fb}{current\+A\+Bank}}
+\item 
+const \mbox{\hyperlink{structboolean_sequence_bank}{boolean\+Sequence\+Bank}} $\ast$ \mbox{\hyperlink{class_dual_euclidean_a72c4896af54012858903e8f3c33a2658}{current\+B\+Bank}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_ad814adf2f1fc533982bbd1f89eb0bee9}{a\+Output}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a97d63f45f6721a70490326a318c0445d}{b\+Output}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_aa4a22dc6a09b16fd2e190b64ceeaa104}{logic\+Output}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_aabf24d1670dc2701f468be10995683c9}{sh\+A\+Signal}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a9faf2d0a2cd274892651d0c35e5cbcf0}{sh\+B\+Signal}} = 0
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a8dc9a63effefd7b05cd4a4d4a1672945}{a\+Length}} = 1
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_ab5d416927c292f4419a2f8054d39943b}{b\+Length}} = 1
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_abce5f6318b327482af48ce89e3a91b04}{a\+Pattern\+Morph}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a51b2bc87d191c9b092d2983c5042416b}{b\+Pattern\+Morph}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a77f16f36c4c5e7b29dd15a10d501fcab}{a\+Pattern\+Index}} = 0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a7a9b06d0d83d1d8eeff1ce41df231b88}{b\+Pattern\+Index}} = 0
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_dual_euclidean_adfa104faaaa81723ec6e3ce1f3f70d92}\label{class_dual_euclidean_adfa104faaaa81723ec6e3ce1f3f70d92}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!advance\+SequencerA@{advance\+SequencerA}}
+\index{advance\+SequencerA@{advance\+SequencerA}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{advance\+Sequencer\+A()}{advanceSequencerA()}}
+{\footnotesize\ttfamily void Dual\+Euclidean\+::advance\+SequencerA (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_dual_euclidean_a84bd2974dc771fde961db2e81797916f}\label{class_dual_euclidean_a84bd2974dc771fde961db2e81797916f}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!advance\+SequencerB@{advance\+SequencerB}}
+\index{advance\+SequencerB@{advance\+SequencerB}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{advance\+Sequencer\+B()}{advanceSequencerB()}}
+{\footnotesize\ttfamily void Dual\+Euclidean\+::advance\+SequencerB (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_dual_euclidean_ab18b3a9c1a51e7f47d6fc3c6fd26ef4a}\label{class_dual_euclidean_ab18b3a9c1a51e7f47d6fc3c6fd26ef4a}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!parse\+Controls@{parse\+Controls}}
+\index{parse\+Controls@{parse\+Controls}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{parse\+Controls()}{parseControls()}}
+{\footnotesize\ttfamily void Dual\+Euclidean\+::parse\+Controls (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$}]{controls,  }\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_dual_euclidean_a546f3720e1120c3ff547f330287fefde}\label{class_dual_euclidean_a546f3720e1120c3ff547f330287fefde}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!process\+Clock@{process\+Clock}}
+\index{process\+Clock@{process\+Clock}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{process\+Clock()}{processClock()}}
+{\footnotesize\ttfamily void Dual\+Euclidean\+::process\+Clock (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_dual_euclidean_afed6b5eb3ac657c75b1d158ee53d1d84}\label{class_dual_euclidean_afed6b5eb3ac657c75b1d158ee53d1d84}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!update\+Logic\+Output@{update\+Logic\+Output}}
+\index{update\+Logic\+Output@{update\+Logic\+Output}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{update\+Logic\+Output()}{updateLogicOutput()}}
+{\footnotesize\ttfamily void Dual\+Euclidean\+::update\+Logic\+Output (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{class_dual_euclidean_acf4499de05acdc7547c5acb21219ef4d}\label{class_dual_euclidean_acf4499de05acdc7547c5acb21219ef4d}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!a\+Counter@{a\+Counter}}
+\index{a\+Counter@{a\+Counter}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{a\+Counter}{aCounter}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::a\+Counter = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_a8dc9a63effefd7b05cd4a4d4a1672945}\label{class_dual_euclidean_a8dc9a63effefd7b05cd4a4d4a1672945}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!a\+Length@{a\+Length}}
+\index{a\+Length@{a\+Length}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{a\+Length}{aLength}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::a\+Length = 1\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_dual_euclidean_a37738201f93b6762ff5eef6e3f231f3b}\label{class_dual_euclidean_a37738201f93b6762ff5eef6e3f231f3b}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!andA@{andA}}
+\index{andA@{andA}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{andA}{andA}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::andA = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_a7e2d80e82bb30ced0df37b75d21533ca}\label{class_dual_euclidean_a7e2d80e82bb30ced0df37b75d21533ca}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!andB@{andB}}
+\index{andB@{andB}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{andB}{andB}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::andB = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_ad814adf2f1fc533982bbd1f89eb0bee9}\label{class_dual_euclidean_ad814adf2f1fc533982bbd1f89eb0bee9}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!a\+Output@{a\+Output}}
+\index{a\+Output@{a\+Output}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{a\+Output}{aOutput}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::a\+Output = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_a77f16f36c4c5e7b29dd15a10d501fcab}\label{class_dual_euclidean_a77f16f36c4c5e7b29dd15a10d501fcab}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!a\+Pattern\+Index@{a\+Pattern\+Index}}
+\index{a\+Pattern\+Index@{a\+Pattern\+Index}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{a\+Pattern\+Index}{aPatternIndex}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::a\+Pattern\+Index = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_dual_euclidean_abce5f6318b327482af48ce89e3a91b04}\label{class_dual_euclidean_abce5f6318b327482af48ce89e3a91b04}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!a\+Pattern\+Morph@{a\+Pattern\+Morph}}
+\index{a\+Pattern\+Morph@{a\+Pattern\+Morph}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{a\+Pattern\+Morph}{aPatternMorph}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::a\+Pattern\+Morph = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_dual_euclidean_ab28bd6271a4cc839b1419091f7a47e96}\label{class_dual_euclidean_ab28bd6271a4cc839b1419091f7a47e96}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!aux\+Logic\+Mode@{aux\+Logic\+Mode}}
+\index{aux\+Logic\+Mode@{aux\+Logic\+Mode}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{aux\+Logic\+Mode}{auxLogicMode}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::aux\+Logic\+Mode = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_a5313528458ec30301e147c1ea7908d25}\label{class_dual_euclidean_a5313528458ec30301e147c1ea7908d25}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!b\+Counter@{b\+Counter}}
+\index{b\+Counter@{b\+Counter}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{b\+Counter}{bCounter}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::b\+Counter = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_ab5d416927c292f4419a2f8054d39943b}\label{class_dual_euclidean_ab5d416927c292f4419a2f8054d39943b}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!b\+Length@{b\+Length}}
+\index{b\+Length@{b\+Length}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{b\+Length}{bLength}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::b\+Length = 1\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_dual_euclidean_a97d63f45f6721a70490326a318c0445d}\label{class_dual_euclidean_a97d63f45f6721a70490326a318c0445d}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!b\+Output@{b\+Output}}
+\index{b\+Output@{b\+Output}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{b\+Output}{bOutput}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::b\+Output = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_a7a9b06d0d83d1d8eeff1ce41df231b88}\label{class_dual_euclidean_a7a9b06d0d83d1d8eeff1ce41df231b88}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!b\+Pattern\+Index@{b\+Pattern\+Index}}
+\index{b\+Pattern\+Index@{b\+Pattern\+Index}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{b\+Pattern\+Index}{bPatternIndex}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::b\+Pattern\+Index = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_dual_euclidean_a51b2bc87d191c9b092d2983c5042416b}\label{class_dual_euclidean_a51b2bc87d191c9b092d2983c5042416b}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!b\+Pattern\+Morph@{b\+Pattern\+Morph}}
+\index{b\+Pattern\+Morph@{b\+Pattern\+Morph}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{b\+Pattern\+Morph}{bPatternMorph}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::b\+Pattern\+Morph = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_dual_euclidean_ad11fa3c6d1303467ebffae617dda5cc8}\label{class_dual_euclidean_ad11fa3c6d1303467ebffae617dda5cc8}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!clock\+On@{clock\+On}}
+\index{clock\+On@{clock\+On}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{clock\+On}{clockOn}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::clock\+On}
+
+\mbox{\Hypertarget{class_dual_euclidean_a358adc877f7d9c9baa67928d75a667d2}\label{class_dual_euclidean_a358adc877f7d9c9baa67928d75a667d2}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!clock\+Period@{clock\+Period}}
+\index{clock\+Period@{clock\+Period}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{clock\+Period}{clockPeriod}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::clock\+Period}
+
+\mbox{\Hypertarget{class_dual_euclidean_a8c4259c3b82f62c4c3a2b5a7b2a511fb}\label{class_dual_euclidean_a8c4259c3b82f62c4c3a2b5a7b2a511fb}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!current\+A\+Bank@{current\+A\+Bank}}
+\index{current\+A\+Bank@{current\+A\+Bank}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{current\+A\+Bank}{currentABank}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{structboolean_sequence_bank}{boolean\+Sequence\+Bank}}$\ast$ Dual\+Euclidean\+::current\+A\+Bank}
+
+\mbox{\Hypertarget{class_dual_euclidean_a72c4896af54012858903e8f3c33a2658}\label{class_dual_euclidean_a72c4896af54012858903e8f3c33a2658}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!current\+B\+Bank@{current\+B\+Bank}}
+\index{current\+B\+Bank@{current\+B\+Bank}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{current\+B\+Bank}{currentBBank}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{structboolean_sequence_bank}{boolean\+Sequence\+Bank}}$\ast$ Dual\+Euclidean\+::current\+B\+Bank}
+
+\mbox{\Hypertarget{class_dual_euclidean_a9f1e0d3ea0d236c36c9ec259b4af6320}\label{class_dual_euclidean_a9f1e0d3ea0d236c36c9ec259b4af6320}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!divider@{divider}}
+\index{divider@{divider}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{divider}{divider}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::divider = 1}
+
+\mbox{\Hypertarget{class_dual_euclidean_a0ff6e722af5d341219112ed173fe2d6a}\label{class_dual_euclidean_a0ff6e722af5d341219112ed173fe2d6a}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!gate\+A\+Event@{gate\+A\+Event}}
+\index{gate\+A\+Event@{gate\+A\+Event}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{gate\+A\+Event}{gateAEvent}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::gate\+A\+Event = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_acf70f4efc7acca8111895c6a71f59bb5}\label{class_dual_euclidean_acf70f4efc7acca8111895c6a71f59bb5}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!gate\+B\+Event@{gate\+B\+Event}}
+\index{gate\+B\+Event@{gate\+B\+Event}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{gate\+B\+Event}{gateBEvent}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::gate\+B\+Event = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_aa4a22dc6a09b16fd2e190b64ceeaa104}\label{class_dual_euclidean_aa4a22dc6a09b16fd2e190b64ceeaa104}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!logic\+Output@{logic\+Output}}
+\index{logic\+Output@{logic\+Output}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{logic\+Output}{logicOutput}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::logic\+Output = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_aad2c789fc10f9bb42e36ade714cf8e32}\label{class_dual_euclidean_aad2c789fc10f9bb42e36ade714cf8e32}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!modulate\+Multiplier@{modulate\+Multiplier}}
+\index{modulate\+Multiplier@{modulate\+Multiplier}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{modulate\+Multiplier}{modulateMultiplier}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::modulate\+Multiplier}
+
+\mbox{\Hypertarget{class_dual_euclidean_a7ef5ab9221f00262bf015f7a67663f3e}\label{class_dual_euclidean_a7ef5ab9221f00262bf015f7a67663f3e}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!multiplier@{multiplier}}
+\index{multiplier@{multiplier}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{multiplier}{multiplier}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::multiplier = 1}
+
+\mbox{\Hypertarget{class_dual_euclidean_a2dddcba8d52c9deba965c7751866c85f}\label{class_dual_euclidean_a2dddcba8d52c9deba965c7751866c85f}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!offset@{offset}}
+\index{offset@{offset}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{offset}{offset}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::offset = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_a64fd4a846ef9448e45ed252f0c272b59}\label{class_dual_euclidean_a64fd4a846ef9448e45ed252f0c272b59}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!period\+Count@{period\+Count}}
+\index{period\+Count@{period\+Count}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{period\+Count}{periodCount}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::period\+Count}
+
+\mbox{\Hypertarget{class_dual_euclidean_a80ac40990fb9804313428fc88bb25a00}\label{class_dual_euclidean_a80ac40990fb9804313428fc88bb25a00}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!sampleA@{sampleA}}
+\index{sampleA@{sampleA}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{sampleA}{sampleA}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::sampleA = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_ac7586dbe4b5473ad464f51ce8315c25e}\label{class_dual_euclidean_ac7586dbe4b5473ad464f51ce8315c25e}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!sampleB@{sampleB}}
+\index{sampleB@{sampleB}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{sampleB}{sampleB}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::sampleB = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_aabf24d1670dc2701f468be10995683c9}\label{class_dual_euclidean_aabf24d1670dc2701f468be10995683c9}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!sh\+A\+Signal@{sh\+A\+Signal}}
+\index{sh\+A\+Signal@{sh\+A\+Signal}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{sh\+A\+Signal}{shASignal}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::sh\+A\+Signal = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_a9faf2d0a2cd274892651d0c35e5cbcf0}\label{class_dual_euclidean_a9faf2d0a2cd274892651d0c35e5cbcf0}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!sh\+B\+Signal@{sh\+B\+Signal}}
+\index{sh\+B\+Signal@{sh\+B\+Signal}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{sh\+B\+Signal}{shBSignal}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::sh\+B\+Signal = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_a19521a4f42d79dcf5c88c02acb8fcc30}\label{class_dual_euclidean_a19521a4f42d79dcf5c88c02acb8fcc30}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!shuffle@{shuffle}}
+\index{shuffle@{shuffle}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{shuffle}{shuffle}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::shuffle = 32767}
+
+\mbox{\Hypertarget{class_dual_euclidean_a3573c1d5e5484ebfccfad19b17aa5113}\label{class_dual_euclidean_a3573c1d5e5484ebfccfad19b17aa5113}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!shuffle\+Delay@{shuffle\+Delay}}
+\index{shuffle\+Delay@{shuffle\+Delay}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{shuffle\+Delay}{shuffleDelay}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::shuffle\+Delay = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_ab17ea18eb5504cffd255fbd926d3f41d}\label{class_dual_euclidean_ab17ea18eb5504cffd255fbd926d3f41d}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!shuffled\+Step@{shuffled\+Step}}
+\index{shuffled\+Step@{shuffled\+Step}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{shuffled\+Step}{shuffledStep}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::shuffled\+Step = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_a10b8d6a00cc86bde18bd612619138724}\label{class_dual_euclidean_a10b8d6a00cc86bde18bd612619138724}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!shuffle\+On@{shuffle\+On}}
+\index{shuffle\+On@{shuffle\+On}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{shuffle\+On}{shuffleOn}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::shuffle\+On}
+
+\mbox{\Hypertarget{class_dual_euclidean_a0cee123dd1067d2144f9c3c53e1d4707}\label{class_dual_euclidean_a0cee123dd1067d2144f9c3c53e1d4707}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!skip\+Clock@{skip\+Clock}}
+\index{skip\+Clock@{skip\+Clock}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{skip\+Clock}{skipClock}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::skip\+Clock = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_a9c9f254af7b89c373ce03d8b857b2477}\label{class_dual_euclidean_a9c9f254af7b89c373ce03d8b857b2477}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!trackA@{trackA}}
+\index{trackA@{trackA}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{trackA}{trackA}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::trackA = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_a9c2333d598bf61280491b69b2e01e8e1}\label{class_dual_euclidean_a9c2333d598bf61280491b69b2e01e8e1}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!trackB@{trackB}}
+\index{trackB@{trackB}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{trackB}{trackB}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::trackB = 0}
+
+\mbox{\Hypertarget{class_dual_euclidean_a178d24471a08efe6149529d86b05fa1d}\label{class_dual_euclidean_a178d24471a08efe6149529d86b05fa1d}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!virtual\+Gate\+High@{virtual\+Gate\+High}}
+\index{virtual\+Gate\+High@{virtual\+Gate\+High}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{virtual\+Gate\+High}{virtualGateHigh}}
+{\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::virtual\+Gate\+High}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+synthesis/inc/\mbox{\hyperlink{sequencers_8hpp}{sequencers.\+hpp}}\item 
+synthesis/sequencers/\mbox{\hyperlink{dual__euclidean_8cpp}{dual\+\_\+euclidean.\+cpp}}\end{DoxyCompactItemize}

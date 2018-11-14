@@ -76,6 +76,11 @@ void ViaSync::ViaSyncUI::uiSetLEDs(int mode) {
 
 void ViaSync::ViaSyncUI::defaultEnterMenuCallback(void) {
 	this_module.clearLEDs();
+	if (button3Mode == 1) {
+		this_module.setLEDD(0);
+	} else {
+		this_module.setLEDD(1);
+	}
 	this_module.runtimeDisplay = 1;
 }
 void ViaSync::ViaSyncUI::newModeEnterMenuCallback(void) {

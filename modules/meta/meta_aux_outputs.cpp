@@ -118,23 +118,19 @@ void ViaMeta::calculateLogicAAttackGate(int32_t writeIndex) {
 
 void ViaMeta::calculateDac3Phasor(int32_t writeIndex) {
 
-	int32_t phasor = metaController.ghostPhase;
-
-	if (phasor >> 24) {
-		phasor = 8191 - (phasor >> 12);
-	} else {
-		phasor = phasor >> 12;
-	}
-
-	phasor = 4095 - phasor;
-
 	int32_t samplesRemaining = outputBufferSize;
+	int32_t readIndex = 0;
 
 	while (samplesRemaining) {
 
-		outputs.dac3Samples[writeIndex] = phasor;
+		if (metaWavetable.phaseOut[readIndex] >> 31) {
+			outputs.dac3Samples[writeIndex] = 8191 - (metaWavetable.phaseOut[readIndex] >> 19);
+		} else {
+			outputs.dac3Samples[writeIndex] = metaWavetable.phaseOut[readIndex] >> 19;
+		}
 
 		samplesRemaining --;
+		readIndex ++;
 		writeIndex ++;
 
 	}
@@ -142,15 +138,15 @@ void ViaMeta::calculateDac3Phasor(int32_t writeIndex) {
 
 void ViaMeta::calculateDac3Contour(int32_t writeIndex) {
 
-	int32_t contourOut = (4095 - outputs.dac2Samples[writeIndex]);
-
 	int32_t samplesRemaining = outputBufferSize;
+	int32_t readIndex = 0;
 
 	while (samplesRemaining) {
 
-		outputs.dac3Samples[writeIndex] = contourOut;
+		outputs.dac3Samples[writeIndex] = metaWavetable.signalOut[readIndex];
 
 		samplesRemaining --;
+		readIndex ++;
 		writeIndex ++;
 
 	}

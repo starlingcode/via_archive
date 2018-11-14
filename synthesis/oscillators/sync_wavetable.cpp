@@ -95,7 +95,11 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 
 	ghostPhase = localGhostPhase;
 
-	int32_t sample = __USAT(getSampleQuinticSpline(localGhostPhase, morph, wavetable, &delta), 12);
+	int32_t deltaWrite = 0;
+
+	int32_t sample = __USAT(getSampleQuinticSplineDeltaValue(localGhostPhase, morph, wavetable, &deltaWrite), 12);
+
+	delta = getDeltaHysterisis(deltaWrite, delta);
 
 	int32_t samplesRemaining = bufferSize;
 	int32_t writeIndex = 0;
@@ -221,9 +225,13 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 
 	// get the delta
 
-	signalOut[writeIndex] = fast_15_16_bilerp_prediff_delta(
+	int32_t deltaWrite;
+
+	signalOut[writeIndex] = fast_15_16_bilerp_prediff_deltaValue(
 			wavetable[leftSample], wavetable[leftSample + 1], morphFrac,
-			OS_PHASE_FRAC, &delta);
+			OS_PHASE_FRAC, &deltaWrite);
+
+	delta = getDeltaHysterisis(deltaWrite, delta);
 
 	// this should give a sample at 0 phase for hard sync
 	phase = localPhase >> 7;

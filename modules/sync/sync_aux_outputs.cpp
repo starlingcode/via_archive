@@ -32,7 +32,11 @@ void ViaSync::calculateLogicAGate(int32_t writeIndex) {
 
 void ViaSync::calculateLogicADelta(int32_t writeIndex) {
 
-	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(syncWavetable.delta);
+//	if (syncWavetable.reversed) {
+//		outputs.logicA[writeIndex] = GET_ALOGIC_MASK(!syncWavetable.delta);
+//	} else {
+		outputs.logicA[writeIndex] = GET_ALOGIC_MASK(syncWavetable.delta);
+//	}
 
 }
 

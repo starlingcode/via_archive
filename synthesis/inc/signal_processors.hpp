@@ -39,7 +39,20 @@ class ThreeAxisScanner {
 	int32_t signalCompare;
 	int32_t xDeltaLast;
 	int32_t yDeltaLast;
+	int32_t xReversed;
+	int32_t yReversed;
 
+	int32_t getDeltaHysterisis(int32_t delta, int32_t last) {
+
+		if (last && (delta < -500)) {
+			return 0;
+		} else if (!last && delta > 500) {
+			return 1;
+		} else {
+			return last;
+		}
+
+	}
 
 	int32_t getHemisphereHysteresis(int32_t signal, int32_t last) {
 		if (last && (signal < (1 << 14) - 5000)) {

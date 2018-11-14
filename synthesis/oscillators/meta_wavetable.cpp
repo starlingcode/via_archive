@@ -28,8 +28,21 @@ void MetaWavetable::advanceSingleSample(uint32_t * wavetable) {
 
 	phaseOut[0] = ghostPhase;
 
-	signalOut[0] = getSampleQuinticSpline(ghostPhase >> 7, (uint32_t) morphModLocal,
+	int32_t sample = getSampleQuinticSpline(ghostPhase >> 7, (uint32_t) morphModLocal,
 			wavetable, &delta);
+
+	uint32_t writeIndex = 0;
+	uint32_t samplesRemaining = bufferSize - 1;
+
+	while (samplesRemaining) {
+
+		phaseOut[writeIndex] = ghostPhase;
+		signalOut[writeIndex] = sample;
+
+		writeIndex++;
+		samplesRemaining--;
+
+	}
 
 };
 

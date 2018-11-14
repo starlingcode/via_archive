@@ -63,6 +63,8 @@ void ViaScanner::ViaScannerUI::uiSetLEDs(int mode) {
 
 void ViaScanner::ViaScannerUI::defaultEnterMenuCallback(void) {
 	this_module.clearLEDs();
+	this_module.setLEDB(this_module.scannerUI.button3Mode & 1);
+	this_module.setLEDD(this_module.scannerUI.button3Mode & 2);
 	this_module.runtimeDisplay = 1;
 }
 void ViaScanner::ViaScannerUI::newModeEnterMenuCallback(void) {
@@ -81,7 +83,7 @@ void ViaScanner::ViaScannerUI::button1EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
-	this_module.setLEDs(X_TABLE);
+	this_module.setLEDs(SYNC_MODE);
 	resetTimerMenu();
 }
 void ViaScanner::ViaScannerUI::button2EnterMenuCallback(void) {
@@ -95,14 +97,16 @@ void ViaScanner::ViaScannerUI::button3EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
-	this_module.setLEDs(X_TABLE);
+//	this_module.setLEDs(TERRAIN);
+	this_module.setLEDB(this_module.scannerUI.button3Mode & 1);
+	this_module.setLEDD(this_module.scannerUI.button3Mode & 2);
 	resetTimerMenu();
 }
 void ViaScanner::ViaScannerUI::button4EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
-	this_module.setLEDs(SYNC_MODE);
+	this_module.setLEDs(X_TABLE);
 	resetTimerMenu();
 }
 void ViaScanner::ViaScannerUI::button5EnterMenuCallback(void) {
@@ -116,7 +120,7 @@ void ViaScanner::ViaScannerUI::button6EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
-	this_module.setLEDs(TERRAIN);
+	this_module.setLEDs(X_TABLE);
 	resetTimerMenu();
 }
 void ViaScanner::ViaScannerUI::aux1EnterMenuCallback(void) {
@@ -133,10 +137,10 @@ void ViaScanner::ViaScannerUI::aux4EnterMenuCallback(void) {
 }
 
 void ViaScanner::ViaScannerUI::button1TapCallback(void) {
-	X_TABLE = incrementModeAndStore(X_TABLE, BUTTON1_MASK, numButton1Modes, BUTTON1_MASK);
-	this_module.handleButton1ModeChange(X_TABLE);
+	SYNC_MODE = decrementModeAndStore(SYNC_MODE, BUTTON1_MASK, numButton1Modes, BUTTON1_MASK);
+	this_module.handleButton1ModeChange(SYNC_MODE);
 	this_module.clearLEDs();
-	this_module.setLEDs(X_TABLE);
+	this_module.setLEDs(SYNC_MODE);
 	transition(&ViaScanner::ViaScannerUI::newModeMenu);
 }
 void ViaScanner::ViaScannerUI::button2TapCallback(void) {
@@ -147,17 +151,18 @@ void ViaScanner::ViaScannerUI::button2TapCallback(void) {
 	transition(&ViaScanner::ViaScannerUI::newModeMenu);
 }
 void ViaScanner::ViaScannerUI::button3TapCallback(void) {
-	X_TABLE = decrementModeAndStore(X_TABLE, BUTTON3_MASK, numButton3Modes, BUTTON3_MASK);
-	this_module.handleButton3ModeChange(X_TABLE);
+	TERRAIN = incrementModeAndStore(TERRAIN, BUTTON3_MASK, numButton3Modes, BUTTON3_MASK);
+	this_module.handleButton3ModeChange(TERRAIN);
 	this_module.clearLEDs();
-	this_module.setLEDs(X_TABLE);
+	this_module.setLEDB(this_module.scannerUI.button3Mode & 1);
+	this_module.setLEDD(this_module.scannerUI.button3Mode & 2);
 	transition(&ViaScanner::ViaScannerUI::newModeMenu);
 }
 void ViaScanner::ViaScannerUI::button4TapCallback(void) {
-	SYNC_MODE = incrementModeAndStore(SYNC_MODE, BUTTON4_MASK, numButton4Modes, BUTTON4_MASK);
-	this_module.handleButton4ModeChange(SYNC_MODE);
+	X_TABLE = incrementModeAndStore(X_TABLE, BUTTON4_MASK, numButton4Modes, BUTTON4_MASK);
+	this_module.handleButton4ModeChange(X_TABLE);
 	this_module.clearLEDs();
-	this_module.setLEDs(SYNC_MODE);
+	this_module.setLEDs(X_TABLE);
 	transition(&ViaScanner::ViaScannerUI::newModeMenu);
 }
 void ViaScanner::ViaScannerUI::button5TapCallback(void) {
@@ -168,11 +173,10 @@ void ViaScanner::ViaScannerUI::button5TapCallback(void) {
 	transition(&ViaScanner::ViaScannerUI::newModeMenu);
 }
 void ViaScanner::ViaScannerUI::button6TapCallback(void) {
-	TERRAIN = incrementModeAndStore(TERRAIN, BUTTON6_MASK,
+	X_TABLE = incrementModeAndStore(X_TABLE, BUTTON6_MASK,
 			numButton6Modes, BUTTON6_MASK);
-	this_module.handleButton6ModeChange(TERRAIN);
+	this_module.handleButton6ModeChange(X_TABLE);
 	this_module.clearLEDs();
-	this_module.setLEDs(TERRAIN);
 	transition(&ViaScanner::ViaScannerUI::newModeMenu);
 }
 

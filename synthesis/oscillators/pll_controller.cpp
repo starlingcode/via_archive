@@ -24,6 +24,12 @@ void PllController::parseControls(ViaControls * controls, ViaInputStreams * inpu
 	rootModLocal += controls->knob2Value;
 	int32_t	rootIndex = (__USAT(rootModLocal, 12)) >> scale->t2Bitshift;
 
+	if (rootIndex != lastYIndex) {
+		yIndexChange = 1;
+	}
+
+	lastYIndex = rootIndex;
+
 	fracMultiplier = scale->grid[rootIndex][noteIndex]->fractionalPart;
 	intMultiplier = scale->grid[rootIndex][noteIndex]->integerPart;
 	gcd = scale->grid[rootIndex][noteIndex]->fundamentalDivision;

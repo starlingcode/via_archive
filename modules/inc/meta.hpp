@@ -231,7 +231,7 @@ public:
 	void updateRGBSubaudio(void) {
 
 		int32_t sample = outputs.dac2Samples[0];
-		int32_t lastPhaseValue = metaWavetable.phase;
+		int32_t lastPhaseValue = metaController.ghostPhase;
 
 		int32_t redSignal = sample * (lastPhaseValue >> 24);
 		int32_t blueSignal = (sample * (!(lastPhaseValue >> 24))) >> 1;

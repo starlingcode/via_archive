@@ -50,6 +50,20 @@ public:
 	int32_t increment = 0;
 	int32_t morphBase = 0;
 
+	int32_t xDeltaLast = 0;
+
+	int32_t getDeltaHysterisis(int32_t delta, int32_t last) {
+
+		if (last && (delta < -100)) {
+			return 0;
+		} else if (!last && delta > 100) {
+			return 1;
+		} else {
+			return last;
+		}
+
+	}
+
 	// results
 	int32_t phaseMod = 0;
 	int32_t phase = 0;
@@ -157,6 +171,7 @@ class PllController {
 
 	uint32_t pllCounter;
 	int32_t lastMultiplier;
+	int32_t lastYIndex;
 
 public:
 
@@ -184,6 +199,7 @@ public:
 	uint32_t increment = 0;
 	uint32_t phaseReset = 0;
 	uint32_t ratioChange = 0;
+	uint32_t yIndexChange = 0;
 
 	void parseControls(ViaControls * controls, ViaInputStreams * input);
 

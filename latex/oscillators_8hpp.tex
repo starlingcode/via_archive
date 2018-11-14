@@ -1,0 +1,90 @@
+\hypertarget{oscillators_8hpp}{}\section{synthesis/inc/oscillators.hpp File Reference}
+\label{oscillators_8hpp}\index{synthesis/inc/oscillators.\+hpp@{synthesis/inc/oscillators.\+hpp}}
+{\ttfamily \#include $<$via\+\_\+platform\+\_\+binding.\+hpp$>$}\newline
+{\ttfamily \#include \char`\"{}tables.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}scales.\+hpp\char`\"{}}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_sync_wavetable}{Sync\+Wavetable}}
+\item 
+class \mbox{\hyperlink{class_meta_wavetable}{Meta\+Wavetable}}
+\item 
+class \mbox{\hyperlink{class_cheap_wavetable}{Cheap\+Wavetable}}
+\item 
+class \mbox{\hyperlink{class_pll_controller}{Pll\+Controller}}
+\item 
+class \mbox{\hyperlink{class_meta_controller}{Meta\+Controller}}
+\item 
+class \mbox{\hyperlink{class_simple_envelope}{Simple\+Envelope}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{oscillators_8hpp_a3472739367c2a7e0dedc0f10f0528ad8}{W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH}}~33554432
+\item 
+\#define \mbox{\hyperlink{oscillators_8hpp_af7514278f73398f2cd034252417a08d9}{N\+E\+G\+A\+T\+I\+V\+E\+\_\+\+W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH}}~-\/33554432
+\item 
+\#define \mbox{\hyperlink{oscillators_8hpp_abc169a7dcc687424998a40d78ffcfe27}{A\+T\+\_\+\+B\+\_\+\+P\+H\+A\+SE}}~16777216
+\item 
+\#define \mbox{\hyperlink{oscillators_8hpp_ab0f30b9957476899f0b8c7cb24f1cb4d}{N\+O\+\_\+\+E\+V\+E\+NT}}~0
+\item 
+\#define \mbox{\hyperlink{oscillators_8hpp_ab7ec791e49607b721d1eca56704cb731}{A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE}}~-\/\mbox{\hyperlink{oscillators_8hpp_a3472739367c2a7e0dedc0f10f0528ad8}{W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH}} + 1
+\item 
+\#define \mbox{\hyperlink{oscillators_8hpp_afc7309e3cd258c03bf35a31c3f32f237}{A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK}}~\mbox{\hyperlink{oscillators_8hpp_a3472739367c2a7e0dedc0f10f0528ad8}{W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH}} -\/ 1
+\item 
+\#define \mbox{\hyperlink{oscillators_8hpp_ab782e2fd945888eff8f41bb078c8756e}{A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK}}~-\/1
+\item 
+\#define \mbox{\hyperlink{oscillators_8hpp_aa9ff312c18403036d6b3df54324fb463}{A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE}}~1
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{oscillators_8hpp_afc7309e3cd258c03bf35a31c3f32f237}\label{oscillators_8hpp_afc7309e3cd258c03bf35a31c3f32f237}} 
+\index{oscillators.\+hpp@{oscillators.\+hpp}!A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK@{A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK}}
+\index{A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK@{A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK}!oscillators.\+hpp@{oscillators.\+hpp}}
+\subsubsection{\texorpdfstring{A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK}{AT\_A\_FROM\_ATTACK}}
+{\footnotesize\ttfamily \#define A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK~\mbox{\hyperlink{oscillators_8hpp_a3472739367c2a7e0dedc0f10f0528ad8}{W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH}} -\/ 1}
+
+\mbox{\Hypertarget{oscillators_8hpp_ab7ec791e49607b721d1eca56704cb731}\label{oscillators_8hpp_ab7ec791e49607b721d1eca56704cb731}} 
+\index{oscillators.\+hpp@{oscillators.\+hpp}!A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE@{A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE}}
+\index{A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE@{A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE}!oscillators.\+hpp@{oscillators.\+hpp}}
+\subsubsection{\texorpdfstring{A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE}{AT\_A\_FROM\_RELEASE}}
+{\footnotesize\ttfamily \#define A\+T\+\_\+\+A\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE~-\/\mbox{\hyperlink{oscillators_8hpp_a3472739367c2a7e0dedc0f10f0528ad8}{W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH}} + 1}
+
+\mbox{\Hypertarget{oscillators_8hpp_ab782e2fd945888eff8f41bb078c8756e}\label{oscillators_8hpp_ab782e2fd945888eff8f41bb078c8756e}} 
+\index{oscillators.\+hpp@{oscillators.\+hpp}!A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK@{A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK}}
+\index{A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK@{A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK}!oscillators.\+hpp@{oscillators.\+hpp}}
+\subsubsection{\texorpdfstring{A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK}{AT\_B\_FROM\_ATTACK}}
+{\footnotesize\ttfamily \#define A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+A\+T\+T\+A\+CK~-\/1}
+
+\mbox{\Hypertarget{oscillators_8hpp_aa9ff312c18403036d6b3df54324fb463}\label{oscillators_8hpp_aa9ff312c18403036d6b3df54324fb463}} 
+\index{oscillators.\+hpp@{oscillators.\+hpp}!A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE@{A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE}}
+\index{A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE@{A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE}!oscillators.\+hpp@{oscillators.\+hpp}}
+\subsubsection{\texorpdfstring{A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE}{AT\_B\_FROM\_RELEASE}}
+{\footnotesize\ttfamily \#define A\+T\+\_\+\+B\+\_\+\+F\+R\+O\+M\+\_\+\+R\+E\+L\+E\+A\+SE~1}
+
+\mbox{\Hypertarget{oscillators_8hpp_abc169a7dcc687424998a40d78ffcfe27}\label{oscillators_8hpp_abc169a7dcc687424998a40d78ffcfe27}} 
+\index{oscillators.\+hpp@{oscillators.\+hpp}!A\+T\+\_\+\+B\+\_\+\+P\+H\+A\+SE@{A\+T\+\_\+\+B\+\_\+\+P\+H\+A\+SE}}
+\index{A\+T\+\_\+\+B\+\_\+\+P\+H\+A\+SE@{A\+T\+\_\+\+B\+\_\+\+P\+H\+A\+SE}!oscillators.\+hpp@{oscillators.\+hpp}}
+\subsubsection{\texorpdfstring{A\+T\+\_\+\+B\+\_\+\+P\+H\+A\+SE}{AT\_B\_PHASE}}
+{\footnotesize\ttfamily \#define A\+T\+\_\+\+B\+\_\+\+P\+H\+A\+SE~16777216}
+
+\mbox{\Hypertarget{oscillators_8hpp_af7514278f73398f2cd034252417a08d9}\label{oscillators_8hpp_af7514278f73398f2cd034252417a08d9}} 
+\index{oscillators.\+hpp@{oscillators.\+hpp}!N\+E\+G\+A\+T\+I\+V\+E\+\_\+\+W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH@{N\+E\+G\+A\+T\+I\+V\+E\+\_\+\+W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH}}
+\index{N\+E\+G\+A\+T\+I\+V\+E\+\_\+\+W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH@{N\+E\+G\+A\+T\+I\+V\+E\+\_\+\+W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH}!oscillators.\+hpp@{oscillators.\+hpp}}
+\subsubsection{\texorpdfstring{N\+E\+G\+A\+T\+I\+V\+E\+\_\+\+W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH}{NEGATIVE\_WAVETABLE\_LENGTH}}
+{\footnotesize\ttfamily \#define N\+E\+G\+A\+T\+I\+V\+E\+\_\+\+W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH~-\/33554432}
+
+\mbox{\Hypertarget{oscillators_8hpp_ab0f30b9957476899f0b8c7cb24f1cb4d}\label{oscillators_8hpp_ab0f30b9957476899f0b8c7cb24f1cb4d}} 
+\index{oscillators.\+hpp@{oscillators.\+hpp}!N\+O\+\_\+\+E\+V\+E\+NT@{N\+O\+\_\+\+E\+V\+E\+NT}}
+\index{N\+O\+\_\+\+E\+V\+E\+NT@{N\+O\+\_\+\+E\+V\+E\+NT}!oscillators.\+hpp@{oscillators.\+hpp}}
+\subsubsection{\texorpdfstring{N\+O\+\_\+\+E\+V\+E\+NT}{NO\_EVENT}}
+{\footnotesize\ttfamily \#define N\+O\+\_\+\+E\+V\+E\+NT~0}
+
+\mbox{\Hypertarget{oscillators_8hpp_a3472739367c2a7e0dedc0f10f0528ad8}\label{oscillators_8hpp_a3472739367c2a7e0dedc0f10f0528ad8}} 
+\index{oscillators.\+hpp@{oscillators.\+hpp}!W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH@{W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH}}
+\index{W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH@{W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH}!oscillators.\+hpp@{oscillators.\+hpp}}
+\subsubsection{\texorpdfstring{W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH}{WAVETABLE\_LENGTH}}
+{\footnotesize\ttfamily \#define W\+A\+V\+E\+T\+A\+B\+L\+E\+\_\+\+L\+E\+N\+G\+TH~33554432}
+
