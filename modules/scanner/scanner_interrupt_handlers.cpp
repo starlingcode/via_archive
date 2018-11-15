@@ -53,7 +53,16 @@ void ViaScanner::halfTransferCallback(void) {
 
 	if (runtimeDisplay) {
 
-		*auxLogicOutput |= (__ROR(outputs.logicA[0], 16) >> 11);
+		#ifdef BUILD_F373
+
+		*ledCOutput |= (__ROR(outputs.logicA[0], 16) >> 11);
+
+		#endif
+		#ifdef BUILD_VIRTUAL
+
+		ledCOutput = (uint32_t) scanner.deltaBlend;
+
+		#endif
 
 	}
 
@@ -86,7 +95,16 @@ void ViaScanner::transferCompleteCallback(void) {
 
 	if (runtimeDisplay) {
 
-		*auxLogicOutput |= (__ROR(outputs.logicA[0], 16) >> 11);
+		#ifdef BUILD_F373
+
+		*ledCOutput |= (__ROR(outputs.logicA[0], 16) >> 11);
+
+		#endif
+		#ifdef BUILD_VIRTUAL
+
+		ledCOutput = (uint32_t) scanner.deltaBlend;
+
+		#endif
 
 	}
 

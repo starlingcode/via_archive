@@ -44,15 +44,26 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 
 	setRedLED((mode >> 1) * 4095);
 	setGreenLED(!(mode >> 1) * 4095);
+
+
 	if (mode == 1 || mode == 3) {
 		SET_BLUE_LED_ONOFF(1);
+
 	} else {
 		SET_BLUE_LED_ONOFF(0);
+
 	}
 
 	switch (mode) {
 	case 0:
+
+#ifdef BUILD_F373
 		TIM2->CR1 &= ~TIM_CR1_CEN;
+#endif
+#ifdef BUILD_VIRTUAL
+		sequencer.virtualTimer1Enable = 0;
+		sequencer.virtualTimer1Count = 0;
+#endif
 		sequencer.clockOn = 0;
 		sequencer.modulateMultiplier = 0;
 		sequencer.multiplier = 1;
@@ -60,7 +71,13 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 		sequencer.shuffle = 0;
 		break;
 	case 1:
+#ifdef BUILD_F373
 		TIM2->CR1 |= TIM_CR1_CEN;
+#endif
+#ifdef BUILD_VIRTUAL
+		sequencer.virtualTimer1Enable = 1;
+		sequencer.virtualTimer1Count = 1;
+#endif
 		sequencer.clockOn = 1;
 		sequencer.modulateMultiplier = 0;
 		sequencer.multiplier = 3;
@@ -68,7 +85,13 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 		sequencer.shuffle = 0;
 		break;
 	case 2:
+#ifdef BUILD_F373
 		TIM2->CR1 |= TIM_CR1_CEN;
+#endif
+#ifdef BUILD_VIRTUAL
+		sequencer.virtualTimer1Enable = 1;
+		sequencer.virtualTimer1Count = 1;
+#endif
 		sequencer.clockOn = 1;
 		sequencer.modulateMultiplier = 0;
 		sequencer.multiplier = 4;
@@ -76,7 +99,13 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 		sequencer.shuffle = 0;
 		break;
 	case 3:
+#ifdef BUILD_F373
 		TIM2->CR1 |= TIM_CR1_CEN;
+#endif
+#ifdef BUILD_VIRTUAL
+		sequencer.virtualTimer1Enable = 1;
+		sequencer.virtualTimer1Count = 1;
+#endif
 		sequencer.clockOn = 1;
 		sequencer.modulateMultiplier = 1;
 		sequencer.offset = 0;

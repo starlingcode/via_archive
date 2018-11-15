@@ -206,6 +206,18 @@ public:
 	void (ViaMeta::*updateRGB)(void);
 	void (ViaMeta::*currentRGBBehavior)(void);
 
+	#ifdef BUILD_VIRTUAL 
+
+		int32_t blinkTimerEnable = 0;
+		int32_t blinkTimerCount = 0;
+		int32_t blinkTimerOverflow = 400;
+
+		int32_t blankTimerEnable = 0;
+		int32_t blankTimerCount = 0;
+		int32_t blankTimerOverflow = 400;
+
+	#endif
+
 	void updateRGBOsc(void) {
 
 		int32_t displayFreq = abs(fix16_mul(__USAT(controls.knob1Value + controls.cv1Value - 1000, 12), metaController.fm[0] + 32767));

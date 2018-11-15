@@ -38,7 +38,8 @@ public:
 
 	ViaControls controls;
 
-	int32_t bufferSize;
+	int32_t inputBufferSize;
+	int32_t outputBufferSize;
 	ViaInputStreams inputs;
 	ViaOutputStreams outputs;
 
@@ -115,6 +116,10 @@ public:
 		ledDOutput = 1 + on;
 	}
 
+	void SET_BLUE_LED_ONOFF(int32_t X) {
+		blueLevel = X * 4095;
+	} 
+
 	enum ViaVirtualGPIO {
 		VIA_GPIO_NOP,
 		VIA_GPIO_LOW,
@@ -133,7 +138,6 @@ public:
 		setLEDB(shB - 1);
 		setLEDC(logicA - 1);
 
-		//combine the mask variables for a shared GPIO group with a bitwise or
 		aLogicOutput = (logicA);
 
 		auxLogicOutput = (auxLogic);
@@ -157,7 +161,9 @@ public:
 
 		auxLogicOutput = (auxLogic);
 
-		shAOutput = (shA | shB);
+		shAOutput = (shA);
+
+		shBOutput = (shB);
 
 	}
 
@@ -173,6 +179,12 @@ public:
 		} else {
 			setLogicOutputsLEDOff(logicA, auxLogic, shA, shB);
 		}
+
+	}
+
+		inline void setLogicOutNoLED(int32_t writeIndex) {
+
+		setLogicOutputsLEDOff(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
 
 	}
 

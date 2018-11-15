@@ -76,6 +76,11 @@ public:
 #ifdef BUILD_VIRTUAL
 	int32_t pressedState = 1;
 	int32_t releasedState = 0;
+
+	int32_t trigButton;
+
+	#define EXPANDER_BUTTON_PRESSED trigButton
+
 #endif
 
 	void transition(void (ViaUI::*func)(int32_t));

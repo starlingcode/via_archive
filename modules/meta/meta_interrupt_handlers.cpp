@@ -27,7 +27,16 @@ void ViaMeta::mainRisingEdgeCallback(void) {
 
 	updateRGB = &ViaMeta::updateRGBBlink;
 
+	#ifdef BUILD_F373
+
 	TIM17->CR1 |= TIM_CR1_CEN;
+
+	#endif
+	#ifdef BUILD_VIRTUAL
+
+	blinkTimerEnable = 1;
+
+	#endif
 
 }
 
