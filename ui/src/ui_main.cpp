@@ -160,6 +160,8 @@ void ViaUI::newAuxModeMenu(int32_t sig) {
 			transition(&ViaUI::aux1Menu);
 		} else if (*button3 == pressedState) {
 			transition(&ViaUI::aux2Menu);
+		} else if (*button2 == pressedState) {
+			transition(&ViaUI::aux2MenuAlt);
 		} else if (*button4 == pressedState) {
 			transition(&ViaUI::aux3Menu);
 		} else if (*button6 == pressedState) {

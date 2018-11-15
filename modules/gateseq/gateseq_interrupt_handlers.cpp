@@ -35,6 +35,13 @@ void ViaGateseq::mainRisingEdgeCallback() {
 
 	sequencer.gateBEvent = SOFT_GATE_HIGH * sequencer.bOutput;
 
+	if (softGateBOn) {
+		gateController.attackTimeB = ((1 << 20) * 1439 / sequencer.periodCount) << 12;
+	} else {
+		gateController.attackTimeB = (1 << 27);
+	}
+	gateController.releaseTimeB = gateController.attackTimeB;
+
 }
 
 void ViaGateseq::mainFallingEdgeCallback() {
@@ -92,6 +99,7 @@ void ViaGateseq::auxTimer1InterruptCallback() {
 			sequencer.shuffledStep = 1;
 		}
 		clockPeriod += sequencer.shuffleDelay;
+
 		TIM2->ARR = clockPeriod;
 		TIM17->ARR = clockPeriod >> 14;
 		TIM17->CNT = 1;
@@ -105,6 +113,12 @@ void ViaGateseq::auxTimer1InterruptCallback() {
 #endif
 
 
+		if (softGateAOn) {
+			gateController.attackTimeA = ((1 << 20) * 1439 / clockPeriod) << 12;
+		} else {
+			gateController.attackTimeA = 1 << 27;
+		}
+		gateController.releaseTimeA = gateController.attackTimeA;
 
 }
 
@@ -119,7 +133,7 @@ void ViaGateseq::auxTimer2InterruptCallback() {
 		sequencer.shASignal = sequencer.sampleA;
 		// similar deal here
 		if (runtimeDisplay) {
-			//setLEDA(sequencer.sampleA);
+			setLEDA(sequencer.sampleA);
 			setLEDC(sequencer.aOutput);
 		}
 		sequencer.gateAEvent = SOFT_GATE_LOW * sequencer.andA;
@@ -263,7 +277,7 @@ void ViaGateseq::slowConversionCallback() {
 #ifdef BUILD_F373
 
 	if (runtimeDisplay) {
-		SET_BLUE_LED_ONOFF(outputs.dac2Samples[0] >> 11);
+		SET_BLUE_LED_ONOFF((outputs.dac2Samples[0] >> 11));
 	}
 
 #endif

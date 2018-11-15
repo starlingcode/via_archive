@@ -105,6 +105,8 @@ void ViaUI::button5Menu(int32_t sig) {
 			transition(&ViaUI::aux1Menu);
 		} else if (*button3 == pressedState) {
 			transition(&ViaUI::aux2Menu);
+		} else if (*button2 == pressedState) {
+			transition(&ViaUI::aux2MenuAlt);
 		} else if (*button4 == pressedState) {
 			transition(&ViaUI::aux3Menu);
 		} else if (*button6 == pressedState) {
@@ -177,6 +179,28 @@ void ViaUI::aux2Menu(int32_t sig) {
 				aux2TapCallback();
 			} else {
 				aux2HoldCallback();
+			}
+		}
+		break;
+
+		case INIT_SIG:
+		break;
+	}
+}
+
+void ViaUI::aux2MenuAlt(int32_t sig) {
+	switch (sig) {
+
+	case ENTRY_SIG:
+		aux2AltEnterMenuCallback();
+		break;
+
+	case SENSOR_EVENT_SIG:
+		if (*button2 == releasedState) {
+			if(timerRead() < 3000) {
+				aux2AltTapCallback();
+			} else {
+				aux2AltHoldCallback();
 			}
 		}
 		break;

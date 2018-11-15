@@ -149,6 +149,10 @@ void ViaSync::ViaSyncUI::aux2EnterMenuCallback(void) {
 	this_module.setLEDs(QUADRATURE_MODE);
 	resetTimerMenu();
 }
+
+void ViaSync::ViaSyncUI::aux2AltEnterMenuCallback(void) {
+	transition(&ViaSync::ViaSyncUI::button5Menu);
+}
 void ViaSync::ViaSyncUI::aux3EnterMenuCallback(void) {
 	this_module.clearLEDs();
 	this_module.setLEDs(AUX_OUT_MODE);
@@ -219,6 +223,10 @@ void ViaSync::ViaSyncUI::aux2TapCallback(void) {
 	transition(&ViaSync::ViaSyncUI::newAuxModeMenu);
 }
 
+void ViaSync::ViaSyncUI::aux2AltTapCallback(void) {
+	transition(&ViaSync::ViaSyncUI::button5Menu);
+}
+
 void ViaSync::ViaSyncUI::aux3TapCallback(void) {
 	AUX_OUT_MODE = incrementModeAndStore(AUX_OUT_MODE, AUX_MODE3_MASK, numAux3Modes, AUX_MODE3_MASK);
 	this_module.handleAux3ModeChange(AUX_OUT_MODE);
@@ -259,6 +267,10 @@ void ViaSync::ViaSyncUI::aux1HoldCallback(void) {
 }
 
 void ViaSync::ViaSyncUI::aux2HoldCallback(void) {
+	transition(&ViaSync::ViaSyncUI::defaultMenu);
+}
+
+void ViaSync::ViaSyncUI::aux2AltHoldCallback(void) {
 	transition(&ViaSync::ViaSyncUI::defaultMenu);
 }
 

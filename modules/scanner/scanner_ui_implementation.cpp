@@ -129,6 +129,9 @@ void ViaScanner::ViaScannerUI::aux1EnterMenuCallback(void) {
 void ViaScanner::ViaScannerUI::aux2EnterMenuCallback(void) {
 	transition(&ViaScanner::ViaScannerUI::button5Menu);
 }
+void ViaScanner::ViaScannerUI::aux2AltEnterMenuCallback(void) {
+	transition(&ViaScanner::ViaScannerUI::button5Menu);
+}
 void ViaScanner::ViaScannerUI::aux3EnterMenuCallback(void) {
 	transition(&ViaScanner::ViaScannerUI::button5Menu);
 }
@@ -187,6 +190,9 @@ void ViaScanner::ViaScannerUI::aux1TapCallback(void) {
 void ViaScanner::ViaScannerUI::aux2TapCallback(void) {
 	transition(&ViaScanner::ViaScannerUI::button5Menu);
 }
+void ViaScanner::ViaScannerUI::aux2AltTapCallback(void) {
+	transition(&ViaScanner::ViaScannerUI::button5Menu);
+}
 
 void ViaScanner::ViaScannerUI::aux3TapCallback(void) {
 	transition(&ViaScanner::ViaScannerUI::button5Menu);
@@ -218,6 +224,9 @@ void ViaScanner::ViaScannerUI::aux1HoldCallback(void) {
 	transition(&ViaScanner::ViaScannerUI::button5Menu);
 }
 void ViaScanner::ViaScannerUI::aux2HoldCallback(void) {
+	transition(&ViaScanner::ViaScannerUI::button5Menu);
+}
+void ViaScanner::ViaScannerUI::aux2AltHoldCallback(void) {
 	transition(&ViaScanner::ViaScannerUI::button5Menu);
 }
 void ViaScanner::ViaScannerUI::aux3HoldCallback(void) {

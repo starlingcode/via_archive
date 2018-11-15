@@ -28,12 +28,22 @@ void ViaGateseq::handleButton1ModeChange(int32_t mode) {
 
 void ViaGateseq::handleButton2ModeChange(int32_t mode) {
 
-	sequencer.andA = mode;
-
-	if (mode) {
-		sequencer.gateAEvent = SOFT_GATE_LOW;
-	} else {
+	switch (mode) {
+	case 0:
 		sequencer.gateAEvent = SOFT_GATE_HIGH;
+		sequencer.andA = 0;
+		softGateAOn = 0;
+		break;
+	case 1:
+		sequencer.andA = 1;
+		sequencer.gateAEvent = SOFT_GATE_LOW;
+		softGateAOn = 0;
+		break;
+	case 2:
+		sequencer.andA = 1;
+		sequencer.gateAEvent = SOFT_GATE_LOW;
+		softGateAOn = 1;
+		break;
 	}
 
 }
@@ -141,11 +151,22 @@ void ViaGateseq::handleButton4ModeChange(int32_t mode) {
 
 void ViaGateseq::handleButton5ModeChange(int32_t mode) {
 
-	sequencer.andB = mode;
-	if (mode) {
-		sequencer.gateBEvent = SOFT_GATE_LOW;
-	} else {
+	switch (mode) {
+	case 0:
 		sequencer.gateBEvent = SOFT_GATE_HIGH;
+		sequencer.andB = 0;
+		softGateBOn = 0;
+		break;
+	case 1:
+		sequencer.andB = 1;
+		sequencer.gateBEvent = SOFT_GATE_LOW;
+		softGateBOn = 0;
+		break;
+	case 2:
+		sequencer.andB = 1;
+		sequencer.gateBEvent = SOFT_GATE_LOW;
+		softGateBOn = 1;
+		break;
 	}
 
 }

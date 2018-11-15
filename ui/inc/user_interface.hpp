@@ -83,7 +83,7 @@ public:
 
 #endif
 
-	void transition(void (ViaUI::*func)(int32_t));
+	virtual void transition(void (ViaUI::*func)(int32_t));
 
 	// Main
 	void defaultMenu(int32_t sig);
@@ -99,6 +99,7 @@ public:
 	void button6Menu(int32_t sig);
 	void aux1Menu(int32_t sig);
 	void aux2Menu(int32_t sig);
+	void aux2MenuAlt(int32_t sig);
 	void aux3Menu(int32_t sig);
 	void aux4Menu(int32_t sig);
 
@@ -128,6 +129,8 @@ public:
 	virtual void aux1HoldCallback(void) = 0;
 	virtual void aux2TapCallback(void) = 0;
 	virtual void aux2HoldCallback(void) = 0;
+	virtual void aux2AltTapCallback(void) = 0;
+	virtual void aux2AltHoldCallback(void) = 0;
 	virtual void aux3TapCallback(void) = 0;
 	virtual void aux3HoldCallback(void) = 0;
 	virtual void aux4TapCallback(void) = 0;
@@ -147,6 +150,7 @@ public:
 
 	virtual void aux1EnterMenuCallback(void) = 0;
 	virtual void aux2EnterMenuCallback(void) = 0;
+	virtual void aux2AltEnterMenuCallback(void) = 0;
 	virtual void aux3EnterMenuCallback(void) = 0;
 	virtual void aux4EnterMenuCallback(void) = 0;
 
