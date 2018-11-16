@@ -17,13 +17,13 @@
 int32_t SoftGate::updateGateA(int32_t signal) {
 	aSignal = signal;
 	(this->*manageGateA)();
-	return gateA;
+	return gateA >> 16;
 }
 
 int32_t SoftGate::updateGateB(int32_t signal) {
 	bSignal = signal;
 	(this->*manageGateB)();
-	return gateB;
+	return gateB >> 16;
 }
 
 
@@ -31,10 +31,10 @@ void SoftGate::gateAHigh(void) {
 
 	switch (aSignal) {
 	case SOFT_GATE_EXECUTE:
-		gateA = 4095;
+		gateA = (4095 << 16);
 		break;
 	case SOFT_GATE_LOW:
-		gateA = 4095;
+		gateA = (4095 << 16);
 		manageGateA = &SoftGate::gateAFall;
 		break;
 	default:
@@ -60,10 +60,10 @@ void SoftGate::gateBHigh(void) {
 
 	switch (bSignal) {
 	case SOFT_GATE_EXECUTE:
-		gateB = 4095;
+		gateB = (4095 << 16);
 		break;
 	case SOFT_GATE_LOW:
-		gateB = 4095;
+		gateB = (4095 << 16);
 		manageGateB = &SoftGate::gateBFall;
 		break;
 	default:
@@ -90,8 +90,8 @@ void SoftGate::gateARise(void) {
 	switch (aSignal) {
 	case SOFT_GATE_EXECUTE:
 		gateA += attackTimeA;
-		if (gateA >= 4095) {
-			gateA = 4095;
+		if (gateA >= (4095 << 16)) {
+			gateA = (4095 << 16);
 			manageGateA = &SoftGate::gateAHigh;
 		}
 		break;
@@ -125,8 +125,8 @@ void SoftGate::gateBRise(void) {
 	switch (bSignal) {
 	case SOFT_GATE_EXECUTE:
 		gateB += attackTimeB;
-		if (gateB >= 4095) {
-			gateB = 4095;
+		if (gateB >= (4095 << 16)) {
+			gateB = (4095 << 16);
 			manageGateB = &SoftGate::gateBHigh;
 		}
 		break;

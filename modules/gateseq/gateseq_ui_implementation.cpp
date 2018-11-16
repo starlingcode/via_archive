@@ -110,16 +110,16 @@ void ViaGateseq::ViaGateseqUI::button3EnterMenuCallback(void) {
 	this_module.setGreenLED(!(button3Mode >> 1) * 4095);
 	if (button3Mode == 1 || button3Mode == 3) {
 #ifdef BUILD_F373	
-		this_module.SET_BLUE_LED_ONOFF(1);
+		SET_BLUE_LED_ONOFF(1);
 #endif
-#ifdef BUILD_F373	
+#ifdef BUILD_VIRTUAL
 		this_module.SET_BLUE_LED_ONOFF(1);
 #endif
 	} else {
 #ifdef BUILD_F373	
-		this_module.SET_BLUE_LED_ONOFF(0);
+	SET_BLUE_LED_ONOFF(0);
 #endif
-#ifdef BUILD_F373	
+#ifdef BUILD_VIRTUAL
 		this_module.SET_BLUE_LED_ONOFF(0);
 #endif
 	}
@@ -150,6 +150,9 @@ void ViaGateseq::ViaGateseqUI::aux1EnterMenuCallback(void) {
 	transition(&ViaGateseq::ViaGateseqUI::button5Menu);
 }
 void ViaGateseq::ViaGateseqUI::aux2EnterMenuCallback(void) {
+	transition(&ViaGateseq::ViaGateseqUI::button5Menu);
+}
+void ViaGateseq::ViaGateseqUI::aux2AltEnterMenuCallback(void) {
 	this_module.clearLEDs();
 	this_module.setLEDs(LOGIC_MODE);
 	resetTimerMenu();
@@ -209,6 +212,10 @@ void ViaGateseq::ViaGateseqUI::aux1TapCallback(void) {
 }
 
 void ViaGateseq::ViaGateseqUI::aux2TapCallback(void) {
+	transition(&ViaGateseq::ViaGateseqUI::button5Menu);
+}
+
+void ViaGateseq::ViaGateseqUI::aux2AltTapCallback(void) {
 	LOGIC_MODE = incrementModeAndStore(LOGIC_MODE, AUX_MODE2_MASK, numAux2Modes, AUX_MODE2_MASK);
 	this_module.handleAux2ModeChange(LOGIC_MODE);
 	this_module.clearLEDs();
@@ -245,6 +252,10 @@ void ViaGateseq::ViaGateseqUI::button6HoldCallback(void) {
 
 void ViaGateseq::ViaGateseqUI::aux1HoldCallback(void) {
 	transition(&ViaGateseq::ViaGateseqUI::button5Menu);
+}
+
+void ViaGateseq::ViaGateseqUI::aux2AltHoldCallback(void) {
+	transition(&ViaGateseq::ViaGateseqUI::defaultMenu);
 }
 
 void ViaGateseq::ViaGateseqUI::aux2HoldCallback(void) {

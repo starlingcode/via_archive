@@ -37,10 +37,10 @@ extern "C" {
 #define LOGIC_MODE aux2Mode
 
 #define numButton1Modes 3
-#define numButton2Modes 2
+#define numButton2Modes 3
 #define numButton3Modes 4
 #define numButton4Modes 3
-#define numButton5Modes 2
+#define numButton5Modes 3
 #define numButton6Modes 4
 #define numAux1Modes 0
 #define numAux2Modes 4
@@ -51,7 +51,7 @@ enum gateseq_button1Modes {
 	aNoSH, aResample, aSampleTrack
 };
 enum gateseq_button2Modes {
-	andAoff, andAon
+	andAoff, andAon, softGateA
 };
 enum gateseq_button3Modes {
 	aPatternBankSelections
@@ -60,7 +60,7 @@ enum gateseq_button4Modes {
 	bNoSH, bResample, bSampleTrack
 };
 enum gateseq_button5Modes {
-	andBoff, andBon
+	andBoff, andBon, softGateB
 };
 enum gateseq_button6Modes {
 	bPatternBankSelections
@@ -109,10 +109,13 @@ public:
 		void aux1HoldCallback(void) override;
 		void aux2TapCallback(void) override;
 		void aux2HoldCallback(void) override;
+		void aux2AltTapCallback(void) override;
+		void aux2AltHoldCallback(void) override;
 		void aux3TapCallback(void) override;
 		void aux3HoldCallback(void) override;
 		void aux4TapCallback(void) override;
 		void aux4HoldCallback(void) override;
+
 
 		void uiSetLEDs(int) override;
 
@@ -132,6 +135,7 @@ public:
 
 		void aux1EnterMenuCallback(void) override;
 		void aux2EnterMenuCallback(void) override;
+		void aux2AltEnterMenuCallback(void) override;
 		void aux3EnterMenuCallback(void) override;
 		void aux4EnterMenuCallback(void) override;
 
@@ -182,6 +186,9 @@ public:
 	SoftGate gateController;
 
 	uint32_t simultaneousTrigFlag;
+
+	int32_t softGateAOn;
+	int32_t softGateBOn;
 
 	/*
 	 *

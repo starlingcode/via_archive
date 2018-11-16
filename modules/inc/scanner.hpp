@@ -115,6 +115,8 @@ public:
 		void aux1HoldCallback(void) override;
 		void aux2TapCallback(void) override;
 		void aux2HoldCallback(void) override;
+		void aux2AltTapCallback(void) override;
+		void aux2AltHoldCallback(void) override;
 		void aux3TapCallback(void) override;
 		void aux3HoldCallback(void) override;
 		void aux4TapCallback(void) override;
@@ -138,6 +140,7 @@ public:
 
 		void aux1EnterMenuCallback(void) override;
 		void aux2EnterMenuCallback(void) override;
+		void aux2AltEnterMenuCallback(void) override;
 		void aux3EnterMenuCallback(void) override;
 		void aux4EnterMenuCallback(void) override;
 

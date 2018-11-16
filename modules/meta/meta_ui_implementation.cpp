@@ -158,6 +158,11 @@ void ViaMeta::ViaMetaUI::aux2EnterMenuCallback(void) {
 	this_module.setLEDs(LOGIC_A_MODE);
 	resetTimerMenu();
 }
+
+void ViaMeta::ViaMetaUI::aux2AltEnterMenuCallback(void) {
+	transition(&ViaMeta::ViaMetaUI::button5Menu);
+}
+
 void ViaMeta::ViaMetaUI::aux3EnterMenuCallback(void) {
 	this_module.clearLEDs();
 	this_module.setLEDs(DRUM_MODE);
@@ -224,6 +229,10 @@ void ViaMeta::ViaMetaUI::aux2TapCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::newAuxModeMenu);
 }
 
+void ViaMeta::ViaMetaUI::aux2AltTapCallback(void) {
+	transition(&ViaMeta::ViaMetaUI::button5Menu);
+}
+
 void ViaMeta::ViaMetaUI::aux3TapCallback(void) {
 	DRUM_MODE = incrementModeAndStore(DRUM_MODE, AUX_MODE3_MASK, numAux3Modes, AUX_MODE3_SHIFT);
 	this_module.handleAux3ModeChange(DRUM_MODE);
@@ -264,6 +273,10 @@ void ViaMeta::ViaMetaUI::aux1HoldCallback(void) {
 }
 
 void ViaMeta::ViaMetaUI::aux2HoldCallback(void) {
+	transition(&ViaMeta::ViaMetaUI::defaultMenu);
+}
+
+void ViaMeta::ViaMetaUI::aux2AltHoldCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::defaultMenu);
 }
 
