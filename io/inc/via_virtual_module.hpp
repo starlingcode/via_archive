@@ -263,15 +263,15 @@ public:
 			break;
 		case 2:
 			setLEDA(0);
-			setLEDB(1);
-			setLEDC(0);
-			setLEDD(0);
-			break;
-		case 3:
-			setLEDA(0);
 			setLEDB(0);
 			setLEDC(0);
 			setLEDD(1);
+			break;
+		case 3:
+			setLEDA(0);
+			setLEDB(1);
+			setLEDC(0);
+			setLEDD(0);
 			break;
 		case 4:
 			setLEDA(1);
@@ -281,21 +281,21 @@ public:
 			break;
 		case 5:
 			setLEDA(0);
+			setLEDB(0);
+			setLEDC(1);
+			setLEDD(1);
+			break;
+		case 6:
+			setLEDA(0);
 			setLEDB(1);
 			setLEDC(0);
 			setLEDD(1);
 			break;
-		case 6:
+		case 7:
 			setLEDA(1);
 			setLEDB(1);
 			setLEDC(0);
 			setLEDD(0);
-			break;
-		case 7:
-			setLEDA(0);
-			setLEDB(0);
-			setLEDC(1);
-			setLEDD(1);
 			break;
 		}
 	}
