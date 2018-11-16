@@ -210,11 +210,11 @@ public:
 
 		int32_t blinkTimerEnable = 0;
 		int32_t blinkTimerCount = 0;
-		int32_t blinkTimerOverflow = 400;
+		int32_t blinkTimerOverflow = 200;
 
 		int32_t blankTimerEnable = 0;
 		int32_t blankTimerCount = 0;
-		int32_t blankTimerOverflow = 400;
+		int32_t blankTimerOverflow = 200;
 
 	#endif
 

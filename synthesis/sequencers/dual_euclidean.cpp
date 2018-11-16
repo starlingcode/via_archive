@@ -94,9 +94,8 @@ void DualEuclidean::processClock(void) {
 	virtualTimer1Count = 0;
 	virtualTimer3Enable = 0;
 	//virtualTimer2Prescaler = divider - 1; // no division implemented yet
-	virtualTimer2Overflow = periodCount/multiplier;
 	virtualTimer2Count = 0;
-	// then "handle an interrupt" on the multiplier timer and update the aux logic output in the module interrupt handler
+	shuffledStep = 1;
 	skipClock = 1;
 	}
 #endif

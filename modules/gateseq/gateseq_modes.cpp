@@ -61,8 +61,8 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 		TIM2->CR1 &= ~TIM_CR1_CEN;
 #endif
 #ifdef BUILD_VIRTUAL
-		sequencer.virtualTimer1Enable = 0;
-		sequencer.virtualTimer1Count = 0;
+		sequencer.virtualTimer2Enable = 0;
+		sequencer.virtualTimer2Count = 0;
 #endif
 		sequencer.clockOn = 0;
 		sequencer.modulateMultiplier = 0;
@@ -75,8 +75,8 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 		TIM2->CR1 |= TIM_CR1_CEN;
 #endif
 #ifdef BUILD_VIRTUAL
-		sequencer.virtualTimer1Enable = 1;
-		sequencer.virtualTimer1Count = 1;
+		sequencer.virtualTimer2Enable = 1;
+		sequencer.virtualTimer2Count = 1;
 #endif
 		sequencer.clockOn = 1;
 		sequencer.modulateMultiplier = 0;
@@ -89,8 +89,8 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 		TIM2->CR1 |= TIM_CR1_CEN;
 #endif
 #ifdef BUILD_VIRTUAL
-		sequencer.virtualTimer1Enable = 1;
-		sequencer.virtualTimer1Count = 1;
+		sequencer.virtualTimer2Enable = 1;
+		sequencer.virtualTimer2Count = 1;
 #endif
 		sequencer.clockOn = 1;
 		sequencer.modulateMultiplier = 0;
@@ -103,8 +103,8 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 		TIM2->CR1 |= TIM_CR1_CEN;
 #endif
 #ifdef BUILD_VIRTUAL
-		sequencer.virtualTimer1Enable = 1;
-		sequencer.virtualTimer1Count = 1;
+		sequencer.virtualTimer2Enable = 1;
+		sequencer.virtualTimer2Count = 1;
 #endif
 		sequencer.clockOn = 1;
 		sequencer.modulateMultiplier = 1;

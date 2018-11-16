@@ -13,7 +13,9 @@ void ViaGateseq::mainRisingEdgeCallback() {
 	sequencer.processClock();
 
 #ifdef BUILD_VIRTUAL
-	auxTimer1InterruptCallback();
+	if (sequencer.skipClock) {
+		auxTimer1InterruptCallback();
+	}
 	sequencer.updateLogicOutput();
 #endif
 
@@ -81,25 +83,26 @@ void ViaGateseq::auxTimer1InterruptCallback() {
 
 		sequencer.gateAEvent = SOFT_GATE_HIGH * sequencer.aOutput;
 
-#ifdef BUILD_F373
 		uint32_t clockPeriod = sequencer.periodCount/sequencer.multiplier;
+		
 		if (sequencer.shuffledStep) {
 			sequencer.shuffleDelay = fix16_mul(clockPeriod, sequencer.shuffle);
 			sequencer.shuffledStep = 0;
-
 		} else {
 			sequencer.shuffleDelay = -fix16_mul(clockPeriod, sequencer.shuffle);
 			sequencer.shuffledStep = 1;
 		}
 		clockPeriod += sequencer.shuffleDelay;
+
+#ifdef BUILD_F373
 		TIM2->ARR = clockPeriod;
 		TIM17->ARR = clockPeriod >> 14;
 		TIM17->CNT = 1;
 		TIM17->CR1 = TIM_CR1_CEN;
 #endif 
 #ifdef BUILD_VIRTUAL
-		sequencer.virtualTimer2Overflow = sequencer.periodCount/sequencer.multiplier;
-		sequencer.virtualTimer3Overflow = sequencer.virtualTimer2Overflow >> 1;
+		sequencer.virtualTimer2Overflow = clockPeriod;
+		sequencer.virtualTimer3Overflow = clockPeriod >> 1;
 		sequencer.virtualTimer3Count = 0;
 		sequencer.virtualTimer3Enable = 1;
 #endif
@@ -150,6 +153,7 @@ void ViaGateseq::auxTimer3InterruptCallback() {
 void ViaGateseq::auxRisingEdgeCallback() {
 
 	if (simultaneousTrigFlag) {
+		sequencer.skipClock = 1;
 		sequencer.aCounter = 0;
 		sequencer.bCounter = 0;
 		sequencer.advanceSequencerA();
