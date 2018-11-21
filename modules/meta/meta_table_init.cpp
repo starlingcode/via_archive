@@ -4,13 +4,13 @@
 void ViaMeta::fillWavetableArray(void) {
 
 	wavetableArray[0][0] = &trains;
-	wavetableArray[0][1] = &soprano257;
-	wavetableArray[0][2] = &impevens;
-	wavetableArray[0][3] = &linwavefold_257;
-	wavetableArray[0][4] = &skipSaw;
+	wavetableArray[0][1] = &waterphone;
+	wavetableArray[0][2] = &vox;
+	wavetableArray[0][3] = &csound_formants;
+	wavetableArray[0][4] = &impevens;
 	wavetableArray[0][5] = &sinwavefold_257;
-	wavetableArray[0][6] = &additive_tri_to_pulse;
-	wavetableArray[0][7] = &newBounce;
+	wavetableArray[0][6] = &linwavefold_257;
+	wavetableArray[0][7] = &skipSaw;
 	wavetableArray[1][0] = &testRMS;
 	wavetableArray[1][1] = &gamma257;
 	wavetableArray[1][2] = &bounce_257;
