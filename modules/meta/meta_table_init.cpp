@@ -3,7 +3,7 @@
 
 void ViaMeta::fillWavetableArray(void) {
 
-	wavetableArray[0][0] = &tenor257;
+	wavetableArray[0][0] = &trains;
 	wavetableArray[0][1] = &soprano257;
 	wavetableArray[0][2] = &impevens;
 	wavetableArray[0][3] = &linwavefold_257;

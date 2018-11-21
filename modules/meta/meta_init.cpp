@@ -24,6 +24,8 @@ void ViaMeta::init() {
 	metaController.parseControls = &MetaController::parseControlsDrum;
 	metaController.generateIncrements = &MetaController::generateIncrementsDrum;
 	metaController.incrementArbiter = &MetaController::noRetrigAttackState;
+	metaController.advancePhase = &MetaController::advancePhaseOversampled;
+
 	metaController.loopHandler = &MetaController::handleLoopOn;
 
 	drumEnvelope.incrementArbiter = &SimpleEnvelope::restingState;

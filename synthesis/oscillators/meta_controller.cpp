@@ -117,7 +117,11 @@ void MetaController::generateIncrementsSeq(ViaInputStreams * inputs) {
 
 }
 
-int32_t MetaController::advancePhase(uint32_t * phaseDistTable) {
+void MetaController::advancePhaseExternal(uint32_t * phaseDistTable) {
+	(this->*advancePhase)(phaseDistTable);
+}
+
+int32_t MetaController::advancePhasePWM(uint32_t * phaseDistTable) {
 
 	int32_t phaseWrapper;
 
@@ -170,9 +174,6 @@ int32_t MetaController::advancePhase(uint32_t * phaseDistTable) {
 
 	phaseWrapper += atBIndicator;
 
-//	// stick the position to WAVETABLE AT_B_PHASE
-//	phase -= (phase - previousPhase) * (abs(atBIndicator) & gateSignal);
-
 	phaseEvent = phaseWrapper;
 
 	(this->*loopHandler)();
@@ -180,13 +181,62 @@ int32_t MetaController::advancePhase(uint32_t * phaseDistTable) {
 	// store the current phases
 	phaseBeforeIncrement = ghostPhase;
 
-	previousPhase = phase;
+	ghostPhase = localPhase;
+
+	return phase;
+
+}
+
+int32_t MetaController::advancePhaseOversampled(uint32_t * phaseDistTable) {
+
+	int32_t phaseWrapper;
+
+	incrementUsed = (this->*incrementArbiter)();
+
+	int32_t increment = incrementUsed * freeze;
+
+	int32_t localPhase = phase + !triggerSignal;
+
+	localPhase = (localPhase + __SSAT(increment, 24)) * (oscillatorOn);
+
+	phaseWrapper = 0;
+
+	// add wavetable length if phase < 0
+
+	phaseWrapper += ((uint32_t)(localPhase) >> 31) * WAVETABLE_LENGTH;
+
+	// subtract wavetable length if phase > wavetable length
+
+	phaseWrapper -= ((uint32_t)(WAVETABLE_LENGTH - localPhase) >> 31) * WAVETABLE_LENGTH;
+
+	// apply the wrapping
+	// no effect if the phase is in bounds
+
+	localPhase += phaseWrapper;
+
+	// log a -1 if the max value index of the wavetable is traversed from the left
+	// log a 1 if traversed from the right
+	// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
+	// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
+
+	int32_t atBIndicator = ((uint32_t)(localPhase - AT_B_PHASE) >> 31) - ((uint32_t)(ghostPhase - AT_B_PHASE) >> 31);
+
+	phaseWrapper += atBIndicator;
+
+	phaseEvent = phaseWrapper;
+
+	(this->*loopHandler)();
+
+	phaseBeforeIncrement = phase;
+
+	phase = localPhase;
 
 	ghostPhase = localPhase;
 
 	return phase;
 
 }
+
 
 
 void MetaController::handleLoopOn(void) {

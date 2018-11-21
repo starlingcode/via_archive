@@ -73,6 +73,12 @@ void ViaSync::handleButton4ModeChange(int32_t mode) {
 
 	// see pllMultiplierMeasureFrequency for why this is in range 1, 2, 3
 
+	pllController.nudgeSum = 0;
+
+	for (int i = 0; i < 32; i ++) {
+		writeBuffer(&pllController.nudgeBuffer, 0);
+	}
+
 	pllController.syncMode = mode + 1;
 
 }

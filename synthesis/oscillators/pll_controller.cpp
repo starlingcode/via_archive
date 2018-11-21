@@ -66,20 +66,22 @@ void PllController::doPLL(void) {
 				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
 				pllNudge -= phase * !(phase >> 24);
 
-				pllCounter = gcd;
+				nudgeSum = pllNudge + nudgeSum - readBuffer(&nudgeBuffer, 31);
+				writeBuffer(&nudgeBuffer, pllNudge);
+				pllNudge = nudgeSum >> 5;
 
 				break;
+
 			case FAST_PLL:
 				pllNudge = 0;
 				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
 				pllNudge -= phase * !(phase >> 24);
 
-				if (intMultiplier >> 16) {
-					pllNudge = ((int64_t) (pllNudge) << 16)/(intMultiplier);
-				}
+				pllNudge <<= 2;
+
 				nudgeSum = pllNudge + nudgeSum - readBuffer(&nudgeBuffer, 7);
 				writeBuffer(&nudgeBuffer, pllNudge);
-				pllNudge = nudgeSum << 2;
+				pllNudge = nudgeSum >> 3;
 
 				pllCounter = gcd;
 				break;
@@ -89,12 +91,9 @@ void PllController::doPLL(void) {
 				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
 				pllNudge -= phase * !(phase >> 24);
 
-				if (intMultiplier >> 16) {
-					pllNudge = ((int64_t) (pllNudge) << 16)/(intMultiplier);
-				}
-				nudgeSum = pllNudge + nudgeSum - readBuffer(&nudgeBuffer, 7);
-				writeBuffer(&nudgeBuffer, pllNudge);
-				pllNudge = nudgeSum << 4;
+				pllNudge <<= 4;
+
+				pllCounter = gcd;
 
 				break;
 			case HARD_SYNC:
@@ -129,7 +128,7 @@ void PllController::generateFrequency(void) {
 
 #ifdef BUILD_F373
 
-	int32_t incrementCalc = ((uint64_t)(0x100000000 + (uint64_t) pllNudge) * 180) / periodCount;
+	int32_t incrementCalc = ((uint64_t)(0x100000000 + (uint64_t) pllNudge) * 1440) / (periodCount * 8);
 	incrementCalc = (fix48_mul(incrementCalc, fracMultiplier) + fix16_mul(incrementCalc, intMultiplier));
 	increment = __USAT(incrementCalc, 31);
 

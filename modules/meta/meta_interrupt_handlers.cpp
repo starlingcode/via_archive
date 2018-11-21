@@ -87,7 +87,7 @@ void ViaMeta::halfTransferCallback(void) {
 	setLogicOut(0, runtimeDisplay);
 
 	metaController.generateIncrementsExternal(&inputs);
-	metaController.advancePhase((uint32_t *) phaseModPWMTables);
+	metaController.advancePhaseExternal((uint32_t *) phaseModPWMTables);
 	metaWavetable.phase = metaController.phaseBeforeIncrement;
 	metaWavetable.increment = metaController.incrementUsed;
 	metaWavetable.advance((uint32_t *) wavetableRead);
@@ -106,7 +106,7 @@ void ViaMeta::transferCompleteCallback(void) {
 	setLogicOut(1, runtimeDisplay);
 
 	metaController.generateIncrementsExternal(&inputs);
-	metaController.advancePhase((uint32_t *) phaseModPWMTables);
+	metaController.advancePhaseExternal((uint32_t *) phaseModPWMTables);
 	metaWavetable.phase = metaController.phaseBeforeIncrement;
 	metaWavetable.increment = metaController.incrementUsed;
 	metaWavetable.advance((uint32_t *) wavetableRead);

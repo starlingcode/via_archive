@@ -279,7 +279,12 @@ public:
 	void generateIncrementsEnv(ViaInputStreams * inputs);
 	void generateIncrementsSeq(ViaInputStreams * inputs);
 
-	int32_t advancePhase(uint32_t * phaseDistTable);
+	void advancePhaseExternal(uint32_t * phaseDistTable);
+
+	int32_t (MetaController::*advancePhase)(uint32_t * phaseDistTable);
+	int32_t advancePhasePWM(uint32_t * phaseDistTable);
+	int32_t advancePhaseOversampled(uint32_t * phaseDistTable);
+
 
 	int32_t (MetaController::*incrementArbiter)(void);
 

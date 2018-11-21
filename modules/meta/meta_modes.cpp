@@ -51,6 +51,7 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 			metaController.parseControls = &MetaController::parseControlsDrum;
 			metaController.fm = drumFullScale;
 			outputStage = &ViaMeta::drumMode;
+			metaController.advancePhase = &MetaController::advancePhaseOversampled;
 			metaWavetable.oversamplingFactor = 0;
 			metaController.loopHandler = &MetaController::handleLoopOn;
 			metaController.loopMode = 1;
@@ -63,6 +64,7 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 			metaController.parseControls = &MetaController::parseControlsAudio;
 			metaController.generateIncrements = &MetaController::generateIncrementsAudio;
 			outputStage = &ViaMeta::oversample;
+			metaController.advancePhase = &MetaController::advancePhaseOversampled;
 			metaWavetable.oversamplingFactor = 3;
 			metaController.fm = inputs.cv2Samples;
 			metaWavetable.morphScale = drumFullScale;
@@ -79,6 +81,7 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 		metaController.generateIncrements = &MetaController::generateIncrementsEnv;
 
 		outputStage = &ViaMeta::addThreeBits;
+		metaController.advancePhase = &MetaController::advancePhasePWM;
 		metaWavetable.oversamplingFactor = 0;
 
 		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
@@ -110,6 +113,7 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 		metaController.generateIncrements = &MetaController::generateIncrementsSeq;
 
 		outputStage = &ViaMeta::addThreeBits;
+		metaController.advancePhase = &MetaController::advancePhasePWM;
 
 		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
 		break;
@@ -163,6 +167,7 @@ void ViaMeta::handleButton6ModeChange(int32_t mode) {
 			handleButton3ModeChange(0);
 			handleButton4ModeChange(0);
 			outputStage = &ViaMeta::drumMode;
+			metaController.advancePhase = &MetaController::advancePhaseOversampled;
 			metaWavetable.oversamplingFactor = 0;
 		} else {
 			metaController.loopHandler = &MetaController::handleLoopOff;
@@ -177,6 +182,7 @@ void ViaMeta::handleButton6ModeChange(int32_t mode) {
 			handleButton3ModeChange(0);
 			handleButton4ModeChange(metaUI.TRIG_MODE);
 			outputStage = &ViaMeta::oversample;
+			metaController.advancePhase = &MetaController::advancePhaseOversampled;
 			metaWavetable.oversamplingFactor = 3;
 		}
 		metaController.loopHandler = &MetaController::handleLoopOn;
