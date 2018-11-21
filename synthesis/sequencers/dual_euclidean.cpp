@@ -25,12 +25,22 @@ void DualEuclidean::parseControls(ViaControls * controls,
 	cv3Sample = cv3Sample >> 4;
 	cv3Sample += 2048;
 
-	if (controls->cv1Value >= 2048) {
+	uint32_t cv1WOffset;
+
+#ifdef BUILD_VIRTUAL
+	cv1WOffset = controls->cv1Value;
+#endif
+#ifdef BUILD_F373
+	cv1WOffset = __USAT(controls->cv1Value - 100, 12);
+#endif
+
+
+	if (cv1WOffset >= 2048) {
 		aPatternMorph = (fix16_lerp(controls->knob1Value, 4095,
-				(controls->cv1Value - 2048) << 5)) >> 8;
+				(cv1WOffset - 2048) << 5)) >> 8;
 	} else {
 		aPatternMorph = (fix16_lerp(0, controls->knob1Value,
-				controls->cv1Value << 5)) >> 8;
+				cv1WOffset << 5)) >> 8;
 	}
 
 	if (modulateMultiplier) {
