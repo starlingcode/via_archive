@@ -33,8 +33,8 @@ void ViaMeta::addThreeBits(int32_t writeIndex) {
 	int32_t dac1Sample = (32767 - dac2Sample);
 	int32_t dac1Base = dac1Sample >> 3;
 
-	int32_t dac1LSB = -(dac1Sample - dac1Base);
-	int32_t dac2LSB = -(dac2Sample - dac2Base);
+	int32_t dac1LSB = -(dac2Sample & 0b111);
+	int32_t dac2LSB = -(dac2Sample & 0b111);
 
 	int32_t samplesRemaining = outputBufferSize;
 
@@ -42,6 +42,9 @@ void ViaMeta::addThreeBits(int32_t writeIndex) {
 
 		outputs.dac1Samples[writeIndex] = __USAT(dac1Base + (dac1LSB > 0), 12);
 		outputs.dac2Samples[writeIndex] = __USAT(dac2Base + (dac2LSB > 0), 12);
+
+//		outputs.dac1Samples[writeIndex] = dac1Base;
+//		outputs.dac2Samples[writeIndex] = dac2Base;
 
 		dac1LSB++;
 		dac2LSB++;
@@ -54,6 +57,8 @@ void ViaMeta::addThreeBits(int32_t writeIndex) {
 void ViaMeta::drumMode(int32_t writeIndex) {
 
 	drumEnvelope.advance(&inputs, wavetableReadDrum);
+	drumEnvelope2.advance(&inputs, wavetableReadDrum2);
+
 
 	uint32_t ampScale = drumEnvelope.output[0] << 1;
 	int32_t sample = metaWavetable.signalOut[0];

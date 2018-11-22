@@ -29,12 +29,16 @@ void ViaMeta::init() {
 	metaController.loopHandler = &MetaController::handleLoopOn;
 
 	drumEnvelope.incrementArbiter = &SimpleEnvelope::restingState;
+	drumEnvelope2.incrementArbiter = &SimpleEnvelope::restingState;
+
 
 	// initialize our touch sensors
 
 	fillWavetableArray();
 	initDrum();
 	drumEnvelope.output = (uint32_t*) drumWrite;
+	drumEnvelope2.output = (uint32_t*) drum2Write;
+
 
 	inputs.init(META_BUFFER_SIZE);
 	outputs.init(META_BUFFER_SIZE);

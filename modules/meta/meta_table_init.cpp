@@ -39,6 +39,7 @@ void ViaMeta::switchWavetable(const Wavetable * table) {
 // declare functions to set the currently active tables
 void ViaMeta::initDrum(void) {
 	loadSingleTable15Bit(&drum, (uint32_t *) wavetableReadDrum);
+	loadSingleTable15Bit(&drum, (uint32_t *) wavetableReadDrum2);
 	for (int32_t i = 0; i < 4; i++) {
 		drumFullScale[i] = 32767;
 	}

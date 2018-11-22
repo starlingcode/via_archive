@@ -153,8 +153,7 @@ public:
 	// declare arrays to store the active tables
 	uint32_t wavetableRead[9][517];
 	uint32_t wavetableReadDrum[517];
-
-	//uint32_t meta_phaseDistRead[33][65];
+	uint32_t wavetableReadDrum2[517];
 
 	// declare functions to set the currently active tables
 	void switchWavetable(const Wavetable *);
@@ -163,6 +162,7 @@ public:
 	void fillWavetableArray(void);
 	void initDrum(void);
 	int16_t drumWrite[4];
+	int16_t drum2Write[4];
 	int16_t drumFullScale[4];
 
 	/*
@@ -280,6 +280,7 @@ public:
 	MetaWavetable metaWavetable;
 	MetaController metaController;
 	SimpleEnvelope drumEnvelope;
+	SimpleEnvelope drumEnvelope2;
 
 	/*
 	 *

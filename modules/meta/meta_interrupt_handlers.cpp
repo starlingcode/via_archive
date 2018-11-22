@@ -127,6 +127,8 @@ void ViaMeta::slowConversionCallback(void) {
 	metaWavetable.parseControls(&controls);
 	metaController.parseControlsExternal(&controls, &inputs);
 	drumEnvelope.parseControls(&controls, &inputs);
+	drumEnvelope2.parseControls(&controls, &inputs);
+
 
 	(this->*updateRGB)();
 

@@ -48,168 +48,8 @@ static const uint16_t *impshort_5[9] = { impshort0, impshort1, impshort2,
 
 
 
-static const uint16_t *algerianReleaseFamily[5] = {
-	algerianReleaseFamily0, algerianReleaseFamily1, algerianReleaseFamily2, algerianReleaseFamily3, algerianReleaseFamily4};
-
-
-static const uint16_t *sawBendReleaseFamily[5] = {
-	sawBendReleaseFamily0, sawBendReleaseFamily1, sawBendReleaseFamily2, sawBendReleaseFamily3, sawBendReleaseFamily4};
-
-
-static const uint16_t *skipsaw[5] = {
-	skipsaw0, skipsaw1, skipsaw2, skipsaw3, skipsaw4};
-
-
-static const uint16_t *test_fm_release[5] = {
-	test_fm_release0, test_fm_release1, test_fm_release2, test_fm_release3, test_fm_release4};
-
-
-static const uint16_t *exciteBikeAttackFamily[9] = {
-	exciteBikeAttackFamily0, exciteBikeAttackFamily1, exciteBikeAttackFamily2, exciteBikeAttackFamily3, exciteBikeAttackFamily4, exciteBikeAttackFamily5, exciteBikeAttackFamily6, exciteBikeAttackFamily7,
-	exciteBikeAttackFamily8};
-
-
-static const uint16_t *trains_release[9] = {
-	trains_release0, trains_release1, trains_release2, trains_release3, trains_release4, trains_release5, trains_release6, trains_release7,
-	trains_release8};
-
-
-static const uint16_t *moogSquareShiftReleaseFamily[9] = {
-	moogSquareShiftReleaseFamily0, moogSquareShiftReleaseFamily1, moogSquareShiftReleaseFamily2, moogSquareShiftReleaseFamily3, moogSquareShiftReleaseFamily4, moogSquareShiftReleaseFamily5, moogSquareShiftReleaseFamily6, moogSquareShiftReleaseFamily7,
-	moogSquareShiftReleaseFamily8};
-
-
-static const uint16_t *newBounceFamily[5] = {
-	newBounceFamily0, newBounceFamily1, newBounceFamily2, newBounceFamily3, newBounceFamily4};
-
-
-static const uint16_t *moogSquareShiftAttackFamily[9] = {
-	moogSquareShiftAttackFamily0, moogSquareShiftAttackFamily1, moogSquareShiftAttackFamily2, moogSquareShiftAttackFamily3, moogSquareShiftAttackFamily4, moogSquareShiftAttackFamily5, moogSquareShiftAttackFamily6, moogSquareShiftAttackFamily7,
-	moogSquareShiftAttackFamily8};
-
-
-static const uint16_t *gamma257Attack[9] = {
-	gamma257Attack0, gamma257Attack1, gamma257Attack2, gamma257Attack3, gamma257Attack4, gamma257Attack5, gamma257Attack6, gamma257Attack7,
-	gamma257Attack8};
-
-
-static const uint16_t *soprano257Rls[5] = {
-	soprano257Rls0, soprano257Rls1, soprano257Rls2, soprano257Rls3, soprano257Rls4};
-
-
-static const uint16_t *waterphone_release[9] = {
-	waterphone_release0, waterphone_release1, waterphone_release2, waterphone_release3, waterphone_release4, waterphone_release5, waterphone_release6, waterphone_release7,
-	waterphone_release8};
-
-
-static const uint16_t *tenor257Atk[5] = {
-	tenor257Atk0, tenor257Atk1, tenor257Atk2, tenor257Atk3, tenor257Atk4};
-
-
-static const uint16_t *testRMSRMSRls[5] = {
-	testRMSRMSRls0, testRMSRMSRls1, testRMSRMSRls2, testRMSRMSRls3, testRMSRMSRls4};
-
-
-static const uint16_t *soprano257Atk[5] = {
-	soprano257Atk0, soprano257Atk1, soprano257Atk2, soprano257Atk3, soprano257Atk4};
-
-
-static const uint16_t *csound_formants_release[9] = {
-	csound_formants_release0, csound_formants_release1, csound_formants_release2, csound_formants_release3, csound_formants_release4, csound_formants_release5, csound_formants_release6, csound_formants_release7,
-	csound_formants_release8};
-
-
-static const uint16_t *vox_release[9] = {
-	vox_release0, vox_release1, vox_release2, vox_release3, vox_release4, vox_release5, vox_release6, vox_release7,
-	vox_release8};
-
-
-static const uint16_t *trioddAttackFamily[9] = {
-	trioddAttackFamily0, trioddAttackFamily1, trioddAttackFamily2, trioddAttackFamily3, trioddAttackFamily4, trioddAttackFamily5, trioddAttackFamily6, trioddAttackFamily7,
-	trioddAttackFamily8};
-
-
-static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
-	quintic_out2quintic_in257_slopes0, quintic_out2quintic_in257_slopes1, quintic_out2quintic_in257_slopes2, quintic_out2quintic_in257_slopes3, quintic_out2quintic_in257_slopes4, quintic_out2quintic_in257_slopes5, quintic_out2quintic_in257_slopes6, quintic_out2quintic_in257_slopes7,
-	quintic_out2quintic_in257_slopes8};
-
-
-static const uint16_t *trains_attack[9] = {
-	trains_attack0, trains_attack1, trains_attack2, trains_attack3, trains_attack4, trains_attack5, trains_attack6, trains_attack7,
-	trains_attack8};
-
-
-static const uint16_t *csound_formants_attack[9] = {
-	csound_formants_attack0, csound_formants_attack1, csound_formants_attack2, csound_formants_attack3, csound_formants_attack4, csound_formants_attack5, csound_formants_attack6, csound_formants_attack7,
-	csound_formants_attack8};
-
-
-static const uint16_t *sharpExpoSymAttackFamily[9] = {
-	sharpExpoSymAttackFamily0, sharpExpoSymAttackFamily1, sharpExpoSymAttackFamily2, sharpExpoSymAttackFamily3, sharpExpoSymAttackFamily4, sharpExpoSymAttackFamily5, sharpExpoSymAttackFamily6, sharpExpoSymAttackFamily7,
-	sharpExpoSymAttackFamily8};
-
-
-static const uint16_t *sharpExpoSymReleaseFamily[9] = {
-	sharpExpoSymReleaseFamily0, sharpExpoSymReleaseFamily1, sharpExpoSymReleaseFamily2, sharpExpoSymReleaseFamily3, sharpExpoSymReleaseFamily4, sharpExpoSymReleaseFamily5, sharpExpoSymReleaseFamily6, sharpExpoSymReleaseFamily7,
-	sharpExpoSymReleaseFamily8};
-
-
-static const uint16_t *allLinear129_5[5] = {
-	allLinear129_50, allLinear129_51, allLinear129_52, allLinear129_53, allLinear129_54};
-
-
-static const uint16_t *exciteBikeReleaseFamily[9] = {
-	exciteBikeReleaseFamily0, exciteBikeReleaseFamily1, exciteBikeReleaseFamily2, exciteBikeReleaseFamily3, exciteBikeReleaseFamily4, exciteBikeReleaseFamily5, exciteBikeReleaseFamily6, exciteBikeReleaseFamily7,
-	exciteBikeReleaseFamily8};
-
-
-static const uint16_t *additive_tri_to_pulseFamily[5] = {
-	additive_tri_to_pulseFamily0, additive_tri_to_pulseFamily1, additive_tri_to_pulseFamily2, additive_tri_to_pulseFamily3, additive_tri_to_pulseFamily4};
-
-
-static const uint16_t *circular_257_slopes[5] = {
-	circular_257_slopes0, circular_257_slopes1, circular_257_slopes2, circular_257_slopes3, circular_257_slopes4};
-
-
-static const uint16_t *algerianAttackFamily[5] = {
-	algerianAttackFamily0, algerianAttackFamily1, algerianAttackFamily2, algerianAttackFamily3, algerianAttackFamily4};
-
-
-static const uint16_t *impshort[9] = {
-	impshort0, impshort1, impshort2, impshort3, impshort4, impshort5, impshort6, impshort7,
-	impshort8};
-
-
-static const uint16_t *linwavefold_257_Family[5] = {
-	linwavefold_257_Family0, linwavefold_257_Family1, linwavefold_257_Family2, linwavefold_257_Family3, linwavefold_257_Family4};
-
-
 static const uint16_t *sawBendAttackFamily[5] = {
 	sawBendAttackFamily0, sawBendAttackFamily1, sawBendAttackFamily2, sawBendAttackFamily3, sawBendAttackFamily4};
-
-
-static const uint16_t *waterphone_attack[9] = {
-	waterphone_attack0, waterphone_attack1, waterphone_attack2, waterphone_attack3, waterphone_attack4, waterphone_attack5, waterphone_attack6, waterphone_attack7,
-	waterphone_attack8};
-
-
-static const uint16_t *vox_attack[9] = {
-	vox_attack0, vox_attack1, vox_attack2, vox_attack3, vox_attack4, vox_attack5, vox_attack6, vox_attack7,
-	vox_attack8};
-
-
-static const uint16_t *trioddReleaseFamily[9] = {
-	trioddReleaseFamily0, trioddReleaseFamily1, trioddReleaseFamily2, trioddReleaseFamily3, trioddReleaseFamily4, trioddReleaseFamily5, trioddReleaseFamily6, trioddReleaseFamily7,
-	trioddReleaseFamily8};
-
-
-static const uint16_t *tenor257Rls[5] = {
-	tenor257Rls0, tenor257Rls1, tenor257Rls2, tenor257Rls3, tenor257Rls4};
-
-
-static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
-	quintic_inout2quintic_outin257_slopes0, quintic_inout2quintic_outin257_slopes1, quintic_inout2quintic_outin257_slopes2, quintic_inout2quintic_outin257_slopes3, quintic_inout2quintic_outin257_slopes4, quintic_inout2quintic_outin257_slopes5, quintic_inout2quintic_outin257_slopes6, quintic_inout2quintic_outin257_slopes7,
-	quintic_inout2quintic_outin257_slopes8};
 
 
 static const uint16_t *sinwavefold_257_Family[9] = {
@@ -217,12 +57,172 @@ static const uint16_t *sinwavefold_257_Family[9] = {
 	sinwavefold_257_Family8};
 
 
-static const uint16_t *bounce_257_slopes[5] = {
-	bounce_257_slopes0, bounce_257_slopes1, bounce_257_slopes2, bounce_257_slopes3, bounce_257_slopes4};
+static const uint16_t *quintic_inout2quintic_outin257_slopes[9] = {
+	quintic_inout2quintic_outin257_slopes0, quintic_inout2quintic_outin257_slopes1, quintic_inout2quintic_outin257_slopes2, quintic_inout2quintic_outin257_slopes3, quintic_inout2quintic_outin257_slopes4, quintic_inout2quintic_outin257_slopes5, quintic_inout2quintic_outin257_slopes6, quintic_inout2quintic_outin257_slopes7,
+	quintic_inout2quintic_outin257_slopes8};
+
+
+static const uint16_t *csound_formants_release[9] = {
+	csound_formants_release0, csound_formants_release1, csound_formants_release2, csound_formants_release3, csound_formants_release4, csound_formants_release5, csound_formants_release6, csound_formants_release7,
+	csound_formants_release8};
+
+
+static const uint16_t *impshort[9] = {
+	impshort0, impshort1, impshort2, impshort3, impshort4, impshort5, impshort6, impshort7,
+	impshort8};
 
 
 static const uint16_t *test_fm_attack[5] = {
 	test_fm_attack0, test_fm_attack1, test_fm_attack2, test_fm_attack3, test_fm_attack4};
+
+
+static const uint16_t *trains_attack[9] = {
+	trains_attack0, trains_attack1, trains_attack2, trains_attack3, trains_attack4, trains_attack5, trains_attack6, trains_attack7,
+	trains_attack8};
+
+
+static const uint16_t *moogSquareShiftReleaseFamily[9] = {
+	moogSquareShiftReleaseFamily0, moogSquareShiftReleaseFamily1, moogSquareShiftReleaseFamily2, moogSquareShiftReleaseFamily3, moogSquareShiftReleaseFamily4, moogSquareShiftReleaseFamily5, moogSquareShiftReleaseFamily6, moogSquareShiftReleaseFamily7,
+	moogSquareShiftReleaseFamily8};
+
+
+static const uint16_t *testRMSRMSRls[5] = {
+	testRMSRMSRls0, testRMSRMSRls1, testRMSRMSRls2, testRMSRMSRls3, testRMSRMSRls4};
+
+
+static const uint16_t *algerianReleaseFamily[5] = {
+	algerianReleaseFamily0, algerianReleaseFamily1, algerianReleaseFamily2, algerianReleaseFamily3, algerianReleaseFamily4};
+
+
+static const uint16_t *soprano257Rls[5] = {
+	soprano257Rls0, soprano257Rls1, soprano257Rls2, soprano257Rls3, soprano257Rls4};
+
+
+static const uint16_t *gamma257Attack[9] = {
+	gamma257Attack0, gamma257Attack1, gamma257Attack2, gamma257Attack3, gamma257Attack4, gamma257Attack5, gamma257Attack6, gamma257Attack7,
+	gamma257Attack8};
+
+
+static const uint16_t *tenor257Atk[5] = {
+	tenor257Atk0, tenor257Atk1, tenor257Atk2, tenor257Atk3, tenor257Atk4};
+
+
+static const uint16_t *linwavefold_257_Family[5] = {
+	linwavefold_257_Family0, linwavefold_257_Family1, linwavefold_257_Family2, linwavefold_257_Family3, linwavefold_257_Family4};
+
+
+static const uint16_t *test_fm_release[5] = {
+	test_fm_release0, test_fm_release1, test_fm_release2, test_fm_release3, test_fm_release4};
+
+
+static const uint16_t *moogSquareShiftAttackFamily[9] = {
+	moogSquareShiftAttackFamily0, moogSquareShiftAttackFamily1, moogSquareShiftAttackFamily2, moogSquareShiftAttackFamily3, moogSquareShiftAttackFamily4, moogSquareShiftAttackFamily5, moogSquareShiftAttackFamily6, moogSquareShiftAttackFamily7,
+	moogSquareShiftAttackFamily8};
+
+
+static const uint16_t *soprano257Atk[5] = {
+	soprano257Atk0, soprano257Atk1, soprano257Atk2, soprano257Atk3, soprano257Atk4};
+
+
+static const uint16_t *csound_formants_attack[9] = {
+	csound_formants_attack0, csound_formants_attack1, csound_formants_attack2, csound_formants_attack3, csound_formants_attack4, csound_formants_attack5, csound_formants_attack6, csound_formants_attack7,
+	csound_formants_attack8};
+
+
+static const uint16_t *quintic_out2quintic_in257_slopes[9] = {
+	quintic_out2quintic_in257_slopes0, quintic_out2quintic_in257_slopes1, quintic_out2quintic_in257_slopes2, quintic_out2quintic_in257_slopes3, quintic_out2quintic_in257_slopes4, quintic_out2quintic_in257_slopes5, quintic_out2quintic_in257_slopes6, quintic_out2quintic_in257_slopes7,
+	quintic_out2quintic_in257_slopes8};
+
+
+static const uint16_t *skipsaw[5] = {
+	skipsaw0, skipsaw1, skipsaw2, skipsaw3, skipsaw4};
+
+
+static const uint16_t *trains_release[9] = {
+	trains_release0, trains_release1, trains_release2, trains_release3, trains_release4, trains_release5, trains_release6, trains_release7,
+	trains_release8};
+
+
+static const uint16_t *newBounceFamily[5] = {
+	newBounceFamily0, newBounceFamily1, newBounceFamily2, newBounceFamily3, newBounceFamily4};
+
+
+static const uint16_t *waterphone_attack[9] = {
+	waterphone_attack0, waterphone_attack1, waterphone_attack2, waterphone_attack3, waterphone_attack4, waterphone_attack5, waterphone_attack6, waterphone_attack7,
+	waterphone_attack8};
+
+
+static const uint16_t *trioddAttackFamily[9] = {
+	trioddAttackFamily0, trioddAttackFamily1, trioddAttackFamily2, trioddAttackFamily3, trioddAttackFamily4, trioddAttackFamily5, trioddAttackFamily6, trioddAttackFamily7,
+	trioddAttackFamily8};
+
+
+static const uint16_t *sharpExpoSymAttackFamily[9] = {
+	sharpExpoSymAttackFamily0, sharpExpoSymAttackFamily1, sharpExpoSymAttackFamily2, sharpExpoSymAttackFamily3, sharpExpoSymAttackFamily4, sharpExpoSymAttackFamily5, sharpExpoSymAttackFamily6, sharpExpoSymAttackFamily7,
+	sharpExpoSymAttackFamily8};
+
+
+static const uint16_t *exciteBikeAttackFamily[9] = {
+	exciteBikeAttackFamily0, exciteBikeAttackFamily1, exciteBikeAttackFamily2, exciteBikeAttackFamily3, exciteBikeAttackFamily4, exciteBikeAttackFamily5, exciteBikeAttackFamily6, exciteBikeAttackFamily7,
+	exciteBikeAttackFamily8};
+
+
+static const uint16_t *exciteBikeReleaseFamily[9] = {
+	exciteBikeReleaseFamily0, exciteBikeReleaseFamily1, exciteBikeReleaseFamily2, exciteBikeReleaseFamily3, exciteBikeReleaseFamily4, exciteBikeReleaseFamily5, exciteBikeReleaseFamily6, exciteBikeReleaseFamily7,
+	exciteBikeReleaseFamily8};
+
+
+static const uint16_t *circular_257_slopes[5] = {
+	circular_257_slopes0, circular_257_slopes1, circular_257_slopes2, circular_257_slopes3, circular_257_slopes4};
+
+
+static const uint16_t *sawBendReleaseFamily[5] = {
+	sawBendReleaseFamily0, sawBendReleaseFamily1, sawBendReleaseFamily2, sawBendReleaseFamily3, sawBendReleaseFamily4};
+
+
+static const uint16_t *additive_tri_to_pulseFamily[5] = {
+	additive_tri_to_pulseFamily0, additive_tri_to_pulseFamily1, additive_tri_to_pulseFamily2, additive_tri_to_pulseFamily3, additive_tri_to_pulseFamily4};
+
+
+static const uint16_t *trioddReleaseFamily[9] = {
+	trioddReleaseFamily0, trioddReleaseFamily1, trioddReleaseFamily2, trioddReleaseFamily3, trioddReleaseFamily4, trioddReleaseFamily5, trioddReleaseFamily6, trioddReleaseFamily7,
+	trioddReleaseFamily8};
+
+
+static const uint16_t *algerianAttackFamily[5] = {
+	algerianAttackFamily0, algerianAttackFamily1, algerianAttackFamily2, algerianAttackFamily3, algerianAttackFamily4};
+
+
+static const uint16_t *allLinear129_5[5] = {
+	allLinear129_50, allLinear129_51, allLinear129_52, allLinear129_53, allLinear129_54};
+
+
+static const uint16_t *sharpExpoSymReleaseFamily[9] = {
+	sharpExpoSymReleaseFamily0, sharpExpoSymReleaseFamily1, sharpExpoSymReleaseFamily2, sharpExpoSymReleaseFamily3, sharpExpoSymReleaseFamily4, sharpExpoSymReleaseFamily5, sharpExpoSymReleaseFamily6, sharpExpoSymReleaseFamily7,
+	sharpExpoSymReleaseFamily8};
+
+
+static const uint16_t *bounce_257_slopes[5] = {
+	bounce_257_slopes0, bounce_257_slopes1, bounce_257_slopes2, bounce_257_slopes3, bounce_257_slopes4};
+
+
+static const uint16_t *waterphone_release[9] = {
+	waterphone_release0, waterphone_release1, waterphone_release2, waterphone_release3, waterphone_release4, waterphone_release5, waterphone_release6, waterphone_release7,
+	waterphone_release8};
+
+
+static const uint16_t *tenor257Rls[5] = {
+	tenor257Rls0, tenor257Rls1, tenor257Rls2, tenor257Rls3, tenor257Rls4};
+
+
+static const uint16_t *vox_attack[9] = {
+	vox_attack0, vox_attack1, vox_attack2, vox_attack3, vox_attack4, vox_attack5, vox_attack6, vox_attack7,
+	vox_attack8};
+
+
+static const uint16_t *vox_release[9] = {
+	vox_release0, vox_release1, vox_release2, vox_release3, vox_release4, vox_release5, vox_release6, vox_release7,
+	vox_release8};
 
 
 // TABLES 
