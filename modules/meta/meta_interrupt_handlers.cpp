@@ -128,6 +128,8 @@ void ViaMeta::slowConversionCallback(void) {
 	metaController.parseControlsExternal(&controls, &inputs);
 	drumEnvelope.parseControls(&controls, &inputs);
 	drumEnvelope2.parseControls(&controls, &inputs);
+	drumEnvelope3.parseControls(&controls, &inputs);
+
 
 
 	(this->*updateRGB)();

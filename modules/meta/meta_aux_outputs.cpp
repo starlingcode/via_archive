@@ -58,6 +58,8 @@ void ViaMeta::drumMode(int32_t writeIndex) {
 
 	drumEnvelope.advance(&inputs, wavetableReadDrum);
 	drumEnvelope2.advance(&inputs, wavetableReadDrum2);
+	drumEnvelope3.advance(&inputs, wavetableReadDrum2);
+
 
 
 	uint32_t ampScale = drumEnvelope.output[0] << 1;

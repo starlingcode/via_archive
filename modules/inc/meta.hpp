@@ -163,6 +163,7 @@ public:
 	void initDrum(void);
 	int16_t drumWrite[4];
 	int16_t drum2Write[4];
+	int16_t drum3Write[4];
 	int16_t drumFullScale[4];
 
 	/*
@@ -281,6 +282,7 @@ public:
 	MetaController metaController;
 	SimpleEnvelope drumEnvelope;
 	SimpleEnvelope drumEnvelope2;
+	SimpleEnvelope drumEnvelope3;
 
 	/*
 	 *

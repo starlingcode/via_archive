@@ -30,6 +30,8 @@ void ViaMeta::init() {
 
 	drumEnvelope.incrementArbiter = &SimpleEnvelope::restingState;
 	drumEnvelope2.incrementArbiter = &SimpleEnvelope::restingState;
+	drumEnvelope3.incrementArbiter = &SimpleEnvelope::restingState;
+
 
 
 	// initialize our touch sensors
@@ -38,6 +40,8 @@ void ViaMeta::init() {
 	initDrum();
 	drumEnvelope.output = (uint32_t*) drumWrite;
 	drumEnvelope2.output = (uint32_t*) drum2Write;
+	drumEnvelope3.output = (uint32_t*) drum3Write;
+
 
 
 	inputs.init(META_BUFFER_SIZE);
