@@ -56,6 +56,19 @@ void gateseqTouchLink (void * uiVoid) {
 
 void ViaGateseq::ViaGateseqUI::recallModuleState(void) {
 
+	// protect against bogus values
+
+	this_module.gateseqUI.button1Mode %= numButton1Modes;
+	this_module.gateseqUI.button2Mode %= numButton2Modes;
+	this_module.gateseqUI.button3Mode %= numButton3Modes;
+	this_module.gateseqUI.button4Mode %= numButton4Modes;
+	this_module.gateseqUI.button5Mode %= numButton5Modes;
+	this_module.gateseqUI.button6Mode %= numButton6Modes;
+	this_module.gateseqUI.aux1Mode = 0;
+	this_module.gateseqUI.aux2Mode %= numAux2Modes;
+	this_module.gateseqUI.aux3Mode = 0;
+	this_module.gateseqUI.aux4Mode = 0;
+
 	this_module.handleButton1ModeChange(this_module.gateseqUI.button1Mode);
 	this_module.handleButton2ModeChange(this_module.gateseqUI.button2Mode);
 	this_module.handleButton3ModeChange(this_module.gateseqUI.button3Mode);

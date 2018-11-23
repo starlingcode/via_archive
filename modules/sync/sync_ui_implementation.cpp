@@ -57,6 +57,17 @@ void syncTouchLink (void * uiVoid) {
 
 void ViaSync::ViaSyncUI::recallModuleState(void) {
 
+	this_module.syncUI.button1Mode %= numButton1Modes;
+	this_module.syncUI.button2Mode %= numButton2Modes;
+	this_module.syncUI.button3Mode %= numButton3Modes;
+	this_module.syncUI.button4Mode %= numButton4Modes;
+	this_module.syncUI.button5Mode %= numButton5Modes;
+	this_module.syncUI.button6Mode %= numButton6Modes;
+	this_module.syncUI.aux1Mode %= numAux1Modes;
+	this_module.syncUI.aux2Mode %= numAux2Modes;
+	this_module.syncUI.aux3Mode %= numAux3Modes;
+	this_module.syncUI.aux4Mode %= numAux4Modes;
+
 	this_module.handleAux3ModeChange(this_module.syncUI.aux3Mode);
 	this_module.handleButton1ModeChange(this_module.syncUI.button1Mode);
 	this_module.handleButton2ModeChange(this_module.syncUI.button2Mode);

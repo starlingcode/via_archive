@@ -48,6 +48,17 @@ void scannerTouchLink (void * uiVoid) {
 
 void ViaScanner::ViaScannerUI::recallModuleState(void) {
 
+	this_module.scannerUI.button1Mode %= numButton1Modes;
+	this_module.scannerUI.button2Mode %= numButton2Modes;
+	this_module.scannerUI.button3Mode %= numButton3Modes;
+	this_module.scannerUI.button4Mode %= numButton4Modes;
+	this_module.scannerUI.button5Mode %= numButton5Modes;
+	this_module.scannerUI.button6Mode %= numButton6Modes;
+	this_module.scannerUI.aux1Mode = 0;
+	this_module.scannerUI.aux2Mode = 0;
+	this_module.scannerUI.aux3Mode = 0;
+	this_module.scannerUI.aux4Mode = 0;
+
 	this_module.handleButton1ModeChange(this_module.scannerUI.button1Mode);
 	this_module.handleButton2ModeChange(this_module.scannerUI.button2Mode);
 	this_module.handleButton3ModeChange(this_module.scannerUI.button3Mode);

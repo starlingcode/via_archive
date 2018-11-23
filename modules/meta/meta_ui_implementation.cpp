@@ -56,6 +56,20 @@ void metaTouchLink (void * uiVoid) {
 
 void ViaMeta::ViaMetaUI::recallModuleState(void) {
 
+	// protect against bogus values
+
+	this_module.metaUI.button1Mode %= numButton1Modes;
+	this_module.metaUI.button2Mode %= numButton2Modes;
+	this_module.metaUI.button3Mode %= numButton3Modes;
+	this_module.metaUI.button4Mode %= numButton4Modes;
+	this_module.metaUI.button5Mode %= numButton5Modes;
+	this_module.metaUI.button6Mode %= numButton6Modes;
+	this_module.metaUI.aux1Mode = 0;
+	this_module.metaUI.aux2Mode %= numAux2Modes;
+	this_module.metaUI.aux3Mode %= numAux3Modes;
+	this_module.metaUI.aux4Mode %= numAux4Modes;
+
+
 	this_module.handleAux3ModeChange(this_module.metaUI.aux3Mode);
 	this_module.handleButton1ModeChange(this_module.metaUI.button1Mode);
 	this_module.handleButton2ModeChange(this_module.metaUI.button2Mode);
