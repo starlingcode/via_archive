@@ -11,6 +11,85 @@
 
 #define RUNTIME_DISPLAY 1
 
+
+
+void DualEuclidean::advanceSequencerA(void) {
+
+	uint32_t aPatternValue;
+
+	aPatternIndex = (aCounter + offset) % aLength;
+
+	aPatternValue = currentABank->patternBank[aPatternMorph][aPatternIndex];
+
+	aCounter = (aCounter + 1) % aLength;
+
+	aOutput = aPatternValue;
+
+}
+
+void DualEuclidean::advanceSequencerB(void) {
+
+	uint32_t bPatternValue;
+
+	//TODO relate offset to scale lengths
+	bPatternIndex = bCounter;
+
+	//lookup the logic values
+	bPatternValue = currentBBank->patternBank[bPatternMorph][bPatternIndex];
+
+	//increment the sequence counter
+	bCounter = (bCounter + 1) % bLength;
+
+	bOutput = bPatternValue;
+
+}
+
+void DualEuclidean::updateLogicOutput(void) {
+
+	// jump to the conditional check appropriate for the currently selected logic operation
+
+#define __AND 0
+#define __OR 1
+#define __XOR 2
+#define __NOR 3
+
+	switch (auxLogicMode) {
+	case __OR:
+		if (aOutput || bOutput) {
+			logicOutput = 1;
+		} else {
+			logicOutput = 0;
+		}
+		break;
+	case __AND:
+		if (aOutput && bOutput) {
+			logicOutput = 1;
+		} else {
+			logicOutput = 0;
+		}
+		break;
+	case __XOR:
+		if (aOutput ^ bOutput) {
+			logicOutput = 1;
+		} else {
+			logicOutput = 0;
+		}
+		break;
+	case __NOR:
+		// nand instead?
+		if (!aOutput && !bOutput) {
+			logicOutput = 1;
+		} else {
+			logicOutput = 0;
+		}
+		break;
+	}
+
+	logicOutput &= virtualGateHigh;
+
+}
+
+
 void DualEuclidean::parseControls(ViaControls * controls,
 		ViaInputStreams * inputs) {
 
@@ -92,7 +171,7 @@ void DualEuclidean::parseControls(ViaControls * controls,
 
 }
 
-void DualEuclidean::processClock(void) {
+void DualEuclidean::processMainRisingEdge(void) {
 
 	advanceSequencerB();
 
@@ -112,93 +191,110 @@ void DualEuclidean::processClock(void) {
 #ifdef BUILD_F373
 	periodCount = TIM5->CNT;
 	TIM5->CNT = 0;
-	TIM17->CR1 &= ~TIM_CR1_CEN;
-	TIM2->PSC = divider-1;
-	TIM2->CNT = 0;
-	TIM2->EGR = TIM_EGR_UG;
-	shuffledStep = 1;
+
+	if (!clockOn || TIM2->CNT > 5000) {
+
+		TIM17->CR1 &= ~TIM_CR1_CEN;
+		TIM17->CNT = 0;
+		TIM2->PSC = divider-1;
+		TIM2->CNT = 0;
+		TIM2->EGR = TIM_EGR_UG;
+		shuffledStep = 1;
+	}
 	skipClock = 1;
+
 	}
 	updateLogicOutput();
 #endif
 
-}
+	// update the simple sequencer sample and hold control
 
-void DualEuclidean::advanceSequencerA(void) {
-
-	uint32_t aPatternValue;
-
-	//TODO relate offset to scale lengths
-	aPatternIndex = (aCounter + offset) % aLength;
-
-	//lookup the logic values
-	aPatternValue = currentABank->patternBank[aPatternMorph][aPatternIndex];
-
-	//increment the sequence counter
-	aCounter = (aCounter + 1) % aLength;
-
-	aOutput = aPatternValue;
-
-}
-
-void DualEuclidean::advanceSequencerB(void) {
-
-	uint32_t bPatternValue;
-
-	//TODO relate offset to scale lengths
-	bPatternIndex = bCounter;
-
-	//lookup the logic values
-	bPatternValue = currentBBank->patternBank[bPatternMorph][bPatternIndex];
-
-	//increment the sequence counter
-	bCounter = (bCounter + 1) % bLength;
-
-	bOutput = bPatternValue;
-
-}
-
-void DualEuclidean::updateLogicOutput(void) {
-
-	// jump to the conditional check appropriate for the currently selected logic operation
-
-#define __AND 0
-#define __OR 1
-#define __XOR 2
-#define __NOR 3
-
-	switch (auxLogicMode) {
-	case __OR:
-		if (aOutput || bOutput) {
-			logicOutput = 1;
-		} else {
-			logicOutput = 0;
-		}
-		break;
-	case __AND:
-		if (aOutput && bOutput) {
-			logicOutput = 1;
-		} else {
-			logicOutput = 0;
-		}
-		break;
-	case __XOR:
-		if (aOutput ^ bOutput) {
-			logicOutput = 1;
-		} else {
-			logicOutput = 0;
-		}
-		break;
-	case __NOR:
-		// nand instead?
-		if (!aOutput && !bOutput) {
-			logicOutput = 1;
-		} else {
-			logicOutput = 0;
-		}
-		break;
+	if (sampleB) {
+		shBSignal = (!bOutput);
+	} else if (trackB) {
+		shBSignal = (bOutput);
+	} else {
+		shBSignal = 0;
 	}
 
-	logicOutput &= virtualGateHigh;
+}
+
+void DualEuclidean::processInternalRisingEdge(void) {
+
+
+	// complex sequencer "rising edge"
+
+	// signal a rising edge
+	virtualGateHigh = 1;
+
+	// update the complex sequencer, s&h, gates, leds
+	advanceSequencerA();
+	updateLogicOutput();
+
+	if (sampleA) {
+		shASignal = (!aOutput);
+	} else if (trackA) {
+		shASignal = (aOutput);
+	} else {
+		shASignal = 0;
+	}
+
+	// prepare the next step, set the gate timer
+
+	clockPeriod = periodCount/multiplier;
+
+	if (shuffledStep) {
+		shuffleDelay = fix16_mul(clockPeriod, shuffle);
+		shuffledStep = 0;
+	} else {
+		shuffleDelay = -fix16_mul(clockPeriod, shuffle);
+		shuffledStep = 1;
+	}
+	clockPeriod += shuffleDelay;
+
+#ifdef BUILD_F373
+
+	TIM2->ARR = clockPeriod;
+	TIM17->ARR = clockPeriod >> 13;
+	TIM17->CNT = 1;
+	TIM17->CR1 = TIM_CR1_CEN;
+#endif
+#ifdef BUILD_VIRTUAL
+	virtualTimer2Overflow = clockPeriod;
+	virtualTimer3Overflow = clockPeriod >> 1;
+	virtualTimer3Count = 0;
+	virtualTimer3Enable = 1;
+#endif
+
 
 }
+
+void DualEuclidean::processMainFallingEdge(void) {
+
+	// gate low on the simple sequencer
+
+	bOutput = 0;
+	updateLogicOutput();
+
+}
+
+void DualEuclidean::processInternalFallingEdge(void) {
+
+	// virtual gate low, much like the simple sequencer
+
+	virtualGateHigh = 0;
+
+	aOutput = 0;
+	shASignal = sampleA;
+	updateLogicOutput();
+
+	// disable the gate timer
+#ifdef BUILD_F373
+	TIM17->CR1 &= ~TIM_CR1_CEN;
+#endif
+#ifdef BUILD_VIRTUAL
+	sequencer.virtualTimer3Enable = 0;
+#endif
+
+}
+

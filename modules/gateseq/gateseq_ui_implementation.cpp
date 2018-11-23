@@ -165,42 +165,42 @@ void ViaGateseq::ViaGateseqUI::aux4EnterMenuCallback(void) {
 }
 
 void ViaGateseq::ViaGateseqUI::button1TapCallback(void) {
-	SH_A_MODE = incrementModeAndStore(SH_A_MODE, BUTTON1_MASK, numButton1Modes, BUTTON1_MASK);
+	SH_A_MODE = incrementModeAndStore(SH_A_MODE, BUTTON1_MASK, numButton1Modes, BUTTON1_SHIFT);
 	this_module.handleButton1ModeChange(SH_A_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(SH_A_MODE);
 	transition(&ViaGateseq::ViaGateseqUI::newModeMenu);
 }
 void ViaGateseq::ViaGateseqUI::button2TapCallback(void) {
-	AND_A_MODE = incrementModeAndStore(AND_A_MODE, BUTTON2_MASK, numButton2Modes, BUTTON2_MASK);
+	AND_A_MODE = incrementModeAndStore(AND_A_MODE, BUTTON2_MASK, numButton2Modes, BUTTON2_SHIFT);
 	this_module.handleButton2ModeChange(AND_A_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(AND_A_MODE);
 	transition(&ViaGateseq::ViaGateseqUI::newModeMenu);
 }
 void ViaGateseq::ViaGateseqUI::button3TapCallback(void) {
-	A_PATTERN_BANK = incrementModeAndStore(A_PATTERN_BANK, BUTTON3_MASK, numButton3Modes, BUTTON3_MASK);
+	A_PATTERN_BANK = incrementModeAndStore(A_PATTERN_BANK, BUTTON3_MASK, numButton3Modes, BUTTON3_SHIFT);
 	this_module.handleButton3ModeChange(A_PATTERN_BANK);
 	this_module.clearLEDs();
 	this_module.setLEDs(A_PATTERN_BANK);
 	transition(&ViaGateseq::ViaGateseqUI::newModeMenu);
 }
 void ViaGateseq::ViaGateseqUI::button4TapCallback(void) {
-	SH_B_MODE = incrementModeAndStore(SH_B_MODE, BUTTON4_MASK, numButton4Modes, BUTTON4_MASK);
+	SH_B_MODE = incrementModeAndStore(SH_B_MODE, BUTTON4_MASK, numButton4Modes, BUTTON4_SHIFT);
 	this_module.handleButton4ModeChange(SH_B_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(SH_B_MODE);
 	transition(&ViaGateseq::ViaGateseqUI::newModeMenu);
 }
 void ViaGateseq::ViaGateseqUI::button5TapCallback(void) {
-	AND_B_MODE = incrementModeAndStore(AND_B_MODE, BUTTON5_MASK, numButton5Modes, BUTTON5_MASK);
+	AND_B_MODE = incrementModeAndStore(AND_B_MODE, BUTTON5_MASK, numButton5Modes, BUTTON5_SHIFT);
 	this_module.handleButton5ModeChange(AND_B_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(AND_B_MODE);
 	transition(&ViaGateseq::ViaGateseqUI::newModeMenu);
 }
 void ViaGateseq::ViaGateseqUI::button6TapCallback(void) {
-	B_PATTERN_BANK = incrementModeAndStore(B_PATTERN_BANK, BUTTON6_MASK, numButton6Modes, BUTTON6_MASK);
+	B_PATTERN_BANK = incrementModeAndStore(B_PATTERN_BANK, BUTTON6_MASK, numButton6Modes, BUTTON6_SHIFT);
 	this_module.handleButton6ModeChange(B_PATTERN_BANK);
 	this_module.clearLEDs();
 	this_module.setLEDs(B_PATTERN_BANK);
@@ -216,7 +216,7 @@ void ViaGateseq::ViaGateseqUI::aux2TapCallback(void) {
 }
 
 void ViaGateseq::ViaGateseqUI::aux2AltTapCallback(void) {
-	LOGIC_MODE = incrementModeAndStore(LOGIC_MODE, AUX_MODE2_MASK, numAux2Modes, AUX_MODE2_MASK);
+	LOGIC_MODE = incrementModeAndStore(LOGIC_MODE, AUX_MODE2_MASK, numAux2Modes, AUX_MODE2_SHIFT);
 	this_module.handleAux2ModeChange(LOGIC_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(LOGIC_MODE);

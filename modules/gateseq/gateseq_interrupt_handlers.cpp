@@ -2,7 +2,12 @@
 
 void ViaGateseq::mainRisingEdgeCallback() {
 
+	// notify the module of a rising edge
+
 	simultaneousTrigFlag = 1;
+
+	// enable the simultaneous reset handling
+
 #ifdef BUILD_F373
 	TIM18->CR1 = TIM_CR1_CEN;
 #endif
@@ -10,7 +15,11 @@ void ViaGateseq::mainRisingEdgeCallback() {
 	sequencer.virtualTimer4Enable = 1;
 #endif
 
-	sequencer.processClock();
+	// process the rising edge
+
+	sequencer.processMainRisingEdge();
+
+	// in VCVRack, set a "virtual interrupt" for the sequencer 1 timer
 
 #ifdef BUILD_VIRTUAL
 	if (sequencer.skipClock) {
@@ -19,21 +28,18 @@ void ViaGateseq::mainRisingEdgeCallback() {
 	sequencer.updateLogicOutput();
 #endif
 
+	// update the aux logic output for new seq2 value
+
 	setAuxLogic(sequencer.logicOutput);
 
-	if (sequencer.sampleB) {
-		sequencer.shBSignal = (!sequencer.bOutput);
-	} else if (sequencer.trackB) {
-		sequencer.shBSignal = (sequencer.bOutput);
-	} else {
-		sequencer.shBSignal = 0;
-	}
+	// set the leds
 
-	// similar deal here
 	if (runtimeDisplay) {
 		setLEDB(sequencer.sampleB | sequencer.shBSignal);
 		setLEDD(sequencer.bOutput);
 	}
+
+	// send a gate signal, update the timing (move gate events out of sequencer class)
 
 	sequencer.gateBEvent = SOFT_GATE_HIGH * sequencer.bOutput;
 
@@ -48,14 +54,16 @@ void ViaGateseq::mainRisingEdgeCallback() {
 
 void ViaGateseq::mainFallingEdgeCallback() {
 
-	sequencer.bOutput = 0;
-	sequencer.updateLogicOutput();
+	sequencer.processMainFallingEdge();
+
+	// update the logic mode per sequencer II state
 
 	setAuxLogic(sequencer.logicOutput);
 
+	// similar deal as the rising edge
+
 	sequencer.shBSignal = sequencer.sampleB;
 
-	// similar deal here
 	if (runtimeDisplay) {
 		setLEDB(sequencer.sampleB);
 		setLEDD(sequencer.bOutput);
@@ -67,90 +75,46 @@ void ViaGateseq::mainFallingEdgeCallback() {
 
 void ViaGateseq::auxTimer1InterruptCallback() {
 
-		sequencer.virtualGateHigh = 1;
+	sequencer.processInternalRisingEdge();
 
-		sequencer.advanceSequencerA();
-		sequencer.updateLogicOutput();
-		setLogicA(sequencer.aOutput);
-		setAuxLogic(sequencer.logicOutput);
+	setLogicA(sequencer.aOutput);
+	setAuxLogic(sequencer.logicOutput);
 
-		if (sequencer.sampleA) {
-			sequencer.shASignal = (!sequencer.aOutput);
-		} else if (sequencer.trackA) {
-			sequencer.shASignal = (sequencer.aOutput);
-		} else {
-			sequencer.shASignal = 0;
-		}
+	if (runtimeDisplay) {
+		setLEDA(sequencer.sampleA | sequencer.shASignal);
+		setLEDC(sequencer.aOutput);
+	}
 
-		// similar deal here
-		if (runtimeDisplay) {
-			setLEDA(sequencer.sampleA | sequencer.shASignal);
-			setLEDC(sequencer.aOutput);
-		}
+	sequencer.gateAEvent = SOFT_GATE_HIGH * sequencer.aOutput;
 
-		sequencer.gateAEvent = SOFT_GATE_HIGH * sequencer.aOutput;
+	// update the gate time
 
-		uint32_t clockPeriod = sequencer.periodCount/sequencer.multiplier;
-		
-		if (sequencer.shuffledStep) {
-			sequencer.shuffleDelay = fix16_mul(clockPeriod, sequencer.shuffle);
-			sequencer.shuffledStep = 0;
-		} else {
-			sequencer.shuffleDelay = -fix16_mul(clockPeriod, sequencer.shuffle);
-			sequencer.shuffledStep = 1;
-		}
-		clockPeriod += sequencer.shuffleDelay;
-
-#ifdef BUILD_F373
-
-		TIM2->ARR = clockPeriod;
-		TIM17->ARR = clockPeriod >> 14;
-		TIM17->CNT = 1;
-		TIM17->CR1 = TIM_CR1_CEN;
-#endif 
-#ifdef BUILD_VIRTUAL
-		sequencer.virtualTimer2Overflow = clockPeriod;
-		sequencer.virtualTimer3Overflow = clockPeriod >> 1;
-		sequencer.virtualTimer3Count = 0;
-		sequencer.virtualTimer3Enable = 1;
-#endif
-
-
-		if (softGateAOn) {
-			gateController.attackTimeA = ((1 << 20) * 1439 / clockPeriod) << 12;
-		} else {
-			gateController.attackTimeA = 1 << 27;
-		}
-		gateController.releaseTimeA = gateController.attackTimeA;
+	if (softGateAOn) {
+		gateController.attackTimeA = ((1 << 20) * 1439 / sequencer.clockPeriod) << 12;
+	} else {
+		gateController.attackTimeA = 1 << 27;
+	}
+	gateController.releaseTimeA = gateController.attackTimeA;
 
 }
 
 void ViaGateseq::auxTimer2InterruptCallback() {
 
-		sequencer.virtualGateHigh = 0;
+	sequencer.processInternalFallingEdge();
 
-		sequencer.aOutput = 0;
-		setLogicA(sequencer.aOutput);
-		sequencer.updateLogicOutput();
-		setAuxLogic(sequencer.logicOutput);
-		sequencer.shASignal = sequencer.sampleA;
-		// similar deal here
-		if (runtimeDisplay) {
-			setLEDA(sequencer.sampleA);
-			setLEDC(sequencer.aOutput);
-		}
-		sequencer.gateAEvent = SOFT_GATE_LOW * sequencer.andA;
-
-#ifdef BUILD_F373
-		TIM17->CR1 &= ~TIM_CR1_CEN;
-#endif
-#ifdef BUILD_VIRTUAL
-		sequencer.virtualTimer3Enable = 0;
-#endif
+	setLogicA(sequencer.aOutput);
+	setAuxLogic(sequencer.logicOutput);
+	if (runtimeDisplay) {
+		setLEDA(sequencer.sampleA);
+		setLEDC(sequencer.aOutput);
+	}
+	sequencer.gateAEvent = SOFT_GATE_LOW * sequencer.andA;
 
 }
 
 void ViaGateseq::auxTimer3InterruptCallback() {
+
+	// signal a timeout
 
 	simultaneousTrigFlag = 0;
 #ifdef BUILD_F373
@@ -234,7 +198,6 @@ void ViaGateseq::halfTransferCallback() {
 	outputs.dac1Samples[0] = gateController.updateGateA(sequencer.gateAEvent);
 	outputs.dac2Samples[0] = gateController.updateGateB(sequencer.gateBEvent);
 	outputs.dac3Samples[0] = 2048 - (sequencer.bOutput * 2048);
-
 
 	sequencer.gateAEvent = SOFT_GATE_EXECUTE;
 	sequencer.gateBEvent = SOFT_GATE_EXECUTE;

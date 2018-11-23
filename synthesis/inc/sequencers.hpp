@@ -92,7 +92,10 @@ public:
 	uint32_t shASignal = 0;
 	uint32_t shBSignal = 0;
 
-	void processClock(void);
+	void processMainRisingEdge(void);
+	void processInternalRisingEdge(void);
+	void processMainFallingEdge(void);
+	void processInternalFallingEdge(void);
 	void advanceSequencerA(void);
 	void advanceSequencerB(void);
 	void updateLogicOutput(void);
