@@ -23,7 +23,9 @@ void ViaMeta::mainRisingEdgeCallback(void) {
 
 	metaController.gateSignal = 1 * metaController.gateOn;
 
-	drumEnvelope.trigger = 0;
+	ampEnvelope.trigger = 0;
+	freqTransient.trigger = 0;
+	morphEnvelope.trigger = 0;
 
 	updateRGB = &ViaMeta::updateRGBBlink;
 
@@ -63,7 +65,7 @@ void ViaMeta::buttonPressedCallback(void) {
 
 	metaController.gateSignal = 1 * metaController.gateOn;
 
-	drumEnvelope.trigger = 0;
+	ampEnvelope.trigger = 0;
 
 	this->metaUI.dispatch(EXPAND_SW_ON_SIG);
 
@@ -126,9 +128,12 @@ void ViaMeta::slowConversionCallback(void) {
 	controls.update();
 	metaWavetable.parseControls(&controls);
 	metaController.parseControlsExternal(&controls, &inputs);
-	drumEnvelope.parseControls(&controls, &inputs);
-	drumEnvelope2.parseControls(&controls, &inputs);
-	drumEnvelope3.parseControls(&controls, &inputs);
+	ampEnvelope.parseControls(&controls, &inputs);
+	freqTransient.attack = __USAT(ampEnvelope.release * freqAttackMultiplier, 19);
+	freqTransient.release = __USAT(ampEnvelope.release * freqReleaseMultiplier - minTransientLength, 15);
+	morphEnvelope.release = ampEnvelope.release * morphReleaseMultiplier;
+	morphEnvelope.attack = __USAT(ampEnvelope.release * morphAttackMultiplier, 19);
+
 
 
 

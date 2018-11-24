@@ -255,6 +255,7 @@ public:
 	int32_t lastPhase = 0;
 	int32_t oscillatorOn = 0;
 	int16_t * fm;
+	int32_t * expoFM;
 
 	int32_t phase = 0;
 	int32_t phaseBeforeIncrement;
@@ -333,7 +334,7 @@ class SimpleEnvelope {
 
 public:
 
-	uint32_t attack = 0;
+	uint32_t attack = 100000;
 	uint32_t release = 0;
 	uint32_t increment = 0;
 	uint32_t morph = 0;
@@ -341,7 +342,7 @@ public:
 	int32_t phaseEvent = 0;
 	uint32_t trigger;
 
-	uint32_t * output;
+	int32_t * output;
 
 	void parseControls (ViaControls * controls, ViaInputStreams * inputs);
 	void advance (ViaInputStreams * inputs, uint32_t * wavetable);

@@ -56,13 +56,13 @@ void ViaMeta::addThreeBits(int32_t writeIndex) {
 
 void ViaMeta::drumMode(int32_t writeIndex) {
 
-	drumEnvelope.advance(&inputs, wavetableReadDrum);
-	drumEnvelope2.advance(&inputs, wavetableReadDrum2);
-	drumEnvelope3.advance(&inputs, wavetableReadDrum2);
+	ampEnvelope.advance(&inputs, wavetableReadDrum);
+	freqTransient.advance(&inputs, wavetableReadDrum);
+	morphEnvelope.advance(&inputs, wavetableReadDrum);
 
+	freqTransient.output[0] *= transientScale;
 
-
-	uint32_t ampScale = drumEnvelope.output[0] << 1;
+	uint32_t ampScale = ampEnvelope.output[0] << 1;
 	int32_t sample = metaWavetable.signalOut[0];
 
 	int32_t dac1Sample = fix16_mul(32767 - sample, ampScale);

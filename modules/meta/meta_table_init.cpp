@@ -42,5 +42,8 @@ void ViaMeta::initDrum(void) {
 	loadSingleTable15Bit(&drum, (uint32_t *) wavetableReadDrum2);
 	for (int32_t i = 0; i < 4; i++) {
 		drumFullScale[i] = 32767;
+		drumOff[i] = 65535;
 	}
+	freqTransient.attack = 60000;
+	morphEnvelope.attack = 5000;
 }

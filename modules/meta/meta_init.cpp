@@ -28,9 +28,9 @@ void ViaMeta::init() {
 
 	metaController.loopHandler = &MetaController::handleLoopOn;
 
-	drumEnvelope.incrementArbiter = &SimpleEnvelope::restingState;
-	drumEnvelope2.incrementArbiter = &SimpleEnvelope::restingState;
-	drumEnvelope3.incrementArbiter = &SimpleEnvelope::restingState;
+	ampEnvelope.incrementArbiter = &SimpleEnvelope::restingState;
+	freqTransient.incrementArbiter = &SimpleEnvelope::restingState;
+	morphEnvelope.incrementArbiter = &SimpleEnvelope::restingState;
 
 
 
@@ -38,9 +38,9 @@ void ViaMeta::init() {
 
 	fillWavetableArray();
 	initDrum();
-	drumEnvelope.output = (uint32_t*) drumWrite;
-	drumEnvelope2.output = (uint32_t*) drum2Write;
-	drumEnvelope3.output = (uint32_t*) drum3Write;
+	ampEnvelope.output = (int32_t*) drumWrite;
+	freqTransient.output = (int32_t*) drum2Write;
+	morphEnvelope.output = (int32_t*) drum3Write;
 
 
 
@@ -59,8 +59,8 @@ void ViaMeta::init() {
 
 	metaWavetable.morphMod = inputs.cv3Samples;
 #ifdef BUILD_VIRTUAL
-	metaWavetable.morphScale = (int16_t*) drumEnvelope.output;
-	metaController.fm = (int16_t*) drumEnvelope.output;
+	metaWavetable.morphScale = (int16_t*) ampEnvelope.output;
+	metaController.fm = (int16_t*) ampEnvelope.output;
 #endif
 
 }

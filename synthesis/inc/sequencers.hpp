@@ -68,6 +68,8 @@ public:
 	uint32_t modulateMultiplier;
 	uint32_t virtualGateHigh;
 
+	int32_t multipliers[8] = {1, 2, 3, 4, 6, 8, 12, 16};
+
 	// "inputs"
 	uint32_t aCounter = 0;
 	uint32_t bCounter = 0;

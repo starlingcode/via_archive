@@ -35,6 +35,7 @@ void MetaController::parseControlsDrum(ViaControls * controls, ViaInputStreams *
 
 	timeBase1 = fix16_mul(expoTable[((controls->knob1Value >> 2)*3) + 1024] >> 5,
 			expoTable[controls->cv1Value] >> 2) >> 4;
+
 	timeBase2 = timeBase1;
 
 	dutyCycleBase = 32767;
@@ -89,7 +90,10 @@ void MetaController::generateIncrementsAudio(ViaInputStreams * inputs) {
 void MetaController::generateIncrementsDrum(ViaInputStreams * inputs) {
 
 	int32_t localFm = (int32_t) fm[0];
-	increment1 = fix16_mul(timeBase1, localFm << 1);
+	localFm <<= 1;
+	localFm += (1 << 15);
+	int32_t localTimeBase = timeBase1 + fix16_mul(timeBase1, expoFM[0]);
+	increment1 = fix16_mul(localTimeBase, localFm);
 	increment2 = increment1;
 
 	dutyCycle = dutyCycleBase;

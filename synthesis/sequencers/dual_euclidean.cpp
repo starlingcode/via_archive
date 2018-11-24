@@ -126,13 +126,13 @@ void DualEuclidean::parseControls(ViaControls * controls,
 
 		if (cv2Sample >= 2048) {
 			multiplier = (fix16_lerp(controls->knob2Value, 4095,
-					(cv2Sample - 2048) << 5)) >> 8;
+					(cv2Sample - 2048) << 5)) >> 9;
 		} else {
 			multiplier = (fix16_lerp(0, controls->knob2Value,
-					cv2Sample << 5)) >> 8;
+					cv2Sample << 5)) >> 9;
 		}
 		//0-7 -> 1-8
-		multiplier += 1;
+		multiplier = multipliers[multiplier];
 
 	} else if (shuffleOn) {
 

@@ -50,6 +50,7 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 			metaController.generateIncrements = &MetaController::generateIncrementsDrum;
 			metaController.parseControls = &MetaController::parseControlsDrum;
 			metaController.fm = drumFullScale;
+			metaController.expoFM = freqTransient.output;
 			outputStage = &ViaMeta::drumMode;
 			metaController.advancePhase = &MetaController::advancePhaseOversampled;
 			metaWavetable.oversamplingFactor = 0;
@@ -64,6 +65,7 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 			metaController.parseControls = &MetaController::parseControlsAudio;
 			metaController.generateIncrements = &MetaController::generateIncrementsAudio;
 			outputStage = &ViaMeta::oversample;
+			metaController.expoFM = drumOff;
 			metaController.advancePhase = &MetaController::advancePhaseOversampled;
 			metaWavetable.oversamplingFactor = 3;
 			metaController.fm = inputs.cv2Samples;
@@ -167,6 +169,7 @@ void ViaMeta::handleButton6ModeChange(int32_t mode) {
 			handleButton3ModeChange(0);
 			handleButton4ModeChange(0);
 			outputStage = &ViaMeta::drumMode;
+			metaController.expoFM = freqTransient.output;
 			metaController.advancePhase = &MetaController::advancePhaseOversampled;
 			metaWavetable.oversamplingFactor = 0;
 		} else {
@@ -182,6 +185,7 @@ void ViaMeta::handleButton6ModeChange(int32_t mode) {
 			handleButton3ModeChange(0);
 			handleButton4ModeChange(metaUI.TRIG_MODE);
 			outputStage = &ViaMeta::oversample;
+			metaController.expoFM = drumOff;
 			metaController.advancePhase = &MetaController::advancePhaseOversampled;
 			metaWavetable.oversamplingFactor = 3;
 		}
@@ -217,20 +221,56 @@ void ViaMeta::handleAux3ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case pitchMorphAmp:
-		metaController.fm = (int16_t*) drumEnvelope.output;
-		metaWavetable.morphScale = (int16_t*) drumEnvelope.output;
+		metaController.fm = (int16_t*) morphEnvelope.output;
+		metaWavetable.morphScale = (int16_t*) ampEnvelope.output;
+
+		ampEnvelope.attack = 2 << 16;
+		morphAttackMultiplier = 1 << 8;
+		morphReleaseMultiplier = 1 << 2;
+		freqAttackMultiplier = 1 << 13;
+		freqReleaseMultiplier = 1<< 12;
+		transientScale = 1 << 3;
+		minTransientLength = 10000;
+
 		break;
 	case morphAmp:
 		metaController.fm = drumFullScale;
-		metaWavetable.morphScale = (int16_t*) drumEnvelope.output;
+		metaWavetable.morphScale = (int16_t*) morphEnvelope.output;
+
+		ampEnvelope.attack = 2 << 16;
+		morphAttackMultiplier = 1 << 6;
+		morphReleaseMultiplier = 1;
+		freqAttackMultiplier = 1 << 13;
+		freqReleaseMultiplier = 1<< 12;
+		transientScale = 1 << 2;
+		minTransientLength = 0;
+
 		break;
 	case pitchAmp:
-		metaController.fm = (int16_t*) drumEnvelope.output;
+		metaController.fm = (int16_t*) morphEnvelope.output;
 		metaWavetable.morphScale = drumFullScale;
+
+		ampEnvelope.attack = 1 << 16;
+		morphAttackMultiplier = 1 << 8;
+		morphReleaseMultiplier = 1 << 1;
+		freqAttackMultiplier = 1 << 11;
+		freqReleaseMultiplier = 1<< 7;
+		transientScale = 1 << 1;
+		minTransientLength = 10000;
+
 		break;
 	case amp:
 		metaController.fm = drumFullScale;
 		metaWavetable.morphScale = drumFullScale;
+
+		ampEnvelope.attack = 2 << 16;
+		morphAttackMultiplier = 1 << 8;
+		morphReleaseMultiplier = 1 << 2;
+		freqAttackMultiplier = 1 << 13;
+		freqReleaseMultiplier = 1<< 12;
+		transientScale = 1;
+		minTransientLength = 20;
+
 		break;
 	}
 

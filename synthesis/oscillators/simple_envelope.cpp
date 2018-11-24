@@ -14,7 +14,6 @@ void SimpleEnvelope::parseControls(ViaControls * controls, ViaInputStreams * inp
 
 	releaseMod = releaseMod >> 4;
 
-	attack = 400000;
 	release = fix16_mul(expoTable[((4095 - controls->knob2Value) >> 2) * 3] >> 8,
 			expoTable[releaseMod] >> 7);
 

@@ -165,6 +165,7 @@ public:
 	int16_t drum2Write[4];
 	int16_t drum3Write[4];
 	int16_t drumFullScale[4];
+	int32_t drumOff[4];
 
 	/*
 	 *
@@ -235,7 +236,7 @@ public:
 	void updateRGBDrum(void) {
 		
 		int32_t displayFreq = abs(fix16_mul(__USAT(controls.knob1Value + controls.cv1Value - 1000, 12), metaController.fm[0] + 32767));
-		uint32_t drumEnvelopeLevel = drumEnvelope.output[0] << 1;
+		uint32_t drumEnvelopeLevel = ampEnvelope.output[0] << 1;
 
 		int32_t redSignal = fix16_mul(4095 - displayFreq, drumEnvelopeLevel);
 		int32_t blueSignal = fix16_mul(displayFreq, drumEnvelopeLevel);
@@ -280,9 +281,17 @@ public:
 
 	MetaWavetable metaWavetable;
 	MetaController metaController;
-	SimpleEnvelope drumEnvelope;
-	SimpleEnvelope drumEnvelope2;
-	SimpleEnvelope drumEnvelope3;
+	SimpleEnvelope ampEnvelope;
+	SimpleEnvelope freqTransient;
+	SimpleEnvelope morphEnvelope;
+
+	int32_t morphAttackMultiplier = 1 << 8;
+	int32_t morphReleaseMultiplier = 1 << 2;
+	int32_t freqAttackMultiplier = 1 << 10;
+	int32_t freqReleaseMultiplier = 1<< 8;
+
+	int32_t transientScale = 1 << 3;
+	uint32_t minTransientLength = 14;
 
 	/*
 	 *
