@@ -10,8 +10,8 @@
 
 void ThreeAxisScanner::parseControls(ViaControls * controls) {
 
-	xOffset = (controls->knob2Value - 2048) << 4;
-	yOffset = (controls->knob3Value - 2048) << 4;
+	xOffset = (controls->knob2Value - 2048) << 13;
+	yOffset = (controls->knob3Value - 2048) << 13;
 
 	int32_t zKnobCV = controls->knob1Value - 2200 + controls->cv1Value;
 	zIndex = __USAT(zKnobCV, 12) << 6;
@@ -44,8 +44,8 @@ void ThreeAxisScanner::fillBuffer() {
 		xIndex += xIncrement;
 		yIndex += yIncrement;
 
-		xIndexBuffer[writeIndex] = foldSignal16Bit((xIndex >> 2) + xOffset);
-		yIndexBuffer[writeIndex] = foldSignal16Bit((yIndex >> 2) + yOffset);
+		xIndexBuffer[writeIndex] = foldSignal25Bit((xIndex << 8) + xOffset);
+		yIndexBuffer[writeIndex] = foldSignal25Bit((yIndex << 8) + yOffset);
 
 		samplesRemaining --;
 		writeIndex ++;
@@ -101,19 +101,18 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 
 	if (oversample == 0) {
 
-		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex] << 9, zIndex,
+		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) xTable, &xDelta);
-		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex] << 9, zIndex,
+		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) yTable, &yDelta);
 
-		int32_t mainScan = __SSAT(((xSample - 16383) + (yIndexBuffer[writeIndex] - 16383)) >> 3, 11) + 2047;
+		int32_t mainScan = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 11) + 2047;
 
 		int32_t samplesRemaining = bufferSize;
 
 		while (samplesRemaining) {
 			altitude[writeIndex] = mainScan;
-			locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 32767) + (yIndexBuffer[writeIndex] - 32767)) >> 4
-					, 11) + 2047;
+			locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 11) + 2047;
 
 			writeIndex ++;
 			samplesRemaining --;
@@ -124,38 +123,37 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 
 		while (samplesRemaining) {
 
-			leftSample = xIndexBuffer[writeIndex] >> 7;
-			phaseFrac = (xIndexBuffer[writeIndex] << 9) & 0xFFFF;
+			leftSample = xIndexBuffer[writeIndex] >> 16;
+			phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
 			morphFrac =  zIndex & 0xFFFF;
 
 			xSample = fast_15_16_bilerp_prediff(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac);
 
-			leftSample = yIndexBuffer[writeIndex] >> 7;
-			phaseFrac = (yIndexBuffer[writeIndex] << 9) & 0xFFFF;
+			leftSample = yIndexBuffer[writeIndex] >> 16;
+			phaseFrac = (yIndexBuffer[writeIndex]) & 0xFFFF;
 
 			ySample = fast_15_16_bilerp_prediff(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac);
 
-			altitude[writeIndex] = __SSAT(((xSample - 16383) + (yIndexBuffer[writeIndex] - 16383)) >> 3, 11) + 2047;
-			locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 32767) + (yIndexBuffer[writeIndex] - 32767)) >> 4
-					, 11) + 2047;
+			altitude[writeIndex] = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 11) + 2047;
+			locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 11) + 2047;
 			writeIndex ++;
 			samplesRemaining --;
 
 		}
 
-		leftSample = xIndexBuffer[writeIndex] >> 7;
-		phaseFrac = (xIndexBuffer[writeIndex] << 9) & 0xFFFF;
+		leftSample = xIndexBuffer[writeIndex] >> 16;
+		phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
 		morphFrac =  zIndex & 0xFFFF;
 
 		xSample = fast_15_16_bilerp_prediff_deltaValue(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac, &xDelta);
 
-		leftSample = yIndexBuffer[writeIndex] >> 7;
-		phaseFrac = (yIndexBuffer[writeIndex] << 9) & 0xFFFF;
+		leftSample = yIndexBuffer[writeIndex]>> 16;
+		phaseFrac = (yIndexBuffer[writeIndex]) & 0xFFFF;
 
 		ySample = fast_15_16_bilerp_prediff_deltaValue(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac, &yDelta);
 
-		altitude[writeIndex] = __SSAT(((xSample - 16383) + (yIndexBuffer[writeIndex] - 16383)) >> 3, 11) + 2047;
-		locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 32767) + (yIndexBuffer[writeIndex] - 32767)) >> 4, 11) + 2047;
+		altitude[writeIndex] = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 11) + 2047;
+		locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 11) + 2047;
 	}
 
 	xHemisphereLast = getHemisphereHysteresis(xSample, xHemisphereLast);
@@ -190,9 +188,9 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 
 	if (oversample == 0) {
 
-		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex] << 9, zIndex,
+		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) xTable, &xDelta);
-		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex] << 9, zIndex,
+		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) yTable, &yDelta);
 
 		int32_t mainScan = (xSample * ySample) >> 18; //15 bit fixed point multiply and right shift by 3
@@ -201,7 +199,7 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 
 		while (samplesRemaining) {
 			altitude[writeIndex] = mainScan;
-			locationBlend[writeIndex] = (xIndexBuffer[writeIndex] * yIndexBuffer[writeIndex]) >> 20;
+			locationBlend[writeIndex] = fix16_mul(xIndexBuffer[writeIndex] >> 2, yIndexBuffer[writeIndex] >> 2) >> 18;
 
 			writeIndex ++;
 			samplesRemaining --;
@@ -211,38 +209,38 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 
 		while (samplesRemaining) {
 
-			leftSample = xIndexBuffer[writeIndex] >> 7;
-			phaseFrac = (xIndexBuffer[writeIndex] << 9) & 0xFFFF;
+			leftSample = xIndexBuffer[writeIndex]>> 16;
+			phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
 			morphFrac =  zIndex & 0xFFFF;
 
 			xSample = fast_15_16_bilerp_prediff(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac);
 
-			leftSample = yIndexBuffer[writeIndex] >> 7;
-			phaseFrac = (yIndexBuffer[writeIndex] << 9) & 0xFFFF;
+			leftSample = yIndexBuffer[writeIndex]>> 16;
+			phaseFrac = (yIndexBuffer[writeIndex]) & 0xFFFF;
 
 			ySample = fast_15_16_bilerp_prediff(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac);
 
 			altitude[writeIndex] = (xSample * ySample) >> 18;
-			locationBlend[writeIndex] = (xIndexBuffer[writeIndex] * yIndexBuffer[writeIndex]) >> 20;
+			locationBlend[writeIndex] = fix16_mul(xIndexBuffer[writeIndex] >> 2, yIndexBuffer[writeIndex] >> 2) >> 18;
 
 			writeIndex ++;
 			samplesRemaining --;
 
 		}
 
-		leftSample = xIndexBuffer[writeIndex] >> 7;
-		phaseFrac = (xIndexBuffer[writeIndex] << 9) & 0xFFFF;
+		leftSample = xIndexBuffer[writeIndex]>> 16;
+		phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
 		morphFrac =  zIndex & 0xFFFF;
 
 		xSample = fast_15_16_bilerp_prediff_deltaValue(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac, &xDelta);
 
-		leftSample = yIndexBuffer[writeIndex] >> 7;
-		phaseFrac = (yIndexBuffer[writeIndex] << 9) & 0xFFFF;
+		leftSample = yIndexBuffer[writeIndex]>> 16;
+		phaseFrac = (yIndexBuffer[writeIndex]) & 0xFFFF;
 
 		ySample = fast_15_16_bilerp_prediff_deltaValue(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac, &yDelta);
 
 		altitude[writeIndex] = (xSample * ySample) >> 18;
-		locationBlend[writeIndex] = (xIndexBuffer[writeIndex] * yIndexBuffer[writeIndex]) >> 20;
+		locationBlend[writeIndex] = fix16_mul(xIndexBuffer[writeIndex] >> 2, yIndexBuffer[writeIndex] >> 2) >> 18;
 
 	}
 
@@ -279,9 +277,9 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 
 	if (oversample == 0) {
 
-		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex] << 9, zIndex,
+		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) xTable, &xDelta);
-		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex] << 9, zIndex,
+		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) yTable, &yDelta);
 
 		int32_t mainScan = abs((xSample - ySample) >> 3); //15 bit fixed point multiply and right shift by 3
@@ -290,7 +288,7 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 
 		while (samplesRemaining) {
 			altitude[writeIndex] = mainScan;
-			locationBlend[writeIndex] = abs((xIndexBuffer[writeIndex] - yIndexBuffer[writeIndex]) >> 4);
+			locationBlend[writeIndex] = abs((xIndexBuffer[writeIndex] - yIndexBuffer[writeIndex]) >> 13);
 
 			writeIndex ++;
 			samplesRemaining --;
@@ -301,38 +299,38 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 
 		while (samplesRemaining) {
 
-			leftSample = xIndexBuffer[writeIndex] >> 7;
-			phaseFrac = (xIndexBuffer[writeIndex] << 9) & 0xFFFF;
+			leftSample = xIndexBuffer[writeIndex]>> 16;
+			phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
 			morphFrac =  zIndex & 0xFFFF;
 
 			xSample = fast_15_16_bilerp_prediff(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac);
 
-			leftSample = yIndexBuffer[writeIndex] >> 7;
-			phaseFrac = (yIndexBuffer[writeIndex] << 9) & 0xFFFF;
+			leftSample = yIndexBuffer[writeIndex]>> 16;
+			phaseFrac = (yIndexBuffer[writeIndex]) & 0xFFFF;
 
 			ySample = fast_15_16_bilerp_prediff(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac);
 
 			altitude[writeIndex] = abs((xSample - ySample) >> 3);
-			locationBlend[writeIndex] = abs((xIndexBuffer[writeIndex] - yIndexBuffer[writeIndex]) >> 4);
+			locationBlend[writeIndex] = abs((xIndexBuffer[writeIndex] - yIndexBuffer[writeIndex]) >> 13);
 
 			writeIndex ++;
 			samplesRemaining --;
 
 		}
 
-		leftSample = xIndexBuffer[writeIndex] >> 7;
-		phaseFrac = (xIndexBuffer[writeIndex] << 9) & 0xFFFF;
+		leftSample = xIndexBuffer[writeIndex]>> 16;
+		phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
 		morphFrac =  zIndex & 0xFFFF;
 
 		xSample = fast_15_16_bilerp_prediff_deltaValue(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac, &xDelta);
 
-		leftSample = yIndexBuffer[writeIndex] >> 7;
-		phaseFrac = (yIndexBuffer[writeIndex] << 9) & 0xFFFF;
+		leftSample = yIndexBuffer[writeIndex]>> 16;
+		phaseFrac = (yIndexBuffer[writeIndex]) & 0xFFFF;
 
 		ySample = fast_15_16_bilerp_prediff_deltaValue(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac, &yDelta);
 
 		altitude[writeIndex] = abs((xSample - ySample) >> 3);
-		locationBlend[writeIndex] = abs((xIndexBuffer[writeIndex] - yIndexBuffer[writeIndex]) >> 4);
+		locationBlend[writeIndex] = abs((xIndexBuffer[writeIndex] - yIndexBuffer[writeIndex]) >> 13);
 
 	}
 
@@ -368,9 +366,9 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 
 	if (oversample == 0) {
 
-		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex] << 9, zIndex,
+		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) xTable, &xDelta);
-		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex] << 9, zIndex,
+		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) yTable, &yDelta);
 
 		int32_t mainScan = (ySample > xSample) ? ySample >> 3 : xSample >> 3; //15 bit fixed point multiply and right shift by 3
@@ -379,7 +377,7 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 
 		while (samplesRemaining) {
 			altitude[writeIndex] = mainScan;
-			locationBlend[writeIndex] = ((yIndexBuffer[writeIndex] > xIndexBuffer[writeIndex]) ? yIndexBuffer[writeIndex] : xIndexBuffer[writeIndex]) >> 4;
+			locationBlend[writeIndex] = ((yIndexBuffer[writeIndex] > xIndexBuffer[writeIndex]) ? yIndexBuffer[writeIndex] : xIndexBuffer[writeIndex]) >> 13;
 
 			writeIndex ++;
 			samplesRemaining --;
@@ -390,38 +388,38 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 
 		while (samplesRemaining) {
 
-			leftSample = xIndexBuffer[writeIndex] >> 7;
-			phaseFrac = (xIndexBuffer[writeIndex] << 9) & 0xFFFF;
+			leftSample = xIndexBuffer[writeIndex]>> 16;
+			phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
 			morphFrac =  zIndex & 0xFFFF;
 
 			xSample = fast_15_16_bilerp_prediff(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac);
 
-			leftSample = yIndexBuffer[writeIndex] >> 7;
-			phaseFrac = (yIndexBuffer[writeIndex] << 9) & 0xFFFF;
+			leftSample = yIndexBuffer[writeIndex]>> 16;
+			phaseFrac = (yIndexBuffer[writeIndex]) & 0xFFFF;
 
 			ySample = fast_15_16_bilerp_prediff(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac);
 
 			altitude[writeIndex] = (ySample > xSample) ? ySample >> 3 : xSample >> 3;
-			locationBlend[writeIndex] = ((yIndexBuffer[writeIndex] > xIndexBuffer[writeIndex]) ? yIndexBuffer[writeIndex] : xIndexBuffer[writeIndex]) >> 4;
+			locationBlend[writeIndex] = ((yIndexBuffer[writeIndex] > xIndexBuffer[writeIndex]) ? yIndexBuffer[writeIndex] : xIndexBuffer[writeIndex]) >> 13;
 
 			writeIndex ++;
 			samplesRemaining --;
 
 		}
 
-		leftSample = xIndexBuffer[writeIndex] >> 7;
-		phaseFrac = (xIndexBuffer[writeIndex] << 9) & 0xFFFF;
+		leftSample = xIndexBuffer[writeIndex]>> 16;
+		phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
 		morphFrac =  zIndex & 0xFFFF;
 
 		xSample = fast_15_16_bilerp_prediff_deltaValue(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac, &xDelta);
 
-		leftSample = yIndexBuffer[writeIndex] >> 7;
-		phaseFrac = (yIndexBuffer[writeIndex] << 9) & 0xFFFF;
+		leftSample = yIndexBuffer[writeIndex]>> 16;
+		phaseFrac = (yIndexBuffer[writeIndex]) & 0xFFFF;
 
 		ySample = fast_15_16_bilerp_prediff_deltaValue(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac, &yDelta);
 
 		altitude[writeIndex] = (ySample > xSample) ? ySample >> 3 : xSample >> 3;
-		locationBlend[writeIndex] = ((yIndexBuffer[writeIndex] > xIndexBuffer[writeIndex]) ? yIndexBuffer[writeIndex] : xIndexBuffer[writeIndex]) >> 4;
+		locationBlend[writeIndex] = ((yIndexBuffer[writeIndex] > xIndexBuffer[writeIndex]) ? yIndexBuffer[writeIndex] : xIndexBuffer[writeIndex]) >> 13;
 
 	}
 

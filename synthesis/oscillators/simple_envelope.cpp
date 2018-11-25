@@ -10,12 +10,14 @@
 void SimpleEnvelope::parseControls(ViaControls * controls, ViaInputStreams * inputs) {
 
 	int32_t releaseMod = inputs->cv2Samples[0];
-	releaseMod += 32767;
+	releaseMod += 32768;
 
 	releaseMod = releaseMod >> 4;
 
-	release = fix16_mul(expoTable[((4095 - controls->knob2Value) >> 2) * 3] >> 8,
-			expoTable[releaseMod] >> 7);
+	release = fix16_mul(expoTable[((4095 - controls->knob2Value) >> 2) * 3] >> 11,
+			expoTable[((releaseMod) >> 2) * 3] >> 4);
+
+//	release >>= 2;
 
 }
 void SimpleEnvelope::advance(ViaInputStreams * inputs,
