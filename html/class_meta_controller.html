@@ -72,8 +72,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab5edafda7b2d14c42b80d56b3c1aba09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab78ff8455308bff2fb7ebff51c33790b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#ab78ff8455308bff2fb7ebff51c33790b">generateIncrementsSeq</a> (<a class="el" href="class_via_input_streams.html">ViaInputStreams</a> *inputs)</td></tr>
 <tr class="separator:ab78ff8455308bff2fb7ebff51c33790b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaca3bcd3c1ad139f9743d95f206d53b6"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#aaca3bcd3c1ad139f9743d95f206d53b6">advancePhase</a> (uint32_t *phaseDistTable)</td></tr>
-<tr class="separator:aaca3bcd3c1ad139f9743d95f206d53b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6511123a3f058b34f548819022fa7ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#af6511123a3f058b34f548819022fa7ab">advancePhaseExternal</a> (uint32_t *phaseDistTable)</td></tr>
+<tr class="separator:af6511123a3f058b34f548819022fa7ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cc79ab820032663f6b05497e2f8b5d2"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#a3cc79ab820032663f6b05497e2f8b5d2">advancePhasePWM</a> (uint32_t *phaseDistTable)</td></tr>
+<tr class="separator:a3cc79ab820032663f6b05497e2f8b5d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03bce7a9b690534f7daff9c990c07cc4"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#a03bce7a9b690534f7daff9c990c07cc4">advancePhaseOversampled</a> (uint32_t *phaseDistTable)</td></tr>
+<tr class="separator:a03bce7a9b690534f7daff9c990c07cc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83b8da3f1d5f19ed4e3bccba2500691b"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#a83b8da3f1d5f19ed4e3bccba2500691b">noRetrigAttackState</a> (void)</td></tr>
 <tr class="separator:a83b8da3f1d5f19ed4e3bccba2500691b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3fe6a696bbbdd4eed7467b610ec72b3"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#ae3fe6a696bbbdd4eed7467b610ec72b3">noRetrigReleaseState</a> (void)</td></tr>
@@ -159,6 +163,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a5fd35122564a177ec064c87fdb5dd218"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0baa5897d4b06f0e922d96cda137f6ab"><td class="memItemLeft" align="right" valign="top">int16_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#a0baa5897d4b06f0e922d96cda137f6ab">fm</a></td></tr>
 <tr class="separator:a0baa5897d4b06f0e922d96cda137f6ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cda0eb0469d7b18682f59d9343d7c16"><td class="memItemLeft" align="right" valign="top">int32_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#a8cda0eb0469d7b18682f59d9343d7c16">expoFM</a></td></tr>
+<tr class="separator:a8cda0eb0469d7b18682f59d9343d7c16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46db61d62388f7d72047cc188d67bddc"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#a46db61d62388f7d72047cc188d67bddc">phase</a> = 0</td></tr>
 <tr class="separator:a46db61d62388f7d72047cc188d67bddc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad460161d10335de5227b5b15e523adb6"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#ad460161d10335de5227b5b15e523adb6">phaseBeforeIncrement</a></td></tr>
@@ -171,6 +177,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a2dca0b0a40e81430fd22cbce198c2b5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9cece3599531090186f2e21e26638579"><td class="memItemLeft" align="right" valign="top">void(MetaController::*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#a9cece3599531090186f2e21e26638579">generateIncrements</a> )(<a class="el" href="class_via_input_streams.html">ViaInputStreams</a> *inputs)</td></tr>
 <tr class="separator:a9cece3599531090186f2e21e26638579"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93ac4ca3a88052163f06964660408d71"><td class="memItemLeft" align="right" valign="top">int32_t(MetaController::*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#a93ac4ca3a88052163f06964660408d71">advancePhase</a> )(uint32_t *phaseDistTable)</td></tr>
+<tr class="separator:a93ac4ca3a88052163f06964660408d71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4825810085dd530123a7dcf99594780"><td class="memItemLeft" align="right" valign="top">int32_t(MetaController::*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#ab4825810085dd530123a7dcf99594780">incrementArbiter</a> )(void)</td></tr>
 <tr class="separator:ab4825810085dd530123a7dcf99594780"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7a9bfb22b8149d17e32fa5ffd0eb025"><td class="memItemLeft" align="right" valign="top">void(MetaController::*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_meta_controller.html#ad7a9bfb22b8149d17e32fa5ffd0eb025">loopHandler</a> )(void)</td></tr>
@@ -184,14 +192,50 @@ Private Attributes</h2></td></tr>
 <tr class="separator:afbdb66d7673f39db7b252cdc64b0175f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aaca3bcd3c1ad139f9743d95f206d53b6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaca3bcd3c1ad139f9743d95f206d53b6">&#9670;&nbsp;</a></span>advancePhase()</h2>
+<a id="af6511123a3f058b34f548819022fa7ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6511123a3f058b34f548819022fa7ab">&#9670;&nbsp;</a></span>advancePhaseExternal()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int32_t MetaController::advancePhase </td>
+          <td class="memname">void MetaController::advancePhaseExternal </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t *&#160;</td>
+          <td class="paramname"><em>phaseDistTable</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a03bce7a9b690534f7daff9c990c07cc4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03bce7a9b690534f7daff9c990c07cc4">&#9670;&nbsp;</a></span>advancePhaseOversampled()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t MetaController::advancePhaseOversampled </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t *&#160;</td>
+          <td class="paramname"><em>phaseDistTable</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3cc79ab820032663f6b05497e2f8b5d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cc79ab820032663f6b05497e2f8b5d2">&#9670;&nbsp;</a></span>advancePhasePWM()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t MetaController::advancePhasePWM </td>
           <td>(</td>
           <td class="paramtype">uint32_t *&#160;</td>
           <td class="paramname"><em>phaseDistTable</em></td><td>)</td>
@@ -883,6 +927,20 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a93ac4ca3a88052163f06964660408d71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93ac4ca3a88052163f06964660408d71">&#9670;&nbsp;</a></span>advancePhase</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t(MetaController::* MetaController::advancePhase) (uint32_t *phaseDistTable)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a4e7438588ed111de3739188278576b38"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4e7438588ed111de3739188278576b38">&#9670;&nbsp;</a></span>atB</h2>
 
@@ -919,6 +977,20 @@ Private Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">int32_t MetaController::dutyCycleBase = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8cda0eb0469d7b18682f59d9343d7c16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8cda0eb0469d7b18682f59d9343d7c16">&#9670;&nbsp;</a></span>expoFM</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t* MetaController::expoFM</td>
         </tr>
       </table>
 </div><div class="memdoc">

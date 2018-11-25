@@ -52,8 +52,14 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a546f3720e1120c3ff547f330287fefde"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dual_euclidean.html#a546f3720e1120c3ff547f330287fefde">processClock</a> (void)</td></tr>
-<tr class="separator:a546f3720e1120c3ff547f330287fefde"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf05390e980a6a06a3bd5a999a3bfc2a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dual_euclidean.html#aaf05390e980a6a06a3bd5a999a3bfc2a">processMainRisingEdge</a> (void)</td></tr>
+<tr class="separator:aaf05390e980a6a06a3bd5a999a3bfc2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f7f169fc8880eeb0ab56b8124c999e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dual_euclidean.html#a5f7f169fc8880eeb0ab56b8124c999e2">processInternalRisingEdge</a> (void)</td></tr>
+<tr class="separator:a5f7f169fc8880eeb0ab56b8124c999e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a025b9c5c5194fafabba03ea4a6b573d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dual_euclidean.html#a025b9c5c5194fafabba03ea4a6b573d5">processMainFallingEdge</a> (void)</td></tr>
+<tr class="separator:a025b9c5c5194fafabba03ea4a6b573d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe6a9969ba4d40c748f2b341658f3630"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dual_euclidean.html#afe6a9969ba4d40c748f2b341658f3630">processInternalFallingEdge</a> (void)</td></tr>
+<tr class="separator:afe6a9969ba4d40c748f2b341658f3630"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adfa104faaaa81723ec6e3ce1f3f70d92"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dual_euclidean.html#adfa104faaaa81723ec6e3ce1f3f70d92">advanceSequencerA</a> (void)</td></tr>
 <tr class="separator:adfa104faaaa81723ec6e3ce1f3f70d92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84bd2974dc771fde961db2e81797916f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dual_euclidean.html#a84bd2974dc771fde961db2e81797916f">advanceSequencerB</a> (void)</td></tr>
@@ -91,6 +97,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:aad2c789fc10f9bb42e36ade714cf8e32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a178d24471a08efe6149529d86b05fa1d"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dual_euclidean.html#a178d24471a08efe6149529d86b05fa1d">virtualGateHigh</a></td></tr>
 <tr class="separator:a178d24471a08efe6149529d86b05fa1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab693c769cf1137e20e1b4db05ad1404"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dual_euclidean.html#aab693c769cf1137e20e1b4db05ad1404">multipliers</a> [8] = {1, 2, 3, 4, 6, 8, 12, 16}</td></tr>
+<tr class="separator:aab693c769cf1137e20e1b4db05ad1404"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf4499de05acdc7547c5acb21219ef4d"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dual_euclidean.html#acf4499de05acdc7547c5acb21219ef4d">aCounter</a> = 0</td></tr>
 <tr class="separator:acf4499de05acdc7547c5acb21219ef4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5313528458ec30301e147c1ea7908d25"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dual_euclidean.html#a5313528458ec30301e147c1ea7908d25">bCounter</a> = 0</td></tr>
@@ -208,14 +216,68 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a546f3720e1120c3ff547f330287fefde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a546f3720e1120c3ff547f330287fefde">&#9670;&nbsp;</a></span>processClock()</h2>
+<a id="afe6a9969ba4d40c748f2b341658f3630"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe6a9969ba4d40c748f2b341658f3630">&#9670;&nbsp;</a></span>processInternalFallingEdge()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void DualEuclidean::processClock </td>
+          <td class="memname">void DualEuclidean::processInternalFallingEdge </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5f7f169fc8880eeb0ab56b8124c999e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f7f169fc8880eeb0ab56b8124c999e2">&#9670;&nbsp;</a></span>processInternalRisingEdge()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DualEuclidean::processInternalRisingEdge </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a025b9c5c5194fafabba03ea4a6b573d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a025b9c5c5194fafabba03ea4a6b573d5">&#9670;&nbsp;</a></span>processMainFallingEdge()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DualEuclidean::processMainFallingEdge </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aaf05390e980a6a06a3bd5a999a3bfc2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf05390e980a6a06a3bd5a999a3bfc2a">&#9670;&nbsp;</a></span>processMainRisingEdge()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DualEuclidean::processMainRisingEdge </td>
           <td>(</td>
           <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -609,6 +671,20 @@ Private Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">uint32_t DualEuclidean::multiplier = 1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aab693c769cf1137e20e1b4db05ad1404"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab693c769cf1137e20e1b4db05ad1404">&#9670;&nbsp;</a></span>multipliers</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t DualEuclidean::multipliers[8] = {1, 2, 3, 4, 6, 8, 12, 16}</td>
         </tr>
       </table>
 </div><div class="memdoc">

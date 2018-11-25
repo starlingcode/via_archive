@@ -136,12 +136,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9b2a127bfdbf2240fbdd1f79bbef52bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9883693e8eacafa7ee68866793adf6e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_via_module.html#ad9883693e8eacafa7ee68866793adf6e">setLEDD</a> (int32_t on)</td></tr>
 <tr class="separator:ad9883693e8eacafa7ee68866793adf6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1448e56cf6d131b3b344175d586853e0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_via_module.html#a1448e56cf6d131b3b344175d586853e0">SET_BLUE_LED_ONOFF</a> (int32_t X)</td></tr>
+<tr class="separator:a1448e56cf6d131b3b344175d586853e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad676ccf2b9177bccfc7842967a792fa1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_via_module.html#ad676ccf2b9177bccfc7842967a792fa1">setLogicOutputsLEDOn</a> (uint32_t logicA, uint32_t auxLogic, uint32_t shA, uint32_t shB)</td></tr>
 <tr class="separator:ad676ccf2b9177bccfc7842967a792fa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7f3b8c185a7e46f6412753c9d17ead9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_via_module.html#ab7f3b8c185a7e46f6412753c9d17ead9">setLogicOutputsLEDOff</a> (uint32_t logicA, uint32_t auxLogic, uint32_t shA, uint32_t shB)</td></tr>
 <tr class="separator:ab7f3b8c185a7e46f6412753c9d17ead9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a980dceea193632fc47c663dc2adcf7ca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_via_module.html#a980dceea193632fc47c663dc2adcf7ca">setLogicOut</a> (int32_t writeIndex, int32_t runtimeDisplay)</td></tr>
 <tr class="separator:a980dceea193632fc47c663dc2adcf7ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a0572d7fc135512a278b4fb304014d2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_via_module.html#a6a0572d7fc135512a278b4fb304014d2">setLogicOutNoLED</a> (int32_t writeIndex)</td></tr>
+<tr class="separator:a6a0572d7fc135512a278b4fb304014d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7dd37cc52066d45418818743b3d23ad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_via_module.html#ad7dd37cc52066d45418818743b3d23ad">setLogicOutBoolean</a> (int32_t writeIndex, int32_t runtimeDisplay)</td></tr>
 <tr class="separator:ad7dd37cc52066d45418818743b3d23ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a11c19ddf0c9a04061105a65d7c546b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_via_module.html#a7a11c19ddf0c9a04061105a65d7c546b">setRedLED</a> (int32_t level)</td></tr>
@@ -245,8 +249,6 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a56d68d397aecce9d7ca1c4f36f556586"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4afb6bc99e668e10cdd83dd8f6aeec5"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_via_module.html#aa4afb6bc99e668e10cdd83dd8f6aeec5">button6Input</a> = 0</td></tr>
 <tr class="separator:aa4afb6bc99e668e10cdd83dd8f6aeec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf2754a9decc1a6e8ca8d17bbc810277"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_via_module.html#abf2754a9decc1a6e8ca8d17bbc810277">bufferSize</a></td></tr>
-<tr class="separator:abf2754a9decc1a6e8ca8d17bbc810277"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a1b83ad8b5871ad71e582502e9c252eb6"></a>
@@ -459,6 +461,32 @@ Public Attributes</h2></td></tr>
           <td class="memname">void ViaModule::ioStreamInit </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1448e56cf6d131b3b344175d586853e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1448e56cf6d131b3b344175d586853e0">&#9670;&nbsp;</a></span>SET_BLUE_LED_ONOFF()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ViaModule::SET_BLUE_LED_ONOFF </td>
+          <td>(</td>
+          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramname"><em>X</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1084,7 +1112,33 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <a id="a6a0572d7fc135512a278b4fb304014d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a0572d7fc135512a278b4fb304014d2">&#9670;&nbsp;</a></span>setLogicOutNoLED()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a0572d7fc135512a278b4fb304014d2">&#9670;&nbsp;</a></span>setLogicOutNoLED() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ViaModule::setLogicOutNoLED </td>
+          <td>(</td>
+          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramname"><em>writeIndex</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6a0572d7fc135512a278b4fb304014d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a0572d7fc135512a278b4fb304014d2">&#9670;&nbsp;</a></span>setLogicOutNoLED() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1730,20 +1784,6 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="abf2754a9decc1a6e8ca8d17bbc810277"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf2754a9decc1a6e8ca8d17bbc810277">&#9670;&nbsp;</a></span>bufferSize</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int32_t ViaModule::bufferSize</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a8b54c1c283ce508654c6ca3d501d1d4b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8b54c1c283ce508654c6ca3d501d1d4b">&#9670;&nbsp;</a></span>button1Input <span class="overload">[1/2]</span></h2>
 
@@ -1926,28 +1966,28 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="af0465adbc24c831446092ceda3afc7d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af0465adbc24c831446092ceda3afc7d1">&#9670;&nbsp;</a></span>greenLevel <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">volatile uint32_t* ViaModule::greenLevel</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a823f43c562e39858bfa1d2b1943dd2b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a823f43c562e39858bfa1d2b1943dd2b5">&#9670;&nbsp;</a></span>greenLevel <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a823f43c562e39858bfa1d2b1943dd2b5">&#9670;&nbsp;</a></span>greenLevel <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">uint32_t ViaModule::greenLevel = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af0465adbc24c831446092ceda3afc7d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0465adbc24c831446092ceda3afc7d1">&#9670;&nbsp;</a></span>greenLevel <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">volatile uint32_t* ViaModule::greenLevel</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -2080,28 +2120,28 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ac11bc2cd4f35777e6aac585c77eb9103"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac11bc2cd4f35777e6aac585c77eb9103">&#9670;&nbsp;</a></span>ledDOutput <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">volatile uint32_t* ViaModule::ledDOutput</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a3a36a2d911549950d6eca39b2f05029d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a36a2d911549950d6eca39b2f05029d">&#9670;&nbsp;</a></span>ledDOutput <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a36a2d911549950d6eca39b2f05029d">&#9670;&nbsp;</a></span>ledDOutput <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">uint32_t ViaModule::ledDOutput = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac11bc2cd4f35777e6aac585c77eb9103"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac11bc2cd4f35777e6aac585c77eb9103">&#9670;&nbsp;</a></span>ledDOutput <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">volatile uint32_t* ViaModule::ledDOutput</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -2192,28 +2232,28 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a9d6d3dd39cf5560aaf2b14a6d7c4a46b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d6d3dd39cf5560aaf2b14a6d7c4a46b">&#9670;&nbsp;</a></span>shBOutput <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">volatile uint32_t* ViaModule::shBOutput</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a7cfbe5fe6b6afb143cb55ff53cdcc90e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cfbe5fe6b6afb143cb55ff53cdcc90e">&#9670;&nbsp;</a></span>shBOutput <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cfbe5fe6b6afb143cb55ff53cdcc90e">&#9670;&nbsp;</a></span>shBOutput <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">uint32_t ViaModule::shBOutput = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9d6d3dd39cf5560aaf2b14a6d7c4a46b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d6d3dd39cf5560aaf2b14a6d7c4a46b">&#9670;&nbsp;</a></span>shBOutput <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">volatile uint32_t* ViaModule::shBOutput</td>
         </tr>
       </table>
 </div><div class="memdoc">

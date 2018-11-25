@@ -7,7 +7,13 @@
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \mbox{\hyperlink{class_dual_euclidean_a546f3720e1120c3ff547f330287fefde}{process\+Clock}} (void)
+void \mbox{\hyperlink{class_dual_euclidean_aaf05390e980a6a06a3bd5a999a3bfc2a}{process\+Main\+Rising\+Edge}} (void)
+\item 
+void \mbox{\hyperlink{class_dual_euclidean_a5f7f169fc8880eeb0ab56b8124c999e2}{process\+Internal\+Rising\+Edge}} (void)
+\item 
+void \mbox{\hyperlink{class_dual_euclidean_a025b9c5c5194fafabba03ea4a6b573d5}{process\+Main\+Falling\+Edge}} (void)
+\item 
+void \mbox{\hyperlink{class_dual_euclidean_afe6a9969ba4d40c748f2b341658f3630}{process\+Internal\+Falling\+Edge}} (void)
 \item 
 void \mbox{\hyperlink{class_dual_euclidean_adfa104faaaa81723ec6e3ce1f3f70d92}{advance\+SequencerA}} (void)
 \item 
@@ -45,6 +51,8 @@ uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a0cee123dd1067d2144f9c3c53e1
 uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_aad2c789fc10f9bb42e36ade714cf8e32}{modulate\+Multiplier}}
 \item 
 uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a178d24471a08efe6149529d86b05fa1d}{virtual\+Gate\+High}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_aab693c769cf1137e20e1b4db05ad1404}{multipliers}} \mbox{[}8\mbox{]} = \{1, 2, 3, 4, 6, 8, 12, 16\}
 \item 
 uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_acf4499de05acdc7547c5acb21219ef4d}{a\+Counter}} = 0
 \item 
@@ -118,11 +126,29 @@ uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a7a9b06d0d83d1d8eeff1ce41df2
 \subsubsection{\texorpdfstring{parse\+Controls()}{parseControls()}}
 {\footnotesize\ttfamily void Dual\+Euclidean\+::parse\+Controls (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$}]{controls,  }\item[{\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$}]{inputs }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{class_dual_euclidean_a546f3720e1120c3ff547f330287fefde}\label{class_dual_euclidean_a546f3720e1120c3ff547f330287fefde}} 
-\index{Dual\+Euclidean@{Dual\+Euclidean}!process\+Clock@{process\+Clock}}
-\index{process\+Clock@{process\+Clock}!Dual\+Euclidean@{Dual\+Euclidean}}
-\subsubsection{\texorpdfstring{process\+Clock()}{processClock()}}
-{\footnotesize\ttfamily void Dual\+Euclidean\+::process\+Clock (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{class_dual_euclidean_afe6a9969ba4d40c748f2b341658f3630}\label{class_dual_euclidean_afe6a9969ba4d40c748f2b341658f3630}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!process\+Internal\+Falling\+Edge@{process\+Internal\+Falling\+Edge}}
+\index{process\+Internal\+Falling\+Edge@{process\+Internal\+Falling\+Edge}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{process\+Internal\+Falling\+Edge()}{processInternalFallingEdge()}}
+{\footnotesize\ttfamily void Dual\+Euclidean\+::process\+Internal\+Falling\+Edge (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_dual_euclidean_a5f7f169fc8880eeb0ab56b8124c999e2}\label{class_dual_euclidean_a5f7f169fc8880eeb0ab56b8124c999e2}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!process\+Internal\+Rising\+Edge@{process\+Internal\+Rising\+Edge}}
+\index{process\+Internal\+Rising\+Edge@{process\+Internal\+Rising\+Edge}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{process\+Internal\+Rising\+Edge()}{processInternalRisingEdge()}}
+{\footnotesize\ttfamily void Dual\+Euclidean\+::process\+Internal\+Rising\+Edge (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_dual_euclidean_a025b9c5c5194fafabba03ea4a6b573d5}\label{class_dual_euclidean_a025b9c5c5194fafabba03ea4a6b573d5}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!process\+Main\+Falling\+Edge@{process\+Main\+Falling\+Edge}}
+\index{process\+Main\+Falling\+Edge@{process\+Main\+Falling\+Edge}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{process\+Main\+Falling\+Edge()}{processMainFallingEdge()}}
+{\footnotesize\ttfamily void Dual\+Euclidean\+::process\+Main\+Falling\+Edge (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_dual_euclidean_aaf05390e980a6a06a3bd5a999a3bfc2a}\label{class_dual_euclidean_aaf05390e980a6a06a3bd5a999a3bfc2a}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!process\+Main\+Rising\+Edge@{process\+Main\+Rising\+Edge}}
+\index{process\+Main\+Rising\+Edge@{process\+Main\+Rising\+Edge}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{process\+Main\+Rising\+Edge()}{processMainRisingEdge()}}
+{\footnotesize\ttfamily void Dual\+Euclidean\+::process\+Main\+Rising\+Edge (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{class_dual_euclidean_afed6b5eb3ac657c75b1d158ee53d1d84}\label{class_dual_euclidean_afed6b5eb3ac657c75b1d158ee53d1d84}} 
 \index{Dual\+Euclidean@{Dual\+Euclidean}!update\+Logic\+Output@{update\+Logic\+Output}}
@@ -270,6 +296,12 @@ uint32\+\_\+t \mbox{\hyperlink{class_dual_euclidean_a7a9b06d0d83d1d8eeff1ce41df2
 \index{multiplier@{multiplier}!Dual\+Euclidean@{Dual\+Euclidean}}
 \subsubsection{\texorpdfstring{multiplier}{multiplier}}
 {\footnotesize\ttfamily uint32\+\_\+t Dual\+Euclidean\+::multiplier = 1}
+
+\mbox{\Hypertarget{class_dual_euclidean_aab693c769cf1137e20e1b4db05ad1404}\label{class_dual_euclidean_aab693c769cf1137e20e1b4db05ad1404}} 
+\index{Dual\+Euclidean@{Dual\+Euclidean}!multipliers@{multipliers}}
+\index{multipliers@{multipliers}!Dual\+Euclidean@{Dual\+Euclidean}}
+\subsubsection{\texorpdfstring{multipliers}{multipliers}}
+{\footnotesize\ttfamily int32\+\_\+t Dual\+Euclidean\+::multipliers\mbox{[}8\mbox{]} = \{1, 2, 3, 4, 6, 8, 12, 16\}}
 
 \mbox{\Hypertarget{class_dual_euclidean_a2dddcba8d52c9deba965c7751866c85f}\label{class_dual_euclidean_a2dddcba8d52c9deba965c7751866c85f}} 
 \index{Dual\+Euclidean@{Dual\+Euclidean}!offset@{offset}}

@@ -125,9 +125,17 @@ uint32\+\_\+t \mbox{\hyperlink{class_via_meta_aedee75e7f255d70c7292972d5e5eef65}
 \item 
 uint32\+\_\+t \mbox{\hyperlink{class_via_meta_a8b0b6f0072b72144fe3f894b6303a0d4}{wavetable\+Read\+Drum}} \mbox{[}517\mbox{]}
 \item 
+uint32\+\_\+t \mbox{\hyperlink{class_via_meta_aceb676011c9259d33d690fe1101421a4}{wavetable\+Read\+Drum2}} \mbox{[}517\mbox{]}
+\item 
 int16\+\_\+t \mbox{\hyperlink{class_via_meta_a2650520c89c5e41f90571a6670cc3786}{drum\+Write}} \mbox{[}4\mbox{]}
 \item 
+int16\+\_\+t \mbox{\hyperlink{class_via_meta_a99391f3254d8e106fc7d1d7b3422b1b1}{drum2\+Write}} \mbox{[}4\mbox{]}
+\item 
+int16\+\_\+t \mbox{\hyperlink{class_via_meta_abe228d0883cfa64c5c34368270dce045}{drum3\+Write}} \mbox{[}4\mbox{]}
+\item 
 int16\+\_\+t \mbox{\hyperlink{class_via_meta_af67df1f1a9de4ee090de75709c9e8445}{drum\+Full\+Scale}} \mbox{[}4\mbox{]}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_via_meta_ac0e88a37fdb70516c048a65c0195925b}{drum\+Off}} \mbox{[}4\mbox{]}
 \item 
 void(Via\+Meta\+::$\ast$ \mbox{\hyperlink{class_via_meta_ab0b9e808d133a9bc00bca8ecc5928b87}{output\+Stage}} )(int32\+\_\+t write\+Index)
 \item 
@@ -153,7 +161,23 @@ int32\+\_\+t \mbox{\hyperlink{class_via_meta_a849f78f2ca06dd8d5df280ac74f7f2df}{
 \item 
 \mbox{\hyperlink{class_meta_controller}{Meta\+Controller}} \mbox{\hyperlink{class_via_meta_ae825571bb029bcd9ddbe8a2c19f041a5}{meta\+Controller}}
 \item 
-\mbox{\hyperlink{class_simple_envelope}{Simple\+Envelope}} \mbox{\hyperlink{class_via_meta_a92a7fdb0c5bd482b06467217c2e16f31}{drum\+Envelope}}
+\mbox{\hyperlink{class_simple_envelope}{Simple\+Envelope}} \mbox{\hyperlink{class_via_meta_a1bbd7242c6133f93cd5732ce6add7f87}{amp\+Envelope}}
+\item 
+\mbox{\hyperlink{class_simple_envelope}{Simple\+Envelope}} \mbox{\hyperlink{class_via_meta_a1ff8bd7ec2f612c9114330b6d451bddc}{freq\+Transient}}
+\item 
+\mbox{\hyperlink{class_simple_envelope}{Simple\+Envelope}} \mbox{\hyperlink{class_via_meta_acb397704a71ed2eb11218c5d96e5e622}{morph\+Envelope}}
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_via_meta_acc661a6ed6ca9a096f1dfb7ebfac724f}{morph\+Attack\+Multiplier}} = 1 $<$$<$ 8
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_via_meta_a583404362a04ac999f086ab9899fa2e4}{morph\+Release\+Multiplier}} = 1 $<$$<$ 2
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_via_meta_afbc54709d93d43fa6e2508206d280fd4}{freq\+Attack\+Multiplier}} = 1 $<$$<$ 10
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_via_meta_a2dc1962ea9604adccb61269572acdeb4}{freq\+Release\+Multiplier}} = 1$<$$<$ 8
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_via_meta_a76c5199c165cb7cdc09ec135e941710f}{transient\+Scale}} = 1 $<$$<$ 3
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_via_meta_a4cedfcb63af32f4c03ce682559741b3d}{min\+Transient\+Length}} = 14
 \end{DoxyCompactItemize}
 \subsection*{Additional Inherited Members}
 
@@ -459,6 +483,12 @@ int32\+\_\+t \mbox{\hyperlink{class_via_meta_a849f78f2ca06dd8d5df280ac74f7f2df}{
 
 
 \subsection{Member Data Documentation}
+\mbox{\Hypertarget{class_via_meta_a1bbd7242c6133f93cd5732ce6add7f87}\label{class_via_meta_a1bbd7242c6133f93cd5732ce6add7f87}} 
+\index{Via\+Meta@{Via\+Meta}!amp\+Envelope@{amp\+Envelope}}
+\index{amp\+Envelope@{amp\+Envelope}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{amp\+Envelope}{ampEnvelope}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_simple_envelope}{Simple\+Envelope}} Via\+Meta\+::amp\+Envelope}
+
 \mbox{\Hypertarget{class_via_meta_a20f99319d993114f391102f7cadd558d}\label{class_via_meta_a20f99319d993114f391102f7cadd558d}} 
 \index{Via\+Meta@{Via\+Meta}!calculate\+Dac3@{calculate\+Dac3}}
 \index{calculate\+Dac3@{calculate\+Dac3}!Via\+Meta@{Via\+Meta}}
@@ -483,11 +513,17 @@ int32\+\_\+t \mbox{\hyperlink{class_via_meta_a849f78f2ca06dd8d5df280ac74f7f2df}{
 \subsubsection{\texorpdfstring{current\+R\+G\+B\+Behavior}{currentRGBBehavior}}
 {\footnotesize\ttfamily void(Via\+Meta\+::$\ast$ Via\+Meta\+::current\+R\+G\+B\+Behavior) (void)}
 
-\mbox{\Hypertarget{class_via_meta_a92a7fdb0c5bd482b06467217c2e16f31}\label{class_via_meta_a92a7fdb0c5bd482b06467217c2e16f31}} 
-\index{Via\+Meta@{Via\+Meta}!drum\+Envelope@{drum\+Envelope}}
-\index{drum\+Envelope@{drum\+Envelope}!Via\+Meta@{Via\+Meta}}
-\subsubsection{\texorpdfstring{drum\+Envelope}{drumEnvelope}}
-{\footnotesize\ttfamily \mbox{\hyperlink{class_simple_envelope}{Simple\+Envelope}} Via\+Meta\+::drum\+Envelope}
+\mbox{\Hypertarget{class_via_meta_a99391f3254d8e106fc7d1d7b3422b1b1}\label{class_via_meta_a99391f3254d8e106fc7d1d7b3422b1b1}} 
+\index{Via\+Meta@{Via\+Meta}!drum2\+Write@{drum2\+Write}}
+\index{drum2\+Write@{drum2\+Write}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{drum2\+Write}{drum2Write}}
+{\footnotesize\ttfamily int16\+\_\+t Via\+Meta\+::drum2\+Write\mbox{[}4\mbox{]}}
+
+\mbox{\Hypertarget{class_via_meta_abe228d0883cfa64c5c34368270dce045}\label{class_via_meta_abe228d0883cfa64c5c34368270dce045}} 
+\index{Via\+Meta@{Via\+Meta}!drum3\+Write@{drum3\+Write}}
+\index{drum3\+Write@{drum3\+Write}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{drum3\+Write}{drum3Write}}
+{\footnotesize\ttfamily int16\+\_\+t Via\+Meta\+::drum3\+Write\mbox{[}4\mbox{]}}
 
 \mbox{\Hypertarget{class_via_meta_af67df1f1a9de4ee090de75709c9e8445}\label{class_via_meta_af67df1f1a9de4ee090de75709c9e8445}} 
 \index{Via\+Meta@{Via\+Meta}!drum\+Full\+Scale@{drum\+Full\+Scale}}
@@ -495,11 +531,35 @@ int32\+\_\+t \mbox{\hyperlink{class_via_meta_a849f78f2ca06dd8d5df280ac74f7f2df}{
 \subsubsection{\texorpdfstring{drum\+Full\+Scale}{drumFullScale}}
 {\footnotesize\ttfamily int16\+\_\+t Via\+Meta\+::drum\+Full\+Scale\mbox{[}4\mbox{]}}
 
+\mbox{\Hypertarget{class_via_meta_ac0e88a37fdb70516c048a65c0195925b}\label{class_via_meta_ac0e88a37fdb70516c048a65c0195925b}} 
+\index{Via\+Meta@{Via\+Meta}!drum\+Off@{drum\+Off}}
+\index{drum\+Off@{drum\+Off}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{drum\+Off}{drumOff}}
+{\footnotesize\ttfamily int32\+\_\+t Via\+Meta\+::drum\+Off\mbox{[}4\mbox{]}}
+
 \mbox{\Hypertarget{class_via_meta_a2650520c89c5e41f90571a6670cc3786}\label{class_via_meta_a2650520c89c5e41f90571a6670cc3786}} 
 \index{Via\+Meta@{Via\+Meta}!drum\+Write@{drum\+Write}}
 \index{drum\+Write@{drum\+Write}!Via\+Meta@{Via\+Meta}}
 \subsubsection{\texorpdfstring{drum\+Write}{drumWrite}}
 {\footnotesize\ttfamily int16\+\_\+t Via\+Meta\+::drum\+Write\mbox{[}4\mbox{]}}
+
+\mbox{\Hypertarget{class_via_meta_afbc54709d93d43fa6e2508206d280fd4}\label{class_via_meta_afbc54709d93d43fa6e2508206d280fd4}} 
+\index{Via\+Meta@{Via\+Meta}!freq\+Attack\+Multiplier@{freq\+Attack\+Multiplier}}
+\index{freq\+Attack\+Multiplier@{freq\+Attack\+Multiplier}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{freq\+Attack\+Multiplier}{freqAttackMultiplier}}
+{\footnotesize\ttfamily int32\+\_\+t Via\+Meta\+::freq\+Attack\+Multiplier = 1 $<$$<$ 10}
+
+\mbox{\Hypertarget{class_via_meta_a2dc1962ea9604adccb61269572acdeb4}\label{class_via_meta_a2dc1962ea9604adccb61269572acdeb4}} 
+\index{Via\+Meta@{Via\+Meta}!freq\+Release\+Multiplier@{freq\+Release\+Multiplier}}
+\index{freq\+Release\+Multiplier@{freq\+Release\+Multiplier}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{freq\+Release\+Multiplier}{freqReleaseMultiplier}}
+{\footnotesize\ttfamily int32\+\_\+t Via\+Meta\+::freq\+Release\+Multiplier = 1$<$$<$ 8}
+
+\mbox{\Hypertarget{class_via_meta_a1ff8bd7ec2f612c9114330b6d451bddc}\label{class_via_meta_a1ff8bd7ec2f612c9114330b6d451bddc}} 
+\index{Via\+Meta@{Via\+Meta}!freq\+Transient@{freq\+Transient}}
+\index{freq\+Transient@{freq\+Transient}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{freq\+Transient}{freqTransient}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_simple_envelope}{Simple\+Envelope}} Via\+Meta\+::freq\+Transient}
 
 \mbox{\Hypertarget{class_via_meta_ae825571bb029bcd9ddbe8a2c19f041a5}\label{class_via_meta_ae825571bb029bcd9ddbe8a2c19f041a5}} 
 \index{Via\+Meta@{Via\+Meta}!meta\+Controller@{meta\+Controller}}
@@ -519,6 +579,30 @@ int32\+\_\+t \mbox{\hyperlink{class_via_meta_a849f78f2ca06dd8d5df280ac74f7f2df}{
 \subsubsection{\texorpdfstring{meta\+Wavetable}{metaWavetable}}
 {\footnotesize\ttfamily \mbox{\hyperlink{class_meta_wavetable}{Meta\+Wavetable}} Via\+Meta\+::meta\+Wavetable}
 
+\mbox{\Hypertarget{class_via_meta_a4cedfcb63af32f4c03ce682559741b3d}\label{class_via_meta_a4cedfcb63af32f4c03ce682559741b3d}} 
+\index{Via\+Meta@{Via\+Meta}!min\+Transient\+Length@{min\+Transient\+Length}}
+\index{min\+Transient\+Length@{min\+Transient\+Length}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{min\+Transient\+Length}{minTransientLength}}
+{\footnotesize\ttfamily uint32\+\_\+t Via\+Meta\+::min\+Transient\+Length = 14}
+
+\mbox{\Hypertarget{class_via_meta_acc661a6ed6ca9a096f1dfb7ebfac724f}\label{class_via_meta_acc661a6ed6ca9a096f1dfb7ebfac724f}} 
+\index{Via\+Meta@{Via\+Meta}!morph\+Attack\+Multiplier@{morph\+Attack\+Multiplier}}
+\index{morph\+Attack\+Multiplier@{morph\+Attack\+Multiplier}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{morph\+Attack\+Multiplier}{morphAttackMultiplier}}
+{\footnotesize\ttfamily int32\+\_\+t Via\+Meta\+::morph\+Attack\+Multiplier = 1 $<$$<$ 8}
+
+\mbox{\Hypertarget{class_via_meta_acb397704a71ed2eb11218c5d96e5e622}\label{class_via_meta_acb397704a71ed2eb11218c5d96e5e622}} 
+\index{Via\+Meta@{Via\+Meta}!morph\+Envelope@{morph\+Envelope}}
+\index{morph\+Envelope@{morph\+Envelope}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{morph\+Envelope}{morphEnvelope}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_simple_envelope}{Simple\+Envelope}} Via\+Meta\+::morph\+Envelope}
+
+\mbox{\Hypertarget{class_via_meta_a583404362a04ac999f086ab9899fa2e4}\label{class_via_meta_a583404362a04ac999f086ab9899fa2e4}} 
+\index{Via\+Meta@{Via\+Meta}!morph\+Release\+Multiplier@{morph\+Release\+Multiplier}}
+\index{morph\+Release\+Multiplier@{morph\+Release\+Multiplier}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{morph\+Release\+Multiplier}{morphReleaseMultiplier}}
+{\footnotesize\ttfamily int32\+\_\+t Via\+Meta\+::morph\+Release\+Multiplier = 1 $<$$<$ 2}
+
 \mbox{\Hypertarget{class_via_meta_ab0b9e808d133a9bc00bca8ecc5928b87}\label{class_via_meta_ab0b9e808d133a9bc00bca8ecc5928b87}} 
 \index{Via\+Meta@{Via\+Meta}!output\+Stage@{output\+Stage}}
 \index{output\+Stage@{output\+Stage}!Via\+Meta@{Via\+Meta}}
@@ -530,6 +614,12 @@ int32\+\_\+t \mbox{\hyperlink{class_via_meta_a849f78f2ca06dd8d5df280ac74f7f2df}{
 \index{runtime\+Display@{runtime\+Display}!Via\+Meta@{Via\+Meta}}
 \subsubsection{\texorpdfstring{runtime\+Display}{runtimeDisplay}}
 {\footnotesize\ttfamily int32\+\_\+t Via\+Meta\+::runtime\+Display}
+
+\mbox{\Hypertarget{class_via_meta_a76c5199c165cb7cdc09ec135e941710f}\label{class_via_meta_a76c5199c165cb7cdc09ec135e941710f}} 
+\index{Via\+Meta@{Via\+Meta}!transient\+Scale@{transient\+Scale}}
+\index{transient\+Scale@{transient\+Scale}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{transient\+Scale}{transientScale}}
+{\footnotesize\ttfamily int32\+\_\+t Via\+Meta\+::transient\+Scale = 1 $<$$<$ 3}
 
 \mbox{\Hypertarget{class_via_meta_a56b5fee57636b4d7b6b0be80145ae474}\label{class_via_meta_a56b5fee57636b4d7b6b0be80145ae474}} 
 \index{Via\+Meta@{Via\+Meta}!update\+R\+GB@{update\+R\+GB}}
@@ -566,6 +656,12 @@ int32\+\_\+t \mbox{\hyperlink{class_via_meta_a849f78f2ca06dd8d5df280ac74f7f2df}{
 \index{wavetable\+Read\+Drum@{wavetable\+Read\+Drum}!Via\+Meta@{Via\+Meta}}
 \subsubsection{\texorpdfstring{wavetable\+Read\+Drum}{wavetableReadDrum}}
 {\footnotesize\ttfamily uint32\+\_\+t Via\+Meta\+::wavetable\+Read\+Drum\mbox{[}517\mbox{]}}
+
+\mbox{\Hypertarget{class_via_meta_aceb676011c9259d33d690fe1101421a4}\label{class_via_meta_aceb676011c9259d33d690fe1101421a4}} 
+\index{Via\+Meta@{Via\+Meta}!wavetable\+Read\+Drum2@{wavetable\+Read\+Drum2}}
+\index{wavetable\+Read\+Drum2@{wavetable\+Read\+Drum2}!Via\+Meta@{Via\+Meta}}
+\subsubsection{\texorpdfstring{wavetable\+Read\+Drum2}{wavetableReadDrum2}}
+{\footnotesize\ttfamily uint32\+\_\+t Via\+Meta\+::wavetable\+Read\+Drum2\mbox{[}517\mbox{]}}
 
 
 

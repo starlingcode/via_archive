@@ -27,7 +27,11 @@ void \mbox{\hyperlink{class_meta_controller_ab5edafda7b2d14c42b80d56b3c1aba09}{g
 \item 
 void \mbox{\hyperlink{class_meta_controller_ab78ff8455308bff2fb7ebff51c33790b}{generate\+Increments\+Seq}} (\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
 \item 
-int32\+\_\+t \mbox{\hyperlink{class_meta_controller_aaca3bcd3c1ad139f9743d95f206d53b6}{advance\+Phase}} (uint32\+\_\+t $\ast$phase\+Dist\+Table)
+void \mbox{\hyperlink{class_meta_controller_af6511123a3f058b34f548819022fa7ab}{advance\+Phase\+External}} (uint32\+\_\+t $\ast$phase\+Dist\+Table)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a3cc79ab820032663f6b05497e2f8b5d2}{advance\+Phase\+P\+WM}} (uint32\+\_\+t $\ast$phase\+Dist\+Table)
+\item 
+int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a03bce7a9b690534f7daff9c990c07cc4}{advance\+Phase\+Oversampled}} (uint32\+\_\+t $\ast$phase\+Dist\+Table)
 \item 
 int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a83b8da3f1d5f19ed4e3bccba2500691b}{no\+Retrig\+Attack\+State}} (void)
 \item 
@@ -114,6 +118,8 @@ int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a5fd35122564a177ec064c87fdb5
 \item 
 int16\+\_\+t $\ast$ \mbox{\hyperlink{class_meta_controller_a0baa5897d4b06f0e922d96cda137f6ab}{fm}}
 \item 
+int32\+\_\+t $\ast$ \mbox{\hyperlink{class_meta_controller_a8cda0eb0469d7b18682f59d9343d7c16}{expo\+FM}}
+\item 
 int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a46db61d62388f7d72047cc188d67bddc}{phase}} = 0
 \item 
 int32\+\_\+t \mbox{\hyperlink{class_meta_controller_ad460161d10335de5227b5b15e523adb6}{phase\+Before\+Increment}}
@@ -125,6 +131,8 @@ int32\+\_\+t \mbox{\hyperlink{class_meta_controller_a00854d18e1394459842769c712a
 void(Meta\+Controller\+::$\ast$ \mbox{\hyperlink{class_meta_controller_a2dca0b0a40e81430fd22cbce198c2b5b}{parse\+Controls}} )(\mbox{\hyperlink{class_via_controls}{Via\+Controls}} $\ast$controls, \mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
 \item 
 void(Meta\+Controller\+::$\ast$ \mbox{\hyperlink{class_meta_controller_a9cece3599531090186f2e21e26638579}{generate\+Increments}} )(\mbox{\hyperlink{class_via_input_streams}{Via\+Input\+Streams}} $\ast$inputs)
+\item 
+int32\+\_\+t(Meta\+Controller\+::$\ast$ \mbox{\hyperlink{class_meta_controller_a93ac4ca3a88052163f06964660408d71}{advance\+Phase}} )(uint32\+\_\+t $\ast$phase\+Dist\+Table)
 \item 
 int32\+\_\+t(Meta\+Controller\+::$\ast$ \mbox{\hyperlink{class_meta_controller_ab4825810085dd530123a7dcf99594780}{increment\+Arbiter}} )(void)
 \item 
@@ -140,11 +148,23 @@ int32\+\_\+t \mbox{\hyperlink{class_meta_controller_afbdb66d7673f39db7b252cdc64b
 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{class_meta_controller_aaca3bcd3c1ad139f9743d95f206d53b6}\label{class_meta_controller_aaca3bcd3c1ad139f9743d95f206d53b6}} 
-\index{Meta\+Controller@{Meta\+Controller}!advance\+Phase@{advance\+Phase}}
-\index{advance\+Phase@{advance\+Phase}!Meta\+Controller@{Meta\+Controller}}
-\subsubsection{\texorpdfstring{advance\+Phase()}{advancePhase()}}
-{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::advance\+Phase (\begin{DoxyParamCaption}\item[{uint32\+\_\+t $\ast$}]{phase\+Dist\+Table }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{class_meta_controller_af6511123a3f058b34f548819022fa7ab}\label{class_meta_controller_af6511123a3f058b34f548819022fa7ab}} 
+\index{Meta\+Controller@{Meta\+Controller}!advance\+Phase\+External@{advance\+Phase\+External}}
+\index{advance\+Phase\+External@{advance\+Phase\+External}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{advance\+Phase\+External()}{advancePhaseExternal()}}
+{\footnotesize\ttfamily void Meta\+Controller\+::advance\+Phase\+External (\begin{DoxyParamCaption}\item[{uint32\+\_\+t $\ast$}]{phase\+Dist\+Table }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a03bce7a9b690534f7daff9c990c07cc4}\label{class_meta_controller_a03bce7a9b690534f7daff9c990c07cc4}} 
+\index{Meta\+Controller@{Meta\+Controller}!advance\+Phase\+Oversampled@{advance\+Phase\+Oversampled}}
+\index{advance\+Phase\+Oversampled@{advance\+Phase\+Oversampled}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{advance\+Phase\+Oversampled()}{advancePhaseOversampled()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::advance\+Phase\+Oversampled (\begin{DoxyParamCaption}\item[{uint32\+\_\+t $\ast$}]{phase\+Dist\+Table }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_meta_controller_a3cc79ab820032663f6b05497e2f8b5d2}\label{class_meta_controller_a3cc79ab820032663f6b05497e2f8b5d2}} 
+\index{Meta\+Controller@{Meta\+Controller}!advance\+Phase\+P\+WM@{advance\+Phase\+P\+WM}}
+\index{advance\+Phase\+P\+WM@{advance\+Phase\+P\+WM}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{advance\+Phase\+P\+W\+M()}{advancePhasePWM()}}
+{\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::advance\+Phase\+P\+WM (\begin{DoxyParamCaption}\item[{uint32\+\_\+t $\ast$}]{phase\+Dist\+Table }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{class_meta_controller_afd3d1fbf5121b09b014fa6b64468c78c}\label{class_meta_controller_afd3d1fbf5121b09b014fa6b64468c78c}} 
 \index{Meta\+Controller@{Meta\+Controller}!env\+Attack\+State@{env\+Attack\+State}}
@@ -359,6 +379,12 @@ int32\+\_\+t \mbox{\hyperlink{class_meta_controller_afbdb66d7673f39db7b252cdc64b
 
 
 \subsection{Member Data Documentation}
+\mbox{\Hypertarget{class_meta_controller_a93ac4ca3a88052163f06964660408d71}\label{class_meta_controller_a93ac4ca3a88052163f06964660408d71}} 
+\index{Meta\+Controller@{Meta\+Controller}!advance\+Phase@{advance\+Phase}}
+\index{advance\+Phase@{advance\+Phase}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{advance\+Phase}{advancePhase}}
+{\footnotesize\ttfamily int32\+\_\+t(Meta\+Controller\+::$\ast$ Meta\+Controller\+::advance\+Phase) (uint32\+\_\+t $\ast$phase\+Dist\+Table)}
+
 \mbox{\Hypertarget{class_meta_controller_a4e7438588ed111de3739188278576b38}\label{class_meta_controller_a4e7438588ed111de3739188278576b38}} 
 \index{Meta\+Controller@{Meta\+Controller}!atB@{atB}}
 \index{atB@{atB}!Meta\+Controller@{Meta\+Controller}}
@@ -376,6 +402,12 @@ int32\+\_\+t \mbox{\hyperlink{class_meta_controller_afbdb66d7673f39db7b252cdc64b
 \index{duty\+Cycle\+Base@{duty\+Cycle\+Base}!Meta\+Controller@{Meta\+Controller}}
 \subsubsection{\texorpdfstring{duty\+Cycle\+Base}{dutyCycleBase}}
 {\footnotesize\ttfamily int32\+\_\+t Meta\+Controller\+::duty\+Cycle\+Base = 0}
+
+\mbox{\Hypertarget{class_meta_controller_a8cda0eb0469d7b18682f59d9343d7c16}\label{class_meta_controller_a8cda0eb0469d7b18682f59d9343d7c16}} 
+\index{Meta\+Controller@{Meta\+Controller}!expo\+FM@{expo\+FM}}
+\index{expo\+FM@{expo\+FM}!Meta\+Controller@{Meta\+Controller}}
+\subsubsection{\texorpdfstring{expo\+FM}{expoFM}}
+{\footnotesize\ttfamily int32\+\_\+t$\ast$ Meta\+Controller\+::expo\+FM}
 
 \mbox{\Hypertarget{class_meta_controller_a0baa5897d4b06f0e922d96cda137f6ab}\label{class_meta_controller_a0baa5897d4b06f0e922d96cda137f6ab}} 
 \index{Meta\+Controller@{Meta\+Controller}!fm@{fm}}

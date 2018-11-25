@@ -82,7 +82,7 @@ Macros</h2></td></tr>
 <tr class="separator:a5f66fa65b80afcb213a8720dc3b6c94d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad19535ff4566a832933ec4c064684860"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="f373__rev6__io_8hpp.html#ad19535ff4566a832933ec4c064684860">GET_SH_B_MASK</a>(X)&#160;&#160;&#160;(<a class="el" href="via__virtual__system_8hpp.html#a0e07c19bb6663843895684df212f04f0">SH_B_TRACK_MASK</a> &lt;&lt; (16*(X)))</td></tr>
 <tr class="separator:ad19535ff4566a832933ec4c064684860"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6edfc314a6bd72975fc586b23d3baff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="f373__rev6__io_8hpp.html#af6edfc314a6bd72975fc586b23d3baff">SET_BLUE_LED_ONOFF</a>(X)&#160;&#160;&#160;GPIOA-&gt;BSRR |= ((uint32_t)<a class="el" href="via__virtual__system_8hpp.html#af5eb6a42a4428e236bd4fd08ade71e7a">GPIO_PIN_8</a> &lt;&lt; (16 * !X))</td></tr>
+<tr class="memitem:af6edfc314a6bd72975fc586b23d3baff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="f373__rev6__io_8hpp.html#af6edfc314a6bd72975fc586b23d3baff">SET_BLUE_LED_ONOFF</a>(X)&#160;&#160;&#160;GPIOA-&gt;BSRR |= ((uint32_t)<a class="el" href="via__virtual__system_8hpp.html#af5eb6a42a4428e236bd4fd08ade71e7a">GPIO_PIN_8</a> &lt;&lt; (16 * !(X)))</td></tr>
 <tr class="separator:af6edfc314a6bd72975fc586b23d3baff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1f803abb36eac6342cad8854fbc1e10"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="f373__rev6__io_8hpp.html#ab1f803abb36eac6342cad8854fbc1e10">TRIGGER_RISING_EDGE</a>&#160;&#160;&#160;((GPIOA-&gt;IDR &amp; GPIO_PIN_15) == (uint32_t) GPIO_PIN_RESET)</td></tr>
 <tr class="separator:ab1f803abb36eac6342cad8854fbc1e10"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -422,7 +422,7 @@ Variables</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">X</td><td>)</td>
-          <td>&#160;&#160;&#160;GPIOA-&gt;BSRR |= ((uint32_t)<a class="el" href="via__virtual__system_8hpp.html#af5eb6a42a4428e236bd4fd08ade71e7a">GPIO_PIN_8</a> &lt;&lt; (16 * !X))</td>
+          <td>&#160;&#160;&#160;GPIOA-&gt;BSRR |= ((uint32_t)<a class="el" href="via__virtual__system_8hpp.html#af5eb6a42a4428e236bd4fd08ade71e7a">GPIO_PIN_8</a> &lt;&lt; (16 * !(X)))</td>
         </tr>
       </table>
 </div><div class="memdoc">

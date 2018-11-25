@@ -85,11 +85,15 @@ void \mbox{\hyperlink{class_via_module_a9b2a127bfdbf2240fbdd1f79bbef52bc}{set\+L
 \item 
 void \mbox{\hyperlink{class_via_module_ad9883693e8eacafa7ee68866793adf6e}{set\+L\+E\+DD}} (int32\+\_\+t on)
 \item 
+void \mbox{\hyperlink{class_via_module_a1448e56cf6d131b3b344175d586853e0}{S\+E\+T\+\_\+\+B\+L\+U\+E\+\_\+\+L\+E\+D\+\_\+\+O\+N\+O\+FF}} (int32\+\_\+t X)
+\item 
 void \mbox{\hyperlink{class_via_module_ad676ccf2b9177bccfc7842967a792fa1}{set\+Logic\+Outputs\+L\+E\+D\+On}} (uint32\+\_\+t logicA, uint32\+\_\+t aux\+Logic, uint32\+\_\+t shA, uint32\+\_\+t shB)
 \item 
 void \mbox{\hyperlink{class_via_module_ab7f3b8c185a7e46f6412753c9d17ead9}{set\+Logic\+Outputs\+L\+E\+D\+Off}} (uint32\+\_\+t logicA, uint32\+\_\+t aux\+Logic, uint32\+\_\+t shA, uint32\+\_\+t shB)
 \item 
 void \mbox{\hyperlink{class_via_module_a980dceea193632fc47c663dc2adcf7ca}{set\+Logic\+Out}} (int32\+\_\+t write\+Index, int32\+\_\+t runtime\+Display)
+\item 
+void \mbox{\hyperlink{class_via_module_a6a0572d7fc135512a278b4fb304014d2}{set\+Logic\+Out\+No\+L\+ED}} (int32\+\_\+t write\+Index)
 \item 
 void \mbox{\hyperlink{class_via_module_ad7dd37cc52066d45418818743b3d23ad}{set\+Logic\+Out\+Boolean}} (int32\+\_\+t write\+Index, int32\+\_\+t runtime\+Display)
 \item 
@@ -193,8 +197,6 @@ int32\+\_\+t \mbox{\hyperlink{class_via_module_a9ada50e4526b70a798cc59a108befcfa
 int32\+\_\+t \mbox{\hyperlink{class_via_module_a56d68d397aecce9d7ca1c4f36f556586}{button5\+Input}} = 0
 \item 
 int32\+\_\+t \mbox{\hyperlink{class_via_module_aa4afb6bc99e668e10cdd83dd8f6aeec5}{button6\+Input}} = 0
-\item 
-int32\+\_\+t \mbox{\hyperlink{class_via_module_abf2754a9decc1a6e8ca8d17bbc810277}{buffer\+Size}}
 \end{DoxyCompactItemize}
 
 
@@ -269,6 +271,12 @@ V\+I\+A\+\_\+\+G\+P\+I\+O\+\_\+\+H\+I\+GH&\\
 \index{io\+Stream\+Init@{io\+Stream\+Init}!Via\+Module@{Via\+Module}}
 \subsubsection{\texorpdfstring{io\+Stream\+Init()}{ioStreamInit()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily void Via\+Module\+::io\+Stream\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_via_module_a1448e56cf6d131b3b344175d586853e0}\label{class_via_module_a1448e56cf6d131b3b344175d586853e0}} 
+\index{Via\+Module@{Via\+Module}!S\+E\+T\+\_\+\+B\+L\+U\+E\+\_\+\+L\+E\+D\+\_\+\+O\+N\+O\+FF@{S\+E\+T\+\_\+\+B\+L\+U\+E\+\_\+\+L\+E\+D\+\_\+\+O\+N\+O\+FF}}
+\index{S\+E\+T\+\_\+\+B\+L\+U\+E\+\_\+\+L\+E\+D\+\_\+\+O\+N\+O\+FF@{S\+E\+T\+\_\+\+B\+L\+U\+E\+\_\+\+L\+E\+D\+\_\+\+O\+N\+O\+FF}!Via\+Module@{Via\+Module}}
+\subsubsection{\texorpdfstring{S\+E\+T\+\_\+\+B\+L\+U\+E\+\_\+\+L\+E\+D\+\_\+\+O\+N\+O\+F\+F()}{SET\_BLUE\_LED\_ONOFF()}}
+{\footnotesize\ttfamily void Via\+Module\+::\+S\+E\+T\+\_\+\+B\+L\+U\+E\+\_\+\+L\+E\+D\+\_\+\+O\+N\+O\+FF (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{X }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 \mbox{\Hypertarget{class_via_module_a6d68fc57d798138024c4e2079cbab3f3}\label{class_via_module_a6d68fc57d798138024c4e2079cbab3f3}} 
 \index{Via\+Module@{Via\+Module}!set\+Aux\+Logic@{set\+Aux\+Logic}}
@@ -405,7 +413,13 @@ V\+I\+A\+\_\+\+G\+P\+I\+O\+\_\+\+H\+I\+GH&\\
 \mbox{\Hypertarget{class_via_module_a6a0572d7fc135512a278b4fb304014d2}\label{class_via_module_a6a0572d7fc135512a278b4fb304014d2}} 
 \index{Via\+Module@{Via\+Module}!set\+Logic\+Out\+No\+L\+ED@{set\+Logic\+Out\+No\+L\+ED}}
 \index{set\+Logic\+Out\+No\+L\+ED@{set\+Logic\+Out\+No\+L\+ED}!Via\+Module@{Via\+Module}}
-\subsubsection{\texorpdfstring{set\+Logic\+Out\+No\+L\+E\+D()}{setLogicOutNoLED()}}
+\subsubsection{\texorpdfstring{set\+Logic\+Out\+No\+L\+E\+D()}{setLogicOutNoLED()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Via\+Module\+::set\+Logic\+Out\+No\+L\+ED (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{write\+Index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_via_module_a6a0572d7fc135512a278b4fb304014d2}\label{class_via_module_a6a0572d7fc135512a278b4fb304014d2}} 
+\index{Via\+Module@{Via\+Module}!set\+Logic\+Out\+No\+L\+ED@{set\+Logic\+Out\+No\+L\+ED}}
+\index{set\+Logic\+Out\+No\+L\+ED@{set\+Logic\+Out\+No\+L\+ED}!Via\+Module@{Via\+Module}}
+\subsubsection{\texorpdfstring{set\+Logic\+Out\+No\+L\+E\+D()}{setLogicOutNoLED()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily void Via\+Module\+::set\+Logic\+Out\+No\+L\+ED (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{write\+Index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 \mbox{\Hypertarget{class_via_module_ab7f3b8c185a7e46f6412753c9d17ead9}\label{class_via_module_ab7f3b8c185a7e46f6412753c9d17ead9}} 
@@ -531,12 +545,6 @@ V\+I\+A\+\_\+\+G\+P\+I\+O\+\_\+\+H\+I\+GH&\\
 \subsubsection{\texorpdfstring{blue\+Level}{blueLevel}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily uint32\+\_\+t Via\+Module\+::blue\+Level = 0}
 
-\mbox{\Hypertarget{class_via_module_abf2754a9decc1a6e8ca8d17bbc810277}\label{class_via_module_abf2754a9decc1a6e8ca8d17bbc810277}} 
-\index{Via\+Module@{Via\+Module}!buffer\+Size@{buffer\+Size}}
-\index{buffer\+Size@{buffer\+Size}!Via\+Module@{Via\+Module}}
-\subsubsection{\texorpdfstring{buffer\+Size}{bufferSize}}
-{\footnotesize\ttfamily int32\+\_\+t Via\+Module\+::buffer\+Size}
-
 \mbox{\Hypertarget{class_via_module_a8b54c1c283ce508654c6ca3d501d1d4b}\label{class_via_module_a8b54c1c283ce508654c6ca3d501d1d4b}} 
 \index{Via\+Module@{Via\+Module}!button1\+Input@{button1\+Input}}
 \index{button1\+Input@{button1\+Input}!Via\+Module@{Via\+Module}}
@@ -615,17 +623,17 @@ V\+I\+A\+\_\+\+G\+P\+I\+O\+\_\+\+H\+I\+GH&\\
 \subsubsection{\texorpdfstring{controls}{controls}}
 {\footnotesize\ttfamily \mbox{\hyperlink{class_via_controls}{Via\+Controls}} Via\+Module\+::controls}
 
-\mbox{\Hypertarget{class_via_module_af0465adbc24c831446092ceda3afc7d1}\label{class_via_module_af0465adbc24c831446092ceda3afc7d1}} 
-\index{Via\+Module@{Via\+Module}!green\+Level@{green\+Level}}
-\index{green\+Level@{green\+Level}!Via\+Module@{Via\+Module}}
-\subsubsection{\texorpdfstring{green\+Level}{greenLevel}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily volatile uint32\+\_\+t$\ast$ Via\+Module\+::green\+Level}
-
 \mbox{\Hypertarget{class_via_module_a823f43c562e39858bfa1d2b1943dd2b5}\label{class_via_module_a823f43c562e39858bfa1d2b1943dd2b5}} 
 \index{Via\+Module@{Via\+Module}!green\+Level@{green\+Level}}
 \index{green\+Level@{green\+Level}!Via\+Module@{Via\+Module}}
-\subsubsection{\texorpdfstring{green\+Level}{greenLevel}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+\subsubsection{\texorpdfstring{green\+Level}{greenLevel}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
 {\footnotesize\ttfamily uint32\+\_\+t Via\+Module\+::green\+Level = 0}
+
+\mbox{\Hypertarget{class_via_module_af0465adbc24c831446092ceda3afc7d1}\label{class_via_module_af0465adbc24c831446092ceda3afc7d1}} 
+\index{Via\+Module@{Via\+Module}!green\+Level@{green\+Level}}
+\index{green\+Level@{green\+Level}!Via\+Module@{Via\+Module}}
+\subsubsection{\texorpdfstring{green\+Level}{greenLevel}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily volatile uint32\+\_\+t$\ast$ Via\+Module\+::green\+Level}
 
 \mbox{\Hypertarget{class_via_module_a3426e2c19cee84ade2831cae4b627ebb}\label{class_via_module_a3426e2c19cee84ade2831cae4b627ebb}} 
 \index{Via\+Module@{Via\+Module}!hue\+Space@{hue\+Space}}
@@ -681,17 +689,17 @@ V\+I\+A\+\_\+\+G\+P\+I\+O\+\_\+\+H\+I\+GH&\\
 \subsubsection{\texorpdfstring{led\+C\+Output}{ledCOutput}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily volatile uint32\+\_\+t$\ast$ Via\+Module\+::led\+C\+Output}
 
-\mbox{\Hypertarget{class_via_module_ac11bc2cd4f35777e6aac585c77eb9103}\label{class_via_module_ac11bc2cd4f35777e6aac585c77eb9103}} 
-\index{Via\+Module@{Via\+Module}!led\+D\+Output@{led\+D\+Output}}
-\index{led\+D\+Output@{led\+D\+Output}!Via\+Module@{Via\+Module}}
-\subsubsection{\texorpdfstring{led\+D\+Output}{ledDOutput}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily volatile uint32\+\_\+t$\ast$ Via\+Module\+::led\+D\+Output}
-
 \mbox{\Hypertarget{class_via_module_a3a36a2d911549950d6eca39b2f05029d}\label{class_via_module_a3a36a2d911549950d6eca39b2f05029d}} 
 \index{Via\+Module@{Via\+Module}!led\+D\+Output@{led\+D\+Output}}
 \index{led\+D\+Output@{led\+D\+Output}!Via\+Module@{Via\+Module}}
-\subsubsection{\texorpdfstring{led\+D\+Output}{ledDOutput}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+\subsubsection{\texorpdfstring{led\+D\+Output}{ledDOutput}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
 {\footnotesize\ttfamily uint32\+\_\+t Via\+Module\+::led\+D\+Output = 0}
+
+\mbox{\Hypertarget{class_via_module_ac11bc2cd4f35777e6aac585c77eb9103}\label{class_via_module_ac11bc2cd4f35777e6aac585c77eb9103}} 
+\index{Via\+Module@{Via\+Module}!led\+D\+Output@{led\+D\+Output}}
+\index{led\+D\+Output@{led\+D\+Output}!Via\+Module@{Via\+Module}}
+\subsubsection{\texorpdfstring{led\+D\+Output}{ledDOutput}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily volatile uint32\+\_\+t$\ast$ Via\+Module\+::led\+D\+Output}
 
 \mbox{\Hypertarget{class_via_module_ad80e8f75d0c3770fb54b5a47a4c25d12}\label{class_via_module_ad80e8f75d0c3770fb54b5a47a4c25d12}} 
 \index{Via\+Module@{Via\+Module}!output\+Buffer\+Size@{output\+Buffer\+Size}}
@@ -729,17 +737,17 @@ V\+I\+A\+\_\+\+G\+P\+I\+O\+\_\+\+H\+I\+GH&\\
 \subsubsection{\texorpdfstring{sh\+A\+Output}{shAOutput}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily uint32\+\_\+t Via\+Module\+::sh\+A\+Output = 0}
 
-\mbox{\Hypertarget{class_via_module_a9d6d3dd39cf5560aaf2b14a6d7c4a46b}\label{class_via_module_a9d6d3dd39cf5560aaf2b14a6d7c4a46b}} 
-\index{Via\+Module@{Via\+Module}!sh\+B\+Output@{sh\+B\+Output}}
-\index{sh\+B\+Output@{sh\+B\+Output}!Via\+Module@{Via\+Module}}
-\subsubsection{\texorpdfstring{sh\+B\+Output}{shBOutput}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily volatile uint32\+\_\+t$\ast$ Via\+Module\+::sh\+B\+Output}
-
 \mbox{\Hypertarget{class_via_module_a7cfbe5fe6b6afb143cb55ff53cdcc90e}\label{class_via_module_a7cfbe5fe6b6afb143cb55ff53cdcc90e}} 
 \index{Via\+Module@{Via\+Module}!sh\+B\+Output@{sh\+B\+Output}}
 \index{sh\+B\+Output@{sh\+B\+Output}!Via\+Module@{Via\+Module}}
-\subsubsection{\texorpdfstring{sh\+B\+Output}{shBOutput}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+\subsubsection{\texorpdfstring{sh\+B\+Output}{shBOutput}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
 {\footnotesize\ttfamily uint32\+\_\+t Via\+Module\+::sh\+B\+Output = 0}
+
+\mbox{\Hypertarget{class_via_module_a9d6d3dd39cf5560aaf2b14a6d7c4a46b}\label{class_via_module_a9d6d3dd39cf5560aaf2b14a6d7c4a46b}} 
+\index{Via\+Module@{Via\+Module}!sh\+B\+Output@{sh\+B\+Output}}
+\index{sh\+B\+Output@{sh\+B\+Output}!Via\+Module@{Via\+Module}}
+\subsubsection{\texorpdfstring{sh\+B\+Output}{shBOutput}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily volatile uint32\+\_\+t$\ast$ Via\+Module\+::sh\+B\+Output}
 
 
 

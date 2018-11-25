@@ -13,7 +13,7 @@ Inheritance diagram for Via\+UI\+:\begin{figure}[H]
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \mbox{\hyperlink{class_via_u_i_a99373a450c4c494a6261edbfc3b21fd9}{transition}} (void(Via\+U\+I\+::$\ast$func)(int32\+\_\+t))
+virtual void \mbox{\hyperlink{class_via_u_i_a99373a450c4c494a6261edbfc3b21fd9}{transition}} (void(Via\+U\+I\+::$\ast$func)(int32\+\_\+t))
 \item 
 void \mbox{\hyperlink{class_via_u_i_af80f2151bdd13bc6e84517064100ed92}{default\+Menu}} (int32\+\_\+t sig)
 \item 
@@ -36,6 +36,8 @@ void \mbox{\hyperlink{class_via_u_i_aed3d9b75b2d67b17a5596597aa59cf26}{button6\+
 void \mbox{\hyperlink{class_via_u_i_aaee6701bf5a06d4064caa2443d96f61d}{aux1\+Menu}} (int32\+\_\+t sig)
 \item 
 void \mbox{\hyperlink{class_via_u_i_a928f20f199d42ce05487d5ed7bffd574}{aux2\+Menu}} (int32\+\_\+t sig)
+\item 
+void \mbox{\hyperlink{class_via_u_i_adf31f9ee348422bc4536f5fc1ef401a4}{aux2\+Menu\+Alt}} (int32\+\_\+t sig)
 \item 
 void \mbox{\hyperlink{class_via_u_i_adf0e11621a20477354eb1169c3943cb8}{aux3\+Menu}} (int32\+\_\+t sig)
 \item 
@@ -83,6 +85,10 @@ virtual void \mbox{\hyperlink{class_via_u_i_ae5e009dc22002f62e6bff8dd76d2f745}{a
 \item 
 virtual void \mbox{\hyperlink{class_via_u_i_a42545b69c2bbbb036f633140fd8007d6}{aux2\+Hold\+Callback}} (void)=0
 \item 
+virtual void \mbox{\hyperlink{class_via_u_i_ad13d74c0bd271b83b8da662b22713ddb}{aux2\+Alt\+Tap\+Callback}} (void)=0
+\item 
+virtual void \mbox{\hyperlink{class_via_u_i_ab93989ef608d1b63b854b54278006f49}{aux2\+Alt\+Hold\+Callback}} (void)=0
+\item 
 virtual void \mbox{\hyperlink{class_via_u_i_a29026efd361a615374adce2462aa652a}{aux3\+Tap\+Callback}} (void)=0
 \item 
 virtual void \mbox{\hyperlink{class_via_u_i_a9ea505dfd800b261beabe8dc47b201d3}{aux3\+Hold\+Callback}} (void)=0
@@ -114,6 +120,8 @@ virtual void \mbox{\hyperlink{class_via_u_i_ae59e7ff3a6ba1f641a4a916e47a26513}{b
 virtual void \mbox{\hyperlink{class_via_u_i_a578111861e912bf43d3f320a0faffb0f}{aux1\+Enter\+Menu\+Callback}} (void)=0
 \item 
 virtual void \mbox{\hyperlink{class_via_u_i_a1f51fc259471364f91bd0a1592824dab}{aux2\+Enter\+Menu\+Callback}} (void)=0
+\item 
+virtual void \mbox{\hyperlink{class_via_u_i_a08a746b666d37ac6bc293303187fd6be}{aux2\+Alt\+Enter\+Menu\+Callback}} (void)=0
 \item 
 virtual void \mbox{\hyperlink{class_via_u_i_aa62c9f8dc58d37fc2a3abc7bce1cd16e}{aux3\+Enter\+Menu\+Callback}} (void)=0
 \item 
@@ -234,6 +242,36 @@ Implemented in \mbox{\hyperlink{class_via_scanner_1_1_via_scanner_u_i_a634c06fae
 
 Implemented in \mbox{\hyperlink{class_via_scanner_1_1_via_scanner_u_i_af7e91846bdd9922b309580adf4fe653b}{Via\+Scanner\+::\+Via\+Scanner\+UI}}, \mbox{\hyperlink{class_via_gateseq_1_1_via_gateseq_u_i_a3f44c4a89f3f7aedff958e903e6c71b5}{Via\+Gateseq\+::\+Via\+Gateseq\+UI}}, \mbox{\hyperlink{class_via_sync_1_1_via_sync_u_i_a53f8add06247c8ed4e7a1c049e8136fb}{Via\+Sync\+::\+Via\+Sync\+UI}}, and \mbox{\hyperlink{class_via_meta_1_1_via_meta_u_i_ad95b464f8dda873be1c24622d1f082fa}{Via\+Meta\+::\+Via\+Meta\+UI}}.
 
+\mbox{\Hypertarget{class_via_u_i_a08a746b666d37ac6bc293303187fd6be}\label{class_via_u_i_a08a746b666d37ac6bc293303187fd6be}} 
+\index{Via\+UI@{Via\+UI}!aux2\+Alt\+Enter\+Menu\+Callback@{aux2\+Alt\+Enter\+Menu\+Callback}}
+\index{aux2\+Alt\+Enter\+Menu\+Callback@{aux2\+Alt\+Enter\+Menu\+Callback}!Via\+UI@{Via\+UI}}
+\subsubsection{\texorpdfstring{aux2\+Alt\+Enter\+Menu\+Callback()}{aux2AltEnterMenuCallback()}}
+{\footnotesize\ttfamily virtual void Via\+U\+I\+::aux2\+Alt\+Enter\+Menu\+Callback (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_via_scanner_1_1_via_scanner_u_i_a649f3b095e254e2e2049c91f5c9543b2}{Via\+Scanner\+::\+Via\+Scanner\+UI}}, \mbox{\hyperlink{class_via_gateseq_1_1_via_gateseq_u_i_a39db35560b35c8fafeaabef258be61d8}{Via\+Gateseq\+::\+Via\+Gateseq\+UI}}, \mbox{\hyperlink{class_via_sync_1_1_via_sync_u_i_a6a382c3c2660d7f232d38f5a4f7da110}{Via\+Sync\+::\+Via\+Sync\+UI}}, and \mbox{\hyperlink{class_via_meta_1_1_via_meta_u_i_ab0ccbc22f2460565456b8347d18634b8}{Via\+Meta\+::\+Via\+Meta\+UI}}.
+
+\mbox{\Hypertarget{class_via_u_i_ab93989ef608d1b63b854b54278006f49}\label{class_via_u_i_ab93989ef608d1b63b854b54278006f49}} 
+\index{Via\+UI@{Via\+UI}!aux2\+Alt\+Hold\+Callback@{aux2\+Alt\+Hold\+Callback}}
+\index{aux2\+Alt\+Hold\+Callback@{aux2\+Alt\+Hold\+Callback}!Via\+UI@{Via\+UI}}
+\subsubsection{\texorpdfstring{aux2\+Alt\+Hold\+Callback()}{aux2AltHoldCallback()}}
+{\footnotesize\ttfamily virtual void Via\+U\+I\+::aux2\+Alt\+Hold\+Callback (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_via_scanner_1_1_via_scanner_u_i_ae1947196ca5cb248c4bc177f02cb20f5}{Via\+Scanner\+::\+Via\+Scanner\+UI}}, \mbox{\hyperlink{class_via_gateseq_1_1_via_gateseq_u_i_ada61d29fe8fd743edbb49500ee6e3d27}{Via\+Gateseq\+::\+Via\+Gateseq\+UI}}, \mbox{\hyperlink{class_via_sync_1_1_via_sync_u_i_af6b69d61a650e68e37286490191634ed}{Via\+Sync\+::\+Via\+Sync\+UI}}, and \mbox{\hyperlink{class_via_meta_1_1_via_meta_u_i_a372fe7280f3107f81e7283ba7451efd6}{Via\+Meta\+::\+Via\+Meta\+UI}}.
+
+\mbox{\Hypertarget{class_via_u_i_ad13d74c0bd271b83b8da662b22713ddb}\label{class_via_u_i_ad13d74c0bd271b83b8da662b22713ddb}} 
+\index{Via\+UI@{Via\+UI}!aux2\+Alt\+Tap\+Callback@{aux2\+Alt\+Tap\+Callback}}
+\index{aux2\+Alt\+Tap\+Callback@{aux2\+Alt\+Tap\+Callback}!Via\+UI@{Via\+UI}}
+\subsubsection{\texorpdfstring{aux2\+Alt\+Tap\+Callback()}{aux2AltTapCallback()}}
+{\footnotesize\ttfamily virtual void Via\+U\+I\+::aux2\+Alt\+Tap\+Callback (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_via_scanner_1_1_via_scanner_u_i_aa862c7243959f99bfd42995102ffcdf5}{Via\+Scanner\+::\+Via\+Scanner\+UI}}, \mbox{\hyperlink{class_via_gateseq_1_1_via_gateseq_u_i_a84c1f0f19956b81f81a7fba2b6581f99}{Via\+Gateseq\+::\+Via\+Gateseq\+UI}}, \mbox{\hyperlink{class_via_sync_1_1_via_sync_u_i_ad837068e55fb66fe3fe2aa15ff90ec21}{Via\+Sync\+::\+Via\+Sync\+UI}}, and \mbox{\hyperlink{class_via_meta_1_1_via_meta_u_i_a5982022f5c08ce9aaa75173209d30e6c}{Via\+Meta\+::\+Via\+Meta\+UI}}.
+
 \mbox{\Hypertarget{class_via_u_i_a1f51fc259471364f91bd0a1592824dab}\label{class_via_u_i_a1f51fc259471364f91bd0a1592824dab}} 
 \index{Via\+UI@{Via\+UI}!aux2\+Enter\+Menu\+Callback@{aux2\+Enter\+Menu\+Callback}}
 \index{aux2\+Enter\+Menu\+Callback@{aux2\+Enter\+Menu\+Callback}!Via\+UI@{Via\+UI}}
@@ -259,6 +297,12 @@ Implemented in \mbox{\hyperlink{class_via_scanner_1_1_via_scanner_u_i_a929ba662a
 \index{aux2\+Menu@{aux2\+Menu}!Via\+UI@{Via\+UI}}
 \subsubsection{\texorpdfstring{aux2\+Menu()}{aux2Menu()}}
 {\footnotesize\ttfamily void Via\+U\+I\+::aux2\+Menu (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{sig }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_via_u_i_adf31f9ee348422bc4536f5fc1ef401a4}\label{class_via_u_i_adf31f9ee348422bc4536f5fc1ef401a4}} 
+\index{Via\+UI@{Via\+UI}!aux2\+Menu\+Alt@{aux2\+Menu\+Alt}}
+\index{aux2\+Menu\+Alt@{aux2\+Menu\+Alt}!Via\+UI@{Via\+UI}}
+\subsubsection{\texorpdfstring{aux2\+Menu\+Alt()}{aux2MenuAlt()}}
+{\footnotesize\ttfamily void Via\+U\+I\+::aux2\+Menu\+Alt (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{sig }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{class_via_u_i_ae5e009dc22002f62e6bff8dd76d2f745}\label{class_via_u_i_ae5e009dc22002f62e6bff8dd76d2f745}} 
 \index{Via\+UI@{Via\+UI}!aux2\+Tap\+Callback@{aux2\+Tap\+Callback}}
@@ -706,7 +750,7 @@ Switch to preset indicator state Flashes around the white leds once \mbox{\Hyper
 \index{Via\+UI@{Via\+UI}!transition@{transition}}
 \index{transition@{transition}!Via\+UI@{Via\+UI}}
 \subsubsection{\texorpdfstring{transition()}{transition()}}
-{\footnotesize\ttfamily void Via\+U\+I\+::transition (\begin{DoxyParamCaption}\item[{void(Via\+U\+I\+::$\ast$)(int32\+\_\+t)}]{func }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void Via\+U\+I\+::transition (\begin{DoxyParamCaption}\item[{void(Via\+U\+I\+::$\ast$)(int32\+\_\+t)}]{func }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
 
 Transition to new UI state Send the exit signal to the current state Change the state pointer to the new state Send the entry signal to the new state \mbox{\Hypertarget{class_via_u_i_a4bd3d575f4efe1273d6e4645454ead52}\label{class_via_u_i_a4bd3d575f4efe1273d6e4645454ead52}} 
 \index{Via\+UI@{Via\+UI}!ui\+Set\+L\+E\+Ds@{ui\+Set\+L\+E\+Ds}}
