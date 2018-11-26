@@ -50,7 +50,7 @@ void ViaGateseq::handleButton2ModeChange(int32_t mode) {
 
 void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 
-	sequencer.currentABank = seq1PatternBank[mode];
+	sequencer.currentABank = seq1Banks[mode];
 
 	setRedLED((mode >> 1) * 4095);
 	setGreenLED(!(mode >> 1) * 4095);
@@ -173,7 +173,7 @@ void ViaGateseq::handleButton5ModeChange(int32_t mode) {
 
 void ViaGateseq::handleButton6ModeChange(int32_t mode) {
 
-	sequencer.currentBBank = seq2PatternBank[mode];
+	sequencer.currentBBank = seq2Banks[mode];
 
 	sequencer.aCounter = 0;
 	sequencer.bCounter = 0;

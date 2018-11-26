@@ -1,77 +1,94 @@
-/*
- * via_f373_module.hpp
+/** \file via_f373_module.hpp
+ * \brief Hardware module class definition.
  *
- *  Created on: Sep 18, 2018
- *      Author: willmitchell
+ *  Define class and system methods for the hardware implementation of the module using an STM32F373 MCU.
  */
 
 #ifndef INC_VIA_F373_MODULE_HPP_
 #define INC_VIA_F373_MODULE_HPP_
 
+#include <via_f373_system.hpp>
 #include "dsp.hpp"
-#include "f373_rev6_io.hpp"
 #include "via_global_signals.hpp"
 
+/// Hardware module class.
+/** Global module class inherited by each module if built as module firmware.*/
 class ViaModule {
 public:
 
+	//@{
+	/// Pointer to GPIO control registers. See setLogicOut() for value information.
 	volatile uint32_t * aLogicOutput;
 	volatile uint32_t * auxLogicOutput;
 	volatile uint32_t * shAOutput;
 	volatile uint32_t * shBOutput;
+	//@}
 
+	//@{
+	/// Pointer to RGB LED timer PWM control registers. Valid range 0 - 4095.
 	volatile uint32_t * redLevel;
 	volatile uint32_t * greenLevel;
 	volatile uint32_t * blueLevel;
+	//@}
 
+	//@{
+	/// Pointer to the LED control register, see setLEDA() for value information.
 	volatile uint32_t * ledAOutput;
 	volatile uint32_t * ledBOutput;
 	volatile uint32_t * ledCOutput;
 	volatile uint32_t * ledDOutput;
+	//@}
 
+	//@{
+	/// Pointer to touch button state from the touch sense library.
 	int32_t * button1Input;
 	int32_t * button2Input;
 	int32_t * button3Input;
 	int32_t * button4Input;
 	int32_t * button5Input;
 	int32_t * button6Input;
+	//@}
 
+	/// Control rate inputs with averaging, see ViaControls for details.
 	ViaControls controls;
 
+	/// Length of input buffer.
+	/**
+	 * To update the first element in the input arrays at 50k (full speed), use 1.
+	 * To copy N values at an update frequency of 50000/N, use 2 * N.
+	 */
 	int32_t inputBufferSize;
+	/// Length of output buffer.
+	/**
+	 * Number of samples per half transfer complete callback.
+	 */
 	int32_t outputBufferSize;
+	/// Audio rate inputs from CV2 and CV3 SDADCs, see ViaInputStreams for details.
 	ViaInputStreams inputs;
+	/// Audio rate outputs to the three DAC channels, see ViaOutputStreams for details.
 	ViaOutputStreams outputs;
 
+	/// Connect module hardware IO
+	/** Connect the virtual module sample data streams to the DMA controller on the hardware. */
 	void ioStreamInit() {
 
-//		int16_t cv2Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA0) << 2;
-//		int16_t cv3Offset = HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA1) << 2;
-
-//		for (int32_t i = 0; i < 2 * bufferSize; i++) {
-//			inputs.cv2VirtualGround[i] = cv2Offset;
-//			inputs.cv3VirtualGround[i] = cv3Offset;
-//		}
-
-		// initialize the ADCs and their respective DMA arrays
+		/// Initialize the control rate 12 bit ADC DMA. The buffer length of 16 in conjunction with the ADC sample rate causes it to update at 2k. End of conversion events are serviced by the slowConversionCallback method of each module.
 		HAL_ADC_Start_DMA(&hadc1, controls.controlRateInputs, 16);
 
+		/// Start calibration calibration and poll for completion for each sigma delta ADC (CV2 and CV3).
 		if (HAL_SDADC_CalibrationStart(&hsdadc1, SDADC_CALIBRATION_SEQ_1)
 				!= HAL_OK) {
 		}
-
-		/* Pool for the end of calibration */
 		if (HAL_SDADC_PollForCalibEvent(&hsdadc1, 1000) != HAL_OK) {
 		}
 
 		if (HAL_SDADC_CalibrationStart(&hsdadc2, SDADC_CALIBRATION_SEQ_1)
 				!= HAL_OK) {
 		}
-
-		/* Pool for the end of calibration */
 		if (HAL_SDADC_PollForCalibEvent(&hsdadc2, 1000) != HAL_OK) {
 		}
 
+		/// Initialize the DAC DMA with buffer length per half transfer callback set by the outputBufferSize member.
 		HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, outputs.dac1Samples,
 				2 * outputBufferSize, DAC_ALIGN_12B_R);
 		HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_2, outputs.dac2Samples,
@@ -79,19 +96,28 @@ public:
 		HAL_DAC_Start_DMA(&hdac2, DAC_CHANNEL_1, outputs.dac3Samples,
 				2 * outputBufferSize, DAC_ALIGN_12B_R);
 
-		// set the dac sample rate and start the dac timer
+		/// Initialize the DAC DMA with buffer length per full transfer set by the inputBufferSize member. This does not multiply the buffer size by two so that inputs.cv2Samples[0] updates at 50k. A buffer size of 1 is used for all existing modules as they update the output by 50k.
 		HAL_SDADC_Start_DMA(&hsdadc1, (uint32_t *) inputs.cv2Samples, inputBufferSize);
 		HAL_SDADC_Start_DMA(&hsdadc2, (uint32_t *) inputs.cv3Samples, inputBufferSize);
 
 	}
 
+	/// Initialize GPIO and timer outputs.
+	/** Tie the output pointers to the appropriate control registers on the microcontroller. */
 	void initializeAuxOutputs(void) {
 
+		/// Tie the output pointers of the module to GPIO control registers.
 		aLogicOutput = &(GPIOC->BSRR);
 		auxLogicOutput = &(GPIOA->BSRR);
 		shAOutput = &(GPIOB->BSRR);
 		shBOutput = &(GPIOB->BSRR);
 
+		ledAOutput = &(GPIOF->BSRR);
+		ledBOutput = &(GPIOC->BSRR);
+		ledCOutput = &(GPIOA->BSRR);
+		ledDOutput = &(GPIOB->BSRR);
+
+		/// Tie the PWM control output pointers of the module class to GPIO control registers.
 		// tim3 channel 2
 		redLevel = &TIM3->CCR1 + 1;
 		// tim4 channel 4
@@ -99,15 +125,9 @@ public:
 		// tim5 channel 1
 		blueLevel = &TIM5->CCR1;
 
-		ledAOutput = &(GPIOF->BSRR);
-		ledBOutput = &(GPIOC->BSRR);
-		ledCOutput = &(GPIOA->BSRR);
-		ledDOutput = &(GPIOB->BSRR);
-
 	}
 
-	// 16 samples from the hue space as RGB
-
+	/// 16 samples from the hue space as RGB values with 12 bits per color channel.
 	rgb hueSpace[16] = {{4095, 0, 0}, {4095, 1228, 0}, {4095, 2457, 0}, {4095, 3685, 0}, {2047, 4095, 0}, {819, 4095, 0}, {0, 4095, 409}, {0, 4095, 1638}, {0, 4095, 4095}, {0, 2866, 4095}, {0, 1638, 4095}, {0, 409, 4095}, {2047, 0, 4095}, {3276, 0, 4095}, {4095, 0, 3685}, {4095, 0, 2456}};
 
 
@@ -117,14 +137,17 @@ public:
 	 *
 	 */
 
+	/// Set main logic output with 1, reset with 0. Accepts 0 or 1, other values will not work, for safety pass (value != 0).
 	inline void setLogicA(int32_t high) {
 		*aLogicOutput = GET_ALOGIC_MASK(high);
 	}
 
+	/// Set aux logic output with 1, reset with 0. Accepts 0 or 1, other values will not work, for safety pass (value != 0)
 	inline void setAuxLogic(int32_t high) {
 		*auxLogicOutput = GET_EXPAND_LOGIC_MASK(high);
 	}
 
+	/// Set aux logic output with 1, reset with 0. Accepts 0 or 1, other values will not work, for safety pass (value != 0)
 	inline void setSH(int32_t sampleA, int32_t sampleB) {
 
 		uint32_t mask = GET_SH_A_MASK(sampleA);
@@ -134,6 +157,13 @@ public:
 
 	}
 
+	/**
+	 * \brief Set all GPIO outputs at once and set adjacent LEDs.
+	 *
+	 * This expects GPIO masks as arguments for the logic control.
+	 * To convert from 0 as off and 1 as on to masks use GET_ALOGIC_MASK, GET_EXPAND_LOGIC_MASK, GET_SH_A_MASK, and GET_SH_B_MASK.
+	 * Set matching LEDs (LED A with SH A, LED C (needs name change) with SH B, LED B (name change) with main logic out.
+	 */
 	inline void setLogicOutputsLEDOn(uint32_t logicA, uint32_t auxLogic,
 			uint32_t shA, uint32_t shB) {
 
@@ -157,6 +187,13 @@ public:
 
 	}
 
+	/**
+	 * \brief Set all GPIO outputs at once.
+	 *
+	 * This expects GPIO masks as arguments for the logic control.
+	 * To convert from 0 as off and 1 as on to masks use GET_ALOGIC_MASK, GET_EXPAND_LOGIC_MASK, GET_SH_A_MASK, and GET_SH_B_MASK.
+	 * Don't set LEDs.
+	 */
 	inline void setLogicOutputsLEDOff(uint32_t logicA, uint32_t auxLogic,
 			uint32_t shA, uint32_t shB) {
 
@@ -169,6 +206,14 @@ public:
 
 	}
 
+	/**
+	 * \brief Set all GPIO outputs at once using the logic streams with flag to disable.
+	 *
+	 * This expects GPIO masks as arguments for the logic control.
+	 * To convert from 0 as off and 1 as on to masks use GET_ALOGIC_MASK, GET_EXPAND_LOGIC_MASK, GET_SH_A_MASK, and GET_SH_B_MASK.
+	 * setLogicOutBoolean includes this step.
+	 * If runtimeDisplay, set LEDs, else if runtimeDisplay == 0, don't set LEDs.
+	 */
 	inline void setLogicOut(int32_t writeIndex, int32_t runtimeDisplay) {
 
 		if (runtimeDisplay) {
@@ -179,11 +224,24 @@ public:
 
 	}
 
+	/**
+	 *
+	 * \brief Same as setLogicOut, but never set the LEDs.
+	 */
+
 	inline void setLogicOutNoLED(int32_t writeIndex) {
 
 		setLogicOutputsLEDOff(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
 
 	}
+
+	/**
+	 * \brief Set logic outputs and corresponding LEDs with disable flag.
+	 *
+	 * Set all GPIO outputs at once using the logic streams.
+	 * This converts 1 = high/sample, 0 = low/track to the appropriate mask
+	 * If runtimeDisplay, set LEDs, else if runtimeDisplay == 0, don't set LEDs.
+	 */
 
 	inline void setLogicOutBoolean(int32_t writeIndex, int32_t runtimeDisplay) {
 
@@ -206,6 +264,10 @@ public:
 	 *
 	 */
 
+	//@{
+
+	/// Set LED on with a non zero value and off with 0.
+
 	inline void setLEDA(int32_t on) {
 		*ledAOutput = ((uint32_t) GPIO_PIN_7) << (16 * (!on));
 	}
@@ -222,18 +284,24 @@ public:
 		*ledDOutput = ((uint32_t) GPIO_PIN_2) << (16 * (!on));
 	}
 
+	//@}
+
+	/// Update red LED, 4095 fully on, 0 off.
 	inline void setRedLED(int32_t level) {
 		*redLevel = level;
 	}
 
+	/// Update green LED, 4095 fully on, 0 off.
 	inline void setGreenLED(int32_t level) {
 		*greenLevel = level;
 	}
 
+	/// Update blue LED, 4095 fully on, 0 off.
 	inline void setBlueLED(int32_t level) {
 		*blueLevel = level;
 	}
 
+	/// Update rbg with values 4095 fully on, 0 off. Only update if runtimeDisplay != 0.
 	inline void updateRGBDisplay(int32_t red, int32_t green, int32_t blue, int32_t runtimeDisplay) {
 		if (runtimeDisplay) {
 			setRedLED(red);
@@ -242,23 +310,27 @@ public:
 		}
 	}
 
+	/// Update rbg with values 4095 fully on, 0 off. No disable variable.
 	void setRGB(rgb color) {
 		setRedLED(color.r);
 		setGreenLED(color.g);
 		setBlueLED(color.b);
 	}
 
+	/// Update rbg with values 4095 fully on, 0 off. Scale each value with a 16 bit int, 65535 fully on, 0 off.
 	void setRGBScaled(rgb color, int32_t scale) {
-		setRedLED((color.r * scale) >> 12);
-		setGreenLED((color.g * scale) >> 12);
-		setBlueLED((color.b * scale) >> 12);
+		setRedLED((color.r * scale) >> 16);
+		setGreenLED((color.g * scale) >> 16);
+		setBlueLED((color.b * scale) >> 16);
 	}
 
+	/// Set RGB LED to 0.
 	void clearRGB() {
 		setRGB({0, 0, 0});
 		SET_BLUE_LED_ONOFF(0);
 	}
 
+	/// Set an enumerated pattern for 8 digits on the white LEDs. The LEDs increment clockwise from top left, with one LED on for 1-4 and 2 LEDs on for 5-8.
 	void setLEDs(int32_t digit) {
 		switch (digit) {
 		case 0:
@@ -312,6 +384,7 @@ public:
 		}
 	}
 
+	/// Turn the white LEDs off.
 	void clearLEDs() {
 		setLEDA(0);
 		setLEDB(0);

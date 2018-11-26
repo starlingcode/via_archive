@@ -1,9 +1,3 @@
-/*
- * dsp.h
- *
- *  Created on: Aug 18, 2018
- *      Author: willmitchell
- */
 
 #ifndef INC_VIA_DSP_H_
 #define INC_VIA_DSP_H_
@@ -15,44 +9,60 @@ extern "C" {
 #endif
 
 #include "stm32f3xx.h"
-
-
-
 #include <stdint.h>
 
-/*
- *
- * Circular buffer
- *
+/** \file dsp.hpp
+ * Some math functions.
+ * Fixed point arithmetic, interpolation, averaging.
  */
 
+///
+/// Circular buffer, max length 32.
+///
 typedef struct {
+	/// Data buffer
 	int32_t buff[32];
+	/// Write head position
 	int32_t writeIndex;
 } buffer;
 
+///
+/// Circular buffer, max length 256.
+///
 typedef struct {
+	/// Data buffer
 	int32_t buff[256];
+	/// Write head position
 	int32_t writeIndex;
 } longBuffer;
 
+///
+/// Write to value buffer at current write index and increment index.
+///
 static inline void writeBuffer(buffer* buffer, int32_t value) {
 	buffer->buff[(buffer->writeIndex++) & 31] = value;
 }
 
+///
+/// Read value at index in buffer relative to write position.
+///
 static inline int32_t readBuffer(buffer* buffer, int32_t Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 31];
 }
 
+///
+/// Write to value long buffer at current write index and increment index.
+///
 static inline void writeLongBuffer(longBuffer* buffer, int32_t value) {
 	buffer->buff[(buffer->writeIndex++) & 255] = value;
 }
 
+/// Read value at index relative to write position.
 static inline int32_t readLongBuffer(longBuffer* buffer, int32_t Xn) {
 	return buffer->buff[(buffer->writeIndex + (~Xn)) & 255];
 }
 
-/*
+/**
  *
  * Absolute value for 32 bit int32_t
  *
@@ -70,7 +80,7 @@ inline int32_t int32_abs(int32_t n) {
  *
  */
 
-// overflows when in0*in1 > 1<<48, no saturation
+/// Multiply 16.16 point numbers, overflows when in0*in1 > 1<<48, no saturation.
 static inline int32_t fix16_mul(int32_t in0, int32_t in1) {
 
 	int32_t lsb;
@@ -91,13 +101,13 @@ static inline int32_t fix16_mul(int32_t in0, int32_t in1) {
 
 }
 
-// doubting such an optimization would work here
+/// Multiply 8.24 point numbers, overflows when in0*in1 > 1<<56, no saturation.
 static inline int32_t fix24_mul(int32_t in0, int32_t in1) {
 	int64_t result = (uint64_t) in0 * in1;
 	return result >> 24;
 }
 
-
+/// Multiply 8.24 point numbers, overflows when in0*in1 > 1<<64, no saturation.
 static inline int32_t fix48_mul(uint32_t in0, uint32_t in1) {
 	// taken from the fixmathlib library
 	int64_t result = (uint64_t) in0 * in1;
@@ -110,7 +120,7 @@ static inline int32_t fix48_mul(uint32_t in0, uint32_t in1) {
  *
  */
 
-// in0 and in1 can be full scale 32 bit, frac max is 16 bits
+/// Linear interpolation. in0 and in1 can be full scale 32 bit, frac ranges from 0 - 0xFFFF
 static inline int32_t fix16_lerp(int32_t in0, int32_t in1, int32_t frac) {
 	// maybe could do this better by shoving frac up by 16,
 	// loading in0 in the msb of a 64 bit accumulator,
@@ -118,14 +128,12 @@ static inline int32_t fix16_lerp(int32_t in0, int32_t in1, int32_t frac) {
 	return in0 + fix16_mul(in1 - in0, frac);
 }
 
-// in0 and in1 must each be 16 bits max, frac max is 16 bits
-
+/// Faster linear interpolation. in0 and in1 must be 16 bit, frac ranges from 0 - 0xFFFF
 static inline int32_t fast16_16_lerp(int32_t in0, int32_t in1, int32_t frac) {
 	return in0 + (((in1 - in0) * frac) >> 16);
 }
 
-// in0 and in1 can be full scale 32 bit, frac max is 15 bits (!!!)
-
+/// Fastest linear interpolation. in0 and in1 must be 16 bit, frac ranges from 0 - 0x7FFF
 static inline int32_t fast_fix15_lerp(int32_t in0, int32_t in1, int32_t frac) {
 
 	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
@@ -136,9 +144,18 @@ static inline int32_t fast_fix15_lerp(int32_t in0, int32_t in1, int32_t frac) {
 	return in0 << 1;
 }
 
-// same value ranges
+/// Fastest linear interpolation, good for sample values
+static inline int32_t fast_15_16_lerp(int32_t in0, int32_t in1, int32_t frac) {
 
-// lower quality but faster?
+	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
+			: [result_1] "=r" (in0)
+			: [input_1] "r" (frac), [input_2] "r" (in1 - in0), [input_3] "r" (in0)
+	);
+
+	return in0;
+}
+
+/// Bilinear interpolation using fast_fix15_lerp, frac0 interpolates between in0 and in1 then in2 and in3, frac 1 interpolates between those results
 static inline int32_t fix15_bilerp(int32_t in0, int32_t in1, int32_t in2, int32_t in3, int32_t frac0,
 		int32_t frac1) {
 
@@ -148,7 +165,7 @@ static inline int32_t fix15_bilerp(int32_t in0, int32_t in1, int32_t in2, int32_
 	return fast_fix15_lerp(in0, in2, frac1);
 }
 
-// alternate form
+/// Bilinear interpolation alt form, frac0 interpolates between in0 and in1 then in2 and in3, frac 1 interpolates between those results
 static inline int32_t fix15_bilerp_alt(int32_t in0, int32_t in1, int32_t in2, int32_t in3,
 		int32_t frac0, int32_t frac1) {
 
@@ -185,24 +202,6 @@ static inline int32_t fix15_bilerp_alt(int32_t in0, int32_t in1, int32_t in2, in
 	);
 
 	return in0 << 1;
-}
-
-// naive implmentation kinda cruft
-static inline int32_t fix24_lerp(int32_t in0, int32_t in1, int32_t frac) {
-	return in0 + (((signed long long) (in1 - in0) * frac) >> 24);
-}
-
-// fastest, good for sample values
-// in0 and in1 must be each max 15 bits, frac is max 16 bits
-
-static inline int32_t fast_15_16_lerp(int32_t in0, int32_t in1, int32_t frac) {
-
-	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
-			: [result_1] "=r" (in0)
-			: [input_1] "r" (frac), [input_2] "r" (in1 - in0), [input_3] "r" (in0)
-	);
-
-	return in0;
 }
 
 static inline int32_t fast_15_16_lerp_prediff(int32_t in0, int32_t frac) {

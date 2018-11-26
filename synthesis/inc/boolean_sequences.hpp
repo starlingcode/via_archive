@@ -1,244 +1,244 @@
 #ifndef SEQUENCERS_INC_BOOLEAN_SEQUENCES_H_
 #define SEQUENCERS_INC_BOOLEAN_SEQUENCES_H_
 
+/// Sequence grid data type, generated using (link).
 typedef struct {
+    /// Array of sequences, each an array of values
 	const uint32_t **patternBank;
+	/// Array of lengths for each sequence
 	const uint32_t *lengths;
+	/// number of sequences in the array
 	const uint32_t numPatterns;
 } booleanSequenceBank;
 
-/////////////////////////
-// Euclidean sequences //
-/////////////////////////
-
-
-static const uint32_t sequencer1bankshuffle_9_32[32] = {1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank3_7_12[12] = {1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0}; 
-
-static const uint32_t sequencer1bankmultiplier_1_6[6] = {1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer1banknoclock_2_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer1banktriplet_4_24[24] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank3_3_12[12] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank2_2_2[2] = {1, 1}; 
-
-static const uint32_t sequencer2bank4_1_6[6] = {1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank1_5_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t sequencer1bankmultiplier_1_3[3] = {1, 0, 0}; 
-
-static const uint32_t sequencer2bank2_3_13[13] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank1_12_16[16] = {1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0}; 
-
-static const uint32_t sequencer1bankshuffle_15_32[32] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t sequencer1bankshuffle_13_32[32] = {1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t sequencer2bank2_2_7[7] = {1, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank2_2_5[5] = {1, 0, 1, 0, 0}; 
-
-static const uint32_t sequencer2bank3_7_8[8] = {1, 1, 1, 1, 1, 1, 1, 0}; 
-
-static const uint32_t sequencer1banktriplet_13_24[24] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0}; 
-
-static const uint32_t sequencer2bank2_2_13[13] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank4_1_4[4] = {1, 0, 0, 0}; 
-
-static const uint32_t sequencer1banknoclock_10_16[16] = {1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0}; 
-
-static const uint32_t sequencer2bank3_3_16[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank2_2_4[4] = {1, 0, 1, 0}; 
-
-static const uint32_t sequencer2bank4_2_2[2] = {1, 1}; 
-
-static const uint32_t sequencer2bank4_1_2[2] = {1, 0}; 
-
-static const uint32_t sequencer2bank1_8_16[16] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}; 
-
-static const uint32_t sequencer2bank1_10_16[16] = {1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0}; 
-
-static const uint32_t sequencer1banknoclock_3_16[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank3_5_8[8] = {1, 0, 1, 1, 0, 1, 1, 0}; 
-
-static const uint32_t sequencer2bank1_11_16[16] = {1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1}; 
-
-static const uint32_t sequencer1banknoclock_0_16[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer1banknoclock_7_16[16] = {1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t sequencer1bankshuffle_19_32[32] = {1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0}; 
-
-static const uint32_t sequencer1bankmultiplier_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank2_2_17[17] = {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank3_1_4[4] = {1, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank2_2_9[9] = {1, 0, 0, 0, 1, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer1banknoclock_13_16[16] = {1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1}; 
-
-static const uint32_t sequencer2bank2_3_11[11] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0}; 
-
-static const uint32_t sequencer2bank3_5_12[12] = {1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t sequencer2bank2_3_7[7] = {1, 0, 1, 0, 1, 0, 0}; 
-
-static const uint32_t sequencer2bank2_3_17[17] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer1bankshuffle_23_32[32] = {1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1}; 
-
-static const uint32_t sequencer2bank2_3_4[4] = {1, 1, 1, 0}; 
 
 static const uint32_t sequencer2bank4_1_3[3] = {1, 0, 0}; 
 
-static const uint32_t sequencer2bank1_3_16[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank4_0_2[2] = {0, 0}; 
-
-static const uint32_t sequencer1bankshuffle_0_32[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer1banknoclock_11_16[16] = {1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1}; 
-
-static const uint32_t sequencer1bankshuffle_5_32[32] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
-
 static const uint32_t sequencer2bank1_16_16[16] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; 
 
-static const uint32_t sequencer1banknoclock_8_16[16] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}; 
-
-static const uint32_t sequencer1bankshuffle_25_32[32] = {1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1}; 
-
-static const uint32_t sequencer2bank2_3_9[9] = {1, 0, 0, 1, 0, 0, 1, 0, 0}; 
-
-static const uint32_t sequencer2bank4_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer1bankshuffle_29_32[32] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}; 
-
-static const uint32_t sequencer1banktriplet_20_24[24] = {1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0}; 
-
-static const uint32_t sequencer1banktriplet_16_24[24] = {1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0}; 
-
-static const uint32_t sequencer2bank3_7_16[16] = {1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t sequencer2bank2_3_5[5] = {1, 0, 1, 0, 1}; 
-
-static const uint32_t sequencer1bankmultiplier_1_12[12] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank1_9_16[16] = {1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0}; 
+static const uint32_t sequencer2bank2_3_4[4] = {1, 1, 1, 0}; 
 
 static const uint32_t sequencer2bank3_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
 
-static const uint32_t sequencer2bank3_1_8[8] = {1, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer1banknoclock_5_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t sequencer1banktriplet_8_24[24] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0}; 
-
-static const uint32_t sequencer1bankshuffle_27_32[32] = {1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0}; 
-
-static const uint32_t sequencer1bankmultiplier_1_2[2] = {1, 0}; 
-
-static const uint32_t sequencer1bankmultiplier_2_2[2] = {1, 1}; 
-
-static const uint32_t sequencer2bank3_1_12[12] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer1bankshuffle_32_32[32] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; 
-
-static const uint32_t sequencer2bank1_13_16[16] = {1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1}; 
-
-static const uint32_t sequencer1bankmultiplier_1_4[4] = {1, 0, 0, 0}; 
-
-static const uint32_t sequencer1banknoclock_12_16[16] = {1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0}; 
-
-static const uint32_t sequencer2bank3_0_2[2] = {0, 0}; 
-
-static const uint32_t sequencer1banktriplet_22_24[24] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}; 
-
-static const uint32_t sequencer2bank1_7_16[16] = {1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t sequencer1bankshuffle_11_32[32] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t sequencer1banktriplet_2_24[24] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank1_14_16[16] = {1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0}; 
-
-static const uint32_t sequencer2bank2_0_2[2] = {0, 0}; 
-
-static const uint32_t sequencer1banktriplet_7_24[24] = {1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0}; 
-
-static const uint32_t sequencer1banknoclock_6_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t sequencer2bank3_3_4[4] = {1, 1, 1, 0}; 
-
-static const uint32_t sequencer2bank3_3_8[8] = {1, 0, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t sequencer1banktriplet_24_24[24] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; 
-
-static const uint32_t sequencer1banktriplet_0_24[24] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer1banknoclock_4_16[16] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t sequencer1banknoclock_16_16[16] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; 
-
-static const uint32_t sequencer1bankshuffle_7_32[32] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank1_0_16[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank1_2_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank3_2_2[2] = {1, 1}; 
-
-static const uint32_t sequencer2bank2_2_11[11] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer1banktriplet_5_24[24] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t sequencer1banktriplet_10_24[24] = {1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t sequencer1banktriplet_17_24[24] = {1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0}; 
-
-static const uint32_t sequencer2bank1_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank4_1_8[8] = {1, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank1_4_16[16] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank3_5_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
-
-static const uint32_t sequencer2bank1_6_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t sequencer1banktriplet_11_24[24] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
-
-static const uint32_t sequencer1bankshuffle_21_32[32] = {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0}; 
-
-static const uint32_t sequencer2bank4_1_12[12] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
-static const uint32_t sequencer1banktriplet_14_24[24] = {1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0}; 
-
-static const uint32_t sequencer1banktriplet_19_24[24] = {1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0}; 
+static const uint32_t sequencer2bank4_1_6[6] = {1, 0, 0, 0, 0, 0}; 
 
 static const uint32_t sequencer1bankshuffle_17_32[32] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0}; 
 
-static const uint32_t sequencer1banknoclock_9_16[16] = {1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0}; 
+static const uint32_t sequencer1bankmultiplier_1_2[2] = {1, 0}; 
 
-static const uint32_t sequencer1banknoclock_15_16[16] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}; 
-
-static const uint32_t sequencer1banknoclock_14_16[16] = {1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0}; 
+static const uint32_t sequencer2bank3_1_4[4] = {1, 0, 0, 0}; 
 
 static const uint32_t sequencer1bankmultiplier_1_8[8] = {1, 0, 0, 0, 0, 0, 0, 0}; 
 
-static const uint32_t sequencer1bankmultiplier_0_2[2] = {0, 0}; 
+static const uint32_t sequencer2bank2_2_9[9] = {1, 0, 0, 0, 1, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank4_1_2[2] = {1, 0}; 
+
+static const uint32_t sequencer1bankshuffle_9_32[32] = {1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank1_2_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banknoclock_14_16[16] = {1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0}; 
+
+static const uint32_t sequencer1bankshuffle_11_32[32] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t sequencer2bank1_13_16[16] = {1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1}; 
+
+static const uint32_t sequencer1banktriplet_13_24[24] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0}; 
+
+static const uint32_t sequencer1bankshuffle_21_32[32] = {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0}; 
+
+static const uint32_t sequencer2bank2_3_13[13] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banknoclock_15_16[16] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}; 
+
+static const uint32_t sequencer2bank3_5_12[12] = {1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t sequencer1bankshuffle_7_32[32] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank1_7_16[16] = {1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t sequencer1banktriplet_10_24[24] = {1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t sequencer1banknoclock_7_16[16] = {1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t sequencer1banktriplet_20_24[24] = {1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0}; 
+
+static const uint32_t sequencer1bankshuffle_23_32[32] = {1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1}; 
+
+static const uint32_t sequencer1banktriplet_19_24[24] = {1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0}; 
+
+static const uint32_t sequencer1bankshuffle_13_32[32] = {1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t sequencer1banktriplet_5_24[24] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank1_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank3_3_4[4] = {1, 1, 1, 0}; 
+
+static const uint32_t sequencer2bank3_3_16[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank1_11_16[16] = {1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1}; 
+
+static const uint32_t sequencer2bank3_1_12[12] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1bankmultiplier_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banktriplet_4_24[24] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1bankshuffle_15_32[32] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t sequencer1bankshuffle_19_32[32] = {1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0}; 
+
+static const uint32_t sequencer1banknoclock_3_16[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1bankmultiplier_2_2[2] = {1, 1}; 
+
+static const uint32_t sequencer2bank1_8_16[16] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}; 
+
+static const uint32_t sequencer2bank3_7_12[12] = {1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0}; 
+
+static const uint32_t sequencer1bankmultiplier_1_4[4] = {1, 0, 0, 0}; 
+
+static const uint32_t sequencer1bankshuffle_5_32[32] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
 
 static const uint32_t sequencer1bankshuffle_3_32[32] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banknoclock_9_16[16] = {1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0}; 
+
+static const uint32_t sequencer1bankshuffle_32_32[32] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; 
+
+static const uint32_t sequencer2bank2_2_13[13] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banknoclock_6_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t sequencer2bank3_1_8[8] = {1, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banknoclock_16_16[16] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; 
+
+static const uint32_t sequencer2bank4_0_2[2] = {0, 0}; 
+
+static const uint32_t sequencer2bank1_10_16[16] = {1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0}; 
+
+static const uint32_t sequencer2bank4_1_12[12] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banknoclock_13_16[16] = {1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1}; 
+
+static const uint32_t sequencer2bank1_3_16[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank3_2_2[2] = {1, 1}; 
+
+static const uint32_t sequencer2bank1_6_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t sequencer2bank1_12_16[16] = {1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0}; 
+
+static const uint32_t sequencer2bank2_2_4[4] = {1, 0, 1, 0}; 
+
+static const uint32_t sequencer2bank2_3_5[5] = {1, 0, 1, 0, 1}; 
+
+static const uint32_t sequencer2bank3_7_8[8] = {1, 1, 1, 1, 1, 1, 1, 0}; 
+
+static const uint32_t sequencer2bank3_7_16[16] = {1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t sequencer2bank3_5_8[8] = {1, 0, 1, 1, 0, 1, 1, 0}; 
+
+static const uint32_t sequencer2bank2_2_7[7] = {1, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank1_14_16[16] = {1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0}; 
+
+static const uint32_t sequencer1bankshuffle_27_32[32] = {1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0}; 
+
+static const uint32_t sequencer2bank2_2_2[2] = {1, 1}; 
+
+static const uint32_t sequencer1bankmultiplier_0_2[2] = {0, 0}; 
+
+static const uint32_t sequencer2bank3_3_8[8] = {1, 0, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t sequencer1bankmultiplier_1_3[3] = {1, 0, 0}; 
+
+static const uint32_t sequencer2bank2_3_11[11] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0}; 
+
+static const uint32_t sequencer2bank2_2_17[17] = {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank4_1_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banktriplet_2_24[24] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banknoclock_12_16[16] = {1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0}; 
+
+static const uint32_t sequencer1banknoclock_11_16[16] = {1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1}; 
+
+static const uint32_t sequencer1bankshuffle_25_32[32] = {1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1}; 
+
+static const uint32_t sequencer2bank2_2_5[5] = {1, 0, 1, 0, 0}; 
+
+static const uint32_t sequencer1banknoclock_0_16[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banktriplet_7_24[24] = {1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0}; 
+
+static const uint32_t sequencer1banktriplet_17_24[24] = {1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0}; 
+
+static const uint32_t sequencer2bank2_0_2[2] = {0, 0}; 
+
+static const uint32_t sequencer2bank3_3_12[12] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t sequencer1banktriplet_8_24[24] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0}; 
+
+static const uint32_t sequencer2bank1_4_16[16] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t sequencer1banktriplet_16_24[24] = {1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0}; 
+
+static const uint32_t sequencer1banknoclock_10_16[16] = {1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0}; 
+
+static const uint32_t sequencer2bank4_2_2[2] = {1, 1}; 
+
+static const uint32_t sequencer2bank1_9_16[16] = {1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0}; 
+
+static const uint32_t sequencer1bankshuffle_29_32[32] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}; 
+
+static const uint32_t sequencer1banktriplet_22_24[24] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}; 
+
+static const uint32_t sequencer1banktriplet_24_24[24] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; 
+
+static const uint32_t sequencer2bank1_0_16[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banktriplet_0_24[24] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banktriplet_14_24[24] = {1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0}; 
+
+static const uint32_t sequencer2bank1_5_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t sequencer1bankmultiplier_1_12[12] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank3_0_2[2] = {0, 0}; 
+
+static const uint32_t sequencer2bank2_3_9[9] = {1, 0, 0, 1, 0, 0, 1, 0, 0}; 
+
+static const uint32_t sequencer2bank4_1_8[8] = {1, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1bankshuffle_0_32[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank4_1_4[4] = {1, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank2_3_7[7] = {1, 0, 1, 0, 1, 0, 0}; 
+
+static const uint32_t sequencer1banktriplet_11_24[24] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0}; 
+
+static const uint32_t sequencer2bank3_5_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t sequencer1banknoclock_5_16[16] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t sequencer1bankmultiplier_1_6[6] = {1, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banknoclock_4_16[16] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank2_3_17[17] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer2bank2_2_11[11] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}; 
+
+static const uint32_t sequencer1banknoclock_8_16[16] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}; 
+
+static const uint32_t sequencer1banknoclock_2_16[16] = {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}; 
 
 
 

@@ -118,7 +118,7 @@ void ViaGateseq::ViaGateseqUI::button3EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
-	this_module.setLEDs(A_PATTERN_BANK);
+	this_module.setLEDs(SEQ1_MODE);
 	this_module.setRedLED((button3Mode >> 1) * 4095);
 	this_module.setGreenLED(!(button3Mode >> 1) * 4095);
 	if (button3Mode == 1 || button3Mode == 3) {
@@ -156,7 +156,7 @@ void ViaGateseq::ViaGateseqUI::button6EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
-	this_module.setLEDs(B_PATTERN_BANK);
+	this_module.setLEDs(SEQ2_MODE);
 	resetTimerMenu();
 }
 void ViaGateseq::ViaGateseqUI::aux1EnterMenuCallback(void) {
@@ -192,10 +192,10 @@ void ViaGateseq::ViaGateseqUI::button2TapCallback(void) {
 	transition(&ViaGateseq::ViaGateseqUI::newModeMenu);
 }
 void ViaGateseq::ViaGateseqUI::button3TapCallback(void) {
-	A_PATTERN_BANK = incrementModeAndStore(A_PATTERN_BANK, BUTTON3_MASK, numButton3Modes, BUTTON3_SHIFT);
-	this_module.handleButton3ModeChange(A_PATTERN_BANK);
+	SEQ1_MODE = incrementModeAndStore(SEQ1_MODE, BUTTON3_MASK, numButton3Modes, BUTTON3_SHIFT);
+	this_module.handleButton3ModeChange(SEQ1_MODE);
 	this_module.clearLEDs();
-	this_module.setLEDs(A_PATTERN_BANK);
+	this_module.setLEDs(SEQ1_MODE);
 	transition(&ViaGateseq::ViaGateseqUI::newModeMenu);
 }
 void ViaGateseq::ViaGateseqUI::button4TapCallback(void) {
@@ -213,10 +213,10 @@ void ViaGateseq::ViaGateseqUI::button5TapCallback(void) {
 	transition(&ViaGateseq::ViaGateseqUI::newModeMenu);
 }
 void ViaGateseq::ViaGateseqUI::button6TapCallback(void) {
-	B_PATTERN_BANK = incrementModeAndStore(B_PATTERN_BANK, BUTTON6_MASK, numButton6Modes, BUTTON6_SHIFT);
-	this_module.handleButton6ModeChange(B_PATTERN_BANK);
+	SEQ2_MODE = incrementModeAndStore(SEQ2_MODE, BUTTON6_MASK, numButton6Modes, BUTTON6_SHIFT);
+	this_module.handleButton6ModeChange(SEQ2_MODE);
 	this_module.clearLEDs();
-	this_module.setLEDs(B_PATTERN_BANK);
+	this_module.setLEDs(SEQ2_MODE);
 	transition(&ViaGateseq::ViaGateseqUI::newModeMenu);
 }
 

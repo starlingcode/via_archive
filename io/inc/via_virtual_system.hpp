@@ -1,15 +1,17 @@
-/*
- * via_virtual_system.hpp
- *
- *  Created on: Sep 22, 2018
- *      Author: willmitchell
+/** \file via_virtual_system.hpp
+ * \brief Some macros to mimic the hardware GPIO, needs to be updated.
  */
 
 #ifndef IO_INC_VIA_VIRTUAL_SYSTEM_HPP_
 #define IO_INC_VIA_VIRTUAL_SYSTEM_HPP_
 
+/// \cond
+
+#ifdef BUILD_VIRTUAL
 
 
+//@{
+/// Method to emulate the hardware GPIO outputs, should be rewritten
 #define GPIO_NOP 0
 
 #define GPIO_PIN_13 (1 << 13)
@@ -38,19 +40,30 @@
 #define GET_SH_A_VIRTUAL_MASK(X) (((X >> 8) | (X >> 23)) & 0b11)
 #define GET_SH_B_VIRTUAL_MASK(X) (((X >> 9) | (X >> 24)) & 0b11)
 
+//@}
+
+
+
 /*
  * Touch sensors
  */
 
-#define BUTTON2SENSOR MyTKeys[0].p_Data->StateId
-#define BUTTON1SENSOR MyTKeys[1].p_Data->StateId
-#define BUTTON3SENSOR MyTKeys[2].p_Data->StateId
-#define BUTTON4SENSOR MyTKeys[3].p_Data->StateId
-#define BUTTON6SENSOR MyTKeys[4].p_Data->StateId
-#define BUTTON5SENSOR MyTKeys[5].p_Data->StateId
+//#define BUTTON2SENSOR MyTKeys[0].p_Data->StateId
+//#define BUTTON1SENSOR MyTKeys[1].p_Data->StateId
+//#define BUTTON3SENSOR MyTKeys[2].p_Data->StateId
+//#define BUTTON4SENSOR MyTKeys[3].p_Data->StateId
+//#define BUTTON6SENSOR MyTKeys[4].p_Data->StateId
+//#define BUTTON5SENSOR MyTKeys[5].p_Data->StateId
 
+//@{
+/// Stand ins for the values used by the hardware touch sense library.
 #define PRESSED 1
 #define RELEASED 0
+//@}
 
+#endif
+
+
+/// \endcond
 
 #endif /* IO_INC_VIA_VIRTUAL_SYSTEM_HPP_ */

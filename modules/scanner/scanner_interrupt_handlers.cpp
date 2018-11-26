@@ -1,5 +1,4 @@
 #include "scanner.hpp"
-#include "cmsis_dsp.hpp"
 
 void ViaScanner::mainRisingEdgeCallback(void) {
 

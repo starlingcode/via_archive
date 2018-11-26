@@ -9,8 +9,8 @@ void ViaGateseq::init(void) {
 	gateController.updateGateA(SOFT_GATE_HIGH);
 	gateController.updateGateB(SOFT_GATE_HIGH);
 
-	sequencer.currentABank = seq1PatternBank[0];
-	sequencer.currentBBank = seq2PatternBank[0];
+	sequencer.currentABank = seq1Banks[0];
+	sequencer.currentBBank = seq2Banks[0];
 
 	sequencer.gateAEvent = SOFT_GATE_EXECUTE;
 	sequencer.gateBEvent = SOFT_GATE_EXECUTE;
