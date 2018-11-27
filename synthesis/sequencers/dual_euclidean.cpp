@@ -181,10 +181,14 @@ void DualEuclidean::processMainRisingEdge(void) {
 #ifdef BUILD_VIRTUAL
 	periodCount = virtualTimer1Count;
 	virtualTimer1Count = 0;
-	virtualTimer3Enable = 0;
-	//virtualTimer2Prescaler = divider - 1; // no division implemented yet
-	virtualTimer2Count = 0;
-	shuffledStep = 1;
+	if (!clockOn || virtualTimer2Count > 16) {
+		virtualTimer3Enable = 0;
+		virtualTimer3Count = 0;
+		//virtualTimer2Prescaler = divider - 1; // no division implemented yet
+		virtualTimer2Count = 0;
+		shuffledStep = 1;
+		processSeq1 = 1;
+	}
 	skipClock = 1;
 	}
 #endif
@@ -293,7 +297,7 @@ void DualEuclidean::processInternalFallingEdge(void) {
 	TIM17->CR1 &= ~TIM_CR1_CEN;
 #endif
 #ifdef BUILD_VIRTUAL
-	sequencer.virtualTimer3Enable = 0;
+	virtualTimer3Enable = 0;
 #endif
 
 }

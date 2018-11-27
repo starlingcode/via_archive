@@ -67,6 +67,7 @@ public:
 	uint32_t skipClock = 0;
 	uint32_t modulateMultiplier;
 	uint32_t virtualGateHigh;
+	uint32_t processSeq1;
 
 	int32_t multipliers[8] = {1, 2, 3, 4, 6, 8, 12, 16};
 

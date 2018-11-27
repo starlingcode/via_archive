@@ -15,10 +15,10 @@ void ViaGateseq::init(void) {
 	sequencer.gateAEvent = SOFT_GATE_EXECUTE;
 	sequencer.gateBEvent = SOFT_GATE_EXECUTE;
 
-	inputs.init(TRIGSEQ_BUFFER_SIZE);
-	outputs.init(TRIGSEQ_BUFFER_SIZE);
-	inputBufferSize = TRIGSEQ_BUFFER_SIZE;
-	outputBufferSize = TRIGSEQ_BUFFER_SIZE;
+	inputs.init(GATESEQ_BUFFER_SIZE);
+	outputs.init(GATESEQ_BUFFER_SIZE);
+	inputBufferSize = GATESEQ_BUFFER_SIZE;
+	outputBufferSize = GATESEQ_BUFFER_SIZE;
 
 	gateseqUI.initialize();
 

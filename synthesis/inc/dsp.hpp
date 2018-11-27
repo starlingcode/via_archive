@@ -796,6 +796,18 @@ static inline int32_t foldSignal16Bit(int32_t phaseIn) {
 
 }
 
+
+static inline int32_t foldSignal25Bit(int32_t phaseIn) {
+
+	// fold into the space [0, 2^25)
+	// check the lsb of abs(input) >> 15 (is phaseIn / 2^15 even or odd)
+	// mathematical conditional that adds the modulo 2^15 for odd and the inversion of that in 15 bit space for even
+
+	return ((phaseIn >> 25) & 1) ?
+			(0x1FFFFFF - (phaseIn & 0x1FFFFFF)) : (phaseIn & 0x1FFFFFF);
+
+}
+
 static inline int32_t wrapSignal16Bit(int32_t phaseIn) {
 
 	// wrap into the space [0, 2^15) by calculating the input modulo 2^15

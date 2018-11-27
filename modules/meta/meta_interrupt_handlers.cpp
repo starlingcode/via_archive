@@ -66,6 +66,8 @@ void ViaMeta::buttonPressedCallback(void) {
 	metaController.gateSignal = 1 * metaController.gateOn;
 
 	ampEnvelope.trigger = 0;
+	freqTransient.trigger = 0;
+	morphEnvelope.trigger = 0;
 
 	this->metaUI.dispatch(EXPAND_SW_ON_SIG);
 

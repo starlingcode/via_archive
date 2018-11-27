@@ -61,6 +61,8 @@ void ViaMeta::init() {
 #ifdef BUILD_VIRTUAL
 	metaWavetable.morphScale = (int16_t*) ampEnvelope.output;
 	metaController.fm = (int16_t*) ampEnvelope.output;
+	metaController.expoFM = freqTransient.output;
+
 #endif
 
 }

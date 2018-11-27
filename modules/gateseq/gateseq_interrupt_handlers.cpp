@@ -22,10 +22,12 @@ void ViaGateseq::mainRisingEdgeCallback() {
 	// in VCVRack, set a "virtual interrupt" for the sequencer 1 timer
 
 #ifdef BUILD_VIRTUAL
-	if (sequencer.skipClock) {
+	if (sequencer.processSeq1) {
 		auxTimer1InterruptCallback();
+		sequencer.processSeq1 = 0;
 	}
 	sequencer.updateLogicOutput();
+
 #endif
 
 	// update the aux logic output for new seq2 value
