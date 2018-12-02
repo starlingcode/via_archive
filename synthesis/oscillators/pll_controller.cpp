@@ -19,7 +19,7 @@ void PllController::parseControls(ViaControls * controls, ViaInputStreams * inpu
 
 	int32_t tempNote = controls->knob1Value + controls->cv1Value - 2048;
 	int32_t noteIndex = __USAT(tempNote, 12) >> 5;
-	int32_t rootModLocal = rootMod[0];
+	int32_t rootModLocal = -rootMod[0];
 	rootModLocal = rootModLocal >> 4;
 	rootModLocal += controls->knob2Value;
 	int32_t	rootIndex = (__USAT(rootModLocal, 12)) >> scale->t2Bitshift;

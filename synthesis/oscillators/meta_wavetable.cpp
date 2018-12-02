@@ -32,7 +32,7 @@ void MetaWavetable::advanceSingleSample(uint32_t * wavetable) {
 			wavetable, &delta);
 
 	uint32_t writeIndex = 0;
-	uint32_t samplesRemaining = bufferSize - 1;
+	uint32_t samplesRemaining = bufferSize;
 
 	while (samplesRemaining) {
 
