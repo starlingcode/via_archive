@@ -151,7 +151,7 @@ void ViaScanner::ViaScannerUI::aux4EnterMenuCallback(void) {
 }
 
 void ViaScanner::ViaScannerUI::button1TapCallback(void) {
-	SYNC_MODE = decrementModeAndStore(SYNC_MODE, BUTTON1_MASK, numButton1Modes, BUTTON1_MASK);
+	SYNC_MODE = incrementModeAndStore(SYNC_MODE, BUTTON1_MASK, numButton1Modes, BUTTON1_MASK);
 	this_module.handleButton1ModeChange(SYNC_MODE);
 	this_module.clearLEDs();
 	this_module.setLEDs(SYNC_MODE);
@@ -173,7 +173,7 @@ void ViaScanner::ViaScannerUI::button3TapCallback(void) {
 	transition(&ViaScanner::ViaScannerUI::newModeMenu);
 }
 void ViaScanner::ViaScannerUI::button4TapCallback(void) {
-	X_TABLE = incrementModeAndStore(X_TABLE, BUTTON4_MASK, numButton4Modes, BUTTON4_MASK);
+	X_TABLE = decrementModeAndStore(X_TABLE, BUTTON4_MASK, numButton4Modes, BUTTON4_MASK);
 	this_module.handleButton4ModeChange(X_TABLE);
 	this_module.clearLEDs();
 	this_module.setLEDs(X_TABLE);
@@ -191,6 +191,7 @@ void ViaScanner::ViaScannerUI::button6TapCallback(void) {
 			numButton6Modes, BUTTON6_MASK);
 	this_module.handleButton6ModeChange(X_TABLE);
 	this_module.clearLEDs();
+	this_module.setLEDs(X_TABLE);
 	transition(&ViaScanner::ViaScannerUI::newModeMenu);
 }
 

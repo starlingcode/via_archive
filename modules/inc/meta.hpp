@@ -141,6 +141,13 @@ public:
 	void handleAux3ModeChange(int32_t);
 	void handleAux4ModeChange(int32_t);
 
+	void initializeDrum(void);
+	void initializeOscillator(void);
+	void initializeEnvelope(void);
+	void initializeSimpleLFO(void);
+	void initializeSequence(void);
+	void initializeComplexLFO(void);
+
 	/*
 	 *
 	 * Tables

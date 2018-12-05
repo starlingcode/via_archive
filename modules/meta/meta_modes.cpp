@@ -41,52 +41,29 @@ void ViaMeta::handleButton2ModeChange(int32_t mode) {
 
 void ViaMeta::handleButton3ModeChange(int32_t mode) {
 
+	switchWavetable(wavetableArray[mode][metaUI.TABLE]);
+
 	switch (mode) {
 	case audio:
+
 		if (metaUI.LOOP_MODE == noloop) {
 			updateRGBDisplay(0, 4095, 4095, 1);
-			updateRGB = &ViaMeta::updateRGBDrum;
-			currentRGBBehavior = &ViaMeta::updateRGBDrum;
-			metaController.generateIncrements = &MetaController::generateIncrementsDrum;
-			metaController.parseControls = &MetaController::parseControlsDrum;
-			metaController.fm = drumFullScale;
-			metaController.expoFM = freqTransient.output;
-			outputStage = &ViaMeta::drumMode;
-			metaController.advancePhase = &MetaController::advancePhaseOversampled;
-			metaWavetable.oversamplingFactor = 0;
-			metaController.loopHandler = &MetaController::handleLoopOn;
-			metaController.loopMode = 1;
-			handleButton4ModeChange(0);
-			handleAux3ModeChange(metaUI.DRUM_MODE);
+			initializeDrum();
 		} else {
 			updateRGBDisplay(0, 0, 4095, 1);
-			updateRGB = &ViaMeta::updateRGBOsc;
-			currentRGBBehavior = &ViaMeta::updateRGBOsc;
-			metaController.parseControls = &MetaController::parseControlsAudio;
-			metaController.generateIncrements = &MetaController::generateIncrementsAudio;
-			outputStage = &ViaMeta::oversample;
-			metaController.expoFM = drumOff;
-			metaController.advancePhase = &MetaController::advancePhaseOversampled;
-			metaWavetable.oversamplingFactor = 3;
-			metaController.fm = inputs.cv2Samples;
-			metaWavetable.morphScale = drumFullScale;
-
+			initializeOscillator();
 		}
-		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
+
+		if (metaUI.DAC_3_MODE == phasor) {
+			calculateDac3 = &ViaMeta::calculateDac3Phasor;
+		} else {
+			calculateDac3 = &ViaMeta::calculateDac3Contour;
+		}
+
 		break;
 	case env:
 
 		updateRGBDisplay(0, 4095, 0, 1);
-		updateRGB = &ViaMeta::updateRGBSubaudio;
-		currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
-		metaController.parseControls = &MetaController::parseControlsEnv;
-		metaController.generateIncrements = &MetaController::generateIncrementsEnv;
-
-		outputStage = &ViaMeta::addThreeBits;
-		metaController.advancePhase = &MetaController::advancePhasePWM;
-		metaWavetable.oversamplingFactor = 0;
-
-		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
 
 		if (metaUI.DAC_3_MODE == phasor) {
 			calculateDac3 = &ViaMeta::calculateDac3PhasorEnv;
@@ -95,29 +72,28 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 		}
 		
 		if (metaUI.LOOP_MODE == noloop) {
-			metaController.fm = inputs.cv2Samples;
-			metaWavetable.morphScale = drumFullScale;
-			metaController.loopHandler = &MetaController::handleLoopOff;
-			metaController.loopMode = 0;
-			handleButton4ModeChange(metaUI.TRIG_MODE);
+			initializeEnvelope();
+		} else {
+			initializeSimpleLFO();
 		}
+
 		break;
 	case seq:
+
 		updateRGBDisplay(4095, 0, 0, 1);
+
 		if (metaUI.DAC_3_MODE == phasor) {
 			calculateDac3 = &ViaMeta::calculateDac3Phasor;
 		} else {
 			calculateDac3 = &ViaMeta::calculateDac3Contour;
 		}
-		updateRGB = &ViaMeta::updateRGBSubaudio;
-		currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
-		metaController.parseControls = &MetaController::parseControlsSeq;
-		metaController.generateIncrements = &MetaController::generateIncrementsSeq;
 
-		outputStage = &ViaMeta::addThreeBits;
-		metaController.advancePhase = &MetaController::advancePhasePWM;
+		if (metaUI.LOOP_MODE == noloop) {
+			initializeEnvelope();
+		} else {
+			initializeSimpleLFO();
+		}
 
-		switchWavetable(wavetableArray[mode][metaUI.TABLE]);
 		break;
 	}
 
@@ -165,16 +141,11 @@ void ViaMeta::handleButton6ModeChange(int32_t mode) {
 	switch (mode) {
 	case noloop:
 		if (metaUI.FREQ_MODE == audio) {
-			handleAux3ModeChange(metaUI.DRUM_MODE);
-			handleButton3ModeChange(0);
-			handleButton4ModeChange(0);
-			outputStage = &ViaMeta::drumMode;
-			metaController.expoFM = freqTransient.output;
-			metaController.advancePhase = &MetaController::advancePhaseOversampled;
-			metaWavetable.oversamplingFactor = 0;
+			initializeDrum();
+		} else if (metaUI.FREQ_MODE == env)  {
+			initializeEnvelope();
 		} else {
-			metaController.loopHandler = &MetaController::handleLoopOff;
-			metaController.loopMode = 0;
+			initializeSequence();
 		}
 		if (metaUI.TRIG_MODE == meta_pendulum)  {
 			metaController.incrementArbiter = &MetaController::stickyPendulumRestingState;
@@ -182,15 +153,12 @@ void ViaMeta::handleButton6ModeChange(int32_t mode) {
 		break;
 	case looping:
 		if (metaUI.FREQ_MODE == audio) {
-			handleButton3ModeChange(0);
-			handleButton4ModeChange(metaUI.TRIG_MODE);
-			outputStage = &ViaMeta::oversample;
-			metaController.expoFM = drumOff;
-			metaController.advancePhase = &MetaController::advancePhaseOversampled;
-			metaWavetable.oversamplingFactor = 3;
+			initializeOscillator();
+		} else if (metaUI.FREQ_MODE == env)  {
+			initializeSimpleLFO();
+		} else {
+			initializeComplexLFO();
 		}
-		metaController.loopHandler = &MetaController::handleLoopOn;
-		metaController.loopMode = 1;
 		if (metaUI.TRIG_MODE == meta_pendulum)  {
 			metaController.incrementArbiter = &MetaController::pendulumRestingState;
 		}
@@ -294,6 +262,134 @@ void ViaMeta::handleAux4ModeChange(int32_t mode) {
 		}
 		break;
 	}
+
+}
+
+void ViaMeta::initializeDrum(void) {
+
+	updateRGB = &ViaMeta::updateRGBDrum;
+	currentRGBBehavior = &ViaMeta::updateRGBDrum;
+
+	metaController.generateIncrements = &MetaController::generateIncrementsDrum;
+	metaController.parseControls = &MetaController::parseControlsDrum;
+	// metaController.fm = drumFullScale; // set in the drum mode handler
+	metaController.expoFM = freqTransient.output;
+	metaController.advancePhase = &MetaController::advancePhaseOversampled;
+	metaController.loopHandler = &MetaController::handleLoopOn;
+	metaController.loopMode = 1;
+
+	// metaWavetable.morphScale = drumFullScale; // set in the drum mode handler
+	metaWavetable.oversamplingFactor = 0;
+
+	outputStage = &ViaMeta::drumMode;
+
+	handleButton4ModeChange(0);
+
+	handleAux3ModeChange(metaUI.DRUM_MODE);
+}
+void ViaMeta::initializeOscillator(void) {
+
+	updateRGB = &ViaMeta::updateRGBOsc;
+	currentRGBBehavior = &ViaMeta::updateRGBOsc;
+
+	metaController.parseControls = &MetaController::parseControlsAudio;
+	metaController.generateIncrements = &MetaController::generateIncrementsAudio;
+	metaController.advancePhase = &MetaController::advancePhaseOversampled;
+	metaController.fm = inputs.cv2Samples;
+	metaController.expoFM = drumOff;
+	metaController.loopHandler = &MetaController::handleLoopOn;
+	metaController.loopMode = 1;
+
+	metaWavetable.morphScale = drumFullScale;
+	metaWavetable.oversamplingFactor = 3;
+
+	outputStage = &ViaMeta::oversample;
+
+	handleButton4ModeChange(metaUI.TRIG_MODE);
+
+}
+void ViaMeta::initializeEnvelope(void) {
+
+	updateRGB = &ViaMeta::updateRGBSubaudio;
+	currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
+
+	metaController.parseControls = &MetaController::parseControlsEnv;
+	metaController.generateIncrements = &MetaController::generateIncrementsEnv;
+	metaController.advancePhase = &MetaController::advancePhasePWM;
+	metaController.fm = inputs.cv2Samples;
+	metaController.expoFM = drumOff;
+	metaController.loopHandler = &MetaController::handleLoopOff;
+	metaController.loopMode = 0;
+
+	metaWavetable.oversamplingFactor = 0;
+	metaWavetable.morphScale = drumFullScale;
+
+	outputStage = &ViaMeta::addThreeBits;
+
+	handleButton4ModeChange(metaUI.TRIG_MODE);
+
+}
+void ViaMeta::initializeSimpleLFO(void) {
+
+	updateRGB = &ViaMeta::updateRGBSubaudio;
+	currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
+
+	metaController.parseControls = &MetaController::parseControlsEnv;
+	metaController.generateIncrements = &MetaController::generateIncrementsEnv;
+	metaController.advancePhase = &MetaController::advancePhasePWM;
+	metaController.fm = inputs.cv2Samples;
+	metaController.expoFM = drumOff;
+	metaController.loopHandler = &MetaController::handleLoopOn;
+	metaController.loopMode = 1;
+
+	metaWavetable.oversamplingFactor = 0;
+	metaWavetable.morphScale = drumFullScale;
+
+	outputStage = &ViaMeta::addThreeBits;
+
+	handleButton4ModeChange(metaUI.TRIG_MODE);
+
+}
+void ViaMeta::initializeSequence(void) {
+
+	updateRGB = &ViaMeta::updateRGBSubaudio;
+	currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
+
+	metaController.parseControls = &MetaController::parseControlsSeq;
+	metaController.generateIncrements = &MetaController::generateIncrementsSeq;
+	metaController.advancePhase = &MetaController::advancePhasePWM;
+	metaController.fm = inputs.cv2Samples;
+	metaController.expoFM = drumOff;
+	metaController.loopHandler = &MetaController::handleLoopOff;
+	metaController.loopMode = 0;
+
+	metaWavetable.oversamplingFactor = 0;
+	metaWavetable.morphScale = drumFullScale;
+
+	outputStage = &ViaMeta::addThreeBits;
+
+	handleButton4ModeChange(metaUI.TRIG_MODE);
+
+}
+void ViaMeta::initializeComplexLFO(void) {
+
+	updateRGB = &ViaMeta::updateRGBSubaudio;
+	currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
+
+	metaController.parseControls = &MetaController::parseControlsSeq;
+	metaController.generateIncrements = &MetaController::generateIncrementsSeq;
+	metaController.advancePhase = &MetaController::advancePhasePWM;
+	metaController.fm = inputs.cv2Samples;
+	metaController.expoFM = drumOff;
+	metaController.loopHandler = &MetaController::handleLoopOff;
+	metaController.loopMode = 0;
+
+	metaWavetable.oversamplingFactor = 0;
+	metaWavetable.morphScale = drumFullScale;
+
+	outputStage = &ViaMeta::addThreeBits;
+
+	handleButton4ModeChange(metaUI.TRIG_MODE);
 
 }
 
