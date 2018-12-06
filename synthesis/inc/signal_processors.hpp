@@ -102,6 +102,9 @@ public:
 	uint32_t syncMode = 0;
 	uint32_t xTableSize = 0;
 	uint32_t yTableSize = 0;
+	uint32_t xInterpolateOn = 1;
+	uint32_t yInterpolateOn = 1;
+
 
 	// outputs
 	int32_t * xIndexBuffer;

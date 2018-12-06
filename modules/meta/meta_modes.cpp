@@ -381,8 +381,8 @@ void ViaMeta::initializeComplexLFO(void) {
 	metaController.advancePhase = &MetaController::advancePhasePWM;
 	metaController.fm = inputs.cv2Samples;
 	metaController.expoFM = drumOff;
-	metaController.loopHandler = &MetaController::handleLoopOff;
-	metaController.loopMode = 0;
+	metaController.loopHandler = &MetaController::handleLoopOn;
+	metaController.loopMode = 1;
 
 	metaWavetable.oversamplingFactor = 0;
 	metaWavetable.morphScale = drumFullScale;

@@ -6,11 +6,11 @@ void ViaScanner::fillWavetableArray(void) {
 	wavetableArray[0] = &hyperbolic_shapers;
 	wavetableArray[1] = &tanh_res;
 	wavetableArray[2] = &newBounce;
-	wavetableArray[3] = &bitcrush;
+	wavetableArray[3] = &bessel;
 	wavetableArray[4] = &test_fm;
 	wavetableArray[5] = &soprano257;
-	wavetableArray[6] = &skipSaw;
-	wavetableArray[7] = &saw_comb_filter;
+	wavetableArray[6] = &bitcrush;
+	wavetableArray[7] = &new_steps;
 }
 
 

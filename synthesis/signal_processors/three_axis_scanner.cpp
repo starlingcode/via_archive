@@ -102,9 +102,9 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 	if (oversample == 0) {
 
 		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) xTable, &xDelta);
+				(uint32_t *) xTable, &xDelta, xInterpolateOn);
 		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) yTable, &yDelta);
+				(uint32_t *) yTable, &yDelta, yInterpolateOn);
 
 		int32_t mainScan = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 11) + 2047;
 
@@ -189,9 +189,9 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 	if (oversample == 0) {
 
 		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) xTable, &xDelta);
+				(uint32_t *) xTable, &xDelta, xInterpolateOn);
 		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) yTable, &yDelta);
+				(uint32_t *) yTable, &yDelta, yInterpolateOn);
 
 		int32_t mainScan = (xSample * ySample) >> 18; //15 bit fixed point multiply and right shift by 3
 
@@ -278,9 +278,9 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 	if (oversample == 0) {
 
 		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) xTable, &xDelta);
+				(uint32_t *) xTable, &xDelta, xInterpolateOn);
 		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) yTable, &yDelta);
+				(uint32_t *) yTable, &yDelta, yInterpolateOn);
 
 		int32_t mainScan = abs((xSample - ySample) >> 3); //15 bit fixed point multiply and right shift by 3
 
@@ -367,9 +367,9 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 	if (oversample == 0) {
 
 		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) xTable, &xDelta);
+				(uint32_t *) xTable, &xDelta, xInterpolateOn);
 		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) yTable, &yDelta);
+				(uint32_t *) yTable, &yDelta, yInterpolateOn);
 
 		int32_t mainScan = (ySample > xSample) ? ySample >> 3 : xSample >> 3; //15 bit fixed point multiply and right shift by 3
 
