@@ -376,7 +376,7 @@ static inline int32_t getSampleQuinticSpline(uint32_t phase, uint32_t morph,
 }
 
 static inline int32_t getSampleQuinticSplineDeltaValue(uint32_t phase, uint32_t morph,
-		uint32_t *fullTableHoldArray, int32_t *delta, uint32_t interpOn) {
+		uint32_t *fullTableHoldArray, int32_t *delta, uint32_t interpOff) {
 
 	/* in this function, we use our phase position to get the sample to give to our dacs using a quintic spline interpolation technique
 	 essentially, we need to get 6 pairs of sample values and two "fractional arguments" (where are we at in between those sample values)
@@ -434,7 +434,7 @@ static inline int32_t getSampleQuinticSplineDeltaValue(uint32_t phase, uint32_t 
 			))
 		));
 
-	out += (sample2 - out) * interpOn;
+	out += (sample2 - out) * interpOff;
 
 	*delta = (sample3 - sample2);
 

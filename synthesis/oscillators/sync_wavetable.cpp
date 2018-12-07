@@ -97,7 +97,7 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 
 	int32_t deltaWrite = 0;
 
-	int32_t sample = __USAT(getSampleQuinticSplineDeltaValue(localGhostPhase, morph, wavetable, &deltaWrite, 1), 12);
+	int32_t sample = __USAT(getSampleQuinticSplineDeltaValue(localGhostPhase, morph, wavetable, &deltaWrite, 0), 12);
 
 	delta = getDeltaHysterisis(deltaWrite, delta);
 

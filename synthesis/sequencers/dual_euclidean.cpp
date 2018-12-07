@@ -261,13 +261,17 @@ void DualEuclidean::processInternalRisingEdge(void) {
 	TIM2->ARR = clockPeriod;
 	TIM17->ARR = clockPeriod >> 13;
 	TIM17->CNT = 1;
-	TIM17->CR1 = TIM_CR1_CEN;
+	//if (clockOn) {
+		TIM17->CR1 = TIM_CR1_CEN;
+	//}
 #endif
 #ifdef BUILD_VIRTUAL
 	virtualTimer2Overflow = clockPeriod;
 	virtualTimer3Overflow = clockPeriod >> 1;
 	virtualTimer3Count = 0;
-	virtualTimer3Enable = 1;
+	//if (clockOn) {
+		virtualTimer3Enable = 1;
+	//}
 #endif
 
 
@@ -276,6 +280,11 @@ void DualEuclidean::processInternalRisingEdge(void) {
 void DualEuclidean::processMainFallingEdge(void) {
 
 	// gate low on the simple sequencer
+//	if (!clockOn) {
+//		aOutput = 0;
+//		virtualGateHigh = 0;
+//		shASignal = sampleA;
+//	}
 
 	bOutput = 0;
 	updateLogicOutput();
@@ -286,11 +295,12 @@ void DualEuclidean::processInternalFallingEdge(void) {
 
 	// virtual gate low, much like the simple sequencer
 
-	virtualGateHigh = 0;
 
+	virtualGateHigh = 0;
 	aOutput = 0;
 	shASignal = sampleA;
 	updateLogicOutput();
+
 
 	// disable the gate timer
 #ifdef BUILD_F373

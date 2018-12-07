@@ -62,6 +62,16 @@ void ViaGateseq::mainFallingEdgeCallback() {
 
 	setAuxLogic(sequencer.logicOutput);
 
+//	if (!sequencer.clockOn) {
+//		setLogicA(sequencer.aOutput);
+//		setAuxLogic(sequencer.logicOutput);
+//		if (runtimeDisplay) {
+//			setLEDA(sequencer.sampleA);
+//			setLEDC(sequencer.aOutput);
+//		}
+//		sequencer.gateAEvent = SOFT_GATE_LOW * sequencer.andA;
+//	}
+
 	// similar deal as the rising edge
 
 	sequencer.shBSignal = sequencer.sampleB;
@@ -104,13 +114,15 @@ void ViaGateseq::auxTimer2InterruptCallback() {
 
 	sequencer.processInternalFallingEdge();
 
-	setLogicA(sequencer.aOutput);
-	setAuxLogic(sequencer.logicOutput);
-	if (runtimeDisplay) {
-		setLEDA(sequencer.sampleA);
-		setLEDC(sequencer.aOutput);
-	}
-	sequencer.gateAEvent = SOFT_GATE_LOW * sequencer.andA;
+	//if (sequencer.clockOn) {
+		setLogicA(sequencer.aOutput);
+		setAuxLogic(sequencer.logicOutput);
+		if (runtimeDisplay) {
+			setLEDA(sequencer.sampleA);
+			setLEDC(sequencer.aOutput);
+		}
+		sequencer.gateAEvent = SOFT_GATE_LOW * sequencer.andA;
+	//}
 
 }
 
