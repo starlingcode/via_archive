@@ -196,7 +196,7 @@ void DualEuclidean::processMainRisingEdge(void) {
 	periodCount = TIM5->CNT;
 	TIM5->CNT = 0;
 
-	if (!clockOn || TIM2->CNT > 5000) {
+	if (!clockOn || TIM2->CNT > 20000) {
 
 		TIM17->CR1 &= ~TIM_CR1_CEN;
 		TIM17->CNT = 0;
