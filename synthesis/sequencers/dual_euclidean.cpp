@@ -196,15 +196,17 @@ void DualEuclidean::processMainRisingEdge(void) {
 	periodCount = TIM5->CNT;
 	TIM5->CNT = 0;
 
-	if (!clockOn || TIM2->CNT > 20000) {
+	if (!clockOn || TIM2->CNT > (clockPeriod >> 1)) {
 
+		TIM2->PSC = divider-1;
 		TIM17->CR1 &= ~TIM_CR1_CEN;
 		TIM17->CNT = 0;
-		TIM2->PSC = divider-1;
+
 		TIM2->CNT = 0;
 		TIM2->EGR = TIM_EGR_UG;
 		shuffledStep = 1;
 	}
+
 	skipClock = 1;
 
 	}

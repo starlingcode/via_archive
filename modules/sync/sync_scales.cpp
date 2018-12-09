@@ -12,7 +12,7 @@ void ViaSync::initializeScales() {
    scaleArray[1][3] = &bohlenPeirce;
    scaleArray[2][0] = &modesofroot;
    scaleArray[2][1] = &tetrad_inversions;
-   scaleArray[2][2] = &harm73_75;
+   scaleArray[2][2] = &harmonic_entropy;
    scaleArray[2][3] = &bohlenPeircevoct;
    scaleArray[3][0] = &simpleRhythms;
    scaleArray[3][1] = &simpleRhythms16;
