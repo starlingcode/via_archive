@@ -19,8 +19,8 @@ void ViaScanner::init(void) {
 
 	fillWavetableArray();
 
-	switchWavetableX(wavetableArray[0]);
-	switchWavetableY(wavetableArray[0]);
+	switchWavetableX(wavetableArray[0][0]);
+	switchWavetableY(wavetableArray[1][0]);
 
 	scanner.xTable = (uint32_t *) &wavetableXRead[0][0];
 	scanner.yTable = (uint32_t *) &wavetableYRead[0][0];

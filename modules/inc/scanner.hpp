@@ -170,7 +170,7 @@ public:
 	 */
 
 	// declare an array of pointers to wavetables (stored in flash)
-	const Wavetable * wavetableArray[8];
+	const Wavetable * wavetableArray[2][8];
 
 	// declare arrays to store the active tables
 	uint32_t wavetableXRead[5][517];

@@ -3,14 +3,22 @@
 
 void ViaScanner::fillWavetableArray(void) {
 
-	wavetableArray[0] = &hyperbolic_shapers;
-	wavetableArray[1] = &tanh_res;
-	wavetableArray[2] = &newBounce;
-	wavetableArray[3] = &bessel;
-	wavetableArray[4] = &test_fm;
-	wavetableArray[5] = &soprano257;
-	wavetableArray[6] = &bitcrush;
-	wavetableArray[7] = &new_steps;
+	wavetableArray[0][0] = &hyperbolic_shapers;
+	wavetableArray[0][1] = &tanh_res;
+	wavetableArray[0][2] = &newBounce;
+	wavetableArray[0][3] = &exciteBike;
+	wavetableArray[0][4] = &test_fm;
+	wavetableArray[0][5] = &sin_phase_shift;
+	wavetableArray[0][6] = &bitcrush;
+	wavetableArray[0][7] = &new_steps;
+	wavetableArray[1][0] = &circular_257;
+	wavetableArray[1][1] = &bessel;
+	wavetableArray[1][2] = &additive_tri_to_pulse;
+	wavetableArray[1][3] = &sawBend;
+	wavetableArray[1][4] = &moog5Square;
+	wavetableArray[1][5] = &triangle_comb;
+	wavetableArray[1][6] = &bitcrush;
+	wavetableArray[1][7] = &steps5;
 }
 
 

@@ -91,11 +91,25 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="fr.ac6.managedbuild.config.gnu.cross.lib.debug.1094246754.1582533685" name="/" resourcePath="modules/calib">
+						<toolChain id="fr.ac6.managedbuild.toolchain.gnu.cross.lib.debug.1090664002" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.lib.debug" unusedChildren="">
+							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.1686113443.118704469" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu.1686113443"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.fpu.633440465.784088125" name="Floating point hardware" superClass="fr.ac6.managedbuild.option.gnu.cross.fpu.633440465"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.floatabi.895195158.402538984" name="Floating-point ABI" superClass="fr.ac6.managedbuild.option.gnu.cross.floatabi.895195158"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.board.12352860.594148043" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board.12352860"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.115787609" name="MCU GCC Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.816380121"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.760036976" name="MCU G++ Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.880046504"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.1807777702" name="MCU GCC Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker.1601336688"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.694223759" name="MCU G++ Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.1278595077"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.1520516797" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver.627833076"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.652566786" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.364088919"/>
+						</toolChain>
+					</folderInfo>
 					<sourceEntries>
-						<entry excluding="scanner|ui|synthesis|stm32f373|Drivers|modules|io" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="calib|scanner|ui|synthesis|stm32f373|Drivers|modules|io" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="io"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="modules"/>
+						<entry excluding="gateseq/calib" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="modules"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32f373"/>
 						<entry excluding="cmsis_dsp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="synthesis"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ui"/>
@@ -195,11 +209,25 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="fr.ac6.managedbuild.config.gnu.cross.lib.release.689485941.1755458611" name="/" resourcePath="modules/calib">
+						<toolChain id="fr.ac6.managedbuild.toolchain.gnu.cross.lib.release.1155340697" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.lib.release" unusedChildren="">
+							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.1269282675.1068149494" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu.1269282675"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.fpu.945367386.1431223069" name="Floating point hardware" superClass="fr.ac6.managedbuild.option.gnu.cross.fpu.945367386"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.floatabi.1153077827.688111672" name="Floating-point ABI" superClass="fr.ac6.managedbuild.option.gnu.cross.floatabi.1153077827"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.board.1980012556.652161063" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board.1980012556"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.382771897" name="MCU GCC Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.901848617"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.1458545962" name="MCU G++ Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.1792781427"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.142725580" name="MCU GCC Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker.2077087166"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.1428595348" name="MCU G++ Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.733824106"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.1876336555" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver.1429897128"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.lib.release.404820781" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.lib.release.70458573"/>
+						</toolChain>
+					</folderInfo>
 					<sourceEntries>
-						<entry excluding="scanner|ui|synthesis|stm32f373|Drivers|modules|io" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="calib|scanner|ui|synthesis|stm32f373|Drivers|modules|io" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="io"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="modules"/>
+						<entry excluding="gateseq/calib" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="modules"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32f373"/>
 						<entry excluding="cmsis_dsp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="synthesis"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ui"/>

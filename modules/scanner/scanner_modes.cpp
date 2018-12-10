@@ -9,7 +9,7 @@
 
 void ViaScanner::handleButton4ModeChange(int32_t mode) {
 
-	switchWavetableX(wavetableArray[mode]);
+	switchWavetableX(wavetableArray[0][mode]);
 
 	if (mode >= 6) {
 		scanner.xInterpolateOn = 1;
@@ -21,7 +21,7 @@ void ViaScanner::handleButton4ModeChange(int32_t mode) {
 
 void ViaScanner::handleButton2ModeChange(int32_t mode) {
 
-	switchWavetableY(wavetableArray[mode]);
+	switchWavetableY(wavetableArray[1][mode]);
 
 	if (mode >= 6) {
 		scanner.yInterpolateOn = 1;
@@ -33,7 +33,7 @@ void ViaScanner::handleButton2ModeChange(int32_t mode) {
 
 void ViaScanner::handleButton6ModeChange(int32_t mode) {
 
-	switchWavetableX(wavetableArray[mode]);
+	switchWavetableX(wavetableArray[0][mode]);
 
 	if (mode >= 6) {
 		scanner.xInterpolateOn = 1;
@@ -50,7 +50,7 @@ void ViaScanner::handleButton1ModeChange(int32_t mode) {
 
 void ViaScanner::handleButton5ModeChange(int32_t mode) {
 
-	switchWavetableY(wavetableArray[mode]);
+	switchWavetableY(wavetableArray[1][mode]);
 
 	if (mode >= 6) {
 		scanner.xInterpolateOn = 1;
