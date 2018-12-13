@@ -358,7 +358,7 @@ void ViaMeta::initializeSequence(void) {
 	metaController.parseControls = &MetaController::parseControlsSeq;
 	metaController.generateIncrements = &MetaController::generateIncrementsSeq;
 	metaController.advancePhase = &MetaController::advancePhasePWM;
-	metaController.fm = inputs.cv2Samples;
+	metaController.fm = drumFullScale;
 	metaController.expoFM = drumOff;
 	metaController.loopHandler = &MetaController::handleLoopOff;
 	metaController.loopMode = 0;
@@ -379,7 +379,7 @@ void ViaMeta::initializeComplexLFO(void) {
 	metaController.parseControls = &MetaController::parseControlsSeq;
 	metaController.generateIncrements = &MetaController::generateIncrementsSeq;
 	metaController.advancePhase = &MetaController::advancePhasePWM;
-	metaController.fm = inputs.cv2Samples;
+	metaController.fm = drumFullScale;
 	metaController.expoFM = drumOff;
 	metaController.loopHandler = &MetaController::handleLoopOn;
 	metaController.loopMode = 1;

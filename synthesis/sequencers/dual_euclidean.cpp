@@ -261,7 +261,7 @@ void DualEuclidean::processInternalRisingEdge(void) {
 #ifdef BUILD_F373
 
 	TIM2->ARR = clockPeriod;
-	TIM17->ARR = clockPeriod >> 13;
+	TIM17->ARR = __USAT(clockPeriod >> 13, 16);
 	TIM17->CNT = 1;
 	//if (clockOn) {
 		TIM17->CR1 = TIM_CR1_CEN;

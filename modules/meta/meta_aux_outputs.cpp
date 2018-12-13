@@ -16,8 +16,8 @@ void ViaMeta::oversample(int32_t writeIndex) {
 
 	while (samplesRemaining) {
 
-		outputs.dac1Samples[writeIndex] = 4095 - metaWavetable.signalOut[readIndex];
-		outputs.dac2Samples[writeIndex] = metaWavetable.signalOut[readIndex];
+		outputs.dac1Samples[writeIndex] = (32767 - metaWavetable.signalOut[readIndex]) >> 3;
+		outputs.dac2Samples[writeIndex] = metaWavetable.signalOut[readIndex] >> 3;
 
 		readIndex ++;
 		writeIndex ++;
@@ -100,13 +100,29 @@ void ViaMeta::drumMode(int32_t writeIndex) {
 
 void ViaMeta::calculateLogicAReleaseGate(int32_t writeIndex) {
 
-	int32_t incrementReversed = ((uint32_t) metaController.incrementUsed >> 31);
+	int32_t incrementReversed = (uint32_t) metaController.incrementUsed >> 31;
 
-	int32_t releasing = (metaController.ghostPhase >> 24) | metaController.atB;
+	int32_t releasing = ((metaController.ghostPhase + logicAHysterisis) >> 24) | metaController.atB;
 
 	int32_t attacking = !releasing;
 
-	outputs.logicA[writeIndex] = GET_ALOGIC_MASK((releasing | (attacking & incrementReversed)) * metaController.oscillatorOn);
+	int32_t logicState = (releasing | (attacking & incrementReversed)) * metaController.oscillatorOn;
+
+	int32_t dangerZone = (metaController.ghostPhase > ((1 << 24) - 65536)) & (metaController.ghostPhase < ((1 << 24) + 65536));
+
+	int32_t stateChange = (logicState != lastLogicA);
+
+	int32_t absoluteHysteris = dangerZone * stateChange * 65536;
+
+	if (attacking) {
+		logicAHysterisis = dangerZone * -absoluteHysteris;
+	} else {
+		logicAHysterisis = dangerZone * absoluteHysteris;
+	}
+
+	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(logicState);
+
+	lastLogicA = logicState;
 
 }
 
@@ -150,7 +166,7 @@ void ViaMeta::calculateDac3Contour(int32_t writeIndex) {
 
 	while (samplesRemaining) {
 
-		outputs.dac3Samples[writeIndex] = metaWavetable.signalOut[readIndex];
+		outputs.dac3Samples[writeIndex] = metaWavetable.signalOut[readIndex] >> 3;
 
 		samplesRemaining --;
 		readIndex ++;

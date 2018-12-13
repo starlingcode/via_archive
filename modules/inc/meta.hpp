@@ -201,6 +201,10 @@ public:
 	void calculateLogicAReleaseGate(int32_t writeIndex);
 	void calculateLogicAAttackGate(int32_t writeIndex);
 
+	int32_t lastLogicA = 0;
+	int32_t logicAStateChange = 0;
+	int32_t logicAHysterisis = 0;
+
 	void (ViaMeta::*calculateSH)(int32_t writeIndex);
 	// No S&H
 	void calculateSHMode1(int32_t writeIndex);

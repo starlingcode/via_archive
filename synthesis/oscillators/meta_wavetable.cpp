@@ -78,7 +78,7 @@ void MetaWavetable::advanceOversampled(uint32_t * wavetable) {
 #define phaseFrac ((ghostPhase >> 7) & 0xFFFF)
 		signalOut[writeIndex] = fast_15_16_bilerp_prediff(
 				wavetable1[leftSample], wavetable1[leftSample + 1], morphFrac,
-				phaseFrac) >> 3;
+				phaseFrac);
 		writeIndex++;
 		samplesRemaining--;
 	}
@@ -91,7 +91,7 @@ void MetaWavetable::advanceOversampled(uint32_t * wavetable) {
 	leftSample = ghostPhase >> 23;
 	signalOut[writeIndex] = fast_15_16_bilerp_prediff_delta(
 			wavetable1[leftSample], wavetable1[leftSample + 1], morphFrac,
-			phaseFrac, &delta) >> 3;
+			phaseFrac, &delta);
 
 }
 
