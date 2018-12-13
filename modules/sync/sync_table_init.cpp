@@ -3,22 +3,22 @@
 
 void ViaSync::fillWavetableArray(void) {
 
-	wavetableArray[	0][0] = &tenor257;
-	wavetableArray[	0][1] = &soprano257;
-	wavetableArray[	0][2] = &impevens;
-	wavetableArray[	0][3] = &linwavefold_257;
-	wavetableArray[	1][0] = &skipSaw;
-	wavetableArray[	1][1] = &sinwavefold_257;
+	wavetableArray[	0][0] = &ascendingAdditiveClamp;
+	wavetableArray[	0][1] = &linwavefold_257;
+	wavetableArray[	0][2] = &newBounce;
+	wavetableArray[	0][3] = &sharpExpoAsym;
+	wavetableArray[	1][0] = &impevens;
+	wavetableArray[	1][1] = &perlin;
 	wavetableArray[	1][2] = &additive_tri_to_pulse;
-	wavetableArray[	1][3] = &newBounce;
+	wavetableArray[	1][3] = &csound_formants;
 	wavetableArray[	2][0] = &triOdd;
 	wavetableArray[	2][1] = &moogSquare;
-	wavetableArray[	2][2] = &algerian;
-	wavetableArray[	2][3] = &exciteBike;
-	wavetableArray[	3][0] = &testRMS;
+	wavetableArray[	2][2] = &test_fm;
+	wavetableArray[	2][3] = &trains;
+	wavetableArray[	3][0] = &sharpExpoAsym;
 	wavetableArray[	3][1] = &gamma257;
-	wavetableArray[	3][2] = &bounce_257;
-	wavetableArray[	3][3] = &circular_257;
+	wavetableArray[	3][2] = &exciteBike;
+	wavetableArray[	3][3] = &steps;
 	wavetableArrayGlobal[0] = &linwavefold_257;
 	wavetableArrayGlobal[1] = &sinwavefold_257;
 	wavetableArrayGlobal[2] = &newBounce;

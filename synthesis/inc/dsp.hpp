@@ -781,6 +781,73 @@ static inline int32_t getSampleQuinticSplineDeltaValue(uint32_t phase, uint32_t 
 	return __USAT(out, 15);
 }
 
+static inline int32_t getSampleQuinticSplineDeltaValue(uint32_t phase, uint32_t morph,
+		uint32_t *fullTableHoldArray, int32_t *delta, uint32_t interpOff) {
+
+	/* in this function, we use our phase position to get the sample to give to our dacs using a quintic spline interpolation technique
+	 essentially, we need to get 6 pairs of sample values and two "fractional arguments" (where are we at in between those sample values)
+	 one fractional argument determines the relative position in a linear interpolation between the sample values (morph)
+	 the other is the fractional phase argument used in the interpolation calculation
+	 */
+
+	uint32_t LnSample; // indicates the left most sample in the neighborhood of sample values around the phase pointer
+	uint32_t LnFamily; // indicates the nearest neighbor (wavetable) to our morph value in the family
+	uint32_t phaseFrac; // indicates the fractional distance between the nearest sample values in terms of phase
+	uint32_t morphFrac; // indicates the fractional distance between our nearest neighbors in the family
+	uint32_t * leftIndex;
+
+	// we do a lot of tricky bitshifting to take advantage of the structure of a 16 bit fixed point number
+	// truncate phase then add two to find the left neighboring sample of the phase pointer
+
+	LnSample = phase >> 16;
+
+	// bit shifting to divide by the correct power of two takes a 12 bit number (our morph) and returns the a quotient in the range of our family size
+
+	LnFamily = morph >> 16;
+
+	leftIndex = (fullTableHoldArray + LnFamily * 517) + LnSample;
+
+	// determine the fractional part of our phase phase by masking off the integer
+
+	phaseFrac = (0xFFFF & phase);
+
+	// we have to calculate the fractional portion and get it up to full scale q16
+
+	morphFrac = (morph & 0xFFFF);
+
+	// perform the 6 linear interpolations to get the sample values and apply morph
+	// TODO track delta change in the phase event array
+
+	int32_t sample0 = fast_15_16_lerp_prediff(*leftIndex, morphFrac);
+	int32_t sample1 = fast_15_16_lerp_prediff(*(leftIndex + 1), morphFrac);
+	int32_t sample2 = fast_15_16_lerp_prediff(*(leftIndex + 2), morphFrac);
+	int32_t sample3 = fast_15_16_lerp_prediff(*(leftIndex + 3), morphFrac);
+	int32_t sample4 = fast_15_16_lerp_prediff(*(leftIndex + 4), morphFrac);
+	int32_t sample5 = fast_15_16_lerp_prediff(*(leftIndex + 5), morphFrac);
+
+	// a version of the spline forumula from Josh Scholar on the musicdsp mailing list
+	// https://web.archive.org/web/20170705065209/http://www.musicdsp.org/showArchiveComment.php?ArchiveID=60
+
+	int32_t out = (sample2 + fix24_mul(699051, fix16_mul(phaseFrac, ((sample3-sample1)*16 + (sample0-sample4)*2
+					+ fix16_mul(phaseFrac, ((sample3+sample1)*16 - sample0 - sample2*30 - sample4
+							+ fix16_mul(phaseFrac, (sample3*66 - sample2*70 - sample4*33 + sample1*39 + sample5*7 - sample0*9
+									+ fix16_mul(phaseFrac, ( sample2*126 - sample3*124 + sample4*61 - sample1*64 - sample5*12 + sample0*13
+											+ fix16_mul(phaseFrac, ((sample3-sample2)*50 + (sample1-sample4)*25 + (sample5-sample0) * 5
+											))
+									))
+							))
+					))
+			))
+		));
+
+	out += (sample2 - out) * interpOff;
+
+	*delta = (sample3 - sample2);
+
+	return __USAT(out, 15);
+}
+
+
 /*
  *
  * Fold/wrap
