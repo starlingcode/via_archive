@@ -19,6 +19,9 @@ void ViaSync::mainRisingEdgeCallback(void) {
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(pllController.ratioChange);
 	if (runtimeDisplay & showYChange) {
 		setLEDD(pllController.yIndexChange);
+#ifdef BUILD_F373
+		TIM17->CR1 |= TIM_CR1_CEN;
+#endif
 	}
 	pllController.tapTempo = 0;
 
@@ -27,10 +30,6 @@ void ViaSync::mainRisingEdgeCallback(void) {
 void ViaSync::mainFallingEdgeCallback(void) {
 
 	pllController.ratioChange = 0;
-	pllController.yIndexChange = 0;
-	if (runtimeDisplay & showYChange) {
-		setLEDD(pllController.yIndexChange);
-	}
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(pllController.ratioChange);
 
 }
@@ -91,6 +90,13 @@ void ViaSync::buttonPressedCallback(void) {
 void ViaSync::buttonReleasedCallback(void) {
 
 	this->syncUI.dispatch(EXPAND_SW_OFF_SIG);
+
+}
+
+void ViaSync::auxTimer1InterruptCallback(void) {
+
+	pllController.yIndexChange = 0;
+	setLEDD(pllController.yIndexChange);
 
 }
 

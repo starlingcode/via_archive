@@ -171,6 +171,7 @@ public:
 
 	void initializeScales(void);
 
+
 	/*
 	 *
 	 * Mode functions
@@ -189,6 +190,25 @@ public:
 
 	void calculateLogicAGate(int32_t writeIndex);
 	void calculateLogicADelta(int32_t writeIndex);
+	int32_t lastLogicAState = 1;
+	int32_t logicATransitionSample = 0;
+	int32_t logicAOutputStable = 0;
+
+	int32_t logicAHysterisis(int32_t thisLogicAState, int32_t sample) {
+
+		if (logicAOutputStable) {
+			logicAOutputStable = ((lastLogicAState - thisLogicAState) == 0);
+			logicATransitionSample = sample;
+			lastLogicAState = thisLogicAState;
+			return thisLogicAState;
+		} else {
+			logicAOutputStable = abs(sample - logicATransitionSample) > 1;
+			logicAOutputStable &= (sample - logicATransitionSample) != 511;
+			lastLogicAState = logicAOutputStable ? thisLogicAState : lastLogicAState;
+			return lastLogicAState;
+		}
+
+	}
 
 	void (ViaSync::*calculateSH)(int32_t writeIndex);
 	// No S&H
@@ -243,6 +263,8 @@ public:
 	void halfTransferCallback(void);
 	void transferCompleteCallback(void);
 	void slowConversionCallback(void);
+
+	void auxTimer1InterruptCallback(void);
 
 	void ui_dispatch(int32_t sig) {
 		syncUI.dispatch(sig);

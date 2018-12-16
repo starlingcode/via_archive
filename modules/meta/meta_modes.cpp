@@ -169,6 +169,20 @@ void ViaMeta::handleButton6ModeChange(int32_t mode) {
 
 void ViaMeta::handleAux1ModeChange(int32_t mode) {
 
+	switch (mode) {
+	case drumPhasor:
+		calculateDac3 = &ViaMeta::calculateDac3Phasor;
+		break;
+	case drumContour:
+		calculateDac3 = &ViaMeta::calculateDac3Contour;
+		break;
+	case drumEnv:
+		calculateDac3 = &ViaMeta::calculateDac3DrumEnv;
+		break;
+	case noise:
+		calculateDac3 = &ViaMeta::calculateDac3Noise;
+	}
+
 
 }
 
@@ -284,7 +298,7 @@ void ViaMeta::initializeDrum(void) {
 	outputStage = &ViaMeta::drumMode;
 
 	handleButton4ModeChange(0);
-
+	handleAux1ModeChange(metaUI.DRUM_AUX_MODE);
 	handleAux3ModeChange(metaUI.DRUM_MODE);
 }
 void ViaMeta::initializeOscillator(void) {

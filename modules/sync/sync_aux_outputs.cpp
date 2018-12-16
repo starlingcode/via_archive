@@ -9,34 +9,22 @@
 
 void ViaSync::calculateLogicAGate(int32_t writeIndex) {
 
-		switch (syncWavetable.phaseEvent) {
-			//no logic events
-			case 0:
-				outputs.logicA[writeIndex] = GPIO_NOP;
-				break;
-			//dummy at a handling
-			case AT_A_FROM_RELEASE:
-			case AT_A_FROM_ATTACK:
-				outputs.logicA[writeIndex] = ALOGIC_LOW_MASK;
-				break;
-			//dummy at b handling
-			case AT_B_FROM_RELEASE:
-			case AT_B_FROM_ATTACK:
-				outputs.logicA[writeIndex] = ALOGIC_HIGH_MASK;
-				break;
-			default:
-				break;
-		}
+	int32_t thisSample = syncWavetable.ghostPhase >> 16;
+
+	int32_t thisState = thisSample >> 8;
+
+	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(logicAHysterisis(thisState, thisSample));
 
 }
 
 void ViaSync::calculateLogicADelta(int32_t writeIndex) {
 
-//	if (syncWavetable.reversed) {
-//		outputs.logicA[writeIndex] = GET_ALOGIC_MASK(!syncWavetable.delta);
-//	} else {
-		outputs.logicA[writeIndex] = GET_ALOGIC_MASK(syncWavetable.delta);
-//	}
+	int32_t thisState = (uint32_t) syncWavetable.delta >> 31;
+
+	int32_t thisSample = syncWavetable.ghostPhase >> 16;
+
+
+	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(logicAHysterisis(thisState, thisSample));
 
 }
 
@@ -58,6 +46,7 @@ void ViaSync::calculateDac3Phasor(int32_t writeIndex) {
 		samplesRemaining --;
 
 	}
+
 }
 
 void ViaSync::calculateDac3Contour(int32_t writeIndex) {

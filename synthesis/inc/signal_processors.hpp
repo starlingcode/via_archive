@@ -34,34 +34,83 @@ class ThreeAxisScanner {
 
 	inline void scanTerrainDifference(void);
 
-	int32_t xHemisphereLast;
-	int32_t yHemisphereLast;
-	int32_t signalCompare;
-	int32_t xDeltaLast;
-	int32_t yDeltaLast;
 	int32_t xReversed;
 	int32_t yReversed;
 
-	int32_t getDeltaHysterisis(int32_t delta, int32_t last) {
+	int32_t lastDeltaXState = 1;
+	int32_t deltaXTransitionSample = 0;
+	int32_t deltaXOutputStable = 0;
 
-		if (last && (delta < -500)) {
-			return 0;
-		} else if (!last && delta > 500) {
-			return 1;
+	int32_t deltaXHysterisis(int32_t thisDeltaState, int32_t sample) {
+
+		if (deltaXOutputStable) {
+			deltaXOutputStable = ((lastDeltaXState - thisDeltaState) == 0);
+			deltaXTransitionSample = sample;
+			lastDeltaXState = thisDeltaState;
+			return thisDeltaState;
 		} else {
-			return last;
+			deltaXOutputStable = (abs(sample - deltaXTransitionSample) > 1);
+			lastDeltaXState = deltaXOutputStable ? thisDeltaState : lastDeltaXState;
+			return lastDeltaXState;
 		}
 
 	}
 
-	int32_t getHemisphereHysteresis(int32_t signal, int32_t last) {
-		if (last && (signal < (1 << 14) - 5000)) {
-			return 0;
-		} else if (!last && signal > (1 << 14) + 5000) {
-			return 1;
+	int32_t lastDeltaYState = 1;
+	int32_t deltaYTransitionSample = 0;
+	int32_t deltaYOutputStable = 0;
+
+	int32_t deltaYHysterisis(int32_t thisDeltaState, int32_t sample) {
+
+		if (deltaYOutputStable) {
+			deltaYOutputStable = ((lastDeltaYState - thisDeltaState) == 0);
+			deltaYTransitionSample = sample;
+			lastDeltaYState = thisDeltaState;
+			return thisDeltaState;
 		} else {
-			return last;
+			deltaYOutputStable = (abs(sample - deltaYTransitionSample) > 1);
+			lastDeltaYState = deltaYOutputStable ? thisDeltaState : lastDeltaYState;
+			return lastDeltaYState;
 		}
+
+	}
+
+	int32_t lastHemisphereXState = 1;
+	int32_t hemisphereXTransitionSample = 0;
+	int32_t hemisphereXOutputStable = 0;
+
+	int32_t hemisphereXHysterisis(int32_t thisHemisphereState, int32_t sample) {
+
+		if (hemisphereXOutputStable) {
+			hemisphereXOutputStable = ((lastHemisphereXState - thisHemisphereState) == 0);
+			hemisphereXTransitionSample = sample;
+			lastHemisphereXState = thisHemisphereState;
+			return thisHemisphereState;
+		} else {
+			hemisphereXOutputStable = (abs(sample - hemisphereXTransitionSample) > 1);
+			lastHemisphereXState = hemisphereXOutputStable ? thisHemisphereState : lastHemisphereXState;
+			return lastHemisphereXState;
+		}
+
+	}
+
+	int32_t lastHemisphereYState = 1;
+	int32_t hemisphereYTransitionSample = 0;
+	int32_t hemisphereYOutputStable = 0;
+
+	int32_t hemisphereYHysterisis(int32_t thisHemisphereState, int32_t sample) {
+
+		if (hemisphereYOutputStable) {
+			hemisphereYOutputStable = ((lastHemisphereYState - thisHemisphereState) == 0);
+			hemisphereYTransitionSample = sample;
+			lastHemisphereYState = thisHemisphereState;
+			return thisHemisphereState;
+		} else {
+			hemisphereYOutputStable = (abs(sample - hemisphereYTransitionSample) > 1);
+			lastHemisphereYState = hemisphereYOutputStable ? thisHemisphereState : lastHemisphereYState;
+			return lastHemisphereYState;
+		}
+
 	}
 
 	int32_t compareWithHysterisis(int32_t xSignal, int32_t ySignal, int32_t yGreater) {

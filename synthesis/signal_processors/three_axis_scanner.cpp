@@ -23,6 +23,9 @@ void ThreeAxisScanner::fillBuffer() {
 	int32_t xIncrement = (xInput - lastXInput) * reverse;
 	int32_t yIncrement = (yInput - lastYInput) * reverse;
 
+	xReversed = (uint32_t) xIncrement >> 31;
+	yReversed = (uint32_t) yIncrement >> 31;
+
 	if (abs(xIncrement) > 512 || abs(yIncrement) > 512) {
 		oversample = 1;
 	} else {
@@ -99,12 +102,18 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 
 	int32_t samplesRemaining = bufferSize - 1;
 
+	int32_t xIndexAtLogic;
+	int32_t yIndexAtLogic;
+
 	if (oversample == 0) {
 
 		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) xTable, &xDelta, xInterpolateOn);
 		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) yTable, &yDelta, yInterpolateOn);
+
+		xIndexAtLogic = xIndexBuffer[writeIndex] >> 16;
+		yIndexAtLogic = yIndexBuffer[writeIndex] >> 16;
 
 		int32_t mainScan = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 11) + 2047;
 
@@ -142,12 +151,14 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 		}
 
 		leftSample = xIndexBuffer[writeIndex] >> 16;
+		xIndexAtLogic = leftSample;
 		phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
 		morphFrac =  zIndex & 0xFFFF;
 
 		xSample = fast_15_16_bilerp_prediff_deltaValue(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac, &xDelta);
 
 		leftSample = yIndexBuffer[writeIndex]>> 16;
+		yIndexAtLogic = leftSample;
 		phaseFrac = (yIndexBuffer[writeIndex]) & 0xFFFF;
 
 		ySample = fast_15_16_bilerp_prediff_deltaValue(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac, &yDelta);
@@ -156,14 +167,20 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 		locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 11) + 2047;
 	}
 
-	xHemisphereLast = getHemisphereHysteresis(xSample, xHemisphereLast);
-	yHemisphereLast = getHemisphereHysteresis(ySample, yHemisphereLast);
+	int32_t xHemisphere = xSample >> 11;
+	int32_t yHemisphere = ySample >> 11;
 
-	xDeltaLast = getDeltaHysterisis(xDelta, xDeltaLast);
-	yDeltaLast = getDeltaHysterisis(yDelta, yDeltaLast);
+	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
+	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
 
-	hemisphereBlend = xHemisphereLast | yHemisphereLast;
-	deltaBlend = xDeltaLast | yDeltaLast;
+	xDelta = xReversed ? !xDelta : xDelta;
+	yDelta = yReversed ? !yDelta : yDelta;
+
+	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
+	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
+
+	hemisphereBlend = xHemisphere | yHemisphere;
+	deltaBlend = xDelta | yDelta;
 
 }
 
@@ -186,12 +203,18 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 	int32_t morphFrac;
 	int32_t phaseFrac;
 
+	int32_t xIndexAtLogic;
+	int32_t yIndexAtLogic;
+
 	if (oversample == 0) {
 
 		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) xTable, &xDelta, xInterpolateOn);
 		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) yTable, &yDelta, yInterpolateOn);
+
+		xIndexAtLogic = xIndexBuffer[writeIndex] >> 16;
+		yIndexAtLogic = yIndexBuffer[writeIndex] >> 16;
 
 		int32_t mainScan = (xSample * ySample) >> 18; //15 bit fixed point multiply and right shift by 3
 
@@ -229,12 +252,14 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 		}
 
 		leftSample = xIndexBuffer[writeIndex]>> 16;
+		xIndexAtLogic = leftSample;
 		phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
 		morphFrac =  zIndex & 0xFFFF;
 
 		xSample = fast_15_16_bilerp_prediff_deltaValue(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac, &xDelta);
 
 		leftSample = yIndexBuffer[writeIndex]>> 16;
+		yIndexAtLogic = leftSample;
 		phaseFrac = (yIndexBuffer[writeIndex]) & 0xFFFF;
 
 		ySample = fast_15_16_bilerp_prediff_deltaValue(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac, &yDelta);
@@ -244,14 +269,20 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 
 	}
 
-	xHemisphereLast = getHemisphereHysteresis(xSample, xHemisphereLast);
-	yHemisphereLast = getHemisphereHysteresis(ySample, yHemisphereLast);
+	int32_t xHemisphere = xSample >> 11;
+	int32_t yHemisphere = ySample >> 11;
 
-	xDeltaLast = getDeltaHysterisis(xDelta, xDeltaLast);
-	yDeltaLast = getDeltaHysterisis(yDelta, yDeltaLast);
+	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
+	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
 
-	hemisphereBlend = xHemisphereLast & yHemisphereLast;
-	deltaBlend = xDeltaLast & yDeltaLast;
+	xDelta = xReversed ? !xDelta : xDelta;
+	yDelta = yReversed ? !yDelta : yDelta;
+
+	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
+	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
+
+	hemisphereBlend = xHemisphere & yHemisphere;
+	deltaBlend = xDelta & yDelta;
 
 
 }
@@ -275,12 +306,18 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 	int32_t morphFrac;
 	int32_t phaseFrac;
 
+	int32_t xIndexAtLogic;
+	int32_t yIndexAtLogic;
+
 	if (oversample == 0) {
 
 		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) xTable, &xDelta, xInterpolateOn);
 		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) yTable, &yDelta, yInterpolateOn);
+
+		xIndexAtLogic = xIndexBuffer[writeIndex] >> 16;
+		yIndexAtLogic = yIndexBuffer[writeIndex] >> 16;
 
 		int32_t mainScan = abs((xSample - ySample) >> 3); //15 bit fixed point multiply and right shift by 3
 
@@ -319,12 +356,14 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 		}
 
 		leftSample = xIndexBuffer[writeIndex]>> 16;
+		xIndexAtLogic = leftSample;
 		phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
 		morphFrac =  zIndex & 0xFFFF;
 
 		xSample = fast_15_16_bilerp_prediff_deltaValue(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac, &xDelta);
 
 		leftSample = yIndexBuffer[writeIndex]>> 16;
+		yIndexAtLogic = leftSample;
 		phaseFrac = (yIndexBuffer[writeIndex]) & 0xFFFF;
 
 		ySample = fast_15_16_bilerp_prediff_deltaValue(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac, &yDelta);
@@ -334,14 +373,20 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 
 	}
 
-	xHemisphereLast = getHemisphereHysteresis(xSample, xHemisphereLast);
-	yHemisphereLast = getHemisphereHysteresis(ySample, yHemisphereLast);
+	int32_t xHemisphere = xSample >> 11;
+	int32_t yHemisphere = ySample >> 11;
 
-	xDeltaLast = getDeltaHysterisis(xDelta, xDeltaLast);
-	yDeltaLast = getDeltaHysterisis(yDelta, yDeltaLast);
+	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
+	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
 
-	hemisphereBlend = xHemisphereLast ^ yHemisphereLast;
-	deltaBlend = xDeltaLast ^ yDeltaLast;
+	xDelta = xReversed ? !xDelta : xDelta;
+	yDelta = yReversed ? !yDelta : yDelta;
+
+	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
+	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
+
+	hemisphereBlend = xHemisphere ^ yHemisphere;
+	deltaBlend = xDelta ^ xDelta;
 
 }
 
@@ -364,12 +409,18 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 	int32_t morphFrac;
 	int32_t phaseFrac;
 
+	int32_t xIndexAtLogic;
+	int32_t yIndexAtLogic;
+
 	if (oversample == 0) {
 
 		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) xTable, &xDelta, xInterpolateOn);
 		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
 				(uint32_t *) yTable, &yDelta, yInterpolateOn);
+
+		xIndexAtLogic = xIndexBuffer[writeIndex] >> 16;
+		yIndexAtLogic = yIndexBuffer[writeIndex] >> 16;
 
 		int32_t mainScan = (ySample > xSample) ? ySample >> 3 : xSample >> 3; //15 bit fixed point multiply and right shift by 3
 
@@ -408,12 +459,14 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 		}
 
 		leftSample = xIndexBuffer[writeIndex]>> 16;
+		xIndexAtLogic = leftSample;
 		phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
 		morphFrac =  zIndex & 0xFFFF;
 
 		xSample = fast_15_16_bilerp_prediff_deltaValue(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac, &xDelta);
 
 		leftSample = yIndexBuffer[writeIndex]>> 16;
+		yIndexAtLogic = leftSample;
 		phaseFrac = (yIndexBuffer[writeIndex]) & 0xFFFF;
 
 		ySample = fast_15_16_bilerp_prediff_deltaValue(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac, &yDelta);
@@ -423,13 +476,19 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 
 	}
 
-	xHemisphereLast = getHemisphereHysteresis(xSample, xHemisphereLast);
-	yHemisphereLast = getHemisphereHysteresis(ySample, yHemisphereLast);
+	int32_t xHemisphere = xSample >> 11;
+	int32_t yHemisphere = ySample >> 11;
 
-	xDeltaLast = getDeltaHysterisis(xDelta, xDeltaLast);
-	yDeltaLast = getDeltaHysterisis(yDelta, yDeltaLast);
+	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
+	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
 
-	hemisphereBlend = (yHemisphereLast > xHemisphereLast);
-	deltaBlend = (yDeltaLast > xDeltaLast);
+	xDelta = xReversed ? !xDelta : xDelta;
+	yDelta = yReversed ? !yDelta : yDelta;
+
+	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
+	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
+
+	hemisphereBlend = (yHemisphere > xHemisphere);
+	deltaBlend = (yDelta > xDelta);
 
 }

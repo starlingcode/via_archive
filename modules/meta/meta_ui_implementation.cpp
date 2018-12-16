@@ -64,7 +64,7 @@ void ViaMeta::ViaMetaUI::recallModuleState(void) {
 	this_module.metaUI.button4Mode %= numButton4Modes;
 	this_module.metaUI.button5Mode %= numButton5Modes;
 	this_module.metaUI.button6Mode %= numButton6Modes;
-	this_module.metaUI.aux1Mode = 0;
+	this_module.metaUI.aux1Mode %= numAux1Modes;
 	this_module.metaUI.aux2Mode %= numAux2Modes;
 	this_module.metaUI.aux3Mode %= numAux3Modes;
 	this_module.metaUI.aux4Mode %= numAux4Modes;
@@ -165,7 +165,9 @@ void ViaMeta::ViaMetaUI::button6EnterMenuCallback(void) {
 	resetTimerMenu();
 }
 void ViaMeta::ViaMetaUI::aux1EnterMenuCallback(void) {
-	transition(&ViaMeta::ViaMetaUI::button5Menu);
+	this_module.clearLEDs();
+	this_module.setLEDs(DRUM_AUX_MODE);
+	resetTimerMenu();
 }
 void ViaMeta::ViaMetaUI::aux2EnterMenuCallback(void) {
 	this_module.clearLEDs();
@@ -184,8 +186,12 @@ void ViaMeta::ViaMetaUI::aux3EnterMenuCallback(void) {
 }
 void ViaMeta::ViaMetaUI::aux4EnterMenuCallback(void) {
 	this_module.clearLEDs();
-	this_module.setLEDs(DAC_3_MODE);
-	resetTimerMenu();
+	if (!LOOP_MODE && !FREQ_MODE) {
+		this->transition(&ViaMeta::ViaMetaUI::aux1Menu);
+	} else {
+		this_module.setLEDs(DAC_3_MODE);
+		resetTimerMenu();
+	}
 }
 
 void ViaMeta::ViaMetaUI::button1TapCallback(void) {
@@ -232,7 +238,11 @@ void ViaMeta::ViaMetaUI::button6TapCallback(void) {
 }
 
 void ViaMeta::ViaMetaUI::aux1TapCallback(void) {
-	transition(&ViaMeta::ViaMetaUI::button5Menu);
+	DRUM_AUX_MODE = incrementModeAndStore(DRUM_AUX_MODE, AUX_MODE1_MASK, numAux1Modes, AUX_MODE1_SHIFT);
+	this_module.handleAux1ModeChange(DRUM_AUX_MODE);
+	this_module.clearLEDs();
+	this_module.setLEDs(DRUM_AUX_MODE);
+	transition(&ViaMeta::ViaMetaUI::newAuxModeMenu);
 }
 
 void ViaMeta::ViaMetaUI::aux2TapCallback(void) {

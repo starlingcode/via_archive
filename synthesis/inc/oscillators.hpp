@@ -50,20 +50,6 @@ public:
 	int32_t increment = 0;
 	int32_t morphBase = 0;
 
-	int32_t xDeltaLast = 0;
-
-	int32_t getDeltaHysterisis(int32_t delta, int32_t last) {
-
-		if (last && (delta < -100)) {
-			return 0;
-		} else if (!last && delta > 100) {
-			return 1;
-		} else {
-			return last;
-		}
-
-	}
-
 	// results
 	int32_t phaseMod = 0;
 	int32_t phase = 0;
@@ -200,6 +186,47 @@ public:
 	uint32_t phaseReset = 0;
 	uint32_t ratioChange = 0;
 	uint32_t yIndexChange = 0;
+
+	int32_t lastRatioX = 1;
+	int32_t ratioXTransitionPoint = 0;
+	int32_t ratioXStable = 0;
+
+	int32_t ratioXHysterisis(int32_t thisRatioX, int32_t control) {
+
+		if (ratioXStable) {
+			ratioXStable = ((lastRatioX - thisRatioX) == 0);
+			ratioXTransitionPoint = control & 0b111111100000;
+			lastRatioX = thisRatioX;
+			return thisRatioX;
+		} else {
+			ratioXStable = abs(control - ratioXTransitionPoint) > 8;
+			lastRatioX = ratioXStable ? thisRatioX : lastRatioX;
+			return lastRatioX;
+		}
+
+	}
+
+	int32_t lastRatioY = 1;
+	int32_t ratioYTransitionPoint = 0;
+	int32_t ratioYStable = 0;
+
+	int32_t ratioYHysterisis(int32_t control, int32_t shiftAmount) {
+
+		int32_t thisRatioY = control >> shiftAmount;
+
+		if (ratioYStable) {
+			ratioYStable = ((lastRatioY - thisRatioY) == 0);
+			ratioYTransitionPoint = thisRatioY << shiftAmount;
+			lastRatioY = thisRatioY;
+			return thisRatioY;
+		} else {
+			ratioYStable = abs(control - ratioYTransitionPoint) > 8;
+			lastRatioY = ratioYStable ? thisRatioY : lastRatioY;
+			return lastRatioY;
+		}
+
+	}
+
 
 	void parseControls(ViaControls * controls, ViaInputStreams * input);
 

@@ -37,6 +37,7 @@ extern "C" {
 #define TRIG_MODE button4Mode
 #define FREQ_MODE button3Mode
 #define LOOP_MODE button6Mode
+#define DRUM_AUX_MODE aux1Mode
 #define LOGIC_A_MODE aux2Mode
 #define DRUM_MODE aux3Mode
 #define DAC_3_MODE aux4Mode
@@ -48,7 +49,7 @@ extern "C" {
 #define numButton4Modes 5
 #define numButton5Modes 8
 #define numButton6Modes 2
-#define numAux1Modes 0
+#define numAux1Modes 4
 #define numAux2Modes 2
 #define numAux3Modes 4
 #define numAux4Modes 2
@@ -59,7 +60,7 @@ enum meta_button3Modes {audio, env, seq};
 enum meta_button4Modes {noretrigger, meta_hardsync, nongatedretrigger, gated, meta_pendulum};
 enum meta_button5Modes {pairedWithButton2};
 enum meta_button6Modes {noloop, looping};
-enum meta_aux1Modes {aux1NotUsed};
+enum meta_aux1Modes {drumPhasor, drumContour, drumEnv, noise};
 enum meta_aux2Modes {releaseGate, attackGate};
 enum meta_aux3Modes {pitchMorphAmp, morphAmp, pitchAmp, amp};
 enum meta_aux4Modes {phasor, contour};
@@ -193,6 +194,8 @@ public:
 
 	void calculateDac3Phasor(int32_t writeIndex);
 	void calculateDac3Contour(int32_t writeIndex);
+	void calculateDac3DrumEnv(int32_t writeIndex);
+	void calculateDac3Noise(int32_t writeIndex);
 	void calculateDac3PhasorEnv(int32_t writeIndex);
 	void calculateDac3ContourEnv(int32_t writeIndex);
 
@@ -200,10 +203,44 @@ public:
 
 	void calculateLogicAReleaseGate(int32_t writeIndex);
 	void calculateLogicAAttackGate(int32_t writeIndex);
+	int32_t lastLogicAState = 1;
+	int32_t logicATransitionSample = 0;
+	int32_t logicAOutputStable = 0;
 
-	int32_t lastLogicA = 0;
-	int32_t logicAStateChange = 0;
-	int32_t logicAHysterisis = 0;
+	int32_t logicAHysterisis(int32_t thisLogicAState, int32_t sample) {
+
+		if (logicAOutputStable) {
+			logicAOutputStable = ((lastLogicAState - thisLogicAState) == 0);
+			logicATransitionSample = sample;
+			lastLogicAState = thisLogicAState;
+			return thisLogicAState;
+		} else {
+			logicAOutputStable = (abs(sample - logicATransitionSample) > 1);
+			lastLogicAState = logicAOutputStable ? thisLogicAState : lastLogicAState;
+			return lastLogicAState;
+		}
+
+	}
+
+	void calculateDelta(int32_t writeIndex);
+	int32_t lastDeltaState = 1;
+	int32_t deltaTransitionSample = 0;
+	int32_t deltaOutputStable = 0;
+
+	int32_t deltaHysterisis(int32_t thisDeltaState, int32_t sample) {
+
+		if (deltaOutputStable) {
+			deltaOutputStable = ((lastDeltaState - thisDeltaState) == 0);
+			deltaTransitionSample = sample;
+			lastDeltaState = thisDeltaState;
+			return thisDeltaState;
+		} else {
+			deltaOutputStable = (abs(sample - deltaTransitionSample) > 1);
+			lastDeltaState = deltaOutputStable ? thisDeltaState : lastDeltaState;
+			return lastDeltaState;
+		}
+
+	}
 
 	void (ViaMeta::*calculateSH)(int32_t writeIndex);
 	// No S&H

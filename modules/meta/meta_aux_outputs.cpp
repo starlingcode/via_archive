@@ -102,27 +102,15 @@ void ViaMeta::calculateLogicAReleaseGate(int32_t writeIndex) {
 
 	int32_t incrementReversed = (uint32_t) metaController.incrementUsed >> 31;
 
-	int32_t releasing = ((metaController.ghostPhase + logicAHysterisis) >> 24) | metaController.atB;
+	int32_t thisSample = metaController.ghostPhase >> 16;
+
+	int32_t releasing = (thisSample >> 8) | metaController.atB;
 
 	int32_t attacking = !releasing;
 
-	int32_t logicState = (releasing | (attacking & incrementReversed)) * metaController.oscillatorOn;
+	int32_t thisState = (releasing | (attacking & incrementReversed)) * metaController.oscillatorOn;
 
-	int32_t dangerZone = (metaController.ghostPhase > ((1 << 24) - 65536)) & (metaController.ghostPhase < ((1 << 24) + 65536));
-
-	int32_t stateChange = (logicState != lastLogicA);
-
-	int32_t absoluteHysteris = dangerZone * stateChange * 65536;
-
-	if (attacking) {
-		logicAHysterisis = dangerZone * -absoluteHysteris;
-	} else {
-		logicAHysterisis = dangerZone * absoluteHysteris;
-	}
-
-	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(logicState);
-
-	lastLogicA = logicState;
+	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(logicAHysterisis(thisState, thisSample));
 
 }
 
@@ -130,12 +118,27 @@ void ViaMeta::calculateLogicAAttackGate(int32_t writeIndex) {
 
 	int32_t incrementReversed = (uint32_t) metaController.incrementUsed >> 31;
 
-	int32_t releasing = (metaController.ghostPhase >> 24) | metaController.atB;
+	int32_t thisSample = metaController.ghostPhase >> 16;
+
+	int32_t releasing = (thisSample >> 8) | metaController.atB;
 
 	int32_t attacking = !releasing;
 
-	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(attacking | (releasing & incrementReversed));
+	int32_t thisState = (attacking | (releasing & incrementReversed)) * metaController.oscillatorOn;
 
+	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(logicAHysterisis(thisState, thisSample));
+
+}
+
+void ViaMeta::calculateDelta(int32_t writeIndex) {
+
+	int32_t reversed = (uint32_t) metaWavetable.increment >> 31;
+
+	int32_t thisState = reversed ? !metaWavetable.delta : metaWavetable.delta;
+
+	int32_t thisSample = metaController.ghostPhase >> 16;
+
+	outputs.auxLogic[writeIndex] = GET_EXPAND_LOGIC_MASK(deltaHysterisis(thisState, thisSample));
 
 }
 
@@ -167,6 +170,58 @@ void ViaMeta::calculateDac3Contour(int32_t writeIndex) {
 	while (samplesRemaining) {
 
 		outputs.dac3Samples[writeIndex] = metaWavetable.signalOut[readIndex] >> 3;
+
+		samplesRemaining --;
+		readIndex ++;
+		writeIndex ++;
+
+	}
+
+}
+
+void ViaMeta::calculateDac3DrumEnv(int32_t writeIndex) {
+
+	int32_t samplesRemaining = outputBufferSize;
+	int32_t readIndex = 0;
+
+	int32_t dac3OffsetScale = 61983;
+	int32_t dac3Offset = 111;
+
+	int32_t drumEnvSample = fix16_mul(drumWrite[writeIndex], dac3OffsetScale) >> 4;
+
+	drumEnvSample = 2048 - drumEnvSample - dac3Offset;
+
+	while (samplesRemaining) {
+
+		outputs.dac3Samples[writeIndex] = drumEnvSample;
+
+		samplesRemaining --;
+		writeIndex ++;
+
+	}
+
+	while (samplesRemaining) {
+
+		outputs.dac3Samples[writeIndex] = metaWavetable.signalOut[readIndex] >> 3;
+
+		samplesRemaining --;
+		readIndex ++;
+		writeIndex ++;
+
+	}
+
+}
+
+void ViaMeta::calculateDac3Noise(int32_t writeIndex) {
+
+	int32_t samplesRemaining = outputBufferSize;
+	int32_t readIndex = 0;
+
+	int32_t noise = rand() & 4095;
+
+	while (samplesRemaining) {
+
+		outputs.dac3Samples[writeIndex] = noise;
 
 		samplesRemaining --;
 		readIndex ++;

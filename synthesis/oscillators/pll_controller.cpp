@@ -17,22 +17,27 @@
 
 void PllController::parseControls(ViaControls * controls, ViaInputStreams * input) {
 
-	int32_t tempNote = controls->knob1Value + controls->cv1Value - 2048;
-	int32_t noteIndex = __USAT(tempNote, 12) >> 5;
+	int32_t ratioX = controls->knob1Value + controls->cv1Value - 2048;
+	ratioX = __USAT(ratioX, 12);
+
+	ratioX = ratioXHysterisis(ratioX >> 5, ratioX);
+
 	int32_t rootModLocal = -rootMod[0];
 	rootModLocal = rootModLocal >> 4;
 	rootModLocal += controls->knob2Value;
-	int32_t	rootIndex = (__USAT(rootModLocal, 12)) >> scale->t2Bitshift;
+	int32_t	ratioY = __USAT(rootModLocal, 12);
 
-	if (rootIndex != lastYIndex) {
+	ratioY = ratioYHysterisis(ratioY, scale->t2Bitshift);
+
+	if (ratioY != lastYIndex) {
 		yIndexChange = 1;
 	}
 
-	lastYIndex = rootIndex;
+	lastYIndex = ratioY;
 
-	fracMultiplier = scale->grid[rootIndex][noteIndex]->fractionalPart;
-	intMultiplier = scale->grid[rootIndex][noteIndex]->integerPart;
-	gcd = scale->grid[rootIndex][noteIndex]->fundamentalDivision;
+	fracMultiplier = scale->grid[ratioY][ratioX]->fractionalPart;
+	intMultiplier = scale->grid[ratioY][ratioX]->integerPart;
+	gcd = scale->grid[ratioY][ratioX]->fundamentalDivision;
 
 }
 void PllController::doPLL(void) {
