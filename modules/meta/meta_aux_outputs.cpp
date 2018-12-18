@@ -138,7 +138,9 @@ void ViaMeta::calculateDelta(int32_t writeIndex) {
 
 	int32_t thisSample = metaController.ghostPhase >> 16;
 
-	outputs.auxLogic[writeIndex] = GET_EXPAND_LOGIC_MASK(deltaHysterisis(thisState, thisSample));
+	deltaOut = GET_EXPAND_LOGIC_MASK(deltaHysterisis(thisState, thisSample));
+
+	outputs.auxLogic[writeIndex] = deltaOut;
 
 }
 
@@ -217,11 +219,17 @@ void ViaMeta::calculateDac3Noise(int32_t writeIndex) {
 	int32_t samplesRemaining = outputBufferSize;
 	int32_t readIndex = 0;
 
-	int32_t noise = rand() & 4095;
+	int32_t thisSample = metaController.ghostPhase >> 20;
+
+	if (thisSample != lastSample) {
+		lfsrState = rand() & 4095;
+	}
+
+	lastSample = thisSample;
 
 	while (samplesRemaining) {
 
-		outputs.dac3Samples[writeIndex] = noise;
+		outputs.dac3Samples[writeIndex] = lfsrState;
 
 		samplesRemaining --;
 		readIndex ++;

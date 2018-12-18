@@ -242,6 +242,17 @@ public:
 
 	}
 
+	int32_t deltaOut = 0;
+
+	int32_t lastSample = 0;
+
+	int32_t lfsrState = 1;
+	void advanceLFSR(void) {
+		lfsrState ^= lfsrState << 13;
+		lfsrState ^= lfsrState << 17;
+		lfsrState ^= lfsrState << 5;
+	}
+
 	void (ViaMeta::*calculateSH)(int32_t writeIndex);
 	// No S&H
 	void calculateSHMode1(int32_t writeIndex);

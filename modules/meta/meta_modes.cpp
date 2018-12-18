@@ -274,6 +274,7 @@ void ViaMeta::handleAux4ModeChange(int32_t mode) {
 		} else {
 			calculateDac3 = &ViaMeta::calculateDac3Contour;
 		}
+
 		break;
 	}
 

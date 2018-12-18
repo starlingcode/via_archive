@@ -108,7 +108,7 @@ public:
 	// results
 	int32_t delta = 0;
 
-	int32_t phaseOut[32];
+	uint32_t phaseOut[32];
 	int32_t signalOut[32];
 
 	void parseControls(ViaControls * controls);
