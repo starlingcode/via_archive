@@ -65,10 +65,6 @@ void PllController::doPLL(void) {
 	int32_t error = (phase - target) & (WAVETABLE_LENGTH - 1);
 
 	error -= (error >> 24) * WAVETABLE_LENGTH;
-	if (abs(error) > 1000) {
-		printf("error %d \n", error);
-		printf("target %d \n", target >> 16);
-	}
 
 	error *= -1;
 
@@ -91,24 +87,27 @@ void PllController::doPLL(void) {
 			writeBuffer(&nudgeBuffer, error);
 			pTerm = error;
 			iTerm = nudgeSum >> 5;
-			dTerm = (error - readBuffer(&nudgeBuffer, 1)) >> 1;
+			dTerm = (error - readBuffer(&nudgeBuffer, 1));
 			
 			pllNudge = pTerm + iTerm + dTerm;
-			
-
 
 			break;
 		case FAST_PLL:
 
 			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 7);
 			writeBuffer(&nudgeBuffer, error);
-			error += nudgeSum >> 3;
-			pllNudge = error;
+			pTerm = error;
+			iTerm = nudgeSum >> 3;
+			dTerm = (error - readBuffer(&nudgeBuffer, 1)) << 3;
+
+			pllNudge = pTerm + iTerm + dTerm;
 
 			break;
 		case WILD_PLL:
 
-			pllNudge = error;
+			pTerm = error;
+			dTerm = (error - readBuffer(&nudgeBuffer, 1)) << 3;
+			pllNudge = pTerm + dTerm;
 
 			break;
 		case HARD_SYNC:
@@ -146,7 +145,6 @@ void PllController::generateFrequency(void) {
 #ifdef BUILD_VIRTUAL
 
 	int32_t incrementCalc = ((uint64_t)(0x100000000 + (uint64_t) pllNudge)) / (periodCount * 8);
-	//int32_t incrementCalc = ((uint64_t)0x100000000) / (periodCount * 8);
 	incrementCalc = fix48_mul(incrementCalc, fracMultiplier) + fix16_mul(incrementCalc, intMultiplier);
 	increment = __USAT(incrementCalc, 24);
 
