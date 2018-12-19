@@ -97,7 +97,7 @@ void PllController::doPLL(void) {
 			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 7);
 			writeBuffer(&nudgeBuffer, error);
 			pTerm = error;
-			iTerm = nudgeSum >> 3;
+			iTerm = nudgeSum;
 			dTerm = (error - readBuffer(&nudgeBuffer, 1)) << 3;
 
 			pllNudge = pTerm + iTerm + dTerm;
@@ -105,14 +105,14 @@ void PllController::doPLL(void) {
 			break;
 		case WILD_PLL:
 
-			pTerm = error;
+			pTerm = error << 2;
 			dTerm = (error - readBuffer(&nudgeBuffer, 1)) << 3;
 			pllNudge = pTerm + dTerm;
 
 			break;
 		case HARD_SYNC:
 
-			pllNudge = error;
+			pllNudge = error << 3;
 			nudgeSum = 0;
 			phaseSignal = localPhaseOffset + phaseModSignal + target;
 			phaseSignal &= (WAVETABLE_LENGTH - 1);
