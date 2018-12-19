@@ -43,6 +43,8 @@ void PllController::parseControls(ViaControls * controls, ViaInputStreams * inpu
 void PllController::doPLL(void) {
 
 	pllCounter++;
+	pllCounter = (pllCounter >= gcd) ? 0 : pllCounter;
+
 
 	pllCounter *= pllReset;
 	pllReset = 1;
@@ -52,7 +54,23 @@ void PllController::doPLL(void) {
 
 	int32_t phase = (phaseSignal - phaseModSignal + localPhaseOffset) & ((1 << 25) - 1);
 
-	// this switch is always 0 unless pllCounter is 0, in which case its sync mode
+	// this can be more efficient, multiply by wavetable length is a bitshift ..
+
+	int32_t span = fix48_mul(WAVETABLE_LENGTH, fracMultiplier) + fix16_mul(WAVETABLE_LENGTH, intMultiplier);
+
+	int32_t target = pllCounter * span;
+
+	target &= (WAVETABLE_LENGTH - 1);
+
+	int32_t error = (phase - target) & (WAVETABLE_LENGTH - 1);
+
+	error -= (error >> 24) * WAVETABLE_LENGTH;
+	if (abs(error) > 1000) {
+		printf("error %d \n", error);
+		printf("target %d \n", target >> 16);
+	}
+
+	error *= -1;
 
 #define IGNORE 0
 #define SLOW_PLL 1
@@ -60,70 +78,56 @@ void PllController::doPLL(void) {
 #define WILD_PLL 3
 #define HARD_SYNC 4
 
-	if (pllCounter >= gcd) {
+	int32_t pTerm;
+	int32_t iTerm;
+	int32_t dTerm;
 
-		switch (syncMode) {
-			case IGNORE:
-				break;
-			case SLOW_PLL:
+	switch (syncMode) {
+		case IGNORE:
+			break;
+		case SLOW_PLL:
 
-				pllNudge = 0;
-				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
-				pllNudge -= phase * !(phase >> 24);
+			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 31);
+			writeBuffer(&nudgeBuffer, error);
+			pTerm = error;
+			iTerm = nudgeSum >> 5;
+			dTerm = (error - readBuffer(&nudgeBuffer, 1)) >> 1;
+			
+			pllNudge = pTerm + iTerm + dTerm;
+			
 
-				nudgeSum = pllNudge + nudgeSum - readBuffer(&nudgeBuffer, 31);
-				writeBuffer(&nudgeBuffer, pllNudge);
-				pllNudge = nudgeSum >> 5;
 
-				break;
+			break;
+		case FAST_PLL:
 
-			case FAST_PLL:
-				pllNudge = 0;
-				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
-				pllNudge -= phase * !(phase >> 24);
+			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 7);
+			writeBuffer(&nudgeBuffer, error);
+			error += nudgeSum >> 3;
+			pllNudge = error;
 
-				pllNudge <<= 2;
+			break;
+		case WILD_PLL:
 
-				nudgeSum = pllNudge + nudgeSum - readBuffer(&nudgeBuffer, 7);
-				writeBuffer(&nudgeBuffer, pllNudge);
-				pllNudge = nudgeSum >> 3;
+			pllNudge = error;
 
-				pllCounter = gcd;
-				break;
-			case WILD_PLL:
+			break;
+		case HARD_SYNC:
 
-				pllNudge = 0;
-				pllNudge += (WAVETABLE_LENGTH - phase) * (phase >> 24);
-				pllNudge -= phase * !(phase >> 24);
+			pllNudge = error;
+			nudgeSum = 0;
+			phaseSignal = localPhaseOffset + phaseModSignal + target;
+			phaseSignal &= (WAVETABLE_LENGTH - 1);
 
-				pllNudge <<= 4;
+			break;
 
-				pllCounter = gcd;
+		default:
+			break;
 
-				break;
-			case HARD_SYNC:
-
-				pllNudge = 0;
-				nudgeSum = 0;
-				pllCounter = 0;
-				phaseSignal = localPhaseOffset + phaseModSignal;
-
-				break;
-
-			default:
-				pllCounter = 0;
-				break;
-
-		}
 	}
-
+	
 	int32_t multKey = fracMultiplier + intMultiplier;
 
-	if (lastMultiplier != multKey) {
-		ratioChange = 1;
-	} else {
-		ratioChange = 0;
-	}
+	ratioChange = (lastMultiplier != multKey);
 
 	lastMultiplier = multKey;
 
@@ -142,6 +146,7 @@ void PllController::generateFrequency(void) {
 #ifdef BUILD_VIRTUAL
 
 	int32_t incrementCalc = ((uint64_t)(0x100000000 + (uint64_t) pllNudge)) / (periodCount * 8);
+	//int32_t incrementCalc = ((uint64_t)0x100000000) / (periodCount * 8);
 	incrementCalc = fix48_mul(incrementCalc, fracMultiplier) + fix16_mul(incrementCalc, intMultiplier);
 	increment = __USAT(incrementCalc, 24);
 

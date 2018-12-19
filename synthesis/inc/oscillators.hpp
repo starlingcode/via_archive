@@ -180,7 +180,7 @@ public:
 
 	uint32_t fracMultiplier = 0;
 	uint32_t intMultiplier = 0;
-	uint32_t gcd = 0;
+	uint32_t gcd = 1;
 
 	uint32_t increment = 0;
 	uint32_t phaseReset = 0;
