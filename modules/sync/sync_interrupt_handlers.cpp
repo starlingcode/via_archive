@@ -170,7 +170,7 @@ void ViaSync::slowConversionCallback(void) {
 		syncWavetable.increment = pllController.increment;
 	}
 
-	int32_t sample = outputs.dac1Samples[0];
+	int32_t sample = outputs.dac2Samples[0];
 
 	int32_t redSignal = fix16_mul(sample << 4, scaleColor.r);
 	int32_t blueSignal = fix16_mul(sample << 4, scaleColor.b);

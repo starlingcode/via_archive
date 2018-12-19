@@ -13,7 +13,7 @@ void ViaSync::calculateLogicAGate(int32_t writeIndex) {
 
 	int32_t thisState = thisSample >> 8;
 
-	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(logicAHysterisis(thisState, thisSample));
+	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(!logicAHysterisis(thisState, thisSample));
 
 }
 

@@ -112,7 +112,7 @@ void PllController::doPLL(void) {
 			break;
 		case HARD_SYNC:
 
-			pllNudge = error << 3;
+			pllNudge = error;
 			nudgeSum = 0;
 			phaseSignal = localPhaseOffset + phaseModSignal + target;
 			phaseSignal &= (WAVETABLE_LENGTH - 1);
