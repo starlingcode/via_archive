@@ -9,11 +9,7 @@
 
 void ViaSync::calculateLogicAGate(int32_t writeIndex) {
 
-	int32_t thisSample = syncWavetable.ghostPhase >> 16;
-
-	int32_t thisState = thisSample >> 8;
-
-	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(!logicAHysterisis(thisState, thisSample));
+	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(hemisphereState);
 
 }
 
@@ -23,8 +19,7 @@ void ViaSync::calculateLogicADelta(int32_t writeIndex) {
 
 	int32_t thisSample = syncWavetable.ghostPhase >> 16;
 
-
-	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(logicAHysterisis(thisState, thisSample));
+	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(deltaHysterisis(thisState, thisSample));
 
 }
 
@@ -69,27 +64,10 @@ void ViaSync::calculateDac3Contour(int32_t writeIndex) {
 
 void ViaSync::calculateSHMode1(int32_t writeIndex) {
 
-	switch (syncWavetable.phaseEvent) {
-		//no logic events
-		case 0:
-			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
-			break;
-		//dummy at a handling
-		case AT_A_FROM_RELEASE:
-		case AT_A_FROM_ATTACK:
-			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
-			break;
-		//dummy at b handling
-		case AT_B_FROM_RELEASE:
-		case AT_B_FROM_ATTACK:
-			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
-			break;
-		default:
-			break;
-	}
+
+	outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+	outputs.shB[writeIndex] = SH_B_TRACK_MASK;
+
 
 }
 
@@ -97,27 +75,8 @@ void ViaSync::calculateSHMode1(int32_t writeIndex) {
 
 void ViaSync::calculateSHMode2(int32_t writeIndex) {
 
-	switch (syncWavetable.phaseEvent) {
-		//no logic events
-		case 0:
-			outputs.shA[writeIndex] = GPIO_NOP;
-			outputs.shB[writeIndex] = GPIO_NOP;
-			break;
-		//dummy at a handling
-		case AT_A_FROM_RELEASE:
-		case AT_A_FROM_ATTACK:
-			outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
-			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
-			break;
-		//dummy at b handling
-		case AT_B_FROM_RELEASE:
-		case AT_B_FROM_ATTACK:
-			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
-			break;
-		default:
-			break;
-	}
+	outputs.shA[writeIndex] = GET_SH_A_MASK(hemisphereState);
+	outputs.shB[writeIndex] = GET_SH_B_MASK(!hemisphereState);
 
 }
 
@@ -126,27 +85,8 @@ void ViaSync::calculateSHMode2(int32_t writeIndex) {
 void ViaSync::calculateSHMode3(int32_t writeIndex) {
 
 
-	switch (syncWavetable.phaseEvent) {
-		//no logic events
-		case 0:
-			outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
-			outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
-			break;
-		//dummy at a handling
-		case AT_A_FROM_RELEASE:
-		case AT_A_FROM_ATTACK:
-			outputs.shA[writeIndex] = SH_A_SAMPLE_MASK;
-			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
-			break;
-		//dummy at b handling
-		case AT_B_FROM_RELEASE:
-		case AT_B_FROM_ATTACK:
-			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			outputs.shB[writeIndex] = SH_B_SAMPLE_MASK;
-			break;
-		default:
-			break;
-	}
+	outputs.shA[writeIndex] = GET_SH_A_MASK(!((!hemisphereState) & hemisphereLastSample));
+	outputs.shB[writeIndex] = GET_SH_B_MASK(!(hemisphereState & !hemisphereLastSample));
 
 
 }

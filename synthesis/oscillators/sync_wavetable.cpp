@@ -17,15 +17,15 @@ void SyncWavetable::parseControls(ViaControls * controls) {
 
 void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 
-	int32_t localPhase = phase;
+	uint32_t localPhase = phase;
 
-	int32_t localIncrement = increment >> (7 - oversamplingFactor);
+	int32_t localIncrement = increment << oversamplingFactor;
 
 	int32_t pmAmount = (int32_t) -pm[0];
 
 	pmAmount += 32767;
 
-	int32_t phaseModulationValue = (pmAmount - previousPhaseMod) << 9;
+	int32_t phaseModulationValue = (pmAmount - previousPhaseMod) << (16 - oversamplingFactor);
 
 	previousPhaseMod = pmAmount;
 
@@ -37,21 +37,6 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 
 	localPhase *= phaseReset;
 	phaseReset = 1;
-
-	int32_t phaseEventCalculator = 0;
-
-	// add wavetable length if phase < 0
-
-	phaseEventCalculator += ((uint32_t)(localPhase) >> 31) * WAVETABLE_LENGTH;
-
-	// subtract wavetable length if phase > wavetable length
-
-	phaseEventCalculator -= ((uint32_t)(WAVETABLE_LENGTH - localPhase) >> 31) * WAVETABLE_LENGTH;
-
-	// apply the wrapping
-	// no effect if the phase is in bounds
-
-	localPhase += phaseEventCalculator;
 
 	// log a -1 if the max value index of the wavetable is traversed from the left
 	// log a 1 if traversed from the right
@@ -67,25 +52,15 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 	// assuming that each phase distortion lookup table is 65 samples long stored as int32_t
 	uint32_t * pwmTable1 = phaseDistTable + pwmIndex * 65;
 	uint32_t * pwmTable2 = pwmTable1 + 65;
-	uint32_t leftSample = localPhase >> 19;
+	uint32_t leftSample = localPhase >> 26;
 
-#define SPLINE_PWM_PHASE_FRAC (phase & 0x7FFFF) >> 4
+#define SPLINE_PWM_PHASE_FRAC (localPhase & 0x3FFFFFF) >> 11
 		// use this with the precalculated pwm to perform bilinear interpolation
 		// this accomplishes the
 	int32_t	localGhostPhase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
 				pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
 				SPLINE_PWM_PHASE_FRAC);
 
-
-
-	int32_t atBIndicator = ((uint32_t)(localGhostPhase - AT_B_PHASE) >> 31) - ((uint32_t)(ghostPhase - AT_B_PHASE) >> 31);
-
-	phaseEventCalculator += atBIndicator;
-
-	phaseEvent = phaseEventCalculator;
-
-	// store the current phase
-	previousPhase = localGhostPhase;
 
 	int32_t morph = (int32_t) -morphMod[0];
 
@@ -114,39 +89,11 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 
 void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) {
 
-	// get an increment
-
-	uint32_t localPhase = phase;
-
-	int32_t localIncrement = increment >> 7;
-
 	int32_t pmAmount = (int32_t) -pm[0];
-
 	pmAmount += 32767;
-
-	int32_t phaseModulationValue = (pmAmount - previousPhaseMod) << 9;
-
+	int32_t phaseModulationValue = (pmAmount - previousPhaseMod) << (16 - oversamplingFactor);
 	previousPhaseMod = pmAmount;
-
-	localIncrement += phaseModulationValue;
-
 	phaseMod += phaseModulationValue;
-
-	// test the increment for a wrap
-
-	localPhase += localIncrement;
-
-	localPhase *= phaseReset;
-
-	int32_t phaseEventCalculator = 0;
-
-	// add wavetable length if phase < 0
-
-	phaseEventCalculator += ((uint32_t)(localPhase) >> 31) * WAVETABLE_LENGTH;
-
-	// subtract wavetable length if phase > wavetable length
-
-	phaseEventCalculator -= ((uint32_t)(WAVETABLE_LENGTH - localPhase) >> 31) * WAVETABLE_LENGTH;
 
 	// now oversample
 
@@ -167,12 +114,10 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 	wavetable += (morphIndex * 517) + 2;
 
 	// scale increment to size of new phase space (<< 7) and down by oversampling factor
-	localIncrement = increment + (phaseModulationValue << (7 - oversamplingFactor));
+	int32_t localIncrement = increment + phaseModulationValue;
 	uint32_t leftSample;
-	phaseReset = 1;
 
-	// throw away the test phase value (don't like this)
-	localPhase = phase << 7;
+	uint32_t localPhase = phase * phaseReset;
 
 	int32_t samplesRemaining = bufferSize - 1;
 	int32_t writeIndex = 0;
@@ -187,7 +132,7 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 		// divide by right shifting phase size (32 bits) less table size (6 bits) to find the nearest sample to the left
 		leftSample = localPhase >> 26;
 		// extract the less significant bits as fractional phase
-#define OS_PWM_PHASE_FRAC __USAT((localPhase & 0x3FFFFFF) >> 11, 15)
+#define OS_PWM_PHASE_FRAC (localPhase & 0x3FFFFFF) >> 11
 		// use this with the precalculated pwm to perform bilinear interpolation
 		// this accomplishes the
 		localGhostPhase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
@@ -195,7 +140,7 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 				OS_PWM_PHASE_FRAC);
 
 		// write phase out
-		phaseOut[writeIndex] = __USAT(localGhostPhase, 25);
+		phaseOut[writeIndex] = localGhostPhase;
 		// get the actual wavetable output sample as above
 		// but with the appropriate scaling as phase is now 25 bits and table length is 9 bits
 		leftSample = localGhostPhase >> 16;
@@ -226,22 +171,7 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 			OS_PHASE_FRAC, &delta);
 
 	// this should give a sample at 0 phase for hard sync
-	phase = localPhase >> 7;
-
-	// using the last phase distorted phase value,
-	// log a -1 if the max value index of the wavetable is traversed from the left
-	// log a 1 if traversed from the right
-	// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
-	// this adds cruft to the wrap indicators, but that is deterministic and can be parsed out
-
-	int32_t atBIndicator = ((uint32_t)(localGhostPhase - AT_B_PHASE) >> 31) - ((uint32_t)(ghostPhase - AT_B_PHASE) >> 31);
-
-	phaseEventCalculator += atBIndicator;
-
-	phaseEvent = phaseEventCalculator;
-
-	// store the current phase
-	previousPhase = localGhostPhase;
+	phase = localPhase;
 
 	ghostPhase = localGhostPhase;
 

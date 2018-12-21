@@ -190,22 +190,46 @@ public:
 
 	void calculateLogicAGate(int32_t writeIndex);
 	void calculateLogicADelta(int32_t writeIndex);
-	int32_t lastLogicAState = 1;
-	int32_t logicATransitionSample = 0;
-	int32_t logicAOutputStable = 0;
 
-	int32_t logicAHysterisis(int32_t thisLogicAState, int32_t sample) {
+	int32_t hemisphereState = 0;
+	int32_t lastHemisphereState = 1;
+	int32_t hemisphereTransitionSample = 0;
+	int32_t hemisphereOutputStable = 0;
+	int32_t hemisphereLastSample = 0;
 
-		if (logicAOutputStable) {
-			logicAOutputStable = ((lastLogicAState - thisLogicAState) == 0);
-			logicATransitionSample = sample;
-			lastLogicAState = thisLogicAState;
-			return thisLogicAState;
+	void hemisphereHysterisis(int32_t thisHemisphereState, int32_t sample) {
+
+		if (hemisphereOutputStable) {
+			hemisphereOutputStable = ((lastHemisphereState - thisHemisphereState) == 0);
+			hemisphereTransitionSample = sample;
+			lastHemisphereState = thisHemisphereState;
+			hemisphereState =  thisHemisphereState;
 		} else {
-			logicAOutputStable = abs(sample - logicATransitionSample) > 1;
-			logicAOutputStable &= (sample - logicATransitionSample) != 511;
-			lastLogicAState = logicAOutputStable ? thisLogicAState : lastLogicAState;
-			return lastLogicAState;
+			hemisphereOutputStable = abs(sample - hemisphereTransitionSample) > 1;
+			hemisphereOutputStable &= (sample - hemisphereTransitionSample) != 511;
+			lastHemisphereState = hemisphereOutputStable ? thisHemisphereState : lastHemisphereState;
+			hemisphereState = lastHemisphereState;
+		}
+
+	}
+
+	int32_t deltaState = 0;
+	int32_t lastDeltaState = 1;
+	int32_t deltaTransitionSample = 0;
+	int32_t deltaOutputStable = 0;
+
+	int32_t deltaHysterisis(int32_t thisDeltaState, int32_t sample) {
+
+		if (deltaOutputStable) {
+			deltaOutputStable = ((lastDeltaState - thisDeltaState) == 0);
+			deltaTransitionSample = sample;
+			lastDeltaState = thisDeltaState;
+			return thisDeltaState;
+		} else {
+			deltaOutputStable = abs(sample - deltaTransitionSample) > 1;
+			deltaOutputStable &= (sample - deltaTransitionSample) != 511;
+			lastDeltaState = deltaOutputStable ? thisDeltaState : lastDeltaState;
+			return lastDeltaState;
 		}
 
 	}

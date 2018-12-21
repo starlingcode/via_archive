@@ -52,7 +52,7 @@ public:
 
 	// results
 	int32_t phaseMod = 0;
-	int32_t phase = 0;
+	uint32_t phase = 0;
 	int32_t ghostPhase = 0;
 	int32_t phaseEvent = 0;
 	int32_t delta = 0;

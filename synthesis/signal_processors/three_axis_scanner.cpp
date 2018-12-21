@@ -115,13 +115,13 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 		xIndexAtLogic = xIndexBuffer[writeIndex] >> 16;
 		yIndexAtLogic = yIndexBuffer[writeIndex] >> 16;
 
-		int32_t mainScan = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 11) + 2047;
+		int32_t mainScan = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 12) + 2047;
 
 		int32_t samplesRemaining = bufferSize;
 
 		while (samplesRemaining) {
 			altitude[writeIndex] = mainScan;
-			locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 11) + 2047;
+			locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 12) + 2047;
 
 			writeIndex ++;
 			samplesRemaining --;
@@ -143,8 +143,8 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 
 			ySample = fast_15_16_bilerp_prediff(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac);
 
-			altitude[writeIndex] = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 11) + 2047;
-			locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 11) + 2047;
+			altitude[writeIndex] = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 12) + 2047;
+			locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 12) + 2047;
 			writeIndex ++;
 			samplesRemaining --;
 
@@ -163,23 +163,23 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 
 		ySample = fast_15_16_bilerp_prediff_deltaValue(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac, &yDelta);
 
-		altitude[writeIndex] = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 11) + 2047;
-		locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 11) + 2047;
+		altitude[writeIndex] = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 12) + 2047;
+		locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 12) + 2047;
 	}
 
-	int32_t xHemisphere = xSample >> 11;
-	int32_t yHemisphere = ySample >> 11;
+	xSample = xSample >> 11;
+	ySample = ySample >> 11;
 
-	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
-	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
+	xSample = hemisphereXHysterisis(xSample, xIndexAtLogic);
+	ySample = hemisphereYHysterisis(ySample, yIndexAtLogic);
 
-	xDelta = xReversed ? !xDelta : xDelta;
-	yDelta = yReversed ? !yDelta : yDelta;
+	xDelta ^= xReversed;
+	yDelta ^= yReversed;
 
 	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
 	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
 
-	hemisphereBlend = xHemisphere | yHemisphere;
+	hemisphereBlend = xSample | ySample;
 	deltaBlend = xDelta | yDelta;
 
 }
@@ -275,8 +275,8 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
 	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
 
-	xDelta = xReversed ? !xDelta : xDelta;
-	yDelta = yReversed ? !yDelta : yDelta;
+	xDelta ^= xReversed;
+	yDelta ^= yReversed;
 
 	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
 	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
@@ -379,8 +379,8 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
 	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
 
-	xDelta = xReversed ? !xDelta : xDelta;
-	yDelta = yReversed ? !yDelta : yDelta;
+	xDelta ^= xReversed;
+	yDelta ^= yReversed;
 
 	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
 	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
@@ -482,8 +482,8 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
 	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
 
-	xDelta = xReversed ? !xDelta : xDelta;
-	yDelta = yReversed ? !yDelta : yDelta;
+	xDelta ^= xReversed;
+	yDelta ^= yReversed;
 
 	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
 	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);

@@ -125,9 +125,15 @@ void ViaSync::halfTransferCallback(void) {
 
 	}
 
+	int32_t thisSample = syncWavetable.ghostPhase >> 16;
+	int32_t thisState = !(thisSample >> 8);
+	hemisphereHysterisis(thisState, thisSample);
+
 	(this->*calculateDac3)(0);
 	(this->*calculateLogicA)(0);
 	(this->*calculateSH)(0);
+
+	hemisphereLastSample = hemisphereState;
 
 }
 
@@ -153,9 +159,15 @@ void ViaSync::transferCompleteCallback(void) {
 
 	}
 
+	int32_t thisSample = syncWavetable.ghostPhase >> 16;
+	int32_t thisState = !(thisSample >> 8);
+	hemisphereHysterisis(thisState, thisSample);
+
 	(this->*calculateDac3)(SYNC_BUFFER_SIZE);
 	(this->*calculateLogicA)(0);
 	(this->*calculateSH)(0);
+
+	hemisphereLastSample = hemisphereState;
 
 }
 

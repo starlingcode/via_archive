@@ -19,12 +19,17 @@
 
 class ThreeAxisScanner {
 
+private:
+
 	int32_t oversample = 0;
 
 	int32_t lastXInput = 0;
 	int32_t lastYInput = 0;
 	int32_t lastXIndex = 0;
 	int32_t lastYIndex = 0;
+
+	int32_t * xIndexBuffer;
+	int32_t * yIndexBuffer;
 
 	inline void scanTerrainMultiply(void);
 
@@ -37,11 +42,14 @@ class ThreeAxisScanner {
 	int32_t xReversed;
 	int32_t yReversed;
 
+	int32_t xOffset;
+	int32_t yOffset;
+
 	int32_t lastDeltaXState = 1;
 	int32_t deltaXTransitionSample = 0;
 	int32_t deltaXOutputStable = 0;
 
-	int32_t deltaXHysterisis(int32_t thisDeltaState, int32_t sample) {
+	inline int32_t deltaXHysterisis(int32_t thisDeltaState, int32_t sample) {
 
 		if (deltaXOutputStable) {
 			deltaXOutputStable = ((lastDeltaXState - thisDeltaState) == 0);
@@ -60,7 +68,7 @@ class ThreeAxisScanner {
 	int32_t deltaYTransitionSample = 0;
 	int32_t deltaYOutputStable = 0;
 
-	int32_t deltaYHysterisis(int32_t thisDeltaState, int32_t sample) {
+	inline int32_t deltaYHysterisis(int32_t thisDeltaState, int32_t sample) {
 
 		if (deltaYOutputStable) {
 			deltaYOutputStable = ((lastDeltaYState - thisDeltaState) == 0);
@@ -79,7 +87,7 @@ class ThreeAxisScanner {
 	int32_t hemisphereXTransitionSample = 0;
 	int32_t hemisphereXOutputStable = 0;
 
-	int32_t hemisphereXHysterisis(int32_t thisHemisphereState, int32_t sample) {
+	inline int32_t hemisphereXHysterisis(int32_t thisHemisphereState, int32_t sample) {
 
 		if (hemisphereXOutputStable) {
 			hemisphereXOutputStable = ((lastHemisphereXState - thisHemisphereState) == 0);
@@ -98,7 +106,7 @@ class ThreeAxisScanner {
 	int32_t hemisphereYTransitionSample = 0;
 	int32_t hemisphereYOutputStable = 0;
 
-	int32_t hemisphereYHysterisis(int32_t thisHemisphereState, int32_t sample) {
+	inline int32_t hemisphereYHysterisis(int32_t thisHemisphereState, int32_t sample) {
 
 		if (hemisphereYOutputStable) {
 			hemisphereYOutputStable = ((lastHemisphereYState - thisHemisphereState) == 0);
@@ -113,17 +121,6 @@ class ThreeAxisScanner {
 
 	}
 
-	int32_t compareWithHysterisis(int32_t xSignal, int32_t ySignal, int32_t yGreater) {
-
-		if (yGreater && ySignal < (xSignal - 100)) {
-			return 0;
-		} else if (!yGreater && ySignal > (xSignal + 100)) {
-			return 1;
-		} else {
-			return yGreater;
-		}
-
-	}
 
 public:
 
@@ -140,9 +137,6 @@ public:
 	int32_t hardSync;
 	int32_t reverse;
 
-	int32_t xOffset;
-	int32_t yOffset;
-
 	//control rate input
 	uint32_t zIndex = 0;
 
@@ -154,10 +148,6 @@ public:
 	uint32_t xInterpolateOn = 1;
 	uint32_t yInterpolateOn = 1;
 
-
-	// outputs
-	int32_t * xIndexBuffer;
-	int32_t * yIndexBuffer;
 	int32_t * locationBlend;
 	int32_t * altitude;
 
