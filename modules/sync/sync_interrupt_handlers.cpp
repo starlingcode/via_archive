@@ -118,6 +118,7 @@ void ViaSync::halfTransferCallback(void) {
 		int32_t sample = syncWavetable.signalOut[readIndex];
 		outputs.dac1Samples[writeIndex] = 4095 - sample;
 		outputs.dac2Samples[writeIndex] = sample;
+		outputs.dac3Samples[writeIndex] = pllController.errorSig;
 
 		writeIndex ++;
 		readIndex ++;
@@ -129,7 +130,7 @@ void ViaSync::halfTransferCallback(void) {
 	int32_t thisState = !(thisSample >> 8);
 	hemisphereHysterisis(thisState, thisSample);
 
-	(this->*calculateDac3)(0);
+	//(this->*calculateDac3)(0);
 	(this->*calculateLogicA)(0);
 	(this->*calculateSH)(0);
 
@@ -152,6 +153,7 @@ void ViaSync::transferCompleteCallback(void) {
 		int32_t sample = syncWavetable.signalOut[readIndex];
 		outputs.dac1Samples[writeIndex] = 4095 - sample;
 		outputs.dac2Samples[writeIndex] = sample;
+		outputs.dac3Samples[writeIndex] = pllController.errorSig;
 
 		writeIndex ++;
 		readIndex ++;
@@ -163,7 +165,7 @@ void ViaSync::transferCompleteCallback(void) {
 	int32_t thisState = !(thisSample >> 8);
 	hemisphereHysterisis(thisState, thisSample);
 
-	(this->*calculateDac3)(SYNC_BUFFER_SIZE);
+	//(this->*calculateDac3)(SYNC_BUFFER_SIZE);
 	(this->*calculateLogicA)(0);
 	(this->*calculateSH)(0);
 

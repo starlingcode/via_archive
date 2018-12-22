@@ -159,37 +159,11 @@ class PllController {
 	int32_t lastMultiplier;
 	int32_t lastYIndex;
 
-public:
-
-	uint32_t virtualTimer;
-
-	uint32_t periodCount = 100000;
-	int32_t pllNudge = 0;
-	buffer nudgeBuffer;
-	int32_t nudgeSum = 0;
-
-	uint32_t phaseSignal = 0;
-	uint32_t phaseModSignal = 0;
-	uint32_t tapTempo = 0;
-	uint32_t pllReset = 0;
-
-	int16_t * rootMod;
-	uint32_t phaseOffset = 0;
-	uint32_t syncMode = 0;
-	Scale * scale;
-
-	uint32_t fracMultiplier = 0;
-	uint32_t intMultiplier = 0;
-	uint32_t gcd = 1;
-
-	uint32_t increment = 0;
-	uint32_t phaseReset = 0;
-	uint32_t ratioChange = 0;
-	uint32_t yIndexChange = 0;
-
 	int32_t lastRatioX = 1;
 	int32_t ratioXTransitionPoint = 0;
 	int32_t ratioXStable = 0;
+
+	int32_t lastIncrement;
 
 	int32_t ratioXHysterisis(int32_t thisRatioX, int32_t control) {
 
@@ -227,10 +201,39 @@ public:
 
 	}
 
+public:
+
+	uint32_t virtualTimer;
+
+	uint32_t periodCount = 100000;
+	int32_t pllNudge = 0;
+	buffer nudgeBuffer;
+	int32_t nudgeSum = 0;
+
+	uint32_t phaseSignal = 0;
+	uint32_t phaseModSignal = 0;
+	uint32_t tapTempo = 0;
+	uint32_t pllReset = 0;
+
+	int16_t * rootMod;
+	uint32_t phaseOffset = 0;
+	uint32_t syncMode = 0;
+	Scale * scale;
+
+	uint32_t fracMultiplier = 0;
+	uint32_t intMultiplier = 0;
+	uint32_t gcd = 1;
+
+	uint32_t increment = 0;
+	uint32_t phaseReset = 0;
+	uint32_t ratioChange = 0;
+	uint32_t yIndexChange = 0;
+
+	uint32_t errorSig = 0;
 
 	void parseControls(ViaControls * controls, ViaInputStreams * input);
 
-	void measureFrequency(void) {
+	inline void measureFrequency(void) {
 
 #ifdef BUILD_F373
 
@@ -251,7 +254,6 @@ public:
 	}
 
 	void doPLL(void);
-
 	void generateFrequency(void);
 
 };

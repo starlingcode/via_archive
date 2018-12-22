@@ -115,13 +115,13 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 		xIndexAtLogic = xIndexBuffer[writeIndex] >> 16;
 		yIndexAtLogic = yIndexBuffer[writeIndex] >> 16;
 
-		int32_t mainScan = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 12) + 2047;
+		int32_t mainScan = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 11) + 2047;
 
 		int32_t samplesRemaining = bufferSize;
 
 		while (samplesRemaining) {
 			altitude[writeIndex] = mainScan;
-			locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 12) + 2047;
+			locationBlend[writeIndex] = __SSAT((xIndexBuffer[writeIndex] + yIndexBuffer[writeIndex] -  2*0xFFFFFF) >> 13, 11) + 2047;
 
 			writeIndex ++;
 			samplesRemaining --;
@@ -143,8 +143,8 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 
 			ySample = fast_15_16_bilerp_prediff(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac);
 
-			altitude[writeIndex] = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 12) + 2047;
-			locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 12) + 2047;
+			altitude[writeIndex] = __SSAT((xSample + ySample - 32767) >> 3, 11) + 2047;
+			locationBlend[writeIndex] = __SSAT((xIndexBuffer[writeIndex] + yIndexBuffer[writeIndex] -  2*0xFFFFFF) >> 13, 11) + 2047;
 			writeIndex ++;
 			samplesRemaining --;
 
@@ -163,8 +163,8 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 
 		ySample = fast_15_16_bilerp_prediff_deltaValue(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac, &yDelta);
 
-		altitude[writeIndex] = __SSAT(((xSample - 16383) + (ySample - 16383)) >> 3, 12) + 2047;
-		locationBlend[writeIndex] = __SSAT(((xIndexBuffer[writeIndex] - 0xFFFFFF) + (yIndexBuffer[writeIndex] - 0xFFFFFF)) >> 13, 12) + 2047;
+		altitude[writeIndex] = __SSAT((xSample + ySample - 32767) >> 3, 11) + 2047;
+		locationBlend[writeIndex] = __SSAT((xIndexBuffer[writeIndex] + yIndexBuffer[writeIndex] -  2*0xFFFFFF) >> 13, 11) + 2047;
 	}
 
 	xSample = xSample >> 11;

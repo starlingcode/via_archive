@@ -60,6 +60,9 @@ extern SDADC_HandleTypeDef hsdadc2;
 #define SH_B_SAMPLE_MASK ((uint32_t)GPIO_PIN_9 << 16)
 //}
 
+#define LOGICA_HIGH GPIOC->BRR = (uint32_t)GPIO_PIN_13;
+#define LOGICA_LOW GPIOC->BSRR = (uint32_t)GPIO_PIN_13;
+
 //@{
 /*  Converts 1 to the high (sample) mask and 0 to the low (track) mask.*/
 #define GET_ALOGIC_MASK(X) (ALOGIC_LOW_MASK << (16*(X)))

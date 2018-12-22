@@ -52,23 +52,21 @@ void PllController::doPLL(void) {
 
 	int32_t localPhaseOffset = fix48_mul(phaseOffset, fracMultiplier) + fix16_mul(phaseOffset, intMultiplier);
 
-	int32_t phase = ((phaseSignal >> 7) - phaseModSignal + localPhaseOffset) & ((1 << 25) - 1);
+	uint32_t phase = (phaseSignal - (phaseModSignal << 7) + (localPhaseOffset << 7));
 
 	// this can be more efficient, multiply by wavetable length is a bitshift ..
 
-	int32_t span = fix48_mul(WAVETABLE_LENGTH, fracMultiplier) + fix16_mul(WAVETABLE_LENGTH, intMultiplier);
+	uint32_t span = ((int64_t)intMultiplier << 16) | (fracMultiplier >> 16);
 
-	span &= WAVETABLE_LENGTH - 1;
+	uint32_t target = (int64_t)pllCounter * span;
 
-	int32_t target = pllCounter * span;
-
-	target &= (WAVETABLE_LENGTH - 1);
-
-	int32_t error = (phase - target) & (WAVETABLE_LENGTH - 1);
-
-	error -= (error >> 24) * WAVETABLE_LENGTH;
+	int32_t error = (phase - target);
 
 	error *= -1;
+
+	errorSig = __USAT((error >> 20) + 2048, 12);
+//	errorSig = __USAT(((periodCount - lastIncrement) >> 8) + 2048, 12);
+//	lastIncrement = periodCount;
 
 #define IGNORE 0
 #define SLOW_PLL 1
@@ -88,10 +86,10 @@ void PllController::doPLL(void) {
 			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 31);
 			writeBuffer(&nudgeBuffer, error);
 			pTerm = error;
-			iTerm = nudgeSum >> 5;
-			dTerm = (error - readBuffer(&nudgeBuffer, 1 + __USAT(increment >> 16, 4)));
+			iTerm = nudgeSum >> 3;
+			dTerm = (error - readBuffer(&nudgeBuffer, 3));
 
-			pllNudge = (pTerm + iTerm + dTerm) * gcd;
+			pllNudge = (pTerm + iTerm + dTerm) >> 2;
 
 			break;
 		case FAST_PLL:
@@ -99,27 +97,28 @@ void PllController::doPLL(void) {
 			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 7);
 			writeBuffer(&nudgeBuffer, error);
 			pTerm = error;
-			iTerm = nudgeSum >> 3;
-			dTerm = (error - readBuffer(&nudgeBuffer, 1 + __USAT(increment >> 16, 4)));
+			iTerm = nudgeSum >> 5;
+			dTerm = (error - readBuffer(&nudgeBuffer, 1)) >> 3;
 
-			pllNudge = (pTerm + iTerm + dTerm);
+			pllNudge = (pTerm + iTerm);
 
 			break;
 		case WILD_PLL:
 
-			pTerm = error;
-			dTerm = (error - readBuffer(&nudgeBuffer, 1));
+			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 7);
 			writeBuffer(&nudgeBuffer, error);
-			pllNudge = (pTerm + dTerm);
+			pTerm = error;
+			iTerm = nudgeSum >> 7;
+			dTerm = (error - readBuffer(&nudgeBuffer, 1)) >> 3;
+
+			pllNudge = (pTerm + iTerm);
 
 			break;
 		case HARD_SYNC:
 
-			pllNudge = error;
+			pllNudge = 0;
 			nudgeSum = 0;
-			phaseSignal = localPhaseOffset + phaseModSignal + target;
-			phaseSignal &= (WAVETABLE_LENGTH - 1);
-			phaseSignal <<= 7;
+			phaseSignal = (localPhaseOffset << 7) + (phaseModSignal << 7) + target;
 
 			break;
 
@@ -127,7 +126,7 @@ void PllController::doPLL(void) {
 			break;
 
 	}
-	
+
 	int32_t multKey = fracMultiplier + intMultiplier;
 
 	ratioChange = (lastMultiplier != multKey);
@@ -140,8 +139,8 @@ void PllController::generateFrequency(void) {
 
 #ifdef BUILD_F373
 
-	int32_t incrementCalc = ((uint64_t)(0x100000000 + (uint64_t) pllNudge) * 1440) / (periodCount * 8);
-	incrementCalc = (fix48_mul(incrementCalc, fracMultiplier) + fix16_mul(incrementCalc, intMultiplier));
+	int64_t incrementCalc = ((int64_t)intMultiplier << 16) | (fracMultiplier >> 16);
+	incrementCalc = ((uint64_t)(incrementCalc + pllNudge) * 1440) / (periodCount * 8);
 	increment = __USAT(incrementCalc, 31);
 
 #endif
