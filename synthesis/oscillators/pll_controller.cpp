@@ -64,7 +64,7 @@ void PllController::doPLL(void) {
 
 	error *= -1;
 
-	errorSig = __USAT((error >> 20) + 2048, 12);
+//	errorSig = __USAT((error >> 20) + 2048, 12);
 //	errorSig = __USAT(((periodCount - lastIncrement) >> 8) + 2048, 12);
 //	lastIncrement = periodCount;
 
@@ -86,10 +86,10 @@ void PllController::doPLL(void) {
 			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 31);
 			writeBuffer(&nudgeBuffer, error);
 			pTerm = error;
-			iTerm = nudgeSum >> 3;
+			iTerm = nudgeSum >> 5;
 			dTerm = (error - readBuffer(&nudgeBuffer, 3));
 
-			pllNudge = (pTerm + iTerm + dTerm) >> 2;
+			pllNudge = (pTerm + iTerm + dTerm) >> 4;
 
 			break;
 		case FAST_PLL:
@@ -97,21 +97,18 @@ void PllController::doPLL(void) {
 			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 7);
 			writeBuffer(&nudgeBuffer, error);
 			pTerm = error;
-			iTerm = nudgeSum >> 5;
-			dTerm = (error - readBuffer(&nudgeBuffer, 1)) >> 3;
+			iTerm = nudgeSum >> 3;
 
-			pllNudge = (pTerm + iTerm);
+			pllNudge = (pTerm + iTerm) >> 2;
 
 			break;
 		case WILD_PLL:
 
+			pTerm = error;
 			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 7);
 			writeBuffer(&nudgeBuffer, error);
-			pTerm = error;
-			iTerm = nudgeSum >> 7;
-			dTerm = (error - readBuffer(&nudgeBuffer, 1)) >> 3;
-
-			pllNudge = (pTerm + iTerm);
+			iTerm = nudgeSum >> 3;
+			pllNudge = pTerm;
 
 			break;
 		case HARD_SYNC:

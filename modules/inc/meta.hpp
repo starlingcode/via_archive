@@ -62,7 +62,7 @@ enum meta_button5Modes {pairedWithButton2};
 enum meta_button6Modes {noloop, looping};
 enum meta_aux1Modes {drumPhasor, drumContour, drumEnv, noise};
 enum meta_aux2Modes {releaseGate, attackGate};
-enum meta_aux3Modes {pitchMorphAmp, morphAmp, pitchAmp, amp};
+enum meta_aux3Modes {pitchMorphAmp, pitchAmp, morphAmp, amp};
 enum meta_aux4Modes {phasor, contour};
 
 void metaTouchLink (void *);
@@ -251,6 +251,7 @@ public:
 		lfsrState ^= lfsrState << 13;
 		lfsrState ^= lfsrState << 17;
 		lfsrState ^= lfsrState << 5;
+		lfsrState &= 4095;
 	}
 
 	void (ViaMeta::*calculateSH)(int32_t writeIndex);
@@ -346,6 +347,7 @@ public:
 
 	int32_t morphAttackMultiplier = 1 << 8;
 	int32_t morphReleaseMultiplier = 1 << 2;
+	int32_t morphReleaseClamp = 0;
 	int32_t freqAttackMultiplier = 1 << 10;
 	int32_t freqReleaseMultiplier = 1<< 8;
 

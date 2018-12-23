@@ -16,7 +16,7 @@ void MetaWavetable::parseControls(ViaControls * controls) {
 void MetaWavetable::advanceSingleSample(uint32_t * wavetable) {
 
 	int32_t morphScaleLocal = (int32_t) morphScale[0];
-	morphScaleLocal = fix16_mul(morphBase, morphScaleLocal);
+	morphScaleLocal = fix16_mul(morphBase, morphScaleLocal << 1);
 	int32_t morphModLocal = (int32_t) -morphMod[0];
 	morphModLocal = __USAT(morphScaleLocal + morphModLocal, 16) * tableSize;
 

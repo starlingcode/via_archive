@@ -89,9 +89,9 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 		}
 
 		if (metaUI.LOOP_MODE == noloop) {
-			initializeEnvelope();
+			initializeSequence();
 		} else {
-			initializeSimpleLFO();
+			initializeComplexLFO();
 		}
 
 		break;
@@ -208,24 +208,12 @@ void ViaMeta::handleAux3ModeChange(int32_t mode) {
 
 		ampEnvelope.attack = 2 << 16;
 		morphAttackMultiplier = 1 << 8;
-		morphReleaseMultiplier = 1 << 2;
+		morphReleaseMultiplier = 1 << 3;
 		freqAttackMultiplier = 1 << 13;
 		freqReleaseMultiplier = 1<< 12;
 		transientScale = 1 << 3;
 		minTransientLength = 10000;
-
-		break;
-	case morphAmp:
-		metaController.fm = drumFullScale;
-		metaWavetable.morphScale = (int16_t*) morphEnvelope.output;
-
-		ampEnvelope.attack = 2 << 16;
-		morphAttackMultiplier = 1 << 6;
-		morphReleaseMultiplier = 1;
-		freqAttackMultiplier = 1 << 13;
-		freqReleaseMultiplier = 1<< 12;
-		transientScale = 1 << 2;
-		minTransientLength = 0;
+		morphReleaseClamp = 1000;
 
 		break;
 	case pitchAmp:
@@ -239,6 +227,22 @@ void ViaMeta::handleAux3ModeChange(int32_t mode) {
 		freqReleaseMultiplier = 1<< 7;
 		transientScale = 1 << 1;
 		minTransientLength = 10000;
+		morphReleaseClamp = 0;
+
+		break;
+	case morphAmp:
+		metaController.fm = drumFullScale;
+		metaWavetable.morphScale = (int16_t*) morphEnvelope.output;
+
+		ampEnvelope.attack = 2 << 16;
+		morphAttackMultiplier = 1 << 6;
+		morphReleaseMultiplier = 1;
+		freqAttackMultiplier = 1 << 13;
+		freqReleaseMultiplier = 1<< 12;
+		transientScale = 1 << 2;
+		minTransientLength = 0;
+		morphReleaseClamp = 0;
+
 
 		break;
 	case amp:
@@ -252,6 +256,7 @@ void ViaMeta::handleAux3ModeChange(int32_t mode) {
 		freqReleaseMultiplier = 1<< 12;
 		transientScale = 1;
 		minTransientLength = 20;
+		morphReleaseClamp = 0;
 
 		break;
 	}

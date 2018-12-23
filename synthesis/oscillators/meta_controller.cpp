@@ -45,7 +45,7 @@ void MetaController::parseControlsDrum(ViaControls * controls, ViaInputStreams *
 void MetaController::parseControlsEnv(ViaControls * controls, ViaInputStreams * inputs) {
 	// t1 is attack time (attackIncrements), t2 is release time (releaseIncrements)
 
-	int32_t releaseMod = -inputs->cv2Samples[0];
+	int32_t releaseMod = inputs->cv2Samples[0];
 	releaseMod += 32767;
 
 	releaseMod = releaseMod >> 4;
@@ -53,7 +53,7 @@ void MetaController::parseControlsEnv(ViaControls * controls, ViaInputStreams * 
 	timeBase1 = fix16_mul(expoTable[4095 - controls->knob1Value] >> 7,
 			expoTable[(4095 - controls->cv1Value) >> 1] >> 7);
 	timeBase2 = fix16_mul(expoTable[((4095 - controls->knob2Value) >> 2) * 3] >> 7,
-			expoTable[releaseMod] >> 10);
+			expoTable[(releaseMod >> 1) + 2048] >> 10);
 
 	dutyCycleBase = 32767;
 

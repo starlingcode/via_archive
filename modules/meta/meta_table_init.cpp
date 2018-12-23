@@ -4,29 +4,29 @@
 void ViaMeta::fillWavetableArray(void) {
 
 	wavetableArray[0][0] = &trains;
-	wavetableArray[0][1] = &waterphone;
-	wavetableArray[0][2] = &perlin;
-	wavetableArray[0][3] = &csound_formants;
+	wavetableArray[0][1] = &vox;
+	wavetableArray[0][2] = &csound_formants;
+	wavetableArray[0][3] = &perlin;
 	wavetableArray[0][4] = &impevens;
-	wavetableArray[0][5] = &spline_odd;
+	wavetableArray[0][5] = &additive_pairs;
 	wavetableArray[0][6] = &linwavefold_257;
 	wavetableArray[0][7] = &skipSaw;
-	wavetableArray[1][0] = &sharpLinSym;
-	wavetableArray[1][1] = &gammaAsym;
-	wavetableArray[1][2] = &sharpLinSym;
-	wavetableArray[1][3] = &circular_257;
+	wavetableArray[1][0] = &gammaAsym;
+	wavetableArray[1][1] = &sharpLinSym;
+	wavetableArray[1][2] = &circular_257;
+	wavetableArray[1][3] = &quintic_outinAsym;
 	wavetableArray[1][4] = &doubleLump3rdDegLinAtk;
-	wavetableArray[1][5] = &quintic_out2quintic_in257;
-	wavetableArray[1][6] = &quintic_inout2quintic_outin257;
-	wavetableArray[1][7] = &newBounce;
-	wavetableArray[2][0] = &bounce_257;
-	wavetableArray[2][1] = &exciteBike;
-	wavetableArray[2][2] = &newBounce;
-	wavetableArray[2][3] = &sawBend;
-	wavetableArray[2][4] = &triOdd;
-	wavetableArray[2][5] = &steps;
-	wavetableArray[2][6] = &algerian;
-	wavetableArray[2][7] = &exciteBike;
+	wavetableArray[1][5] = &lump2ndDegLinAtk;
+	wavetableArray[1][6] = &testRMS2;
+	wavetableArray[1][7] = &testRMS;
+	wavetableArray[2][0] = &bounce;
+	wavetableArray[2][1] = &bounce_257;
+	wavetableArray[2][2] = &sawBend;
+	wavetableArray[2][3] = &exciteBike;
+	wavetableArray[2][4] = &skipSaw;
+	wavetableArray[2][5] = &euclidean_test;
+	wavetableArray[2][6] = &newest_steps;
+	wavetableArray[2][7] = &block_test;
 }
 
 

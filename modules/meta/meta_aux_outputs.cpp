@@ -138,7 +138,7 @@ void ViaMeta::calculateDelta(int32_t writeIndex) {
 
 	int32_t thisSample = metaController.ghostPhase >> 16;
 
-	deltaOut = GET_EXPAND_LOGIC_MASK(deltaHysterisis(thisState, thisSample));
+	deltaOut = GET_EXPAND_LOGIC_MASK(!deltaHysterisis(thisState, thisSample));
 
 	outputs.auxLogic[writeIndex] = deltaOut;
 
@@ -171,7 +171,7 @@ void ViaMeta::calculateDac3Contour(int32_t writeIndex) {
 
 	while (samplesRemaining) {
 
-		outputs.dac3Samples[writeIndex] = metaWavetable.signalOut[readIndex] >> 3;
+		outputs.dac3Samples[writeIndex] = 4095 - (metaWavetable.signalOut[readIndex] >> 3);
 
 		samplesRemaining --;
 		readIndex ++;
@@ -222,7 +222,8 @@ void ViaMeta::calculateDac3Noise(int32_t writeIndex) {
 	int32_t thisSample = metaController.ghostPhase >> 20;
 
 	if (thisSample != lastSample) {
-		lfsrState = rand() & 4095;
+		lfsrState = metaWavetable.signalOut[0];
+		advanceLFSR();
 	}
 
 	lastSample = thisSample;

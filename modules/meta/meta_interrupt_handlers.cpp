@@ -40,6 +40,7 @@ void ViaMeta::mainRisingEdgeCallback(void) {
 
 	#endif
 
+
 }
 
 void ViaMeta::mainFallingEdgeCallback(void) {
@@ -130,9 +131,21 @@ void ViaMeta::slowConversionCallback(void) {
 	metaController.parseControlsExternal(&controls, &inputs);
 	ampEnvelope.parseControls(&controls, &inputs);
 	freqTransient.attack = __USAT(ampEnvelope.release * freqAttackMultiplier, 19);
+	if (freqTransient.attack < 524287) {
+		freqTransient.attack = 524287;
+	}
 	freqTransient.release = __USAT(ampEnvelope.release * freqReleaseMultiplier - minTransientLength, 15);
+	if (freqTransient.release < 32767) {
+		freqTransient.attack = 32767;
+	}
 	morphEnvelope.release = ampEnvelope.release * morphReleaseMultiplier;
+	if (morphEnvelope.release < morphReleaseClamp) {
+		morphEnvelope.release = morphReleaseClamp;
+	}
 	morphEnvelope.attack = __USAT(ampEnvelope.release * morphAttackMultiplier, 19);
+	if (morphEnvelope.attack < 143360) {
+		morphEnvelope.attack = 200360;
+	}
 
 
 
