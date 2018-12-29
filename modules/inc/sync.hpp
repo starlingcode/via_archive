@@ -17,6 +17,8 @@ extern "C" {
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
 #include <oscillators.hpp>
+#include "sync_scale_defs.hpp"
+#include "sync_tables.hpp"
 
 #ifdef __cplusplus
 }
@@ -148,6 +150,8 @@ public:
 	 * Tables
 	 *
 	 */
+
+	SyncWavetableSet wavetableSet;
 
 	// declare an array of pointers to wavetables (stored in flash)
 	const Wavetable * wavetableArray[4][4];

@@ -17,7 +17,7 @@ extern "C" {
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
 #include <signal_processors.hpp>
-#include <tables.hpp>
+#include <scanner_tables.hpp>
 
 #ifdef __cplusplus
 }
@@ -168,6 +168,8 @@ public:
 	 * Tables
 	 *
 	 */
+
+	ScannerWavetableSet wavetableSet;
 
 	// declare an array of pointers to wavetables (stored in flash)
 	const Wavetable * wavetableArray[2][8];

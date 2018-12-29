@@ -14,8 +14,8 @@ void SimpleEnvelope::parseControls(ViaControls * controls, ViaInputStreams * inp
 
 	releaseMod = releaseMod >> 4;
 
-	release = fix16_mul(expoTable[((4095 - controls->knob2Value) >> 2) * 3] >> 11,
-			expoTable[((releaseMod) >> 2) * 3] >> 4);
+	release = fix16_mul(expo.convert(((4095 - controls->knob2Value) >> 2) * 3) >> 11,
+			expo.convert(((releaseMod) >> 2) * 3) >> 4);
 
 //	release >>= 2;
 
