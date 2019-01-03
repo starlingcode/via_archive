@@ -38,16 +38,12 @@ void ViaUI::transition(void (ViaUI::*func)(int32_t)) {
  */
 
 void ViaUI::defaultMenu(int32_t sig) {
-	switch (sig) {
 
-	case ENTRY_SIG:
+	if (sig == ENTRY_SIG) {
 		defaultEnterMenuCallback();
 		timerReset();
 		timerDisable();
-		break;
-
-	case SENSOR_EVENT_SIG:
-
+	} else if (sig == SENSOR_EVENT_SIG) {
 		if (*button3 == pressedState) {
 			transition(&ViaUI::button3Menu);
 
@@ -66,18 +62,8 @@ void ViaUI::defaultMenu(int32_t sig) {
 		} else if (*button5 == pressedState) {
 			transition(&ViaUI::button5Menu);
 		}
-		break;
-
-	case EXPAND_SW_ON_SIG:
+	} else if (sig == EXPAND_SW_ON_SIG) {
 		transition(&ViaUI::presetMenu);
-		break;
-
-	case EXIT_SIG:
-
-		break;
-
-	default:
-		break;
 	}
 }
 
