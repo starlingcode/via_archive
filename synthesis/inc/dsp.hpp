@@ -2,10 +2,7 @@
 #ifndef INC_VIA_DSP_H_
 #define INC_VIA_DSP_H_
 
-#ifdef BUILD_F373
-
 #include <stdint.h>
-
 
 /**
  *
@@ -26,6 +23,8 @@ public:
 	}
 
 };
+
+#ifdef BUILD_F373
 
 #ifdef __cplusplus
 extern "C" {
