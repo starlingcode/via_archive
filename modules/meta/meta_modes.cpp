@@ -142,14 +142,17 @@ void ViaMeta::handleButton6ModeChange(int32_t mode) {
 	case noloop:
 		if (metaUI.FREQ_MODE == audio) {
 			initializeDrum();
-		} else if (metaUI.FREQ_MODE == env)  {
-			initializeEnvelope();
 		} else {
-			initializeSequence();
+			if (metaUI.TRIG_MODE == meta_pendulum)  {
+				metaController.incrementArbiter = &MetaController::stickyPendulumRestingState;
+			}
+			if (metaUI.FREQ_MODE == env)  {
+				initializeEnvelope();
+			} else {
+				initializeSequence();
+			}
 		}
-		if (metaUI.TRIG_MODE == meta_pendulum)  {
-			metaController.incrementArbiter = &MetaController::stickyPendulumRestingState;
-		}
+
 		break;
 	case looping:
 		if (metaUI.FREQ_MODE == audio) {
@@ -160,7 +163,7 @@ void ViaMeta::handleButton6ModeChange(int32_t mode) {
 			initializeComplexLFO();
 		}
 		if (metaUI.TRIG_MODE == meta_pendulum)  {
-			metaController.incrementArbiter = &MetaController::pendulumRestingState;
+			metaController.incrementArbiter = &MetaController::pendulumForwardAttackState;
 		}
 		break;
 	}

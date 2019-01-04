@@ -315,8 +315,7 @@ public:
 
 		int32_t redSignal = sample * (lastPhaseValue >> 24);
 		int32_t blueSignal = (sample * (!(lastPhaseValue >> 24))) >> 1;
-		int32_t greenSignal = (__USAT(((-inputs.cv3Samples[0] >> 4) + controls.knob3Value), 12)
-				* sample) >> 13;
+		int32_t greenSignal = (metaUI.button3Mode == 2) * sample;
 
 		updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
 
