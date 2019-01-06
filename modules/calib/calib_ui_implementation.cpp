@@ -65,6 +65,16 @@ void ViaCalib::ViaCalibUI::uiSetLEDs(int mode) {
 
 void ViaCalib::ViaCalibUI::defaultEnterMenuCallback(void) {
 
+	if (this_module.checkTouch &&
+			(touch1OK & touch2OK & touch3OK & touch4OK & touch5OK & touch6OK)) {
+
+		this_module.checkTouch = 0;
+		this_module.clearLEDs();
+		this_module.clearRGB();
+
+
+	}
+
 }
 void ViaCalib::ViaCalibUI::newModeEnterMenuCallback(void) {
 
@@ -78,20 +88,38 @@ void ViaCalib::ViaCalibUI::presetEnterMenuCallback(void) {
 
 void ViaCalib::ViaCalibUI::button1EnterMenuCallback(void) {
 
+	this_module.setLEDA(1);
+	touch1OK = 1;
+
 }
 void ViaCalib::ViaCalibUI::button2EnterMenuCallback(void) {
+
+	this_module.setLEDB(1);
+	touch2OK = 1;
 
 }
 void ViaCalib::ViaCalibUI::button3EnterMenuCallback(void) {
 
+	this_module.setLEDC(1);
+	touch3OK = 1;
+
 }
 void ViaCalib::ViaCalibUI::button4EnterMenuCallback(void) {
+
+	this_module.setLEDD(1);
+	touch4OK = 1;
 
 }
 void ViaCalib::ViaCalibUI::button5EnterMenuCallback(void) {
 
+	this_module.setRedLED(2048);
+	touch5OK = 1;
+
 }
 void ViaCalib::ViaCalibUI::button6EnterMenuCallback(void) {
+
+	this_module.setBlueLED(2048);
+	touch6OK = 1;
 
 }
 void ViaCalib::ViaCalibUI::aux1EnterMenuCallback(void) {
@@ -114,40 +142,62 @@ void ViaCalib::ViaCalibUI::aux4EnterMenuCallback(void) {
 
 void ViaCalib::ViaCalibUI::button1TapCallback(void) {
 
+	transition(&ViaCalib::ViaCalibUI::defaultMenu);
+
 }
 void ViaCalib::ViaCalibUI::button2TapCallback(void) {
+
+	transition(&ViaCalib::ViaCalibUI::defaultMenu);
 
 }
 void ViaCalib::ViaCalibUI::button3TapCallback(void) {
 
+	transition(&ViaCalib::ViaCalibUI::defaultMenu);
+
 }
 void ViaCalib::ViaCalibUI::button4TapCallback(void) {
+
+	transition(&ViaCalib::ViaCalibUI::defaultMenu);
 
 }
 void ViaCalib::ViaCalibUI::button5TapCallback(void) {
 
+	transition(&ViaCalib::ViaCalibUI::defaultMenu);
+
 }
 void ViaCalib::ViaCalibUI::button6TapCallback(void) {
+
+	transition(&ViaCalib::ViaCalibUI::defaultMenu);
 
 }
 
 void ViaCalib::ViaCalibUI::aux1TapCallback(void) {
 
+	transition(&ViaCalib::ViaCalibUI::defaultMenu);
+
 }
 
 void ViaCalib::ViaCalibUI::aux2TapCallback(void) {
+
+	transition(&ViaCalib::ViaCalibUI::defaultMenu);
 
 }
 
 void ViaCalib::ViaCalibUI::aux2AltTapCallback(void) {
 
+	transition(&ViaCalib::ViaCalibUI::defaultMenu);
+
 }
 
 void ViaCalib::ViaCalibUI::aux3TapCallback(void) {
 
+	transition(&ViaCalib::ViaCalibUI::defaultMenu);
+
 }
 
 void ViaCalib::ViaCalibUI::aux4TapCallback(void) {
+
+	transition(&ViaCalib::ViaCalibUI::defaultMenu);
 
 }
 

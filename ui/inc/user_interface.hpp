@@ -189,7 +189,7 @@ public:
 		eepromStatus = EE_Init();
 	}
 
-	void loadFromMemory(int32_t position) {
+	void loadStateFromMemory(int32_t position) {
 
 		uint16_t eepromTemp;
 
@@ -201,11 +201,25 @@ public:
 
 	}
 
+	uint32_t loadFromMemory(int32_t position) {
+
+		uint16_t eepromTemp;
+		uint32_t data;
+
+		eepromStatus = EE_ReadVariable(VirtAddVarTab[position * 2], &eepromTemp);
+		data = (int32_t) eepromTemp;  // load bottom 16 bits
+		eepromStatus |= EE_ReadVariable(VirtAddVarTab[(position * 2) + 1],
+				&eepromTemp);
+		data |= ((int32_t) eepromTemp) << 16;  // load 16 upper bits
+		return data;
+
+	}
+
 #endif
 
 #ifdef BUILD_VIRTUAL
 
-	void loadFromMemory(int32_t position) {
+	void loadStateFromMemory(int32_t position) {
 		;
 	}
 
@@ -246,7 +260,8 @@ public:
 	int32_t presetNumber = 0;
 
 	void loadFromEEPROM(int32_t);
-	void storeToEEPROM(int32_t);
+	void storeStateToEEPROM(int32_t);
+	void storeToEEPROM(int32_t, uint32_t);
 
 	int32_t incrementModeAndStore(int32_t, int32_t, int32_t, int32_t);
 	int32_t decrementModeAndStore(int32_t, int32_t, int32_t, int32_t);

@@ -65,4 +65,8 @@ void ViaMeta::init() {
 
 #endif
 
+	if (readOptionBytes() == 0) {
+		readCalibrationPacket();
+	}
+
 }

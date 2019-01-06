@@ -81,7 +81,7 @@ void ViaUI::newModeMenu(int32_t sig) {
 	case ENTRY_SIG:
 		newModeEnterMenuCallback();
 #ifdef BUILD_F373
-		storeToEEPROM(0);
+		storeStateToEEPROM(0);
 #endif
 		timerReset();
 		timerSetOverflow(5000);

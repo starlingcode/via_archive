@@ -9,6 +9,10 @@
 
 void ViaCalib::init() {
 
+	//writeOptionBytes(0,0);
+
+	calibTest = readOptionBytes();
+
 	initializeAuxOutputs();
 
 	inputs.init(CALIB_BUFFER_SIZE);
@@ -16,6 +20,12 @@ void ViaCalib::init() {
 	outputBufferSize = CALIB_BUFFER_SIZE;
 	inputBufferSize = 1;
 
-	CalibUI.initialize();
+	for (int i = 0; i < CALIB_BUFFER_SIZE*2; i++) {
+		outputs.dac3Samples[i] = 2048;
+	}
+
+	calibUI.initialize();
+
+	readCalibrationPacket();
 
 }

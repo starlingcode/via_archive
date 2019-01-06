@@ -68,6 +68,67 @@ public:
 	/// Audio rate outputs to the three DAC channels, see ViaOutputStreams for details.
 	ViaOutputStreams outputs;
 
+	int32_t cv2Calibration = 0;
+	int32_t cv3Calibration = 0;
+	int32_t cv1Calibration = 0;
+	int32_t dac3Calibration = 0;
+
+	int32_t calibrationPacket = 0;
+
+	void encodeCalibrationPacket(uint32_t cv2Calibration, uint32_t cv3Calibration,
+			uint32_t cv1Calibration, uint32_t dac3Calibration) {
+
+		// from lsb, first 10 bits are cv2Calibration, next 10 are cv3Calibration, next 5 are cv1Calibration, last 7 are dac3 calibration
+		calibrationPacket = cv2Calibration | (cv3Calibration << 10) |
+				(cv1Calibration << 20) | ((dac3Calibration >> 2) << 25);
+
+	}
+
+	void decodeCalibrationPacket(void) {
+
+		cv2Calibration = calibrationPacket & 0b1111111111;
+		cv3Calibration = (calibrationPacket >> 10) & 0b1111111111;
+		cv1Calibration = (calibrationPacket >> 20) & 0b11111;
+		dac3Calibration = ((calibrationPacket >> 25) & 0b1111111) << 2;
+
+	}
+
+	void writeOptionBytes(uint16_t bottomHalf, uint16_t topHalf) {
+
+		FLASH_OBProgramInitTypeDef pOBInit;
+		HAL_FLASHEx_OBGetConfig(&pOBInit);
+		HAL_StatusTypeDef obStatus;
+
+		pOBInit.OptionType = OPTIONBYTE_WRP;
+		pOBInit.WRPState = OB_WRPSTATE_DISABLE;
+
+		HAL_FLASH_Unlock();
+		HAL_FLASH_OB_Unlock();
+		obStatus = HAL_FLASHEx_OBProgram(&pOBInit);
+
+		pOBInit.OptionType = OPTIONBYTE_DATA;
+		pOBInit.DATAAddress = OB_DATA_ADDRESS_DATA0;
+		pOBInit.DATAData = bottomHalf;
+
+		obStatus = HAL_FLASHEx_OBProgram(&pOBInit);
+
+		pOBInit.DATAAddress = OB_DATA_ADDRESS_DATA1;
+		pOBInit.DATAData = topHalf;
+
+		obStatus = HAL_FLASHEx_OBProgram(&pOBInit);
+		HAL_FLASH_OB_Launch();
+		HAL_FLASH_Lock();
+
+
+	}
+
+	uint32_t readOptionBytes(void) {
+
+		return HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA0) |
+				(HAL_FLASHEx_OBGetUserData(OB_DATA_ADDRESS_DATA1) << 16);
+
+	}
+
 	/// Connect module hardware IO
 	/** Connect the virtual module sample data streams to the DMA controller on the hardware. */
 	void ioStreamInit() {

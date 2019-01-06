@@ -122,7 +122,7 @@ void ViaUI::presetPressedMenu(int32_t sig) {
 		break;
 
 		case TIMEOUT_SIG:
-		storeToEEPROM(presetNumber);
+		storeStateToEEPROM(presetNumber);
 		transition(&ViaUI::newPreset);
 		break;
 

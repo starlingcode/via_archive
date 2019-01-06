@@ -178,6 +178,11 @@ public:
 	int16_t drumFullScale[4];
 	int32_t drumOff[4];
 
+	void readCalibrationPacket(void) {
+		calibrationPacket = metaUI.loadFromMemory(7);
+		decodeCalibrationPacket();
+	}
+
 	/*
 	 *
 	 * Mode functions

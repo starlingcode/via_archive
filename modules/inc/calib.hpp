@@ -117,17 +117,73 @@ public:
 			linkUI((void *) &calibTouchLink, (void *) this);
 		}
 
+		int32_t touch1OK = 0;
+		int32_t touch2OK = 0;
+		int32_t touch3OK = 0;
+		int32_t touch4OK = 0;
+		int32_t touch5OK = 0;
+		int32_t touch6OK = 0;
+
 	};
+
+	// sketch of module states
+
+	uint32_t calibrateCVs = 0;
+	uint32_t checkTouch = 1;
 
 	/*
 	 *
-	 * Tables
+	 * Calibration data
 	 *
 	 */
 
+	uint32_t calibTest = 0;
+
+	uint32_t calibrateDAC3 = 0;
+	uint32_t cvCalibCounter = 0;
+	uint32_t cv1Sum = 0;
+	uint32_t cv2Sum = 0;
+	uint32_t cv3Sum = 0;
+
+	uint32_t cv1Read = 0;
+	uint32_t cv2Read = 0;
+	uint32_t cv3Read = 0;
+	uint32_t dac3Offset = 0;
+
+	void readCalibrationPacket(void) {
+		calibrationPacket = calibUI.loadFromMemory(7);
+		decodeCalibrationPacket();
+	}
+
+	/// Helper functions
+
+	Sine oscillator;
+	uint32_t sineFreq = 0;
+	uint32_t sinePhase = 0;
+	ExpoConverter expo;
+
+	int32_t octave = 0;
+
+	int32_t cv1Stable = 0;
+	int32_t lastCV1 = 0;
+	int32_t thisCV1 = 0;
+	uint32_t cv1Counter = 0;
+	buffer errorBuffer;
+	int32_t errorSum = 0;
+	int32_t cv1BlueAmount = 0;
+	int32_t cv2RedAmount = 0;
+
+	uint32_t dac3Phasor = 0;
+	uint32_t dac3Increment = 0;
+	int32_t dac3Base = 0;
+	int32_t dac3Range = 0;
+	uint32_t dac3Output = 0;
+
+	/// Init and UI
+
 	void init(void);
 
-	ViaCalibUI CalibUI;
+	ViaCalibUI calibUI;
 
 	int32_t runtimeDisplay;
 
@@ -137,9 +193,13 @@ public:
 	 *
 	 */
 
-	ViaCalib() : CalibUI(*this) {
+	ViaCalib() : calibUI(*this) {
 
 		init();
+
+		for (int i = 0; i < 32; i++) {
+			errorBuffer.buff[i] = 0;
+		}
 	}
 
 	void mainRisingEdgeCallback(void);
@@ -161,7 +221,7 @@ public:
 
 
 	void ui_dispatch(int32_t sig) {
-		this->CalibUI.dispatch(sig);
+		this->calibUI.dispatch(sig);
 	};
 
 };

@@ -37,7 +37,7 @@ void ViaUI::initialize(void) {
 
 void ViaUI::loadFromEEPROM(int32_t position) {
 
-	loadFromMemory(position);
+	loadStateFromMemory(position);
 
 	button1Mode = modeStateBuffer & BUTTON1_MASK;
 	button2Mode = (modeStateBuffer & BUTTON2_MASK) >> BUTTON2_SHIFT;
@@ -56,7 +56,7 @@ void ViaUI::loadFromEEPROM(int32_t position) {
 }
 
 // writes 2 16-bit values representing modeState to EEPROM per position,  1 runtime + 6 presets + calibration word
-void ViaUI::storeToEEPROM(int32_t position) {
+void ViaUI::storeStateToEEPROM(int32_t position) {
 //	// store lower 16 bits
 
 #ifdef BUILD_F373
@@ -64,6 +64,19 @@ void ViaUI::storeToEEPROM(int32_t position) {
 			(uint16_t) modeStateBuffer);
 	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1],
 			(uint16_t) (modeStateBuffer >> 16));
+#endif
+
+}
+
+// writes 2 16-bit values representing modeState to EEPROM per position,  1 runtime + 6 presets + calibration word
+void ViaUI::storeToEEPROM(int32_t position, uint32_t data) {
+//	// store lower 16 bits
+
+#ifdef BUILD_F373
+	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2],
+			(uint16_t) data);
+	eepromStatus |= EE_WriteVariable(VirtAddVarTab[(position * 2) + 1],
+			(uint16_t) (data >> 16));
 #endif
 
 }
