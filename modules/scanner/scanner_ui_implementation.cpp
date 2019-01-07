@@ -248,3 +248,16 @@ void ViaScanner::ViaScannerUI::aux4HoldCallback(void) {
 	transition(&ViaScanner::ViaScannerUI::button5Menu);
 }
 
+void ViaScanner::ViaScannerUI::writeStockPresets(void) {
+
+	storeToEEPROM(1, stockPreset1);
+	storeToEEPROM(2, stockPreset2);
+	storeToEEPROM(3, stockPreset3);
+	storeToEEPROM(4, stockPreset4);
+	storeToEEPROM(5, stockPreset5);
+	storeToEEPROM(6, stockPreset6);
+
+	transition(&ViaScanner::ViaScannerUI::overwritePresets);
+
+}
+

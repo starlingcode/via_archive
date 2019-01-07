@@ -182,6 +182,22 @@ public:
 		void aux4EnterMenuCallback(void) override;
 		//@}
 
+		void writeStockPresets(void) override;
+
+		// TODO use enums, fix for gateseq ....
+		// drum
+		uint32_t stockPreset1 = ENCODE_PRESET(0, 0, 0, 0, 0, 0, 2, 0, 0, 0);
+		// oscillator
+		uint32_t stockPreset2 = ENCODE_PRESET(2, 4, 0, 4, 0, 1, 0, 1, 0, 0);
+		// envelope
+		uint32_t stockPreset3 = ENCODE_PRESET(1, 5, 1, 3, 0, 0, 0, 0, 1, 0);
+		// looping AR
+		uint32_t stockPreset4 = ENCODE_PRESET(3, 3, 1, 1, 0, 1, 0, 1, 0, 0);
+		// complex sequence
+		uint32_t stockPreset5 = ENCODE_PRESET(4, 2, 2, 5, 0, 0, 0, 0, 1, 0);
+		// complex LFO
+		uint32_t stockPreset6 = ENCODE_PRESET(0, 0, 2, 1, 0, 1, 0, 1, 0, 0);
+
 		/// Initialization that for some reason happens outside of the constructor?
 		void initialize(void) override;
 

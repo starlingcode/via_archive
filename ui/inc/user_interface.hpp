@@ -108,6 +108,7 @@ public:
 	void presetPressedMenu(int32_t sig);
 	void newPreset(int32_t sig);
 	void switchPreset(int32_t sig);
+	void overwritePresets(int32_t sig);
 
 	// Factory reset
 	void factoryReset(int32_t sig);
@@ -157,6 +158,8 @@ public:
 	virtual void uiSetLEDs(int) = 0;
 
 	virtual void recallModuleState(void) = 0;
+
+	virtual void writeStockPresets(void) = 0;
 
 	// initial setup of UI
 	virtual void initialize(void) = 0;
@@ -313,12 +316,10 @@ public:
 #define AUX_MODE4_MASK		0b00111000000000000000000000000000
 #define AUX_MODE4_SHIFT		27
 
-#define DEFAULTPRESET1 0b0000000000000000
-#define DEFAULTPRESET2 0b0000000000000000
-#define DEFAULTPRESET3 0b0000000000000000
-#define DEFAULTPRESET4 0b0000000000000000
-#define DEFAULTPRESET5 0b0000000000000000
-#define DEFAULTPRESET6 0b0000000000000000
+#define ENCODE_PRESET(B1, B2, B3, B4, B5, B6, A1, A2, A3, A4) \
+	(B1 | (B2 << BUTTON2_SHIFT) | (B3 << BUTTON3_SHIFT) | (B4 << BUTTON4_SHIFT) | \
+		(B5 << BUTTON5_SHIFT) | (B6 << BUTTON6_SHIFT) | (A1 << AUX_MODE1_SHIFT) | \
+			(A2 << AUX_MODE2_SHIFT) | (A3 << AUX_MODE3_SHIFT) | (A4 << AUX_MODE4_SHIFT))
 
 
 

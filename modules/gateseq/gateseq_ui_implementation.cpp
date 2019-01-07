@@ -283,4 +283,15 @@ void ViaGateseq::ViaGateseqUI::aux4HoldCallback(void) {
 	transition(&ViaGateseq::ViaGateseqUI::defaultMenu);
 }
 
+void ViaGateseq::ViaGateseqUI::writeStockPresets(void) {
 
+	storeToEEPROM(1, stockPreset1);
+	storeToEEPROM(2, stockPreset2);
+	storeToEEPROM(3, stockPreset3);
+	storeToEEPROM(4, stockPreset4);
+	storeToEEPROM(5, stockPreset5);
+	storeToEEPROM(6, stockPreset6);
+
+	transition(&ViaGateseq::ViaGateseqUI::overwritePresets);
+
+}

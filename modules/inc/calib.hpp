@@ -12,15 +12,7 @@
 #include <via_platform_binding.hpp>
 #include <oscillators.hpp>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-
-#ifdef __cplusplus
-}
-#endif
+#ifdef BUILD_F373
 
 #define CALIB_BUFFER_SIZE 8
 
@@ -113,6 +105,10 @@ public:
 
 		void initialize(void) override;
 
+		void writeStockPresets(void) override {
+			;
+		}
+
 		ViaCalibUI(ViaCalib& x): this_module(x) {
 			linkUI((void *) &calibTouchLink, (void *) this);
 		}
@@ -137,6 +133,9 @@ public:
 	 *
 	 */
 
+	void measureCVOffsets(void);
+	void measureDAC3Offset(void);
+
 	uint32_t calibTest = 0;
 
 	uint32_t calibrateDAC3 = 0;
@@ -157,12 +156,25 @@ public:
 
 	/// Helper functions
 
+	void advanceState(void);
+
+	void renderTestOutputs(int32_t writePosition);
+
 	Sine oscillator;
 	uint32_t sineFreq = 0;
 	uint32_t sinePhase = 0;
 	ExpoConverter expo;
 
-	int32_t octave = 0;
+	void advanceLFO(void);
+
+	uint32_t lfoPhasor = 0;
+	uint32_t lfoIncrement = 0;
+
+	int32_t dac3Base = 0;
+	int32_t dac3Range = 0;
+	uint32_t dac3Output = 0;
+
+	void cv1TunerExecute(void);
 
 	int32_t cv1Stable = 0;
 	int32_t lastCV1 = 0;
@@ -173,11 +185,7 @@ public:
 	int32_t cv1BlueAmount = 0;
 	int32_t cv2RedAmount = 0;
 
-	uint32_t dac3Phasor = 0;
-	uint32_t dac3Increment = 0;
-	int32_t dac3Base = 0;
-	int32_t dac3Range = 0;
-	uint32_t dac3Output = 0;
+	void verifyCV2CV3(void);
 
 	/// Init and UI
 
@@ -226,6 +234,6 @@ public:
 
 };
 
-
+#endif
 
 #endif /* INC_Calib_HPP_ */
