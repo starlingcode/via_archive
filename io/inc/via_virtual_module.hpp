@@ -195,6 +195,29 @@ public:
 		setLogicOutputsLEDOff(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
 
 	}
+
+	int32_t cv2Calibration = 0;
+	int32_t cv3Calibration = 0;
+	int32_t cv1Calibration = 0;
+	int32_t dac3Calibration = 0;
+
+	int32_t calibrationPacket = 0;
+
+	void decodeCalibrationPacket(void) {
+
+		cv2Calibration = 0;
+		cv3Calibration = 0;
+		cv1Calibration = 0;
+		dac3Calibration = 0;
+
+	}
+
+	uint32_t readOptionBytes(void) {
+
+		return 0;
+
+	}
+
 	/// Needs to be rewritten
 //	inline void setLogicOutBoolean(int32_t writeIndex, int32_t runtimeDisplay) {
 //

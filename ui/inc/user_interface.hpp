@@ -226,6 +226,10 @@ public:
 		;
 	}
 
+	uint32_t loadFromMemory(int32_t position) {
+		return 0;
+	}
+
 	void timerReset(void) {
 		virtualTimer = 0;
 	}
