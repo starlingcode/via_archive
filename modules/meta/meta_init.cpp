@@ -58,12 +58,6 @@ void ViaMeta::init() {
 	metaController.freeze = 1;
 
 	metaWavetable.morphMod = inputs.cv3Samples;
-#ifdef BUILD_VIRTUAL
-	metaWavetable.morphScale = (int16_t*) ampEnvelope.output;
-	metaController.fm = (int16_t*) ampEnvelope.output;
-	metaController.expoFM = freqTransient.output;
-
-#endif
 
 	if (readOptionBytes() == 0) {
 		readCalibrationPacket();

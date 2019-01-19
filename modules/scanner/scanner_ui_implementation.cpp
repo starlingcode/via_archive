@@ -30,12 +30,8 @@ void ViaScanner::ViaScannerUI::initialize(void) {
 #endif
 
 	loadFromEEPROM(0);
-
-#ifdef BUILD_F373
-
 	recallModuleState();
 
-#endif
 	state = &ViaUI::defaultMenu;
 	transition(&ViaUI::defaultMenu);
 

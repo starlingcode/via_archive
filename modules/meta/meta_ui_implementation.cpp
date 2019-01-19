@@ -38,10 +38,11 @@ void ViaMeta::ViaMetaUI::initialize(void) {
 #endif
 
 	loadFromEEPROM(0);
+	recallModuleState();
 
 #ifdef BUILD_F373
 
-	recallModuleState();
+	
 
 #endif
 
