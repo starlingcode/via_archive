@@ -124,11 +124,6 @@ private:
 
 public:
 
-#define THREE_AXIS_SCANNER_SUM 0
-#define THREE_AXIS_SCANNER_Multiply 1
-#define THREE_AXIS_SCANNER_DIFFERENCE 2
-#define THREE_AXIS_SCANNER_LIGHTEN 3
-
 	uint32_t *xTable;
 	uint32_t *yTable;
 
@@ -154,7 +149,18 @@ public:
 	int32_t hemisphereBlend;
 	int32_t deltaBlend;
 
-	void fillBuffer(void);
+	inline void fillBufferExternal(void) {
+		(this->*fillBuffer)();
+	}
+
+	void (ThreeAxisScanner::*fillBuffer)(void);
+
+	void fillBufferSum(void);
+	void fillBufferMultiply(void);
+	void fillBufferDifference(void);
+	void fillBufferLighten(void);
+
+	inline void scanSetup(void);
 
 	void parseControls(ViaControls * controls);
 

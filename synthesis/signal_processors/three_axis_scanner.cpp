@@ -18,7 +18,7 @@ void ThreeAxisScanner::parseControls(ViaControls * controls) {
 
 }
 
-void ThreeAxisScanner::fillBuffer() {
+void ThreeAxisScanner::scanSetup() {
 
 	int32_t xIncrement = (xInput - lastXInput) * reverse;
 	int32_t yIncrement = (yInput - lastYInput) * reverse;
@@ -59,27 +59,37 @@ void ThreeAxisScanner::fillBuffer() {
 	lastXIndex = xIndex;
 	lastYIndex = yIndex;
 
+}
 
-	switch (terrainType) {
+void ThreeAxisScanner::fillBufferSum() {
 
-	// get samples and combine
-	case THREE_AXIS_SCANNER_SUM:
-		scanTerrainSum();
-		break;
+	scanSetup();
 
-	case THREE_AXIS_SCANNER_Multiply:
-		scanTerrainMultiply();
-		break;
+	scanTerrainSum();
 
-	case THREE_AXIS_SCANNER_DIFFERENCE:
-		scanTerrainDifference();
-		break;
+}
 
-	case THREE_AXIS_SCANNER_LIGHTEN:
-		scanTerrainLighten();
-		break;
+void ThreeAxisScanner::fillBufferMultiply() {
 
-	}
+	scanSetup();
+
+	scanTerrainMultiply();
+
+}
+
+void ThreeAxisScanner::fillBufferDifference() {
+
+	scanSetup();
+
+	scanTerrainDifference();
+
+}
+
+void ThreeAxisScanner::fillBufferLighten() {
+
+	scanSetup();
+
+	scanTerrainLighten();
 
 }
 

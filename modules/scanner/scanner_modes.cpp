@@ -62,7 +62,21 @@ void ViaScanner::handleButton5ModeChange(int32_t mode) {
 
 void ViaScanner::handleButton3ModeChange(int32_t mode) {
 
-	scanner.terrainType = mode;
+	switch (mode) {
+	case sum:
+		scanner.fillBuffer = &ThreeAxisScanner::fillBufferSum;
+		break;
+	case multiply:
+		scanner.fillBuffer = &ThreeAxisScanner::fillBufferMultiply;
+		break;
+	case difference:
+		scanner.fillBuffer = &ThreeAxisScanner::fillBufferDifference;
+		break;
+	case lighten:
+		scanner.fillBuffer = &ThreeAxisScanner::fillBufferLighten;
+		break;
+
+	}
 
 }
 
