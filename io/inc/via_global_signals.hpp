@@ -64,6 +64,7 @@ public:
 
 	/// Update the average for each ADC with the latest value. TODO add methods to update values independently.
 	void update(void);
+	void updateSlow(void);
 
 };
 

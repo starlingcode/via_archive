@@ -73,6 +73,15 @@ void ViaScanner::halfTransferCallback(void) {
 
 	scanner.yInput = (int32_t)-inputs.cv3Samples[0];
 
+//	scanner.xInput += 32767;
+//	scanner.yInput += 32767;
+//
+//	scanner.xInput &= 0xFFF0;
+//	scanner.yInput &= 0xFFF0;
+//
+//	scanner.xInput -= 32767;
+//	scanner.yInput -= 32767;
+
 	scanner.fillBufferExternal();
 
 	int32_t sample;
@@ -108,6 +117,15 @@ void ViaScanner::transferCompleteCallback(void) {
 
 	}
 
+//	scanner.xInput += 32767;
+//	scanner.yInput += 32767;
+//
+//	scanner.xInput &= 0xFFF0;
+//	scanner.yInput &= 0xFFF0;
+//
+//	scanner.xInput -= 32767;
+//	scanner.yInput -= 32767;
+
 	scanner.hardSync = inputs.trigInput;
 	inputs.trigInput = 1;
 	scanner.reverse = reverseSignal;
@@ -135,7 +153,7 @@ void ViaScanner::transferCompleteCallback(void) {
 
 void ViaScanner::slowConversionCallback(void) {
 
-	controls.update();
+	controls.updateSlow();
 	scanner.parseControls(&controls);
 
 	uint32_t redLevel = abs(scanner.xInput) >> 4;

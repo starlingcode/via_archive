@@ -65,13 +65,10 @@ void ViaCalib::ViaCalibUI::uiSetLEDs(int mode) {
 
 void ViaCalib::ViaCalibUI::defaultEnterMenuCallback(void) {
 
-	if (this_module.checkTouch &&
+	if (this_module.currentState == &(this_module.checkTouch) &&
 			(touch1OK & touch2OK & touch3OK & touch4OK & touch5OK & touch6OK)) {
 
-		this_module.checkTouch = 0;
-		this_module.clearLEDs();
-		this_module.clearRGB();
-
+		this_module.currentState->advanceState();
 
 	}
 
@@ -88,7 +85,7 @@ void ViaCalib::ViaCalibUI::presetEnterMenuCallback(void) {
 
 void ViaCalib::ViaCalibUI::button1EnterMenuCallback(void) {
 
-	if (this_module.checkTouch) {
+	if (this_module.currentState == &(this_module.checkTouch)) {
 		this_module.setLEDA(1);
 		touch1OK = 1;
 	}
@@ -97,7 +94,7 @@ void ViaCalib::ViaCalibUI::button1EnterMenuCallback(void) {
 }
 void ViaCalib::ViaCalibUI::button2EnterMenuCallback(void) {
 
-	if (this_module.checkTouch) {
+	if (this_module.currentState == &(this_module.checkTouch)) {
 		this_module.setLEDB(1);
 		touch2OK = 1;
 	}
@@ -106,7 +103,7 @@ void ViaCalib::ViaCalibUI::button2EnterMenuCallback(void) {
 }
 void ViaCalib::ViaCalibUI::button3EnterMenuCallback(void) {
 
-	if (this_module.checkTouch) {
+	if (this_module.currentState == &(this_module.checkTouch)) {
 		this_module.setLEDC(1);
 		touch3OK = 1;
 	}
@@ -115,7 +112,7 @@ void ViaCalib::ViaCalibUI::button3EnterMenuCallback(void) {
 }
 void ViaCalib::ViaCalibUI::button4EnterMenuCallback(void) {
 
-	if (this_module.checkTouch) {
+	if (this_module.currentState == &(this_module.checkTouch)) {
 		this_module.setLEDD(1);
 		touch4OK = 1;
 	}
@@ -124,7 +121,7 @@ void ViaCalib::ViaCalibUI::button4EnterMenuCallback(void) {
 }
 void ViaCalib::ViaCalibUI::button5EnterMenuCallback(void) {
 
-	if (this_module.checkTouch) {
+	if (this_module.currentState == &(this_module.checkTouch)) {
 		this_module.setRedLED(2048);
 		touch5OK = 1;
 	}
@@ -133,7 +130,7 @@ void ViaCalib::ViaCalibUI::button5EnterMenuCallback(void) {
 }
 void ViaCalib::ViaCalibUI::button6EnterMenuCallback(void) {
 
-	if (this_module.checkTouch) {
+	if (this_module.currentState == &(this_module.checkTouch)) {
 		this_module.setBlueLED(2048);
 		touch6OK = 1;
 	}
@@ -220,38 +217,38 @@ void ViaCalib::ViaCalibUI::aux4TapCallback(void) {
 }
 
 void ViaCalib::ViaCalibUI::button1HoldCallback(void) {
-	if (!this_module.checkTouch) {
-		this_module.advanceState();
+	if (this_module.currentState != &(this_module.checkTouch)) {
+		this_module.currentState->advanceState();
 	}
 	transition(&ViaCalib::ViaCalibUI::defaultMenu);
 }
 void ViaCalib::ViaCalibUI::button2HoldCallback(void) {
-	if (!this_module.checkTouch) {
-		this_module.advanceState();
+	if (this_module.currentState != &(this_module.checkTouch)) {
+		this_module.currentState->advanceState();
 	}
 	transition(&ViaCalib::ViaCalibUI::defaultMenu);
 }
 void ViaCalib::ViaCalibUI::button3HoldCallback(void) {
-	if (!this_module.checkTouch) {
-		this_module.advanceState();
+	if (this_module.currentState != &(this_module.checkTouch)) {
+		this_module.currentState->advanceState();
 	}
 	transition(&ViaCalib::ViaCalibUI::defaultMenu);
 }
 void ViaCalib::ViaCalibUI::button4HoldCallback(void) {
-	if (!this_module.checkTouch) {
-		this_module.advanceState();
+	if (this_module.currentState != &(this_module.checkTouch)) {
+		this_module.currentState->advanceState();
 	}
 	transition(&ViaCalib::ViaCalibUI::defaultMenu);
 }
 void ViaCalib::ViaCalibUI::button5HoldCallback(void) {
-	if (!this_module.checkTouch) {
-		this_module.advanceState();
+	if (this_module.currentState != &(this_module.checkTouch)) {
+		this_module.currentState->advanceState();
 	}
 	transition(&ViaCalib::ViaCalibUI::defaultMenu);
 }
 void ViaCalib::ViaCalibUI::button6HoldCallback(void) {
-	if (!this_module.checkTouch) {
-		this_module.advanceState();
+	if (this_module.currentState != &(this_module.checkTouch)) {
+		this_module.currentState->advanceState();
 	}
 	transition(&ViaCalib::ViaCalibUI::defaultMenu);
 }

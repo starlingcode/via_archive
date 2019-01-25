@@ -187,17 +187,17 @@ public:
 		// TODO use enums
 		// (shA, gateA, pattern 1, shB, gateB, pattern 2, logic, na, na, na)
 		// dual euclidean
-		uint32_t stockPreset1 = ENCODE_PRESET(0, 2, 0, 0, 2, 0, 3, 0, 0, 0);
+		uint32_t stockPreset1 = ENCODE_PRESET(0, 2, 0, 0, 2, 0, 0, 0, 0, 0);
 		// 2 vs 3
-		uint32_t stockPreset2 = ENCODE_PRESET(0, 2, 1, 0, 2, 2, 1, 0, 0, 0);
+		uint32_t stockPreset2 = ENCODE_PRESET(0, 2, 1, 0, 2, 0, 3, 0, 0, 0);
 		// shuffle/swing
 		uint32_t stockPreset3 = ENCODE_PRESET(0, 2, 2, 0, 2, 0, 1, 0, 0, 0);
 		// clock multiplier
-		uint32_t stockPreset4 = ENCODE_PRESET(0, 2, 3, 0, 2, 3, 2, 0, 0, 0);
+		uint32_t stockPreset4 = ENCODE_PRESET(0, 2, 3, 0, 2, 3, 1, 0, 0, 0);
 		// s&track
-		uint32_t stockPreset5 = ENCODE_PRESET(1, 0, 0, 1, 1, 0, 0, 3, 0, 0);
+		uint32_t stockPreset5 = ENCODE_PRESET(1, 0, 0, 0, 1, 0, 3, 0, 0, 0);
 		// resample
-		uint32_t stockPreset6 = ENCODE_PRESET(2, 0, 0, 2, 0, 0, 0, 1, 0, 0);
+		uint32_t stockPreset6 = ENCODE_PRESET(2, 0, 0, 2, 0, 0, 2, 0, 0, 0);
 
 		/// Initialization that for some reason happens outside of the constructor?
 		void initialize(void) override;

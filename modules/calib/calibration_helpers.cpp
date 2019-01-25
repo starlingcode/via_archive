@@ -7,21 +7,23 @@
 
 #include "calib.hpp"
 
-void ViaCalib::advanceState(void) {
-	if (!calibrateCVs) {
-		calibrateCVs = 1;
-	} else if (!calibrateDAC3) {
-		calibrateDAC3 = 1;
-		measureDAC3Offset();
-		encodeCalibrationPacket(cv2Read, cv3Read, cv1Read, dac3Offset);
-		setLEDA(1);
-		setLEDB(1);
-		setLEDC(1);
-		setLEDD(1);
-	} else {
-		calibUI.storeToEEPROM(7, calibrationPacket);
-		writeOptionBytes(0, 1);
+constexpr int32_t Sine::big_sine[4097];
+
+void ViaCalib::renderFixedOutputs(int32_t writePosition) {
+
+	int32_t samplesRemaining = CALIB_BUFFER_SIZE;
+
+	while (samplesRemaining) {
+
+		outputs.dac1Samples[writePosition] = 4095;
+		outputs.dac2Samples[writePosition] = 4095;
+		outputs.dac3Samples[writePosition] = 2048;
+
+		samplesRemaining --;
+		writePosition ++;
+
 	}
+
 }
 
 void ViaCalib::renderTestOutputs(int32_t writePosition) {
@@ -144,6 +146,11 @@ void ViaCalib::measureCVOffsets(void) {
 void ViaCalib::measureDAC3Offset(void) {
 
 	dac3Offset = abs((int32_t)(2048 + cv1Read - controls.cv1Value));
+	encodeCalibrationPacket(cv2Read, cv3Read, cv1Read, dac3Offset);
+	setLEDA(1);
+	setLEDB(1);
+	setLEDC(1);
+	setLEDD(1);
 
 }
 
@@ -154,10 +161,18 @@ void ViaCalib::verifyCV2CV3(void) {
 
 	if (cv2Sample < -10000) {
 		setRedLED(2048);
+		cv2High = 1;
+	} else if (cv2High != 0) {
+		cv2High = 0;
+		setRedLED(0);
 	}
 
 	if (cv3Sample < -10000) {
 		setBlueLED(2048);
+		cv3High = 1;
+	} else if (cv3High != 0) {
+		cv3High = 0;
+		setBlueLED(0);
 	}
 
 }

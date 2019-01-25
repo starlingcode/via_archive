@@ -149,18 +149,18 @@ public:
 		void writeStockPresets(void) override;
 
 		// TODO use enums, fix for scanner ....
-		// drum
-		uint32_t stockPreset1 = ENCODE_PRESET(0, 0, 1, 0, 0, 0, 0, 0, 0, 0);
-		// oscillator
-		uint32_t stockPreset2 = ENCODE_PRESET(0, 2, 3, 0, 0, 0, 0, 0, 0, 0);
-		// envelope
-		uint32_t stockPreset3 = ENCODE_PRESET(0, 4, 5, 0, 0, 0, 0, 0, 0, 0);
-		// looping AR
-		uint32_t stockPreset4 = ENCODE_PRESET(0, 6, 7, 0, 0, 0, 0, 0, 0, 0);
-		// complex sequence
-		uint32_t stockPreset5 = ENCODE_PRESET(0, 0, 6, 0, 0, 0, 0, 0, 0, 0);
-		// complex LFO
-		uint32_t stockPreset6 = ENCODE_PRESET(0, 2, 5, 0, 0, 0, 0, 0, 0, 0);
+		// slopes
+		uint32_t stockPreset1 = ENCODE_PRESET(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		// physics world
+		uint32_t stockPreset2 = ENCODE_PRESET(0, 2, 2, 0, 0, 0, 0, 0, 0, 0);
+		// shapeshifting mult
+		uint32_t stockPreset3 = ENCODE_PRESET(0, 3, 4, 0, 0, 0, 0, 0, 0, 0);
+		// synthville
+		uint32_t stockPreset4 = ENCODE_PRESET(0, 5, 5, 0, 0, 0, 0, 0, 0, 0);
+		// staircases
+		uint32_t stockPreset5 = ENCODE_PRESET(0, 6, 6, 0, 0, 0, 0, 0, 0, 0);
+		// blockland
+		uint32_t stockPreset6 = ENCODE_PRESET(0, 7, 7, 0, 0, 0, 0, 0, 0, 0);
 
 		ViaScannerUI(ViaScanner& x): this_module(x) {
 			linkUI((void *) &scannerTouchLink, (void *) this);

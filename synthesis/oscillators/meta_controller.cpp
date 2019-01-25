@@ -267,30 +267,24 @@ void MetaController::handleLoopOff(void) {
 
 int32_t MetaController::noRetrigAttackState(void) {
 
-	switch (phaseEvent) {
-
-	case (AT_B_FROM_ATTACK):
+	if (phaseEvent == AT_B_FROM_ATTACK) {
 		incrementArbiter = &MetaController::noRetrigReleaseState;
 		return increment2;
-
-	default:
+	} else {
 		return increment1;
-
 	}
+
 }
 
 int32_t MetaController::noRetrigReleaseState(void) {
 
-	switch (phaseEvent) {
-
-	case (AT_A_FROM_RELEASE):
+	if (phaseEvent == AT_A_FROM_RELEASE) {
 		incrementArbiter = &MetaController::noRetrigAttackState;
 		return increment1;
-
-	default:
+	} else {
 		return increment2;
-
 	};
+
 }
 
 /*
@@ -303,16 +297,13 @@ int32_t MetaController::hardSyncAttackState(void) {
 
 	phase *= triggerSignal;
 
-	switch (phaseEvent) {
-
-	case (AT_B_FROM_ATTACK):
+	if (phaseEvent == AT_B_FROM_ATTACK) {
 		incrementArbiter = &MetaController::hardSyncReleaseState;
 		return increment2;
-
-	default:
+	} else {
 		return increment1;
-
 	}
+
 }
 
 int32_t MetaController::hardSyncReleaseState(void) {
@@ -323,15 +314,11 @@ int32_t MetaController::hardSyncReleaseState(void) {
 		incrementArbiter = &MetaController::hardSyncAttackState;
 	}
 
-	switch (phaseEvent) {
-
-	case (AT_A_FROM_RELEASE):
+	if (phaseEvent == AT_A_FROM_RELEASE) {
 		incrementArbiter = &MetaController::hardSyncAttackState;
 		return increment1;
-
-	default:
+	} else {
 		return increment2;
-
 	};
 }
 
@@ -343,15 +330,11 @@ int32_t MetaController::hardSyncReleaseState(void) {
 
 int32_t MetaController::envAttackState(void) {
 
-	switch (phaseEvent) {
-
-	case (AT_B_FROM_ATTACK):
+	if (phaseEvent == AT_B_FROM_ATTACK) {
 		incrementArbiter = &MetaController::envReleaseState;
 		return increment2;
-
-	default:
+	} else {
 		return increment1;
-
 	}
 }
 
@@ -360,37 +343,30 @@ int32_t MetaController::envReleaseState(void) {
 	if (triggerSignal == 0) {
 		incrementArbiter = &MetaController::envRetriggerState;
 		return -increment1;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_A_FROM_RELEASE):
-	case (AT_A_FROM_ATTACK):
+		// if at a from attack or at a from release
+	} else if (abs(phaseEvent) == AT_A_FROM_ATTACK) {
 		incrementArbiter = &MetaController::envAttackState;
 		return increment1;
-
-	default:
+	} else {
 		return increment2;
-
 	};
 }
 
 int32_t MetaController::envRetriggerState(void) {
 
-	switch (phaseEvent) {
+	// if at b from attack or at b from release
+	if (abs(phaseEvent) == AT_B_FROM_ATTACK) {
 
-	case (AT_B_FROM_RELEASE):
-	case (AT_B_FROM_ATTACK):
 		incrementArbiter = &MetaController::envReleaseState;
 		return increment2;
 
 	// hack to catch when skew modulation skips over the B phase event ?
 
-	case (AT_A_FROM_ATTACK):
+	} else if (phaseEvent == AT_A_FROM_ATTACK) {
 		incrementArbiter = &MetaController::envAttackState;
 		return increment1;
 
-	default:
+	} else {
 		return -increment1;
 
 	}
@@ -409,17 +385,11 @@ int32_t MetaController::gateAttackState(void) {
 	if (gateWLoopProtection == 0) {
 		incrementArbiter = &MetaController::gateReleaseReverseState;
 		return -increment2;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_B_FROM_ATTACK):
+	} else if (phaseEvent == AT_B_FROM_ATTACK) {
 		incrementArbiter = &MetaController::gatedState;
 		return 0;
-
-	default:
+	} else {
 		return increment1;
-
 	}
 }
 
@@ -428,17 +398,11 @@ int32_t MetaController::gateReleaseReverseState(void) {
 	if (gateSignal) {
 		incrementArbiter = &MetaController::gateAttackState;
 		return increment1;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_A_FROM_ATTACK):
+	} else if (phaseEvent == AT_A_FROM_ATTACK) {
 		incrementArbiter = &MetaController::gateAttackState;
 		return increment1;
-
-	default:
+	} else {
 		return -increment2;
-
 	};
 }
 
@@ -460,17 +424,11 @@ int32_t MetaController::gateReleaseState(void) {
 	if (gateSignal) {
 		incrementArbiter = &MetaController::gateRetriggerState;
 		return -increment1;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_A_FROM_RELEASE):
+	} else if (phaseEvent == AT_A_FROM_RELEASE) {
 		incrementArbiter = &MetaController::gateAttackState;
 		return increment1;
-
-	default:
+	} else {
 		return increment2;
-
 	};
 }
 
@@ -481,18 +439,13 @@ int32_t MetaController::gateRetriggerState(void) {
 	if (gateWLoopProtection == 0) {
 		incrementArbiter = &MetaController::gateReleaseState;
 		return increment2;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_B_FROM_RELEASE):
+	} else if (phaseEvent == AT_B_FROM_RELEASE) {
 		incrementArbiter = &MetaController::gatedState;
 		return 0;
-
-	default:
+	} else {
 		return -increment1;
-
 	}
+
 }
 
 /*
@@ -515,17 +468,11 @@ int32_t MetaController::pendulumForwardAttackState(void) {
 	if (triggerSignal == 0 && oscillatorOn) {
 		incrementArbiter = &MetaController::pendulumReverseAttackState;
 		return 0;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_B_FROM_ATTACK):
+	} else if (phaseEvent == AT_B_FROM_ATTACK) {
 		incrementArbiter = &MetaController::pendulumForwardReleaseState;
-		return increment2;
-
-	default:
 		return increment1;
-
+	} else {
+		return increment1;
 	}
 
 }
@@ -536,17 +483,11 @@ int32_t MetaController::pendulumReverseAttackState(void) {
 	if (triggerSignal == 0) {
 		incrementArbiter = &MetaController::pendulumForwardAttackState;
 		return increment1;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_A_FROM_ATTACK):
+	} else if (phaseEvent == AT_A_FROM_ATTACK) {
 		incrementArbiter = &MetaController::pendulumReverseReleaseState;
 		return -increment2;
-
-	default:
+	} else {
 		return -increment1;
-
 	}
 
 }
@@ -556,17 +497,11 @@ int32_t MetaController::pendulumForwardReleaseState(void) {
 	if (triggerSignal == 0) {
 		incrementArbiter = &MetaController::pendulumReverseReleaseState;
 		return -increment2;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_A_FROM_RELEASE):
+	} else if (phaseEvent == AT_A_FROM_RELEASE) {
 		incrementArbiter = &MetaController::pendulumForwardAttackState;
 		return increment1;
-
-	default:
+	} else {
 		return increment2;
-
 	}
 
 }
@@ -576,17 +511,11 @@ int32_t MetaController::pendulumReverseReleaseState(void) {
 	if (triggerSignal == 0) {
 		incrementArbiter = &MetaController::pendulumForwardReleaseState;
 		return increment2;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_B_FROM_RELEASE):
+	} else if (phaseEvent == AT_B_FROM_RELEASE) {
 		incrementArbiter = &MetaController::pendulumReverseAttackState;
 		return -increment1;
-
-	default:
+	} else {
 		return -increment2;
-
 	}
 
 }
@@ -624,38 +553,25 @@ int32_t MetaController::stickyPendulumForwardAttackState(void) {
 	if (triggerSignal == 0 && oscillatorOn) {
 		incrementArbiter = &MetaController::stickyPendulumReverseAttackState;
 		return 0;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_B_FROM_ATTACK):
+	} else if (phaseEvent == AT_B_FROM_ATTACK) {
 		incrementArbiter = &MetaController::stickyPendulumAtBState;
 		return 0;
-
-	default:
+	} else {
 		return increment1;
-
 	}
 
 }
 
 int32_t MetaController::stickyPendulumReverseAttackState(void) {
 
-
 	if (triggerSignal == 0) {
 		incrementArbiter = &MetaController::stickyPendulumForwardAttackState;
 		return increment1;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_A_FROM_ATTACK):
+	} else if (phaseEvent == AT_A_FROM_ATTACK) {
 		incrementArbiter = &MetaController::stickyPendulumRestingState;
 		return 0;
-
-	default:
+	} else {
 		return -increment1;
-
 	}
 
 }
@@ -665,17 +581,11 @@ int32_t MetaController::stickyPendulumForwardReleaseState(void) {
 	if (triggerSignal == 0) {
 		incrementArbiter = &MetaController::stickyPendulumReverseReleaseState;
 		return -increment2;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_A_FROM_RELEASE):
+	} else if (phaseEvent == AT_A_FROM_RELEASE) {
 		incrementArbiter = &MetaController::stickyPendulumRestingState;;
 		return 0;
-
-	default:
+	} else {
 		return increment2;
-
 	}
 
 }
@@ -685,17 +595,11 @@ int32_t MetaController::stickyPendulumReverseReleaseState(void) {
 	if (triggerSignal == 0) {
 		incrementArbiter = &MetaController::stickyPendulumForwardReleaseState;
 		return increment2;
-	}
-
-	switch (phaseEvent) {
-
-	case (AT_B_FROM_RELEASE):
+	} else if (phaseEvent == AT_B_FROM_RELEASE) {
 		incrementArbiter = &MetaController::stickyPendulumAtBState;
 		return 0;
-
-	default:
+	} else {
 		return -increment2;
-
 	}
 
 }

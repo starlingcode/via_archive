@@ -384,7 +384,6 @@ public:
 	 */
 
 	ViaMeta() : metaUI(*this) {
-
 		init();
 	}
 

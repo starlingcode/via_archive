@@ -19,9 +19,9 @@ void ViaMeta::fillWavetableArray(void) {
 	wavetableArray[1][5] = &wavetableSet.moving_lump;
 	wavetableArray[1][6] = &wavetableSet.compressor;
 	wavetableArray[1][7] = &wavetableSet.fake_adsr;
-	wavetableArray[2][0] = &wavetableSet.skipSaw;
+	wavetableArray[2][0] = &wavetableSet.new_waves;
 	wavetableArray[2][1] = &wavetableSet.euclidean_test;
-	wavetableArray[2][2] = &wavetableSet.bounce;
+	wavetableArray[2][2] = &wavetableSet.rubberband;
 	wavetableArray[2][3] = &wavetableSet.bounce_257;
 	wavetableArray[2][4] = &wavetableSet.mountains;
 	wavetableArray[2][5] = &wavetableSet.half_sines;
@@ -29,34 +29,31 @@ void ViaMeta::fillWavetableArray(void) {
 	wavetableArray[2][7] = &wavetableSet.block_test;
 }
 
-constexpr Wavetable MetaWavetableSet::impevens;
-constexpr Wavetable MetaWavetableSet::compressor;
-constexpr Wavetable MetaWavetableSet::additive_pairs;
-constexpr Wavetable MetaWavetableSet::bounce_257;
-constexpr Wavetable MetaWavetableSet::euclidean_test;
-constexpr Wavetable MetaWavetableSet::vox;
-constexpr Wavetable MetaWavetableSet::fixed_lump;
-constexpr Wavetable MetaWavetableSet::sharpLinSym;
-constexpr Wavetable MetaWavetableSet::block_test;
-constexpr Wavetable MetaWavetableSet::mountains;
 constexpr Wavetable MetaWavetableSet::moving_lump;
-constexpr Wavetable MetaWavetableSet::drum;
-constexpr Wavetable MetaWavetableSet::new_perlin;
 constexpr Wavetable MetaWavetableSet::circular_257;
-constexpr Wavetable MetaWavetableSet::fake_adsr;
-constexpr Wavetable MetaWavetableSet::half_sines;
+constexpr Wavetable MetaWavetableSet::compressor;
 constexpr Wavetable MetaWavetableSet::trains;
-constexpr Wavetable MetaWavetableSet::skipSaw;
-constexpr Wavetable MetaWavetableSet::bounce;
-constexpr Wavetable MetaWavetableSet::newest_steps;
-constexpr Wavetable MetaWavetableSet::gammaAsym;
+constexpr Wavetable MetaWavetableSet::new_waves;
+constexpr Wavetable MetaWavetableSet::drum;
 constexpr Wavetable MetaWavetableSet::csound_formants;
-constexpr Wavetable MetaWavetableSet::quintic_outinAsym;
+constexpr Wavetable MetaWavetableSet::vox;
+constexpr Wavetable MetaWavetableSet::sharpLinSym;
+constexpr Wavetable MetaWavetableSet::gammaAsym;
+constexpr Wavetable MetaWavetableSet::fake_adsr;
+constexpr Wavetable MetaWavetableSet::euclidean_test;
+constexpr Wavetable MetaWavetableSet::new_perlin;
+constexpr Wavetable MetaWavetableSet::bounce_257;
+constexpr Wavetable MetaWavetableSet::block_test;
+constexpr Wavetable MetaWavetableSet::additive_pairs;
+constexpr Wavetable MetaWavetableSet::skipSaw;
+constexpr Wavetable MetaWavetableSet::impevens;
+constexpr Wavetable MetaWavetableSet::half_sines;
+constexpr Wavetable MetaWavetableSet::fixed_lump;
 constexpr Wavetable MetaWavetableSet::linwavefold_257;
-
-constexpr uint16_t MetaWavetableSet::bounceAttackFamily[9][257];
-
-constexpr uint16_t MetaWavetableSet::bounceReleaseFamily[9][257];
+constexpr Wavetable MetaWavetableSet::rubberband;
+constexpr Wavetable MetaWavetableSet::newest_steps;
+constexpr Wavetable MetaWavetableSet::mountains;
+constexpr Wavetable MetaWavetableSet::quintic_outinAsym;
 
 constexpr uint16_t MetaWavetableSet::gammaAsymAttackFamily[9][257];
 
@@ -133,6 +130,10 @@ constexpr uint16_t MetaWavetableSet::half_sines_release[9][257];
 constexpr uint16_t MetaWavetableSet::mountains_attack[4][257];
 
 constexpr uint16_t MetaWavetableSet::mountains_release[4][257];
+
+constexpr uint16_t MetaWavetableSet::new_waves_attack[5][257];
+
+constexpr uint16_t MetaWavetableSet::rubberband_attacks[9][257];
 
 
 // declare functions to set the currently active tables
