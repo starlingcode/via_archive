@@ -161,6 +161,9 @@ public:
 		HAL_SDADC_Start_DMA(&hsdadc1, (uint32_t *) inputs.cv2Samples, inputBufferSize);
 		HAL_SDADC_Start_DMA(&hsdadc2, (uint32_t *) inputs.cv3Samples, inputBufferSize);
 
+		/// Ensure that the sample and hold circuits initialize in tracking state.
+		setSH(0, 0);
+
 	}
 
 	/// Initialize GPIO and timer outputs.

@@ -8,7 +8,7 @@
 #include "user_interface.hpp"
 #include "touch_lib_link.hpp"
 
-
+/// Called when subclasses are constructed.
 void linkUI(void * callback, void * ui) {
 
 	thisUI = ui;

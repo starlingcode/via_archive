@@ -7,17 +7,17 @@
 
 #include "user_interface.hpp"
 
-/**
+/*
  *
- * Initialization routine for the UI state machine
- * Initialize the eeprom and read the last saved mode set
+ * Template routine for the UI state machine.
+ * Assign the button pointers to the address of the sensor state variables.
+ * Initialize the eeprom and read the last saved mode set.
  * Initialize those modes
  * Set the UI state default
  *
  */
 void ViaUI::initialize(void) {
 
-	// link to virtual module buttons at class initialization
 
 #ifdef BUILD_F373
 
@@ -50,14 +50,10 @@ void ViaUI::loadFromEEPROM(int32_t position) {
 	aux3Mode = (modeStateBuffer & AUX_MODE3_MASK) >> AUX_MODE3_SHIFT;
 	aux4Mode = (modeStateBuffer & AUX_MODE4_MASK) >> AUX_MODE4_SHIFT;
 
-	/* ... initialization of ui attributes */
-	// call each menu to initialize, to make UI process the stored modes
-
 }
 
-// writes 2 16-bit values representing modeState to EEPROM per position,  1 runtime + 6 presets + calibration word
+// writes 2 16-bit values representing the modeStateBuffer word to EEPROM at the specified position,  1 runtime + 6 presets + calibration word
 void ViaUI::storeStateToEEPROM(int32_t position) {
-//	// store lower 16 bits
 
 #ifdef BUILD_F373
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2],
@@ -68,9 +64,8 @@ void ViaUI::storeStateToEEPROM(int32_t position) {
 
 }
 
-// writes 2 16-bit values representing modeState to EEPROM per position,  1 runtime + 6 presets + calibration word
+// writes 2 16-bit values representing the data word to EEPROM per position,  1 runtime + 6 presets + calibration word
 void ViaUI::storeToEEPROM(int32_t position, uint32_t data) {
-//	// store lower 16 bits
 
 #ifdef BUILD_F373
 	eepromStatus = EE_WriteVariable(VirtAddVarTab[position * 2],
@@ -80,40 +75,3 @@ void ViaUI::storeToEEPROM(int32_t position, uint32_t data) {
 #endif
 
 }
-
-//// calibration and default preset initialization
-//void ViaUI::factoryReset(int32_t sig) {
-//	switch (sig) {
-//	case ENTRY_SIG:
-//		UI_TIMER_RESET
-//		;
-//		UI_TIMER_SET_OVERFLOW(1000)
-//		;
-//		UI_TIMER_ENABLE
-//		;
-//		modeStateBuffer = DEFAULTPRESET1;
-//		uiStoreToEEPROM(1);
-//		modeStateBuffer = DEFAULTPRESET2;
-//		uiStoreToEEPROM(2);
-//		modeStateBuffer = DEFAULTPRESET3;
-//		uiStoreToEEPROM(3);
-//		modeStateBuffer = DEFAULTPRESET4;
-//		uiStoreToEEPROM(4);
-//		modeStateBuffer = DEFAULTPRESET5;
-//		uiStoreToEEPROM(5);
-//		modeStateBuffer = DEFAULTPRESET6;
-//		uiStoreToEEPROM(6);
-//		uiLoadFromEEPROM(1);
-//		break;
-//
-//	case TIMEOUT_SIG:
-//		if (eepromStatus != EE_OK) {
-//			uiSetLEDs(4);
-//			transition(&ViaUI::error);
-//		} else {
-//			transition(&ViaUI::default);
-//		}
-//	}
-//}
-
-

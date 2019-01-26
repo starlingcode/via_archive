@@ -31,9 +31,8 @@ void ViaUI::transition(void (ViaUI::*func)(int32_t)) {
 
 /**
  *
- * Default runtime state
- * Looks for detect or trigger button to launch menu
- * Runtime display is active in this state
+ * Default runtime state.
+ * Looks for sensor or trigger button event to launch menu.
  *
  */
 
@@ -69,10 +68,9 @@ void ViaUI::defaultMenu(int32_t sig) {
 
 /**
  *
- * Display new mode
- * Write to EEPROM on entry
- * Display new mode until timeout
- * Look for new user interaction
+ * Write current state to EEPROM on entry for state recall after power down.
+ * Stay in state til timeout.
+ * Launch appropriate menu on sensor event or pushbutton signal.
  *
  */
 
@@ -130,8 +128,8 @@ void ViaUI::newModeMenu(int32_t sig) {
 
 /**
  *
- * Transition to this state after AND A is tapped while AND B is pressed
- * Wait for a release of AND B or a new tap of AND A and show the current aux logic mode
+ * Transition to this state after the aux mode has changed.
+ * Look for a new aux mode sensor event and exit on shift button release.
  *
  */
 
@@ -139,6 +137,11 @@ void ViaUI::newAuxModeMenu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		newAuxModeEnterMenuCallback();
+#ifdef BUILD_F373
+		storeStateToEEPROM(0);
+#endif
+		timerReset();
+		timerDisable();
 		break;
 
 	case SENSOR_EVENT_SIG:

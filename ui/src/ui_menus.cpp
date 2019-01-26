@@ -7,7 +7,7 @@
 
 #include "user_interface.hpp"
 
-
+/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::button1Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
@@ -29,6 +29,7 @@ void ViaUI::button1Menu(int32_t sig) {
 	}
 }
 
+/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::button2Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
@@ -47,6 +48,7 @@ void ViaUI::button2Menu(int32_t sig) {
 	}
 }
 
+/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::button3Menu(int32_t sig) {
 	switch (sig) {
 
@@ -69,6 +71,7 @@ void ViaUI::button3Menu(int32_t sig) {
 	}
 }
 
+/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::button4Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
@@ -89,15 +92,14 @@ void ViaUI::button4Menu(int32_t sig) {
 		}
 		break;
 
-		case INIT_SIG:
-		break;
-
 		default:
 		break;
 	}
 
 }
 
+/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
+/// If a different button is pressed before release, enter that the corresponding aux menu state.
 void ViaUI::button5Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
@@ -128,6 +130,7 @@ void ViaUI::button5Menu(int32_t sig) {
 	}
 }
 
+/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::button6Menu(int32_t sig) {
 	switch (sig) {
 
@@ -153,6 +156,7 @@ void ViaUI::button6Menu(int32_t sig) {
 	}
 }
 
+/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::aux1Menu(int32_t sig) {
 	switch (sig) {
 
@@ -175,6 +179,7 @@ void ViaUI::aux1Menu(int32_t sig) {
 	}
 }
 
+/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::aux2Menu(int32_t sig) {
 	switch (sig) {
 
@@ -197,6 +202,7 @@ void ViaUI::aux2Menu(int32_t sig) {
 	}
 }
 
+/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::aux2MenuAlt(int32_t sig) {
 	switch (sig) {
 
@@ -219,6 +225,7 @@ void ViaUI::aux2MenuAlt(int32_t sig) {
 	}
 }
 
+/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::aux3Menu(int32_t sig) {
 	switch (sig) {
 
@@ -241,6 +248,7 @@ void ViaUI::aux3Menu(int32_t sig) {
 	}
 }
 
+/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::aux4Menu(int32_t sig) {
 	switch (sig) {
 

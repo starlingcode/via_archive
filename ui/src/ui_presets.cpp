@@ -8,12 +8,6 @@
 
 #include "user_interface.hpp"
 
-/**
- *
- * Preset select menu
- *
- */
-
 void ViaUI::presetMenu(int32_t sig) {
 
 	switch (sig) {
@@ -57,14 +51,6 @@ void ViaUI::presetMenu(int32_t sig) {
 		break;
 	}
 }
-
-/**
- *
- * Preset selected menu
- * Watches for release while a sensor is pressed from the preset menu.
- * Loads or stores preset according to the length of the press.
- *
- */
 
 void ViaUI::presetPressedMenu(int32_t sig) {
 	switch (sig) {
@@ -138,15 +124,6 @@ void ViaUI::presetPressedMenu(int32_t sig) {
 
 /**
  *
- * Preset selected menu
- * Watches for release while a sensor is pressed from the preset menu.
- * Loads or stores preset according to the length of the press.
- *
- */
-
-/**
- *
- * Preset storage indicator state
  * Flashes around the full led enumeration 2 times
  *
  */
@@ -173,8 +150,7 @@ void ViaUI::newPreset(int32_t sig) {
 
 /**
  *
- * Switch to preset indicator state
- * Flashes around the white leds once
+ * Flashes around the white leds once.
  *
  */
 
@@ -204,8 +180,7 @@ void ViaUI::switchPreset(int32_t sig) {
 
 /**
  *
- * Preset reset indicator state
- * Flashes around the full led enumeration 4 times
+ * Flashes around the full led enumeration 4 times.
  *
  */
 
