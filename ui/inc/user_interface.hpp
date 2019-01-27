@@ -295,12 +295,6 @@ public:
 	inline int32_t timerRead(void) {
 		return TIM7->CNT;
 	}
-	/// An aggregate function to reset the timer, set the timeout to max, and enable it. Useful when entering a button menu and measuring length of press on release event with timerRead().
-	void resetTimerMenu(void) {
-		timerReset();
-		timerSetOverflow(65535);
-		timerEnable();
-	}
 
 	/// Data member to represent the status of the eeprom library after initialzation.
 	int32_t eepromStatus;
@@ -378,6 +372,13 @@ public:
 	}
 
 #endif
+
+		/// An aggregate function to reset the timer, set the timeout to max, and enable it. Useful when entering a button menu and measuring length of press on release event with timerRead().
+	void resetTimerMenu(void) {
+		timerReset();
+		timerSetOverflow(65535);
+		timerEnable();
+	}
 
 };
 
