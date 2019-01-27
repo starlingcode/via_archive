@@ -206,19 +206,19 @@ public:
 	class TestAndTrimState: public CalibrationState {
 	public:
 
-		ViaCalib& this_module;
-
 		/**
 		 * Pointer to the outer class to allow access to data and methods.
 		 * See constructor and outer class constructor for implementation.
 		 */
+		ViaCalib& this_module;
+
+		/// Update the knob averages, execute the CV1 self tune routine, update the test sine frequency, advance the LFOs, and check if CV2 and CV3 are operational.
 		void slowConversionHandler(void) override {
 			this_module.controls.update();
 			this_module.cv1TunerExecute();
 			this_module.sineFreq = this_module.expo.convert(this_module.controls.cv1Value) >> 1;
 			this_module.advanceLFO();
 			this_module.verifyCV2CV3();
-
 		}
 		//@{
 		/// Mirror the logic level at the main logic input on the left LEDs.
@@ -287,11 +287,19 @@ public:
 			this_module.renderFixedOutputs(CALIB_BUFFER_SIZE);
 		}
 		//@}
+		/// The touch button is used to advance state.
+		void buttonPressedHandler(void) override {
+			advanceState();
+		}
 		//@{
 		/// Advance to the stage where the dac output is calibrated.
 		void advanceState(void) override {
 			this_module.currentState = &(this_module.calibrateDACStore);
-			this_module.measureDAC3Offset();
+			this_module.cvCalibCounter = 0;
+		}
+		/// Update the controls.
+		void slowConversionHandler(void) override {
+			this_module.controls.update();
 		}
 
 		/// Define the pointer to the outer class.
@@ -317,10 +325,19 @@ public:
 			this_module.renderFixedOutputs(CALIB_BUFFER_SIZE);
 		}
 		//@}
+		/// The touch button is used to advance state.
+		void buttonPressedHandler(void) override {
+			advanceState();
+		}
 		/// Store the calibration data and write the option bytes, resetting the MCU.
 		void advanceState(void) override {
 			this_module.calibUI.storeToEEPROM(7, this_module.calibrationPacket);
 			this_module.writeOptionBytes(0, 1);
+		}
+		/// Update the controls.
+		void slowConversionHandler(void) override {
+			this_module.controls.update();
+			this_module.measureDAC3Offset();
 		}
 
 		/// Define the pointer to the outer class.
@@ -383,13 +400,10 @@ public:
 	//@{
 	/// Data members for the tuner.
 	int32_t cv1Stable = 0;
-	int32_t lastCV1 = 0;
-	int32_t thisCV1 = 0;
-	uint32_t cv1Counter = 0;
-	buffer errorBuffer;
-	int32_t errorSum = 0;
-	int32_t cv1BlueAmount = 0;
-	int32_t cv2RedAmount = 0;
+	int32_t lastLongerAverage = 0;
+	int32_t baseCV1 = 0;
+	longBuffer extraCV1Buffer;
+	int32_t extraCV1Sum = 0;
 	//@}
 
 	/// Simple method to check the status of the sigma delta ADCs.
@@ -473,8 +487,8 @@ public:
 		inputBufferSize = 1;
 
 		/// Initialize the buffers for the averages.
-		for (int i = 0; i < 32; i++) {
-			errorBuffer.buff[i] = 0;
+		for (int i = 0; i < 256; i++) {
+			extraCV1Buffer.buff[i] = 0;
 		}
 
 		/// Call the UI initialization that needs to happen after outer class construction.

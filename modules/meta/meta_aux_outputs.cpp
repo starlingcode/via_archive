@@ -185,11 +185,9 @@ void ViaMeta::calculateDac3DrumEnv(int32_t writeIndex) {
 
 	int32_t samplesRemaining = outputBufferSize;
 	int32_t readIndex = 0;
+	int32_t dac3Offset = dac3Calibration;
 
-	int32_t dac3OffsetScale = 61983;
-	int32_t dac3Offset = 111;
-
-	int32_t drumEnvSample = fix16_mul(drumWrite[writeIndex], dac3OffsetScale) >> 4;
+	int32_t drumEnvSample = fix16_mul(drumWrite[writeIndex], dac3OffsetCompensation) >> 4;
 
 	drumEnvSample = 2048 - drumEnvSample - dac3Offset;
 
@@ -250,10 +248,9 @@ void ViaMeta::calculateDac3PhasorEnv(int32_t writeIndex) {
 		phasor = phasor >> 12;
 	}
 
-	int32_t dac3OffsetScale = 61983;
-	int32_t dac3Offset = 111;
+	int32_t dac3Offset = dac3Calibration;
 
-	phasor = fix16_mul((phasor >> 1), dac3OffsetScale);
+	phasor = fix16_mul((phasor >> 1), dac3OffsetCompensation);
 
 	phasor = __USAT(2048 - phasor - dac3Offset, 12) ;
 
@@ -272,10 +269,9 @@ void ViaMeta::calculateDac3PhasorEnv(int32_t writeIndex) {
 
 void ViaMeta::calculateDac3ContourEnv(int32_t writeIndex) {
 
-	int32_t dac3OffsetScale = 61983;
-	int32_t dac3Offset = 111;
+	int32_t dac3Offset = dac3Calibration;
 
-	int32_t contour = fix16_mul(outputs.dac2Samples[writeIndex] >> 1, dac3OffsetScale);
+	int32_t contour = fix16_mul(outputs.dac2Samples[writeIndex] >> 1, dac3OffsetCompensation);
 
 	contour = 2048 - contour - dac3Offset;
 
@@ -296,27 +292,8 @@ void ViaMeta::calculateDac3ContourEnv(int32_t writeIndex) {
 
 void ViaMeta::calculateSHMode1(int32_t writeIndex) {
 
-	switch (metaController.phaseEvent) {
-		//no logic events
-		case 0:
-			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
-			break;
-		//dummy at a handling
-		case AT_A_FROM_RELEASE:
-		case AT_A_FROM_ATTACK:
-			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
-			break;
-		//dummy at b handling
-		case AT_B_FROM_RELEASE:
-		case AT_B_FROM_ATTACK:
-			outputs.shA[writeIndex] = SH_A_TRACK_MASK;
-			outputs.shB[writeIndex] = SH_B_TRACK_MASK;
-			break;
-		default:
-			break;
-	}
+	outputs.shA[writeIndex] = SH_A_TRACK_MASK;
+	outputs.shB[writeIndex] = SH_B_TRACK_MASK;
 
 }
 

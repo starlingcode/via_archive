@@ -170,6 +170,8 @@ public:
 	uint32_t tableSize = 0;
 	int32_t increment = 0;
 
+	int32_t morphModOffset = 0;
+
 	int32_t oversamplingFactor = 3;
 	int32_t bufferSize = 8;
 
@@ -355,6 +357,9 @@ public:
 	int32_t oscillatorOn = 0;
 	int16_t * fm;
 	int32_t * expoFM;
+
+	int32_t cv1Offset = 0;
+	int32_t cv2Offset = 0;
 
 	int32_t phase = 0;
 	int32_t phaseBeforeIncrement;

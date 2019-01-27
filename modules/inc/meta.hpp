@@ -207,6 +207,8 @@ public:
 
 	void (ViaMeta::*outputStage)(int32_t writeIndex);
 
+	int32_t dac3OffsetCompensation;
+
 	void oversample(int32_t writeIndex);
 	void addThreeBits(int32_t writeIndex);
 	void drumMode(int32_t writeIndex);

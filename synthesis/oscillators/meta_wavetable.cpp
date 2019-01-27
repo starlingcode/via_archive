@@ -18,7 +18,7 @@ void MetaWavetable::advanceSingleSample(uint32_t * wavetable) {
 	int32_t morphScaleLocal = (int32_t) morphScale[0];
 	morphScaleLocal = fix16_mul(morphBase, morphScaleLocal << 1);
 	int32_t morphModLocal = (int32_t) -morphMod[0];
-	morphModLocal = __USAT(morphScaleLocal + morphModLocal, 16) * tableSize;
+	morphModLocal = __USAT(morphScaleLocal + morphModLocal + morphModOffset, 16) * tableSize;
 
 	uint32_t ghostPhase = phase << 7;
 	// scale increment to size of new phase space (<< 7) and down by oversampling factor
@@ -52,7 +52,7 @@ void MetaWavetable::advanceOversampled(uint32_t * wavetable) {
 
 	// combine knob and CV then to table size in 16.16 fixed point
 	int32_t morphModLocal = -morphMod[0];
-	uint32_t scaledMorph = __USAT((morphBase + morphModLocal), 16) * tableSize;
+	uint32_t scaledMorph = __USAT((morphBase + morphModLocal + morphModOffset), 16) * tableSize;
 	uint32_t morphIndex = scaledMorph >> 16;
 	uint32_t morphFrac = scaledMorph & 0xFFFF;
 	// assuming that each phase distortion lookup table is 517 samples long stored as int

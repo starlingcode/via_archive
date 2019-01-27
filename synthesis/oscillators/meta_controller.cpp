@@ -24,9 +24,10 @@ void MetaController::parseControlsExternal(ViaControls * controls, ViaInputStrea
 void MetaController::parseControlsAudio(ViaControls * controls, ViaInputStreams * inputs) {
 	// time1 is coarse, time2 is fine, release time = attack time
 
-	timeBase1 = fix16_mul(fix16_mul(expo.convert(controls->knob1Value) >> 5,
-			expo.convert((controls->knob2Value >> 3) + 200)),
-			expo.convert(controls->cv1Value) >> 2) >> 2;
+	timeBase1 = fix16_mul(fix16_mul(fix16_mul(expo.convert(controls->knob1Value) >> 5, // 2 << 11
+			expo.convert(controls->knob2Value >> 3)), // 2 << 16
+			expo.convert(__USAT((int32_t)controls->cv1Value - cv1Offset, 12)) >> 2), // 2 << 14
+			34835);
 	timeBase2 = timeBase1;
 
 	dutyCycleBase = 32767;
@@ -36,8 +37,9 @@ void MetaController::parseControlsAudio(ViaControls * controls, ViaInputStreams 
 void MetaController::parseControlsDrum(ViaControls * controls, ViaInputStreams * inputs) {
 	// time1 is coarse, time2 is not used, release time = attack time
 
-	timeBase1 = fix16_mul(expo.convert(((controls->knob1Value >> 2)*3) + 1024) >> 5,
-			expo.convert(controls->cv1Value) >> 2) >> 4;
+	timeBase1 = fix16_mul(fix16_mul(expo.convert(((controls->knob1Value >> 2)*3) + 1024) >> 5,
+			expo.convert(__USAT((int32_t)controls->cv1Value - cv1Offset, 12)) >> 2) >> 4,
+			87779);
 
 	timeBase2 = timeBase1;
 
@@ -49,14 +51,14 @@ void MetaController::parseControlsEnv(ViaControls * controls, ViaInputStreams * 
 	// t1 is attack time (attackIncrements), t2 is release time (releaseIncrements)
 
 	int32_t releaseMod = inputs->cv2Samples[0];
-	releaseMod += 32767;
+	releaseMod += 32767 - cv2Offset;
 
-	releaseMod = releaseMod >> 4;
+	releaseMod = __USAT(releaseMod >> 4, 12);
 
-	timeBase1 = fix16_mul(expo.convert(4095 - controls->knob1Value) >> 7,
-			expo.convert((4095 - controls->cv1Value) >> 1) >> 7);
-	timeBase2 = fix16_mul(expo.convert(((4095 - controls->knob2Value) >> 2) * 3) >> 7,
-			expo.convert((releaseMod >> 1) + 2048) >> 10);
+	timeBase1 = fix16_mul(expo.convert(4095 - controls->knob1Value) >> 8,
+			expo.convert((4095 - __USAT((int32_t)controls->cv1Value - cv1Offset, 12))) >> 7);
+	timeBase2 = fix16_mul(expo.convert(4095 - controls->knob2Value) >> 9,
+			expo.convert(releaseMod) >> 8);
 
 	dutyCycleBase = 32767;
 
@@ -66,7 +68,7 @@ void MetaController::parseControlsSeq(ViaControls * controls, ViaInputStreams * 
 	// t1 is cycle time, t2 is used to feed the duty cycle input for getSamples
 
 	timeBase1 = fix16_mul(expo.convert(4095 - controls->knob1Value) >> 9,
-			expo.convert((4095 - controls->cv1Value) >> 1) >> 9);
+			expo.convert((4095 - __USAT(controls->cv1Value - cv1Offset, 12)) >> 1) >> 9);
 	timeBase2 = timeBase1;
 
 	dutyCycleBase = controls->knob2Value << 4;
@@ -82,7 +84,7 @@ void MetaController::generateIncrementsExternal(ViaInputStreams * inputs) {
 void MetaController::generateIncrementsAudio(ViaInputStreams * inputs) {
 
 	int32_t localFm = (int32_t) -fm[0];
-	localFm += 16384;
+	localFm += 16384 + cv2Offset;
 	increment1 = fix16_mul(timeBase1, localFm);
 	increment2 = increment1;
 
@@ -120,7 +122,7 @@ void MetaController::generateIncrementsSeq(ViaInputStreams * inputs) {
 
 	int32_t dutyCycleMod = -inputs->cv2Samples[0];
 
-	dutyCycle = __USAT(dutyCycleBase + dutyCycleMod, 16);
+	dutyCycle = __USAT(dutyCycleBase + dutyCycleMod + cv2Offset, 16);
 
 }
 
