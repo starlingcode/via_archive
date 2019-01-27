@@ -26,7 +26,7 @@ void MetaController::parseControlsAudio(ViaControls * controls, ViaInputStreams 
 
 	timeBase1 = fix16_mul(fix16_mul(fix16_mul(expo.convert((controls->knob1Value >> 2)*3) >> 5, // 2 << 11
 			expo.convert(controls->knob2Value >> 3)), // 2 << 16
-			expo.convert(__USAT((int32_t)controls->cv1Value - cv1Offset, 12))), // 2 << 14
+			expo.convert(__USAT((int32_t)controls->cv1Value - cv1Offset, 12))), // expoTable[2048]
 			34835);
 	timeBase2 = timeBase1;
 
