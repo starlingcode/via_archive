@@ -23,7 +23,7 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 
 	int32_t pmAmount = (int32_t) -pm[0];
 
-	pmAmount += 32767;
+	pmAmount += 32767 + cv2Offset;
 
 	int32_t phaseModulationValue = (pmAmount - previousPhaseMod) << (16 - oversamplingFactor);
 
@@ -46,7 +46,7 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 	phase = localPhase;
 
 	int32_t localPWM = (int32_t) pwm[0];
-	localPWM += 32768;
+	localPWM = __USAT(localPWM + cv2Offset + 32768, 16);
 	uint32_t pwmIndex = (localPWM >> 11);
 	uint32_t pwmFrac = (localPWM & 0x7FF) << 4;
 	// assuming that each phase distortion lookup table is 65 samples long stored as int32_t
@@ -63,7 +63,7 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 
 
 	int32_t morph = (int32_t) -morphMod[0];
-
+	morph += cv3Offset;
 	morph = __USAT(morph + morphBase, 16);
 
 	morph *= tableSize;
@@ -90,7 +90,7 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) {
 
 	int32_t pmAmount = (int32_t) -pm[0];
-	pmAmount += 32767;
+	pmAmount += 32767 + cv2Offset;
 	int32_t phaseModulationValue = (pmAmount - previousPhaseMod) << (16 - oversamplingFactor);
 	previousPhaseMod = pmAmount;
 	phaseMod += phaseModulationValue;
@@ -98,7 +98,7 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 	// now oversample
 
 	int32_t localPWM = (int32_t) pwm[0];
-	localPWM += 32767;
+	localPWM = __USAT(localPWM + cv2Offset + 32768, 16);
 	uint32_t pwmIndex = (localPWM >> 11);
 	uint32_t pwmFrac = (localPWM & 0x7FF) << 4;
 	// assuming that each phase distortion lookup table is 65 samples long stored as int32_t
@@ -107,6 +107,7 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 
 	// combine knob and CV then to table size in 16.16 fixed point
 	int32_t morphModLocal = -morphMod[0];
+	morphModLocal += cv3Offset;
 	uint32_t scaledMorph = __USAT((morphBase + morphModLocal), 16) * tableSize;
 	uint32_t morphIndex = scaledMorph >> 16;
 	uint32_t morphFrac = scaledMorph & 0xFFFF;

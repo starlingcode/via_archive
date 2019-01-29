@@ -111,6 +111,7 @@ public:
 	int16_t * pwm;
 	int16_t * morphMod;
 	int32_t cv2Offset = 0;
+	int32_t cv3Offset = 0;
 	uint32_t tableSize = 0;
 
 	// generated externally
@@ -289,6 +290,8 @@ public:
 	uint32_t phaseOffset = 0;
 	uint32_t syncMode = 0;
 	Scale * scale;
+	int32_t cv2Offset;
+	int32_t cv1Offset;
 
 	uint32_t fracMultiplier = 0;
 	uint32_t intMultiplier = 0;

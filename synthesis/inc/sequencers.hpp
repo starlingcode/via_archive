@@ -69,6 +69,10 @@ public:
 	uint32_t virtualGateHigh;
 	uint32_t processSeq1;
 
+	int32_t cv1Offset = 0;
+	int32_t cv2Offset = 0;
+	int32_t cv3Offset = 0;
+
 	int32_t multipliers[8] = {1, 2, 3, 4, 6, 8, 12, 16};
 
 	// "inputs"

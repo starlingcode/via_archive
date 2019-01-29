@@ -22,5 +22,23 @@ void ViaGateseq::init(void) {
 
 	gateseqUI.initialize();
 
+	uint32_t optionBytes = readOptionBytes();
+	uint32_t ob1Data = optionBytes &0xFFFF;
+	uint32_t ob2Data = optionBytes &0xFFFF;
+
+	if (ob1Data == 255 && ob2Data == 254) {
+		readCalibrationPacket();
+		gateseqUI.writeStockPresets();
+		writeOptionBytes(4, 0);
+	} else if (ob1Data == 4) {
+		readCalibrationPacket();
+	} else if (ob1Data != 0) {
+		writeOptionBytes(0, 0);
+	}
+
+	sequencer.cv1Offset = cv1Calibration;
+	sequencer.cv2Offset = cv2Calibration;
+	sequencer.cv3Offset = cv3Calibration;
+
 }
 

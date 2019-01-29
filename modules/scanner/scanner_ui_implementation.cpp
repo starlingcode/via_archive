@@ -59,8 +59,6 @@ void ViaScanner::ViaScannerUI::recallModuleState(void) {
 	this_module.handleButton2ModeChange(this_module.scannerUI.button2Mode);
 	this_module.handleButton3ModeChange(this_module.scannerUI.button3Mode);
 	this_module.handleButton4ModeChange(this_module.scannerUI.button4Mode);
-	this_module.handleButton5ModeChange(this_module.scannerUI.button5Mode);
-	this_module.handleButton6ModeChange(this_module.scannerUI.button6Mode);
 
 }
 

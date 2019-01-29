@@ -40,5 +40,26 @@ void ViaSync::init(void) {
 
 	syncUI.initialize();
 
+	uint32_t optionBytes = readOptionBytes();
+	uint32_t ob1Data = optionBytes &0xFFFF;
+	uint32_t ob2Data = optionBytes &0xFFFF;
+
+	if (ob1Data == 255 && ob2Data == 254) {
+		readCalibrationPacket();
+		syncUI.writeStockPresets();
+		writeOptionBytes(2, 0);
+	} else if (ob1Data == 2) {
+		readCalibrationPacket();
+	} else if (ob1Data != 0) {
+		writeOptionBytes(0, 0);
+	}
+
+	inputs.cv2VirtualGround[0] = cv2Calibration;
+	inputs.cv3VirtualGround[0] = cv3Calibration;
+	pllController.cv1Offset = cv1Calibration;
+	pllController.cv2Offset = cv2Calibration;
+	syncWavetable.cv2Offset = cv2Calibration;
+	syncWavetable.cv3Offset = cv3Calibration;
+
 }
 

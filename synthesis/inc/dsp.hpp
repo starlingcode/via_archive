@@ -320,7 +320,7 @@ static inline int32_t fast_15_16_bilerp_prediff_deltaValue(int32_t in0, int32_t 
 			: [input_1] "r" (frac0), [input_2] "r" (in1), [input_3] "r" (in1 & 0xFFFF)
 	);
 
-	*delta = (uint32_t) in1 - in0;
+	*delta = in1 - in0;
 
 	__asm ("SMLAWB %[result_1], %[input_1], %[input_2], %[input_3]"
 			: [result_1] "=r" (in0)

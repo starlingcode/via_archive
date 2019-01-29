@@ -292,6 +292,11 @@ public:
 		}
 	}
 
+	void readCalibrationPacket(void) {
+		calibrationPacket = syncUI.loadFromMemory(7);
+		decodeCalibrationPacket();
+	}
+
 	rgb scaleColor;
 	int32_t scaleHue;
 

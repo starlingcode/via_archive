@@ -4,8 +4,8 @@
 void ViaSync::fillWavetableArray(void) {
 
 	wavetableArray[	0][0] = &wavetableSet.additive_evens;
-	wavetableArray[	0][1] = &wavetableSet.mountains;
-	wavetableArray[	0][2] = &wavetableSet.newBounce;
+	wavetableArray[	0][1] = &wavetableSet.new_waves;
+	wavetableArray[	0][2] = &wavetableSet.newest_bounce;
 	wavetableArray[	0][3] = &wavetableSet.circular_257;
 	wavetableArray[	1][0] = &wavetableSet.impevens;
 	wavetableArray[	1][1] = &wavetableSet.additive_tri_to_pulse;
@@ -21,30 +21,30 @@ void ViaSync::fillWavetableArray(void) {
 	wavetableArray[	3][3] = &wavetableSet.block_test;
 	wavetableArrayGlobal[0] = &wavetableSet.triOdd;
 	wavetableArrayGlobal[1] = &wavetableSet.sinwavefold_257;
-	wavetableArrayGlobal[2] = &wavetableSet.euclidean_test;
+	wavetableArrayGlobal[2] = &wavetableSet.euc_odd_sharp;
 	wavetableArrayGlobal[3] = &wavetableSet.skipSaw;
 }
 
-constexpr Wavetable SyncWavetableSet::sharpExpoSym;
-constexpr Wavetable SyncWavetableSet::triOdd;
-constexpr Wavetable SyncWavetableSet::additive_tri_to_pulse;
-constexpr Wavetable SyncWavetableSet::additive_evens;
-constexpr Wavetable SyncWavetableSet::euclidean_test;
+constexpr Wavetable SyncWavetableSet::additive_pairs;
 constexpr Wavetable SyncWavetableSet::moogSquare;
+constexpr Wavetable SyncWavetableSet::euc_odd_sharp;
+constexpr Wavetable SyncWavetableSet::sinwavefold_257;
+constexpr Wavetable SyncWavetableSet::new_waves;
 constexpr Wavetable SyncWavetableSet::csound_formants;
+constexpr Wavetable SyncWavetableSet::additive_tri_to_pulse;
+constexpr Wavetable SyncWavetableSet::newest_bounce;
+constexpr Wavetable SyncWavetableSet::block_test;
+constexpr Wavetable SyncWavetableSet::newest_steps;
+constexpr Wavetable SyncWavetableSet::gammaAsym;
+constexpr Wavetable SyncWavetableSet::skipSaw;
+constexpr Wavetable SyncWavetableSet::circular_257;
+constexpr Wavetable SyncWavetableSet::test_fm;
+constexpr Wavetable SyncWavetableSet::triOdd;
+constexpr Wavetable SyncWavetableSet::sharpExpoSym;
+constexpr Wavetable SyncWavetableSet::additive_evens;
+constexpr Wavetable SyncWavetableSet::impevens;
 constexpr Wavetable SyncWavetableSet::new_perlin;
 constexpr Wavetable SyncWavetableSet::trains;
-constexpr Wavetable SyncWavetableSet::mountains;
-constexpr Wavetable SyncWavetableSet::skipSaw;
-constexpr Wavetable SyncWavetableSet::sinwavefold_257;
-constexpr Wavetable SyncWavetableSet::gammaAsym;
-constexpr Wavetable SyncWavetableSet::test_fm;
-constexpr Wavetable SyncWavetableSet::circular_257;
-constexpr Wavetable SyncWavetableSet::block_test;
-constexpr Wavetable SyncWavetableSet::newBounce;
-constexpr Wavetable SyncWavetableSet::impevens;
-constexpr Wavetable SyncWavetableSet::additive_pairs;
-constexpr Wavetable SyncWavetableSet::newest_steps;
 
 constexpr uint16_t SyncWavetableSet::moogSquareShiftAttackFamily[9][257];
 
@@ -66,8 +66,6 @@ constexpr uint16_t SyncWavetableSet::sinwavefold_257_Family[9][257];
 
 constexpr uint16_t SyncWavetableSet::additive_tri_to_pulseFamily[5][257];
 
-constexpr uint16_t SyncWavetableSet::newBounceFamily[5][257];
-
 constexpr uint16_t SyncWavetableSet::circular_257_slopes[4][257];
 
 constexpr uint16_t SyncWavetableSet::test_fm_attack[5][257];
@@ -88,8 +86,6 @@ constexpr uint16_t SyncWavetableSet::new_perlin_slope_2[9][257];
 
 constexpr uint16_t SyncWavetableSet::additive_pairs_slopes[9][257];
 
-constexpr uint16_t SyncWavetableSet::euclidean_test_slopes[6][257];
-
 constexpr uint16_t SyncWavetableSet::block_test_attack[9][257];
 
 constexpr uint16_t SyncWavetableSet::block_test_release[9][257];
@@ -98,11 +94,19 @@ constexpr uint16_t SyncWavetableSet::newest_steps_attack[9][257];
 
 constexpr uint16_t SyncWavetableSet::newest_steps_release[9][257];
 
-constexpr uint16_t SyncWavetableSet::mountains_attack[4][257];
-
-constexpr uint16_t SyncWavetableSet::mountains_release[4][257];
-
 constexpr uint16_t SyncWavetableSet::additive_evens_attack[9][257];
+
+constexpr uint16_t SyncWavetableSet::newest_bounce_attack[5][257];
+
+constexpr uint16_t SyncWavetableSet::newest_bounce_release[5][257];
+
+constexpr uint16_t SyncWavetableSet::euc_odd_sharp_attacks[5][257];
+
+constexpr uint16_t SyncWavetableSet::euc_odd_sharp_releases[5][257];
+
+constexpr uint16_t SyncWavetableSet::new_waves_attack[5][257];
+
+constexpr uint16_t SyncWavetableSet::new_waves_release[5][257];
 
 
 // declare functions to set the currently active tables

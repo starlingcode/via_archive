@@ -26,10 +26,10 @@ void ViaScanner::auxFallingEdgeCallback(void) {
 }
 
 void ViaScanner::buttonPressedCallback(void) {
-	;
+	this->scannerUI.dispatch(EXPAND_SW_ON_SIG);
 }
 void ViaScanner::buttonReleasedCallback(void) {
-	;
+	this->scannerUI.dispatch(EXPAND_SW_OFF_SIG);
 }
 
 void ViaScanner::ioProcessCallback(void) {

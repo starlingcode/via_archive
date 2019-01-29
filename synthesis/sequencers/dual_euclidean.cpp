@@ -98,9 +98,11 @@ void DualEuclidean::parseControls(ViaControls * controls,
 	//the negative does the same to the maximum value
 
 	int32_t cv2Sample = (int32_t) -inputs->cv2Samples[0];
+	cv2Sample += cv2Offset;
 	cv2Sample = cv2Sample >> 4;
 	cv2Sample += 2048;
 	int32_t cv3Sample = (int32_t) -inputs->cv3Samples[0];
+	cv3Sample += cv3Offset;
 	cv3Sample = cv3Sample >> 4;
 	cv3Sample += 2048;
 
@@ -110,7 +112,7 @@ void DualEuclidean::parseControls(ViaControls * controls,
 	cv1WOffset = controls->cv1Value;
 #endif
 #ifdef BUILD_F373
-	cv1WOffset = __USAT(controls->cv1Value - 100, 12);
+	cv1WOffset = __USAT(controls->cv1Value - cv1Offset, 12);
 #endif
 
 

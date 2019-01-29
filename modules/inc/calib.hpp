@@ -332,7 +332,7 @@ public:
 		/// Store the calibration data and write the option bytes, resetting the MCU.
 		void advanceState(void) override {
 			this_module.calibUI.storeToEEPROM(7, this_module.calibrationPacket);
-			this_module.writeOptionBytes(0, 1);
+			this_module.writeOptionBytes(255, 254);
 		}
 		/// Update the controls.
 		void slowConversionHandler(void) override {

@@ -286,6 +286,11 @@ public:
 		init();
 	}
 
+	void readCalibrationPacket(void) {
+		calibrationPacket = gateseqUI.loadFromMemory(7);
+		decodeCalibrationPacket();
+	}
+
 	/// Handle a rising edge at the main logic input
 	void mainRisingEdgeCallback(void);
 	/// Handle a falling edge at the main logic input

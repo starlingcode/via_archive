@@ -4,38 +4,39 @@
 void ViaScanner::fillWavetableArray(void) {
 
 	wavetableArray[0][0] = &wavetableSet.hyperbolic_shapers;
-	wavetableArray[0][1] = &wavetableSet.tanh_res;
-	wavetableArray[0][2] = &wavetableSet.newBounce;
-	wavetableArray[0][3] = &wavetableSet.exciteBike;
-	wavetableArray[0][4] = &wavetableSet.test_fm;
-	wavetableArray[0][5] = &wavetableSet.sin_phase_shift;
-	wavetableArray[0][6] = &wavetableSet.bitcrush;
-	wavetableArray[0][7] = &wavetableSet.new_steps;
+	wavetableArray[0][1] = &wavetableSet.bessel;
+	wavetableArray[0][2] = &wavetableSet.newest_bounce;
+	wavetableArray[0][3] = &wavetableSet.mountains;
+	wavetableArray[0][4] = &wavetableSet.new_waves;
+	wavetableArray[0][5] = &wavetableSet.test_fm;
+	wavetableArray[0][6] = &wavetableSet.new_steps;
+	wavetableArray[0][7] = &wavetableSet.block_slope;
 	wavetableArray[1][0] = &wavetableSet.circular_257;
-	wavetableArray[1][1] = &wavetableSet.bessel;
-	wavetableArray[1][2] = &wavetableSet.additive_tri_to_pulse;
+	wavetableArray[1][1] = &wavetableSet.half_sines;
+	wavetableArray[1][2] = &wavetableSet.rubberband;
 	wavetableArray[1][3] = &wavetableSet.sawBend;
-	wavetableArray[1][4] = &wavetableSet.moog5Square;
-	wavetableArray[1][5] = &wavetableSet.triangle_comb;
+	wavetableArray[1][4] = &wavetableSet.skipSaw;
+	wavetableArray[1][5] = &wavetableSet.moog5Square;
 	wavetableArray[1][6] = &wavetableSet.bitcrush;
-	wavetableArray[1][7] = &wavetableSet.steps5;
+	wavetableArray[1][7] = &wavetableSet.block_test;
 }
 
-constexpr Wavetable ScannerWavetableSet::exciteBike;
-constexpr Wavetable ScannerWavetableSet::test_fm;
-constexpr Wavetable ScannerWavetableSet::hyperbolic_shapers;
-constexpr Wavetable ScannerWavetableSet::bitcrush;
+constexpr Wavetable ScannerWavetableSet::bessel;
 constexpr Wavetable ScannerWavetableSet::moog5Square;
 constexpr Wavetable ScannerWavetableSet::new_steps;
-constexpr Wavetable ScannerWavetableSet::bessel;
-constexpr Wavetable ScannerWavetableSet::circular_257;
 constexpr Wavetable ScannerWavetableSet::sawBend;
-constexpr Wavetable ScannerWavetableSet::steps5;
-constexpr Wavetable ScannerWavetableSet::sin_phase_shift;
-constexpr Wavetable ScannerWavetableSet::newBounce;
-constexpr Wavetable ScannerWavetableSet::tanh_res;
-constexpr Wavetable ScannerWavetableSet::triangle_comb;
-constexpr Wavetable ScannerWavetableSet::additive_tri_to_pulse;
+constexpr Wavetable ScannerWavetableSet::new_waves;
+constexpr Wavetable ScannerWavetableSet::hyperbolic_shapers;
+constexpr Wavetable ScannerWavetableSet::mountains;
+constexpr Wavetable ScannerWavetableSet::skipSaw;
+constexpr Wavetable ScannerWavetableSet::newest_bounce;
+constexpr Wavetable ScannerWavetableSet::test_fm;
+constexpr Wavetable ScannerWavetableSet::rubberband;
+constexpr Wavetable ScannerWavetableSet::block_slope;
+constexpr Wavetable ScannerWavetableSet::circular_257;
+constexpr Wavetable ScannerWavetableSet::half_sines;
+constexpr Wavetable ScannerWavetableSet::block_test;
+constexpr Wavetable ScannerWavetableSet::bitcrush;
 
 constexpr uint16_t ScannerWavetableSet::moog5SquareShiftAttackFamily[5][257];
 
@@ -45,31 +46,13 @@ constexpr uint16_t ScannerWavetableSet::sawBendAttackFamily[5][257];
 
 constexpr uint16_t ScannerWavetableSet::sawBendReleaseFamily[5][257];
 
-constexpr uint16_t ScannerWavetableSet::exciteBikeAttackFamily[9][257];
-
-constexpr uint16_t ScannerWavetableSet::exciteBikeReleaseFamily[9][257];
-
-constexpr uint16_t ScannerWavetableSet::steps5AttackFamily[5][257];
-
-constexpr uint16_t ScannerWavetableSet::steps5ReleaseFamily[5][257];
-
-constexpr uint16_t ScannerWavetableSet::additive_tri_to_pulseFamily[5][257];
-
-constexpr uint16_t ScannerWavetableSet::newBounceFamily[5][257];
+constexpr uint16_t ScannerWavetableSet::skipsaw[5][257];
 
 constexpr uint16_t ScannerWavetableSet::circular_257_slopes[4][257];
 
 constexpr uint16_t ScannerWavetableSet::test_fm_attack[5][257];
 
 constexpr uint16_t ScannerWavetableSet::test_fm_release[5][257];
-
-constexpr uint16_t ScannerWavetableSet::triangle_comb_attack[5][257];
-
-constexpr uint16_t ScannerWavetableSet::triangle_comb_release[5][257];
-
-constexpr uint16_t ScannerWavetableSet::tanh_res_attack[5][257];
-
-constexpr uint16_t ScannerWavetableSet::tanh_res_release[5][257];
 
 constexpr uint16_t ScannerWavetableSet::hyperbolic_shapers_attack[5][257];
 
@@ -87,9 +70,31 @@ constexpr uint16_t ScannerWavetableSet::bessel_attack[5][257];
 
 constexpr uint16_t ScannerWavetableSet::bessel_release[5][257];
 
-constexpr uint16_t ScannerWavetableSet::sin_phase_shift_attack[5][257];
+constexpr uint16_t ScannerWavetableSet::block_test_attack[5][257];
 
-constexpr uint16_t ScannerWavetableSet::sin_phase_shift_release[5][257];
+constexpr uint16_t ScannerWavetableSet::block_test_release[5][257];
+
+constexpr uint16_t ScannerWavetableSet::half_sines_attack[5][257];
+
+constexpr uint16_t ScannerWavetableSet::half_sines_release[5][257];
+
+constexpr uint16_t ScannerWavetableSet::mountains_attack[4][257];
+
+constexpr uint16_t ScannerWavetableSet::mountains_release[4][257];
+
+constexpr uint16_t ScannerWavetableSet::rubberband_attacks[5][257];
+
+constexpr uint16_t ScannerWavetableSet::newest_bounce_attack[5][257];
+
+constexpr uint16_t ScannerWavetableSet::newest_bounce_release[5][257];
+
+constexpr uint16_t ScannerWavetableSet::new_waves_attack[5][257];
+
+constexpr uint16_t ScannerWavetableSet::new_waves_release[5][257];
+
+constexpr uint16_t ScannerWavetableSet::block_slope_attack[5][257];
+
+constexpr uint16_t ScannerWavetableSet::block_slope_release[5][257];
 
 
 // declare functions to set the currently active tables

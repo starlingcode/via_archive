@@ -59,7 +59,19 @@ void ViaMeta::init() {
 
 	metaWavetable.morphMod = inputs.cv3Samples;
 
-	readCalibrationPacket();
+	uint32_t optionBytes = readOptionBytes();
+	uint32_t ob1Data = optionBytes &0xFFFF;
+	uint32_t ob2Data = optionBytes &0xFFFF;
+
+	if (ob1Data == 255 && ob2Data == 254) {
+		readCalibrationPacket();
+		metaUI.writeStockPresets();
+		writeOptionBytes(1, 0);
+	} else if (ob1Data == 1) {
+		readCalibrationPacket();
+	} else if (ob1Data != 0) {
+		writeOptionBytes(0, 0);
+	}
 
 	metaController.cv1Offset = cv1Calibration;
 	metaController.cv2Offset = cv2Calibration;

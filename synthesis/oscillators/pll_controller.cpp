@@ -17,12 +17,13 @@
 
 void PllController::parseControls(ViaControls * controls, ViaInputStreams * input) {
 
-	int32_t ratioX = controls->knob1Value + controls->cv1Value - 2048;
+	int32_t ratioX = controls->knob1Value + controls->cv1Value - cv1Offset - 2048;
 	ratioX = __USAT(ratioX, 12);
 
 	ratioX = ratioXHysterisis(ratioX >> 5, ratioX);
 
 	int32_t rootModLocal = -rootMod[0];
+	rootModLocal += cv2Offset;
 	rootModLocal = rootModLocal >> 4;
 	rootModLocal += controls->knob2Value;
 	int32_t	ratioY = __USAT(rootModLocal, 12);

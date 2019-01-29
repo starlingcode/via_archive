@@ -55,7 +55,7 @@ private:
 			deltaXOutputStable = ((lastDeltaXState - thisDeltaState) == 0);
 			deltaXTransitionSample = sample;
 			lastDeltaXState = thisDeltaState;
-			return thisDeltaState;
+			return thisDeltaState ^ xReversed;
 		} else {
 			deltaXOutputStable = (abs(sample - deltaXTransitionSample) > 1);
 			lastDeltaXState = deltaXOutputStable ? thisDeltaState : lastDeltaXState;
@@ -131,6 +131,10 @@ public:
 	int32_t yInput;
 	int32_t hardSync;
 	int32_t reverse;
+
+	int32_t cv1Offset;
+	int32_t cv2Offset;
+	int32_t cv3Offset;
 
 	//control rate input
 	uint32_t zIndex = 0;

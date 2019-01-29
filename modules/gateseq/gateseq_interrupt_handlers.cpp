@@ -211,7 +211,7 @@ void ViaGateseq::halfTransferCallback() {
 
 	outputs.dac1Samples[0] = gateController.updateGateA(sequencer.gateAEvent);
 	outputs.dac2Samples[0] = gateController.updateGateB(sequencer.gateBEvent);
-	outputs.dac3Samples[0] = 2048 - (sequencer.bOutput * 2048);
+	outputs.dac3Samples[0] = __USAT(2048 - dac3Calibration - (sequencer.bOutput * 2048), 12);
 
 	sequencer.gateAEvent = SOFT_GATE_EXECUTE;
 	sequencer.gateBEvent = SOFT_GATE_EXECUTE;
@@ -230,7 +230,7 @@ void ViaGateseq::transferCompleteCallback() {
 
 	outputs.dac1Samples[1] = gateController.updateGateA(sequencer.gateAEvent);
 	outputs.dac2Samples[1] = gateController.updateGateB(sequencer.gateBEvent);
-	outputs.dac3Samples[1] = 2048 - (sequencer.bOutput * 2048);
+	outputs.dac3Samples[1] = __USAT(2048 - dac3Calibration - (sequencer.bOutput * 2048), 12);
 
 	sequencer.gateAEvent = SOFT_GATE_EXECUTE;
 	sequencer.gateBEvent = SOFT_GATE_EXECUTE;

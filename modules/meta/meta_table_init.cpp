@@ -29,31 +29,31 @@ void ViaMeta::fillWavetableArray(void) {
 	wavetableArray[2][7] = &wavetableSet.block_test;
 }
 
+constexpr Wavetable MetaWavetableSet::trains;
+constexpr Wavetable MetaWavetableSet::new_perlin;
+constexpr Wavetable MetaWavetableSet::moving_lump;
+constexpr Wavetable MetaWavetableSet::drum;
+constexpr Wavetable MetaWavetableSet::quintic_outinAsym;
+constexpr Wavetable MetaWavetableSet::skipSaw;
+constexpr Wavetable MetaWavetableSet::linwavefold_257;
+constexpr Wavetable MetaWavetableSet::compressor;
 constexpr Wavetable MetaWavetableSet::additive_pairs;
-constexpr Wavetable MetaWavetableSet::euc_odd_sharp;
+constexpr Wavetable MetaWavetableSet::newest_steps;
+constexpr Wavetable MetaWavetableSet::circular_257;
+constexpr Wavetable MetaWavetableSet::new_waves;
+constexpr Wavetable MetaWavetableSet::newest_bounce;
+constexpr Wavetable MetaWavetableSet::gammaAsym;
+constexpr Wavetable MetaWavetableSet::sharpLinSym;
 constexpr Wavetable MetaWavetableSet::rubberband;
 constexpr Wavetable MetaWavetableSet::fake_adsr;
-constexpr Wavetable MetaWavetableSet::gammaAsym;
-constexpr Wavetable MetaWavetableSet::skipSaw;
-constexpr Wavetable MetaWavetableSet::newest_steps;
-constexpr Wavetable MetaWavetableSet::newest_bounce;
-constexpr Wavetable MetaWavetableSet::drum;
-constexpr Wavetable MetaWavetableSet::new_waves;
-constexpr Wavetable MetaWavetableSet::impevens;
-constexpr Wavetable MetaWavetableSet::new_perlin;
-constexpr Wavetable MetaWavetableSet::block_test;
-constexpr Wavetable MetaWavetableSet::half_sines;
-constexpr Wavetable MetaWavetableSet::moving_lump;
-constexpr Wavetable MetaWavetableSet::linwavefold_257;
-constexpr Wavetable MetaWavetableSet::trains;
-constexpr Wavetable MetaWavetableSet::circular_257;
-constexpr Wavetable MetaWavetableSet::fixed_lump;
-constexpr Wavetable MetaWavetableSet::quintic_outinAsym;
-constexpr Wavetable MetaWavetableSet::sharpLinSym;
+constexpr Wavetable MetaWavetableSet::euc_odd_sharp;
 constexpr Wavetable MetaWavetableSet::mountains;
+constexpr Wavetable MetaWavetableSet::fixed_lump;
 constexpr Wavetable MetaWavetableSet::csound_formants;
 constexpr Wavetable MetaWavetableSet::vox;
-constexpr Wavetable MetaWavetableSet::compressor;
+constexpr Wavetable MetaWavetableSet::block_test;
+constexpr Wavetable MetaWavetableSet::impevens;
+constexpr Wavetable MetaWavetableSet::half_sines;
 
 constexpr uint16_t MetaWavetableSet::gammaAsymAttackFamily[9][257];
 

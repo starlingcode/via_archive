@@ -13,25 +13,34 @@ void ViaScanner::init(void) {
 	outputBufferSize = SCANNER_BUFFER_SIZE;
 	inputBufferSize = 1;
 
-
 	scanner.hardSync = 1;
 	scanner.reverse = 1;
 
 	fillWavetableArray();
 
-	scanner.xTable = (uint32_t *) &wavetableXRead[0][0];
-	scanner.yTable = (uint32_t *) &wavetableYRead[0][0];
-
 	inputs.trigInput = 1;
 	inputs.auxTrigInput = 0;
 	reverseSignal = 1;
 
-	for (int i = 0; i < (SCANNER_BUFFER_SIZE * 2); i++) {
-		inputs.auxTrigSamples[i] = 1;
-		reverseBuffer[i] = 1;
+	scannerUI.initialize();
+
+	uint32_t optionBytes = readOptionBytes();
+	uint32_t ob1Data = optionBytes &0xFFFF;
+	uint32_t ob2Data = optionBytes &0xFFFF;
+
+	if (ob1Data == 255 && ob2Data == 254) {
+		readCalibrationPacket();
+		scannerUI.writeStockPresets();
+		writeOptionBytes(3, 0);
+	} else if (ob1Data == 3) {
+		readCalibrationPacket();
+	} else if (ob1Data != 0) {
+		writeOptionBytes(0, 0);
 	}
 
-	scannerUI.initialize();
+	scanner.cv1Offset = cv1Calibration;
+	scanner.cv2Offset = cv2Calibration;
+	scanner.cv3Offset = cv3Calibration;
 
 }
 
