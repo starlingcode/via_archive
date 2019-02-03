@@ -73,8 +73,6 @@ void ViaMeta::init() {
 		writeOptionBytes(0, 0);
 	}
 
-	readCalibrationPacket();
-
 	metaController.cv1Offset = cv1Calibration;
 	metaController.cv2Offset = cv2Calibration;
 	metaWavetable.morphModOffset = cv3Calibration;
