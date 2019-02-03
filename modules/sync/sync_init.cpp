@@ -54,6 +54,8 @@ void ViaSync::init(void) {
 		writeOptionBytes(0, 0);
 	}
 
+	readCalibrationPacket();
+
 	inputs.cv2VirtualGround[0] = cv2Calibration;
 	inputs.cv3VirtualGround[0] = cv3Calibration;
 	pllController.cv1Offset = cv1Calibration;

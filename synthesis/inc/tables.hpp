@@ -144,6 +144,8 @@ public:
 
 	}
 
+
+
 	void loadSingleTable15Bit(const Wavetable * table,
 			uint32_t * tableRead) {
 

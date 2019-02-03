@@ -39,11 +39,11 @@ private:
 
 	inline void scanTerrainDifference(void);
 
-	int32_t xReversed;
-	int32_t yReversed;
+	int32_t xReversed = 0;
+	int32_t yReversed = 0;
 
-	int32_t xOffset;
-	int32_t yOffset;
+	int32_t xOffset = 0;
+	int32_t yOffset = 0;
 
 	int32_t lastDeltaXState = 1;
 	int32_t deltaXTransitionSample = 0;
@@ -127,14 +127,14 @@ public:
 	uint32_t *xTable;
 	uint32_t *yTable;
 
-	int32_t xInput;
-	int32_t yInput;
-	int32_t hardSync;
-	int32_t reverse;
+	int32_t xInput = 0;
+	int32_t yInput = 0;
+	int32_t hardSync = 0;
+	int32_t reverse = 0;
 
-	int32_t cv1Offset;
-	int32_t cv2Offset;
-	int32_t cv3Offset;
+	int32_t cv1Offset = 0;
+	int32_t cv2Offset = 0;
+	int32_t cv3Offset = 0;
 
 	//control rate input
 	uint32_t zIndex = 0;
@@ -150,8 +150,8 @@ public:
 	int32_t * locationBlend;
 	int32_t * altitude;
 
-	int32_t hemisphereBlend;
-	int32_t deltaBlend;
+	int32_t hemisphereBlend = 0;
+	int32_t deltaBlend = 0;
 
 	inline void fillBufferExternal(void) {
 		(this->*fillBuffer)();
