@@ -54,12 +54,6 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 			initializeOscillator();
 		}
 
-		if (metaUI.DAC_3_MODE == phasor) {
-			calculateDac3 = &ViaMeta::calculateDac3Phasor;
-		} else {
-			calculateDac3 = &ViaMeta::calculateDac3Contour;
-		}
-
 		break;
 	case env:
 
@@ -70,23 +64,11 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 		} else {
 			calculateDac3 = &ViaMeta::calculateDac3ContourEnv;
 		}
-		
-		if (metaUI.LOOP_MODE == noloop) {
-			initializeEnvelope();
-		} else {
-			initializeSimpleLFO();
-		}
 
 		break;
 	case seq:
 
 		updateRGBDisplay(4095, 0, 0, 1);
-
-		if (metaUI.DAC_3_MODE == phasor) {
-			calculateDac3 = &ViaMeta::calculateDac3Phasor;
-		} else {
-			calculateDac3 = &ViaMeta::calculateDac3Contour;
-		}
 
 		if (metaUI.LOOP_MODE == noloop) {
 			initializeSequence();
@@ -329,6 +311,7 @@ void ViaMeta::initializeOscillator(void) {
 	outputStage = &ViaMeta::oversample;
 
 	handleButton4ModeChange(metaUI.TRIG_MODE);
+	handleAux4ModeChange(metaUI.DAC_3_MODE);
 
 }
 void ViaMeta::initializeEnvelope(void) {
@@ -350,6 +333,7 @@ void ViaMeta::initializeEnvelope(void) {
 	outputStage = &ViaMeta::addThreeBits;
 
 	handleButton4ModeChange(metaUI.TRIG_MODE);
+	handleAux4ModeChange(metaUI.DAC_3_MODE);
 
 }
 void ViaMeta::initializeSimpleLFO(void) {
@@ -371,6 +355,7 @@ void ViaMeta::initializeSimpleLFO(void) {
 	outputStage = &ViaMeta::addThreeBits;
 
 	handleButton4ModeChange(metaUI.TRIG_MODE);
+	handleAux4ModeChange(metaUI.DAC_3_MODE);
 
 }
 void ViaMeta::initializeSequence(void) {
@@ -392,6 +377,7 @@ void ViaMeta::initializeSequence(void) {
 	outputStage = &ViaMeta::addThreeBits;
 
 	handleButton4ModeChange(metaUI.TRIG_MODE);
+	handleAux4ModeChange(metaUI.DAC_3_MODE);
 
 }
 void ViaMeta::initializeComplexLFO(void) {
@@ -413,6 +399,7 @@ void ViaMeta::initializeComplexLFO(void) {
 	outputStage = &ViaMeta::addThreeBits;
 
 	handleButton4ModeChange(metaUI.TRIG_MODE);
+	handleAux4ModeChange(metaUI.DAC_3_MODE);
 
 }
 
