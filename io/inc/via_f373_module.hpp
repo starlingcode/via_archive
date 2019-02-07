@@ -79,17 +79,21 @@ public:
 			uint32_t cv1Calibration, uint32_t dac3Calibration) {
 
 		// from lsb, first 10 bits are cv2Calibration, next 10 are cv3Calibration, next 5 are cv1Calibration, last 7 are dac3 calibration
-		calibrationPacket = cv2Calibration | (cv3Calibration << 10) |
-				(cv1Calibration << 20) | ((dac3Calibration >> 2) << 25);
+		calibrationPacket = (cv2Calibration >> 1) | ((cv3Calibration >> 1) << 9) |
+				((cv1Calibration & 0b1111111) << 18) | ((dac3Calibration >> 2) << 25);
 
 	}
 
 	void decodeCalibrationPacket(void) {
 
-		cv2Calibration = calibrationPacket & 0b1111111111;
-		cv3Calibration = (calibrationPacket >> 10) & 0b1111111111;
-		cv1Calibration = (calibrationPacket >> 20) & 0b11111;
-		dac3Calibration = ((calibrationPacket >> 25) & 0b1111111) << 2;
+		cv2Calibration = (calibrationPacket & 0b111111111) << 1;
+		cv3Calibration = ((calibrationPacket >> 9) & 0b111111111) << 1;
+		cv1Calibration = (calibrationPacket >> 18) & 0b1111111;
+		if (cv1Calibration >> 6) {
+			cv1Calibration = -(~cv1Calibration & 0b111111);
+		}
+		dac3Calibration = ((calibrationPacket >> 25) & 0b1111111);
+		dac3Calibration <<= 2;
 
 	}
 

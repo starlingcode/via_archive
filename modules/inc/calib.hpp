@@ -332,7 +332,7 @@ public:
 		/// Store the calibration data and write the option bytes, resetting the MCU.
 		void advanceState(void) override {
 			this_module.calibUI.storeToEEPROM(7, this_module.calibrationPacket);
-			this_module.writeOptionBytes(255, 254);
+			this_module.writeOptionBytes(254, 255);
 		}
 		/// Update the controls.
 		void slowConversionHandler(void) override {
@@ -426,17 +426,17 @@ public:
 	uint32_t calibTest = 0;
 	uint32_t calibrateDAC3 = 0;
 	uint32_t cvCalibCounter = 0;
-	uint32_t cv1Sum = 0;
-	uint32_t cv2Sum = 0;
-	uint32_t cv3Sum = 0;
+	int32_t cv1Sum = 0;
+	int32_t cv2Sum = 0;
+	int32_t cv3Sum = 0;
 	//@}
 
 	//@{
 	/// Calibration data.
-	uint32_t cv1Read = 0;
-	uint32_t cv2Read = 0;
-	uint32_t cv3Read = 0;
-	uint32_t dac3Offset = 0;
+	int32_t cv1Read = 0;
+	int32_t cv2Read = 0;
+	int32_t cv3Read = 0;
+	int32_t dac3Offset = 0;
 	//@}
 
 	//@{
