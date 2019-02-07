@@ -218,6 +218,10 @@ public:
 
 	}
 
+	void writeOptionBytes(uint16_t bottomHalf, uint16_t topHalf) {
+		
+	}
+
 	/// Needs to be rewritten
 //	inline void setLogicOutBoolean(int32_t writeIndex, int32_t runtimeDisplay) {
 //

@@ -71,15 +71,13 @@ void ViaMeta::ViaMetaUI::recallModuleState(void) {
 	this_module.metaUI.aux4Mode %= numAux4Modes;
 
 
-	this_module.handleAux3ModeChange(this_module.metaUI.aux3Mode);
+	this_module.handleAux2ModeChange(this_module.metaUI.aux2Mode);
 	this_module.handleButton1ModeChange(this_module.metaUI.button1Mode);
 	this_module.handleButton2ModeChange(this_module.metaUI.button2Mode);
 	this_module.handleButton3ModeChange(this_module.metaUI.button3Mode);
 	this_module.handleButton4ModeChange(this_module.metaUI.button4Mode);
 	this_module.handleButton5ModeChange(this_module.metaUI.button5Mode);
 	this_module.handleButton6ModeChange(this_module.metaUI.button6Mode);
-	this_module.handleAux2ModeChange(this_module.metaUI.aux2Mode);
-	this_module.handleAux4ModeChange(this_module.metaUI.aux4Mode);
 
 }
 

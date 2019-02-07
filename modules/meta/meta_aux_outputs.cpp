@@ -104,11 +104,11 @@ void ViaMeta::calculateLogicAReleaseGate(int32_t writeIndex) {
 
 	int32_t thisSample = metaController.ghostPhase >> 16;
 
-	int32_t releasing = (thisSample >> 8) | metaController.atB;
+	int32_t releasing = (metaController.ghostPhase >> 24) | metaController.atB;
 
 	int32_t attacking = !releasing;
 
-	int32_t thisState = (releasing | (attacking & incrementReversed)) * metaController.oscillatorOn;
+	int32_t thisState = ((releasing & !incrementReversed) | (attacking & incrementReversed)) * metaController.oscillatorOn;
 
 	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(logicAHysterisis(thisState, thisSample));
 
@@ -120,11 +120,11 @@ void ViaMeta::calculateLogicAAttackGate(int32_t writeIndex) {
 
 	int32_t thisSample = metaController.ghostPhase >> 16;
 
-	int32_t releasing = (thisSample >> 8) | metaController.atB;
+	int32_t releasing = (metaController.ghostPhase >> 24) | metaController.atB;
 
 	int32_t attacking = !releasing;
 
-	int32_t thisState = (attacking | (releasing & incrementReversed)) * metaController.oscillatorOn;
+	int32_t thisState = ((attacking  & !incrementReversed) | (releasing & incrementReversed)) * metaController.oscillatorOn;
 
 	outputs.logicA[writeIndex] = GET_ALOGIC_MASK(logicAHysterisis(thisState, thisSample));
 
