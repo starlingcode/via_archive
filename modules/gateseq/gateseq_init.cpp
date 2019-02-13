@@ -29,7 +29,7 @@ void ViaGateseq::init(void) {
 	if (ob1Data == 254 && ob2Data == 255) {
 		readCalibrationPacket();
 		gateseqUI.writeStockPresets();
-		writeOptionBytes(4, 0);
+		writeOptionBytes(4, 1);
 	} else if (ob1Data == 4) {
 		readCalibrationPacket();
 	}

@@ -47,7 +47,7 @@ void ViaSync::init(void) {
 	if (ob1Data == 254 && ob2Data == 255) {
 		readCalibrationPacket();
 		syncUI.writeStockPresets();
-		writeOptionBytes(2, 0);
+		writeOptionBytes(2, 1);
 	} else if (ob1Data == 2) {
 		readCalibrationPacket();
 	} else if (ob1Data != 0) {
