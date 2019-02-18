@@ -25,7 +25,7 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 
 	pmAmount += 32767 + cv2Offset;
 
-	int32_t phaseModulationValue = (pmAmount - previousPhaseMod) << (16 - oversamplingFactor);
+	int32_t phaseModulationValue = (pmAmount - previousPhaseMod) << 16;
 
 	previousPhaseMod = pmAmount;
 

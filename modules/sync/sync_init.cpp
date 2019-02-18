@@ -41,13 +41,13 @@ void ViaSync::init(void) {
 	syncUI.initialize();
 
 	uint32_t optionBytes = readOptionBytes();
-	uint32_t ob1Data = optionBytes &0xFFFF;
-	uint32_t ob2Data = optionBytes &0xFFFF;
+	uint32_t ob1Data = optionBytes & 0xFFFF;
+	uint32_t ob2Data = optionBytes >> 16;
 
-	if (ob1Data == 255 && ob2Data == 254) {
+	if (ob1Data == 254 && ob2Data == 255) {
 		readCalibrationPacket();
 		syncUI.writeStockPresets();
-		writeOptionBytes(2, 0);
+		writeOptionBytes(2, 1);
 	} else if (ob1Data == 2) {
 		readCalibrationPacket();
 	} else if (ob1Data != 0) {

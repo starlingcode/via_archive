@@ -28,13 +28,13 @@ void ViaScanner::init(void) {
 	inputBufferSize = 1;
 
 	uint32_t optionBytes = readOptionBytes();
-	uint32_t ob1Data = optionBytes &0xFFFF;
-	uint32_t ob2Data = optionBytes &0xFFFF;
+	uint32_t ob1Data = optionBytes & 0xFFFF;
+	uint32_t ob2Data = optionBytes >> 16;
 
-	if (ob1Data == 255 && ob2Data == 254) {
+	if (ob1Data == 254 && ob2Data == 255) {
 		readCalibrationPacket();
 		scannerUI.writeStockPresets();
-		writeOptionBytes(3, 0);
+		writeOptionBytes(3, 1);
 	} else if (ob1Data == 3) {
 		readCalibrationPacket();
 	} else if (ob1Data != 0) {

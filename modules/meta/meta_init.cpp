@@ -60,13 +60,13 @@ void ViaMeta::init() {
 	metaWavetable.morphMod = inputs.cv3Samples;
 
 	uint32_t optionBytes = readOptionBytes();
-	uint32_t ob1Data = optionBytes &0xFFFF;
-	uint32_t ob2Data = optionBytes &0xFFFF;
+	uint32_t ob1Data = optionBytes & 0xFFFF;
+	uint32_t ob2Data = optionBytes >> 16;
 
-	if (ob1Data == 255 && ob2Data == 254) {
+	if (ob1Data == 254 && ob2Data == 255) {
 		readCalibrationPacket();
 		metaUI.writeStockPresets();
-		writeOptionBytes(1, 0);
+		writeOptionBytes(1, 1);
 	} else if (ob1Data == 1) {
 		readCalibrationPacket();
 	} else if (ob1Data != 0) {
