@@ -45,11 +45,20 @@ void ViaGateseq::mainRisingEdgeCallback() {
 
 	sequencer.gateBEvent = SOFT_GATE_HIGH * sequencer.bOutput;
 
+#ifdef BUILD_F373
 	if (softGateBOn) {
 		gateController.attackTimeB = ((1 << 20) * 1439 / sequencer.periodCount) << 12;
 	} else {
 		gateController.attackTimeB = (1 << 27);
 	}
+#endif
+#ifdef BUILD_VIRTUAL
+	if (softGateBOn) {
+		gateController.attackTimeB = ((1 << 22) / sequencer.periodCount) << 12;
+	} else {
+		gateController.attackTimeB = (1 << 27);
+	}
+#endif
 	gateController.releaseTimeB = gateController.attackTimeB;
 
 }
@@ -101,11 +110,20 @@ void ViaGateseq::auxTimer1InterruptCallback() {
 
 	// update the gate time
 
+#ifdef BUILD_F373
 	if (softGateAOn) {
-		gateController.attackTimeA = ((1 << 20) * 1439 / sequencer.clockPeriod) << 12;
+		gateController.attackTimeA = ((1 << 20) * 1439 / sequencer.periodCount) << 12;
 	} else {
-		gateController.attackTimeA = 1 << 27;
+		gateController.attackTimeA = (1 << 27);
 	}
+#endif
+#ifdef BUILD_VIRTUAL
+	if (softGateAOn) {
+		gateController.attackTimeA = ((1 << 22) / sequencer.periodCount) << 12;
+	} else {
+		gateController.attackTimeA = (1 << 27);
+	}
+#endif
 	gateController.releaseTimeA = gateController.attackTimeA;
 
 }
