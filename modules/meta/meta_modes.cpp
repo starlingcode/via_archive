@@ -59,10 +59,10 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 
 		updateRGBDisplay(0, 4095, 0, 1);
 
-		if (metaUI.DAC_3_MODE == phasor) {
-			calculateDac3 = &ViaMeta::calculateDac3PhasorEnv;
+		if (metaUI.LOOP_MODE == noloop) {
+			initializeEnvelope();
 		} else {
-			calculateDac3 = &ViaMeta::calculateDac3ContourEnv;
+			initializeSimpleLFO();
 		}
 
 		break;

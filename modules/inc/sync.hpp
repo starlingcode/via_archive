@@ -134,7 +134,7 @@ public:
 		// harmonic oscillator
 		uint32_t stockPreset1 = ENCODE_PRESET(1, 0, 0, 2, 0, 0, 0, 0, 2, 0);
 		// arpeggiated oscillator
-		uint32_t stockPreset2 = ENCODE_PRESET(0, 1, 0, 1, 1, 0, 1, 0, 0, 0);
+		uint32_t stockPreset2 = ENCODE_PRESET(0, 2, 0, 1, 1, 0, 1, 0, 0, 0);
 		// arpeggiated oscillator bp
 		uint32_t stockPreset3 = ENCODE_PRESET(2, 3, 1, 0, 1, 0, 1, 0, 2, 1);
 		// voct

@@ -53,7 +53,7 @@ void PllController::doPLL(void) {
 
 	int32_t localPhaseOffset = fix48_mul(phaseOffset, fracMultiplier) + fix16_mul(phaseOffset, intMultiplier);
 
-	uint32_t phase = (phaseSignal - (phaseModSignal << 7) + (localPhaseOffset << 7));
+	uint32_t phase = phaseSignal - phaseModSignal + (localPhaseOffset << 7);
 
 	// this can be more efficient, multiply by wavetable length is a bitshift ..
 
