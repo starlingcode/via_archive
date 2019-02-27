@@ -42,6 +42,9 @@ private:
 	int32_t xReversed = 0;
 	int32_t yReversed = 0;
 
+	int32_t lastXReversed = 0;
+	int32_t lastYReversed = 0;
+
 	int32_t xOffset = 0;
 	int32_t yOffset = 0;
 

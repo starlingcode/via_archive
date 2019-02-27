@@ -59,7 +59,7 @@ void ViaScanner::halfTransferCallback(void) {
 		#endif
 		#ifdef BUILD_VIRTUAL
 
-		ledCOutput = (uint32_t) scanner.deltaBlend;
+		ledCOutput = GET_ALOGIC_VIRTUAL_MASK(outputs.logicA[0]) - 1;
 
 		#endif
 
@@ -69,18 +69,12 @@ void ViaScanner::halfTransferCallback(void) {
 	inputs.trigInput = 1;
 	scanner.reverse = reverseSignal;
 
-	scanner.xInput = (int32_t)-inputs.cv2Samples[0];
+	scanner.xInput = (int32_t) inputs.cv2Samples[0];
 
-	scanner.yInput = (int32_t)-inputs.cv3Samples[0];
+	scanner.yInput = (int32_t) inputs.cv3Samples[0];
 
-//	scanner.xInput += 32767;
-//	scanner.yInput += 32767;
-//
-//	scanner.xInput &= 0xFFF0;
-//	scanner.yInput &= 0xFFF0;
-//
-//	scanner.xInput -= 32767;
-//	scanner.yInput -= 32767;
+	scanner.xInput *= -1;
+	scanner.yInput *= -1;
 
 	scanner.fillBufferExternal();
 
@@ -111,8 +105,8 @@ void ViaScanner::transferCompleteCallback(void) {
 		#endif
 		#ifdef BUILD_VIRTUAL
 
-		ledCOutput = (uint32_t) scanner.deltaBlend;
-
+		ledCOutput = GET_ALOGIC_VIRTUAL_MASK(outputs.logicA[0]) - 1;
+		
 		#endif
 
 	}

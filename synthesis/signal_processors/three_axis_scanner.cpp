@@ -23,8 +23,11 @@ void ThreeAxisScanner::scanSetup() {
 	int32_t xIncrement = (xInput - lastXInput) * reverse;
 	int32_t yIncrement = (yInput - lastYInput) * reverse;
 
-	xReversed = (uint32_t) xIncrement >> 31;
-	yReversed = (uint32_t) yIncrement >> 31;
+	xReversed = (xIncrement == 0) ? lastXReversed : (uint32_t) xIncrement >> 31;
+	yReversed = (yIncrement == 0) ? lastYReversed : (uint32_t) yIncrement >> 31;
+
+	lastXReversed = xReversed;
+	lastYReversed = yReversed;
 
 	if (abs(xIncrement) > 512 || abs(yIncrement) > 512) {
 		oversample = 1;
@@ -177,17 +180,14 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 		locationBlend[writeIndex] = (xIndexBuffer[writeIndex] + yIndexBuffer[writeIndex]) >> 14;
 	}
 
-	int32_t xHemisphere = xSample >> 11;
-	int32_t yHemisphere = ySample >> 11;
+	int32_t xHemisphere = xSample >> 14;
+	int32_t yHemisphere = ySample >> 14;
 
 	xSample = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
 	ySample = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
 
-	xDelta = (uint32_t) xDelta >> 31;
-	yDelta = (uint32_t) yDelta >> 31;
-
-	xDelta ^= xReversed;
-	yDelta ^= yReversed;
+	xDelta = (xDelta == 0) ? lastDeltaXState : ((uint32_t) xDelta >> 31) ^ xReversed;
+	yDelta = (yDelta == 0) ? lastDeltaYState : ((uint32_t) yDelta >> 31) ^ yReversed;
 
 	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
 	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
@@ -282,17 +282,20 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 
 	}
 
-	int32_t xHemisphere = xSample >> 11;
-	int32_t yHemisphere = ySample >> 11;
+	int32_t xHemisphere = xSample >> 14;
+	int32_t yHemisphere = ySample >> 14;
 
 	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
 	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
 
-	xDelta = (uint32_t) xDelta >> 31;
-	yDelta = (uint32_t) yDelta >> 31;
+	// xDelta = (uint32_t) xDelta >> 31;
+	// yDelta = (uint32_t) yDelta >> 31;
 
-	xDelta ^= xReversed;
-	yDelta ^= yReversed;
+	// xDelta ^= xReversed;
+	// yDelta ^= yReversed;
+
+	xDelta = (xDelta == 0) ? lastDeltaXState : ((uint32_t) xDelta >> 31) ^ xReversed;
+	yDelta = (yDelta == 0) ? lastDeltaYState : ((uint32_t) yDelta >> 31) ^ yReversed;
 
 	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
 	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
@@ -389,17 +392,20 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 
 	}
 
-	int32_t xHemisphere = xSample >> 11;
-	int32_t yHemisphere = ySample >> 11;
+	int32_t xHemisphere = xSample >> 14;
+	int32_t yHemisphere = ySample >> 14;
 
 	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
 	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
 
-	xDelta = (uint32_t) xDelta >> 31;
-	yDelta = (uint32_t) yDelta >> 31;
+	// xDelta = (uint32_t) xDelta >> 31;
+	// yDelta = (uint32_t) yDelta >> 31;
 
-	xDelta ^= xReversed;
-	yDelta ^= yReversed;
+	// xDelta ^= xReversed;
+	// yDelta ^= yReversed;
+
+	xDelta = (xDelta == 0) ? lastDeltaXState : ((uint32_t) xDelta >> 31) ^ xReversed;
+	yDelta = (yDelta == 0) ? lastDeltaYState : ((uint32_t) yDelta >> 31) ^ yReversed;
 
 	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
 	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
@@ -495,17 +501,20 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 
 	}
 
-	int32_t xHemisphere = xSample >> 11;
-	int32_t yHemisphere = ySample >> 11;
+	int32_t xHemisphere = xSample >> 14;
+	int32_t yHemisphere = ySample >> 14;
 
 	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
 	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
 
-	xDelta = (uint32_t) xDelta >> 31;
-	yDelta = (uint32_t) yDelta >> 31;
+	// xDelta = (uint32_t) xDelta >> 31;
+	// yDelta = (uint32_t) yDelta >> 31;
 
-	xDelta ^= xReversed;
-	yDelta ^= yReversed;
+	// xDelta ^= xReversed;
+	// yDelta ^= yReversed;
+
+	xDelta = (xDelta == 0) ? lastDeltaXState : ((uint32_t) xDelta >> 31) ^ xReversed;
+	yDelta = (yDelta == 0) ? lastDeltaYState : ((uint32_t) yDelta >> 31) ^ yReversed;
 
 	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
 	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
