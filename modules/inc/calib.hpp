@@ -399,10 +399,11 @@ public:
 
 	//@{
 	/// Data members for the tuner.
-	int32_t cv1Stable = 0;
-	int32_t lastLongerAverage = 0;
+	enum tunerStates {resting, changeDetected, averaging, measuring};
+	int32_t tunerState = 0;
+	int32_t lastAverage = 0;
 	int32_t baseCV1 = 0;
-	longBuffer extraCV1Buffer;
+	int32_t extraCV1Counter = 0;
 	int32_t extraCV1Sum = 0;
 	//@}
 
@@ -486,10 +487,10 @@ public:
 		outputBufferSize = CALIB_BUFFER_SIZE;
 		inputBufferSize = 1;
 
-		/// Initialize the buffers for the averages.
-		for (int i = 0; i < 256; i++) {
-			extraCV1Buffer.buff[i] = 0;
-		}
+//		/// Initialize the buffers for the averages.
+//		for (int i = 0; i < 256; i++) {
+//			extraCV1Buffer.buff[i] = 0;
+//		}
 
 		/// Call the UI initialization that needs to happen after outer class construction.
 		calibUI.initialize();

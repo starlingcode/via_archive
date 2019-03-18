@@ -90,26 +90,47 @@ void ViaCalib::advanceLFO(void) {
 
 void ViaCalib::cv1TunerExecute(void) {
 
-	/// Implement an extra running average of length 256
-	extraCV1Sum += controls.cv1Value - readLongBuffer(&extraCV1Buffer, 255);
-	writeLongBuffer(&extraCV1Buffer, controls.cv1Value);
-	int32_t longerAverage = extraCV1Sum >> 8;
+	// when at rest, wait for change
+	// when change, wait for settle
+	// when settle, wait for average completion
+	// when average complete, measure and display, storing average
 
-	/// Measure the deviation in the unaveraged CV from the average value.
-	int32_t cv1Change = (int32_t)((4095 - controls.controlRateInputs[0]) - longerAverage);
+	// {resting, changeDetected, stable, averaging, measuring}
 
-	/// If the CV1 stable flag is not set
-	if (!cv1Stable) {
+	int32_t actualCV1Value = 4095 - controls.controlRateInputs[0];
+	int32_t lastReading;
+	int32_t error;
 
-		/// Take the difference in the average from the last sample.
-		int32_t averageValueDifferential = longerAverage - lastLongerAverage;
+	switch (tunerState) {
+	case resting:
+		if (abs(actualCV1Value - (int32_t)controls.cv1Value) > 100) {
+			tunerState = changeDetected;
+			setLEDA(1);
+			setGreenLED(0);
+			setRedLED(0);
+			setBlueLED(0);
+		}
+		break;
+	case changeDetected:
+		if (abs(actualCV1Value - (int32_t)controls.cv1Value) < 5) {
+			tunerState = averaging;
+		}
+		break;
+	case averaging:
+		if (extraCV1Counter < 2048) {
+			extraCV1Sum += actualCV1Value;
+			extraCV1Counter += 1;
+		} else {
+			extraCV1Counter = 0;
+			tunerState = measuring;
+		}
+		break;
+	case measuring:
+		lastReading = (extraCV1Sum >> 11);
 
-		/// If its 0, the average is stable.
-		if ((averageValueDifferential == 0)) {
-			/// Set the stable flag.
-			cv1Stable = 1;
+		if (baseCV1 < lastReading) {
 			/// Use the current average value to measure the size of the jump module an ideal octave (384)
-			int32_t error = abs(baseCV1 - longerAverage) % 384;
+			error = abs(baseCV1 - lastReading) % 384;
 			/// Blank LED A indicating a measurement has been made.
 			setLEDA(0);
 			/// If the error is 0, turn on the green LED, otherwise show an undershoot on the blue LED and an overshoot on the red LED.
@@ -127,18 +148,70 @@ void ViaCalib::cv1TunerExecute(void) {
 				setRedLED((error << 3) + 300);
 				setGreenLED(0);
 			}
+		} else {
+			setGreenLED(0);
+			setRedLED(0);
+			setBlueLED(0);
 		}
-	/// If the stable flag is high, look for a CV deviation greater than 300.
-	} else if ((abs(cv1Change) > 300)) {
-		/// Set LED A indicating that the CV is unstable and a reading will be made when it stabilizes.
-		setLEDA(1);
-		/// Set the stable flag low.
-		cv1Stable = 0;
-		/// Store the last average before the change to measure step size.
-		baseCV1 = lastLongerAverage;
+		extraCV1Sum = 0;
+		baseCV1 = lastReading;
+		tunerState = resting;
+		break;
+	default:
+		break;
 	}
-	/// Store the current average to use on the next tuner execution call.
-	lastLongerAverage = longerAverage;
+
+
+
+//	/// Implement an extra running average of length 256
+//	extraCV1Sum += controls.cv1Value - readLongBuffer(&extraCV1Buffer, 255);
+//	writeLongBuffer(&extraCV1Buffer, controls.cv1Value);
+//	int32_t longerAverage = extraCV1Sum >> 8;
+//
+//	/// Measure the deviation in the unaveraged CV from the average value.
+//	int32_t cv1Change = (int32_t)((4095 - controls.controlRateInputs[0]) - longerAverage);
+//
+//	/// If the CV1 stable flag is not set
+//	if (!cv1Stable) {
+//
+//		/// Take the difference in the average from the last sample.
+//		int32_t averageValueDifferential = longerAverage - lastLongerAverage;
+//
+//		/// If its 0, the average is stable.
+//		if ((averageValueDifferential == 0)) {
+//			/// Set the stable flag.
+//			cv1Stable = 1;
+//			/// Use the current average value to measure the size of the jump module an ideal octave (384)
+//			int32_t error = abs(baseCV1 - longerAverage) % 384;
+//			/// Blank LED A indicating a measurement has been made.
+//			setLEDA(0);
+//			/// If the error is 0, turn on the green LED, otherwise show an undershoot on the blue LED and an overshoot on the red LED.
+//			/// The blue and red error readings get slightly dimmer as the get smaller, with a min value added so even small error is immediately apparent.
+//			if (error == 0) {
+//				setGreenLED(1024);
+//				setRedLED(0);
+//				setBlueLED(0);
+//			} else if (error > 256) {
+//				setBlueLED(((384 - error) << 3) + 300);
+//				setRedLED(0);
+//				setGreenLED(0);
+//			} else if (error < 256) {
+//				setBlueLED(0);
+//				setRedLED((error << 3) + 300);
+//				setGreenLED(0);
+//			}
+//		}
+//	/// If the stable flag is high, look for a CV deviation greater than 300.
+//	} else if ((abs(cv1Change) > 300)) {
+//		/// Set LED A indicating that the CV is unstable and a reading will be made when it stabilizes.
+//		setLEDA(1);
+//		/// Set the stable flag low.
+//		cv1Stable = 0;
+//		/// Store the last average before the change to measure step size.
+//		baseCV1 = lastLongerAverage;
+//	}
+//	/// Store the current average to use on the next tuner execution call.
+//	lastLongerAverage = longerAverage;
 
 }
 

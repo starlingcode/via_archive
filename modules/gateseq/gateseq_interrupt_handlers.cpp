@@ -197,6 +197,7 @@ void ViaGateseq::auxRisingEdgeCallback() {
 		sequencer.gateAEvent = SOFT_GATE_HIGH * sequencer.aOutput;
 		sequencer.gateBEvent = SOFT_GATE_HIGH * sequencer.bOutput;
 	} else {
+		sequencer.skipClock = 0;
 		sequencer.aCounter = 0;
 		sequencer.bCounter = 0;
 	}
@@ -227,12 +228,12 @@ void ViaGateseq::ioProcessCallback() {
 
 void ViaGateseq::halfTransferCallback() {
 
-	outputs.dac1Samples[0] = gateController.updateGateA(sequencer.gateAEvent);
-	outputs.dac2Samples[0] = gateController.updateGateB(sequencer.gateBEvent);
-	outputs.dac3Samples[0] = __USAT(2048 - dac3Calibration - (sequencer.bOutput * 2048), 12);
+	readGateAEvent = sequencer.gateAEvent;
+	readGateBEvent = sequencer.gateBEvent;
 
-	sequencer.gateAEvent = SOFT_GATE_EXECUTE;
-	sequencer.gateBEvent = SOFT_GATE_EXECUTE;
+	outputs.dac1Samples[0] = gateController.updateGateA(readGateAEvent);
+	outputs.dac2Samples[0] = gateController.updateGateB(readGateBEvent);
+	outputs.dac3Samples[0] = __USAT(2048 - dac3Calibration - (sequencer.bOutput * 2048), 12);
 
 	setSH(sequencer.shASignal, sequencer.shBSignal);
 	if (sequencer.sampleA) {
@@ -241,17 +242,23 @@ void ViaGateseq::halfTransferCallback() {
 	if (sequencer.sampleB) {
 		sequencer.shBSignal = 1;
 	}
+//	if (readGateAEvent == sequencer.gateAEvent) {
+//		sequencer.gateAEvent = SOFT_GATE_EXECUTE;
+//	}
+//	if (readGateBEvent == sequencer.gateBEvent) {
+//		sequencer.gateBEvent = SOFT_GATE_EXECUTE;
+//	}
 
 }
 
 void ViaGateseq::transferCompleteCallback() {
 
-	outputs.dac1Samples[1] = gateController.updateGateA(sequencer.gateAEvent);
-	outputs.dac2Samples[1] = gateController.updateGateB(sequencer.gateBEvent);
-	outputs.dac3Samples[1] = __USAT(2048 - dac3Calibration - (sequencer.bOutput * 2048), 12);
+	readGateAEvent = sequencer.gateAEvent;
+	readGateBEvent = sequencer.gateBEvent;
 
-	sequencer.gateAEvent = SOFT_GATE_EXECUTE;
-	sequencer.gateBEvent = SOFT_GATE_EXECUTE;
+	outputs.dac1Samples[1] = gateController.updateGateA(readGateAEvent);
+	outputs.dac2Samples[1] = gateController.updateGateB(readGateBEvent);
+	outputs.dac3Samples[1] = __USAT(2048 - dac3Calibration - (sequencer.bOutput * 2048), 12);
 
 	setSH(sequencer.shASignal, sequencer.shBSignal);
 	if (sequencer.sampleA) {
@@ -260,6 +267,12 @@ void ViaGateseq::transferCompleteCallback() {
 	if (sequencer.sampleB) {
 		sequencer.shBSignal = 1;
 	}
+//	if (readGateAEvent == sequencer.gateAEvent) {
+//		sequencer.gateAEvent = SOFT_GATE_EXECUTE;
+//	}
+//	if (readGateBEvent == sequencer.gateBEvent) {
+//		sequencer.gateBEvent = SOFT_GATE_EXECUTE;
+//	}
 
 }
 

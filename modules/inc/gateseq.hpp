@@ -275,6 +275,12 @@ public:
 	int32_t softGateBOn;
 	//@}
 
+	//@{
+	/// Variables to pass gate event messages asynchronously from the sequencer to the gate controller
+	int32_t readGateAEvent;
+	int32_t readGateBEvent;
+	//@}
+
 	/*
 	 *
 	 * Event meta_handlers
