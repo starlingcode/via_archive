@@ -273,6 +273,9 @@ public:
 	/// Decrement mode modulo numModes of modes and store to eeprom using mask and shift.
 	int32_t decrementModeAndStore(int32_t mode, int32_t mask, int32_t numModes, int32_t shift);
 
+	int32_t storeMode(int32_t mode, int32_t mask, int32_t shift);
+
+
 #ifdef BUILD_F373
 
 	/// Reset UI timer; does not affect enable/disable.

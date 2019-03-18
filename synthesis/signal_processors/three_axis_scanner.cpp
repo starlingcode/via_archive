@@ -29,7 +29,7 @@ void ThreeAxisScanner::scanSetup() {
 	lastXReversed = xReversed;
 	lastYReversed = yReversed;
 
-	if (abs(xIncrement) > 512 || abs(yIncrement) > 512) {
+	if (int32_abs(xIncrement) > 512 || int32_abs(yIncrement) > 512) {
 		oversample = 1;
 	} else {
 		oversample = 0;
@@ -338,13 +338,13 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 		xIndexAtLogic = xIndexBuffer[writeIndex] >> 16;
 		yIndexAtLogic = yIndexBuffer[writeIndex] >> 16;
 
-		int32_t mainScan = abs((xSample - ySample) >> 3); //15 bit fixed point multiply and right shift by 3
+		int32_t mainScan = int32_abs(xSample - ySample) >> 3; //15 bit fixed point multiply and right shift by 3
 
 		int32_t samplesRemaining = bufferSize;
 
 		while (samplesRemaining) {
 			altitude[writeIndex] = mainScan;
-			locationBlend[writeIndex] = abs((xIndexBuffer[writeIndex] - yIndexBuffer[writeIndex]) >> 13);
+			locationBlend[writeIndex] = int32_abs((xIndexBuffer[writeIndex] - yIndexBuffer[writeIndex]) >> 13);
 
 			writeIndex ++;
 			samplesRemaining --;
@@ -366,8 +366,8 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 
 			ySample = fast_15_16_bilerp_prediff(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac);
 
-			altitude[writeIndex] = abs((xSample - ySample) >> 3);
-			locationBlend[writeIndex] = abs((xIndexBuffer[writeIndex] - yIndexBuffer[writeIndex]) >> 13);
+			altitude[writeIndex] = int32_abs(xSample - ySample) >> 3;
+			locationBlend[writeIndex] = int32_abs((xIndexBuffer[writeIndex] - yIndexBuffer[writeIndex]) >> 13);
 
 			writeIndex ++;
 			samplesRemaining --;
@@ -387,8 +387,8 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 
 		ySample = fast_15_16_bilerp_prediff_deltaValue(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac, &yDelta);
 
-		altitude[writeIndex] = abs((xSample - ySample) >> 3);
-		locationBlend[writeIndex] = abs((xIndexBuffer[writeIndex] - yIndexBuffer[writeIndex]) >> 13);
+		altitude[writeIndex] = int32_abs(xSample - ySample) >> 3;
+		locationBlend[writeIndex] = int32_abs((xIndexBuffer[writeIndex] - yIndexBuffer[writeIndex]) >> 13);
 
 	}
 
