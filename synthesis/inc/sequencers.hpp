@@ -49,7 +49,7 @@ public:
 	int32_t virtualTimer3Enable = 0;
 
 	int32_t virtualTimer4Count = 0;
-	int32_t virtualTimer4Overflow = 16;
+	int32_t virtualTimer4Overflow = 48; // 1ms at 48k
 	int32_t virtualTimer4Enable = 0;
 #endif
 

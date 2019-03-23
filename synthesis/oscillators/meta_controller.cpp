@@ -39,7 +39,7 @@ void MetaController::parseControlsDrum(ViaControls * controls, ViaInputStreams *
 
 	timeBase1 = fix16_mul(fix16_mul(expo.convert(((controls->knob1Value >> 3)*3) + 1024) >> 5,
 			expo.convert(__USAT((int32_t)controls->cv1Value - cv1Offset, 12))) >> 4,
-			87779);
+			58519);
 
 	timeBase2 = timeBase1;
 
