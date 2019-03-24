@@ -25,9 +25,9 @@ void MetaController::parseControlsAudio(ViaControls * controls, ViaInputStreams 
 	// time1 is coarse, time2 is fine, release time = attack time
 
 	timeBase1 = fix16_mul(fix16_mul(fix16_mul(expo.convert((controls->knob1Value >> 2)*3) >> 5, // 2 << 11
-			expo.convert(controls->knob2Value >> 3)), // 2 << 16
+			65535 + (controls->knob2Value << 4)), // 2 << 16
 			expo.convert(__USAT((int32_t)controls->cv1Value - cv1Offset, 12))), // expoTable[2048]
-			34835);
+			audioBaseIncrement);
 	timeBase2 = timeBase1;
 
 	dutyCycleBase = 32767;
@@ -39,7 +39,7 @@ void MetaController::parseControlsDrum(ViaControls * controls, ViaInputStreams *
 
 	timeBase1 = fix16_mul(fix16_mul(expo.convert(((controls->knob1Value >> 3)*3) + 1024) >> 5,
 			expo.convert(__USAT((int32_t)controls->cv1Value - cv1Offset, 12))) >> 4,
-			58519);
+			drumBaseIncrement);
 
 	timeBase2 = timeBase1;
 

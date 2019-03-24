@@ -55,8 +55,6 @@ void PllController::doPLL(void) {
 
 	uint32_t phase = phaseSignal - phaseModSignal + (localPhaseOffset << 7);
 
-	// this can be more efficient, multiply by wavetable length is a bitshift ..
-
 	uint32_t span = ((int64_t)intMultiplier << 16) | (fracMultiplier >> 16);
 
 	uint32_t target = (int64_t)pllCounter * span;

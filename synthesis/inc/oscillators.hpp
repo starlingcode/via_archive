@@ -364,8 +364,11 @@ public:
 	int32_t cv1Offset = 0;
 	int32_t cv2Offset = 0;
 
+	int32_t audioBaseIncrement = 34894;
+	int32_t drumBaseIncrement = 58623;
+
 	int32_t phase = 0;
-	int32_t phaseBeforeIncrement;
+	int32_t phaseBeforeIncrement = 0;
 	int32_t ghostPhase = 0;
 	int32_t phaseEvent = 0;
 

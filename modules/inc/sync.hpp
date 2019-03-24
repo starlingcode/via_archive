@@ -279,6 +279,8 @@ public:
 	buffer tapStore;
 	int32_t tapSum = 0;
 
+	int32_t simultaneousTrigFlag = 0;
+
 	/*
 	 *
 	 * Event meta_handlers
@@ -315,10 +317,15 @@ public:
 	void slowConversionCallback(void);
 
 	void auxTimer1InterruptCallback(void);
+	void auxTimer2InterruptCallback(void);
 
 	void ui_dispatch(int32_t sig) {
 		syncUI.dispatch(sig);
 	};
+
+	int32_t virtualTimer = 0;
+	int32_t virtualTimerEnable = 0;
+	int32_t virtualTimerOverflow = 48;
 
 	void incrementVirtualTimer(void) {
 		pllController.virtualTimer++;

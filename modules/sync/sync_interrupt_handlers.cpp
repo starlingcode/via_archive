@@ -4,6 +4,13 @@ const int32_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseMo
 
 void ViaSync::mainRisingEdgeCallback(void) {
 
+	simultaneousTrigFlag = 1;
+#ifdef BUILD_VIRTUAL
+	virtualTimerEnable = 1;
+	virtualTimer = 0;
+#endif
+
+
 	pllController.measureFrequency();
 	pllController.phaseSignal = syncWavetable.phase;
 	pllController.phaseModSignal = syncWavetable.phaseMod;
@@ -36,7 +43,20 @@ void ViaSync::mainFallingEdgeCallback(void) {
 
 void ViaSync::auxRisingEdgeCallback(void) {
 
-	syncWavetable.phase = 0;
+	if (!simultaneousTrigFlag) {
+		pllController.pllReset = 0;
+	} else {
+		pllController.pllReset = 0;
+		pllController.phaseSignal = syncWavetable.phase;
+		pllController.phaseModSignal = syncWavetable.phaseMod;
+		pllController.doPLL();
+		pllController.generateFrequency();
+
+		// should these be initialized to point to the same address?
+
+		syncWavetable.increment = pllController.increment;
+		syncWavetable.phase = pllController.phaseSignal;
+	}
 
 }
 void ViaSync::auxFallingEdgeCallback(void) {
@@ -97,6 +117,14 @@ void ViaSync::auxTimer1InterruptCallback(void) {
 
 	pllController.yIndexChange = 0;
 	setLEDD(pllController.yIndexChange);
+
+}
+
+void ViaSync::auxTimer2InterruptCallback(void) {
+
+	simultaneousTrigFlag = 0;
+	virtualTimer = 0;
+	virtualTimerEnable = 0;
 
 }
 
