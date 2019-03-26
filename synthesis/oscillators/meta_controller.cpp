@@ -134,7 +134,7 @@ int32_t MetaController::advancePhasePWM(uint32_t * phaseDistTable) {
 
 	int32_t phaseWrapper;
 
-	incrementUsed = (this->*incrementArbiter)();
+	incrementUsed = (this->*incrementArbiter)() * oscillatorOn;
 
 	int32_t increment = incrementUsed * freeze;
 
