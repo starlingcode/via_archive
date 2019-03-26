@@ -9,6 +9,10 @@ void ViaSync::mainRisingEdgeCallback(void) {
 	virtualTimerEnable = 1;
 	virtualTimer = 0;
 #endif
+#ifdef BUILD_F373
+	TIM18->CNT = 1;
+	TIM18->CR1 |= TIM_CR1_CEN;
+#endif
 
 
 	pllController.measureFrequency();
@@ -123,8 +127,14 @@ void ViaSync::auxTimer1InterruptCallback(void) {
 void ViaSync::auxTimer2InterruptCallback(void) {
 
 	simultaneousTrigFlag = 0;
+#ifdef BUILD_VIRTUAL
 	virtualTimer = 0;
 	virtualTimerEnable = 0;
+#endif
+#ifdef BUILD_F373
+	TIM18->CNT = 1;
+	TIM18->CR1 &= ~TIM_CR1_CEN;
+#endif
 
 }
 
