@@ -28,8 +28,8 @@ void MetaWavetable::advanceSingleSample(uint32_t * wavetable) {
 
 	phaseOut[0] = ghostPhase;
 
-	int32_t sample = getSampleQuinticSpline(ghostPhase >> 7, (uint32_t) morphModLocal,
-			wavetable, &delta);
+	int32_t sample = getSampleQuinticSplineDeltaValue(ghostPhase >> 7, (uint32_t) morphModLocal,
+			wavetable, &delta, 0);
 
 	uint32_t writeIndex = 0;
 	uint32_t samplesRemaining = bufferSize;
@@ -89,7 +89,7 @@ void MetaWavetable::advanceOversampled(uint32_t * wavetable) {
 	// get the actual wavetable output sample as above
 	// but with the appropriate scaling as phase is now 25 bits and table length is 9 bits
 	leftSample = ghostPhase >> 23;
-	signalOut[writeIndex] = fast_15_16_bilerp_prediff_delta(
+	signalOut[writeIndex] = fast_15_16_bilerp_prediff_deltaValue(
 			wavetable1[leftSample], wavetable1[leftSample + 1], morphFrac,
 			phaseFrac, &delta);
 

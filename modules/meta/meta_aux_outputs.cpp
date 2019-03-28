@@ -134,7 +134,7 @@ void ViaMeta::calculateDelta(int32_t writeIndex) {
 
 	int32_t reversed = (uint32_t) metaWavetable.increment >> 31;
 
-	int32_t thisState = reversed ? !metaWavetable.delta : metaWavetable.delta;
+	int32_t thisState = (metaWavetable.delta == 0) ? lastDeltaState : ((uint32_t) metaWavetable.delta >> 31) ^ reversed;
 
 	int32_t thisSample = metaController.ghostPhase >> 16;
 
