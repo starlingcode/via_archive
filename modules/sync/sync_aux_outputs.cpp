@@ -15,7 +15,7 @@ void ViaSync::calculateLogicAGate(int32_t writeIndex) {
 
 void ViaSync::calculateLogicADelta(int32_t writeIndex) {
 
-	int32_t thisState = (uint32_t) syncWavetable.delta >> 31;
+	int32_t thisState = (syncWavetable.delta == 0) ? lastDeltaState : ((uint32_t) syncWavetable.delta >> 31);
 
 	int32_t thisSample = syncWavetable.ghostPhase >> 16;
 
