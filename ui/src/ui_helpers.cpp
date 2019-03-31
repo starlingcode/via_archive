@@ -36,7 +36,7 @@ int32_t ViaUI::decrementModeAndStore(int32_t mode, int32_t mask, int32_t numMode
 
 }
 
-int32_t ViaUI::storeMode(int32_t mode, int32_t mask, int32_t shift) {
+void ViaUI::storeMode(int32_t mode, int32_t mask, int32_t shift) {
 
 	modeStateBuffer = (modeStateBuffer & ~(mask)) | (mode << shift);
 
