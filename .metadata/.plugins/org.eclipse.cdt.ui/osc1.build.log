@@ -1,6 +1,0 @@
-23:42:44 **** Clean-only build of configuration Release for project osc1 ****
-make clean 
-make: *** No rule to make target `clean'.  Stop.
-
-23:42:44 Build Finished (took 87ms)
-

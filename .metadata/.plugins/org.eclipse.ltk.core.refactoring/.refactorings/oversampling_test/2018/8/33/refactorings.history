@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;oversampling_test/Inc/osc_pwm_tables.h&apos; to &apos;pwm_tables.h&apos;" description="Rename resource &apos;osc_pwm_tables.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Inc/osc_pwm_tables.h" name="pwm_tables.h" stamp="1534061939737" updateReferences="true"/>
-</session>

@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Delete resource &apos;osc1/prototype.xml&apos;" deleteContents="false" description="Delete resource &apos;osc1/prototype.xml&apos;" element1="/osc1/prototype.xml" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1526074073390"/>&#x0A;<refactoring comment="Delete resource &apos;osc1/trigseq Run.cfg&apos;" deleteContents="false" description="Delete resource &apos;osc1/trigseq Run.cfg&apos;" element1="/osc1/trigseq Run.cfg" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1526074387065"/>
-</session>

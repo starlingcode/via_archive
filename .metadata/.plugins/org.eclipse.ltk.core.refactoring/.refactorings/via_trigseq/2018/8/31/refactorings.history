@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;via_trigseq_library/inc/via_ui_implementation.h&apos; to &apos;trigseq_ui_implementation.h&apos;" description="Rename resource &apos;via_ui_implementation.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="inc/via_ui_implementation.h" name="trigseq_ui_implementation.h" stamp="1533093201801" updateReferences="true"/>
-</session>

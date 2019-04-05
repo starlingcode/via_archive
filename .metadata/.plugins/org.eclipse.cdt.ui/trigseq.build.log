@@ -1,6 +1,0 @@
-23:42:45 **** Clean-only build of configuration Release for project trigseq ****
-make clean 
-make: *** No rule to make target `clean'.  Stop.
-
-23:42:45 Build Finished (took 84ms)
-

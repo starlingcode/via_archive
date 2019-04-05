@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;via_osc/Src&apos; to &apos;osc_src&apos;" description="Rename resource &apos;Src&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Src" name="osc_src" stamp="1534650682277" updateReferences="true"/>
-</session>

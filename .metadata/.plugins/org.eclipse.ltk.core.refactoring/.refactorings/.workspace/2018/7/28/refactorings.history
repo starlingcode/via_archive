@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Delete resource &apos;env_rev5/classic_rev5 Run.cfg&apos;" deleteContents="false" description="Delete resource &apos;env_rev5/classic_rev5 Run.cfg&apos;" element1="/env_rev5/classic_rev5 Run.cfg" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1531458426624"/>
-</session>

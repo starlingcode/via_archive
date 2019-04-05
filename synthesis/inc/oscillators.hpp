@@ -234,8 +234,6 @@ class PllController {
 	int32_t ratioXTransitionPoint = 0;
 	int32_t ratioXStable = 0;
 
-	int32_t lastIncrement;
-
 	int32_t ratioXHysterisis(int32_t thisRatioX, int32_t control) {
 
 		if (ratioXStable) {
@@ -334,9 +332,6 @@ public:
 // meta oscillator controller
 
 class MetaController {
-
-	int32_t previousGhostPhase = 0;
-	int32_t previousPhase = 0;
 
 	ExpoConverter expo;
 

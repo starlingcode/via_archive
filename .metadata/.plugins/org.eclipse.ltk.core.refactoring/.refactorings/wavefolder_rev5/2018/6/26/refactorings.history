@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;wavefolder_rev5/scanner_rev5.xml&apos; to &apos;wavefolder_rev5.xml&apos;" description="Rename resource &apos;scanner_rev5.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="scanner_rev5.xml" name="wavefolder_rev5.xml" stamp="1529910989771" updateReferences="true"/>
-</session>

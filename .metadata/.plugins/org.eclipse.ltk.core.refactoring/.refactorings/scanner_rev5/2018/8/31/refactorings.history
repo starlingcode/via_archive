@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;scanner_rev5/Inc/scanner_main_states.h&apos; to &apos;main_state_machine.h&apos;" description="Rename resource &apos;scanner_main_states.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Inc/scanner_main_states.h" name="main_state_machine.h" stamp="1533350852604" updateReferences="true"/>
-</session>

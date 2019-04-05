@@ -372,7 +372,7 @@ public:
 
 	int32_t morphAttackMultiplier = 1 << 8;
 	int32_t morphReleaseMultiplier = 1 << 2;
-	int32_t morphReleaseClamp = 0;
+	uint32_t morphReleaseClamp = 0;
 	int32_t freqAttackMultiplier = 1 << 10;
 	int32_t freqReleaseMultiplier = 1<< 8;
 

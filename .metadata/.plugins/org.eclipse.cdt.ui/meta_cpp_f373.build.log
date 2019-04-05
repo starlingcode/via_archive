@@ -1,6 +1,0 @@
-17:56:34 **** Incremental Build of configuration Debug for project meta_cpp_f373 ****
-make -j7 all 
-make: Nothing to be done for `all'.
-
-17:56:34 Build Finished (took 100ms)
-

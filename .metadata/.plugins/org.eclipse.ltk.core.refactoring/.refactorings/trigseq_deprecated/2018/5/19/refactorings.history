@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;trigseq/Src/user_interface.c&apos; to &apos;ui_main.c&apos;" description="Rename resource &apos;user_interface.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Src/user_interface.c" name="ui_main.c" stamp="1525662500315" updateReferences="true"/>
-</session>

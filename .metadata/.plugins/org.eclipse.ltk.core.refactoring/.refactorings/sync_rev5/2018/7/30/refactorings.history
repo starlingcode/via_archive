@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;sync_rev5/classic_rev5.xml&apos; to &apos;sync_rev5.xml&apos;" description="Rename resource &apos;classic_rev5.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="classic_rev5.xml" name="sync_rev5.xml" stamp="1532329204606" updateReferences="true"/>&#x0A;&#x0A;<refactoring comment="Rename resource &apos;sync_rev5/Src/main_logic_handling.c&apos; to &apos;main_aux_output.c&apos;" description="Rename resource &apos;main_logic_handling.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Src/main_logic_handling.c" name="main_aux_output.c" stamp="1532663489132" updateReferences="true"/>
-</session>

@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;testcpp/ui/inc/user_interface.h&apos; to &apos;user_interface.hpp&apos;" description="Rename resource &apos;user_interface.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="ui/inc/user_interface.h" name="user_interface.hpp" stamp="1536723230859" updateReferences="true"/>
-</session>
