@@ -1,3 +1,1 @@
-Working firmware repository for Via
-
-more soon..
+Development archive for https://github.com/starlingcode/Via
